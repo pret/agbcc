@@ -10,10 +10,7 @@ struct resword { char *name; short token; enum rid rid;};
 #define MAX_HASH_VALUE 250
 /* maximum key range = 247, duplicates = 0 */
 
-#ifdef __GNUC__
-__inline
-#endif
-static unsigned int
+static inline unsigned int
 hash (str, len)
      register char *str;
      register unsigned int len;
@@ -67,10 +64,7 @@ hash (str, len)
   return hval + asso_values[(unsigned char)str[len - 1]];
 }
 
-#ifdef __GNUC__
-__inline
-#endif
-struct resword *
+static inline struct resword *
 is_reserved_word (str, len)
      register char *str;
      register unsigned int len;
