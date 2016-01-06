@@ -1,0 +1,10 @@
+Makefile
+parse.c
+parse.h
+parse.output
+stamp-parse
+y.tab.c
+*.bb
+*.bbg
+*.da
+*.gcov

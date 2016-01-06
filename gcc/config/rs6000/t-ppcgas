@@ -1,0 +1,22 @@
+# PowerPC embedded support with gas.
+# Build libgcc.a with different options.
+
+MULTILIB_OPTIONS	= msoft-float \
+			  mlittle/mbig \
+			  mcall-sysv/mcall-aix/mcall-linux/mcall-i960-old \
+			  fleading-underscore # CYGNUS local vmakarov: mcall-i960-old and fleading-underscore
+
+MULTILIB_DIRNAMES	= nof \
+			  le be \
+			  cs ca lin o960 \
+			  uns  # CYGNUS local vmakarov: o960 and uns
+
+MULTILIB_EXTRA_OPTS	= mrelocatable-lib mno-eabi mstrict-align
+MULTILIB_EXCEPTIONS	= *mbig/*mcall-linux* \
+			  *mlittle/*mcall-linux* \
+			  *msoft-float/*mcall-linux* \
+			  *mbig/*mcall-i960-old* # CYGNUS local vmakarov
+
+MULTILIB_MATCHES	= ${MULTILIB_MATCHES_FLOAT} \
+			  ${MULTILIB_MATCHES_ENDIAN} \
+			  ${MULTILIB_MATCHES_SYSV}

@@ -1,0 +1,30 @@
+# Build libgcc1 from assembler sources
+LIBGCC1 = libgcc1-asm.a
+CROSS_LIBGCC1 = libgcc1-asm.a
+LIB1ASMSRC = d10v/libgcc1.asm
+LIB1ASMFUNCS = _ashlsi3 _ashrsi3 _lshrsi3 _mulsi3 _udivmodhi4 _divmodhi4 _udivmodsi4 _divmodsi4 _cmpdi _cmpdi0 _ucmpdi _ucmpdi0
+
+# These are really part of libgcc1, but this will cause them to be
+# built correctly, so... 
+LIB2FUNCS_EXTRA = fp-bit.c dp-bit.c
+
+dp-bit.c: $(srcdir)/config/fp-bit.c
+	echo '#define CMPtype HItype' > dp-bit.c
+	echo '#define SMALL_MACHINE' >> dp-bit.c
+	cat $(srcdir)/config/fp-bit.c >> dp-bit.c
+
+fp-bit.c: $(srcdir)/config/fp-bit.c
+	echo '#define FLOAT' > fp-bit.c
+	echo '#define CMPtype HItype' >> fp-bit.c
+	echo '#define SMALL_MACHINE' >> fp-bit.c
+	cat $(srcdir)/config/fp-bit.c >> fp-bit.c
+
+# Build libgcc.a with different options.
+
+MULTILIB_OPTIONS	= mint16/mint32 mdouble32/mdouble64
+MULTILIB_DIRNAMES	= int16 int32	dbl32 dbl64
+MULTILIB_MATCHES	=
+MULTILIB_EXCEPTIONS	=
+
+LIBGCC = stmp-multilib
+INSTALL_LIBGCC = install-multilib

@@ -1,0 +1,168 @@
+***************
+*** 2103,2105 ****
+  }
+  #endif /* THUMB_PE */
+  /* END CYGNUS LOCAL nickc/thumb-pe */
+--- 2103,2264 ----
+  }
+  #endif /* THUMB_PE */
+  /* END CYGNUS LOCAL nickc/thumb-pe */
++ 
++ /* Return nonzero if ATTR is a valid attribute for TYPE.
++    ATTRIBUTES are any existing attributes and ARGS are the arguments
++    supplied with ATTR.
++ 
++    Supported attributes:
++ 
++    short_call: assume the offset from the caller to the callee is small.
++ 
++    long_call: don't assume the offset is small.  */
++ 
++ int
++ arm_valid_machine_type_attribute (type, attributes, attr, args)
++      tree type;
++      tree attributes;
++      tree attr;
++      tree args;
++ {
++   if (args != NULL_TREE)
++     return 0;
++ 
++   if (is_attribute_p ("long_call", attr))
++     return 1;
++   
++   if (is_attribute_p ("short_call", attr))
++     return 1;
++   
++   return 0;
++ }
++ 
++ /*  Encode long_call or short_call attribute by prefixing
++     symbol name in DECL with a special character FLAG.  */
++ 
++ void
++ arm_encode_call_attribute (decl, flag)
++   tree decl;
++   int flag;
++ {
++   const char * str = XSTR (XEXP (DECL_RTL (decl), 0), 0);
++   int          len = strlen (str);
++   char *       newstr;
++ 
++   /* Do not allow weak functions to be treated as short call.  */
++   if (DECL_WEAK (decl) && flag == SHORT_CALL_FLAG_CHAR)
++     return;
++ 
++   if (ENCODED_SHORT_CALL_ATTR_P (str)
++       || ENCODED_LONG_CALL_ATTR_P (str))
++     return;
++ 
++   newstr = malloc (len + 2);
++   newstr[0] = flag;
++   strcpy (newstr + 1, str);
++ 
++   XSTR (XEXP (DECL_RTL (decl), 0), 0) = newstr;
++ }
++ 
++ /* Return the length of a function name prefix
++     that starts with the character 'c'.  */
++ 
++ static int
++ arm_get_strip_length (char c)
++ {
++   switch (c)
++     {
++     ARM_NAME_ENCODING_LENGTHS
++       default: return 0; 
++     }
++ }
++ 
++ /* Return a pointer to a function's name with any
++    and all prefix encodings stripped from it.  */
++ 
++ char *
++ arm_strip_name_encoding (char * name)
++ {
++   int skip;
++   
++   while ((skip = arm_get_strip_length (* name)))
++     name += skip;
++ 
++   return name;
++ }
++ 
++ /* Return 1 if the operand is a SYMBOL_REF for a function known to be
++    defined within the current compilation unit.  If this caanot be
++    determined, then 0 is returned.  */
++ 
++ static int
++ current_file_function_operand (sym_ref)
++   rtx sym_ref;
++ {
++   /* This is a bit of a fib.  A function will have a short call flag
++      applied to its name if it has the short call attribute, or it has
++      already been defined within the current compilation unit.  */
++   if (ENCODED_SHORT_CALL_ATTR_P (XSTR (sym_ref, 0)))
++     return 1;
++ 
++   /* The current function is always defined within the current compilation
++      unit.  if it s a weak definition however, then this may not be the real
++      definition of the function, and so we have to say no.  */
++   if (sym_ref == XEXP (DECL_RTL (current_function_decl), 0)
++       && !DECL_WEAK (current_function_decl))
++     return 1;
++ 
++   /* We cannot make the determination - default to returning 0.  */
++   return 0;
++ }
++ 
++ /* Return non-zero if a 32 bit "long_call" should be generated for
++    this call.  We generate a long_call if the function:
++ 
++         a.  has an __attribute__((long call))
++      or b.  the -mlong-calls command line switch has been specified
++ 
++    However we do not generate a long call if the function:
++    
++         c.  has an __attribute__ ((short_call))
++      or d.  has an __attribute__ ((section))
++      or e.  is defined within the current compilation unit.
++    
++    This function will be called by C fragments contained in the machine
++    description file.  CALL_REF and CALL_COOKIE correspond to the matched
++    rtl operands.  CALL_SYMBOL is used to distinguish between
++    two different callers of the function.  It is set to 1 in the
++    "call_symbol" and "call_symbol_value" patterns and to 0 in the "call"
++    and "call_value" patterns.  This is because of the difference in the
++    SYM_REFs passed by these patterns.  */
++ 
++ int
++ arm_is_longcall_p (sym_ref, call_cookie, call_symbol)
++   rtx sym_ref;
++   int call_cookie;
++   int call_symbol;
++ {
++   if (!call_symbol)
++     {
++       if (GET_CODE (sym_ref) != MEM)
++ 	return 0;
++ 
++       sym_ref = XEXP (sym_ref, 0);
++     }
++ 
++   if (GET_CODE (sym_ref) != SYMBOL_REF)
++     return 0;
++ 
++   if (call_cookie & CALL_SHORT)
++     return 0;
++ 
++   if (TARGET_LONG_CALLS && flag_function_sections)
++     return 1;
++   
++   if (current_file_function_operand (sym_ref))
++     return 0;
++   
++   return (call_cookie & CALL_LONG)
++     || ENCODED_LONG_CALL_ATTR_P (XSTR (sym_ref, 0))
++     || TARGET_LONG_CALLS;
++ }

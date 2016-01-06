@@ -1,0 +1,3 @@
+# Inhibit building libc routines under VxWorks for now
+
+TARGET_LIBGCC2_CFLAGS = -Dinhibit_libc

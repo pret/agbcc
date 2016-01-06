@@ -1,0 +1,180 @@
+# Expect script for the GCC "Wendy" Regression Testsuite
+# Copyright (C) 1994 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+#
+# Written by Jeffrey Wheat (cassidy@cygnus.com)
+# and Doug Evans (dje@cygnus.com).
+#
+# Tests in this directory, when they pass, must either
+# 1) have an exit code of 0, or
+# 2) have "Test passed" in their output, or
+# 3) have the *first* line of the file be
+#    /* DEJAGNU_CFLAGS:"flag1 flag2 ..." DEJAGNU_OUTPUT:"expected output" */
+#    The delimiter " may be anything.  The expected output is matched with
+#    tcl's "string match" (using csh-like pattern matching).
+#
+# If the file needs special cflags, see (3) above.
+# We only look at the first line of the file, if you need to specify both, put
+# them both on the first line (order doesn't matter).
+
+# This testsuite won't run on cross targets (you can't always get the output
+# of printf back), and it has some portability problems, so it's disabled for
+# now.  Since parts of it are "internal use only" (see README), what we need
+# to do is pull the pieces out of it that are good tests into another
+# framework.  We still keep this testsuite around for those who might want to
+# run it, but keep the checked in version disabled (by having it's name not end
+# in ".exp".
+
+if { $tracelevel } then {
+    set strace $tracelevel
+}
+
+# initialize harness
+gcc_init
+
+#
+# wendy_first_line
+#	Read the first line for DEJAGNU cflags and expected output parameters.
+#	The format is "/* DEJAGNU_CFLAGS:<delim>flag1 flag2<delim> DEJAGNU_OUTPUT:<delim>...<delim> */"
+#	We translate "\n" to newline so there can be many lines of output.
+#
+#	CFLAGS and OUTPUT are the names of variables to store the results in.
+#	Returns -1 if there is a DEJAGNU line but is badly formatted,
+#	1 if there is a (properly formatted) DEJAGNU line, 0 otherwise.
+#
+proc wendy_first_line { file cflags output } {
+    upvar $cflags my_cflags $output my_output
+    set fd [open $file r]
+    gets $fd line
+    close $fd
+    if [ string match "*DEJAGNU*" $line ] then {
+	# Fetch the delimiter.
+	verbose "$file has DEJAGNU line: $line" 4
+	regsub ".*DEJAGNU_\[A-Z\]*:(.).*" $line {\1} delim
+	# If there are no matches, there's a syntax error somewhere.
+	set match 0
+	# '\' is needed on the parens here because $delim(foo) means something.
+	# '\' is needed on the brackets because otherwise tcl will execute
+	# what's inbetween them (for you tcl newbies like me).
+	if [regsub ".*DEJAGNU_CFLAGS:$delim\(\[^$delim\]*\)$delim.*" $line {\1} tmp_cflags] then {
+	    set my_cflags $tmp_cflags
+	    set match 1
+	}
+	if [regsub ".*DEJAGNU_OUTPUT:$delim\(\[^$delim\]*\)$delim.*" $line {\1} tmp_output] then {
+	    # Convert "\n" in expected output to newlines.
+	    regsub -all "\\\\n" $tmp_output "\n" my_output
+	    set match 1
+	}
+	if {$match == 0} then {
+	    # Error in test case.
+	    return -1
+	}
+	return 1
+    } else {
+	return 0
+    }
+}
+
+#
+# wendy_try
+#	Try to run a testcase and report pass/fail.
+#	CFLAGS is the cflags you want reported in the pass/fail message
+#	(not all the cflags, just the exceptional ones).
+#
+proc wendy_try { testcase executable cflags expected_output } {
+    global exec_output
+
+    if ![file exists $executable] then {
+	gcc_fail $testcase $cflags
+    } else {
+	set status -1
+	set status [ eval gcc_load "$executable" ]
+	switch -- $status {
+	    "0" { 
+		catch "exec rm -f $executable"
+		gcc_pass $testcase $cflags
+	    }
+	    "1" { 
+		# Allow test cases to have a non-zero exit code and still
+		# succeed if the output is correct.
+		if [string match $expected_output $exec_output] then {
+		    catch "exec rm -f $executable"
+		    gcc_pass $testcase $cflags
+		} else {
+		    verbose "Expected $expected_output, got $exec_output" 4
+		    # Leave executable in place.
+		    gcc_fail $testcase $cflags
+		}
+	    }
+	    "-1" { 
+		perror "Couldn't load $executable." 
+	    }
+	}
+    }
+}
+
+#
+# main test loop
+# Testcases needing additional compilation options, or have non-standard
+# output, provide $testcase.exp which defines $wendy_cflags and $wendy_output.
+#
+
+set wendy_options ""
+if [info exists CFLAGS] then {
+    append wendy_options " $CFLAGS"
+}
+if [info exists LIBS] then {
+    append wendy_options " $LIBS"
+}
+append wendy_options " -lm"
+
+foreach testcase [glob -nocomplain $srcdir/$subdir/*.c] {
+    # If we're only testing specific files and this isn't one of them, skip it.
+    if ![runtest_file_p $runtests $testcase] then {
+	continue
+    }
+    set executable $tmpdir/[file tail [file rootname $testcase].x]
+
+    # Remove any existing executable.
+    catch "exec rm -f $executable"
+
+    # Reset the expected output and optional cflags.
+    set wendy_cflags ""
+    set wendy_output "Test passed*"
+
+    # See if the testcase has special needs.
+    set status [wendy_first_line $testcase wendy_cflags wendy_output]
+    switch -- $status {
+	"0" {}
+	"1" {}
+	"-1" { 
+	    perror "Error in $testcase, badly formatted DEJAGNU line." 
+	}
+    }
+
+    # Compile the testcase.
+    gcc_start [list "$testcase" "-o $executable $wendy_options $wendy_cflags"]
+
+    # Run the executable if it exists.
+    wendy_try $testcase $executable "$wendy_cflags" "$wendy_output"
+}
+
+# call proc gcc_stat to print the testsuite pass/fail stats
+gcc_stat
+
+# Clean up.
+unset wendy_options
+gcc_finish

@@ -1,0 +1,93 @@
+1999-01-15  Brendan Kehoe  <brendan@cygnus.com>
+
+	* typeck2.c (my_friendly_abort): Adjust where to report bugs as a
+	cygnus-local change.
+
+Fri Jan 15 12:32:23 1999  Dave Brolley  (brolley@cygnus.com)
+
+	* lex.c (lang_init_options): Fix typo: data->opts.
+
+Tue Oct 27 23:48:33 1998  Jeffrey A Law  (law@cygnus.com)
+
+	* lang-specs.h (default_compilers): Remove spurious backslashes.
+
+Thu Oct  8 11:00:50 1998  Nick Clifton  <nickc@cygnus.com>
+
+	* decl.c (duplicate_decls): Remove code to copy data_area
+	field of struct tree_decl.
+
+1998-08-27  Benjamin Kosnik  <bkoz@cygnus.com>
+
+	* decl.c (duplicate_decls):  Add DECL_DATA_AREA bits.
+
+	
+Thu May 21 10:21:04 EDT 1998  Andrew MacLeod  <amacleod@cygnus.com>
+
+	* TODO: Updated the exception handling todo list a bit.
+
+Wed Feb 18 12:18:23 1998  Michael Tiemann  <tiemann@axon.cygnus.com>
+
+	* inc/new: (__THROW, __nothing): New macros, for making libgcc2
+	functionality conditional on -fembedded-cxx.
+	(operator new*, operator delete*): Change type signatures to be
+	correct when -fembedded-cxx is specified.
+
+	* new1.cc (operator new): Change `throw' to __THROW, so that file
+	can be compiled with -fembedded-cxx.  Also, don't try to call
+	`handler' if __EMBEDDED_CXX__ is defined.
+	* new2.cc (operator new[], operator delete, operator delete []):
+	Likewise.
+
+	* new.cc (nothrow): Only define if not __EMBEDDED_CXX__.
+
+	* exception.cc: Contents of this file depend on	__EMBEDDED_CXX__
+	not being defined.
+	* tinfo2.cc: Ditto.
+
+Mon Feb 9 17:28:39 EST 1998 Andrew MacLeod <amacleod@torpedo.to.cygnus.com>
+
+	* TODO: Add new file with G++ todo items.
+
+Tue Jan 27 12:04:38 1998  Jason Merrill  <jason@yorick.cygnus.com>
+
+	* decl2.c (lang_decode_option): -fembedded-cxx implies
+ 	-fvtable-thunks.
+
+Wed Jan 21 10:01:32 1998  Benjamin Kosnik  <bkoz@rhino.cygnus.com>
+
+	* inc/new: Remove orphan C-style end comment.
+
+1997-10-31  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	* lex.c (embedded_pedwarn): Change its return type to void.
+
+1997-10-14  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	Compliance with the Embedded C++ language specification.
+	By default we generate warnings; use -pedantic-errors to turn them
+	into hard errors.
+	* decl2.c (flag_embedded_cxx): Define.
+	(struct lang_f_options): Add -fembedded-cxx.
+	(lang_decode_option): If -fembedded-cxx, set FLAG_EMBEDDED_CXX,
+	and clear FLAG_RTTI and FLAG_EXCEPTIONS.
+	* lang-options.h: Add -fembedded-cxx and -fno-embedded-cxx.
+	* lang-specs.h: If -fembedded-cxx, define __EMBEDDED_CXX__.
+	* cp-tree.h (flag_embedded_cxx): Add decl.
+	* parse.y (base_class_list): Give a pedwarn about inheritance if
+	FLAG_EMBEDDED_CXX.
+	(base_class): Likewise for the base_class_access_list case.
+
+	* lex.c (real_yylex): Give pedwarns if FLAG_EMBEDDED_CXX is true and
+	the token VALUE is any of TRY, CATCH, THROW, TEMPLATE, TYPENAME,
+	USING, or NAMESPACE.  Likewise for DYNAMIC_CAST, STATIC_CAST,
+	REINTERPRET_CAST, CONST_CAST, or TYPEID.
+	(embedded_{template,eh,namespace}_error): New global variables to
+	make us only give a warning/error about each once.
+	(embedded_pedwarn): New fn to do the actual pedwarn.
+	* decl.c (grokdeclarator): Give a pedwarn for using mutable.
+
+	* inc/new: Only make the EH stuff appear if !__EMBEDDED_CXX__.
+	(new, new[]) [__EMBEDDED_CXX__]: For placement versions, take out
+	the default throw.  This particular bit is under discussion with
+	the EC++ committee currently.
+
