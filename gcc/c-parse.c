@@ -336,15 +336,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
-#  if ENABLE_NLS
-#   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(msgid) dgettext ("bison-runtime", msgid)
-#  endif
-# endif
-# ifndef YY_
-#  define YY_(msgid) msgid
-# endif
+#define YY_(msgid) msgid
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
@@ -2111,15 +2103,6 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
       int yyx;
 
-# if 0
-      /* This is so xgettext sees the translatable formats that are
-	 constructed on the fly.  */
-      YY_("syntax error, unexpected %s");
-      YY_("syntax error, unexpected %s, expecting %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s");
-# endif
       char *yyfmt;
       char const *yyf;
       static char const yyunexpected[] = "syntax error, unexpected %s";

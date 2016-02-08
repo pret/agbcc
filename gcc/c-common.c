@@ -1239,10 +1239,6 @@ init_function_format_info ()
 			  printf_format_type, 2, 0);
   record_function_format (get_identifier ("strftime"), NULL_TREE,
 			  strftime_format_type, 3, 0);
-
-  record_international_format (get_identifier ("gettext"), NULL_TREE, 1);
-  record_international_format (get_identifier ("dgettext"), NULL_TREE, 2);
-  record_international_format (get_identifier ("dcgettext"), NULL_TREE, 2);
 }
 
 /* Record information for argument format checking.  FUNCTION_IDENT is
