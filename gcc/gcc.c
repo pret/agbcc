@@ -460,7 +460,7 @@ proper position among the other output files.  */
 #endif
 
 #ifndef LINKER_NAME
-#define LINKER_NAME "collect2"
+#define LINKER_NAME "ld"
 #endif
 
 static char *cpp_spec = CPP_SPEC;
@@ -5523,13 +5523,6 @@ main (argc, argv)
     {
       int tmp = execution_count;
 
-      /* We'll use ld if we can't find collect2. */
-      if (! strcmp (linker_name_spec, "collect2"))
-	{
-	  char *s = find_a_file (&exec_prefixes, "collect2", X_OK);
-	  if (s == NULL)
-	    linker_name_spec = "ld";
-	}
       /* Rebuild the COMPILER_PATH and LIBRARY_PATH environment variables
 	 for collect.  */
       putenv_from_prefixes (&exec_prefixes, "COMPILER_PATH=");

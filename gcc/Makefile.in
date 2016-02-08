@@ -360,10 +360,6 @@ EXTRA_PASSES =@extra_passes@
 # Like EXTRA_PASSES, but these are used when linking.
 EXTRA_PROGRAMS = @extra_programs@
 
-# List of extra object files that should be compiled for this target machine.
-# The rules for compiling them should be in the t-* file for the machine.
-EXTRA_PARTS = @extra_parts@
-
 # List of extra object files that should be compiled and linked with
 # compiler proper (cc1, cc1obj, cc1plus).
 EXTRA_OBJS = @extra_objs@
@@ -375,13 +371,6 @@ EXTRA_GCC_OBJS =@host_extra_gcc_objs@
 # List of additional header files to install.
 # Often this is edited directly by `configure'.
 EXTRA_HEADERS =@extra_headers_list@
-
-# Set this to `collect2' to enable use of collect2.
-USE_COLLECT2 = @will_use_collect2@
-MAYBE_USE_COLLECT2 = @maybe_use_collect2@
-# It is convenient for configure to add the assignment at the beginning,
-# so don't override it here.
-USE_COLLECT2 = collect2$(exeext)
 
 # List of extra C and assembler files to add to libgcc1.a.
 # Assembler files should have names ending in `.asm'.
@@ -426,7 +415,7 @@ GCC_PASSES=xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES)
 
 # List of things which should already be built whenever we try to use xgcc
 # to link anything.
-GCC_PARTS=$(GCC_PASSES) $(LIBGCC) $(EXTRA_PROGRAMS) $(USE_COLLECT2) $(EXTRA_PARTS)
+GCC_PARTS=$(GCC_PASSES) $(LIBGCC) $(EXTRA_PROGRAMS)
 
 # Directory to link to, when using the target `maketest'.
 DIR = ../gcc
@@ -483,15 +472,6 @@ RUNTESTFLAGS =
 
 # Extra symbols for fixproto to define when parsing headers.
 FIXPROTO_DEFINES = 
-
-# Extra flags to use when compiling crt{begin,end}.o.
-CRTSTUFF_T_CFLAGS = 
-
-# Extra flags to use when compiling [m]crt0.o.
-CRT0STUFF_T_CFLAGS = 
-
-# "t" or nothing, for building multilibbed versions of, say, crtbegin.o.
-T =
 
 # End of variables for you to override.
 
@@ -671,17 +651,17 @@ STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  insn-attr.h insn-attrtab.c insn-opinit.c genrtl.c genrtl.h tree-check.h \
  s-flags s-config s-codes s-mlib s-under\
  s-output s-recog s-emit s-extract s-peep s-check \
- s-attr s-attrtab s-opinit s-crt s-crtS s-crt0 \
+ s-attr s-attrtab s-opinit \
  genemit$(build_exeext) genoutput$(build_exeext) genrecog$(build_exeext) \
  genextract$(build_exeext) genflags$(build_exeext) gencodes$(build_exeext) \
  genconfig$(build_exeext) genpeep$(build_exeext) genattrtab$(build_exeext) \
  genattr$(build_exeext) genopinit$(build_exeext) gengenrtl$(build_exeext) \
  gencheck$(build_exeext) \
  xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES) \
- $(EXTRA_PARTS) $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
+ $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
  $(CCCP)$(exeext) cc1obj$(exeext) enquire$(exeext) \
  protoize$(exeext) unprotoize$(exeext) \
- specs collect2$(exeext) $(USE_COLLECT2) underscore.c \
+ specs underscore.c \
  gcov$(exeext) *.bp \
  $(CYGNUS-LOCAL-range) *.range \
  *.greg *.lreg *.combine *.flow *.cse *.jump *.rtl *.tree *.loop \
@@ -734,7 +714,6 @@ RTL_BASE_H = rtl.h rtl.def machmode.h machmode.def
 RTL_H = $(RTL_BASE_H) genrtl.h
 TREE_H = tree.h real.h tree.def machmode.h machmode.def tree-check.h
 BASIC_BLOCK_H = basic-block.h bitmap.h sbitmap.h
-DEMANGLE_H = $(srcdir)/../include/demangle.h
 RECOG_H = recog.h
 EXPR_H = expr.h insn-codes.h
 REGS_H = regs.h varray.h machmode.h machmode.def
@@ -819,17 +798,17 @@ all.internal: start.encap rest.encap
 # Note that we can compile enquire using the cross-compiler just built,
 # although we can't run it on this machine.
 all.cross: native gcc-cross specs stmp-headers $(STMP_FIXPROTO) $(LIBGCC) \
-	$(LIBGCC1_TEST) $(EXTRA_PARTS) lang.all.cross
+	$(LIBGCC1_TEST) lang.all.cross
 # This is what to compile if making gcc with a cross-compiler.
-all.build: native xgcc$(exeext) $(EXTRA_PARTS) lang.all.build
+all.build: native xgcc$(exeext) lang.all.build
 # This is what must be made before installing GCC and converting libraries.
 start.encap: native xgcc$(exeext) specs $(LIBGCC1) xlimits.h lang.start.encap
 # These can't be made until after GCC can run.
-rest.encap: stmp-headers $(STMP_FIXPROTO) $(LIBGCC) $(EXTRA_PARTS) lang.rest.encap
+rest.encap: stmp-headers $(STMP_FIXPROTO) $(LIBGCC) lang.rest.encap
 # This is what is made with the host's compiler
 # whether making a cross compiler or not.
 native: config.status auto-host.h cpp$(exeext) $(LANGUAGES) \
-	$(EXTRA_PASSES) $(EXTRA_PROGRAMS) $(USE_COLLECT2)
+	$(EXTRA_PASSES) $(EXTRA_PROGRAMS)
 
 # Define the names for selecting languages in LANGUAGES.
 C c: cc1$(exeext)
@@ -1025,9 +1004,9 @@ libgcc2.ready: $(GCC_PASSES) $(LIBGCC2_DEPS) stmp-int-hdrs $(STMP_FIXPROTO)
 		touch libgcc2.ready; \
 	fi
 
-LIB2ADD = $(srcdir)/frame.c $(LIB2FUNCS_EXTRA) $(LANG_LIB2FUNCS)
+LIB2ADD = $(LIB2FUNCS_EXTRA) $(LANG_LIB2FUNCS)
 libgcc2.a: libgcc2.c libgcc2.ready $(CONFIG_H) $(FPBIT) $(DPBIT) $(LIB2ADD) \
-   machmode.h longlong.h frame.h gbl-ctors.h config.status
+   machmode.h longlong.h config.status
 # Actually build it in tmplibgcc2.a, then rename at end,
 # so that libgcc2.a itself remains nonexistent if compilation is aborted.
 	-rm -f tmplibgcc2.a
@@ -1159,8 +1138,7 @@ s-mlib: $(srcdir)/genmultilib Makefile
 
 # Build multiple copies of libgcc.a, one for each target switch.
 stmp-multilib: $(LIBGCC1) libgcc2.c libgcc2.ready $(CONFIG_H) \
-   frame.h \
-   $(LIB2ADD) machmode.h longlong.h gbl-ctors.h config.status
+   $(LIB2ADD) machmode.h longlong.h config.status
 	for i in `$(GCC_FOR_TARGET) --print-multi-lib`; do \
 	  dir=`echo $$i | sed -e 's/;.*$$//'`; \
 	  flags=`echo $$i | sed -e 's/^[^;]*;//' -e 's/@/ -/g'`; \
@@ -1236,47 +1214,6 @@ stmp-multilib-sub:
 	else true; \
 	fi; done
 
-# Compile two additional files that are linked with every program
-# linked using GCC on systems using COFF or ELF, for the sake of C++
-# constructors.
-$(T)crtbegin.o: crtstuff.c $(GCC_PASSES) $(CONFIG_H) \
-  defaults.h frame.h gbl-ctors.h
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(INCLUDES) $(MULTILIB_CFLAGS) -g0 \
-	  -finhibit-size-directive -fno-inline-functions -fno-exceptions $(CRTSTUFF_T_CFLAGS) \
-	  -c $(srcdir)/crtstuff.c -DCRT_BEGIN -o $(T)crtbegin$(objext)
-
-$(T)crtend.o: crtstuff.c $(GCC_PASSES) $(CONFIG_H) \
-  defaults.h frame.h gbl-ctors.h
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(INCLUDES) $(MULTILIB_CFLAGS) -g0 \
-	  -finhibit-size-directive -fno-inline-functions -fno-exceptions $(CRTSTUFF_T_CFLAGS) \
-	  -c $(srcdir)/crtstuff.c -DCRT_END -o $(T)crtend$(objext)
-
-# On some systems we also want to install versions of these files
-# compiled using PIC for use in shared libraries.
-crtbeginS.o crtendS.o: s-crtS ; @true
-
-s-crtS: crtstuff.c $(GCC_PASSES) $(CONFIG_H) \
-  defaults.h frame.h gbl-ctors.h
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(INCLUDES) $(CRTSTUFF_T_CFLAGS_S) \
-	  -DCRT_BEGIN -DCRTSTUFFS_O -finhibit-size-directive -fno-inline-functions \
-	  -fno-exceptions -g0 -c $(srcdir)/crtstuff.c 
-	mv crtstuff$(objext) crtbeginS$(objext)
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(INCLUDES) $(CRTSTUFF_T_CFLAGS_S) \
-	  -DCRT_END -DCRTSTUFFS_O -finhibit-size-directive -fno-inline-functions \
-	  -fno-exceptions -g0 -c $(srcdir)/crtstuff.c -o crtendS$(objext)
-	touch s-crtS
-
-# Compile the start modules crt0.o and mcrt0.o that are linked with every program
-crt0.o: s-crt0 ; @true
-mcrt0.o: s-crt0; @true
-
-s-crt0:	$(CRT0_S) $(MCRT0_S) $(GCC_PASSES) $(CONFIG_H)
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(CRT0STUFF_T_CFLAGS) \
-	  -o crt0.o -c $(CRT0_S)
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(CRT0STUFF_T_CFLAGS) \
-	  -o mcrt0.o -c $(MCRT0_S)
-	touch s-crt0
-#
 # Compiling object files from source files.
 
 # Note that dependencies on obstack.h are not written
@@ -1326,26 +1263,7 @@ graph.o: graph.c $(CONFIG_H) system.h toplev.h flags.h output.h $(RTL_H) \
     hard-reg-set.h $(BASIC_BLOCK_H)
 sbitmap.o: sbitmap.c $(CONFIG_H) system.h $(RTL_H) flags.h $(BASIC_BLOCK_H)
 
-collect2$(exeext): collect2.o tlink.o hash.o cplus-dem.o underscore.o \
-	version.o choose-temp.o mkstemp.o $(LIBDEPS)
-# Don't try modifying collect2 (aka ld) in place--it might be linking this.
-	-rm -f collect2$(exeext)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ collect2.o tlink.o hash.o \
-	  cplus-dem.o underscore.o version.o choose-temp.o mkstemp.o $(LIBS)
-
-collect2.o : collect2.c $(CONFIG_H) system.h gstab.h \
-	$(srcdir)/../include/obstack.h $(DEMANGLE_H) collect2.h
-	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES)  \
-	-DTARGET_MACHINE=\"$(target_alias)\" $(MAYBE_USE_COLLECT2) \
-	-c `echo $(srcdir)/collect2.c | sed 's,^\./,,'`
-
-tlink.o: tlink.c $(DEMANGLE_H) hash.h $(CONFIG_H) system.h toplev.h collect2.h
 hash.o: hash.c hash.h system.h toplev.h
-
-cplus-dem.o: $(srcdir)/../libiberty/cplus-dem.c $(DEMANGLE_H)
-	rm -f cplus-dem.c
-	$(LN_S) $(srcdir)/../libiberty/cplus-dem.c cplus-dem.c
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) cplus-dem.c
 
 pexecute.o: $(srcdir)/../libiberty/pexecute.c $(CONFIG_H) system.h
 	rm -f pexecute.c
@@ -1450,7 +1368,7 @@ toplev.o : toplev.c $(CONFIG_H) system.h $(TREE_H) $(RTL_H) \
    insn-codes.h insn-config.h $(RECOG_H) Makefile toplev.h dwarfout.h \
    dwarf2out.h sdbout.h dbxout.h $(EXPR_H) \
    $(lang_options_files)
-	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) $(MAYBE_USE_COLLECT2) \
+	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
 	  -DTARGET_NAME=\"$(target_alias)\" \
 	  -c `echo $(srcdir)/toplev.c | sed 's,^\./,,'`
 # END CYGNUS LOCAL
@@ -2322,7 +2240,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f */*.sched2 */*.stack */*.regmove */*.gcse
 # Delete some files made during installation.
 	-rm -f specs float.h-* enquire SYSCALLS.c.X SYSCALLS.c
-	-rm -f collect collect2 mips-tfile mips-tdump alloca.s
+	-rm -f collect mips-tfile mips-tdump alloca.s
 # Delete files generated for fixproto
 # CYGNUS LOCAL: binary installation
 	-rm -rf fix-header xsys-protos.h deduced.h tmp-deduced.h \
@@ -2427,7 +2345,6 @@ realclean: maintainer-clean
 # END CYGNUS LOCAL
 #
 # Entry points `install' and `uninstall'.
-# Also use `install-collect2' to install collect2 when the config files don't.
 
 # The semicolon is to prevent the install.sh -> install default rule
 # from doing anything.  Having it run true helps avoid problems and
@@ -2489,7 +2406,7 @@ installdirs:
 	-if [ -d $(man1dir) ] ; then true ; else mkdir $(man1dir) ; chmod a+rx $(man1dir) ; fi
 
 # Install the compiler executables built during cross compilation.
-install-common: native installdirs $(EXTRA_PARTS) lang.install-common
+install-common: native installdirs lang.install-common
 	for file in $(COMPILERS); do \
 	  if [ -f $$file ] ; then \
 	    rm -f $(libsubdir)/$$file; \
@@ -2497,17 +2414,10 @@ install-common: native installdirs $(EXTRA_PARTS) lang.install-common
 	  else true; \
 	  fi; \
 	done
-	for file in $(EXTRA_PASSES) $(EXTRA_PROGRAMS) $(USE_COLLECT2) ..; do \
+	for file in $(EXTRA_PASSES) $(EXTRA_PROGRAMS) ..; do \
 	  if [ x"$$file" != x.. ]; then \
 	    rm -f $(libsubdir)/$$file; \
 	    $(INSTALL_PROGRAM) $$file $(libsubdir)/$$file; \
-	  else true; fi; \
-	done
-	for file in $(EXTRA_PARTS) ..; do \
-	  if [ x"$$file" != x.. ]; then \
-	    rm -f $(libsubdir)/$$file; \
-	    $(INSTALL_DATA) $$file $(libsubdir)/$$file; \
-	    chmod a-x $(libsubdir)/$$file; \
 	  else true; fi; \
 	done
 # Don't mess with specs if it doesn't exist yet.
@@ -2713,12 +2623,6 @@ install-assert-h: assert.h installdirs
 	  $(INSTALL_DATA) $(srcdir)/assert.h $(assertdir)/assert.h; \
 	  chmod a-x $(assertdir)/assert.h; \
 	fi
-
-# Use this target to install the program `collect2' under the name `collect2'.
-install-collect2: collect2 installdirs
-	$(INSTALL_PROGRAM) collect2$(exeext) $(libsubdir)/collect2$(exeext)
-# Install the driver program as $(libsubdir)/gcc for collect2.
-	$(INSTALL_PROGRAM) xgcc$(exeext) $(libsubdir)/gcc$(exeext)
 
 # Cancel installation by deleting the installed files.
 uninstall: lang.uninstall
@@ -3055,7 +2959,6 @@ stage1-start:
 # dir will work properly.
 	-if [ -f as$(exeext) ] ; then $(LN_S) ../as$(exeext) stage1 ; else true ; fi
 	-if [ -f ld$(exeext) ] ; then $(LN_S) ../ld$(exeext) stage1 ; else true ; fi
-	-if [ -f collect-ld$(exeext) ] ; then $(LN_S) ../collect-ld$(exeext) stage1 ; else true ; fi
 	-rm -f stage1/libgcc.a
 	-cp libgcc.a stage1
 	-if $(RANLIB_TEST_FOR_TARGET) ; then \
@@ -3078,7 +2981,6 @@ stage2-start:
 # dir will work properly.
 	-if [ -f as$(exeext) ] ; then $(LN_S) ../as$(exeext) stage2 ; else true ; fi
 	-if [ -f ld$(exeext) ] ; then $(LN_S) ../ld$(exeext) stage2 ; else true ; fi
-	-if [ -f collect-ld ] ; then $(LN_S) ../collect-ld$(exeext) stage2 ; else true ; fi
 	-rm -f stage2/libgcc.a
 	-cp libgcc.a stage2
 	-if $(RANLIB_TEST_FOR_TARGET) ; then \
@@ -3101,7 +3003,6 @@ stage3-start:
 # dir will work properly.
 	-if [ -f as$(exeext) ] ; then $(LN_S) ../as$(exeext) stage3 ; else true ; fi
 	-if [ -f ld$(exeext) ] ; then $(LN_S) ../ld$(exeext) stage3 ; else true ; fi
-	-if [ -f collect-ld$(exeext) ] ; then $(LN_S) ../collect-ld$(exeext) stage3 ; else true ; fi
 	-rm -f stage3/libgcc.a
 	-cp libgcc.a stage3
 	-if $(RANLIB_TEST_FOR_TARGET) ; then \
@@ -3124,7 +3025,6 @@ stage4-start:
 # dir will work properly.
 	-if [ -f as$(exeext) ] ; then $(LN_S) ../as$(exeext) stage4 ; else true ; fi
 	-if [ -f ld$(exeext) ] ; then $(LN_S) ../ld$(exeext) stage4 ; else true ; fi
-	-if [ -f collect-ld$(exeext) ] ; then $(LN_S) ../collect-ld$(exeext) stage4 ; else true ; fi
 	-rm -f stage4/libgcc.a
 	-cp libgcc.a stage4
 	-if $(RANLIB_TEST_FOR_TARGET) ; then \
