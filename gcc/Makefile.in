@@ -19,7 +19,7 @@
 #Boston MA 02111-1307, USA.
 
 # The targets for external use include:
-# all, doc, proto, install, install-cross, install-cross-rest,
+# all, doc, install, install-cross, install-cross-rest,
 # uninstall, TAGS, mostlyclean, clean, distclean, maintainer-clean,
 # stage1, stage2, stage3, stage4.
 
@@ -40,7 +40,7 @@ SUBDIRS =@subdirs@
 # Selection of languages to be made.
 # This is overridden by configure.
 CONFIG_LANGUAGES = @all_languages@
-LANGUAGES = c proto gcov$(exeext) $(CONFIG_LANGUAGES)
+LANGUAGES = c $(CONFIG_LANGUAGES)
 
 # Selection of languages to be made during stage1 build.
 # This is overridden by configure.
@@ -216,9 +216,6 @@ RANLIB_TEST_FOR_TARGET = \
 # Dir to search for system headers.  Overridden by cross-make.
 SYSTEM_HEADER_DIR = /usr/include
 
-# Control whether to run fixproto.
-STMP_FIXPROTO = stmp-fixproto
-
 # Test to see whether <limits.h> exists in the system header files.
 LIMITS_H_TEST = [ -f $(SYSTEM_HEADER_DIR)/limits.h ]
 
@@ -393,18 +390,6 @@ INSTALL_HEADERS=install-headers
 # Options for tar when copying trees.  So HPUX can override it.
 TAROUTOPTS = xpBf
 
-# Select which version of fixincludes to use (I.E. regular versus SVR4)
-# This value is overridden directly by configure.
-FIXINCLUDES = @fixincludes@
-
-# Additional directories of header files to run fixincludes on.
-# These should be directories searched automatically by default
-# just as /usr/include is.
-# *Do not* use this for directories that happen to contain 
-# header files, but are not searched automatically by default.
-# On most systems, this is empty.
-OTHER_FIXINCLUDES_DIRS=
-
 # A list of all the language-specific executables.
 # This is overridden by configure.
 COMPILERS = cc1$(exeext) @all_compilers@
@@ -446,13 +431,9 @@ HOST_DOPRINT=$(DOPRINT)
 
 # Actual name to use when installing a native compiler.
 GCC_INSTALL_NAME = `t='$(program_transform_name)'; echo gcc | sed -e $$t`
-PROTOIZE_INSTALL_NAME = `t='$(program_transform_name)'; echo protoize | sed -e $$t`
-UNPROTOIZE_INSTALL_NAME = `t='$(program_transform_name)'; echo unprotoize | sed -e $$t`
 
 # Actual name to use when installing a cross-compiler.
 GCC_CROSS_NAME = `t='$(program_transform_cross_name)'; echo gcc | sed -e $$t`
-PROTOIZE_CROSS_NAME = `t='$(program_transform_cross_name)'; echo protoize | sed -e $$t`
-UNPROTOIZE_CROSS_NAME = `t='$(program_transform_cross_name)'; echo unprotoize | sed -e $$t`
 
 # Choose the real default target.
 ALL=all.internal
@@ -469,9 +450,6 @@ RUNTEST = `if [ -f $${srcdir}/../dejagnu/runtest ] ; then \
 	       echo $${srcdir}/../dejagnu/runtest ; \
 	    else echo runtest; fi`
 RUNTESTFLAGS =
-
-# Extra symbols for fixproto to define when parsing headers.
-FIXPROTO_DEFINES = 
 
 # End of variables for you to override.
 
@@ -660,9 +638,7 @@ STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES) \
  $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
  $(CCCP)$(exeext) cc1obj$(exeext) enquire$(exeext) \
- protoize$(exeext) unprotoize$(exeext) \
  specs underscore.c \
- gcov$(exeext) *.bp \
  $(CYGNUS-LOCAL-range) *.range \
  *.greg *.lreg *.combine *.flow *.cse *.jump *.rtl *.tree *.loop \
  *.dbr *.jump2 *.sched *.cse2 *.sched2 *.stack *.gcse \
@@ -797,14 +773,14 @@ all.internal: start.encap rest.encap
 # This is what to compile if making a cross-compiler.
 # Note that we can compile enquire using the cross-compiler just built,
 # although we can't run it on this machine.
-all.cross: native gcc-cross specs stmp-headers $(STMP_FIXPROTO) $(LIBGCC) \
+all.cross: native gcc-cross specs stmp-headers $(LIBGCC) \
 	$(LIBGCC1_TEST) lang.all.cross
 # This is what to compile if making gcc with a cross-compiler.
 all.build: native xgcc$(exeext) lang.all.build
 # This is what must be made before installing GCC and converting libraries.
 start.encap: native xgcc$(exeext) specs $(LIBGCC1) xlimits.h lang.start.encap
 # These can't be made until after GCC can run.
-rest.encap: stmp-headers $(STMP_FIXPROTO) $(LIBGCC) lang.rest.encap
+rest.encap: stmp-headers $(LIBGCC) lang.rest.encap
 # This is what is made with the host's compiler
 # whether making a cross compiler or not.
 native: config.status auto-host.h cpp$(exeext) $(LANGUAGES) \
@@ -812,10 +788,9 @@ native: config.status auto-host.h cpp$(exeext) $(LANGUAGES) \
 
 # Define the names for selecting languages in LANGUAGES.
 C c: cc1$(exeext)
-PROTO: proto
 
 # Tell GNU make these are phony targets.
-.PHONY: C c PROTO proto
+.PHONY: C c
 
 # On the target machine, finish building a cross compiler.
 # This does the things that can't be done on the host machine.
@@ -997,7 +972,7 @@ libgcc1.S: libgcc1.c $(CONFIG_H) config.status
 # Compiling libgcc2.a requires making sure that cc1, etc. have been compiled.
 # But recompiling cc1 should not force recompilation of libgcc2.a.
 # If you want to force recompilation, delete libgcc2.a.
-libgcc2.ready: $(GCC_PASSES) $(LIBGCC2_DEPS) stmp-int-hdrs $(STMP_FIXPROTO)
+libgcc2.ready: $(GCC_PASSES) $(LIBGCC2_DEPS) stmp-int-hdrs
 	-if [ -f libgcc2.ready ] ; then \
 		true; \
 	else \
@@ -1443,7 +1418,7 @@ resource.o : resource.c $(CONFIG_H) $(RTL_H) hard-reg-set.h system.h \
 lcm.o : lcm.c $(CONFIG_H) system.h $(RTL_H) $(REGS_H) hard-reg-set.h flags.h \
    real.h insn-config.h $(RECOG_H) $(EXPR_H) $(BASIC_BLOCK_H)
 profile.o : profile.c $(CONFIG_H) system.h $(RTL_H) flags.h insn-flags.h \
-   gcov-io.h $(TREE_H) output.h $(REGS_H) toplev.h insn-config.h
+   $(TREE_H) output.h $(REGS_H) toplev.h insn-config.h
 loop.o : loop.c $(CONFIG_H) system.h $(RTL_H) flags.h loop.h insn-config.h \
    insn-flags.h $(REGS_H) hard-reg-set.h $(RECOG_H) $(EXPR_H) real.h \
    toplev.h varray.h
@@ -1829,7 +1804,7 @@ $(HOST_PREFIX_1):
 	touch $(HOST_PREFIX_1)
 
 #
-# Remake cpp and protoize.
+# Remake cpp.
 
 # Making the preprocessor
 cpp$(exeext): $(CCCP)$(exeext)
@@ -1897,42 +1872,6 @@ cppalloc.o: cppalloc.c $(CONFIG_H) cpplib.h machmode.h system.h
 # Note for the stamp targets, we run the program `true' instead of
 # having an empty command (nothing following the semicolon).
 
-proto: config.status protoize$(exeext) unprotoize$(exeext) SYSCALLS.c.X
-
-protoize$(exeext): protoize.o getopt.o getopt1.o getpwd.o version.o \
-    pexecute.o choose-temp.o mkstemp.o $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ \
-	  protoize.o getopt.o getopt1.o getpwd.o version.o \
-	  pexecute.o choose-temp.o mkstemp.o $(LIBS)
-
-unprotoize$(exeext): unprotoize.o getopt.o getopt1.o getpwd.o version.o \
-    pexecute.o choose-temp.o mkstemp.o $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ \
-	  unprotoize.o getopt.o getopt1.o getpwd.o version.o \
-	  pexecute.o choose-temp.o mkstemp.o $(LIBS)
-
-protoize.o: protoize.c $(srcdir)/../include/getopt.h $(CONFIG_H) system.h \
-   Makefile
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
-          -DGCC_INCLUDE_DIR=\"$(libsubdir)/include\" \
-	  -DGPLUSPLUS_INCLUDE_DIR=\"$(gcc_gxx_include_dir)\" \
-	  -DCROSS_INCLUDE_DIR=\"$(gcc_tooldir)/sys-include\" \
-	  -DTOOL_INCLUDE_DIR=\"$(gcc_tooldir)/include\" \
-	  -DLOCAL_INCLUDE_DIR=\"$(includedir)\" \
-	  -DSTD_PROTO_DIR=\"$(libsubdir)\" \
-	  $(srcdir)/protoize.c
-
-unprotoize.o: unprotoize.c protoize.c $(srcdir)/../include/getopt.h \
-   $(CONFIG_H) system.h Makefile
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
-          -DGCC_INCLUDE_DIR=\"$(libsubdir)/include\" \
-	  -DGPLUSPLUS_INCLUDE_DIR=\"$(gcc_gxx_include_dir)\" \
-	  -DCROSS_INCLUDE_DIR=\"$(gcc_tooldir)/sys-include\" \
-	  -DTOOL_INCLUDE_DIR=\"$(gcc_tooldir)/include\" \
-	  -DLOCAL_INCLUDE_DIR=\"$(includedir)\" \
-	  -DSTD_PROTO_DIR=\"$(libsubdir)\" \
-	  $(srcdir)/unprotoize.c
-
 getopt.o: $(srcdir)/../libiberty/getopt.c $(srcdir)/../include/getopt.h
 	rm -f getopt.c
 	$(LN_S) $(srcdir)/../libiberty/getopt.c getopt.c
@@ -1952,56 +1891,19 @@ SYSCALLS.c.X: $(srcdir)/sys-types.h $(srcdir)/sys-protos.h $(GCC_PASSES) \
 	  -aux-info $@ -S -o tmp-SYSCALLS.s SYSCALLS.c
 	-rm -f SYSCALLS.c tmp-SYSCALLS.s
 
-
-test-protoize-simple: ./protoize ./unprotoize $(GCC_PASSES)
-	-rm -f tmp-proto.[cso]
-	cp $(srcdir)/protoize.c tmp-proto.c
-	chmod u+w tmp-proto.c
-	./protoize -N -B ./ -x getopt.h -c "-B./ -Wall -Wwrite-strings \
-	  $(CFLAGS) $(INCLUDES) \
-	  -DGCC_INCLUDE_DIR=0 \
-	  -DGPLUSPLUS_INCLUDE_DIR=0 \
-	  -DCROSS_INCLUDE_DIR=0 \
-	  -DTOOL_INCLUDE_DIR=0 \
-	  -DSTD_PROTO_DIR=0" tmp-proto.c
-	@echo '**********' Expect 400 lines of differences.
-	-diff $(srcdir)/protoize.c tmp-proto.c > tmp-proto.diff
-	-wc -l tmp-proto.diff
-	./unprotoize -N -x getopt.h -c "-B./ -Wall -Wwrite-strings \
-	  $(CFLAGS) $(INCLUDES) \
-	  -DGCC_INCLUDE_DIR=0 \
-	  -DGPLUSPLUS_INCLUDE_DIR=0 \
-	  -DCROSS_INCLUDE_DIR=0 \
-	  -DTOOL_INCLUDE_DIR=0 \
-	  -DSTD_PROTO_DIR=0" tmp-proto.c
-	@echo Expect zero differences.
-	diff $(srcdir)/protoize.c tmp-proto.c | cat
-	-rm -f tmp-proto.[cs] tmp-proto$(objext)
-
-gcov.o: gcov.c gcov-io.h system.h
-
-# Only one of 'gcov' or 'gcov.exe' is actually built, depending
-# upon whether $(exeext) is empty or not.
-gcov$(exeext): gcov.o $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) gcov.o $(LIBS) -o $@
-#
 # Build the include directory.  The stamp files are stmp-* rather than
 # s-* so that mostlyclean does not force the include directory to
 # be rebuilt.
 
 # Build the include directory including float.h (which no longer depends upon
 # enquire).
-stmp-int-hdrs: stmp-fixinc $(USER_H) xlimits.h
+stmp-int-hdrs: $(USER_H) xlimits.h
 # Copy in the headers provided with gcc.
-# The sed command gets just the last file name component;
-# this is necessary because VPATH could add a dirname.
-# Using basename would be simpler, but some systems don't have it.
-# The touch command is here to workaround an AIX/Linux NFS bug.
+	rm -rf include
+	mkdir include
 	for file in .. $(USER_H); do \
 	  if [ X$$file != X.. ]; then \
-	    realfile=`echo $$file | sed -e 's|.*/\([^/]*\)$$|\1|'`; \
-	    touch include/$$realfile; \
-	    rm -f include/$$realfile; \
+	    realfile=`basename $$file`; \
 	    cp $$file include; \
 	    chmod a+r include/$$realfile; \
 	  fi; \
@@ -2013,149 +1915,12 @@ stmp-int-hdrs: stmp-fixinc $(USER_H) xlimits.h
 	if [ x$(FLOAT_H) != xMakefile.in ]; then \
 	  cp $(srcdir)/config/$(FLOAT_H) include/float.h && \
 	  chmod a+r include/float.h; \
-	else :; fi
-# Install the README
-	rm -f include/README
-	cp $(srcdir)/README-fixinc include/README
-	chmod a+r include/README
-	touch $@
+	fi
 
 # Now that float.h no longer depends upon enquire, this is actually a no-op.
 stmp-headers:
 	touch $@
 
-fixinc.sh :
-	DEST=`cd $(srcdir) ; pwd`/$@ CC=$(CC) MAKE=$(MAKE) CFLAGS="$(CFLAGS)" \
-	export DEST CC MAKE CFLAGS ; \
-	echo DEST=$$DEST CC=$$CC MAKE=$$MAKE CFLAGS=$$CFLAGS ; \
-	cd ../contrib/fixinc ;  \
-	$(SHELL) mkfixinc.sh $(target) $$DEST
-
-# Build fixed copies of system files.
-stmp-fixinc: $(FIXINCLUDES) gsyslimits.h
-	rm -rf include
-	mkdir include
-	if [ x$(FIXINCLUDES) != xMakefile.in ]; \
-	then \
-	  for dir in $(SYSTEM_HEADER_DIR) $(OTHER_FIXINCLUDES_DIRS); do \
-	    if [ -d $$dir ]; \
-	    then \
-	      $(SHELL) $(srcdir)/$(FIXINCLUDES) include $$dir; \
-	    else true; fi; \
-	  done; \
-	  if [ x$(INSTALL_ASSERT_H) != x ] ; \
-	  then \
-	    rm -f include/assert.h; \
-	    cp $(srcdir)/assert.h include/assert.h; \
-	    chmod a+r include/assert.h; \
-	  fi \
-	else true; \
-	fi
-	rm -f include/syslimits.h
-	if [ -f include/limits.h ]; then \
-	  mv include/limits.h include/syslimits.h; \
-	else \
-	  cp $(srcdir)/gsyslimits.h include/syslimits.h; \
-	fi
-	chmod a+r include/syslimits.h
-# If $(SYSTEM_HEADER_DIR) is $(gcc_tooldir)/sys-include, and
-# that directory exists, then make sure that $(libsubdir) exists.
-# This is because cpp is compiled to find $(gcc_tooldir)/include via
-# $(libsubdir)/$(unlibsubdir), which will only work if $(libsubdir)
-# exists.
-	if [ "$(SYSTEM_HEADER_DIR)" = "$(gcc_tooldir)/sys-include" ] \
-	   && [ -d $(gcc_tooldir)/sys-include ]; then \
-	  if [ -d $(libdir) ] ; then true ; else mkdir $(libdir) ; fi; \
-	  if [ -d $(libdir)/gcc-lib ] ; then true ; else mkdir $(libdir)/gcc-lib; fi; \
-	  if [ -d $(libdir)/gcc-lib/$(target_alias) ] ; then true ; else mkdir $(libdir)/gcc-lib/$(target_alias) ; fi; \
-	  if [ -d $(libdir)/gcc-lib/$(target_alias)/$(version) ] ; then true ; else mkdir $(libdir)/gcc-lib/$(target_alias)/$(version) ; fi; \
-	else true; fi
-
-	touch stmp-fixinc
-
-# Files related to the fixproto script.
-
-deduced.h: $(GCC_PASSES) $(srcdir)/scan-types.sh stmp-int-hdrs
-	if [ -d $(SYSTEM_HEADER_DIR) ]; \
-	then \
-	  CC="$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(ALL_CPPFLAGS) -I. -I$(srcdir) -Iinclude -I${SYSTEM_HEADER_DIR}"; \
-	  export CC; \
-	  $(SHELL) $(srcdir)/scan-types.sh "$(srcdir)" >tmp-deduced.h; \
-	  mv tmp-deduced.h deduced.h; \
-	else \
-	  touch deduced.h; \
-	fi
-
-gen-protos: gen-protos.o scan.o cppalloc.o $(HOST_LIBDEPS)
-	${HOST_CC} $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	  gen-protos.o scan.o cppalloc.o $(HOST_LIBS)
-
-gen-protos.o: gen-protos.c scan.h $(build_xm_file) system.h
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/gen-protos.c
-
-scan.o: scan.c scan.h $(build_xm_file) system.h
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/scan.c
-
-xsys-protos.h: $(GCC_PASSES) $(srcdir)/sys-protos.h deduced.h gen-protos Makefile
-	cat deduced.h $(srcdir)/sys-protos.h > tmp-fixtmp.c
-	mv tmp-fixtmp.c fixtmp.c
-	$(GCC_FOR_TARGET) fixtmp.c -w -U__SIZE_TYPE__ -U__PTRDIFF_TYPE__ -U__WCHAR_TYPE__ -E \
-	  | sed -e 's/	/ /g' -e 's/ *(/ (/g' -e 's/ [ ]*/ /g' -e 's/( )/()/' \
-	  | ./gen-protos >xsys-protos.hT
-	mv xsys-protos.hT xsys-protos.h
-	rm -rf fixtmp.c
-
-fix-header: fix-header.o scan-decls.o scan.o xsys-protos.h $(HOST_LIBDEPS) \
-	    libcpp.a
-	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ fix-header.o \
-	   scan-decls.o scan.o libcpp.a $(HOST_LIBS)
-
-fix-header.o: fix-header.c $(srcdir)/../include/obstack.h scan.h \
-	xsys-protos.h $(build_xm_file) system.h cpplib.h machmode.h cpphash.h
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/fix-header.c
-
-# CYGNUS LOCAL: binary installation
-fixproto-defines:
-	    rm -f fixproto-defines; \
-	    echo "#!/bin/sh" > fixproto-defines ; \
-	    echo "# Print FIXPROTO_DEFINES needed by fixproto." >> fixproto-defines ; \
-	    echo "echo '$(FIXPROTO_DEFINES)'" >> fixproto-defines ; \
-	    chmod +x fixproto-defines
-# END CYGNUS LOCAL
-
-scan-decls.o: scan-decls.c scan.h cpplib.h machmode.h $(build_xm_file) system.h
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/scan-decls.c
-
-
-# stmp-fixproto depends on this, not on fix-header directly.
-# The idea is to make sure fix-header gets built,
-# but not rerun fixproto after each stage
-# just because fix-header's mtime has changed.
-# CYGNUS LOCAL: binary installation
-fixhdr.ready: fix-header fixproto-defines
-	-if [ -f fixhdr.ready ] ; then \
-		true; \
-	else \
-		touch fixhdr.ready; \
-	fi
-
-# stmp-headers is to make sure fixincludes has already finished.
-# The if statement is so that we don't run fixproto a second time
-# if it has already been run on the files in `include'.
-stmp-fixproto: fixhdr.ready fixproto stmp-headers
-	@echo "Various warnings and error messages from fixproto are normal"
-	-if [ -d include ] ; then true; else mkdir include; fi
-	-if [ -f include/fixed ] ; then true; \
-	else \
-	  : This line works around a 'make' bug in BSDI 1.1.; \
-	  FIXPROTO_DEFINES="$(FIXPROTO_DEFINES)"; export FIXPROTO_DEFINES; \
-	  if [ -d $(SYSTEM_HEADER_DIR) ] ; then \
-	    $(SHELL) ${srcdir}/fixproto include include $(SYSTEM_HEADER_DIR); \
-	  else true; fi; \
-	  touch include/fixed; \
-	fi
-	touch stmp-fixproto
-#
 # Remake the info files.
 # CYGNUS LOCAL: built in build directory
 
@@ -2166,12 +1931,12 @@ cpp.info: $(srcdir)/cpp.texi
 	$(MAKEINFO) $(MAKEINFOFLAGS) -I$(srcdir) -o cpp.info $(srcdir)/cpp.texi
 
 gcc.info: $(srcdir)/gcc.texi extend.texi install.texi invoke.texi \
-		md.texi rtl.texi tm.texi gcov.texi
+		md.texi rtl.texi tm.texi
 	$(MAKEINFO) $(MAKEINFOFLAGS) -I$(srcdir) -o gcc.info $(srcdir)/gcc.texi
 
 dvi: gcc.dvi cpp.dvi lang.dvi
 
-gcc.dvi: $(srcdir)/gcc.texi $(srcdir)/extend.texi $(srcdir)/invoke.texi $(srcdir)/md.texi $(srcdir)/rtl.texi $(srcdir)/tm.texi $(srcdir)/gcov.texi
+gcc.dvi: $(srcdir)/gcc.texi $(srcdir)/extend.texi $(srcdir)/invoke.texi $(srcdir)/md.texi $(srcdir)/rtl.texi $(srcdir)/tm.texi
 	TEXINPUTS=${texidir}:$(srcdir):$$TEXINPUTS tex gcc.texi
 	texindex gcc.??
 	TEXINPUTS=${texidir}:$(srcdir):$$TEXINPUTS tex gcc.texi
@@ -2182,7 +1947,7 @@ cpp.dvi: $(srcdir)/cpp.texi
 	TEXINPUTS=${texidir}:$(srcdir):$$TEXINPUTS tex cpp.texi
 
 # CYGNUS LOCAL doc
-usegcc.dvi: usegcc.texi $(srcdir)/extend.texi $(srcdir)/invoke.texi $(srcdir)/md.texi $(srcdir)/gcov.texi
+usegcc.dvi: usegcc.texi $(srcdir)/extend.texi $(srcdir)/invoke.texi $(srcdir)/md.texi
 	TEXINPUTS=${texidir}:$(srcdir):$$TEXINPUTS tex usegcc.texi
 	texindex usegcc.??
 	TEXINPUTS=${texidir}:$(srcdir):$$TEXINPUTS tex usegcc.texi
@@ -2195,7 +1960,7 @@ usegcc.texi: $(srcdir)/gcc.texi
 		$(srcdir)/gcc.texi > usegcc.texi
 
 
-usegcc.info: usegcc.texi  $(srcdir)/extend.texi $(srcdir)/invoke.texi $(srcdir)/gcov.texi
+usegcc.info: usegcc.texi  $(srcdir)/extend.texi $(srcdir)/invoke.texi
 	$(MAKEINFO) -I$(srcdir) -o usegcc.info usegcc.texi
 
 # CYGNUS LOCAL: don't rebuild gcc/INSTALL, ever.
@@ -2241,10 +2006,7 @@ mostlyclean: lang.mostlyclean
 # Delete some files made during installation.
 	-rm -f specs float.h-* enquire SYSCALLS.c.X SYSCALLS.c
 	-rm -f collect mips-tfile mips-tdump alloca.s
-# Delete files generated for fixproto
 # CYGNUS LOCAL: binary installation
-	-rm -rf fix-header xsys-protos.h deduced.h tmp-deduced.h \
-	  fixproto-defines gen-protos fixproto.list fixtmp.* fixhdr.ready
 # Delete unwanted output files from TeX.
 	-rm -f *.toc *.log *.vr *.fn *.cp *.tp *.ky *.pg
 	-rm -f */*.toc */*.log */*.vr */*.fn */*.cp */*.tp */*.ky */*.pg
@@ -2426,51 +2188,6 @@ install-common: native installdirs lang.install-common
 	  $(INSTALL_DATA) specs $(libsubdir)/specs; \
 	  chmod a-x $(libsubdir)/specs; \
 	fi
-# Install protoize if it was compiled.
-	-if [ -f protoize$(exeext) ]; \
-	then \
-	    if [ -f gcc-cross$(exeext) ] ; then \
-		rm -f $(bindir)/$(PROTOIZE_CROSS_NAME)$(exeext); \
-		$(INSTALL_PROGRAM) protoize$(exeext) $(bindir)/$(PROTOIZE_CROSS_NAME)$(exeext); \
-		rm -f $(bindir)/$(UNPROTOIZE_CROSS_NAME)$(exeext); \
-		$(INSTALL_PROGRAM) unprotoize$(exeext) $(bindir)/$(UNPROTOIZE_CROSS_NAME)$(exeext); \
-	    else \
-		rm -f $(bindir)/$(PROTOIZE_INSTALL_NAME)$(exeext); \
-		$(INSTALL_PROGRAM) protoize$(exeext) $(bindir)/$(PROTOIZE_INSTALL_NAME)$(exeext); \
-		rm -f $(bindir)/$(UNPROTOIZE_INSTALL_NAME)$(exeext); \
-		$(INSTALL_PROGRAM) unprotoize$(exeext) $(bindir)/$(UNPROTOIZE_INSTALL_NAME)$(exeext); \
-	    fi ; \
-	    rm -f $(libsubdir)/SYSCALLS.c.X; \
-	    $(INSTALL_DATA) SYSCALLS.c.X $(libsubdir)/SYSCALLS.c.X; \
-	    chmod a-x $(libsubdir)/SYSCALLS.c.X; \
-	fi
-	-rm -f $(libsubdir)/cpp$(exeext)
-	$(INSTALL_PROGRAM) cpp$(exeext) $(libsubdir)/cpp$(exeext)
-# Install gcov if it was compiled.
-	-if [ -f gcov$(exeext) ]; \
-	then \
-	    rm -f $(bindir)/gcov$(exeext); \
-	    $(INSTALL_PROGRAM) gcov$(exeext) $(bindir)/gcov$(exeext); \
-	    chmod a+x $(bindir)/gcov$(exeext); \
-	fi
-# CYGNUS LOCAL: binary installation
-# This is for the sake of binary installation.
-# If newlib exists, then we don't want to run fixincludes or fix-header.
-# Otherwise, install them if they exist and should be run.
-	if [ -d $(objdir)/../$(target_alias)/newlib ] ; then \
-	  true ; \
-	else \
-	  if [ -d $(gcc_tooldir)/install-tools ] ; then true ; else mkdir $(gcc_tooldir)/install-tools ; fi ; \
-	  if [ x$(FIXINCLUDES) != xMakefile.in ] ; then \
-	    $(INSTALL_PROGRAM) $(srcdir)/$(FIXINCLUDES) $(gcc_tooldir)/install-tools/fixincludes ; \
-	  else true; fi; \
-	  if [ -f fix-header ] ; then \
-	    $(INSTALL_PROGRAM) fix-header $(gcc_tooldir)/install-tools/fix-header ; \
-	    $(INSTALL_PROGRAM) $(srcdir)/fixproto $(gcc_tooldir)/install-tools/fixproto ; \
-	    $(INSTALL_PROGRAM) fixproto-defines $(gcc_tooldir)/install-tools/fixproto-defines ; \
-	  else true; fi; \
-	fi
-# END CYGNUS LOCAL
 
 # Install the driver program as $(target_alias)-gcc
 # and also as either gcc (if native) or $(gcc_tooldir)/bin/gcc.
@@ -2489,17 +2206,6 @@ install-driver: xgcc$(exeext)
 	  $(LN) $(bindir)/$(GCC_INSTALL_NAME)$(exeext) $(bindir)/$(target_alias)-gcc-1$(exeext); \
 	  mv $(bindir)/$(target_alias)-gcc-1$(exeext) $(bindir)/$(target_alias)-gcc$(exeext); \
 	fi
-
-# CYGNUS LOCAL: compile-man-sysv
-# Some system V machines don't come with nroff so we'll work out the
-# pages here for them.
-compile-man-sysv:
-	for i in gcc cccp protoize unprotoize ; do \
-		nroff -man $$i.1 | col -b > $$i.t ; \
-		pack $$i.t ; rm -f $$i.t; \
-		mv $$i.t.z $$i.z ;\
-	done
-# END CYGNUS LOCAL
 
 # Install the info files.
 # $(INSTALL_DATA) might be a relative pathname, so we can't cd into srcdir
@@ -2629,14 +2335,9 @@ uninstall: lang.uninstall
 	-rm -rf $(libsubdir)
 	-rm -rf $(bindir)/$(GCC_INSTALL_NAME)$(exeext)
 	-rm -rf $(bindir)/$(GCC_CROSS_NAME)$(exeext)
-	-rm -rf $(bindir)/protoize$(exeext)
-	-rm -rf $(bindir)/unprotoize$(exeext)
-	-rm -rf $(bindir)/gcov$(exeext)
 	-rm -rf $(man1dir)/$(GCC_INSTALL_NAME)$(manext)
 	-rm -rf $(man1dir)/$(GCC_CROSS_NAME)$(manext)
 	-rm -rf $(man1dir)/cccp$(manext)
-	-rm -rf $(man1dir)/protoize$(manext)
-	-rm -rf $(man1dir)/unprotoize$(manext)
 # CYGNUS LOCAL: We install cpp.1.
 	-rm -rf $(man1dir)/cpp$(manext)
 	-rm -f $(infodir)/cpp.info* $(infodir)/gcc.info*
