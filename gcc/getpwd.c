@@ -7,19 +7,19 @@
    BSD systems) now provides getcwd as called for by POSIX.  Allow for
    the few exceptions to the general rule here.  */
 
-#if !(defined (POSIX) || defined (USG) || defined (VMS)) || defined (HAVE_GETWD)
+#if !(defined (POSIX) || defined (USG) ) || defined (HAVE_GETWD)
 #define getcwd(buf,len) getwd(buf)
 #ifdef MAXPATHLEN
 #define GUESSPATHLEN (MAXPATHLEN + 1)
 #else
 #define GUESSPATHLEN 100
 #endif
-#else /* (defined (USG) || defined (VMS)) */
+#else /* (defined (USG)) */
 /* We actually use this as a starting point, not a limit.  */
 #define GUESSPATHLEN 100
-#endif /* (defined (USG) || defined (VMS)) */
+#endif /* (defined (USG)) */
 
-#if !(defined (VMS) || (defined(_WIN32) && !defined(__CYGWIN__)))
+#if !( defined(_WIN32) && !defined(__CYGWIN__))
 
 /* Get the working directory.  Use the PWD environment variable if it's
    set correctly, since this is faster and gives more uniform answers
@@ -67,7 +67,7 @@ getpwd ()
   return p;
 }
 
-#else	/* VMS || _WIN32 && !__CYGWIN__ */
+#else	/* _WIN32 && !__CYGWIN__ */
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 255
@@ -80,11 +80,8 @@ getpwd ()
 
   if (!pwd)
     pwd = getcwd (xmalloc (MAXPATHLEN + 1), MAXPATHLEN + 1
-#ifdef VMS
-		  , 0
-#endif
 		  );
   return pwd;
 }
 
-#endif	/* VMS || _WIN32 && !__CYGWIN__ */
+#endif	/* _WIN32 && !__CYGWIN__ */

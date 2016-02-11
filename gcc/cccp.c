@@ -64,25 +64,6 @@ typedef unsigned char U_CHAR;
 # define OBJECT_SUFFIX ".o"
 #endif
 
-/* VMS-specific definitions */
-#ifdef VMS
-#include <descrip.h>
-#include <ssdef.h>
-#include <syidef.h>
-#define open(fname,mode,prot)	VMS_open (fname,mode,prot)
-#define fopen(fname,mode)	VMS_fopen (fname,mode)
-#define freopen(fname,mode,ofile) VMS_freopen (fname,mode,ofile)
-#define fstat(fd,stbuf)		VMS_fstat (fd,stbuf)
-static int VMS_fstat (), VMS_stat ();
-static int VMS_open ();
-static FILE *VMS_fopen ();
-static FILE *VMS_freopen ();
-static int hack_vms_include_specification ();
-#define INO_T_EQ(a, b) (!bcmp((char *) &(a), (char *) &(b), sizeof (a)))
-#define INO_T_HASH(a) 0
-#define INCLUDE_LEN_FUDGE 12	/* leave room for VMS syntax conversion */
-#endif /* VMS */
-
 /* Windows does not natively support inodes, and neither does MSDOS.  */
 #if (defined (_WIN32) && ! defined (__CYGWIN__)) || defined (__MSDOS__)
 #define INO_T_EQ(a, b) 0
@@ -1285,21 +1266,6 @@ main (argc, argv)
 
   progname = base_name (argv[0]);
 
-#ifdef VMS
-  {
-    /* Remove extension from PROGNAME.  */
-    char *p;
-    char *s = progname = savestring (progname);
-
-    if ((p = rindex (s, ';')) != 0) *p = '\0';	/* strip version number */
-    if ((p = rindex (s, '.')) != 0		/* strip type iff ".exe" */
-	&& (p[1] == 'e' || p[1] == 'E')
-	&& (p[2] == 'x' || p[2] == 'X')
-	&& (p[3] == 'e' || p[3] == 'E')
-	&& !p[4])
-      *p = '\0';
-  }
-#endif
 
   in_fname = NULL;
   out_fname = NULL;
@@ -1823,61 +1789,6 @@ main (argc, argv)
   if (!inhibit_predefs) {
     char *p = (char *) alloca (strlen (predefs) + 1);
 
-#ifdef VMS
-    struct dsc$descriptor_s lcl_name;
-    struct item_list {
-      unsigned short length;  /* input length */
-      unsigned short code;    /* item code */   
-      unsigned long dptr;     /* data ptr */
-      unsigned long lptr;     /* output length ptr */
-    };
-
-    unsigned long syi_length;
-    char syi_data[16];
-
-    struct item_list items[] = {
-      { 16, SYI$_VERSION, 0, 0 },
-      { 0, 0, 0, 0 }
-    };
-
-    items[0].dptr = (unsigned long)syi_data;
-    items[0].lptr = (unsigned long)(&syi_length);
-
-    if (SYS$GETSYIW (0, 0, 0, items, NULL, NULL, NULL, NULL) == SS$_NORMAL)
-      {
-	unsigned long vms_version_value;
-	char *vers;
-
-	vers = syi_data;
-	vms_version_value = 0;
-
-	if (*vers == 'V')
-	  vers++;
-	if (ISDIGIT (*vers))
-	  {
-	    vms_version_value = (*vers - '0') * 10000000;
-	  }
-	vers++;
-	if (*vers == '.')
-	  {
-	    vers++;
-	    if (ISDIGIT (*vers))
-	      {
-		vms_version_value += (*vers - '0') * 100000;
-	      }
-	  }
-
-	if (vms_version_value > 0)
-	  {
-	    char versbuf[32];
-
-	    sprintf (versbuf, "__VMS_VER=%08ld", vms_version_value);
-	    if (debug_output)
-	      output_line_directive (fp, &outbuf, 0, same_file);
-	    make_definition (versbuf);
-	  }
-      }
-#endif
 
     strcpy (p, predefs);
     while (*p) {
@@ -4592,9 +4503,6 @@ do_include (buf, limit, op, keyword)
   int retried = 0;		/* Have already tried macro
 				   expanding the include line*/
   int angle_brackets = 0;	/* 0 for "...", 1 for <...> */
-#ifdef VMS
-  int vaxc_include = 0;		/* 1 for token without punctuation */
-#endif
   int pcf = -1;
   char *pcfbuf;
   char *pcfbuflimit;
@@ -4681,16 +4589,6 @@ get_filename:
 	    simplify_filename (dsp->fname);
 	    nam = base_name (dsp->fname);
 	    *nam = 0;
-#ifdef VMS
-	    /* for hack_vms_include_specification(), a local
-	       dir specification must start with "./" on VMS.  */
-	    if (nam == dsp->fname)
-	      {    
-		*nam++ = '.';
-		*nam++ = '/';
-		*nam = 0;
-	      }
-#endif
 	    /* But for efficiency's sake, do not insert the dir
 	       if it matches the search list's first dir.  */
 	    dsp->next = search_start;
@@ -4719,28 +4617,6 @@ get_filename:
     goto fail;
 
   default:
-#ifdef VMS
-    /*
-     * Support '#include xyz' like VAX-C to allow for easy use of all the
-     * decwindow include files. It defaults to '#include <xyz.h>' (so the
-     * code from case '<' is repeated here) and generates a warning.
-     * (Note: macro expansion of `xyz' takes precedence.)
-     */
-    /* Note: The argument of ISALPHA() can be evaluated twice, so do
-       the pre-decrement outside of the macro. */
-    if (retried && (--fin, ISALPHA(*(U_CHAR *) (fin)))) {
-      while (fin != limit && (!ISSPACE(*fin)))
-	*fend++ = *fin++;
-      warning ("VAX-C-style include specification found, use '#include <filename.h>' !");
-      vaxc_include = 1;
-      if (fin == limit) {
-	angle_brackets = 1;
-	/* If -I-, start with the first -I dir after the -I-.  */
-	search_start = first_bracket_include;
-	break;
-      }
-    }
-#endif
 
   fail:
     if (! retried) {
@@ -4849,38 +4725,8 @@ get_filename:
 	  }
       }
 
-#ifdef VMS
-      /* Change this 1/2 Unix 1/2 VMS file specification into a
-         full VMS file specification */
-      if (searchptr->fname[0])
-	{
-	  strcpy (fname, searchptr->fname);
-	  if (fname[strlen (fname) - 1] == ':')
-	    {
-	      char *slashp;
-	      slashp = strchr (fbeg, '/');
-
-	      /* start at root-dir of logical device if no path given.  */
-	      if (slashp == 0)
-		strcat (fname, "[000000]");
-	    }
-	  strcat (fname, fbeg);
-
-	  /* Fix up the filename */
-	  hack_vms_include_specification (fname, vaxc_include);
-	}
-      else
-	{
-	  /* This is a normal VMS filespec, so use it unchanged.  */
-	  strcpy (fname, fbeg);
-	  /* if it's '#include filename', add the missing .h */
-	  if (vaxc_include && index(fname,'.')==NULL)
-	    strcat (fname, ".h");
-	}
-#else
       strcpy (fname, searchptr->fname);
       strcat (fname, fbeg);
-#endif /* VMS */
       f = open_include_file (fname, searchptr, importing, &inc);
       if (f != -1) {
 	if (bypass_slot && searchptr != first_bracket_include) {
@@ -4896,15 +4742,8 @@ get_filename:
 	}
 	break;
       }
-#ifdef VMS
-      /* Our VMS hacks can produce invalid filespecs, so don't worry
-	 about errors other than EACCES.  */
-      if (errno == EACCES)
-	break;
-#else
       if (errno != ENOENT && errno != ENOTDIR)
 	break;
-#endif
     }
   }
 
@@ -5039,13 +4878,6 @@ base_name (fname)
 #if defined (__MSDOS__) || defined (_WIN32)
   if (ISALPHA (s[0]) && s[1] == ':') s += 2;
 #endif
-#ifdef VMS
-  if ((p = rindex (s, ':'))) s = p + 1;	/* Skip device.  */
-  if ((p = rindex (s, ']'))) s = p + 1;	/* Skip directory.  */
-  if ((p = rindex (s, '>'))) s = p + 1;	/* Skip alternate (int'n'l) dir.  */
-  if (s != fname)
-    return s;
-#endif
   if ((p = rindex (s, '/'))) s = p + 1;
 #ifdef DIR_SEPARATOR
   if ((p = rindex (s, DIR_SEPARATOR))) s = p + 1;
@@ -5065,9 +4897,6 @@ absolute_filename (filename)
 #if defined (__CYGWIN__)
   /* At present, any path that begins with a drive spec is absolute.  */
   if (ISALPHA (filename[0]) && filename[1] == ':') return 1;
-#endif
-#ifdef VMS
-  if (index (filename, ':') != 0) return 1;
 #endif
   if (filename[0] == '/') return 1;
 #ifdef DIR_SEPARATOR
@@ -5118,11 +4947,9 @@ simplify_filename (filename)
   to0 = to;
 
   for (;;) {
-#ifndef VMS
     if (from[0] == '.' && from[1] == '/')
       from += 2;
     else
-#endif
       {
       /* Copy this component and trailing /, if any.  */
       while ((*to++ = *from++) != '/') {
@@ -5322,13 +5149,6 @@ open_include_file (filename, searchptr, importing, pinc)
 
     if (fd < 0)
       {
-#ifdef VMS
-	/* if #include <dir/file> fails, try again with hacked spec.  */
-	if (!hack_vms_include_specification (fname, 0))
-	  return fd;
-	fd = open (fname, O_RDONLY, 0);
-	if (fd < 0)
-#endif
 	  return fd;
       }
 
@@ -9567,21 +9387,10 @@ my_strerror (errnum)
 {
   char *result;
 
-#ifndef VMS
 #ifndef HAVE_STRERROR
   result = (char *) ((errnum < sys_nerr) ? sys_errlist[errnum] : 0);
 #else
   result = strerror (errnum);
-#endif
-#else	/* VMS */
-  /* VAXCRTL's strerror() takes an optional second argument, which only
-     matters when the first argument is EVMSERR.  However, it's simplest
-     just to pass it unconditionally.  `vaxc$errno' is declared in
-     <errno.h>, and maintained by the library in parallel with `errno'.
-     We assume that caller's `errnum' either matches the last setting of
-     `errno' by the library or else does not have the value `EVMSERR'.  */
-
-  result = strerror (errnum, vaxc$errno);
 #endif
 
   if (!result)
@@ -10717,12 +10526,7 @@ new_include_prefix (prev_file_name, component, prefix, name)
       if (len == 1 && dir->fname[len - 1] == '.')
 	len = 0;
       else
-#ifdef VMS
-	/* must be '/', hack_vms_include_specification triggers on it.  */
-	dir->fname[len++] = '/';
-#else
 	dir->fname[len++] = DIR_SEPARATOR;
-#endif
       dir->fname[len] = 0;
     }
 
@@ -10734,9 +10538,6 @@ new_include_prefix (prev_file_name, component, prefix, name)
       free (dir);
       return 0;
     }
-
-#ifndef VMS
-    /* VMS can't stat dir prefixes, so skip these optimizations in VMS.  */
 
     /* Add a trailing "." if there is a filename.  This increases the number
        of systems that can stat directories.  We remove it below.  */
@@ -10767,7 +10568,6 @@ new_include_prefix (prev_file_name, component, prefix, name)
       free (dir);
       return 0;
     }
-#endif /* ! VMS */
 
     dir->next = 0;
     dir->c_system_include_path = 0;
@@ -10964,11 +10764,7 @@ pfatal_with_name (name)
      char *name;
 {
   perror_with_name (name);
-#ifdef VMS
-  exit (vaxc$errno);
-#else
   exit (FATAL_EXIT_CODE);
-#endif
 }
 
 /* Handler for SIGPIPE.  */
@@ -11034,417 +10830,4 @@ savestring (input)
   return output;
 }
 
-#ifdef VMS
-
-/* Under VMS we need to fix up the "include" specification filename.
-
-   Rules for possible conversions
-
-	fullname		tried paths
-
-	name			name
-	./dir/name		[.dir]name
-	/dir/name		dir:name
-	/name			[000000]name, name
-	dir/name		dir:[000000]name, dir:name, dir/name
-	dir1/dir2/name		dir1:[dir2]name, dir1:[000000.dir2]name
-	path:/name		path:[000000]name, path:name
-	path:/dir/name		path:[000000.dir]name, path:[dir]name
-	path:dir/name		path:[dir]name
-	[path]:[dir]name	[path.dir]name
-	path/[dir]name		[path.dir]name
-
-   The path:/name input is constructed when expanding <> includes.
-
-   return 1 if name was changed, 0 else.  */
-
-static int
-hack_vms_include_specification (fullname, vaxc_include)
-     char *fullname;
-     int vaxc_include;
-{
-  register char *basename, *unixname, *local_ptr, *first_slash;
-  int f, check_filename_before_returning, must_revert;
-  char Local[512];
-
-  check_filename_before_returning = 0;
-  must_revert = 0;
-  /* See if we can find a 1st slash. If not, there's no path information.  */
-  first_slash = index (fullname, '/');
-  if (first_slash == 0)
-    return 0;				/* Nothing to do!!! */
-
-  /* construct device spec if none given.  */
-
-  if (index (fullname, ':') == 0)
-    {
-
-      /* If fullname has a slash, take it as device spec.  */
-
-      if (first_slash == fullname)
-	{
-	  first_slash = index (fullname+1, '/');	/* 2nd slash ? */
-	  if (first_slash)
-	    *first_slash = ':';				/* make device spec  */
-	  for (basename = fullname; *basename != 0; basename++)
-	    *basename = *(basename+1);			/* remove leading slash  */
-	}
-      else if ((first_slash[-1] != '.')		/* keep ':/', './' */
-	    && (first_slash[-1] != ':')
-	    && (first_slash[-1] != ']'))	/* or a vms path  */
-	{
-	  *first_slash = ':';
-	}
-      else if ((first_slash[1] == '[')		/* skip './' in './[dir'  */
-	    && (first_slash[-1] == '.'))
-	fullname += 2;
-    }
-
-  /* Get part after first ':' (basename[-1] == ':')
-     or last '/' (basename[-1] == '/').  */
-
-  basename = base_name (fullname);
-
-  /*
-   * Check if we have a vax-c style '#include filename'
-   * and add the missing .h
-   */
-
-  if (vaxc_include && !index (basename,'.'))
-    strcat (basename, ".h");
-
-  local_ptr = Local;			/* initialize */
-
-  /* We are trying to do a number of things here.  First of all, we are
-     trying to hammer the filenames into a standard format, such that later
-     processing can handle them.
-     
-     If the file name contains something like [dir.], then it recognizes this
-     as a root, and strips the ".]".  Later processing will add whatever is
-     needed to get things working properly.
-     
-     If no device is specified, then the first directory name is taken to be
-     a device name (or a rooted logical).  */
-
-  /* Point to the UNIX filename part (which needs to be fixed!)
-     but skip vms path information.
-     [basename != fullname since first_slash != 0].  */
-
-  if ((basename[-1] == ':')		/* vms path spec.  */
-      || (basename[-1] == ']')
-      || (basename[-1] == '>'))
-    unixname = basename;
-  else
-    unixname = fullname;
-
-  if (*unixname == '/')
-    unixname++;
-
-  /* If the directory spec is not rooted, we can just copy
-     the UNIX filename part and we are done.  */
-
-  if (((basename - fullname) > 1)
-     && (  (basename[-1] == ']')
-        || (basename[-1] == '>')))
-    {
-      if (basename[-2] != '.')
-	{
-
-	/* The VMS part ends in a `]', and the preceding character is not a `.'.
-	   -> PATH]:/name (basename = '/name', unixname = 'name')
-	   We strip the `]', and then splice the two parts of the name in the
-	   usual way.  Given the default locations for include files in cccp.c,
-	   we will only use this code if the user specifies alternate locations
-	   with the /include (-I) switch on the command line.  */
-
-	  basename -= 1;	/* Strip "]" */
-	  unixname--;		/* backspace */
-	}
-      else
-	{
-
-	/* The VMS part has a ".]" at the end, and this will not do.  Later
-	   processing will add a second directory spec, and this would be a syntax
-	   error.  Thus we strip the ".]", and thus merge the directory specs.
-	   We also backspace unixname, so that it points to a '/'.  This inhibits the
-	   generation of the 000000 root directory spec (which does not belong here
-	   in this case).  */
-
-	  basename -= 2;	/* Strip ".]" */
-	  unixname--;		/* backspace */
-	}
-    }
-
-  else
-
-    {
-
-      /* We drop in here if there is no VMS style directory specification yet.
-         If there is no device specification either, we make the first dir a
-         device and try that.  If we do not do this, then we will be essentially
-         searching the users default directory (as if they did a #include "asdf.h").
-        
-         Then all we need to do is to push a '[' into the output string. Later
-         processing will fill this in, and close the bracket.  */
-
-      if ((unixname != fullname)	/* vms path spec found.  */
-	 && (basename[-1] != ':'))
-	*local_ptr++ = ':';		/* dev not in spec.  take first dir */
-
-      *local_ptr++ = '[';		/* Open the directory specification */
-    }
-
-    if (unixname == fullname)		/* no vms dir spec.  */
-      {
-	must_revert = 1;
-	if ((first_slash != 0)		/* unix dir spec.  */
-	    && (*unixname != '/')	/* not beginning with '/'  */
-	    && (*unixname != '.'))	/* or './' or '../'  */
-	  *local_ptr++ = '.';		/* dir is local !  */
-      }
-
-  /* at this point we assume that we have the device spec, and (at least
-     the opening "[" for a directory specification.  We may have directories
-     specified already.
-
-     If there are no other slashes then the filename will be
-     in the "root" directory.  Otherwise, we need to add
-     directory specifications.  */
-
-  if (index (unixname, '/') == 0)
-    {
-      /* if no directories specified yet and none are following.  */
-      if (local_ptr[-1] == '[')
-	{
-	  /* Just add "000000]" as the directory string */
-	  strcpy (local_ptr, "000000]");
-	  local_ptr += strlen (local_ptr);
-	  check_filename_before_returning = 1; /* we might need to fool with this later */
-	}
-    }
-  else
-    {
-
-      /* As long as there are still subdirectories to add, do them.  */
-      while (index (unixname, '/') != 0)
-	{
-	  /* If this token is "." we can ignore it
-	       if it's not at the beginning of a path.  */
-	  if ((unixname[0] == '.') && (unixname[1] == '/'))
-	    {
-	      /* remove it at beginning of path.  */
-	      if (  ((unixname == fullname)		/* no device spec  */
-		    && (fullname+2 != basename))	/* starts with ./ */
-							/* or  */
-		 || ((basename[-1] == ':')		/* device spec  */
-		    && (unixname-1 == basename)))	/* and ./ afterwards  */
-		*local_ptr++ = '.';		 	/* make '[.' start of path.  */
-	      unixname += 2;
-	      continue;
-	    }
-
-	  /* Add a subdirectory spec. Do not duplicate "." */
-	  if (  local_ptr[-1] != '.'
-	     && local_ptr[-1] != '['
-	     && local_ptr[-1] != '<')
-	    *local_ptr++ = '.';
-
-	  /* If this is ".." then the spec becomes "-" */
-	  if (  (unixname[0] == '.')
-	     && (unixname[1] == '.')
-	     && (unixname[2] == '/'))
-	    {
-	      /* Add "-" and skip the ".." */
-	      if ((local_ptr[-1] == '.')
-		  && (local_ptr[-2] == '['))
-		local_ptr--;			/* prevent [.-  */
-	      *local_ptr++ = '-';
-	      unixname += 3;
-	      continue;
-	    }
-
-	  /* Copy the subdirectory */
-	  while (*unixname != '/')
-	    *local_ptr++= *unixname++;
-
-	  unixname++;			/* Skip the "/" */
-	}
-
-      /* Close the directory specification */
-      if (local_ptr[-1] == '.')		/* no trailing periods */
-	local_ptr--;
-
-      if (local_ptr[-1] == '[')		/* no dir needed */
-	local_ptr--;
-      else
-	*local_ptr++ = ']';
-    }
-
-  /* Now add the filename.  */
-
-  while (*unixname)
-    *local_ptr++ = *unixname++;
-  *local_ptr = 0;
-
-  /* Now append it to the original VMS spec.  */
-
-  strcpy ((must_revert==1)?fullname:basename, Local);
-
-  /* If we put a [000000] in the filename, try to open it first. If this fails,
-     remove the [000000], and return that name.  This provides flexibility
-     to the user in that they can use both rooted and non-rooted logical names
-     to point to the location of the file.  */
-
-  if (check_filename_before_returning)
-    {
-      f = open (fullname, O_RDONLY, 0666);
-      if (f >= 0)
-	{
-	  /* The file name is OK as it is, so return it as is.  */
-	  close (f);
-	  return 1;
-	}
-
-      /* The filename did not work.  Try to remove the [000000] from the name,
-	 and return it.  */
-
-      basename = index (fullname, '[');
-      local_ptr = index (fullname, ']') + 1;
-      strcpy (basename, local_ptr);		/* this gets rid of it */
-
-    }
-
-  return 1;
-}
-#endif	/* VMS */
 
-#ifdef	VMS
-
-/* The following wrapper functions supply additional arguments to the VMS
-   I/O routines to optimize performance with file handling.  The arguments
-   are:
-     "mbc=16" - Set multi-block count to 16 (use a 8192 byte buffer).
-     "deq=64" - When extending the file, extend it in chunks of 32Kbytes.
-     "fop=tef"- Truncate unused portions of file when closing file.
-     "shr=nil"- Disallow file sharing while file is open.  */
-
-static FILE *
-VMS_freopen (fname, type, oldfile)
-     char *fname;
-     char *type;
-     FILE *oldfile;
-{
-#undef freopen	/* Get back the real freopen routine.  */
-  if (strcmp (type, "w") == 0)
-    return freopen (fname, type, oldfile,
-			 "mbc=16", "deq=64", "fop=tef", "shr=nil");
-  return freopen (fname, type, oldfile, "mbc=16");
-}
-
-static FILE *
-VMS_fopen (fname, type)
-     char *fname;
-     char *type;
-{
-#undef fopen	/* Get back the real fopen routine.  */
-  /* The gcc-vms-1.42 distribution's header files prototype fopen with two
-     fixed arguments, which matches ANSI's specification but not VAXCRTL's
-     pre-ANSI implementation.  This hack circumvents the mismatch problem.  */
-  FILE *(*vmslib_fopen)() = (FILE *(*)()) fopen;
-
-  if (*type == 'w')
-    return (*vmslib_fopen) (fname, type, "mbc=32",
-			    "deq=64", "fop=tef", "shr=nil");
-  else
-    return (*vmslib_fopen) (fname, type, "mbc=32");
-}
-
-static int 
-VMS_open (fname, flags, prot)
-     char *fname;
-     int flags;
-     int prot;
-{
-#undef open	/* Get back the real open routine.  */
-  return open (fname, flags, prot, "mbc=16", "deq=64", "fop=tef");
-}
-
-/* more VMS hackery */
-#include <fab.h>
-#include <nam.h>
-
-extern unsigned long SYS$PARSE(), SYS$SEARCH();
-
-/* Work around another library bug.  If a file is located via a searchlist,
-   and if the device it's on is not the same device as the one specified
-   in the first element of that searchlist, then both stat() and fstat()
-   will fail to return info about it.  `errno' will be set to EVMSERR, and
-   `vaxc$errno' will be set to SS$_NORMAL due yet another bug in stat()!
-   We can get around this by fully parsing the filename and then passing
-   that absolute name to stat().
-
-   Without this fix, we can end up failing to find header files, which is
-   bad enough, but then compounding the problem by reporting the reason for
-   failure as "normal successful completion."  */
-
-#undef fstat	/* Get back to the library version.  */
-
-static int
-VMS_fstat (fd, statbuf)
-     int fd;
-     struct stat *statbuf;
-{
-  int result = fstat (fd, statbuf);
-
-  if (result < 0)
-    {
-      FILE *fp;
-      char nambuf[NAM$C_MAXRSS+1];
-
-      if ((fp = fdopen (fd, "r")) != 0 && fgetname (fp, nambuf) != 0)
-	result = VMS_stat (nambuf, statbuf);
-      /* No fclose(fp) here; that would close(fd) as well.  */
-    }
-
-  return result;
-}
-
-static int
-VMS_stat (name, statbuf)
-     const char *name;
-     struct stat *statbuf;
-{
-  int result = stat (name, statbuf);
-
-  if (result < 0)
-    {
-      struct FAB fab;
-      struct NAM nam;
-      char exp_nam[NAM$C_MAXRSS+1],  /* expanded name buffer for SYS$PARSE */
-	   res_nam[NAM$C_MAXRSS+1];  /* resultant name buffer for SYS$SEARCH */
-
-      fab = cc$rms_fab;
-      fab.fab$l_fna = (char *) name;
-      fab.fab$b_fns = (unsigned char) strlen (name);
-      fab.fab$l_nam = (void *) &nam;
-      nam = cc$rms_nam;
-      nam.nam$l_esa = exp_nam,  nam.nam$b_ess = sizeof exp_nam - 1;
-      nam.nam$l_rsa = res_nam,  nam.nam$b_rss = sizeof res_nam - 1;
-      nam.nam$b_nop = NAM$M_PWD | NAM$M_NOCONCEAL;
-      if (SYS$PARSE (&fab) & 1)
-	{
-	  if (SYS$SEARCH (&fab) & 1)
-	    {
-	      res_nam[nam.nam$b_rsl] = '\0';
-	      result = stat (res_nam, statbuf);
-	    }
-	  /* Clean up searchlist context cached by the system.  */
-	  nam.nam$b_nop = NAM$M_SYNCHK;
-	  fab.fab$l_fna = 0,  fab.fab$b_fns = 0;
-	  (void) SYS$PARSE (&fab);
-	}
-    }
-
-  return result;
-}
-#endif /* VMS */

@@ -2942,24 +2942,6 @@ do_include (pfile, keyword)
       if (fbeg[-1] == '<')
 	  angle_brackets = 1;
     }
-#ifdef VMS
-  else if (token == CPP_NAME)
-    {
-      /* Support '#include xyz' like VAX-C to allow for easy use of
-       * all the decwindow include files. It defaults to '#include
-       * <xyz.h>' and generates a warning.  */
-      cpp_warning (pfile,
-		   "VAX-C-style include specification found, use '#include <filename.h>' !");
-      angle_brackets = 1;
-
-      /* Append the missing `.h' to the name. */
-      CPP_PUTS (pfile, ".h", 3)
-      CPP_NUL_TERMINATE_Q (pfile);
-
-      fbeg = pfile->token_buffer + old_written;
-      fend = CPP_PWRITTEN (pfile);
-    }
-#endif
   else
     {
       cpp_error (pfile,
@@ -5105,11 +5087,7 @@ cpp_start_read (pfile, fname)
 	    }
 
 	  /* Supply our own suffix.  */
-#ifndef VMS
 	  strcpy (q, ".o");
-#else
-	  strcpy (q, ".obj");
-#endif
 
 	  deps_output (pfile, p, ':');
 	  deps_output (pfile, opts->in_fname, ' ');
@@ -6515,21 +6493,10 @@ my_strerror (errnum)
 {
   char *result;
 
-#ifndef VMS
 #ifndef HAVE_STRERROR
   result = (char *) ((errnum < sys_nerr) ? sys_errlist[errnum] : 0);
 #else
   result = strerror (errnum);
-#endif
-#else	/* VMS */
-  /* VAXCRTL's strerror() takes an optional second argument, which only
-     matters when the first argument is EVMSERR.  However, it's simplest
-     just to pass it unconditionally.  `vaxc$errno' is declared in
-     <errno.h>, and maintained by the library in parallel with `errno'.
-     We assume that caller's `errnum' either matches the last setting of
-     `errno' by the library or else does not have the value `EVMSERR'.  */
-
-  result = strerror (errnum, vaxc$errno);
 #endif
 
   if (!result)

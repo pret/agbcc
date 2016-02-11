@@ -38,9 +38,6 @@ compilation is specified by a string called a "spec".  */
 #include "obstack.h"
 #include "prefix.h"
 
-#ifdef VMS
-#define exit __posix_exit
-#endif
 
 /* By default there is no special suffix for executables.  */
 #ifdef EXECUTABLE_SUFFIX
@@ -1443,7 +1440,6 @@ static int argbuf_index;
 /* We want this on by default all the time now.  */
 #define MKTEMP_EACH_FILE
 
-#ifdef MKTEMP_EACH_FILE
 
 extern char *make_temp_file PROTO((char *));
 
@@ -1458,7 +1454,6 @@ static struct temp_name {
   int filename_length;	/* strlen (filename).  */
   struct temp_name *next;
 } *temp_names;
-#endif
 
 
 /* Number of commands executed so far.  */
@@ -2001,7 +1996,6 @@ void
 putenv (str)
      char *str;
 {
-#ifndef VMS			/* nor about VMS */
 
   extern char **environ;
   char **old_environ = environ;
@@ -2036,7 +2030,6 @@ putenv (str)
   memcpy ((char *) (environ + 1), (char *) old_environ,
 	 sizeof (char *) * (num_envs+1));
 
-#endif	/* VMS */
 }
 
 #endif	/* HAVE_PUTENV */
@@ -2621,7 +2614,7 @@ execute ()
   for (n_commands = 1, i = 0; i < argbuf_index; i++)
     if (strcmp (argbuf[i], "|") == 0)
       {				/* each command.  */
-#if defined (__MSDOS__) || defined (OS2) || defined (VMS)
+#if defined (__MSDOS__) || defined (OS2)
         fatal ("-pipe not supported");
 #endif
 	argbuf[i] = 0;	/* termination of command args.  */
@@ -4040,7 +4033,6 @@ do_spec_1 (spec, inswitch, soft_matched_part)
 	      }
 	    else
 	      {
-#ifdef MKTEMP_EACH_FILE
 		/* ??? This has a problem: the total number of
 		   values mktemp can return is limited.
 		   That matters for the names of object files.
@@ -4093,18 +4085,6 @@ do_spec_1 (spec, inswitch, soft_matched_part)
 
 		obstack_grow (&obstack, t->filename, t->filename_length);
 		delete_this_arg = 1;
-#else
-		obstack_grow (&obstack, temp_filename, temp_filename_length);
-		if (c == 'u' || c == 'U')
-		  {
-		    static int unique;
-		    char buff[9];
-		    if (c == 'u')
-		      unique++;
-		    sprintf (buff, "%d", unique);
-		    obstack_grow (&obstack, buff, strlen (buff));
-		  }
-#endif
 		delete_this_arg = 1;
 	      }
 	    arg_going = 1;
@@ -5118,10 +5098,6 @@ main (argc, argv)
 
   /* Choose directory for temp files.  */
 
-#ifndef MKTEMP_EACH_FILE
-  temp_filename = choose_temp_base ();
-  temp_filename_length = strlen (temp_filename);
-#endif
 
   /* Make a table of what switches there are (switches, n_switches).
      Make a table of specified input files (infiles, n_infiles).

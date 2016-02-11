@@ -163,9 +163,5 @@ cpp_pfatal_with_name (pfile, name)
      const char *name;
 {
   cpp_perror_with_name (pfile, name);
-#ifdef VMS
-  exit (vaxc$errno);
-#else
   exit (FATAL_EXIT_CODE);
-#endif
 }

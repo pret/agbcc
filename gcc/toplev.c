@@ -75,26 +75,6 @@ Boston, MA 02111-1307, USA.  */
 #include "xcoffout.h"
 #endif
 
-#ifdef VMS
-/* The extra parameters substantially improve the I/O performance.  */
-static FILE *
-vms_fopen (fname, type)
-     char * fname;
-     char * type;
-{
-  /* The <stdio.h> in the gcc-vms-1.42 distribution prototypes fopen with two
-     fixed arguments, which matches ANSI's specification but not VAXCRTL's
-     pre-ANSI implementation.  This hack circumvents the mismatch problem.  */
-  FILE *(*vmslib_fopen)() = (FILE *(*)()) fopen;
-
-  if (*type == 'w')
-    return (*vmslib_fopen) (fname, type, "mbc=32",
-			    "deq=64", "fop=tef", "shr=nil");
-  else
-    return (*vmslib_fopen) (fname, type, "mbc=32");
-}
-#define fopen vms_fopen
-#endif	/* VMS */
 
 #ifndef DEFAULT_GDB_EXTENSIONS
 #define DEFAULT_GDB_EXTENSIONS 1
@@ -135,7 +115,7 @@ You Lose!  You must define PREFERRED_DEBUGGING_TYPE!
 
 extern int rtx_equal_function_value_matters;
 
-#if ! (defined (VMS) || defined (OS2))
+#if ! defined (OS2)
 extern char **environ;
 #endif
 extern char *version_string, *language_string;
@@ -1338,26 +1318,12 @@ get_run_time ()
     return (tms.tms_utime + tms.tms_stime) * (1000000 / TICKS_PER_SECOND);
   }
 #else
-#ifndef VMS
   {
     struct rusage rusage;
     getrusage (0, &rusage);
     return (rusage.ru_utime.tv_sec * 1000000 + rusage.ru_utime.tv_usec
 	    + rusage.ru_stime.tv_sec * 1000000 + rusage.ru_stime.tv_usec);
   }
-#else /* VMS */
-  {
-    struct
-      {
-        int proc_user_time;
-        int proc_system_time;
-        int child_user_time;
-        int child_system_time;
-      } vms_times;
-    times ((void *) &vms_times);
-    return (vms_times.proc_user_time + vms_times.proc_system_time) * 10000;
-  }
-#endif	/* VMS */
 #endif	/* USG */
 #endif  /* _SC_CLK_TCK */
 #endif	/* _WIN32 */
@@ -5276,7 +5242,7 @@ main (argc, argv)
 
   compile_file (filename);
 
-#if !defined(OS2) && !defined(VMS) && (!defined(_WIN32) || defined (__CYGWIN__))
+#if !defined(OS2) && (!defined(_WIN32) || defined (__CYGWIN__))
   if (flag_print_mem)
     {
       char *lim = (char *) sbrk (0);
@@ -5292,7 +5258,7 @@ main (argc, argv)
 #endif /* not USG */
 #endif
     }
-#endif /* ! OS2 && ! VMS && (! _WIN32 || CYGWIN) */
+#endif /* ! OS2 && (! _WIN32 || CYGWIN) */
 
   if (errorcount)
     exit (FATAL_EXIT_CODE);
