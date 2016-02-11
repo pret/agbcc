@@ -74,19 +74,7 @@ extern struct obstack *rtl_obstack;
 /* END CYGNUS LOCAL */
 
 /* Get N_SLINE and N_SOL from stab.h if we can expect the file to exist.  */
-#if defined (DBX_DEBUGGING_INFO) || defined (XCOFF_DEBUGGING_INFO)
-#include "dbxout.h"
-#if defined (USG) || !defined (HAVE_STAB_H)
-#include "gstab.h"  /* If doing DBX on sysV, use our own stab.h.  */
-#else
-#include <stab.h>
-#endif
 
-#endif /* DBX_DEBUGGING_INFO || XCOFF_DEBUGGING_INFO */
-
-#ifdef XCOFF_DEBUGGING_INFO
-#include "xcoffout.h"
-#endif
 
 #ifdef DWARF_DEBUGGING_INFO
 #include "dwarfout.h"
@@ -96,9 +84,6 @@ extern struct obstack *rtl_obstack;
 #include "dwarf2out.h"
 #endif
 
-#ifdef SDB_DEBUGGING_INFO
-#include "sdbout.h"
-#endif
 
 /* .stabd code for line number.  */
 #ifndef N_SLINE
@@ -158,13 +143,6 @@ static int high_function_linenum;
 /* Filename of last NOTE.  */
 static char *last_filename;
 
-/* Number of basic blocks seen so far;
-   used if profile_block_flag is set.  */
-static int count_basic_blocks;
-
-/* Number of instrumented arcs when profile_arc_flag is set.  */
-extern int count_instrumented_arcs;
-
 extern int length_unit_log; /* This is defined in insn-attrtab.c.  */
 
 /* Nonzero while outputting an `asm' with operands.
@@ -178,10 +156,6 @@ static unsigned int insn_noperands;
 /* Compare optimization flag.  */
 
 static rtx last_ignored_compare = 0;
-
-/* Flag indicating this insn is the start of a new basic block.  */
-
-static int new_block = 1;
 
 /* All the symbol-blocks (levels of scoping) in the compilation
    are assigned sequence numbers in order of appearance of the
@@ -239,10 +213,6 @@ char regs_ever_live[FIRST_PSEUDO_REGISTER];
 
 int frame_pointer_needed;
 
-/* Assign unique numbers to labels generated for profiling.  */
-
-int profile_label_no;
-
 /* Length so far allocated in PENDING_BLOCKS.  */
 
 static int max_block_depth;
@@ -284,29 +254,6 @@ static int dialect_number;
 
 static char *line_note_exists;
 
-/* Linked list to hold line numbers for each basic block.  */
-
-struct bb_list {
-  struct bb_list *next;		/* pointer to next basic block */
-  int line_num;			/* line number */
-  int file_label_num;		/* LPBC<n> label # for stored filename */
-  int func_label_num;		/* LPBC<n> label # for stored function name */
-};
-
-static struct bb_list *bb_head	= 0;		/* Head of basic block list */
-static struct bb_list **bb_tail = &bb_head;	/* Ptr to store next bb ptr */
-static int bb_file_label_num	= -1;		/* Current label # for file */
-static int bb_func_label_num	= -1;		/* Current label # for func */
-
-/* Linked list to hold the strings for each file and function name output.  */
-
-struct bb_str {
-  struct bb_str *next;		/* pointer to next string */
-  char *string;			/* string */
-  int label_num;		/* label number */
-  int length;			/* string length */
-};
-
 /* CYGNUS LOCAL LRS */
 /* Current marker number for live ranges.  */
 extern int range_max_number;
@@ -314,17 +261,9 @@ extern int range_max_number;
 
 extern rtx peephole		PROTO((rtx));
 
-static struct bb_str *sbb_head	= 0;		/* Head of string list.  */
-static struct bb_str **sbb_tail	= &sbb_head;	/* Ptr to store next bb str */
-static int sbb_label_num	= 0;		/* Last label used */
-
 #ifdef HAVE_ATTR_length
 static int asm_insn_count	PROTO((rtx));
 #endif
-static void profile_function	PROTO((FILE *));
-static void profile_after_prologue PROTO((FILE *));
-static void add_bb		PROTO((FILE *));
-static int add_bb_string	PROTO((char *, int));
 static void output_source_line	PROTO((FILE *, rtx));
 static rtx walk_alter_subreg	PROTO((rtx));
 static void output_asm_name	PROTO((void));
@@ -365,248 +304,6 @@ void
 end_final (filename)
      char *filename;
 {
-  int i;
-
-  if (profile_block_flag || profile_arc_flag)
-    {
-      char name[20];
-      int align = exact_log2 (BIGGEST_ALIGNMENT / BITS_PER_UNIT);
-      int size, rounded;
-      struct bb_list *ptr;
-      struct bb_str *sptr;
-      int long_bytes = LONG_TYPE_SIZE / BITS_PER_UNIT;
-      int pointer_bytes = POINTER_SIZE / BITS_PER_UNIT;
-
-      if (profile_block_flag)
-	size = long_bytes * count_basic_blocks;
-      else
-	size = long_bytes * count_instrumented_arcs;
-      rounded = size;
-
-      rounded += (BIGGEST_ALIGNMENT / BITS_PER_UNIT) - 1;
-      rounded = (rounded / (BIGGEST_ALIGNMENT / BITS_PER_UNIT)
-		 * (BIGGEST_ALIGNMENT / BITS_PER_UNIT));
-
-      data_section ();
-
-      /* Output the main header, of 11 words:
-	 0:  1 if this file is initialized, else 0.
-	 1:  address of file name (LPBX1).
-	 2:  address of table of counts (LPBX2).
-	 3:  number of counts in the table.
-	 4:  always 0, for compatibility with Sun.
-
-         The following are GNU extensions:
-
-	 5:  address of table of start addrs of basic blocks (LPBX3).
-	 6:  Number of bytes in this header.
-	 7:  address of table of function names (LPBX4).
-	 8:  address of table of line numbers (LPBX5) or 0.
-	 9:  address of table of file names (LPBX6) or 0.
-	10:  space reserved for basic block profiling.  */
-
-      ASM_OUTPUT_ALIGN (asm_out_file, align);
-
-      ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 0);
-      /* zero word */
-      assemble_integer (const0_rtx, long_bytes, 1);
-
-      /* address of filename */
-      ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 1);
-      assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes, 1);
-
-      /* address of count table */
-      ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 2);
-      assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes, 1);
-
-      /* count of the # of basic blocks or # of instrumented arcs */
-      if (profile_block_flag)
-	assemble_integer (GEN_INT (count_basic_blocks), long_bytes, 1);
-      else
-	assemble_integer (GEN_INT (count_instrumented_arcs), long_bytes,
-			  1);
-
-      /* zero word (link field) */
-      assemble_integer (const0_rtx, pointer_bytes, 1);
-
-      /* address of basic block start address table */
-      if (profile_block_flag)
-	{
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 3);
-	  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes,
-			    1);
-	}
-      else
-	assemble_integer (const0_rtx, pointer_bytes, 1);
-
-      /* byte count for extended structure.  */
-      assemble_integer (GEN_INT (10 * UNITS_PER_WORD), long_bytes, 1);
-
-      /* address of function name table */
-      if (profile_block_flag)
-	{
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 4);
-	  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes,
-			    1);
-	}
-      else
-	assemble_integer (const0_rtx, pointer_bytes, 1);
-
-      /* address of line number and filename tables if debugging.  */
-      if (write_symbols != NO_DEBUG && profile_block_flag)
-	{
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 5);
-	  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes, 1);
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 6);
-	  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes, 1);
-	}
-      else
-	{
-	  assemble_integer (const0_rtx, pointer_bytes, 1);
-	  assemble_integer (const0_rtx, pointer_bytes, 1);
-	}
-
-      /* space for extension ptr (link field) */
-      assemble_integer (const0_rtx, UNITS_PER_WORD, 1);
-
-      /* Output the file name changing the suffix to .d for Sun tcov
-	 compatibility.  */
-      ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 1);
-      {
-	char *cwd = getpwd ();
-	int len = strlen (filename) + strlen (cwd) + 1;
-	char *data_file = (char *) alloca (len + 4);
-
-	strcpy (data_file, cwd);
-	strcat (data_file, "/");
-	strcat (data_file, filename);
-	strip_off_ending (data_file, len);
-	if (profile_block_flag)
-	  strcat (data_file, ".d");
-	else
-	  strcat (data_file, ".da");
-	assemble_string (data_file, strlen (data_file) + 1);
-      }
-
-      /* Make space for the table of counts.  */
-      if (size == 0)
-	{
-	  /* Realign data section.  */
-	  ASM_OUTPUT_ALIGN (asm_out_file, align);
-	  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 2);
-	  if (size != 0)
-	    assemble_zeros (size);
-	}
-      else
-	{
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 2);
-#ifdef ASM_OUTPUT_SHARED_LOCAL
-	  if (flag_shared_data)
-	    ASM_OUTPUT_SHARED_LOCAL (asm_out_file, name, size, rounded);
-	  else
-#endif
-#ifdef ASM_OUTPUT_ALIGNED_DECL_LOCAL
-	    ASM_OUTPUT_ALIGNED_DECL_LOCAL (asm_out_file, NULL_TREE, name, size,
-					      BIGGEST_ALIGNMENT);
-#else
-#ifdef ASM_OUTPUT_ALIGNED_LOCAL
-	    ASM_OUTPUT_ALIGNED_LOCAL (asm_out_file, name, size,
-				      BIGGEST_ALIGNMENT);
-#else
-	    ASM_OUTPUT_LOCAL (asm_out_file, name, size, rounded);
-#endif
-#endif
-	}
-
-      /* Output any basic block strings */
-      if (profile_block_flag)
-	{
-	  readonly_data_section ();
-	  if (sbb_head)
-	    {
-	      ASM_OUTPUT_ALIGN (asm_out_file, align);
-	      for (sptr = sbb_head; sptr != 0; sptr = sptr->next)
-		{
-		  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBC",
-					     sptr->label_num);
-		  assemble_string (sptr->string, sptr->length);
-		}
-	    }
-	}
-
-      /* Output the table of addresses.  */
-      if (profile_block_flag)
-	{
-	  /* Realign in new section */
-	  ASM_OUTPUT_ALIGN (asm_out_file, align);
-	  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 3);
-	  for (i = 0; i < count_basic_blocks; i++)
-	    {
-	      ASM_GENERATE_INTERNAL_LABEL (name, "LPB", i);
-	      assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name),
-				pointer_bytes, 1);
-	    }
-	}
-
-      /* Output the table of function names.  */
-      if (profile_block_flag)
-	{
-	  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 4);
-	  for ((ptr = bb_head), (i = 0); ptr != 0; (ptr = ptr->next), i++)
-	    {
-	      if (ptr->func_label_num >= 0)
-		{
-		  ASM_GENERATE_INTERNAL_LABEL (name, "LPBC",
-					       ptr->func_label_num);
-		  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name),
-				    pointer_bytes, 1);
-		}
-	      else
-		assemble_integer (const0_rtx, pointer_bytes, 1);
-	    }
-
-	  for ( ; i < count_basic_blocks; i++)
-	    assemble_integer (const0_rtx, pointer_bytes, 1);
-	}
-
-      if (write_symbols != NO_DEBUG && profile_block_flag)
-	{
-	  /* Output the table of line numbers.  */
-	  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 5);
-	  for ((ptr = bb_head), (i = 0); ptr != 0; (ptr = ptr->next), i++)
-	    assemble_integer (GEN_INT (ptr->line_num), long_bytes, 1);
-
-	  for ( ; i < count_basic_blocks; i++)
-	    assemble_integer (const0_rtx, long_bytes, 1);
-
-	  /* Output the table of file names.  */
-	  ASM_OUTPUT_INTERNAL_LABEL (asm_out_file, "LPBX", 6);
-	  for ((ptr = bb_head), (i = 0); ptr != 0; (ptr = ptr->next), i++)
-	    {
-	      if (ptr->file_label_num >= 0)
-		{
-		  ASM_GENERATE_INTERNAL_LABEL (name, "LPBC",
-					       ptr->file_label_num);
-		  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name),
-				    pointer_bytes, 1);
-		}
-	      else
-		assemble_integer (const0_rtx, pointer_bytes, 1);
-	    }
-
-	  for ( ; i < count_basic_blocks; i++)
-	    assemble_integer (const0_rtx, pointer_bytes, 1);
-	}
-
-      /* End with the address of the table of addresses,
-	 so we can find it easily, as the last word in the file's text.  */
-      if (profile_block_flag)
-	{
-	  ASM_GENERATE_INTERNAL_LABEL (name, "LPBX", 3);
-	  assemble_integer (gen_rtx_SYMBOL_REF (Pmode, name), pointer_bytes,
-			    1);
-	}
-    }
 }
 
 /* Enable APP processing of subsequent output.
@@ -1658,20 +1355,6 @@ final_start_function (first, file, optimize)
     dwarf2out_begin_prologue ();
 #endif
 
-  /* For SDB and XCOFF, the function beginning must be marked between
-     the function label and the prologue.  We always need this, even when
-     -g1 was used.  Defer on MIPS systems so that parameter descriptions
-     follow function entry.  */
-#if defined(SDB_DEBUGGING_INFO) && !defined(MIPS_DEBUGGING_INFO)
-  if (write_symbols == SDB_DEBUG)
-    sdbout_begin_function (last_linenum);
-  else
-#endif
-#ifdef XCOFF_DEBUGGING_INFO
-    if (write_symbols == XCOFF_DEBUG)
-      xcoffout_begin_function (file, last_linenum);
-    else
-#endif	  
       /* But only output line number for other debug info types if -g2
 	 or better.  */
       if (NOTE_LINE_NUMBER (first) != NOTE_INSN_DELETED)
@@ -1682,13 +1365,6 @@ final_start_function (first, file, optimize)
     leaf_renumber_regs (first);
 #endif
 
-  /* The Sun386i and perhaps other machines don't work right
-     if the profiling code comes after the prologue.  */
-#ifdef PROFILE_BEFORE_PROLOGUE
-  if (profile_flag)
-    profile_function (file);
-#endif /* PROFILE_BEFORE_PROLOGUE */
-
 #if defined (DWARF2_UNWIND_INFO) && defined (HAVE_prologue)
   if (dwarf2out_do_frame ())
     dwarf2out_frame_debug (NULL_RTX);
@@ -1697,117 +1373,6 @@ final_start_function (first, file, optimize)
 #ifdef FUNCTION_PROLOGUE
   /* First output the function prologue: code to set up the stack frame.  */
   FUNCTION_PROLOGUE (file, get_frame_size ());
-#endif
-
-#if defined (SDB_DEBUGGING_INFO) || defined (XCOFF_DEBUGGING_INFO)
-  if (write_symbols == SDB_DEBUG || write_symbols == XCOFF_DEBUG)
-    next_block_index = 1;
-#endif
-
-  /* If the machine represents the prologue as RTL, the profiling code must
-     be emitted when NOTE_INSN_PROLOGUE_END is scanned.  */
-#ifdef HAVE_prologue
-  if (! HAVE_prologue)
-#endif
-    profile_after_prologue (file);
-
-  profile_label_no++;
-
-  /* If we are doing basic block profiling, remember a printable version
-     of the function name.  */
-  if (profile_block_flag)
-    {
-      bb_func_label_num
-	= add_bb_string ((*decl_printable_name) (current_function_decl, 2), FALSE);
-    }
-}
-
-static void
-profile_after_prologue (file)
-     FILE *file;
-{
-#ifdef FUNCTION_BLOCK_PROFILER
-  if (profile_block_flag)
-    {
-      FUNCTION_BLOCK_PROFILER (file, count_basic_blocks);
-    }
-#endif /* FUNCTION_BLOCK_PROFILER */
-
-#ifndef PROFILE_BEFORE_PROLOGUE
-  if (profile_flag)
-    profile_function (file);
-#endif /* not PROFILE_BEFORE_PROLOGUE */
-}
-
-static void
-profile_function (file)
-     FILE *file;
-{
-  int align = MIN (BIGGEST_ALIGNMENT, LONG_TYPE_SIZE);
-#if defined(ASM_OUTPUT_REG_PUSH)
-#if defined(STRUCT_VALUE_INCOMING_REGNUM) || defined(STRUCT_VALUE_REGNUM)
-  int sval = current_function_returns_struct;
-#endif
-#if defined(STATIC_CHAIN_INCOMING_REGNUM) || defined(STATIC_CHAIN_REGNUM)
-  int cxt = current_function_needs_context;
-#endif
-#endif /* ASM_OUTPUT_REG_PUSH */
-
-  data_section ();
-  ASM_OUTPUT_ALIGN (file, floor_log2 (align / BITS_PER_UNIT));
-  ASM_OUTPUT_INTERNAL_LABEL (file, "LP", profile_label_no);
-  assemble_integer (const0_rtx, LONG_TYPE_SIZE / BITS_PER_UNIT, 1);
-
-  function_section (current_function_decl);
-
-#if defined(STRUCT_VALUE_INCOMING_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (sval)
-    ASM_OUTPUT_REG_PUSH (file, STRUCT_VALUE_INCOMING_REGNUM);
-#else
-#if defined(STRUCT_VALUE_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (sval)
-    {
-      ASM_OUTPUT_REG_PUSH (file, STRUCT_VALUE_REGNUM);
-    }
-#endif
-#endif
-
-#if defined(STATIC_CHAIN_INCOMING_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (cxt)
-    ASM_OUTPUT_REG_PUSH (file, STATIC_CHAIN_INCOMING_REGNUM);
-#else
-#if defined(STATIC_CHAIN_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (cxt)
-    {
-      ASM_OUTPUT_REG_PUSH (file, STATIC_CHAIN_REGNUM);
-    }
-#endif
-#endif
-
-  FUNCTION_PROFILER (file, profile_label_no);
-
-#if defined(STATIC_CHAIN_INCOMING_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (cxt)
-    ASM_OUTPUT_REG_POP (file, STATIC_CHAIN_INCOMING_REGNUM);
-#else
-#if defined(STATIC_CHAIN_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (cxt)
-    {
-      ASM_OUTPUT_REG_POP (file, STATIC_CHAIN_REGNUM);
-    }
-#endif
-#endif
-
-#if defined(STRUCT_VALUE_INCOMING_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (sval)
-    ASM_OUTPUT_REG_POP (file, STRUCT_VALUE_INCOMING_REGNUM);
-#else
-#if defined(STRUCT_VALUE_REGNUM) && defined(ASM_OUTPUT_REG_PUSH)
-  if (sval)
-    {
-      ASM_OUTPUT_REG_POP (file, STRUCT_VALUE_REGNUM);
-    }
-#endif
 #endif
 }
 
@@ -1827,30 +1392,15 @@ final_end_function (first, file, optimize)
       app_on = 0;
     }
 
-#ifdef SDB_DEBUGGING_INFO
-  if (write_symbols == SDB_DEBUG)
-    sdbout_end_function (high_function_linenum);
-#endif
-
 #ifdef DWARF_DEBUGGING_INFO
   if (write_symbols == DWARF_DEBUG)
     dwarfout_end_function ();
-#endif
-
-#ifdef XCOFF_DEBUGGING_INFO
-  if (write_symbols == XCOFF_DEBUG)
-    xcoffout_end_function (file, high_function_linenum);
 #endif
 
 #ifdef FUNCTION_EPILOGUE
   /* Finally, output the function epilogue:
      code to restore the stack frame and return to the caller.  */
   FUNCTION_EPILOGUE (file, get_frame_size ());
-#endif
-
-#ifdef SDB_DEBUGGING_INFO
-  if (write_symbols == SDB_DEBUG)
-    sdbout_end_epilogue ();
 #endif
 
 #ifdef DWARF_DEBUGGING_INFO
@@ -1863,100 +1413,10 @@ final_end_function (first, file, optimize)
     dwarf2out_end_epilogue ();
 #endif
 
-#ifdef XCOFF_DEBUGGING_INFO
-  if (write_symbols == XCOFF_DEBUG)
-    xcoffout_end_epilogue (file);
-#endif
-
-  bb_func_label_num = -1;	/* not in function, nuke label # */
-
   /* If FUNCTION_EPILOGUE is not defined, then the function body
      itself contains return instructions wherever needed.  */
 }
-
-/* Add a block to the linked list that remembers the current line/file/function
-   for basic block profiling.  Emit the label in front of the basic block and
-   the instructions that increment the count field.  */
 
-static void
-add_bb (file)
-     FILE *file;
-{
-  struct bb_list *ptr = (struct bb_list *) permalloc (sizeof (struct bb_list));
-
-  /* Add basic block to linked list.  */
-  ptr->next = 0;
-  ptr->line_num = last_linenum;
-  ptr->file_label_num = bb_file_label_num;
-  ptr->func_label_num = bb_func_label_num;
-  *bb_tail = ptr;
-  bb_tail = &ptr->next;
-
-  /* Enable the table of basic-block use counts
-     to point at the code it applies to.  */
-  ASM_OUTPUT_INTERNAL_LABEL (file, "LPB", count_basic_blocks);
-
-  /* Before first insn of this basic block, increment the
-     count of times it was entered.  */
-#ifdef BLOCK_PROFILER
-  BLOCK_PROFILER (file, count_basic_blocks);
-#endif
-#ifdef HAVE_cc0
-  CC_STATUS_INIT;
-#endif
-
-  new_block = 0;
-  count_basic_blocks++;
-}
-
-/* Add a string to be used for basic block profiling.  */
-
-static int
-add_bb_string (string, perm_p)
-     char *string;
-     int perm_p;
-{
-  int len;
-  struct bb_str *ptr = 0;
-
-  if (!string)
-    {
-      string = "<unknown>";
-      perm_p = TRUE;
-    }
-
-  /* Allocate a new string if the current string isn't permanent.  If
-     the string is permanent search for the same string in other
-     allocations.  */
-
-  len = strlen (string) + 1;
-  if (!perm_p)
-    {
-      char *p = (char *) permalloc (len);
-      bcopy (string, p, len);
-      string = p;
-    }
-  else
-    for (ptr = sbb_head; ptr != (struct bb_str *) 0; ptr = ptr->next)
-      if (ptr->string == string)
-	break;
-
-  /* Allocate a new string block if we need to.  */
-  if (!ptr)
-    {
-      ptr = (struct bb_str *) permalloc (sizeof (*ptr));
-      ptr->next = 0;
-      ptr->length = len;
-      ptr->label_num = sbb_label_num++;
-      ptr->string = string;
-      *sbb_tail = ptr;
-      sbb_tail = &ptr->next;
-    }
-
-  return ptr->label_num;
-}
-
-
 /* Output assembler code for some insns: all or part of a function.
    For description of args, see `final_start_function', above.
 
@@ -1980,7 +1440,6 @@ final (first, file, optimize, prescan)
   int max_uid = 0;
 
   last_ignored_compare = 0;
-  new_block = 1;
 
   check_exception_handler_labels ();
 
@@ -1989,39 +1448,10 @@ final (first, file, optimize, prescan)
     block_nodes = identify_blocks (DECL_INITIAL (current_function_decl), first);
   /* END CYGNUS LOCAL */
 
-  /* Make a map indicating which line numbers appear in this function.
-     When producing SDB debugging info, delete troublesome line number
-     notes from inlined functions in other files as well as duplicate
-     line number notes.  */
-#ifdef SDB_DEBUGGING_INFO
-  if (write_symbols == SDB_DEBUG)
-    {
-      rtx last = 0;
-      for (insn = first; insn; insn = NEXT_INSN (insn))
-	if (GET_CODE (insn) == NOTE && NOTE_LINE_NUMBER (insn) > 0)
-	  {
-	    if ((RTX_INTEGRATED_P (insn)
-		 && strcmp (NOTE_SOURCE_FILE (insn), main_input_filename) != 0)
-		 || (last != 0
-		     && NOTE_LINE_NUMBER (insn) == NOTE_LINE_NUMBER (last)
-		     && NOTE_SOURCE_FILE (insn) == NOTE_SOURCE_FILE (last)))
-	      {
-		NOTE_LINE_NUMBER (insn) = NOTE_INSN_DELETED;
-		NOTE_SOURCE_FILE (insn) = 0;
-		continue;
-	      }
-	    last = insn;
-	    if (NOTE_LINE_NUMBER (insn) > max_line)
-	      max_line = NOTE_LINE_NUMBER (insn);
-	  }
-    }
-  else
-#endif
-    {
-      for (insn = first; insn; insn = NEXT_INSN (insn))
-	if (GET_CODE (insn) == NOTE && NOTE_LINE_NUMBER (insn) > max_line)
-	  max_line = NOTE_LINE_NUMBER (insn);
-    }
+  /* Make a map indicating which line numbers appear in this function. */
+    for (insn = first; insn; insn = NEXT_INSN (insn))
+        if (GET_CODE (insn) == NOTE && NOTE_LINE_NUMBER (insn) > max_line)
+            max_line = NOTE_LINE_NUMBER (insn);
 
   line_note_exists = (char *) oballoc (max_line + 1);
   bzero (line_note_exists, max_line + 1);
@@ -2062,11 +1492,6 @@ final (first, file, optimize, prescan)
 #endif
       insn = final_scan_insn (insn, file, optimize, prescan, 0);
     }
-
-  /* Do basic-block profiling here
-     if the last insn was a conditional branch.  */
-  if (profile_block_flag && new_block)
-    add_bb (file);
 
   /* CYGNUS LOCAL LRS */
   if (write_symbols != NO_DEBUG)
@@ -2150,17 +1575,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    live_range_print (file, NOTE_RANGE_INFO (insn), "\t",
 			      ASM_COMMENT_START);
 #endif
-#ifdef DBX_DEBUGGING_INFO
-	  if (write_symbols == DBX_DEBUG && LIVE_RANGE_GDBSTAB_P ())
-	    {
-	      rtx ri = NOTE_RANGE_INFO (insn);
-	      if (!RANGE_INFO_MARKER_START (ri))
-		{
-		  RANGE_INFO_MARKER_START (ri) = ++range_max_number;
-		  dbxout_live_range (range_max_number);
-		}
-	    }
-#endif
 	  break;
 	}
 
@@ -2171,17 +1585,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    fprintf (file, "\t%s range #%d end\n", ASM_COMMENT_START,
 		     RANGE_INFO_UNIQUE (NOTE_RANGE_INFO (insn)));
 #endif
-#ifdef DBX_DEBUGGING_INFO
-	  if (write_symbols == DBX_DEBUG && LIVE_RANGE_GDBSTAB_P ())
-	    {
-	      rtx ri = NOTE_RANGE_INFO (insn);
-	      if (!RANGE_INFO_MARKER_END (ri))
-		{
-		  RANGE_INFO_MARKER_END (ri) = ++range_max_number;
-		  dbxout_live_range (range_max_number);
-		}
-	    }
-#endif
 	  break;
 	}
       /* END CYGNUS LOCAL */
@@ -2191,7 +1594,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 #ifdef FUNCTION_END_PROLOGUE
 	  FUNCTION_END_PROLOGUE (file);
 #endif
-	  profile_after_prologue (file);
 	  break;
 	}
 
@@ -2207,13 +1609,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	break;
       if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_FUNCTION_BEG)
 	{
-#if defined(SDB_DEBUGGING_INFO) && defined(MIPS_DEBUGGING_INFO)
-	  /* MIPS stabs require the parameter descriptions to be after the
-	     function entry point rather than before.  */
-	  if (write_symbols == SDB_DEBUG)
-	    sdbout_begin_function (last_linenum);
-	  else
-#endif
 #ifdef DWARF_DEBUGGING_INFO
 	  /* This outputs a marker where the function body starts, so it
 	     must be after the prologue.  */
@@ -2258,18 +1653,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 
 	  /* Output debugging info about the symbol-block beginning.  */
 
-#ifdef SDB_DEBUGGING_INFO
-	  if (write_symbols == SDB_DEBUG)
-	    sdbout_begin_block (file, last_linenum, next_block_index);
-#endif
-#ifdef XCOFF_DEBUGGING_INFO
-	  if (write_symbols == XCOFF_DEBUG)
-	    xcoffout_begin_block (file, last_linenum, next_block_index);
-#endif
-#ifdef DBX_DEBUGGING_INFO
-	  if (write_symbols == DBX_DEBUG)
-	    ASM_OUTPUT_INTERNAL_LABEL (file, "LBB", next_block_index);
-#endif
 #ifdef DWARF_DEBUGGING_INFO
 	  if (write_symbols == DWARF_DEBUG)
 	    dwarfout_begin_block (next_block_index);
@@ -2295,21 +1678,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    abort ();
 
 	  /* CYGNUS LOCAL LRS */
-#ifdef XCOFF_DEBUGGING_INFO
-	  if (write_symbols == XCOFF_DEBUG)
-	    xcoffout_end_block (file, high_block_linenum,
-				pending_blocks[block_depth].number);
-#endif
-#ifdef DBX_DEBUGGING_INFO
-	  if (write_symbols == DBX_DEBUG)
-	    ASM_OUTPUT_INTERNAL_LABEL (file, "LBE",
-				       pending_blocks[block_depth].number);
-#endif
-#ifdef SDB_DEBUGGING_INFO
-	  if (write_symbols == SDB_DEBUG)
-	    sdbout_end_block (file, high_block_linenum,
-			      pending_blocks[block_depth].number);
-#endif
 #ifdef DWARF_DEBUGGING_INFO
 	  if (write_symbols == DWARF_DEBUG)
 	    dwarfout_end_block (pending_blocks[block_depth].number);
@@ -2435,16 +1803,11 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 #endif
       if (prescan > 0)
 	break;
-      new_block = 1;
 
 #ifdef FINAL_PRESCAN_LABEL
       FINAL_PRESCAN_INSN (insn, NULL_PTR, 0);
 #endif
 
-#ifdef SDB_DEBUGGING_INFO
-      if (write_symbols == SDB_DEBUG && LABEL_NAME (insn))
-	sdbout_label (insn);
-#endif
 #ifdef DWARF_DEBUGGING_INFO
       if (write_symbols == DWARF_DEBUG && LABEL_NAME (insn))
 	dwarfout_label (insn);
@@ -2604,11 +1967,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    break;
 	  }
 
-	/* Do basic-block profiling when we reach a new block.
-	   Done here to avoid jump tables.  */
-	if (profile_block_flag && new_block)
-	  add_bb (file);
-
 	if (GET_CODE (body) == ASM_INPUT)
 	  {
 	    /* There's no telling what that did to the condition codes.  */
@@ -2707,22 +2065,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	      {
 		CC_STATUS_INIT;
 	      }
-
-	    /* Following a conditional branch sequence, we have a new basic
-	       block.  */
-	    if (profile_block_flag)
-	      {
-		rtx insn = XVECEXP (body, 0, 0);
-		rtx body = PATTERN (insn);
-
-		if ((GET_CODE (insn) == JUMP_INSN && GET_CODE (body) == SET
-		     && GET_CODE (SET_SRC (body)) != LABEL_REF)
-		    || (GET_CODE (insn) == JUMP_INSN
-			&& GET_CODE (body) == PARALLEL
-			&& GET_CODE (XVECEXP (body, 0, 0)) == SET
-			&& GET_CODE (SET_SRC (XVECEXP (body, 0, 0))) != LABEL_REF))
-		  new_block = 1;
-	      }
 	    break;
 	  }
 
@@ -2780,17 +2122,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	      }
 	  }
 #endif
-
-	/* Following a conditional branch, we have a new basic block.
-	   But if we are inside a sequence, the new block starts after the
-	   last insn of the sequence.  */
-	if (profile_block_flag && final_sequence == 0
-	    && ((GET_CODE (insn) == JUMP_INSN && GET_CODE (body) == SET
-		 && GET_CODE (SET_SRC (body)) != LABEL_REF)
-		|| (GET_CODE (insn) == JUMP_INSN && GET_CODE (body) == PARALLEL
-		    && GET_CODE (XVECEXP (body, 0, 0)) == SET
-		    && GET_CODE (SET_SRC (XVECEXP (body, 0, 0))) != LABEL_REF)))
-	  new_block = 1;
 
 #ifndef STACK_REGS
 	/* Don't bother outputting obvious no-ops, even without -O.
@@ -3003,7 +2334,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	      {
 		if (prev_nonnote_insn (insn) != last_ignored_compare)
 		  abort ();
-		new_block = 0;
 		return prev_nonnote_insn (insn);
 	      }
 	  }
@@ -3025,7 +2355,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    abort ();
 #endif
 
-	    new_block = 0;
 	    return new;
 	  }
 	
@@ -3077,14 +2406,6 @@ output_source_line (file, insn)
 {
   register char *filename = NOTE_SOURCE_FILE (insn);
 
-  /* Remember filename for basic block profiling.
-     Filenames are allocated on the permanent obstack
-     or are passed in ARGV, so we don't have to save
-     the string.  */
-
-  if (profile_block_flag && last_filename != filename)
-    bb_file_label_num = add_bb_string (filename, TRUE);
-
   last_filename = filename;
   last_linenum = NOTE_LINE_NUMBER (insn);
   high_block_linenum = MAX (last_linenum, high_block_linenum);
@@ -3092,34 +2413,8 @@ output_source_line (file, insn)
 
   if (write_symbols != NO_DEBUG)
     {
-#ifdef SDB_DEBUGGING_INFO
-      if (write_symbols == SDB_DEBUG
-#if 0 /* People like having line numbers even in wrong file!  */
-	  /* COFF can't handle multiple source files--lose, lose.  */
-	  && !strcmp (filename, main_input_filename)
-#endif
-	  /* COFF relative line numbers must be positive.  */
-	  && last_linenum > sdb_begin_function_line)
-	{
-#ifdef ASM_OUTPUT_SOURCE_LINE
-	  ASM_OUTPUT_SOURCE_LINE (file, last_linenum);
-#else
-	  fprintf (file, "\t.ln\t%d\n",
-		   ((sdb_begin_function_line > -1)
-		    ? last_linenum - sdb_begin_function_line : 1));
-#endif
-	}
-#endif
 
-#if defined (DBX_DEBUGGING_INFO)
-      if (write_symbols == DBX_DEBUG)
-	dbxout_source_line (file, filename, NOTE_LINE_NUMBER (insn));
-#endif
 
-#if defined (XCOFF_DEBUGGING_INFO)
-      if (write_symbols == XCOFF_DEBUG)
-	xcoffout_source_line (file, filename, insn);
-#endif
 
 #ifdef DWARF_DEBUGGING_INFO
       if (write_symbols == DWARF_DEBUG)
@@ -4073,9 +3368,6 @@ int
 leaf_function_p ()
 {
   rtx insn;
-
-  if (profile_flag || profile_block_flag || profile_arc_flag)
-    return 0;
 
   for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
     {

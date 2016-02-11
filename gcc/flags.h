@@ -137,26 +137,6 @@ extern unsigned larger_than_size;
 
 extern int warn_aggregate_return;
 
-/* Nonzero if generating code to do profiling.  */
-
-extern int profile_flag;
-
-/* Nonzero if generating code to do profiling on the basis of basic blocks.  */
-
-extern int profile_block_flag;
-
-/* Nonzero if generating code to profile program flow graph arcs. */
-
-extern int profile_arc_flag;
-
-/* Nonzero if generating info for gcov to calculate line test coverage. */
-
-extern int flag_test_coverage;
-
-/* Nonzero indicates that branch taken probabilities should be calculated. */
-
-extern int flag_branch_probabilities;
-
 /* Nonzero for -pedantic switch: warn about anything
    that standard C forbids.  */
 

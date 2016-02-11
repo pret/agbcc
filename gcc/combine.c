@@ -11531,14 +11531,6 @@ distribute_notes (notes, from_insn, i3, i2, elim_i2, elim_i1)
       next_note = XEXP (note, 1);
       switch (REG_NOTE_KIND (note))
 	{
-	case REG_BR_PROB:
-	case REG_EXEC_COUNT:
-	  /* Doesn't matter much where we put this, as long as it's somewhere.
-	     It is preferable to keep these notes on branches, which is most
-	     likely to be i3.  */
-	  place = i3;
-	  break;
-
 	case REG_EH_REGION:
 	  /* This note must remain with the call.  It should not be possible
 	     for both I2 and I3 to be a call.  */

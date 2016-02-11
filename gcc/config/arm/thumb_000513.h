@@ -736,14 +736,6 @@ int thumb_shiftable_const ();
 
 #define FUNCTION_EPILOGUE(FILE,SIZE) thumb_function_epilogue((FILE),(SIZE))
 
-/* Generating code for profiling */
-#define FUNCTION_PROFILER(STREAM,LABELNO)		\
-{							\
-  fprintf ((STREAM), "\tmov\\tip, lr\n");		\
-  fprintf ((STREAM), "\tbl\tmcount\n");			\
-  fprintf ((STREAM), "\t.word\tLP%d\n", (LABELNO));	\
-}
-
 /* Implementing the Varargs Macros */
 
 #define SETUP_INCOMING_VARARGS(CUM,MODE,TYPE,PRETEND_SIZE,NO_RTL)	\

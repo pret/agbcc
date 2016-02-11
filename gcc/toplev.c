@@ -278,7 +278,6 @@ int cse_dump = 0;
 int gcse_dump = 0;
 int loop_dump = 0;
 int cse2_dump = 0;
-int branch_prob_dump = 0;
 int flow_dump = 0;
 int combine_dump = 0;
 int regmove_dump = 0;
@@ -369,26 +368,6 @@ lang_expand_expr_t lang_expand_expr = 0;
    end of compilation.  */
 
 void (*incomplete_decl_finalize_hook) PROTO((tree)) = 0;
-
-/* Nonzero if generating code to do profiling.  */
-
-int profile_flag = 0;
-
-/* Nonzero if generating code to do profiling on a line-by-line basis.  */
-
-int profile_block_flag;
-
-/* Nonzero if generating code to profile program flow graph arcs.  */
-
-int profile_arc_flag = 0;
-
-/* Nonzero if generating info for gcov to calculate line test coverage.  */
-
-int flag_test_coverage = 0;
-
-/* Nonzero indicates that branch taken probabilities should be calculated.  */
-
-int flag_branch_probabilities = 0;
 
 /* Nonzero for -pedantic switch: warn about anything
    that standard spec forbids.  */
@@ -943,12 +922,6 @@ lang_independent_options f_options[] =
    "Use setjmp/longjmp to handle exceptions" },
   {"asynchronous-exceptions", &asynchronous_exceptions, 1,
    "Support asynchronous exceptions" },
-  {"profile-arcs", &profile_arc_flag, 1,
-   "Insert arc based program profiling code" },
-  {"test-coverage", &flag_test_coverage, 1,
-   "Create data files needed by gcov" },
-  {"branch-probabilities", &flag_branch_probabilities, 1,
-   "Use profiling information for branch porbabilities" },
   {"fast-math", &flag_fast_math, 1,
    "Improve FP speed by violating ANSI & IEEE rules" },
   {"common", &flag_no_common, 0,
@@ -1303,7 +1276,6 @@ int cse_time;
 int gcse_time;
 int loop_time;
 int cse2_time;
-int branch_prob_time;
 int flow_time;
 int combine_time;
 int regmove_time;
@@ -2637,7 +2609,6 @@ compile_file (name)
   gcse_time = 0;
   loop_time = 0;
   cse2_time = 0;
-  branch_prob_time = 0;
   flow_time = 0;
   combine_time = 0;
   regmove_time = 0;
@@ -2661,8 +2632,7 @@ compile_file (name)
   name = init_parse (name);
   init_rtl ();
   init_emit_once (debug_info_level == DINFO_LEVEL_NORMAL
-		  || debug_info_level == DINFO_LEVEL_VERBOSE
-		  || flag_test_coverage);
+		  || debug_info_level == DINFO_LEVEL_VERBOSE);
   init_regs ();
   init_decl_processing ();
   init_optabs ();
@@ -2733,12 +2703,6 @@ compile_file (name)
       clean_dump_file (".cse2");
       if (graph_dump_format != no_graph)
 	clean_graph_dump_file (dump_base_name, ".cse2");
-    }
-  if (branch_prob_dump)
-    {
-      clean_dump_file (".bp");
-      if (graph_dump_format != no_graph)
-	clean_graph_dump_file (dump_base_name, ".bp");
     }
   if (flow_dump)
     {
@@ -2877,8 +2841,6 @@ compile_file (name)
   if (flag_syntax_only)
     {
       write_symbols = NO_DEBUG;
-      profile_flag = 0;
-      profile_block_flag = 0;
     }
   else
     {
@@ -2923,13 +2885,6 @@ compile_file (name)
     }
 #endif
 
-  if (flag_function_sections
-      && (profile_flag || profile_block_flag))
-    {
-      warning ("-ffunction-sections disabled; it makes profiling impossible.");
-      flag_function_sections = 0;
-    }
-
 #ifndef OBJECT_FORMAT_ELF
   if (flag_function_sections && write_symbols != NO_DEBUG)
     warning ("-ffunction-sections may affect debugging on some targets.");
@@ -2944,18 +2899,6 @@ compile_file (name)
       Therefore, I took out that change.
       In future versions we should find another way to solve
       that dbx problem.  -- rms, 23 May 93.  */
-      
-  /* Don't let the first function fall at the same address
-     as gcc_compiled., if profiling.  */
-  if (profile_flag || profile_block_flag)
-    {
-      /* It's best if we can write a nop here since some
-	 assemblers don't tolerate zeros in the text section.  */
-      if (insn_template[CODE_FOR_nop] != 0)
-	output_asm_insn (insn_template[CODE_FOR_nop], NULL_PTR);
-      else
-	assemble_zeros (UNITS_PER_WORD);
-    }
 
   /* If dbx symbol table desired, initialize writing it
      and output the predefined types.  */
@@ -2985,7 +2928,6 @@ compile_file (name)
   /* Initialize yet another pass.  */
 
   init_final (main_input_filename);
-  init_branch_prob (dump_base_name);
 
   start_time = get_run_time ();
 
@@ -3107,15 +3049,6 @@ compile_file (name)
 	      }
 	  }
       }
-
-    /* This must occur after the loop to output deferred functions.  Else
-       the profiler initializer would not be emitted if all the functions
-       in this compilation unit were deferred.
-
-       output_func_start_profiler can not cause any additional functions or
-       data to need to be output, so it need not be in the deferred function
-       loop above.  */
-    output_func_start_profiler ();
 
     /* Now that all possible functions have been output, we can dump
        the exception table.  */
@@ -3256,14 +3189,6 @@ compile_file (name)
 
   end_final (dump_base_name);
    
-  if (branch_prob_dump)
-    open_dump_file (".bp", NULL);
-   
-  TIMEVAR (dump_time, end_branch_prob (rtl_dump_file));
-   
-  if (branch_prob_dump)
-    close_dump_file (NULL, NULL_RTX);
-   
 #ifdef ASM_FILE_END
   ASM_FILE_END (asm_out_file);
 #endif
@@ -3321,8 +3246,6 @@ compile_file (name)
 	finish_graph_dump_file (dump_base_name, ".loop");
       if (cse2_dump)
 	finish_graph_dump_file (dump_base_name, ".cse2");
-      if (branch_prob_dump)
-	finish_graph_dump_file (dump_base_name, ".bp");
       if (flow_dump)
 	finish_graph_dump_file (dump_base_name, ".flow");
       if (combine_dump)
@@ -3371,7 +3294,6 @@ compile_file (name)
       print_time ("gcse", gcse_time);
       print_time ("loop", loop_time);
       print_time ("cse2", cse2_time);
-      print_time ("branch-prob", branch_prob_time);
       print_time ("flow", flow_time);
       print_time ("combine", combine_time);
       print_time ("regmove", regmove_time);
@@ -3939,25 +3861,6 @@ rest_of_compilation (decl)
 	}
     }
 
-  if (profile_arc_flag || flag_test_coverage || flag_branch_probabilities)
-    {
-      if (branch_prob_dump)
-	open_dump_file (".bp", decl_printable_name (decl, 2));
-
-      TIMEVAR
-	(branch_prob_time,
-	 {
-	   branch_prob (insns, rtl_dump_file);
-	 });
-
-      if (branch_prob_dump)
-	{
-	  close_dump_file (print_rtl, insns);
-	  if (graph_dump_format != no_graph)
-	    print_rtl_graph_with_bb (dump_base_name, ".bp", insns);
-	}
-    }
-
   /* We are no longer anticipating cse in this function, at least.  */
 
   cse_not_expected = 1;
@@ -4471,13 +4374,6 @@ display_help ()
   
   printf ("  -Wid-clash-<num>        Warn if 2 identifiers have the same first <num> chars\n");
   printf ("  -Wlarger-than-<number>  Warn if an object is larger than <number> bytes\n");
-  printf ("  -p                      Enable function profiling\n");
-#if defined (BLOCK_PROFILER) || defined (FUNCTION_BLOCK_PROFILER)
-  printf ("  -a                      Enable block profiling \n");
-#endif  
-#if defined (BLOCK_PROFILER) || defined (FUNCTION_BLOCK_PROFILER) || defined FUNCTION_BLOCK_PROFILER_EXIT
-  printf ("  -ax                     Enable jump profiling \n");
-#endif  
   printf ("  -o <file>               Place output into <file> \n");
   printf ("  -G <number>             Put global and static data smaller than <number>\n");
   printf ("                           bytes into a special section (on some targets)\n");
@@ -4878,7 +4774,6 @@ main (argc, argv)
 		switch (*p++)
 		  {
  		  case 'a':
-		    branch_prob_dump = 1;
  		    combine_dump = 1;
 #ifdef DELAY_SLOTS
  		    dbr_sched_dump = 1;
@@ -4908,9 +4803,6 @@ main (argc, argv)
 		    break;
 		  case 'A':
 		    flag_debug_asm = 1;
-		    break;
-		  case 'b':
-		    branch_prob_dump = 1;
 		    break;
 		  case 'c':
 		    combine_dump = 1;
@@ -5148,24 +5040,15 @@ main (argc, argv)
 	    }
 	  else if (!strcmp (str, "p"))
 	    {
-	      profile_flag = 1;
+	      warning ("`-p' option (function profiling) not supported");
 	    }
 	  else if (!strcmp (str, "a"))
 	    {
-#if !defined (BLOCK_PROFILER) || !defined (FUNCTION_BLOCK_PROFILER)
 	      warning ("`-a' option (basic block profile) not supported");
-#else
-              profile_block_flag = (profile_block_flag < 2) ? 1 : 3;
-#endif
 	    }
 	  else if (!strcmp (str, "ax"))
 	    {
-#if !defined (FUNCTION_BLOCK_PROFILER_EXIT) || !defined (BLOCK_PROFILER) || !defined (FUNCTION_BLOCK_PROFILER)
 	      warning ("`-ax' option (jump profiling) not supported");
-#else
-	      profile_block_flag = (!profile_block_flag 
-	                               || profile_block_flag == 2) ? 2 : 3;
-#endif
 	    }
 	  else if (str[0] == 'g')
 	    {
@@ -5341,12 +5224,6 @@ main (argc, argv)
 #else
       exceptions_via_longjmp = 1;
 #endif
-    }
-
-  if (profile_block_flag == 3)
-    {
-      warning ("`-ax' and `-a' are conflicting options. `-a' ignored.");
-      profile_block_flag = 2;
     }
 
   /* Unrolling all loops implies that standard loop unrolling must also
