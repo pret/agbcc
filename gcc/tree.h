@@ -1233,11 +1233,6 @@ struct tree_type
    alternative would be passed.  */
 #define DECL_TRANSPARENT_UNION(NODE) (DECL_CHECK (NODE)->decl.transparent_union)
 
-/* Used in FUNCTION_DECLs to indicate that they should be run automatically
-   at the beginning or end of execution.  */
-#define DECL_STATIC_CONSTRUCTOR(NODE) (DECL_CHECK (NODE)->decl.static_ctor_flag)
-#define DECL_STATIC_DESTRUCTOR(NODE) (DECL_CHECK (NODE)->decl.static_dtor_flag)
-
 /* Used to indicate that this DECL represents a compiler-generated entity.  */
 #define DECL_ARTIFICIAL(NODE) (DECL_CHECK (NODE)->decl.artificial_flag)
 

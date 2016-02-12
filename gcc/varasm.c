@@ -49,10 +49,6 @@ Boston, MA 02111-1307, USA.  */
 #define TRAMPOLINE_ALIGNMENT FUNCTION_BOUNDARY
 #endif
 
-#ifndef ASM_STABS_OP
-#define ASM_STABS_OP ".stabs"
-#endif
-
 /* Define the prefix to use when check_memory_usage_flag is enable.  */
 #ifdef NO_DOLLAR_IN_LABEL
 #ifdef NO_DOT_IN_LABEL
@@ -854,83 +850,6 @@ assemble_asm (string)
   fprintf (asm_out_file, "\t%s\n", TREE_STRING_POINTER (string));
 }
 
-#if 0 /* This should no longer be needed, because
-	 flag_gnu_linker should be 0 on these systems,
-	 which should prevent any output
-	 if ASM_OUTPUT_CONSTRUCTOR and ASM_OUTPUT_DESTRUCTOR are absent.  */
-#ifndef ASM_OUTPUT_CONSTRUCTOR
-#define ASM_OUTPUT_CONSTRUCTOR(file, name)
-#endif
-#ifndef ASM_OUTPUT_DESTRUCTOR
-#define ASM_OUTPUT_DESTRUCTOR(file, name)
-#endif
-#endif /* 0 */
-
-/* Record an element in the table of global destructors.
-   How this is done depends on what sort of assembler and linker
-   are in use.
-
-   NAME should be the name of a global function to be called
-   at exit time.  This name is output using assemble_name.  */
-
-void
-assemble_destructor (name)
-     char *name;
-{
-#ifdef ASM_OUTPUT_DESTRUCTOR
-  ASM_OUTPUT_DESTRUCTOR (asm_out_file, name);
-#else
-  if (flag_gnu_linker)
-    {
-      /* Now tell GNU LD that this is part of the static destructor set.  */
-      /* This code works for any machine provided you use GNU as/ld.  */
-      fprintf (asm_out_file, "%s \"___DTOR_LIST__\",22,0,0,", ASM_STABS_OP);
-      assemble_name (asm_out_file, name);
-      fputc ('\n', asm_out_file);
-    }
-#endif
-}
-
-/* Likewise for global constructors.  */
-
-void
-assemble_constructor (name)
-     char *name;
-{
-#ifdef ASM_OUTPUT_CONSTRUCTOR
-  ASM_OUTPUT_CONSTRUCTOR (asm_out_file, name);
-#else
-  if (flag_gnu_linker)
-    {
-      /* Now tell GNU LD that this is part of the static constructor set.  */
-      /* This code works for any machine provided you use GNU as/ld.  */
-      fprintf (asm_out_file, "%s \"___CTOR_LIST__\",22,0,0,", ASM_STABS_OP);
-      assemble_name (asm_out_file, name);
-      fputc ('\n', asm_out_file);
-    }
-#endif
-}
-
-/* Likewise for entries we want to record for garbage collection.
-   Garbage collection is still under development.  */
-
-void
-assemble_gc_entry (name)
-     char *name;
-{
-#ifdef ASM_OUTPUT_GC_ENTRY
-  ASM_OUTPUT_GC_ENTRY (asm_out_file, name);
-#else
-  if (flag_gnu_linker)
-    {
-      /* Now tell GNU LD that this is part of the static constructor set.  */
-      fprintf (asm_out_file, "%s \"___PTR_LIST__\",22,0,0,", ASM_STABS_OP);
-      assemble_name (asm_out_file, name);
-      fputc ('\n', asm_out_file);
-    }
-#endif
-}
-
 /* CONSTANT_POOL_BEFORE_FUNCTION may be defined as an expression with
    a non-zero value if the constant pool should be output before the
    start of the function, or a zero value if the pool should output

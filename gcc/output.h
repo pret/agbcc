@@ -213,21 +213,6 @@ extern void assemble_alias		PROTO((tree, tree));
    for an `asm' keyword used between functions.  */
 extern void assemble_asm		PROTO((tree));
 
-/* Record an element in the table of global destructors.
-   How this is done depends on what sort of assembler and linker
-   are in use.
-
-   NAME should be the name of a global function to be called
-   at exit time.  This name is output using assemble_name.  */
-extern void assemble_destructor		PROTO((char *));
-
-/* Likewise for global constructors.  */
-extern void assemble_constructor	PROTO((char *));
-
-/* Likewise for entries we want to record for garbage collection.
-   Garbage collection is still under development.  */
-extern void assemble_gc_entry		PROTO((char *));
-
 /* Output assembler code for the constant pool of a function and associated
    with defining the name of the function.  DECL describes the function.
    NAME is the function's name.  For the constant pool, we use the current
@@ -479,13 +464,6 @@ extern int current_function_uses_const_pool;
 
 /* Language-specific reason why the current function cannot be made inline.  */
 extern char *current_function_cannot_inline;
-
-/* The line number of the beginning of the current function.
-   sdbout.c needs this so that it can output relative linenumbers.  */
-
-#ifdef SDB_DEBUGGING_INFO /* Avoid undef sym in certain broken linkers.  */
-extern int sdb_begin_function_line;
-#endif
 
 /* File in which assembler code is being written.  */
 

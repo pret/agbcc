@@ -388,8 +388,6 @@ init_attributes ()
   add_attribute (A_UNUSED, "unused", 0, 0, 0);
   add_attribute (A_CONST, "const", 0, 0, 1);
   add_attribute (A_T_UNION, "transparent_union", 0, 0, 0);
-  add_attribute (A_CONSTRUCTOR, "constructor", 0, 0, 1);
-  add_attribute (A_DESTRUCTOR, "destructor", 0, 0, 1);
   add_attribute (A_MODE, "mode", 1, 1, 1);
   add_attribute (A_SECTION, "section", 1, 1, 1);
   add_attribute (A_ALIGNED, "aligned", 0, 1, 0);
@@ -552,30 +550,6 @@ decl_attributes (node, attributes, prefix_attributes)
 		   && TREE_CODE (type) == UNION_TYPE
 		   && TYPE_MODE (type) == DECL_MODE (TYPE_FIELDS (type)))
 	    DECL_TRANSPARENT_UNION (decl) = 1;
-	  else
-	    warning ("`%s' attribute ignored", IDENTIFIER_POINTER (name));
-	  break;
-
-	case A_CONSTRUCTOR:
-	  if (TREE_CODE (decl) == FUNCTION_DECL
-	      && TREE_CODE (type) == FUNCTION_TYPE
-	      && decl_function_context (decl) == 0)
-	    {
-	      DECL_STATIC_CONSTRUCTOR (decl) = 1;
-	      TREE_USED (decl) = 1;
-	    }
-	  else
-	    warning ("`%s' attribute ignored", IDENTIFIER_POINTER (name));
-	  break;
-
-	case A_DESTRUCTOR:
-	  if (TREE_CODE (decl) == FUNCTION_DECL
-	      && TREE_CODE (type) == FUNCTION_TYPE
-	      && decl_function_context (decl) == 0)
-	    {
-	      DECL_STATIC_DESTRUCTOR (decl) = 1;
-	      TREE_USED (decl) = 1;
-	    }
 	  else
 	    warning ("`%s' attribute ignored", IDENTIFIER_POINTER (name));
 	  break;

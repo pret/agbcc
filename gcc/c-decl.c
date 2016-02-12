@@ -417,10 +417,6 @@ static int keep_next_if_subblocks;
 
 static struct binding_level *label_level_chain;
 
-/* Functions called automatically at the beginning and end of execution.  */
-
-tree static_ctors, static_dtors;
-
 /* Forward declarations.  */
 
 static struct binding_level * make_binding_level	PROTO((void));
@@ -1993,9 +1989,6 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
 
       if (TREE_CODE (newdecl) == FUNCTION_DECL)
 	{
-	  DECL_STATIC_CONSTRUCTOR(newdecl) |= DECL_STATIC_CONSTRUCTOR(olddecl);
-	  DECL_STATIC_DESTRUCTOR (newdecl) |= DECL_STATIC_DESTRUCTOR (olddecl);
-
 	  DECL_NO_INSTRUMENT_FUNCTION_ENTRY_EXIT (newdecl)
 	    |= DECL_NO_INSTRUMENT_FUNCTION_ENTRY_EXIT (olddecl);
 	  DECL_NO_CHECK_MEMORY_USAGE (newdecl)
@@ -7336,25 +7329,6 @@ finish_function (nested)
       if (DECL_INITIAL (fndecl) != 0)
 	DECL_INITIAL (fndecl) = error_mark_node;
       DECL_ARGUMENTS (fndecl) = 0;
-    }
-
-  if (DECL_STATIC_CONSTRUCTOR (fndecl))
-    {
-#ifndef ASM_OUTPUT_CONSTRUCTOR
-      if (! flag_gnu_linker)
-	static_ctors = perm_tree_cons (NULL_TREE, fndecl, static_ctors);
-      else
-#endif
-      assemble_constructor (IDENTIFIER_POINTER (DECL_NAME (fndecl)));
-    }
-  if (DECL_STATIC_DESTRUCTOR (fndecl))
-    {
-#ifndef ASM_OUTPUT_DESTRUCTOR
-      if (! flag_gnu_linker)
-	static_dtors = perm_tree_cons (NULL_TREE, fndecl, static_dtors);
-      else
-#endif
-      assemble_destructor (IDENTIFIER_POINTER (DECL_NAME (fndecl)));
     }
 
   if (! nested)
