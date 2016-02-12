@@ -73,26 +73,8 @@ Boston, MA 02111-1307, USA.  */
 extern struct obstack *rtl_obstack;
 /* END CYGNUS LOCAL */
 
-/* Get N_SLINE and N_SOL from stab.h if we can expect the file to exist.  */
-
-
-#ifdef DWARF_DEBUGGING_INFO
-#include "dwarfout.h"
-#endif
-
 #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
-#endif
-
-
-/* .stabd code for line number.  */
-#ifndef N_SLINE
-#define	N_SLINE	0x44
-#endif
-
-/* .stabs code for included file name.  */
-#ifndef N_SOL
-#define	N_SOL 0x84
 #endif
 
 #ifndef INT_TYPE_SIZE
@@ -1392,10 +1374,6 @@ final_end_function (first, file, optimize)
       app_on = 0;
     }
 
-#ifdef DWARF_DEBUGGING_INFO
-  if (write_symbols == DWARF_DEBUG)
-    dwarfout_end_function ();
-#endif
 
 #ifdef FUNCTION_EPILOGUE
   /* Finally, output the function epilogue:
@@ -1403,10 +1381,6 @@ final_end_function (first, file, optimize)
   FUNCTION_EPILOGUE (file, get_frame_size ());
 #endif
 
-#ifdef DWARF_DEBUGGING_INFO
-  if (write_symbols == DWARF_DEBUG)
-    dwarfout_end_epilogue ();
-#endif
 
 #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
   if (dwarf2out_do_frame ())
@@ -1609,12 +1583,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	break;
       if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_FUNCTION_BEG)
 	{
-#ifdef DWARF_DEBUGGING_INFO
-	  /* This outputs a marker where the function body starts, so it
-	     must be after the prologue.  */
-	  if (write_symbols == DWARF_DEBUG)
-	    dwarfout_begin_function ();
-#endif
 	  break;
 	}
       if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_DELETED)
@@ -1653,10 +1621,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 
 	  /* Output debugging info about the symbol-block beginning.  */
 
-#ifdef DWARF_DEBUGGING_INFO
-	  if (write_symbols == DWARF_DEBUG)
-	    dwarfout_begin_block (next_block_index);
-#endif
 #ifdef DWARF2_DEBUGGING_INFO
 	  if (write_symbols == DWARF2_DEBUG)
 	    dwarf2out_begin_block (next_block_index);
@@ -1678,10 +1642,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    abort ();
 
 	  /* CYGNUS LOCAL LRS */
-#ifdef DWARF_DEBUGGING_INFO
-	  if (write_symbols == DWARF_DEBUG)
-	    dwarfout_end_block (pending_blocks[block_depth].number);
-#endif
 #ifdef DWARF2_DEBUGGING_INFO
 	  if (write_symbols == DWARF2_DEBUG)
 	    dwarf2out_end_block (pending_blocks[block_depth].number);
@@ -1692,10 +1652,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	       && (debug_info_level == DINFO_LEVEL_NORMAL
 		   || debug_info_level == DINFO_LEVEL_VERBOSE))
 	{
-#ifdef DWARF_DEBUGGING_INFO
-          if (write_symbols == DWARF_DEBUG)
-            dwarfout_label (insn);
-#endif
 #ifdef DWARF2_DEBUGGING_INFO
           if (write_symbols == DWARF2_DEBUG)
             dwarf2out_label (insn);
@@ -1808,10 +1764,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
       FINAL_PRESCAN_INSN (insn, NULL_PTR, 0);
 #endif
 
-#ifdef DWARF_DEBUGGING_INFO
-      if (write_symbols == DWARF_DEBUG && LABEL_NAME (insn))
-	dwarfout_label (insn);
-#endif
 #ifdef DWARF2_DEBUGGING_INFO
       if (write_symbols == DWARF2_DEBUG && LABEL_NAME (insn))
 	dwarf2out_label (insn);
@@ -2416,10 +2368,6 @@ output_source_line (file, insn)
 
 
 
-#ifdef DWARF_DEBUGGING_INFO
-      if (write_symbols == DWARF_DEBUG)
-	dwarfout_line (filename, NOTE_LINE_NUMBER (insn));
-#endif
 
 #ifdef DWARF2_DEBUGGING_INFO
       if (write_symbols == DWARF2_DEBUG)

@@ -29,7 +29,6 @@ Boston, MA 02111-1307, USA.  */
 #include "config.h"
 #include "system.h"
 #include <setjmp.h>
-/* #include <stab.h> */
 #include "rtl.h"
 #include "tree.h"
 #include "flags.h"
@@ -42,15 +41,9 @@ Boston, MA 02111-1307, USA.  */
 #include "defaults.h"
 #include "real.h"
 #include "toplev.h"
-#include "dbxout.h"
-#include "sdbout.h"
-
 #include "obstack.h"
 #include "c-pragma.h"
 
-#ifdef XCOFF_DEBUGGING_INFO
-#include "xcoffout.h"
-#endif
 
 #ifndef TRAMPOLINE_ALIGNMENT
 #define TRAMPOLINE_ALIGNMENT FUNCTION_BOUNDARY
@@ -865,13 +858,11 @@ assemble_asm (string)
 	 flag_gnu_linker should be 0 on these systems,
 	 which should prevent any output
 	 if ASM_OUTPUT_CONSTRUCTOR and ASM_OUTPUT_DESTRUCTOR are absent.  */
-#if !(defined(DBX_DEBUGGING_INFO) && !defined(FASCIST_ASSEMBLER))
 #ifndef ASM_OUTPUT_CONSTRUCTOR
 #define ASM_OUTPUT_CONSTRUCTOR(file, name)
 #endif
 #ifndef ASM_OUTPUT_DESTRUCTOR
 #define ASM_OUTPUT_DESTRUCTOR(file, name)
-#endif
 #endif
 #endif /* 0 */
 
@@ -998,17 +989,7 @@ assemble_start_function (decl, fnname)
   ASM_OUTPUT_FUNCTION_PREFIX (asm_out_file, fnname);
 #endif
 
-#ifdef SDB_DEBUGGING_INFO
-  /* Output SDB definition of the function.  */
-  if (write_symbols == SDB_DEBUG)
-    sdbout_mark_begin_function ();
-#endif
 
-#ifdef DBX_DEBUGGING_INFO
-  /* Output DBX definition of the function.  */
-  if (write_symbols == DBX_DEBUG)
-    dbxout_begin_function (decl);
-#endif
 
   /* Make function name accessible from other files, if appropriate.  */
 
@@ -1294,19 +1275,6 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
 	return;
       TREE_ASM_WRITTEN (decl) = 1;
 
-#if defined (DBX_DEBUGGING_INFO) || defined (XCOFF_DEBUGGING_INFO)
-      /* File-scope global variables are output here.  */
-      if ((write_symbols == DBX_DEBUG || write_symbols == XCOFF_DEBUG)
-	   && top_level)
-	dbxout_symbol (decl, 0);
-#endif
-#ifdef SDB_DEBUGGING_INFO
-      if (write_symbols == SDB_DEBUG && top_level
-	  /* Leave initialized global vars for end of compilation;
-	     see comment in compile_file.  */
-	  && (TREE_PUBLIC (decl) == 0 || DECL_INITIAL (decl) == 0))
-	sdbout_symbol (decl, 0);
-#endif
 
       /* Don't output any DWARF debugging information for variables here.
 	 In the case of local variables, the information for them is output
@@ -1464,18 +1432,6 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
            (decl, "requested alignment for %s is greater than implemented alignment of %d.",rounded);
 #endif
        
-#ifdef DBX_DEBUGGING_INFO
-      /* File-scope global variables are output here.  */
-      if (write_symbols == DBX_DEBUG && top_level)
-	dbxout_symbol (decl, 0);
-#endif
-#ifdef SDB_DEBUGGING_INFO
-      if (write_symbols == SDB_DEBUG && top_level
-	  /* Leave initialized global vars for end of compilation;
-	     see comment in compile_file.  */
-	  && (TREE_PUBLIC (decl) == 0 || DECL_INITIAL (decl) == 0))
-	sdbout_symbol (decl, 0);
-#endif
 
       /* Don't output any DWARF debugging information for variables here.
 	 In the case of local variables, the information for them is output
@@ -1545,18 +1501,6 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
 
   /* Output the dbx info now that we have chosen the section.  */
 
-#ifdef DBX_DEBUGGING_INFO
-  /* File-scope global variables are output here.  */
-  if (write_symbols == DBX_DEBUG && top_level)
-    dbxout_symbol (decl, 0);
-#endif
-#ifdef SDB_DEBUGGING_INFO
-  if (write_symbols == SDB_DEBUG && top_level
-      /* Leave initialized global vars for end of compilation;
-	 see comment in compile_file.  */
-      && (TREE_PUBLIC (decl) == 0 || DECL_INITIAL (decl) == 0))
-    sdbout_symbol (decl, 0);
-#endif
 
   /* Don't output any DWARF debugging information for variables here.
      In the case of local variables, the information for them is output
@@ -1596,27 +1540,8 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
     }
 
  finish:
-#ifdef XCOFF_DEBUGGING_INFO
-  /* Unfortunately, the IBM assembler cannot handle stabx before the actual
-     declaration.  When something like ".stabx  "aa:S-2",aa,133,0" is emitted 
-     and `aa' hasn't been output yet, the assembler generates a stab entry with
-     a value of zero, in addition to creating an unnecessary external entry
-     for `aa'.  Hence, we must postpone dbxout_symbol to here at the end.  */
-
-  /* File-scope global variables are output here.  */
-  if (write_symbols == XCOFF_DEBUG && top_level)
-    {
-      saved_in_section = in_section;
-
-      dbxout_symbol (decl, 0);
-
-      if (in_section != saved_in_section)
-	variable_section (decl, reloc);
-    }
-#else
   /* There must be a statement after a label.  */
   ;
-#endif
 }
 
 /* Return 1 if type TYPE contains any pointers.  */

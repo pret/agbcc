@@ -1292,8 +1292,7 @@ range_finish (stream, first_insn, count, range_max_regno)
       rtx before;
       int new_scope_p = (write_symbols != NO_DEBUG	/* create new scope */
 			 && flag_live_range_scope	/* block for vars? */
-			 && (write_symbols != DBX_DEBUG
-			     || !LIVE_RANGE_GDBSTAB_P ()));
+            );
 
       after = range_start;
       before = range_end;

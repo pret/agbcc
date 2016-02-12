@@ -37,16 +37,8 @@ extern int range_max_unique;
 /* Allow copies from constant integers */
 #define LIVE_RANGE_COPYIN_CONST 0x4
 
-/* Default value for using GDB specific stabs to denote live ranges */
-#define LIVE_RANGE_GDB_DEFAULT 1
-
 /* Default value for creating scoping blocks for live ranges */
 #define LIVE_RANGE_SCOPE_DEFAULT 0
-
-/* Determine whether or not to use new style stabs for live range debugging.
-   Assumes that write_symbols == DBX_DEBUG has already been checked for.  */
-#define LIVE_RANGE_GDBSTAB_P() (use_gnu_debug_info_extensions		\
-				&& flag_live_range_gdb)
 
 /* Live range functions */
 #ifdef BUFSIZ
