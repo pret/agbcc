@@ -2615,9 +2615,6 @@ implicitly_declare (functionid)
      If flag_traditional is set, pushdecl does it top-level.  */
   pushdecl (decl);
 
-  /* This is a no-op in c-lang.c or something real in objc-actions.c.  */
-  maybe_objc_check_decl (decl);
-
   rest_of_decl_compilation (decl, NULL_PTR, 0, 0);
 
   if (mesg_implicit_function_declaration && implicit_warning)
@@ -4082,8 +4079,6 @@ finish_decl (decl, init, asmspec_tree)
 	{
 	  push_obstacks_nochange ();
 	  end_temporary_allocation ();
-	  /* This is a no-op in c-lang.c or something real in objc-actions.c.  */
-	  maybe_objc_check_decl (decl);
 	  rest_of_decl_compilation (decl, asmspec,
 				    (DECL_CONTEXT (decl) == 0
 				     || TREE_ASM_WRITTEN (decl)),
@@ -4092,8 +4087,6 @@ finish_decl (decl, init, asmspec_tree)
 	}
       else
 	{
-	  /* This is a no-op in c-lang.c or something real in objc-actions.c.  */
-	  maybe_objc_check_decl (decl);
 	  rest_of_decl_compilation (decl, asmspec, DECL_CONTEXT (decl) == 0,
 				    0);
 	}
@@ -4119,8 +4112,6 @@ finish_decl (decl, init, asmspec_tree)
 
   if (TREE_CODE (decl) == TYPE_DECL)
     {
-      /* This is a no-op in c-lang.c or something real in objc-actions.c.  */
-      maybe_objc_check_decl (decl);
       rest_of_decl_compilation (decl, NULL_PTR, DECL_CONTEXT (decl) == 0,
 				0);
     }
@@ -5781,7 +5772,6 @@ grokfield (filename, line, declarator, declspecs, width)
   finish_decl (value, NULL_TREE, NULL_TREE);
   DECL_INITIAL (value) = width;
 
-  maybe_objc_check_decl (value);
   return value;
 }
 
@@ -6106,8 +6096,6 @@ finish_struct (t, fieldlist, attributes)
 	      && TREE_CODE (decl) != TYPE_DECL)
 	    {
 	      layout_decl (decl, 0);
-	      /* This is a no-op in c-lang.c or something real in objc-actions.c.  */
-	      maybe_objc_check_decl (decl);
 	      rest_of_decl_compilation (decl, NULL_PTR, toplevel, 0);
 	      if (! toplevel)
 		expand_decl (decl);

@@ -508,11 +508,6 @@ comptypes (type1, type2)
         break;
       }
 
-    case RECORD_TYPE:
-      if (maybe_objc_comptypes (t1, t2, 0) == 1)
-	val = 1;
-      break;
-
     default:
       break;
     }
@@ -527,10 +522,6 @@ comp_target_types (ttl, ttr)
      tree ttl, ttr;
 {
   int val;
-
-  /* Give maybe_objc_comptypes a crack at letting these types through.  */
-  if ((val = maybe_objc_comptypes (ttl, ttr, 1)) >= 0)
-    return val;
 
   val = comptypes (TYPE_MAIN_VARIANT (TREE_TYPE (ttl)),
 		   TYPE_MAIN_VARIANT (TREE_TYPE (ttr)));
@@ -4062,9 +4053,6 @@ convert_for_assignment (type, rhs, errtype, fundecl, funname, parmnum)
   if (TYPE_MAIN_VARIANT (type) == TYPE_MAIN_VARIANT (rhstype))
     {
       overflow_warning (rhs);
-      /* Check for Objective-C protocols.  This will issue a warning if
-	 there are protocol violations.  No need to use the return value.  */
-      maybe_objc_comptypes (type, rhstype, 0);
       return rhs;
     }
 
@@ -4266,14 +4254,8 @@ convert_for_assignment (type, rhs, errtype, fundecl, funname, parmnum)
     {
       if (funname)
  	{
- 	  tree selector = maybe_building_objc_message_expr ();
- 
- 	  if (selector && parmnum > 2)
- 	    error ("incompatible type for argument %d of `%s'",
-		   parmnum - 2, IDENTIFIER_POINTER (selector));
- 	  else
-	    error ("incompatible type for argument %d of `%s'",
-		   parmnum, IDENTIFIER_POINTER (funname));
+ 	  error ("incompatible type for argument %d of `%s'",
+		     parmnum, IDENTIFIER_POINTER (funname));
 	}
       else
 	error ("incompatible type for argument %d of indirect function call",
@@ -4288,8 +4270,7 @@ convert_for_assignment (type, rhs, errtype, fundecl, funname, parmnum)
 /* Print a warning using MSG.
    It gets OPNAME as its one parameter.
    If OPNAME is null, it is replaced by "passing arg ARGNUM of `FUNCTION'".
-   FUNCTION and ARGNUM are handled specially if we are building an
-   Objective-C selector.  */
+*/
 
 static void
 warn_for_assignment (msg, opname, function, argnum)
@@ -4303,13 +4284,6 @@ warn_for_assignment (msg, opname, function, argnum)
 
   if (opname == 0)
     {
-      tree selector = maybe_building_objc_message_expr ();
-      
-      if (selector && argnum > 2)
-	{
-	  function = selector;
-	  argnum -= 2;
-	}
       if (function)
 	{
 	  /* Function name is known; supply it.  */

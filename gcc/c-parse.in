@@ -271,7 +271,6 @@ extern void yyprint			PROTO ((FILE *, int, YYSTYPE));
 program: /* empty */
 		{ if (pedantic)
 		    pedwarn ("ANSI C forbids an empty source file");
-		  finish_file ();
 		}
 	| extdefs
 		{
@@ -279,7 +278,6 @@ program: /* empty */
 		     get us back to the global binding level.  */
 		  while (! global_bindings_p ())
 		    poplevel (0, 0, 0);
-		  finish_file ();
 		}
 	;
 

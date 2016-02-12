@@ -2796,6 +2796,13 @@ unsigned char *yy_cur, *yy_lim;
 #define GETC() (yy_cur < yy_lim ? *yy_cur++ : yy_get_token ())
 #define UNGETC(c) ((c), yy_cur--)
 
+void cpplib_init()
+{
+  cpp_reader_init (&parse_in);
+  parse_in.opts = &parse_options;
+  cpp_options_init (&parse_options);
+}
+
 int
 yy_get_token ()
 {

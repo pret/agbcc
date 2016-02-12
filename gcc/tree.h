@@ -2036,31 +2036,16 @@ extern void dwarf2out_end_epilogue	PROTO((void));
 
 /* The language front-end must define these functions.  */
 
-/* Function of no arguments for initializing options.  */
-extern void lang_init_options			PROTO((void));
-
 /* Function of no arguments for initializing lexical scanning.  */
 extern void init_lex				PROTO((void));
 /* Function of no arguments for initializing the symbol table.  */
 extern void init_decl_processing		PROTO((void));
-
-/* Functions called with no arguments at the beginning and end or processing
-   the input source file.  */
-extern void lang_init				PROTO((void));
-extern void lang_finish				PROTO((void));
-
-/* Function to identify which front-end produced the output file. */
-extern char *lang_identify			PROTO((void));
 
 /* Function to replace the DECL_LANG_SPECIFIC field of a DECL with a copy.  */
 extern void copy_lang_decl			PROTO((tree));
 
 /* Function called with no arguments to parse and compile the input.  */
 extern int yyparse				PROTO((void));
-/* Function called with option as argument
-   to decode options starting with -f or -W or +.
-   It should return nonzero if it handles the option.  */
-extern int lang_decode_option			PROTO((int, char **));
 
 /* Functions for processing symbol declarations.  */
 /* Function to enter a new lexical scope.
@@ -2229,9 +2214,6 @@ extern struct rtx_def *emit_line_note_force	PROTO ((char *, int));
 extern int mark_addressable		PROTO ((tree));
 extern void incomplete_type_error	PROTO ((tree, tree));
 
-/* In c-lang.c */
-extern void print_lang_statistics	PROTO ((void));
-
 /* In c-common.c */
 extern tree truthvalue_conversion	PROTO ((tree));
 extern int min_precision		PROTO ((tree, int));
@@ -2297,9 +2279,6 @@ extern tree case_index_expr_type	PROTO ((void));
 extern HOST_WIDE_INT all_cases_count	PROTO ((tree, int *));
 extern void check_for_full_enumeration_handling PROTO ((tree));
 extern void declare_nonlocal_label	PROTO ((tree));
-#ifdef BUFSIZ
-extern void lang_print_xnode 		PROTO ((FILE *, tree, int));
-#endif
 
 
 /* If KIND=='I', return a suitable global initializer (constructor) name.

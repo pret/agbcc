@@ -4749,8 +4749,7 @@ print_obstack_statistics (str, o)
 	   str, n_alloc, n_chunks);
 }
 
-/* Print debugging information about tree nodes generated during the compile,
-   and any language-specific information.  */
+/* Print debugging information about tree nodes generated during the compile. */
 
 void
 dump_tree_statistics ()
@@ -4785,7 +4784,6 @@ dump_tree_statistics ()
   print_obstack_statistics ("momentary_obstack", &momentary_obstack);
   print_obstack_statistics ("temp_decl_obstack", &temp_decl_obstack);
   print_inline_obstack_statistics ();
-  print_lang_statistics ();
 }
 
 #define FILE_FUNCTION_PREFIX_LEN 9

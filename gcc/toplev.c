@@ -82,6 +82,8 @@ extern char *version_string, *language_string;
 extern int size_directive_output;
 extern tree last_assemble_variable_decl;
 
+extern void cpplib_init();
+
 extern char *init_parse PVPROTO((char *));
 extern void finish_parse ();
 extern void init_decl_processing ();
@@ -135,9 +137,6 @@ static void vsorry PROTO((char *, va_list));
 static void v_really_sorry PROTO((char *, va_list)) ATTRIBUTE_NORETURN;
 static void float_signal PROTO((int)) ATTRIBUTE_NORETURN;
 static void pipe_closed PROTO((int)) ATTRIBUTE_NORETURN;
-#ifdef ASM_IDENTIFY_LANGUAGE
-static void output_lang_identify PROTO((FILE *));
-#endif
 static void open_dump_file PROTO((char *, char *));
 static void close_dump_file PROTO((void (*) (FILE *, rtx), rtx));
 static void dump_rtl PROTO((char *, tree, void (*) (FILE *, rtx), rtx));
@@ -1029,28 +1028,7 @@ documented_lang_options[] =
   { "-nostdinc", "" },
   { "-nostdinc++", "" },
   { "-trigraphs", "" },
-  { "-undef", "" },
-  
-#define DEFINE_LANG_NAME(NAME) { NULL, NAME },
-  
-  /* These are for obj c.  */
-  DEFINE_LANG_NAME ("Objective C")
-  
-  { "-lang-objc", "" },
-  { "-gen-decls", "Dump decls to a .decl file" },
-  { "-fgnu-runtime", "Generate code for GNU runtime envrionment" },
-  { "-fno-gnu-runtime", "" },
-  { "-fnext-runtime", "Generate code for NeXT runtime environment" },
-  { "-fno-next-runtime", "" },
-  { "-Wselector", "Warn if a selector has multiple methods" },
-  { "-Wno-selector", "" },
-  { "-Wprotocol", "" },
-  { "-Wno-protocol", "Do not warn if inherited methods are unimplemented"},
-  { "-print-objc-runtime-info",
-    "Generate C header of platform specific features" },
-
-#include "options.h"
-  
+  { "-undef", "" }
 };
 
 /* Here is a table, controlled by the tm.h file, listing each -m switch
@@ -2372,19 +2350,6 @@ output_file_directive (asm_file, input_name)
 #endif
 #endif
 }
-
-#ifdef ASM_IDENTIFY_LANGUAGE
-/* Routine to build language identifier for object file.  */
-static void
-output_lang_identify (asm_out_file)
-     FILE *asm_out_file;
-{
-  int len = strlen (lang_identify ()) + sizeof ("__gnu_compiled_") + 1;
-  char *s = (char *) alloca (len);
-  sprintf (s, "__gnu_compiled_%s", lang_identify ());
-  ASM_OUTPUT_LABEL (asm_out_file, s);
-}
-#endif
 
 /* Routine to open a dump file.  */
 static void
@@ -2721,9 +2686,13 @@ compile_file (name)
   input_file_stack->next = 0;
   input_file_stack->name = input_filename;
 
-  /* Perform language-specific initialization.
-     This may set main_input_filename.  */
-  lang_init ();
+  /* This may set main_input_filename.  */
+#if !USE_CPPLIB
+  ungetc (check_newline (), finput);
+#else
+  check_newline ();
+  yy_cur--;
+#endif
 
   /* If the input doesn't start with a #line, use the input name
      as the official input file name.  */
@@ -3002,9 +2971,6 @@ compile_file (name)
 
   weak_finish ();
 
-  /* Do dbx symbols */
-
-
 #ifdef DWARF2_UNWIND_INFO
   if (dwarf2out_do_frame ())
     dwarf2out_frame_finish ();
@@ -3026,10 +2992,7 @@ compile_file (name)
   ASM_FILE_END (asm_out_file);
 #endif
 
-
-  /* Language-specific end of compilation actions.  */
  finish_syntax:
-  lang_finish ();
 
   /* Close the dump files.  */
 
@@ -4406,8 +4369,9 @@ main (argc, argv)
   flag_short_enums = DEFAULT_SHORT_ENUMS;
 #endif
 
-  /* Perform language-specific options intialization.  */
-  lang_init_options ();
+#if USE_CPPLIB
+    cpplib_init();
+#endif
 
   /* Scan to see what optimization level has been specified.  That will
      determine the default value of many flags.  */
@@ -4517,9 +4481,7 @@ main (argc, argv)
       
       if (j != (size_t)-1)
 	{
-	  /* If the option is valid for *some* language,
-	     treat it as valid even if this language doesn't understand it.  */
-	  int strings_processed = lang_decode_option (argc - i, argv + i);
+	  int strings_processed = c_decode_option (argc - i, argv + i);
 	  
 	  if (!strcmp (argv[i], "--help"))
 	    {

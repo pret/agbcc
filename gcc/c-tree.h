@@ -160,18 +160,7 @@ struct lang_type
 /* In a VAR_DECL for an iterator, means we are within
    an explicit loop over that iterator.  */
 #define ITERATOR_BOUND_P(NODE) ((NODE)->common.readonly_flag)
-
-/* in c-lang.c and objc-act.c */
-extern tree lookup_interface			PROTO((tree));
-extern tree is_class_name			PROTO((tree));
-extern void maybe_objc_check_decl		PROTO((tree));
-extern void finish_file				PROTO((void));
-extern int maybe_objc_comptypes                 PROTO((tree, tree, int));
-extern tree maybe_building_objc_message_expr    PROTO((void));
-extern tree maybe_objc_method_name		PROTO((tree));
-extern int recognize_objc_keyword		PROTO((void));
-extern tree build_objc_string			PROTO((int, char *));
-
+
 /* in c-aux-info.c */
 extern void gen_aux_info_record                 PROTO((tree, int, int, int));
 
@@ -549,10 +538,6 @@ extern int warn_long_long;
 /* Nonzero means we are reading code that came from a system header file.  */
 
 extern int system_header_p;
-
-/* Nonzero enables objc features.  */
-
-extern int doing_objc_thang;
 
 /* In c-decl.c */
 extern void finish_incomplete_decl PROTO((tree));

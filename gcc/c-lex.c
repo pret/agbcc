@@ -75,10 +75,6 @@ extern int yy_get_token ();
    used in a context which makes it a reference to a variable.  */
 tree lastiddecl;
 
-/* Nonzero enables objc features.  */
-
-int doing_objc_thang;
-
 extern int yydebug;
 
 /* File used for outputting assembler code.  */
@@ -97,8 +93,7 @@ extern FILE *asm_out_file;
 
 static int maxtoken;		/* Current nominal length of token buffer.  */
 char *token_buffer;	/* Pointer to token buffer.
-			   Actual allocated length is maxtoken + 2.
-			   This is not static because objc-parse.y uses it.  */
+			   Actual allocated length is maxtoken + 2. */
 
 static int indent_level = 0;        /* Number of { minus number of }. */
 
@@ -272,8 +267,8 @@ init_lex ()
   do { struct resword *s = is_reserved_word (STRING, sizeof (STRING) - 1); \
        if (s) s->name = ""; } while (0)
 
-  if (! doing_objc_thang)
-    UNSET_RESERVED_WORD ("id");
+
+  UNSET_RESERVED_WORD ("id");
 
   if (flag_traditional)
     {
@@ -1094,7 +1089,6 @@ yylex ()
   register char *p;
   register int value;
   int wide_flag = 0;
-  int objc_flag = 0;
 
 #if !USE_CPPLIB
   if (nextchar >= 0)
@@ -1160,23 +1154,8 @@ yylex ()
       goto letter;
 
     case '@':
-      if (!doing_objc_thang)
-	{
-	  value = c;
-	  break;
-	}
-      else
-	{
-	  /* '@' may start a constant string object.  */
-	  register int c = GETC ();
-	  if (c == '"')
-	    {
-	      objc_flag = 1;
-	      goto string_constant;
-	    }
-	  UNGETC (c);
-	  /* Fall through to treat '@' as the start of an identifier.  */
-	}
+      value = c;
+      break;
 
     case 'A':  case 'B':  case 'C':  case 'D':  case 'E':
     case 'F':  case 'G':  case 'H':  case 'I':  case 'J':
@@ -1194,11 +1173,9 @@ yylex ()
     case '$':
     letter:
       p = token_buffer;
-      while (ISALNUM (c) || c == '_' || c == '$' || c == '@')
+      while (ISALNUM (c) || c == '_' || c == '$')
 	{
 	  /* Make sure this char really belongs in an identifier.  */
-	  if (c == '@' && ! doing_objc_thang)
-	    break;
 	  if (c == '$')
 	    {
 	      if (! dollars_in_ident)
@@ -1234,16 +1211,6 @@ yylex ()
 	    if (ptr->rid)
 	      yylval.ttype = ridpointers[(int) ptr->rid];
 	    value = (int) ptr->token;
-
-	    /* Only return OBJECTNAME if it is a typedef.  */
-	    if (doing_objc_thang && value == OBJECTNAME)
-	      {
-		lastiddecl = lookup_name(yylval.ttype);
-
-		if (lastiddecl == NULL_TREE
-		    || TREE_CODE (lastiddecl) != TYPE_DECL)
-		  value = IDENTIFIER;
-	      }
 
 	    /* Even if we decided to recognize asm, still perhaps warn.  */
 	    if (pedantic
@@ -1284,16 +1251,6 @@ yylex ()
 	      yylval.ttype = build_string (TREE_STRING_LENGTH (stringval),
 					   TREE_STRING_POINTER (stringval));
 	      value = STRING;
-	    }
-          else if (doing_objc_thang)
-            {
-	      tree objc_interface_decl = is_class_name (yylval.ttype);
-
-	      if (objc_interface_decl)
-		{
-		  value = CLASSNAME;
-		  yylval.ttype = objc_interface_decl;
-		}
 	    }
 	}
 
@@ -2138,14 +2095,6 @@ yylex ()
 					 token_buffer + 1);
 	    TREE_TYPE (yylval.ttype) = wchar_array_type_node;
 	    value = STRING;
-	  }
-	else if (objc_flag)
-	  {
-	    /* Return an Objective-C @"..." constant string object.  */
-	    yylval.ttype = build_objc_string (p - (token_buffer + 1),
-					      token_buffer + 1);
-	    TREE_TYPE (yylval.ttype) = char_array_type_node;
-	    value = OBJC_STRING;
 	  }
 	else
 	  {
