@@ -141,22 +141,8 @@ INSTALL_HEADERS_DIR = @build_install_headers_dir@
 # Header files that are made available under the same name
 # to programs compiled with GCC.
 USER_H = $(srcdir)/ginclude/stdarg.h $(srcdir)/ginclude/stddef.h \
-    $(srcdir)/ginclude/varargs.h $(srcdir)/ginclude/va-alpha.h \
-    $(srcdir)/ginclude/va-h8300.h $(srcdir)/ginclude/va-i860.h \
-    $(srcdir)/ginclude/va-i960.h $(srcdir)/ginclude/va-mips.h \
-    $(srcdir)/ginclude/va-m88k.h $(srcdir)/ginclude/va-mn10200.h \
-    $(srcdir)/ginclude/va-mn10300.h $(srcdir)/ginclude/va-pa.h \
-    $(srcdir)/ginclude/va-pyr.h $(srcdir)/ginclude/va-sparc.h \
-    $(srcdir)/ginclude/va-clipper.h $(srcdir)/ginclude/va-spur.h \
-    $(srcdir)/ginclude/va-m32r.h $(srcdir)/ginclude/va-sh.h \
-    $(srcdir)/ginclude/va-v850.h $(srcdir)/ginclude/va-arc.h \
-    $(srcdir)/ginclude/iso646.h $(srcdir)/ginclude/va-ppc.h \
-    $(CYGNUS-LOCAL-d10v) $(srcdir)/ginclude/va-d10v.h \
-    $(CYGNUS-LOCAL-fr30) $(srcdir)/ginclude/va-fr30.h \
-    $(CYGNUS-LOCAL-d30v) $(srcdir)/ginclude/va-d30v.h \
-    $(srcdir)/ginclude/va-c4x.h $(EXTRA_HEADERS) $(LANG_EXTRA_HEADERS) \
-    $(srcdir)/ginclude/proto.h $(srcdir)/ginclude/stdbool.h \
-    $(srcdir)/ginclude/limits.h
+    $(srcdir)/ginclude/iso646.h $(srcdir)/ginclude/stdbool.h \
+    $(srcdir)/ginclude/limits.h $(srcdir)/ginclude/float.h
 
 # Target to use whe installing assert.h.  Some systems may
 # want to set this empty.
@@ -374,10 +360,6 @@ LIB1FUNCS_EXTRA =
 # List of extra C and assembler files to add to libgcc2.a.
 # Assembler files should have names ending in `.asm'.
 LIB2FUNCS_EXTRA = 
-
-# We do not try to build float.h anymore.  Let configure select the
-# appropriate pre-built float.h file for the target.
-FLOAT_H=@float_h_file@
 
 # Program to convert libraries.
 LIBCONVERT = 
@@ -769,14 +751,14 @@ all.internal: start.encap rest.encap
 # This is what to compile if making a cross-compiler.
 # Note that we can compile enquire using the cross-compiler just built,
 # although we can't run it on this machine.
-all.cross: native gcc-cross specs stmp-headers $(LIBGCC) \
+all.cross: native gcc-cross specs $(LIBGCC) \
 	$(LIBGCC1_TEST) lang.all.cross
 # This is what to compile if making gcc with a cross-compiler.
 all.build: native xgcc$(exeext) lang.all.build
 # This is what must be made before installing GCC and converting libraries.
 start.encap: native xgcc$(exeext) specs $(LIBGCC1) lang.start.encap
 # These can't be made until after GCC can run.
-rest.encap: stmp-headers $(LIBGCC) lang.rest.encap
+rest.encap: $(LIBGCC) lang.rest.encap
 # This is what is made with the host's compiler
 # whether making a cross compiler or not.
 native: config.status auto-host.h cpp$(exeext) $(LANGUAGES) \
@@ -1843,8 +1825,7 @@ SYSCALLS.c.X: $(srcdir)/sys-types.h $(srcdir)/sys-protos.h $(GCC_PASSES) \
 # s-* so that mostlyclean does not force the include directory to
 # be rebuilt.
 
-# Build the include directory including float.h (which no longer depends upon
-# enquire).
+# Build the include directory
 stmp-int-hdrs: $(USER_H)
 # Copy in the headers provided with gcc.
 	rm -rf include
@@ -1856,15 +1837,6 @@ stmp-int-hdrs: $(USER_H)
 	    chmod a+r include/$$realfile; \
 	  fi; \
 	done
-	rm -f include/float.h
-	if [ x$(FLOAT_H) != xMakefile.in ]; then \
-	  cp $(srcdir)/config/$(FLOAT_H) include/float.h && \
-	  chmod a+r include/float.h; \
-	fi
-
-# Now that float.h no longer depends upon enquire, this is actually a no-op.
-stmp-headers:
-	touch $@
 
 # Remake the info files.
 # CYGNUS LOCAL: built in build directory
@@ -1937,7 +1909,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f tmplibgcc* tmpcopy libgcc1-test
 	for name in $(LIB1FUNCS); do rm -f $${name}.c; done
 # Delete other built files.
-	-rm -f t-float.h-cross xsys-protos.hT fp-bit.c dp-bit.c
+	-rm -f xsys-protos.hT fp-bit.c dp-bit.c
 # Delete the stamp and temporary files.
 	-rm -f s-* tmp-* stamp-* stmp-*
 	-rm -f */stamp-* */tmp-*
@@ -1949,7 +1921,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f */*.tree */*.loop */*.dbr */*.jump2 */*.sched */*.cse2
 	-rm -f */*.sched2 */*.stack */*.regmove */*.gcse
 # Delete some files made during installation.
-	-rm -f specs float.h-* enquire SYSCALLS.c.X SYSCALLS.c
+	-rm -f specs enquire SYSCALLS.c.X SYSCALLS.c
 	-rm -f collect mips-tfile mips-tdump alloca.s
 # CYGNUS LOCAL: binary installation
 # Delete unwanted output files from TeX.
@@ -2008,7 +1980,6 @@ distclean: clean lang.distclean
 	-rm -f */stage1 */stage2 */stage3 */stage4 */include
 	-rm -f c-parse.output
 	-rm -f *.asm
-	-rm -f float.h
 	-rm -f site.exp site.bak testsuite/site.exp testsuite/site.bak
 	-rm -f testsuite/{gcc,g++}.{log,sum}
 
@@ -2067,23 +2038,6 @@ install-normal: install-common $(INSTALL_HEADERS) $(INSTALL_LIBGCC) \
 # gcc together by hand.
 install-build: force
 	@echo You have to install gcc on your target machine by hand.
-
-# Run this on the target machine
-# to finish installation of cross compiler.
-# This is not used anymore now that float.h does not depend on enquire.
-install-cross-rest: install-float-h-cross
-
-# Install float.h for cross compiler.
-# Run this on the target machine!
-# This is not used anymore now that float.h does not depend on enquire.
-install-float-h-cross: installdirs
-#	if [ -f enquire ] ; then true; else false; fi
-# Note: don't use -.  We should fail right away if enquire was not made.
-	./enquire -f > $(tmpdir)/float.h
-	-rm -f $(libsubdir)/include/float.h
-	$(INSTALL_DATA) $(tmpdir)/float.h $(libsubdir)/include/float.h
-	-rm -f $(tmpdir)/float.h
-	chmod a-x $(libsubdir)/include/float.h
 
 # Create the installation directories.
 installdirs:
@@ -2220,7 +2174,7 @@ install-include-dir: installdirs
 	-chmod a+rx $(libsubdir)/include
 
 # Install the include directory using tar.
-install-headers-tar: stmp-headers $(STMP_FIXPROTO) install-include-dir
+install-headers-tar: $(STMP_FIXPROTO) install-include-dir
 	(cd include; \
 	 tar -cf - .; exit 0) | (cd $(libsubdir)/include; tar $(TAROUTOPTS) - )
 # /bin/sh on some systems returns the status of the first tar,
@@ -2228,7 +2182,7 @@ install-headers-tar: stmp-headers $(STMP_FIXPROTO) install-include-dir
 # So use `exit 0' to ignore its exit status.
 
 # Install the include directory using cpio.
-install-headers-cpio: stmp-headers $(STMP_FIXPROTO) install-include-dir
+install-headers-cpio: $(STMP_FIXPROTO) install-include-dir
 	(cd include; find . -print) | (cd include; cpio -pdum $(libsubdir)/include)
 
 # Put assert.h where it won't override GNU libc's assert.h.
@@ -2681,57 +2635,3 @@ risky-stage4: stage4
 .PHONY: risky-stage1 risky-stage2 risky-stage3 risky-stage4
 
 force:
-
-# ---
-# The enquire rules are still useful for building new float-anything.h.
-# Special flags for compiling enquire.
-# We disable optimization to make floating point more reliable.
-ENQUIRE_CFLAGS = -DNO_MEM -DNO_LONG_DOUBLE_IO -O0
-ENQUIRE_LDFLAGS = $(LDFLAGS)
-
-# Enquire target (This is a variable so that a target can choose not to
-# build it.)
-ENQUIRE = enquire
-
-# Test to see whether <float.h> exists in the system header files,
-# and is not derived from GCC.
-FLOAT_H_TEST = \
-  [ -f $(SYSTEM_HEADER_DIR)/float.h ] && \
-  if grep 'ifndef _FLOAT_H___' $(SYSTEM_HEADER_DIR)/float.h >/dev/null; \
-  then false; \
-  else :; fi
-# We pretend to not having a usable <float.h>, hence disable the FLOAT_H_TEST
-# to ensure, we're emitting a full blown <float.h> ourselves.
-FLOAT_H_TEST = false
-
-# Used to compile enquire with standard cc, but have forgotten why.
-# Let's try with GCC.
-enquire: enquire.o $(GCC_PARTS)
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(ENQUIRE_LDFLAGS) enquire.o -o $@
-enquire.o: $(srcdir)/enquire.c $(GCC_PASSES) stmp-int-hdrs
-	if $(FLOAT_H_TEST); then \
-	  rm -f include/float.h; \
-	  SYS_FLOAT_H_WRAP=1; \
-	else :; \
-	  SYS_FLOAT_H_WRAP=0; \
-	fi; \
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(ALL_CPPFLAGS) $(ENQUIRE_CFLAGS) \
-	  -DSYS_FLOAT_H_WRAP=$$SYS_FLOAT_H_WRAP \
-	  -I. -c $(srcdir)/enquire.c
-
-# Create float.h source for the native machine.
-# Make it empty if we can use the system float.h without changes.
-float.h-nat: enquire
-	-./enquire -f > tmp-float.h
-	grep '#define [^_]' tmp-float.h >/dev/null || true > tmp-float.h
-	mv tmp-float.h float.h-nat
-
-# Create a dummy float.h source for a cross-compiler.
-# ??? This isn't used anymore.  Should we create config/float-unkn.h
-# and make that the default float_format in configure?
-float.h-cross:
-	echo "#ifndef	__GCC_FLOAT_NOT_NEEDED" > t-float.h-cross
-	echo "#error float.h values not known for cross-compiler" >> t-float.h-cross
-	echo "#endif" >> t-float.h-cross
-	mv t-float.h-cross float.h-cross
-
