@@ -79,8 +79,7 @@ print_node_brief (file, prefix, node, indent)
      name if any.  */
   if (indent > 0)
     fprintf (file, " ");
-  fprintf (file, "%s <%s ", prefix, tree_code_name[(int) TREE_CODE (node)]);
-  fprintf (file, HOST_PTR_PRINTF, (char *) node);
+  fprintf (file, "%s <%s %p", prefix, tree_code_name[(int) TREE_CODE (node)], (char *) node);
 
   if (class == 'd')
     {
@@ -236,8 +235,7 @@ print_node (file, prefix, node, indent)
   indent_to (file, indent);
 
   /* Print the slot this node is in, and its code, and address.  */
-  fprintf (file, "%s <%s ", prefix, tree_code_name[(int) TREE_CODE (node)]);
-  fprintf (file, HOST_PTR_PRINTF, (char *) node);
+  fprintf (file, "%s <%s %p", prefix, tree_code_name[(int) TREE_CODE (node)], (char *) node);
 
   /* Print the name, if any.  */
   if (class == 'd')
@@ -433,9 +431,7 @@ print_node (file, prefix, node, indent)
 	    }
 	  else if (TREE_CODE (node) == FUNCTION_DECL)
 	    {
-	      fprintf (file, "saved-insns ");
-	      fprintf (file, HOST_PTR_PRINTF,
- 		       (char *) DECL_SAVED_INSNS (node));
+	      fprintf (file, "saved-insns %p", (char *) DECL_SAVED_INSNS (node));
 	    }
 	}
 

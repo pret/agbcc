@@ -3,22 +3,6 @@
 #include "config.h"
 #include "system.h"
 
-/* Virtually every UN*X system now in common use (except for pre-4.3-tahoe
-   BSD systems) now provides getcwd as called for by POSIX.  Allow for
-   the few exceptions to the general rule here.  */
-
-#if !(defined (POSIX) || defined (USG) ) || defined (HAVE_GETWD)
-#define getcwd(buf,len) getwd(buf)
-#ifdef MAXPATHLEN
-#define GUESSPATHLEN (MAXPATHLEN + 1)
-#else
-#define GUESSPATHLEN 100
-#endif
-#else /* (defined (USG)) */
-/* We actually use this as a starting point, not a limit.  */
-#define GUESSPATHLEN 100
-#endif /* (defined (USG)) */
-
 #if !( defined(_WIN32) && !defined(__CYGWIN__))
 
 /* Get the working directory.  Use the PWD environment variable if it's
@@ -33,32 +17,33 @@ getpwd ()
   static int failure_errno;
 
   char *p = pwd;
-  size_t s;
+  size_t guessed_len;
   struct stat dotstat, pwdstat;
 
   if (!p && !(errno = failure_errno))
     {
-      if (! ((p = getenv ("PWD")) != 0
+      int env_ok = ((p = getenv ("PWD")) != 0
 	     && *p == '/'
 	     && stat (p, &pwdstat) == 0
 	     && stat (".", &dotstat) == 0
 	     && dotstat.st_ino == pwdstat.st_ino
-	     && dotstat.st_dev == pwdstat.st_dev))
+	     && dotstat.st_dev == pwdstat.st_dev);
 
-	/* The shortcut didn't work.  Try the slow, ``sure'' way.  */
-	for (s = GUESSPATHLEN;  ! getcwd (p = xmalloc (s), s);  s *= 2)
+	if (!env_ok)
+    {
+        /* The shortcut didn't work.  Try the slow, ``sure'' way.  */
+	for (guessed_len = 256; !getcwd(p = xmalloc (guessed_len), guessed_len); guessed_len *= 2)
 	  {
 	    int e = errno;
 	    free (p);
-#ifdef ERANGE
 	    if (e != ERANGE)
-#endif
 	      {
 		errno = failure_errno = e;
 		p = 0;
 		break;
 	      }
 	  }
+    }
 
       /* Cache the result.  This assumes that the program does
 	 not invoke chdir between calls to getpwd.  */
@@ -69,18 +54,13 @@ getpwd ()
 
 #else	/* _WIN32 && !__CYGWIN__ */
 
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 255
-#endif
-
 char *
 getpwd ()
 {
   static char *pwd = 0;
 
   if (!pwd)
-    pwd = getcwd (xmalloc (MAXPATHLEN + 1), MAXPATHLEN + 1
-		  );
+    pwd = _getcwd(NULL, 0);
   return pwd;
 }
 

@@ -4250,7 +4250,6 @@ main (argc, argv)
 {
   register int i;
   char *filename = 0;
-  int flag_print_mem = 0;
   int version_flag = 0;
   char *p;
 
@@ -4266,18 +4265,6 @@ main (argc, argv)
 	 )
     --p;
   progname = p;
-
-#if defined (RLIMIT_STACK) && defined (HAVE_GETRLIMIT) && defined (HAVE_SETRLIMIT)
-  /* Get rid of any avoidable limit on stack size.  */
-  {
-    struct rlimit rlim;
-
-    /* Set the stack limit huge so that alloca does not fail.  */
-    getrlimit (RLIMIT_STACK, &rlim);
-    rlim.rlim_cur = rlim.rlim_max;
-    setrlimit (RLIMIT_STACK, &rlim);
-  }
-#endif
 
   signal (SIGFPE, float_signal);
 
@@ -4489,9 +4476,6 @@ main (argc, argv)
 		    break;
 		  case 'L':
 		    loop_dump = 1;
-		    break;
-		  case 'm':
-		    flag_print_mem = 1;
 		    break;
 #ifdef MACHINE_DEPENDENT_REORG
 		  case 'M':
@@ -4915,24 +4899,6 @@ main (argc, argv)
     }
 
   compile_file (filename);
-
-#if !defined(OS2) && (!defined(_WIN32) || defined (__CYGWIN__))
-  if (flag_print_mem)
-    {
-      char *lim = (char *) sbrk (0);
-
-      fprintf (stderr, "Data size %ld.\n", (long)(lim - (char *) &environ));
-      fflush (stderr);
-
-#ifndef __MSDOS__
-#ifdef USG
-      system ("ps -l 1>&2");
-#else /* not USG */
-      system ("ps v");
-#endif /* not USG */
-#endif
-    }
-#endif /* ! OS2 && (! _WIN32 || CYGWIN) */
 
   if (errorcount)
     exit (FATAL_EXIT_CODE);

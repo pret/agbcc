@@ -559,23 +559,13 @@ bitmap_debug_file (file, head)
 {
   bitmap_element *ptr;
 
-  fprintf (file, "\nfirst = ");
-  fprintf (file, HOST_PTR_PRINTF, head->first);
-  fprintf (file, " current = ");
-  fprintf (file, HOST_PTR_PRINTF, head->current);
-  fprintf (file, " indx = %u\n", head->indx);
+  fprintf (file, "\nfirst = %p current = %p indx = %u\n", head->first, head->current, head->indx);
 
   for (ptr = head->first; ptr; ptr = ptr->next)
     {
       int i, j, col = 26;
 
-      fprintf (file, "\t");
-      fprintf (file, HOST_PTR_PRINTF, ptr);
-      fprintf (file, " next = ");
-      fprintf (file, HOST_PTR_PRINTF, ptr->next);
-      fprintf (file, " prev = ");
-      fprintf (file, HOST_PTR_PRINTF, ptr->prev);
-      fprintf (file, " indx = %u\n\t\tbits = {", ptr->indx);
+      fprintf (file, "\t%p next = %p prev = %p indx = %u\n\t\tbits = {", ptr, ptr->next, ptr->prev, ptr->indx);
 
       for (i = 0; i < BITMAP_ELEMENT_WORDS; i++)
 	for (j = 0; j < HOST_BITS_PER_WIDE_INT; j++)

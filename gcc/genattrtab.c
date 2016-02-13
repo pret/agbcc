@@ -5898,18 +5898,6 @@ main (argc, argv)
   rtx tem;
   int i;
 
-#if defined (RLIMIT_STACK) && defined (HAVE_GETRLIMIT) && defined (HAVE_SETRLIMIT)
-  /* Get rid of any avoidable limit on stack size.  */
-  {
-    struct rlimit rlim;
-
-    /* Set the stack limit huge so that alloca does not fail.  */
-    getrlimit (RLIMIT_STACK, &rlim);
-    rlim.rlim_cur = rlim.rlim_max;
-    setrlimit (RLIMIT_STACK, &rlim);
-  }
-#endif
-
   obstack_init (rtl_obstack);
   obstack_init (hash_obstack);
   obstack_init (temp_obstack);
