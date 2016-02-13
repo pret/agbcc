@@ -457,6 +457,12 @@ pragma_ungetc (arg)
 }
 #endif
 
+void check_line_directive()
+{
+    check_newline ();
+    yy_cur--;
+}
+
 /* At the beginning of a line, increment the line number
    and process any #-directive on this line.
    If the line is a #-directive, read the entire line and return a newline.

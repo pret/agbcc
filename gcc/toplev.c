@@ -79,6 +79,7 @@ extern char *version_string, *language_string;
 extern int size_directive_output;
 extern tree last_assemble_variable_decl;
 
+extern void check_line_directive();
 extern void cpplib_init();
 
 extern char *init_parse PVPROTO((char *));
@@ -2654,8 +2655,7 @@ compile_file (name)
   input_file_stack->name = input_filename;
 
   /* This may set main_input_filename.  */
-  check_newline ();
-  yy_cur--;
+  check_line_directive();
 
   /* If the input doesn't start with a #line, use the input name
      as the official input file name.  */

@@ -1,9 +1,5 @@
 #ifndef _LIMITS_H___
-#ifndef _MACH_MACHLIMITS_H_
-
-/* _MACH_MACHLIMITS_H_ is used on OSF/1.  */
 #define _LIMITS_H___
-#define _MACH_MACHLIMITS_H_
 
 /* Number of bits in a `char'.  */
 #undef CHAR_BIT
@@ -64,11 +60,7 @@
 /* Minimum and maximum values a `signed long int' can hold.
    (Same as `int').  */
 #ifndef __LONG_MAX__
-#if defined (__alpha__) || defined (__sparc_v9__) || defined (__sparcv9)
-#define __LONG_MAX__ 9223372036854775807L
-#else
 #define __LONG_MAX__ 2147483647L
-#endif /* __alpha__ || sparc64 */
 #endif
 #undef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)
@@ -79,7 +71,6 @@
 #undef ULONG_MAX
 #define ULONG_MAX (LONG_MAX * 2UL + 1)
 
-#if defined (__GNU_LIBRARY__) ? defined (__USE_GNU) : !defined (__STRICT_ANSI__)
 /* Minimum and maximum values a `signed long long int' can hold.  */
 #ifndef __LONG_LONG_MAX__
 #define __LONG_LONG_MAX__ 9223372036854775807LL
@@ -92,7 +83,5 @@
 /* Maximum value an `unsigned long long int' can hold.  (Minimum is 0).  */
 #undef ULONG_LONG_MAX
 #define ULONG_LONG_MAX (LONG_LONG_MAX * 2ULL + 1)
-#endif
 
-#endif /* _MACH_MACHLIMITS_H_ */
 #endif /* _LIMITS_H___ */

@@ -155,7 +155,8 @@ USER_H = $(srcdir)/ginclude/stdarg.h $(srcdir)/ginclude/stddef.h \
     $(CYGNUS-LOCAL-fr30) $(srcdir)/ginclude/va-fr30.h \
     $(CYGNUS-LOCAL-d30v) $(srcdir)/ginclude/va-d30v.h \
     $(srcdir)/ginclude/va-c4x.h $(EXTRA_HEADERS) $(LANG_EXTRA_HEADERS) \
-    $(srcdir)/ginclude/proto.h $(srcdir)/ginclude/stdbool.h
+    $(srcdir)/ginclude/proto.h $(srcdir)/ginclude/stdbool.h \
+    $(srcdir)/ginclude/limits.h
 
 # Target to use whe installing assert.h.  Some systems may
 # want to set this empty.
@@ -215,9 +216,6 @@ RANLIB_TEST_FOR_TARGET = \
 
 # Dir to search for system headers.  Overridden by cross-make.
 SYSTEM_HEADER_DIR = /usr/include
-
-# Test to see whether <limits.h> exists in the system header files.
-LIMITS_H_TEST = [ -f $(SYSTEM_HEADER_DIR)/limits.h ]
 
 # There may be a premade insn-attrtab.c for this machine.
 # (You could rebuild it with genattrtab as usual, but it takes a long time.)
@@ -596,7 +594,7 @@ C_AND_OBJC_OBJS = c-lex.o c-pragma.o c-decl.o c-typeck.o c-convert.o \
   c-aux-info.o c-common.o c-iterate.o @extra_c_objs@
 
 # Language-specific object files for C.
-C_OBJS = c-parse.o c-lang.o $(C_AND_OBJC_OBJS)
+C_OBJS = c-parse.o $(C_AND_OBJC_OBJS)
 
 SCHED_PREFIX = @sched_prefix@
 SCHED_CFLAGS = @sched_cflags@
@@ -776,7 +774,7 @@ all.cross: native gcc-cross specs stmp-headers $(LIBGCC) \
 # This is what to compile if making gcc with a cross-compiler.
 all.build: native xgcc$(exeext) lang.all.build
 # This is what must be made before installing GCC and converting libraries.
-start.encap: native xgcc$(exeext) specs $(LIBGCC1) xlimits.h lang.start.encap
+start.encap: native xgcc$(exeext) specs $(LIBGCC1) lang.start.encap
 # These can't be made until after GCC can run.
 rest.encap: stmp-headers $(LIBGCC) lang.rest.encap
 # This is what is made with the host's compiler
@@ -834,15 +832,6 @@ gcc-cross: xgcc$(exeext)
 cc1$(exeext): $(P) $(OBJS) $(C_OBJS) $(LIBDEPS)
 	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(C_OBJS) $(LIBS)
 
-# Build the version of limits.h that we will install.
-xlimits.h: glimits.h limitx.h limity.h
-	if $(LIMITS_H_TEST) ; then \
-	  cat $(srcdir)/limitx.h $(srcdir)/glimits.h $(srcdir)/limity.h > tmp-xlimits.h; \
-	else \
-	  cat $(srcdir)/glimits.h > tmp-xlimits.h; \
-	fi
-	mv tmp-xlimits.h xlimits.h
-#
 # Build libgcc.a.
 # This is done in two parts because some functions, in libgcc1.c,
 # must be compiled with something other than GCC,
@@ -1856,7 +1845,7 @@ SYSCALLS.c.X: $(srcdir)/sys-types.h $(srcdir)/sys-protos.h $(GCC_PASSES) \
 
 # Build the include directory including float.h (which no longer depends upon
 # enquire).
-stmp-int-hdrs: $(USER_H) xlimits.h
+stmp-int-hdrs: $(USER_H)
 # Copy in the headers provided with gcc.
 	rm -rf include
 	mkdir include
@@ -1867,9 +1856,6 @@ stmp-int-hdrs: $(USER_H) xlimits.h
 	    chmod a+r include/$$realfile; \
 	  fi; \
 	done
-	rm -f include/limits.h
-	cp xlimits.h include/limits.h
-	chmod a+r include/limits.h
 	rm -f include/float.h
 	if [ x$(FLOAT_H) != xMakefile.in ]; then \
 	  cp $(srcdir)/config/$(FLOAT_H) include/float.h && \
@@ -1948,7 +1934,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f $(HOST_PREFIX_1)alloca.c $(HOST_PREFIX_1)malloc.c
 	-rm -f $(HOST_PREFIX_1)obstack.c 
 # Delete the temp files made in the course of building libgcc.a.
-	-rm -f tmplibgcc* tmpcopy xlimits.h libgcc1-test
+	-rm -f tmplibgcc* tmpcopy libgcc1-test
 	for name in $(LIB1FUNCS); do rm -f $${name}.c; done
 # Delete other built files.
 	-rm -f t-float.h-cross xsys-protos.hT fp-bit.c dp-bit.c
@@ -2074,7 +2060,7 @@ install: $(INSTALL_TARGET) ; @true
 # broken is small.
 # CYGNUS LOCAL: install-info done separately.
 install-normal: install-common $(INSTALL_HEADERS) $(INSTALL_LIBGCC) \
-    install-man lang.install-normal install-driver
+    lang.install-normal install-driver
 
 # Do nothing while making gcc with a cross-compiler. The person who
 # makes gcc for the target machine has to know how to put a complete
@@ -2184,24 +2170,6 @@ install-info: doc installdirs lang.install-info
 # CYGNUS LOCAL: clean-info
 clean-info:
 	-rm -f *.info*
-
-# Install the man pages.
-install-man: installdirs $(srcdir)/gcc.1 $(srcdir)/cccp.1 lang.install-man
-	-if [ -f gcc-cross$(exeext) ] ; then \
-	  rm -f $(man1dir)/$(GCC_CROSS_NAME)$(manext); \
-	  $(INSTALL_DATA) $(srcdir)/gcc.1 $(man1dir)/$(GCC_CROSS_NAME)$(manext); \
-	  chmod a-x $(man1dir)/$(GCC_CROSS_NAME)$(manext); \
-	else \
-	  rm -f $(man1dir)/$(GCC_INSTALL_NAME)$(manext); \
-	  $(INSTALL_DATA) $(srcdir)/gcc.1 $(man1dir)/$(GCC_INSTALL_NAME)$(manext); \
-	  chmod a-x $(man1dir)/$(GCC_INSTALL_NAME)$(manext); \
-	fi
-	-rm -f $(man1dir)/cccp$(manext)
-	-$(INSTALL_DATA) $(srcdir)/cccp.1 $(man1dir)/cccp$(manext)
-	-chmod a-x $(man1dir)/cccp$(manext)
-	# CYGNUS LOCAL: We install cpp.1.
-	-$(INSTALL_DATA) $(srcdir)/cpp.1 $(man1dir)/cpp$(manext)
-	-chmod a-x $(man1dir)/cpp$(manext)
 
 # Install the library.
 install-libgcc: libgcc.a installdirs
