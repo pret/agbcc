@@ -587,7 +587,6 @@ static struct compiler default_compilers[] =
   {".c", {"@c"}},
   {"@c",
    {
-#if USE_CPPLIB
      "%{E|M|MM:cpp -lang-c %{ansi:-std=c89} %{std*} %{nostdinc*}\
 	%{C} %{v} %{A*} %{I*} %{P} %I\
 	%{C:%{!E:%eGNU C does not support -C without using -E}}\
@@ -651,53 +650,6 @@ static struct compiler default_compilers[] =
 #endif 
    /* END CYGNUS LOCAL */
   }},
-#else /* ! USE_CPPLIB */
-    "cpp -lang-c %{ansi:-std=c89} %{std*} %{nostdinc*}\
-	%{C} %{v} %{A*} %{I*} %{P} %I\
-	%{C:%{!E:%eGNU C does not support -C without using -E}}\
-	%{M} %{MM} %{MD:-MD %b.d} %{MMD:-MMD %b.d} %{MG}\
-        -undef -D__GNUC__=%v1 -D__GNUC_MINOR__=%v2\
-	%{ansi|std=*:%{!std=gnu*:-trigraphs -D__STRICT_ANSI__}}\
-	%{!undef:%{!ansi:%{!std=*:%p}%{std=gnu*:%p}} %P} %{trigraphs}\
-        %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
-        %{traditional} %{ftraditional:-traditional}\
-        %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
-	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
-        %i %{!M:%{!MM:%{!E:%{!pipe:%g.i}}}}%{E:%W{o*}}%{M:%W{o*}}%{MM:%W{o*}} |\n",
-   /* CYGNUS LOCAL v850/law & --help/nickc */
-#if 1
-    "%{!M:%{!MM:%{!E:cc1 %{!pipe:%g.i} %1 \
-		   %{!Q:-quiet} -dumpbase %b.c %{d*} %{m*} %{a*}\
-		   %{g*} %{O*} %{W*} %{w} %{pedantic*} %{ansi} \
-		   %{traditional} %{v:-version} %{pg:-p} %{p} %{f*}\
-		   %{aux-info*}\
-		   %{attr-info*}\
-		   %{--help:--help} \
-		   %{offset-info*}\
-		   %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-		   %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-              %{!S:as %a %Y\
-		      %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-                      %{!pipe:%g.s} %A\n }}}}"
-#else
-   /* END CYGNUS LOCAL */
-   "%{!M:%{!MM:%{!E:cc1 %{!pipe:%g.i} %1 \
-		   %{!Q:-quiet} -dumpbase %b.c %{d*} %{m*} %{a*}\
-		   %{g*} %{O*} %{W*} %{w} %{pedantic*} %{std*}\
-		   %{traditional} %{v:-version} %{pg:-p} %{p} %{f*}\
-		   %{aux-info*}\
-		   %{--help:--help} \
-		   %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-		   %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-              %{!S:as %a %Y\
-		      %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-                      %{!pipe:%g.s} %A\n }}}}"
-   /* CYGNUS LOCAL v850/law */
-#endif 
-   /* END CYGNUS LOCAL */
-  }},
-#endif /* ! USE_CPPLIB */
   {"-",
    {"%{E:cpp -lang-c %{ansi:-std=c89} %{std*} %{nostdinc*}\
 	%{C} %{v} %{A*} %{I*} %{P} %I\
@@ -5574,16 +5526,7 @@ lookup_compiler (name, length, language)
 	  (!strcmp (cp->suffix, "-") && !strcmp (name, "-"))
 	  || (strlen (cp->suffix) < length
 	      /* See if the suffix matches the end of NAME.  */
-#ifdef OS2
-	      && ((!strcmp (cp->suffix,
-			   name + length - strlen (cp->suffix))
-		   || !strpbrk (cp->suffix, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
-		  && !strcasecmp (cp->suffix,
-				  name + length - strlen (cp->suffix)))
-#else
-	      && !strcmp (cp->suffix,
-			  name + length - strlen (cp->suffix))
-#endif
+	      && !strcmp (cp->suffix, name + length - strlen (cp->suffix))
 	 ))
 	{
 	  if (cp->spec[0][0] == '@')

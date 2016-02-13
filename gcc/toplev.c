@@ -2654,12 +2654,8 @@ compile_file (name)
   input_file_stack->name = input_filename;
 
   /* This may set main_input_filename.  */
-#if !USE_CPPLIB
-  ungetc (check_newline (), finput);
-#else
   check_newline ();
   yy_cur--;
-#endif
 
   /* If the input doesn't start with a #line, use the input name
      as the official input file name.  */
@@ -4011,10 +4007,6 @@ display_help ()
   unsigned long	 i;
   char * lang;
   
-#ifndef USE_CPPLIB  
-  printf ("Usage: %s input [switches]\n", progname);
-  printf ("Switches:\n");
-#endif
   printf ("  -ffixed-<register>      Mark <register> as being unavailable to the compiler\n");
   printf ("  -fcall-used-<register>  Mark <register> as being corrupted by function calls\n");
   printf ("  -fcall-saved-<register> Mark <register> as being preserved across functions\n");
@@ -4303,9 +4295,7 @@ main (argc, argv)
   flag_short_enums = DEFAULT_SHORT_ENUMS;
 #endif
 
-#if USE_CPPLIB
     cpplib_init();
-#endif
 
   /* Scan to see what optimization level has been specified.  That will
      determine the default value of many flags.  */

@@ -30,12 +30,10 @@ Boston, MA 02111-1307, USA.  */
 #include "c-pragma.h"
 #include "rtl.h"
 
-#if USE_CPPLIB
 #include "cpplib.h"
 cpp_reader  parse_in;
 cpp_options parse_options;
 static enum cpp_token cpp_token;
-#endif
 
 #ifndef WCHAR_TYPE_SIZE
 #ifdef INT_TYPE_SIZE
@@ -2781,7 +2779,6 @@ truthvalue_conversion (expr)
   return build_binary_op (NE_EXPR, expr, integer_zero_node, 1);
 }
 
-#if USE_CPPLIB
 /* Read the rest of a #-directive from input stream FINPUT.
    In normal use, the directive name and the white space after it
    have already been read, so they won't be included in the result.
@@ -2886,90 +2883,6 @@ get_directive_line ()
       char_escaped = (c == '\\' && ! char_escaped);
     }
 }
-#else
-/* Read the rest of a #-directive from input stream FINPUT.
-   In normal use, the directive name and the white space after it
-   have already been read, so they won't be included in the result.
-   We allow for the fact that the directive line may contain
-   a newline embedded within a character or string literal which forms
-   a part of the directive.
-
-   The value is a string in a reusable buffer.  It remains valid
-   only until the next time this function is called.
-
-   The terminating character ('\n' or EOF) is left in FINPUT for the
-   caller to re-read.  */
-
-char *
-get_directive_line (finput)
-     register FILE *finput;
-{
-  static char *directive_buffer = NULL;
-  static unsigned buffer_length = 0;
-  register char *p;
-  register char *buffer_limit;
-  register int looking_for = 0;
-  register int char_escaped = 0;
-
-  if (buffer_length == 0)
-    {
-      directive_buffer = (char *)xmalloc (128);
-      buffer_length = 128;
-    }
-
-  buffer_limit = &directive_buffer[buffer_length];
-
-  for (p = directive_buffer; ; )
-    {
-      int c;
-
-      /* Make buffer bigger if it is full.  */
-      if (p >= buffer_limit)
-        {
-	  register unsigned bytes_used = (p - directive_buffer);
-
-	  buffer_length *= 2;
-	  directive_buffer
-	    = (char *)xrealloc (directive_buffer, buffer_length);
-	  p = &directive_buffer[bytes_used];
-	  buffer_limit = &directive_buffer[buffer_length];
-        }
-
-      c = getc (finput);
-
-      /* Discard initial whitespace.  */
-      if ((c == ' ' || c == '\t') && p == directive_buffer)
-	continue;
-
-      /* Detect the end of the directive.  */
-      if (looking_for == 0
-	  && (c == '\n' || c == EOF))
-	{
-          ungetc (c, finput);
-	  c = '\0';
-	}
-
-      *p++ = c;
-
-      if (c == 0)
-	return directive_buffer;
-
-      /* Handle string and character constant syntax.  */
-      if (looking_for)
-	{
-	  if (looking_for == c && !char_escaped)
-	    looking_for = 0;	/* Found terminator... stop looking.  */
-	}
-      else
-        if (c == '\'' || c == '"')
-	  looking_for = c;	/* Don't stop buffering until we see another
-				   one of these (or an EOF).  */
-
-      /* Handle backslash.  */
-      char_escaped = (c == '\\' && ! char_escaped);
-    }
-}
-#endif /* !USE_CPPLIB */
 
 /* Make a variant type in the proper way for C/C++, propagating qualifiers
    down to the element type of an array.  */

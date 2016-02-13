@@ -35,10 +35,8 @@ Boston, MA 02111-1307, USA.  */
 #include "c-lex.h"
 #include "toplev.h"
 
-#if USE_CPPLIB
 #include "cpplib.h"
 extern cpp_reader parse_in;
-#endif
 
 /* In grokdeclarator, distinguish syntactic contexts of declarators.  */
 enum decl_context
@@ -608,11 +606,7 @@ c_decode_option (argc, argv)
 {
   int strings_processed;
   char *p = argv[0];
-#if USE_CPPLIB
   strings_processed = cpp_handle_option (&parse_in, argc, argv);
-#else
-  strings_processed = 0;
-#endif /* ! USE_CPPLIB */
 
   if (!strcmp (p, "-ftraditional") || !strcmp (p, "-traditional"))
     {

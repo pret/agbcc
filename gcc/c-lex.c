@@ -38,14 +38,9 @@ Boston, MA 02111-1307, USA.  */
 #include <locale.h>
 #endif /* MULTIBYTE_CHARS */
 
-#if USE_CPPLIB
 #include "cpplib.h"
 extern cpp_reader  parse_in;
 extern cpp_options parse_options;
-#else
-/* Stream for reading from the input file.  */
-FILE *finput;
-#endif
 
 extern void yyprint			PROTO((FILE *, int, YYSTYPE));
 
@@ -57,17 +52,12 @@ tree ridpointers[(int) RID_MAX];
 /* Cause the `yydebug' variable to be defined.  */
 #define YYDEBUG 1
 
-#if USE_CPPLIB
 extern unsigned char *yy_cur, *yy_lim;
 
 extern int yy_get_token ();
 
 #define GETC() (yy_cur < yy_lim ? *yy_cur++ : yy_get_token ())
 #define UNGETC(c) ((void)(c), yy_cur--)
-#else
-#define GETC() getc (finput)
-#define UNGETC(c) ungetc (c, finput)
-#endif
 
 /* the declaration found for the last IDENTIFIER token read in.
    yylex must look this up to detect typedefs, which get token type TYPENAME,
@@ -100,10 +90,6 @@ static int indent_level = 0;        /* Number of { minus number of }. */
 /* Nonzero if end-of-file has been seen on input.  */
 static int end_of_file;
 
-#if !USE_CPPLIB
-/* Buffered-back input character; faster than using ungetc.  */
-static int nextchar = -1;
-#endif
 
 #ifdef HANDLE_GENERIC_PRAGMAS
 static int handle_generic_pragma	PROTO((int));
@@ -169,22 +155,6 @@ char *
 init_parse (filename)
      char *filename;
 {
-#if !USE_CPPLIB
-  /* Open input file.  */
-  if (filename == 0 || !strcmp (filename, "-"))
-    {
-      finput = stdin;
-      filename = "stdin";
-    }
-  else
-    finput = fopen (filename, "r");
-  if (finput == 0)
-    pfatal_with_name (filename);
-
-#ifdef IO_BUFFER_SIZE
-  setvbuf (finput, (char *) xmalloc (IO_BUFFER_SIZE), _IOFBF, IO_BUFFER_SIZE);
-#endif
-#else /* !USE_CPPLIB */
   parse_in.show_column = 1;
   if (! cpp_start_read (&parse_in, filename))
     abort ();
@@ -196,7 +166,6 @@ init_parse (filename)
      token buffer.  We must arrange to read it out here. */
   yy_cur = parse_in.token_buffer;
   yy_lim = CPP_PWRITTEN (&parse_in);
-#endif
 
   init_lex ();
 
@@ -206,11 +175,7 @@ init_parse (filename)
 void
 finish_parse ()
 {
-#if USE_CPPLIB
   cpp_finish (&parse_in);
-#else
-  fclose (finput);
-#endif
 }
 
 void
@@ -422,11 +387,6 @@ position_after_white_space ()
 {
   register int c;
 
-#if !USE_CPPLIB
-  if (nextchar != -1)
-    c = nextchar, nextchar = -1;
-  else
-#endif
     c = GETC();
 
   UNGETC (skip_white_space (c));
@@ -560,13 +520,6 @@ check_newline ()
 	      /* We invoke HANDLE_PRAGMA before HANDLE_GENERIC_PRAGMAS (if
 		 both are defined), in order to give the back end a chance to
 		 override the interpretation of generic style pragmas.  */
-#if !USE_CPPLIB
-	      if (nextchar >= 0)
-		{
-		  c = nextchar, nextchar = -1;
-		  UNGETC (c);
-		}
-#endif /* !USE_CPPLIB */
 
 	      if (TREE_CODE (yylval.ttype) != IDENTIFIER_NODE)
 		goto skipline;
@@ -837,10 +790,6 @@ linenum:
 
   /* skip the rest of this line.  */
  skipline:
-#if !USE_CPPLIB
-  if (c != '\n' && c != EOF && nextchar >= 0)
-    c = nextchar, nextchar = -1;
-#endif
   while (c != '\n' && c != EOF)
     c = GETC();
   return c;
@@ -874,11 +823,6 @@ handle_generic_pragma (token)
 	default:
 	  handle_pragma_token (token_buffer, NULL);
 	}
-#if !USE_CPPLIB
-      if (nextchar >= 0)
-	c = nextchar, nextchar = -1;
-      else
-#endif
 	c = GETC ();
 
       while (c == ' ' || c == '\t')
@@ -1090,11 +1034,6 @@ yylex ()
   register int value;
   int wide_flag = 0;
 
-#if !USE_CPPLIB
-  if (nextchar >= 0)
-    c = nextchar, nextchar = -1;
-  else
-#endif
     c = GETC();
 
   /* Effectively do c = skip_white_space (c)
@@ -1192,11 +1131,7 @@ yylex ()
 	}
 
       *p = 0;
-#if USE_CPPLIB
       UNGETC (c);
-#else
-      nextchar = c;
-#endif
 
       value = IDENTIFIER;
       yylval.itype = 0;
@@ -2253,9 +2188,5 @@ void
 set_yydebug (value)
      int value;
 {
-#if YYDEBUG != 0
   yydebug = value;
-#else
-  warning ("YYDEBUG not defined.");
-#endif
 }
