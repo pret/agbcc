@@ -34,7 +34,6 @@ Boston, MA 02111-1307, USA.  */
 #include "toplev.h"
 /* CYGNUS LOCAL live range */
 #include "obstack.h"
-#include "range.h"
 #define obstack_chunk_alloc     xmalloc
 #define obstack_chunk_free      free
 
@@ -110,20 +109,6 @@ static int *allocno_size;
 
 static int *reg_may_share;
 
-/* CYGNUS LOCAL live range */
-/* Indexed by (pseudo) reg number, gives the hard registers that where
-   allocated by any register which is split into distinct live ranges.
-   We try to use the same registers, to cut down on copies made.  */
-
-static HARD_REG_SET **reg_live_ranges;
-
-/* Copy of reg_renumber to reinitialize it if we need to run register
-   allocation a second time due to some live range copy registers
-   not getting hard registers.  */
-
-static short *save_reg_renumber;
-/* END CYGNUS LOCAL */
-
 /* Define the number of bits in each element of `conflicts' and what
    type that element has.  We use the largest integer format on the
    host machine.  */
@@ -154,12 +139,6 @@ static int allocno_row_words;
 #define SET_CONFLICT(I, J) \
  (conflicts[(I) * allocno_row_words + (J) / INT_BITS]	\
   |= ((INT_TYPE) 1 << ((J) % INT_BITS)))
-
-/* CYGNUS LOCAL LRS */
-#define CLEAR_CONFLICT(I, J) \
- (conflicts[(I) * allocno_row_words + (J) / INT_BITS]   \
-  &= ~ ((INT_TYPE) 1 << ((J) % INT_BITS)))
-/* END CYGNUS LOCAL */
 
 /* Set of hard regs currently live (during scan of all insns).  */
 
@@ -301,9 +280,7 @@ static void dump_conflicts	PROTO((FILE *));
 static void reg_becomes_live	PROTO((rtx, rtx));
 static void reg_dies		PROTO((int, enum machine_mode));
 static void build_insn_chain	PROTO((rtx));
-/* CYGNUS LOCAL live range */
-static void undo_live_range	PROTO((FILE *));
-static void global_init		PROTO((FILE *, int));
+static void global_init		PROTO((FILE *));
 
 /* Perform allocation of pseudo-registers not allocated by local_alloc.
    FILE is a file to output debugging information on,
@@ -314,19 +291,10 @@ static void global_init		PROTO((FILE *, int));
 
 /* Initialize for allocating registers.  */
 static void
-global_init (file, alloc_p)
-     FILE *file;
-     int alloc_p;
+global_init (FILE *file)
 {
-#ifdef ELIMINABLE_REGS
   static struct {int from, to; } eliminables[] = ELIMINABLE_REGS;
-#endif
-  int need_fp
-    = (! flag_omit_frame_pointer
-#ifdef EXIT_IGNORE_STACK
-       || (current_function_calls_alloca && EXIT_IGNORE_STACK)
-#endif
-       || FRAME_POINTER_REQUIRED);
+  int need_fp = (!flag_omit_frame_pointer || FRAME_POINTER_REQUIRED);
 
   register size_t i;
   rtx x;
@@ -337,64 +305,30 @@ global_init (file, alloc_p)
      are safe to use only within a basic block.  */
 
   CLEAR_HARD_REG_SET (no_global_alloc_regs);
-#ifdef OVERLAPPING_REGNO_P
-  for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-    if (OVERLAPPING_REGNO_P (i))
-      SET_HARD_REG_BIT (no_global_alloc_regs, i);
-#endif
 
   /* Build the regset of all eliminable registers and show we can't use those
      that we already know won't be eliminated.  */
-#ifdef ELIMINABLE_REGS
-  for (i = 0; i < sizeof eliminables / sizeof eliminables[0]; i++)
+
+    for (i = 0; i < sizeof eliminables / sizeof eliminables[0]; i++)
     {
-      SET_HARD_REG_BIT (eliminable_regset, eliminables[i].from);
+        SET_HARD_REG_BIT (eliminable_regset, eliminables[i].from);
 
-      if (! CAN_ELIMINATE (eliminables[i].from, eliminables[i].to)
-	  || (eliminables[i].to == STACK_POINTER_REGNUM && need_fp))
-	SET_HARD_REG_BIT (no_global_alloc_regs, eliminables[i].from);
+        if (!CAN_ELIMINATE(eliminables[i].from, eliminables[i].to)
+         || (eliminables[i].to == STACK_POINTER_REGNUM && need_fp))
+        SET_HARD_REG_BIT (no_global_alloc_regs, eliminables[i].from);
     }
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-  SET_HARD_REG_BIT (eliminable_regset, HARD_FRAME_POINTER_REGNUM);
-  if (need_fp)
-    SET_HARD_REG_BIT (no_global_alloc_regs, HARD_FRAME_POINTER_REGNUM);
-#endif
-
-#else
-  SET_HARD_REG_BIT (eliminable_regset, FRAME_POINTER_REGNUM);
-  if (need_fp)
-    SET_HARD_REG_BIT (no_global_alloc_regs, FRAME_POINTER_REGNUM);
-#endif
 
   /* Track which registers have already been used.  Start with registers
      explicitly in the rtl, then registers allocated by local register
      allocation.  */
 
   CLEAR_HARD_REG_SET (regs_used_so_far);
-#ifdef LEAF_REGISTERS
-  /* If we are doing the leaf function optimization, and this is a leaf
-     function, it means that the registers that take work to save are those
-     that need a register window.  So prefer the ones that can be used in
-     a leaf function.  */
-  {
-    char *cheap_regs;
-    static char leaf_regs[] = LEAF_REGISTERS;
 
-    if (only_leaf_regs_used () && leaf_function_p ())
-      cheap_regs = leaf_regs;
-    else
-      cheap_regs = call_used_regs;
-    for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-      if (regs_ever_live[i] || cheap_regs[i])
-	SET_HARD_REG_BIT (regs_used_so_far, i);
-  }
-#else
   /* We consider registers that do not have to be saved over calls as if
      they were already used since there is no cost in using them.  */
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     if (regs_ever_live[i] || call_used_regs[i])
       SET_HARD_REG_BIT (regs_used_so_far, i);
-#endif
 
   for (i = FIRST_PSEUDO_REGISTER; i < (size_t) max_regno; i++)
     if (reg_renumber[i] >= 0)
@@ -403,97 +337,24 @@ global_init (file, alloc_p)
   /* Establish mappings from register number to allocation number
      and vice versa.  In the process, count the allocnos.  */
 
-  if (alloc_p)
-    reg_allocno = (int *) obstack_alloc (&global_obstack,
-					 max_regno * sizeof (int));
+    reg_allocno = (int *) obstack_alloc (&global_obstack, max_regno * sizeof (int));
 
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     reg_allocno[i] = -1;
 
   /* Initialize the shared-hard-reg mapping
      from the list of pairs that may share.  */
-  if (alloc_p)
-    {
-      reg_may_share = (int *) obstack_alloc (&global_obstack,
-					     max_regno * sizeof (int));
-      bzero ((char *) reg_may_share, max_regno * sizeof (int));
-      for (x = regs_may_share; x; x = XEXP (XEXP (x, 1), 1))
+
+    reg_may_share = (int *) obstack_alloc (&global_obstack, max_regno * sizeof (int));
+    bzero ((char *) reg_may_share, max_regno * sizeof (int));
+    for (x = regs_may_share; x; x = XEXP (XEXP (x, 1), 1))
 	{
-	  int r1 = REGNO (XEXP (x, 0));
-	  int r2 = REGNO (XEXP (XEXP (x, 1), 0));
-	  if (r1 > r2)
-	    reg_may_share[r1] = r2;
-	  else
-	    reg_may_share[r2] = r1;
-        }
-
-      /* Initialize the register sets for registers split into distinct live
-	 ranges.  */
-      if (live_range_list)
-	{
-	  rtx range;
-
-	  reg_live_ranges = (HARD_REG_SET **)
-	    obstack_alloc (&global_obstack, max_regno * sizeof (HARD_REG_SET *));
-	  bzero ((char *)reg_live_ranges,  max_regno * sizeof (HARD_REG_SET *));
-
-	  for (range = live_range_list; range; range = XEXP (range, 1))
-	    {
-	      rtx range_start = XEXP (range, 0);
-	      rtx rinfo = NOTE_RANGE_INFO (range_start);
-
-	      for (i = 0; i < RANGE_INFO_NUM_REGS (rinfo); i++)
-		{
-		  int old_regno = RANGE_REG_PSEUDO (rinfo, i);
-		  int new_regno = RANGE_REG_COPY (rinfo, i);
-		  HARD_REG_SET *old_regset = reg_live_ranges[old_regno];
-		  HARD_REG_SET *new_regset = reg_live_ranges[new_regno];
-
-		  /* Copy registers that don't need either copyins or
-		     copyouts don't need to try to share registers */
-		  if (!RANGE_REG_COPY_FLAGS (rinfo, i))
-		    continue;
-
-		  if (old_regset == (HARD_REG_SET *)0
-		      && new_regset == (HARD_REG_SET *)0)
-		    {
-		      reg_live_ranges[old_regno]
-			= reg_live_ranges[new_regno]
-			= new_regset
-			= (HARD_REG_SET *) obstack_alloc (&global_obstack,
-							  sizeof (HARD_REG_SET));
-		      SET_HARD_REG_SET (*new_regset);
-		    }
-		  else if (old_regset != (HARD_REG_SET *)0
-			   && new_regset == (HARD_REG_SET *)0)
-		    {
-		      reg_live_ranges[new_regno] = new_regset = old_regset;
-		    }
-		  else if (old_regset == (HARD_REG_SET *)0
-			   && new_regset != (HARD_REG_SET *)0)
-		    {
-		      reg_live_ranges[old_regno] = new_regset;
-		    }
-		  else if (old_regset != new_regset)
-		    {
-		      int j;
-		      for (j = 0; j < max_regno; j++)
-			{
-			  if (reg_live_ranges[j] == old_regset)
-			    reg_live_ranges[j] = new_regset;
-			}
-		    }
-
-		  if (reg_renumber[old_regno] >= 0)
-		    CLEAR_HARD_REG_BIT (*new_regset, reg_renumber[old_regno]);
-
-		  if (reg_renumber[new_regno] >= 0)
-		    CLEAR_HARD_REG_BIT (*new_regset, reg_renumber[new_regno]);
-		}
-	    }
-	}
-      else
-	reg_live_ranges = (HARD_REG_SET **)0;
+        int r1 = REGNO (XEXP (x, 0));
+        int r2 = REGNO (XEXP (XEXP (x, 1), 0));
+        if (r1 > r2)
+            reg_may_share[r1] = r2;
+        else
+            reg_may_share[r2] = r1;
     }
 
   for (i = FIRST_PSEUDO_REGISTER; i < (size_t) max_regno; i++)
@@ -516,20 +377,11 @@ global_init (file, alloc_p)
     else
       reg_allocno[i] = -1;
 
-  if (alloc_p)
-    {
-      allocno_reg = (int *) obstack_alloc (&global_obstack,
-					   max_allocno * sizeof (int));
-      allocno_size = (int *) obstack_alloc (&global_obstack,
-					    max_allocno * sizeof (int));
-      allocno_calls_crossed = (int *) obstack_alloc (&global_obstack,
-						     (max_allocno
-						      * sizeof (int)));
-      allocno_n_refs = (int *) obstack_alloc (&global_obstack,
-					      max_allocno * sizeof (int));
-      allocno_live_length = (int *) obstack_alloc (&global_obstack,
-						   max_allocno * sizeof (int));
-    }
+    allocno_reg = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
+    allocno_size = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
+    allocno_calls_crossed = (int *) obstack_alloc (&global_obstack, (max_allocno * sizeof (int)));
+    allocno_n_refs = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
+    allocno_live_length = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
 
   bzero ((char *) allocno_size, max_allocno * sizeof (int));
   bzero ((char *) allocno_calls_crossed, max_allocno * sizeof (int));
@@ -575,8 +427,7 @@ global_init (file, alloc_p)
   /* Allocate the space for the conflict and preference tables and
      initialize them.  */
 
-  if (alloc_p)
-    {
+
       hard_reg_conflicts
 	= (HARD_REG_SET *) obstack_alloc (&global_obstack,
 					  max_allocno * sizeof (HARD_REG_SET));
@@ -608,7 +459,6 @@ global_init (file, alloc_p)
       allocnos_live = (INT_TYPE *) obstack_alloc (&global_obstack,
 						  (allocno_row_words
 						   * sizeof (INT_TYPE)));
-    }
 
   bzero ((char *) hard_reg_conflicts, max_allocno * sizeof (HARD_REG_SET));
   bzero ((char *) hard_reg_preferences, max_allocno * sizeof (HARD_REG_SET));
@@ -675,27 +525,22 @@ global_init (file, alloc_p)
  
       if (file)
 	{
-	  fprintf (file, "\nPass %d registers to be allocated in sorted order:\n",
-		   (alloc_p) ? 1 : 2);
+	  fprintf (file, "\nRegisters to be allocated in sorted order:\n");
 	  for (i = 0; i < max_allocno; i++)
 	    {
 	      int r = allocno_order[i];
 	      fprintf (file,
-		       "Register %d, refs = %d, live_length = %d, size = %d%s%s\n",
+		       "Register %d, refs = %d, live_length = %d, size = %d\n",
 		       allocno_reg[r], allocno_n_refs[r],
-		       allocno_live_length[r], allocno_size[r],
-		       ((REG_N_RANGE_CANDIDATE_P (allocno_reg[r]))
-			? ", live range candidate" : ""),
-		       ((REG_N_RANGE_COPY_P (allocno_reg[r]))
-			? ", live range copy" : ""));
+		       allocno_live_length[r], allocno_size[r]);
 	    }
 	  putc ('\n', file);
 	}
 
       prune_preferences ();
 
-      if (file)
-	dump_conflicts (file);
+    if (file)
+        dump_conflicts (file);
     }
 }
 
@@ -707,85 +552,51 @@ global_init (file, alloc_p)
    and we must not do any more for this function.  */
 
 int
-global_alloc (file)
-     FILE *file;
+global_alloc (FILE *file)
 {
-  register int i;
-  int copy_not_alloc_p;
-  int loop_p = TRUE;
-  int pass;
-  int retval;
+    register int i;
+    int pass;
+    int retval;
 
-  /* Set up the memory pool we will use here.  */
-  gcc_obstack_init (&global_obstack);
+    /* Set up the memory pool we will use here.  */
+    gcc_obstack_init (&global_obstack);
 
-  /* If we are splitting live ranges, save the initial value of the
-     reg_renumber array.  */
-  if (flag_live_range)
-    {
-      save_reg_renumber = (short *) obstack_alloc (&global_obstack,
-                                                   sizeof (short) * max_regno);
-      for (i = max_regno-1; i >= 0; i--)
-        save_reg_renumber[i] = reg_renumber[i];
-    }
-
-
-  /* Try to allocate everything on the first pass.  If we are doing live
-     range splitting, and one or more of the register that were split into live
-     ranges did not get a register assigned, undo the live range for that
-     register, and redo the allocation in a second pass.  */
-  for (pass = 0; pass < 2 && loop_p; pass++)
-    {
-      /* Do all of the initialization, allocations only on the first pass.  */
-      global_init (file, (pass == 0));
-
-      copy_not_alloc_p = FALSE;
+    global_init (file);
   
-      for (i = 0; i < (size_t) max_allocno; i++)
-	if (reg_renumber[allocno_reg[allocno_order[i]]] < 0
-	    && REG_LIVE_LENGTH (allocno_reg[allocno_order[i]]) >= 0)
-	  {
-	    int order = allocno_order[i];
-	    int regno = allocno_reg[order];
-
-	    /* If we have more than one register class,
-	       first try allocating in the class that is cheapest
-	       for this pseudo-reg.  If that fails, try any reg.  */
-	    if (reg_renumber[regno] < 0 && N_REG_CLASSES > 1)
-	      find_reg (order, 0, 0, 0, 0);
-
-	    if (reg_renumber[regno] < 0
-		&& reg_alternate_class (regno) != NO_REGS)
-	      find_reg (order, 0, 1, 0, 0);
-
-	    if (REG_N_RANGE_COPY_P (regno) && reg_renumber[regno] < 0)
-	      copy_not_alloc_p = 1;
-	  }
-
-      if (copy_not_alloc_p)
-	undo_live_range (file);
-      else
-	loop_p = FALSE;
-	
-    }
-
-  /* Do the reloads now while the allocno data still exist, so that we can
-     try to assign new hard regs to any pseudo regs that are spilled.  */
-
-#if 0 /* We need to eliminate regs even if there is no rtl code,
-	 for the sake of debugging information.  */
-  if (n_basic_blocks > 0)
-#endif
+    for (i = 0; i < (size_t) max_allocno; i++)
     {
-      build_insn_chain (get_insns ());
-      retval = reload (get_insns (), 1, file);
+        if (reg_renumber[allocno_reg[allocno_order[i]]] < 0
+         && REG_LIVE_LENGTH (allocno_reg[allocno_order[i]]) >= 0)
+        {
+            int order = allocno_order[i];
+            int regno = allocno_reg[order];
+
+            /* If we have more than one register class,
+               first try allocating in the class that is cheapest
+               for this pseudo-reg.  If that fails, try any reg.  */
+            if (reg_renumber[regno] < 0 && N_REG_CLASSES > 1)
+              find_reg (order, 0, 0, 0, 0);
+
+            if (reg_renumber[regno] < 0
+             && reg_alternate_class (regno) != NO_REGS)
+              find_reg (order, 0, 1, 0, 0);
+        }
     }
 
-  obstack_free (&global_obstack, NULL);
-  free (conflicts);
-  return retval;
+    /* Do the reloads now while the allocno data still exist, so that we can
+       try to assign new hard regs to any pseudo regs that are spilled.  */
+
+    /* We need to eliminate regs even if there is no rtl code,
+       for the sake of debugging information.  */
+
+    build_insn_chain (get_insns ());
+    retval = reload (get_insns (), 1, file);
+
+    obstack_free (&global_obstack, NULL);
+    free (conflicts);
+
+    return retval;
 }
-/* END CYGNUS LOCAL */
 
 /* Sort predicate for ordering the allocnos.
    Returns -1 (1) if *v1 should be allocated before (after) *v2.  */
@@ -796,15 +607,8 @@ allocno_compare (v1p, v2p)
      const GENERIC_PTR v2p;
 {
   int v1 = *(int *)v1p, v2 = *(int *)v2p;
-  /* CYGNUS LOCAL live range */
   register int pri1;
   register int pri2;
-
-    /* Favor regs referenced in live ranges over other registers */
-  pri1 = REG_N_RANGE_COPY_P (allocno_reg [v1]);
-  pri2 = REG_N_RANGE_COPY_P (allocno_reg [v2]);
-  if (pri2 - pri1)
-    return pri2 - pri1;
 
   /* Note that the quotient will never be bigger than
      the value of floor_log2 times the maximum number of
@@ -824,162 +628,8 @@ allocno_compare (v1p, v2p)
   /* If regs are equally good, sort by allocno,
      so that the results of qsort leave nothing to chance.  */
   return v1 - v2;
-  /* END CYGNUS LOCAL */
 }
 
-/* CYGNUS LOCAL live range */
-/* If there were any live_range copies that were not allocated registers,
-   replace them with the original register, so that we don't get code copying
-   a stack location to a register, then into a stack location for the live
-   range.  */
-
-static void
-undo_live_range (file)
-     FILE *file;
-{
-  rtx range;
-  rtx insn;
-  int i, j;
-  regset new_dead = ALLOCA_REG_SET ();
-  regset old_live = ALLOCA_REG_SET ();
-  rtx *replacements = (rtx *) obstack_alloc (&global_obstack,
-					     max_regno * sizeof (rtx));
-  bzero ((char *)replacements, max_regno * sizeof (rtx));
-
-  for (i = max_regno-1; i >= 0; i--)
-    reg_renumber[i] = save_reg_renumber[i];
-
-  for (range = live_range_list; range; range = XEXP (range, 1))
-    {
-      rtx range_start = XEXP (range, 0);
-      rtx rinfo = NOTE_RANGE_INFO (range_start);
-      int bb_start = RANGE_INFO_BB_START (rinfo);
-      int bb_end = RANGE_INFO_BB_END (rinfo);
-      int block;
-      int num_dead_regs;
-
-      CLEAR_REG_SET (new_dead);
-      num_dead_regs = 0;
-      j = 0;
-      for (i = 0; i < RANGE_INFO_NUM_REGS (rinfo); i++)
-	{
-	  int old_regno = RANGE_REG_PSEUDO (rinfo, i);
-	  int new_regno = RANGE_REG_COPY (rinfo, i);
-
-	  if (new_regno >= 0 && reg_renumber[new_regno] < 0)
-	    {
-	      int new_allocno = reg_allocno[new_regno];
-	      int old_allocno = reg_allocno[old_regno];
-	      int j;
-
-	      /* Conflicts are not symmetric!  */
-	      for (j = 0; j < max_allocno; j++)
-		{
-		  if (CONFLICTP (new_allocno, j))
-		    SET_CONFLICT (old_allocno, j);
-
-		  if (CONFLICTP (j, new_allocno))
-		    SET_CONFLICT (j, old_allocno);
-		}
-
-	      replacements[new_regno] = regno_reg_rtx[old_regno];
-	      SET_REGNO_REG_SET (new_dead, new_regno);
-
-#if 0
-	      REG_N_REFS (old_regno) += REG_N_REFS (new_regno);
-	      REG_N_SETS (old_regno) += REG_N_SETS (new_regno);
-	      REG_N_DEATHS (old_regno) += REG_N_DEATHS (new_regno);
-	      REG_N_CALLS_CROSSED (old_regno) += REG_N_CALLS_CROSSED (new_regno);
-	      REG_LIVE_LENGTH (old_regno) += REG_LIVE_LENGTH (new_regno);
-#endif
-
-	      REG_N_REFS (new_regno) = 0;
-	      REG_N_SETS (new_regno) = 0;
-	      REG_N_DEATHS (new_regno) = 0;
-	      REG_N_CALLS_CROSSED (new_regno) = 0;
-	      REG_LIVE_LENGTH (new_regno) = 0;
-	      num_dead_regs++;
-
-	      if (file)
-		fprintf (file, "Live range copy register %d not allocated\n",
-			 new_regno);
-	    }
-	  else
-	    RANGE_INFO_REGS_REG (rinfo, j++) = RANGE_INFO_REGS_REG (rinfo, i);
-	}
-
-      RANGE_INFO_NUM_REGS (rinfo) -= num_dead_regs;
-
-      /* Update live information */
-      for (block = bb_start; block <= bb_end; block++)
-	{
-	  regset bits = basic_block_live_at_start[block];
-
-	  CLEAR_REG_SET (old_live);
-	  EXECUTE_IF_AND_IN_REG_SET (bits, new_dead,
-				     FIRST_PSEUDO_REGISTER, i,
-				     {
-				       int n = REGNO (replacements[i]);
-				       SET_REGNO_REG_SET (old_live, n);
-				     });
-
-	  AND_COMPL_REG_SET (bits, new_dead);
-	  IOR_REG_SET (bits, old_live);
-	  basic_block_live_at_start[block] = bits;
-	}
-    }
-
-  for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
-    if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
-      {
-	rtx note;
-	rtx set = single_set (insn);
-
-	/* Delete the copy-ins, copy-outs.  */
-	if (set
-	    && GET_CODE (SET_DEST (set)) == REG
-	    && GET_CODE (SET_SRC (set)) == REG
-	    && ((replacements[REGNO (SET_DEST (set))] == SET_SRC (set))
-		|| (replacements[REGNO (SET_SRC (set))] == SET_DEST (set))))
-	  {
-	    PUT_CODE (insn, NOTE);
-	    NOTE_LINE_NUMBER (insn) = NOTE_INSN_DELETED;
-	    NOTE_SOURCE_FILE (insn) = 0;
-	  }
-	else
-	  {
-	    PATTERN (insn) = replace_regs (PATTERN (insn),
-					   replacements, max_regno,
-					   TRUE);
-
-	    for (note = REG_NOTES (insn);
-		 note != NULL_RTX;
-		 note = XEXP (note, 1))
-	      {
-		if ((REG_NOTE_KIND (note) == REG_DEAD
-		     || REG_NOTE_KIND (note) == REG_UNUSED)
-		    && GET_CODE (XEXP (note, 0)) == REG
-		    && (replacements[ REGNO (XEXP (note, 0))] != NULL_RTX))
-		  {
-		    XEXP (note, 0) = replacements[ REGNO (XEXP (note, 0))];
-		  }
-
-		/* If the pseudo is set more than once and has a REG_EQUIV
-		   note attached, then demote the REG_EQUIV note to a
-		   REG_EQUAL note.  */
-		if (set
-		    && GET_CODE (SET_DEST (set)) == REG
-		    && REG_N_SETS (REGNO (SET_DEST (set))) > 1
-		    && REG_NOTE_KIND (note) == REG_EQUIV)
-		  PUT_REG_NOTE_KIND (note, REG_EQUAL);
-	      }
-	  }
-      }
-
-  FREE_REG_SET (new_dead);
-  FREE_REG_SET (old_live);
-}
-
 /* Scan the rtl code and record all conflicts and register preferences in the
    conflict matrices and preference tables.  */
 
@@ -1151,33 +801,6 @@ global_conflicts ()
 	  insn = NEXT_INSN (insn);
 	}
     }
-
-  /* CYGNUS LOCAL live range */
-  /* Go through any live ranges created, and specifically delete any conflicts
-     between the original register and the copy that is made for use within
-     the range.  */
-#if 1
-  if (live_range_list)
-    {
-      rtx range;
-      for (range = live_range_list; range; range = XEXP (range, 1))
-	{
-	  rtx range_start = XEXP (range, 0);
-	  rtx rinfo = NOTE_RANGE_INFO (range_start);
-	  for (i = 0; i < RANGE_INFO_NUM_REGS (rinfo); i++)
-	    {
-	      int old_allocno = reg_allocno[RANGE_REG_PSEUDO (rinfo, i)];
-	      int new_allocno = reg_allocno[RANGE_REG_COPY (rinfo, i)];
-	      if (old_allocno >= 0 && new_allocno >= 0)
-		{
-		  CLEAR_CONFLICT (old_allocno, new_allocno);
-		  CLEAR_CONFLICT (new_allocno, old_allocno);
-		}
-	    }
-	}
-    }
-#endif
-  /* END CYGNUS LOCAL */
 }
 /* Expand the preference information by looking for cases where one allocno
    dies in an insn that sets an allocno.  If those two allocnos don't conflict,
@@ -1353,11 +976,8 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 		      reg_class_contents[(int) CLASS_CANNOT_CHANGE_SIZE]);
 #endif
 
-  /* CYGNUS LOCAL live range */
-  /* Try each hard reg to see if it fits.  Do this in three passes.
-     In the first pass, check whether any other copies of the same original
-     register created by LRS have been allocated to a hadr register.
-     In the second pass, skip registers that are preferred by some other pseudo
+  /* Try each hard reg to see if it fits.  Do this in two passes.
+     In the first pass, skip registers that are preferred by some other pseudo
      to give it a better chance of getting one of those registers.  Only if
      we can not get a register when excluding those do we take one of them.
      However, we never allocate a register for the first time in pass 0.  */
@@ -1368,17 +988,10 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
   
   best_reg = -1;
   for (i = FIRST_PSEUDO_REGISTER, pass = 0;
-       pass <= 2 && i >= FIRST_PSEUDO_REGISTER;
+       pass <= 1 && i >= FIRST_PSEUDO_REGISTER;
        pass++)
     {
       if (pass == 0)
-	{
-	  if (!reg_live_ranges || !reg_live_ranges[pseudo])
-	    continue;
-	  COPY_HARD_REG_SET (used, *reg_live_ranges[pseudo]);
-	  IOR_HARD_REG_SET (used, used_nopref);
-	}
-      else if (pass == 1)
 	COPY_HARD_REG_SET (used, used_nopref);
       else
 	COPY_HARD_REG_SET (used, used1);
@@ -1413,7 +1026,6 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 	    }
 	  }
       }
-  /* END CYGNUS LOCAL */
 
   /* See if there is a preferred register with the same class as the register
      we allocated above.  Making this restriction prevents register
@@ -1605,13 +1217,6 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 	for (j = FIRST_PSEUDO_REGISTER; j < max_regno; j++)
 	  if (reg_allocno[j] == allocno)
 	    reg_renumber[j] = best_reg;
-
-      /* CYGNUS LOCAL live range */
-      /* If this is a live range copy, update the register mask so that
-	 other distinct ranges can try to allocate the same register.  */
-      if (reg_live_ranges && reg_live_ranges[pseudo] != NULL)
-	CLEAR_HARD_REG_BIT (*reg_live_ranges[pseudo], best_reg);
-      /* END CYGNUS LOCAL */
 
       /* Make a set of the hard regs being allocated.  */
       CLEAR_HARD_REG_SET (this_reg);

@@ -430,17 +430,6 @@ extern int flag_unaligned_struct_hack;
 extern int flag_unaligned_pointers;
 /* END CYGNUS LOCAL */
 
-/* CYGNUS LOCAL LRS */
-/* Enable live range splitting.  */
-extern int flag_live_range;
-
-/* Enable/disable using GDB extensions for denoting live ranges.  */
-extern int flag_live_range_gdb;
-
-/* Create scoping blocks for live ranges when debugging.  */
-extern int flag_live_range_scope;
-/* END CYGNUS LOCAL LRS */
-
 /* Tag all structures with __attribute__(packed) */
 extern int flag_pack_struct;
 

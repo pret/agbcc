@@ -51,9 +51,6 @@ Boston, MA 02111-1307, USA.  */
 #include "except.h"
 #include "toplev.h"
 #include "expr.h"
-/* CYGNUS LOCAL LRS */
-#include "range.h"
-/* END CYGNUS LOCAL */
 
 #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
@@ -231,9 +228,6 @@ int stack_reg_dump = 0;
 #ifdef MACHINE_DEPENDENT_REORG
 int mach_dep_reorg_dump = 0;
 #endif
-/* CYGNUS LOCAL LRS */
-int live_range_dump = 0;
-/* END CYGNUS LOCAL */
 enum graph_dump_types graph_dump_format;
 
 /* Name for output file of assembly code, specified with -o.  */
@@ -643,14 +637,6 @@ int flag_unaligned_struct_hack = 0;
 int flag_unaligned_pointers = 0;
 /* END CYGNUS LOCAL */
 
-/* CYGNUS LOCAL LRS */
-/* Enable live range splitting.  */
-int flag_live_range = 0;
-
-/* Create scoping blocks for live ranges when debugging.  */
-int flag_live_range_scope = LIVE_RANGE_SCOPE_DEFAULT;
-/* END CYGNUS LOCAL */
-
 /* Tag all structures with __attribute__(packed) */
 int flag_pack_struct = 0;
 
@@ -855,12 +841,6 @@ lang_independent_options f_options[] =
    "Enables a register move optimisation"},
   {"optimize-register-move", &flag_regmove, 1,
    "Do the full regmove optimization pass"},
-  /* CYGNUS LOCAL LRS */
-  {"live-range", &flag_live_range, 1,
-   "Enable live range splitting" },
-  {"live-range-scope", &flag_live_range_scope, 1,
-   "Create scope blocks for debugging live ranges"},
-  /* END CYGNUS LOCAL */
   {"pack-struct", &flag_pack_struct, 1,
    "Pack structure members together without holes" },
   {"stack-check", &flag_stack_check, 1,
@@ -1175,10 +1155,7 @@ int stack_reg_time;
 int final_time;
 int symout_time;
 int dump_time;
-/* CYGNUS LOCAL LRS */
-int live_range_time;
-/* END CYGNUS LOCAL */
-
+
 /* Return time used so far, in microseconds.  */
 
 long
@@ -2503,12 +2480,6 @@ compile_file (name)
   if (flag_caller_saves)
     init_caller_save ();
 
-  /* CYGNUS LOCAL LRS */
-  /* Clear out live range data if needed */
-  if (flag_live_range)
-    init_live_range ();
-  /* END CYGNUS LOCAL */
-
   /* If auxiliary info generation is desired, open the output file.
      This goes in the same directory as the source file--unlike
      all the other output files.  */
@@ -2639,10 +2610,6 @@ compile_file (name)
 	clean_graph_dump_file (dump_base_name, ".mach");
     }
 #endif
-  /* CYGNUS LOCAL LRS */
-  if (live_range_dump)
-    clean_dump_file (".range");
-  /* END CYGNUS LOCAL */
 
   /* Open assembler code output file.  */
 
@@ -3094,9 +3061,6 @@ compile_file (name)
       print_time ("combine", combine_time);
       print_time ("regmove", regmove_time);
       print_time ("sched", sched_time);
-      /* CYGNUS LOCAL LRS */
-      print_time ("live-range", live_range_time);
-      /* END CYGNUS LOCAL */
       print_time ("local-alloc", local_alloc_time);
       print_time ("global-alloc", global_alloc_time);
       print_time ("sched2", sched2_time);
@@ -3726,38 +3690,13 @@ rest_of_compilation (decl)
 	}
     }
 
-  /* CYGNUS LOCAL LRS */
-  if (optimize > 0 && flag_live_range && !obey_regdecls)
-    {
-      if (live_range_dump)
-	open_dump_file (".range", decl_printable_name (decl, 2));
-
-      /* Get accurate register usage information.  */
-      TIMEVAR (live_range_time, recompute_reg_usage (insns, !optimize_size));
-      TIMEVAR (live_range_time, live_range (insns, rtl_dump_file));
-      
-      if (live_range_dump)
-	close_dump_file (print_rtl_with_bb, insns);
-    }
-  /* END CYGNUS LOCAL */
-
   /* Unless we did stupid register allocation,
      allocate pseudo-regs that are used only within 1 basic block.  */
 
   if (!obey_regdecls)
     TIMEVAR (local_alloc_time,
 	     {
-	       /* CYGNUS LOCAL LRS */
-	       /* If we are splitting live ranges, then we want to get the
-		  register usage information accurate before splitting.
-
-		  ??? We must leave it inaccurate after splitting for now
-		  as undo_live_range assumes that it does not need to update
-		  the usage information for the LRS candidate after undoing
-		  a live range.  */
-	       if (!flag_live_range)
-		 recompute_reg_usage (insns, !optimize_size);
-	       /* END CYGNUS LOCAL */
+	       recompute_reg_usage (insns, !optimize_size);
 	       regclass (insns, max_reg_num ());
 	       local_alloc ();
 	     });
@@ -4039,11 +3978,6 @@ rest_of_compilation (decl)
 
 	      /* Show no temporary slots allocated.  */
 	      init_temp_slots ();
-
-	      /* CYGNUS LOCAL LRS */
-	      /* Clear out live range data if needed.  */
-	      if (flag_live_range)
-		init_live_range ();
 
 	      /* Release all memory held by regsets.  */
 	      regset_release_memory ();
@@ -4434,15 +4368,6 @@ main (argc, argv)
       flag_rerun_loop_opt = 1;
       flag_caller_saves = 1;
       flag_force_mem = 1;
-      /* CYGNUS LOCAL LRS */
-      /* Right now we can only support deubgging of LRS code using stabs
-	 extensions.  So LRS is enabled by default only for targets which
-	 prefer stabs debug symbols.
-
-	 If/when we add LRS support to our dwarf2 code we can enable LRS
-	 optimizations for more targets.  */
-      flag_live_range = (PREFERRED_DEBUGGING_TYPE == DBX_DEBUG);
-      /* END CYGNUS LOCAL */
 #ifdef INSN_SCHEDULING
       flag_schedule_insns = 1;
       flag_schedule_insns_after_reload = 1;
@@ -4526,9 +4451,6 @@ main (argc, argv)
  		    rtl_dump = 1;
  		    cse_dump = 1, cse2_dump = 1;
  		    gcse_dump = 1;
-		    /* CYGNUS LOCAL LRS/law */
-		    live_range_dump = 1;
-		    /* END CYGNUS LOCAL */
  		    sched_dump = 1;
  		    sched2_dump = 1;
 #ifdef STACK_REGS
@@ -4567,11 +4489,6 @@ main (argc, argv)
 		  case 'J':
 		    jump2_opt_dump = 1;
 		    break;
-		  /* CYGNUS LOCAL LRS */
-		  case 'K':
-		    live_range_dump = 1;
-		    break;
-		  /* END CYGNUS LOCAL */
 #ifdef STACK_REGS		    
 		  case 'k':
 		    stack_reg_dump = 1;

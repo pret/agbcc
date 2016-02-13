@@ -611,7 +611,6 @@ OBJS = toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
  insn-peep.o reorg.o $(SCHED_PREFIX)sched.o final.o recog.o reg-stack.o \
  insn-opinit.o insn-recog.o insn-extract.o insn-output.o insn-emit.o \
  $(CYGNUS-LOCAL-lcm) lcm.o \
- $(CYGNUS-LOCAL-range) range.o \
  insn-attrtab.o $(out_object_file) getpwd.o $(EXTRA_OBJS) convert.o \
  mbchar.o dyn-string.o splay-tree.o graph.o sbitmap.o resource.o
 
@@ -639,7 +638,6 @@ STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
  $(CCCP)$(exeext) cc1obj$(exeext) enquire$(exeext) \
  specs underscore.c \
- $(CYGNUS-LOCAL-range) *.range \
  *.greg *.lreg *.combine *.flow *.cse *.jump *.rtl *.tree *.loop \
  *.dbr *.jump2 *.sched *.cse2 *.sched2 *.stack *.gcse \
  *.[si] libcpp.a \
@@ -1335,16 +1333,16 @@ stor-layout.o : stor-layout.c $(CONFIG_H) system.h $(TREE_H) flags.h \
    function.h $(EXPR_H) $(RTL_H) toplev.h except.h
 fold-const.o : fold-const.c $(CONFIG_H) system.h $(TREE_H) flags.h toplev.h \
   $(RTL_H)
-# CYGNUS LOCAL live range
+
 toplev.o : toplev.c $(CONFIG_H) system.h $(TREE_H) $(RTL_H) \
-   flags.h input.h insn-attr.h defaults.h output.h range.h \
+   flags.h input.h insn-attr.h defaults.h output.h \
    insn-codes.h insn-config.h $(RECOG_H) Makefile toplev.h \
    dwarf2out.h $(EXPR_H) \
    $(lang_options_files)
 	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
 	  -DTARGET_NAME=\"$(target_alias)\" \
 	  -c `echo $(srcdir)/toplev.c | sed 's,^\./,,'`
-# END CYGNUS LOCAL
+
 
 rtl.o : rtl.c $(CONFIG_H) system.h $(RTL_H) bitmap.h
 
@@ -1420,14 +1418,8 @@ local-alloc.o : local-alloc.c $(CONFIG_H) system.h $(RTL_H) flags.h \
    insn-attr.h toplev.h
 bitmap.o : bitmap.c $(CONFIG_H) system.h $(RTL_H) flags.h $(BASIC_BLOCK_H) \
    $(REGS_H)
-# CYGNUS LOCAL live range
-range.o : range.c $(CONFIG_H) $(RTL_H) $(TREE_H) $(BASIC_BLOCK_H) flags.h \
-   $(REGS_H) hard-reg-set.h insn-config.h recog.h output.h expr.h insn-codes.h \
-   range.h function.h except.h system.h toplev.h
 global.o : global.c $(CONFIG_H) system.h $(RTL_H) flags.h  reload.h \
-   $(BASIC_BLOCK_H) $(REGS_H) hard-reg-set.h insn-config.h output.h toplev.h \
-   range.h
-#END CYGNUS LOCAL
+   $(BASIC_BLOCK_H) $(REGS_H) hard-reg-set.h insn-config.h output.h toplev.h
 varray.o : varray.c $(CONFIG_H) system.h varray.h $(RTL_H) $(TREE_H) bitmap.h
 
 reload.o : reload.c $(CONFIG_H) system.h $(RTL_H) flags.h output.h $(EXPR_H) \
@@ -1450,12 +1442,10 @@ regmove.o : regmove.c $(CONFIG_H) system.h $(RTL_H) insn-config.h \
 $(SCHED_PREFIX)sched.o : $(SCHED_PREFIX)sched.c $(CONFIG_H) system.h $(RTL_H) \
    $(BASIC_BLOCK_H) $(REGS_H) hard-reg-set.h flags.h insn-config.h \
    insn-attr.h toplev.h recog.h
-# CYGNUS LOCAL live range
 final.o : final.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h $(REGS_H) \
    $(RECOG_H) conditions.h insn-config.h insn-attr.h except.h real.h output.h \
    hard-reg-set.h insn-flags.h insn-codes.h defaults.h \
-   toplev.h reload.h dwarf2out.h range.h
-# END CYGNUS LOCAL
+   toplev.h reload.h dwarf2out.h
 recog.o : recog.c $(CONFIG_H) system.h $(RTL_H)  \
    $(REGS_H) $(RECOG_H) hard-reg-set.h flags.h insn-config.h insn-attr.h \
    insn-flags.h insn-codes.h real.h toplev.h
@@ -1989,9 +1979,6 @@ mostlyclean: lang.mostlyclean
 # in the build subdirectories.
 	-rm -f c-parse.c c-parse.output c-parse.h
 	-rm -f cexp.c cexp.output $(BUILD_SO1) $(BUILD_SO2) $(BUILD_SO3)
-# END CYGNUS LOCAL
-# CYGNUS LOCAL: live range
-	-rm -f *.range */*.range
 # END CYGNUS LOCAL
 	-rm -f *.bp */*.bp
 

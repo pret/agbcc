@@ -66,7 +66,6 @@ Boston, MA 02111-1307, USA.  */
 #include "reload.h"
 /* CYGNUS LOCAL LRS */
 #include "function.h"
-#include "range.h"
 #include "bitmap.h"
 #include "obstack.h"
 
@@ -1540,28 +1539,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 #endif
 	  break;
 	}
-
-      /* CYGNUS LOCAL LRS */
-      if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_RANGE_START)
-	{
-#ifdef ASM_COMMENT_START
-	  if (flag_debug_asm)
-	    live_range_print (file, NOTE_RANGE_INFO (insn), "\t",
-			      ASM_COMMENT_START);
-#endif
-	  break;
-	}
-
-      if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_RANGE_END)
-	{
-#ifdef ASM_COMMENT_START
-	  if (flag_debug_asm)
-	    fprintf (file, "\t%s range #%d end\n", ASM_COMMENT_START,
-		     RANGE_INFO_UNIQUE (NOTE_RANGE_INFO (insn)));
-#endif
-	  break;
-	}
-      /* END CYGNUS LOCAL */
 
       if (NOTE_LINE_NUMBER (insn) == NOTE_INSN_PROLOGUE_END)
 	{
