@@ -118,18 +118,7 @@ Boston, MA 02111-1307, USA.  */
 extern int errno;
 #endif
 
-#ifdef STRING_WITH_STRINGS
-# include <string.h>
-# include <strings.h>
-#else
-# ifdef HAVE_STRING_H
-#  include <string.h>
-# else
-#  ifdef HAVE_STRINGS_H
-#   include <strings.h>
-#  endif
-# endif
-#endif
+#include <string.h>
 
 #ifdef HAVE_STDLIB_H
 # include <stdlib.h>
@@ -212,57 +201,9 @@ extern int errno;
 #define WEXITSTATUS(S) (((S) & 0xff00) >> 8)
 #endif
 
+#define copy_memory(src,dst,len) memcpy((dst),(src),(len))
 
-
-#ifndef bcopy
-# ifdef HAVE_BCOPY
-#  ifdef NEED_DECLARATION_BCOPY
-extern void bcopy ();
-#  endif
-# else /* ! HAVE_BCOPY */
-#  define bcopy(src,dst,len) memcpy ((dst),(src),(len))
-# endif
-#endif
-
-#ifndef bcmp
-# ifdef HAVE_BCMP
-#  ifdef NEED_DECLARATION_BCMP
-extern int bcmp ();
-#  endif
-# else /* ! HAVE_BCMP */
-#  define bcmp(left,right,len) memcmp ((left),(right),(len))
-# endif
-#endif
-
-#ifndef bzero
-# ifdef HAVE_BZERO
-#  ifdef NEED_DECLARATION_BZERO
-extern void bzero ();
-#  endif
-# else /* ! HAVE_BZERO */
-#  define bzero(dst,len) memset ((dst),0,(len))
-# endif
-#endif
-
-#ifndef index
-# ifdef HAVE_INDEX
-#  ifdef NEED_DECLARATION_INDEX
-extern char *index ();
-#  endif
-# else /* ! HAVE_INDEX */
-#  define index strchr
-# endif
-#endif
-
-#ifndef rindex
-# ifdef HAVE_RINDEX
-#  ifdef NEED_DECLARATION_RINDEX
-extern char *rindex ();
-#  endif
-# else /* ! HAVE_RINDEX */
-#  define rindex strrchr
-# endif
-#endif
+#define zero_memory(dst,len) memset((dst),0,(len))
 
 #ifdef NEED_DECLARATION_ATOF
 extern double atof ();

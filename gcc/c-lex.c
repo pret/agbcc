@@ -1432,7 +1432,7 @@ yylex ()
 		   and not the suffixes; once we add `f' or `i',
 		   REAL_VALUE_ATOF may not work any more.  */
 		char *copy = (char *) alloca (p - token_buffer + 1);
-		bcopy (token_buffer, copy, p - token_buffer + 1);
+		copy_memory (token_buffer, copy, p - token_buffer + 1);
 
 		set_float_handler (handler);
 
@@ -2014,7 +2014,7 @@ yylex ()
 	  {
 	    if (p + WCHAR_BYTES > token_buffer + maxtoken)
 	      p = extend_token_buffer (p);
-	    bzero (p, WCHAR_BYTES);
+	    zero_memory (p, WCHAR_BYTES);
 	    p += WCHAR_BYTES;
 	  }
 	else

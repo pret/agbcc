@@ -346,7 +346,7 @@ global_init (FILE *file)
      from the list of pairs that may share.  */
 
     reg_may_share = (int *) obstack_alloc (&global_obstack, max_regno * sizeof (int));
-    bzero ((char *) reg_may_share, max_regno * sizeof (int));
+    zero_memory ((char *) reg_may_share, max_regno * sizeof (int));
     for (x = regs_may_share; x; x = XEXP (XEXP (x, 1), 1))
 	{
         int r1 = REGNO (XEXP (x, 0));
@@ -383,10 +383,10 @@ global_init (FILE *file)
     allocno_n_refs = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
     allocno_live_length = (int *) obstack_alloc (&global_obstack, max_allocno * sizeof (int));
 
-  bzero ((char *) allocno_size, max_allocno * sizeof (int));
-  bzero ((char *) allocno_calls_crossed, max_allocno * sizeof (int));
-  bzero ((char *) allocno_n_refs, max_allocno * sizeof (int));
-  bzero ((char *) allocno_live_length, max_allocno * sizeof (int));
+  zero_memory ((char *) allocno_size, max_allocno * sizeof (int));
+  zero_memory ((char *) allocno_calls_crossed, max_allocno * sizeof (int));
+  zero_memory ((char *) allocno_n_refs, max_allocno * sizeof (int));
+  zero_memory ((char *) allocno_live_length, max_allocno * sizeof (int));
 
   for (i = FIRST_PSEUDO_REGISTER; i < (size_t) max_regno; i++)
     if (reg_allocno[i] >= 0)
@@ -403,8 +403,8 @@ global_init (FILE *file)
   /* Calculate amount of usage of each hard reg by pseudos
      allocated by local-alloc.  This is to see if we want to
      override it.  */
-  bzero ((char *) local_reg_live_length, sizeof local_reg_live_length);
-  bzero ((char *) local_reg_n_refs, sizeof local_reg_n_refs);
+  zero_memory ((char *) local_reg_live_length, sizeof local_reg_live_length);
+  zero_memory ((char *) local_reg_n_refs, sizeof local_reg_n_refs);
   for (i = FIRST_PSEUDO_REGISTER; i < (size_t) max_regno; i++)
     if (reg_renumber[i] >= 0)
       {
@@ -460,14 +460,14 @@ global_init (FILE *file)
 						  (allocno_row_words
 						   * sizeof (INT_TYPE)));
 
-  bzero ((char *) hard_reg_conflicts, max_allocno * sizeof (HARD_REG_SET));
-  bzero ((char *) hard_reg_preferences, max_allocno * sizeof (HARD_REG_SET));
-  bzero ((char *) hard_reg_copy_preferences,
+  zero_memory ((char *) hard_reg_conflicts, max_allocno * sizeof (HARD_REG_SET));
+  zero_memory ((char *) hard_reg_preferences, max_allocno * sizeof (HARD_REG_SET));
+  zero_memory ((char *) hard_reg_copy_preferences,
 	 max_allocno * sizeof (HARD_REG_SET));
-  bzero ((char *) hard_reg_full_preferences,
+  zero_memory ((char *) hard_reg_full_preferences,
 	 max_allocno * sizeof (HARD_REG_SET));
-  bzero ((char *) regs_someone_prefers, max_allocno * sizeof (HARD_REG_SET));
-  bzero ((char *) conflicts,
+  zero_memory ((char *) regs_someone_prefers, max_allocno * sizeof (HARD_REG_SET));
+  zero_memory ((char *) conflicts,
 	 max_allocno * allocno_row_words * sizeof (INT_TYPE));
 
   /* If there is work to be done (at least one reg to allocate),
@@ -651,7 +651,7 @@ global_conflicts ()
 
   for (b = 0; b < n_basic_blocks; b++)
     {
-      bzero ((char *) allocnos_live, allocno_row_words * sizeof (INT_TYPE));
+      zero_memory ((char *) allocnos_live, allocno_row_words * sizeof (INT_TYPE));
 
       /* Initialize table of registers currently live
 	 to the state at the beginning of this basic block.

@@ -375,7 +375,7 @@ local_alloc ()
 	 vectors might need to be initialized because they were used
 	 for the previous block; it is set to the entire array before
 	 block 0.  Initialize those, with explicit loop if there are few,
-	 else with bzero and bcopy.  Do not initialize vectors that are
+	 else with zero_memory and bcopy.  Do not initialize vectors that are
 	 explicit set by `alloc_qty'.  */
 
       if (next_qty < 6)
@@ -391,7 +391,7 @@ local_alloc ()
       else
 	{
 #define CLEAR(vector)  \
-	  bzero ((char *) (vector), (sizeof (*(vector))) * next_qty);
+	  zero_memory ((char *) (vector), (sizeof (*(vector))) * next_qty);
 
 	  CLEAR (qty_phys_copy_sugg);
 	  CLEAR (qty_phys_num_copy_sugg);
@@ -667,9 +667,9 @@ update_equiv_regs ()
   reg_equiv_init_insns = (rtx *) alloca (max_regno * sizeof (rtx));
   reg_equiv_replacement = (rtx *) alloca (max_regno * sizeof (rtx));
 
-  bzero ((char *) reg_equiv_init_insns, max_regno * sizeof (rtx));
-  bzero ((char *) reg_equiv_replacement, max_regno * sizeof (rtx));
-  bzero ((char *) reg_equiv_replace, max_regno * sizeof *reg_equiv_replace);
+  zero_memory ((char *) reg_equiv_init_insns, max_regno * sizeof (rtx));
+  zero_memory ((char *) reg_equiv_replacement, max_regno * sizeof (rtx));
+  zero_memory ((char *) reg_equiv_replace, max_regno * sizeof *reg_equiv_replace);
 
   init_alias_analysis ();
 
@@ -1035,7 +1035,7 @@ block_alloc (b)
      the birth of a CLOBBER in the first insn.  */
   regs_live_at = (HARD_REG_SET *) alloca ((2 * insn_count + 2)
 					  * sizeof (HARD_REG_SET));
-  bzero ((char *) regs_live_at, (2 * insn_count + 2) * sizeof (HARD_REG_SET));
+  zero_memory ((char *) regs_live_at, (2 * insn_count + 2) * sizeof (HARD_REG_SET));
 
   /* Initialize table of hardware registers currently live.  */
 

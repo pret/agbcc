@@ -3556,8 +3556,8 @@ dbr_schedule (first, file)
   end_of_function_label = 0;
 
   /* Initialize the statistics for this function.  */
-  bzero ((char *) num_insns_needing_delays, sizeof num_insns_needing_delays);
-  bzero ((char *) num_filled_delays, sizeof num_filled_delays);
+  zero_memory ((char *) num_insns_needing_delays, sizeof num_insns_needing_delays);
+  zero_memory ((char *) num_filled_delays, sizeof num_filled_delays);
 
   /* Now do the delay slot filling.  Try everything twice in case earlier
      changes make more slots fillable.  */

@@ -60,5 +60,5 @@ main ()
   int i;
 
   for (i = 1; i < 67108864 / BYTES; i++)
-    bcopy (s, d, BYTES);
+    copy_memory (s, d, BYTES);
 }

@@ -692,7 +692,7 @@ find_related (xp, insn, luid, call_tally)
 		new_related->invalidate_luid = 0;
 		new_related->death = NULL_RTX;
 		rel_new (new_related->baseinfo);
-		bzero ((char *) new_related->baseinfo,
+		zero_memory ((char *) new_related->baseinfo,
 		       sizeof *new_related->baseinfo);
 		new_related->baseinfo->prev_base = rel_base_list;
 		rel_base_list = new_related;
@@ -1508,7 +1508,7 @@ optimize_related_values_1 (rel_base, luid, call_tally, insert_after,
     }
 
   /* Finally, clear the entries that we used in regno_related.  We do it
-     item by item here, because doing it with bzero for each basic block
+     item by item here, because doing it with zero_memory for each basic block
      would give O(n*n) time complexity.  */
   for (rel = rel_base; rel; rel = rel->prev)
     regno_related[REGNO (rel->reg)] = 0;
@@ -1623,7 +1623,7 @@ optimize_related_values (nregs, regmove_dump_file)
 
   gcc_obstack_init (&related_obstack);
   regno_related = rel_alloc (nregs * sizeof *regno_related);
-  bzero ((char *) regno_related, nregs * sizeof *regno_related);
+  zero_memory ((char *) regno_related, nregs * sizeof *regno_related);
   rel_base_list = 0;
   loop_depth = 1;
   for (insn = get_insns (); insn; insn = NEXT_INSN (insn))

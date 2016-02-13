@@ -184,7 +184,7 @@ stupid_life_analysis (f, nregs, file)
 
   current_function_has_computed_jump = 0;
 
-  bzero (regs_ever_live, sizeof regs_ever_live);
+  zero_memory (regs_ever_live, sizeof regs_ever_live);
 
   regs_live = (char *) xmalloc (nregs);
 
@@ -220,25 +220,25 @@ stupid_life_analysis (f, nregs, file)
   /* Allocate tables to record info about regs.  */
 
   reg_where_dead = (int *) xmalloc (nregs * sizeof (int));
-  bzero ((char *) reg_where_dead, nregs * sizeof (int));
+  zero_memory ((char *) reg_where_dead, nregs * sizeof (int));
 
   reg_where_born_exact = (int *) xmalloc (nregs * sizeof (int));
-  bzero ((char *) reg_where_born_exact, nregs * sizeof (int));
+  zero_memory ((char *) reg_where_born_exact, nregs * sizeof (int));
 
   reg_where_born_clobber = (int *) xmalloc (nregs * sizeof (int));
-  bzero ((char *) reg_where_born_clobber, nregs * sizeof (int));
+  zero_memory ((char *) reg_where_born_clobber, nregs * sizeof (int));
 
   reg_where_dead_chain = (struct insn_chain **) xmalloc (nregs * sizeof (struct insn_chain *));
-  bzero ((char *) reg_where_dead_chain, nregs * sizeof (struct insn_chain *));
+  zero_memory ((char *) reg_where_dead_chain, nregs * sizeof (struct insn_chain *));
  
   reg_order = (int *) xmalloc (nregs * sizeof (int));
-  bzero ((char *) reg_order, nregs * sizeof (int));
+  zero_memory ((char *) reg_order, nregs * sizeof (int));
 
   regs_change_size = (char *) xmalloc (nregs * sizeof (char));
-  bzero ((char *) regs_change_size, nregs * sizeof (char));
+  zero_memory ((char *) regs_change_size, nregs * sizeof (char));
 
   regs_crosses_setjmp = (char *) xmalloc (nregs * sizeof (char));
-  bzero ((char *) regs_crosses_setjmp, nregs * sizeof (char));
+  zero_memory ((char *) regs_crosses_setjmp, nregs * sizeof (char));
 
   /* Allocate the reg_renumber array */
   allocate_reg_info (max_regno, FALSE, TRUE);
@@ -248,7 +248,7 @@ stupid_life_analysis (f, nregs, file)
   after_insn_hard_regs
     = (HARD_REG_SET *) xmalloc (max_suid * sizeof (HARD_REG_SET));
 
-  bzero ((char *) after_insn_hard_regs, max_suid * sizeof (HARD_REG_SET));
+  zero_memory ((char *) after_insn_hard_regs, max_suid * sizeof (HARD_REG_SET));
 
   /* Allocate and zero out many data structures
      that will record the data from lifetime analysis.  */
@@ -258,7 +258,7 @@ stupid_life_analysis (f, nregs, file)
   for (i = 0; i < max_regno; i++)
     REG_N_DEATHS (i) = 1;
 
-  bzero (regs_live, nregs);
+  zero_memory (regs_live, nregs);
 
   /* Find where each pseudo register is born and dies,
      by scanning all insns from the end to the start

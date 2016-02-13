@@ -548,7 +548,7 @@ path_include (pfile, path)
       } else {
 	/* Otherwise use the directory that is named.  */
 	name = (char *) xmalloc (q - p + 1);
-	bcopy (p, name, q - p);
+	copy_memory (p, name, q - p);
 	name[q - p] = 0;
       }
 
@@ -568,7 +568,7 @@ void
 cpp_options_init (opts)
      cpp_options *opts;
 {
-  bzero ((char *) opts, sizeof *opts);
+  zero_memory ((char *) opts, sizeof *opts);
   opts->in_fname = NULL;
   opts->out_fname = NULL;
 
@@ -1357,7 +1357,7 @@ create_definition (buf, limit, pfile, predefinition)
       struct arglist *temp;
       int i = 0;
       for (temp = arg_ptrs; temp; temp = temp->next) {
-	bcopy (temp->name, &defn->args.argnames[i], temp->length);
+	copy_memory (temp->name, &defn->args.argnames[i], temp->length);
 	i += temp->length;
 	if (temp->next != 0) {
 	  defn->args.argnames[i++] = ',';
@@ -1434,7 +1434,7 @@ check_macro_name (pfile, symname, usage)
   else if (!is_idstart[*symname]) {
     U_CHAR *msg;			/* what pain...  */
     msg = (U_CHAR *) alloca (sym_length + 1);
-    bcopy (symname, msg, sym_length);
+    copy_memory (symname, msg, sym_length);
     msg[sym_length] = 0;
     cpp_error (pfile, "invalid %s name `%s'", usage, msg);
   } else {
@@ -1546,7 +1546,7 @@ do_define (pfile, keyword)
   buf = pfile->token_buffer + here;
   end = CPP_PWRITTEN (pfile);
   macro = alloca (end - buf + 1);
-  bcopy (buf, macro, end - buf + 1);
+  copy_memory (buf, macro, end - buf + 1);
   end = macro + (end - buf);
 
   CPP_SET_WRITTEN (pfile, here);
@@ -1587,7 +1587,7 @@ do_define (pfile, keyword)
 
 	  msg = (U_CHAR *) alloca (mdef.symlen + 22);
 	  *msg = '`';
-	  bcopy (mdef.symnam, msg + 1, mdef.symlen);
+	  copy_memory (mdef.symnam, msg + 1, mdef.symlen);
 	  strcpy ((char *) (msg + mdef.symlen + 1), "' redefined");
 	  cpp_pedwarn (pfile, msg);
 	  if (hp->type == T_MACRO)
@@ -1656,7 +1656,7 @@ cpp_push_buffer (pfile, buffer, length)
       return NULL;
     }
   buf--;
-  bzero ((char *) buf, sizeof (cpp_buffer));
+  zero_memory ((char *) buf, sizeof (cpp_buffer));
   CPP_BUFFER (pfile) = buf;
   buf->if_stack = pfile->if_stack;
   buf->cleanup = null_cleanup;
@@ -2161,7 +2161,7 @@ special_symbol (hp, pfile)
       sprintf (buf, "%d", hp->value.ival);
 #ifdef STDC_0_IN_SYSTEM_HEADERS
       if (ip->system_header_p
-	  && hp->length == 8 && bcmp (hp->name, "__STDC__", 8) == 0
+	  && hp->length == 8 && memcmp (hp->name, "__STDC__", 8) == 0
 	  && ! cpp_lookup (pfile, (U_CHAR *) "__STRICT_ANSI__", -1, -1))
 	strcpy (buf, "0");
 #endif
@@ -2684,7 +2684,7 @@ macroexpand (pfile, hp)
 
 	  if (ap->stringify != 0)
 	    {
-	      bcopy (ARG_BASE + arg->stringified,
+	      copy_memory (ARG_BASE + arg->stringified,
 		     xbuf + totlen, arg->stringified_length);
 	      totlen += arg->stringified_length;
 	    }
@@ -2737,7 +2737,7 @@ macroexpand (pfile, hp)
 	      if (p1[0] == '@' && p1[1] == '-')
 		p1 += 2;
 
-	      bcopy (p1, xbuf + totlen, l1 - p1);
+	      copy_memory (p1, xbuf + totlen, l1 - p1);
 	      totlen += l1 - p1;
 	    }
 	  else
@@ -2751,7 +2751,7 @@ macroexpand (pfile, hp)
 		  xbuf[totlen++] = ' ';
 		}
 
-	      bcopy (expanded, xbuf + totlen, arg->expand_length);
+	      copy_memory (expanded, xbuf + totlen, arg->expand_length);
 	      totlen += arg->expand_length;
 
 	      if (!ap->raw_after && totlen > 0 && offset < defn->length
@@ -3264,7 +3264,7 @@ do_line (pfile, keyword)
 
       hp->length = fname_length;
       ip->nominal_fname = hp->value.cpval = ((char *) hp) + sizeof (HASHNODE);
-      bcopy (fname, hp->value.cpval, fname_length);
+      copy_memory (fname, hp->value.cpval, fname_length);
     }
   }
   else if (token != CPP_VSPACE && token != CPP_EOF) {
@@ -3313,7 +3313,7 @@ do_undef (pfile, keyword)
 
   /* Copy out the token so we can pop the token buffer. */
   name = alloca (limit - buf + 1);
-  bcopy(buf, name, limit - buf);
+  copy_memory(buf, name, limit - buf);
   name[limit - buf] = '\0';
 
   token = get_directive_token (pfile);
@@ -3474,10 +3474,10 @@ do_pragma (pfile, keyword)
         return 0;
 
       fname = p + 1;
-      p = (U_CHAR *) index (fname, '\"');
+      p = (U_CHAR *) strchr (fname, '\"');
 
       fcopy = alloca (p - fname + 1);
-      bcopy (fname, fcopy, p - fname);
+      copy_memory (fname, fcopy, p - fname);
       fcopy[p-fname] = '\0';
 
       ptr = include_hash (pfile, fcopy, 0);
@@ -3640,7 +3640,7 @@ do_xifdef (pfile, keyword)
       if (start_of_file && !skip)
 	{
 	  control_macro = (U_CHAR *) xmalloc (ident_length + 1);
-	  bcopy (ident, control_macro, ident_length + 1);
+	  copy_memory (ident, control_macro, ident_length + 1);
 	}
     }
   else
@@ -4103,14 +4103,14 @@ cpp_get_token (pfile)
 	    if (lintcmd != NULL) {
 	      /* I believe it is always safe to emit this newline: */
 	      obp[-1] = '\n';
-	      bcopy ("#pragma lint ", (char *) obp, 13);
+	      copy_memory ("#pragma lint ", (char *) obp, 13);
 	      obp += 13;
-	      bcopy (lintcmd, (char *) obp, cmdlen);
+	      copy_memory (lintcmd, (char *) obp, cmdlen);
 	      obp += cmdlen;
 
 	      if (arglen != 0) {
 		*(obp++) = ' ';
-		bcopy (argbp, (char *) obp, arglen);
+		copy_memory (argbp, (char *) obp, arglen);
 		obp += arglen;
 	      }
 
@@ -4571,7 +4571,7 @@ cpp_get_token (pfile)
 	      xbuf_len = CPP_WRITTEN (pfile) - before_name_written;
 	      xbuf = (U_CHAR *) xmalloc (xbuf_len + 1);
 	      CPP_SET_WRITTEN (pfile, before_name_written);
-	      bcopy (CPP_PWRITTEN (pfile), xbuf, xbuf_len + 1);
+	      copy_memory (CPP_PWRITTEN (pfile), xbuf, xbuf_len + 1);
 	      push_macro_expansion (pfile, xbuf, xbuf_len, hp);
 	    }
 	    else
@@ -4906,7 +4906,7 @@ cpp_start_read (pfile, fname)
 	  endp++;
       }
       /* Put the usual defaults back in at the end.  */
-      bcopy ((char *) include_defaults_array,
+      copy_memory ((char *) include_defaults_array,
 	     (char *) &include_defaults[num_dirs],
 	     sizeof (include_defaults_array));
     }
@@ -5017,7 +5017,7 @@ cpp_start_read (pfile, fname)
       {
 	opts->deps_target = s + 1;
 	output_file = (char *) xmalloc (s - spec + 1);
-	bcopy (spec, output_file, s - spec);
+	copy_memory (spec, output_file, s - spec);
 	output_file[s - spec] = 0;
       }
     else
@@ -5054,9 +5054,9 @@ cpp_start_read (pfile, fname)
 				   };
 
 	  /* Discard all directory prefixes from filename.  */
-	  if ((q = rindex (opts->in_fname, '/')) != NULL
+	  if ((q = strrchr (opts->in_fname, '/')) != NULL
 #ifdef DIR_SEPARATOR
-	      && (q = rindex (opts->in_fname, DIR_SEPARATOR)) != NULL
+	      && (q = strrchr (opts->in_fname, DIR_SEPARATOR)) != NULL
 #endif
 	      )
 	    ++q;
@@ -5071,7 +5071,7 @@ cpp_start_read (pfile, fname)
 	  len = strlen (p);
 	  q = p + len;
 	  /* Point to the filename suffix.  */
-	  r = rindex (p, '.');
+	  r = strrchr (p, '.');
 	  /* Compare against the known suffixes.  */
 	  x = 0;
 	  while (known_suffixes[x] != 0)
@@ -5216,7 +5216,7 @@ void
 cpp_reader_init (pfile)
      cpp_reader *pfile;
 {
-  bzero ((char *) pfile, sizeof (cpp_reader));
+  zero_memory ((char *) pfile, sizeof (cpp_reader));
   pfile->get_token = cpp_get_token;
 
   pfile->token_buffer_size = 200;
@@ -6042,7 +6042,7 @@ do_assert (pfile, keyword)
     }
 
   thislen = strlen (sym);
-  baselen = index (sym, '(') - sym;
+  baselen = strchr (sym, '(') - sym;
   this = cpp_lookup (pfile, sym, thislen, -1);
   if (this)
     {
@@ -6118,7 +6118,7 @@ do_unassert (pfile, keyword)
     }
   else
     {
-      baselen = index (sym, '(') - sym;
+      baselen = strchr (sym, '(') - sym;
       base = cpp_lookup (pfile, sym, baselen, -1);
       if (! base) goto error;
       this = cpp_lookup (pfile, sym, thislen, -1);

@@ -1058,7 +1058,7 @@ translate_options (argcp, argvp)
 
 		      /* If this mapping requires extra text at end of name,
 			 accept that as "argument".  */
-		      else if (index (arginfo, '*') != 0)
+		      else if (strchr (arginfo, '*') != 0)
 			arg = argv[i] + optlen;
 
 		      /* Otherwise, extra text at end means mismatch.
@@ -1067,14 +1067,14 @@ translate_options (argcp, argvp)
 			continue;
 		    }
 
-		  else if (index (arginfo, '*') != 0)
+		  else if (strchr (arginfo, '*') != 0)
 		    {
 		      error ("Incomplete `%s' option", option_map[j].name);
 		      break;
 		    }
 
 		  /* Handle arguments.  */
-		  if (index (arginfo, 'a') != 0)
+		  if (strchr (arginfo, 'a') != 0)
 		    {
 		      if (arg == 0)
 			{
@@ -1088,9 +1088,9 @@ translate_options (argcp, argvp)
 			  arg = argv[++i];
 			}
 		    }
-		  else if (index (arginfo, '*') != 0)
+		  else if (strchr (arginfo, '*') != 0)
 		    ;
-		  else if (index (arginfo, 'o') == 0)
+		  else if (strchr (arginfo, 'o') == 0)
 		    {
 		      if (arg != 0)
 			error ("Extraneous argument to `%s' option",
@@ -1099,7 +1099,7 @@ translate_options (argcp, argvp)
 		    }
 
 		  /* Store the translation as one argv elt or as two.  */
-		  if (arg != 0 && index (arginfo, 'j') != 0)
+		  if (arg != 0 && strchr (arginfo, 'j') != 0)
 		    newv[newindex++] = concat (option_map[j].equivalent, arg,
 					       NULL_PTR);
 		  else if (arg != 0)
@@ -1286,7 +1286,7 @@ init_spec ()
   extra_specs = (struct spec_list *)
     xmalloc (sizeof(struct spec_list) *
 	     (sizeof(extra_specs_1)/sizeof(extra_specs_1[0])));
-  bzero ((PTR) extra_specs, sizeof(struct spec_list) *
+  zero_memory ((PTR) extra_specs, sizeof(struct spec_list) *
 	 (sizeof(extra_specs_1)/sizeof(extra_specs_1[0])));
   
   for (i = (sizeof(extra_specs_1) / sizeof(extra_specs_1[0])) - 1; i >= 0; i--)
@@ -1786,11 +1786,11 @@ read_specs (filename, main_p)
 			 (n_compilers + 2) * sizeof (struct compiler)));
 
 	  compilers[n_compilers].suffix = suffix;
-	  bzero ((char *) compilers[n_compilers].spec,
+	  zero_memory ((char *) compilers[n_compilers].spec,
 		 sizeof compilers[n_compilers].spec);
 	  compilers[n_compilers].spec[0] = spec;
 	  n_compilers++;
-	  bzero ((char *) &compilers[n_compilers],
+	  zero_memory ((char *) &compilers[n_compilers],
 		 sizeof compilers[n_compilers]);
 	}
 
@@ -3593,7 +3593,7 @@ process_command (argc, argv)
 	      /* Null-terminate the vector.  */
 	      switches[n_switches].args[j] = 0;
 	    }
-	  else if (index (switches_need_spaces, c))
+	  else if (strchr (switches_need_spaces, c))
 	    {
 	      /* On some systems, ld cannot handle some options without
 		 a space.  So split the option from its argument.  */
@@ -5076,7 +5076,7 @@ main (argc, argv)
 	first_time = FALSE;
 	obstack_grow (&collect_obstack, "'-", 2);
         q = switches[i].part1;
-	while ((p = index (q,'\'')))
+	while ((p = strchr (q,'\'')))
           {
             obstack_grow (&collect_obstack, q, p-q);
             obstack_grow (&collect_obstack, "'\\''", 4);
@@ -5089,7 +5089,7 @@ main (argc, argv)
 	  {
 	    obstack_grow (&collect_obstack, " '", 2);
 	    q = *args;
-	    while ((p = index (q,'\'')))
+	    while ((p = strchr (q,'\'')))
 	      {
 		obstack_grow (&collect_obstack, q, p-q);
 		obstack_grow (&collect_obstack, "'\\''", 4);
@@ -5107,7 +5107,7 @@ main (argc, argv)
      This means one element containing 0s, as a terminator.  */
 
   compilers = (struct compiler *) xmalloc (sizeof default_compilers);
-  bcopy ((char *) default_compilers, (char *) compilers,
+  copy_memory ((char *) default_compilers, (char *) compilers,
 	 sizeof default_compilers);
   n_compilers = n_default_compilers;
 
@@ -5339,12 +5339,12 @@ main (argc, argv)
   i += lang_specific_extra_outfiles;
 #endif
   outfiles = (char **) xmalloc (i * sizeof (char *));
-  bzero ((char *) outfiles, i * sizeof (char *));
+  zero_memory ((char *) outfiles, i * sizeof (char *));
 
   /* Record which files were specified explicitly as link input.  */
 
   explicit_link_files = xmalloc (n_infiles);
-  bzero (explicit_link_files, n_infiles);
+  zero_memory (explicit_link_files, n_infiles);
 
   for (i = 0; (int)i < n_infiles; i++)
     {
@@ -5540,7 +5540,7 @@ lookup_compiler (name, length, language)
 	      language = cp->spec[0] + 1;
 	      new = (struct compiler *) xmalloc (sizeof (struct compiler));
 	      new->suffix = cp->suffix;
-	      bcopy ((char *) lookup_compiler (NULL_PTR, 0, language)->spec,
+	      copy_memory ((char *) lookup_compiler (NULL_PTR, 0, language)->spec,
 		     (char *) new->spec, sizeof new->spec);
 	      return new;
 	    }
@@ -5585,7 +5585,7 @@ save_string (s, len)
 {
   register char *result = xmalloc (len + 1);
 
-  bcopy (s, result, len);
+  copy_memory (s, result, len);
   result[len] = 0;
   return result;
 }

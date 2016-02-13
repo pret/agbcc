@@ -1348,9 +1348,9 @@ init_alias_analysis ()
     - FIRST_PSEUDO_REGISTER;
   reg_known_equiv_p =
     oballoc (maxreg - FIRST_PSEUDO_REGISTER) - FIRST_PSEUDO_REGISTER;
-  bzero ((char *) (reg_known_value + FIRST_PSEUDO_REGISTER),
+  zero_memory ((char *) (reg_known_value + FIRST_PSEUDO_REGISTER),
 	 (maxreg-FIRST_PSEUDO_REGISTER) * sizeof (rtx));
-  bzero (reg_known_equiv_p + FIRST_PSEUDO_REGISTER,
+  zero_memory (reg_known_equiv_p + FIRST_PSEUDO_REGISTER,
 	 (maxreg - FIRST_PSEUDO_REGISTER) * sizeof (char));
 
   /* Overallocate reg_base_value to allow some growth during loop
@@ -1360,12 +1360,12 @@ init_alias_analysis ()
   reg_base_value = (rtx *)oballoc (reg_base_value_size * sizeof (rtx));
   new_reg_base_value = (rtx *)alloca (reg_base_value_size * sizeof (rtx));
   reg_seen = (char *)alloca (reg_base_value_size);
-  bzero ((char *) reg_base_value, reg_base_value_size * sizeof (rtx));
+  zero_memory ((char *) reg_base_value, reg_base_value_size * sizeof (rtx));
   if (! reload_completed && flag_unroll_loops)
     {
       alias_invariant = (rtx *)xrealloc (alias_invariant,
 					 reg_base_value_size * sizeof (rtx));
-      bzero ((char *)alias_invariant, reg_base_value_size * sizeof (rtx));
+      zero_memory ((char *)alias_invariant, reg_base_value_size * sizeof (rtx));
     }
     
 
@@ -1403,10 +1403,10 @@ init_alias_analysis ()
       copying_arguments = 1;
 
       /* Wipe the potential alias information clean for this pass.  */
-      bzero ((char *) new_reg_base_value, reg_base_value_size * sizeof (rtx));
+      zero_memory ((char *) new_reg_base_value, reg_base_value_size * sizeof (rtx));
 
       /* Wipe the reg_seen array clean.  */
-      bzero ((char *) reg_seen, reg_base_value_size);
+      zero_memory ((char *) reg_seen, reg_base_value_size);
 
       /* Mark all hard registers which may contain an address.
 	 The stack, frame and argument pointers may contain an address.

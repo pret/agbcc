@@ -637,9 +637,9 @@ static int unit_n_insns[FUNCTION_UNITS_SIZE];
 static void
 clear_units ()
 {
-  bzero ((char *) unit_last_insn, sizeof (unit_last_insn));
-  bzero ((char *) unit_tick, sizeof (unit_tick));
-  bzero ((char *) unit_n_insns, sizeof (unit_n_insns));
+  zero_memory ((char *) unit_last_insn, sizeof (unit_last_insn));
+  zero_memory ((char *) unit_tick, sizeof (unit_tick));
+  zero_memory ((char *) unit_n_insns, sizeof (unit_n_insns));
 }
 
 /* Record an insn as one that will use the units encoded by UNIT.  */
@@ -2633,9 +2633,9 @@ schedule_block (b, file)
 
   i = max_reg_num ();
   reg_last_uses = (rtx *) alloca (i * sizeof (rtx));
-  bzero ((char *) reg_last_uses, i * sizeof (rtx));
+  zero_memory ((char *) reg_last_uses, i * sizeof (rtx));
   reg_last_sets = (rtx *) alloca (i * sizeof (rtx));
-  bzero ((char *) reg_last_sets, i * sizeof (rtx));
+  zero_memory ((char *) reg_last_sets, i * sizeof (rtx));
   reg_pending_sets = ALLOCA_REG_SET ();
   CLEAR_REG_SET (reg_pending_sets);
   reg_pending_sets_all = 0;
@@ -3132,7 +3132,7 @@ schedule_block (b, file)
 
   /* Q_SIZE will always be zero here.  */
   q_ptr = 0; clock = 0;
-  bzero ((char *) insn_queue, sizeof (insn_queue));
+  zero_memory ((char *) insn_queue, sizeof (insn_queue));
 
   /* Now, perform list scheduling.  */
 
@@ -4258,8 +4258,8 @@ schedule_insns (dump_file)
       sched_reg_live_length = (int *) alloca (max_regno * sizeof (int));
       bb_dead_regs = ALLOCA_REG_SET ();
       bb_live_regs = ALLOCA_REG_SET ();
-      bzero ((char *) sched_reg_n_calls_crossed, max_regno * sizeof (int));
-      bzero ((char *) sched_reg_live_length, max_regno * sizeof (int));
+      zero_memory ((char *) sched_reg_n_calls_crossed, max_regno * sizeof (int));
+      zero_memory ((char *) sched_reg_live_length, max_regno * sizeof (int));
     }
   else
     {
@@ -4275,9 +4275,9 @@ schedule_insns (dump_file)
       rtx line;
 
       line_note = (rtx *) xmalloc (max_uid * sizeof (rtx));
-      bzero ((char *) line_note, max_uid * sizeof (rtx));
+      zero_memory ((char *) line_note, max_uid * sizeof (rtx));
       line_note_head = (rtx *) alloca (n_basic_blocks * sizeof (rtx));
-      bzero ((char *) line_note_head, n_basic_blocks * sizeof (rtx));
+      zero_memory ((char *) line_note_head, n_basic_blocks * sizeof (rtx));
 
       /* Determine the line-number at the start of each basic block.
 	 This must be computed and saved now, because after a basic block's
@@ -4293,13 +4293,13 @@ schedule_insns (dump_file)
 	    }
     }
 
-  bzero ((char *) insn_luid, max_uid * sizeof (int));
-  bzero ((char *) insn_priority, max_uid * sizeof (int));
-  bzero ((char *) insn_tick, max_uid * sizeof (int));
-  bzero ((char *) insn_costs, max_uid * sizeof (short));
-  bzero ((char *) insn_units, max_uid * sizeof (short));
-  bzero ((char *) insn_blockage, max_uid * sizeof (unsigned int));
-  bzero ((char *) insn_ref_count, max_uid * sizeof (int));
+  zero_memory ((char *) insn_luid, max_uid * sizeof (int));
+  zero_memory ((char *) insn_priority, max_uid * sizeof (int));
+  zero_memory ((char *) insn_tick, max_uid * sizeof (int));
+  zero_memory ((char *) insn_costs, max_uid * sizeof (short));
+  zero_memory ((char *) insn_units, max_uid * sizeof (short));
+  zero_memory ((char *) insn_blockage, max_uid * sizeof (unsigned int));
+  zero_memory ((char *) insn_ref_count, max_uid * sizeof (int));
 
   /* Schedule each basic block, block by block.  */
 

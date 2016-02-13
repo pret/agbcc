@@ -471,7 +471,7 @@ loop_optimize (f, dumpfile, unroll_p, bct_p)
   max_reg_before_loop = max_reg_num ();
 
   moved_once = (char *) alloca (max_reg_before_loop);
-  bzero (moved_once, max_reg_before_loop);
+  zero_memory (moved_once, max_reg_before_loop);
 
   regs_may_share = 0;
 
@@ -496,8 +496,8 @@ loop_optimize (f, dumpfile, unroll_p, bct_p)
   uid_luid = (int *) alloca (max_uid_for_loop * sizeof (int));
   uid_loop_num = (int *) alloca (max_uid_for_loop * sizeof (int));
 
-  bzero ((char *) uid_luid, max_uid_for_loop * sizeof (int));
-  bzero ((char *) uid_loop_num, max_uid_for_loop * sizeof (int));
+  zero_memory ((char *) uid_luid, max_uid_for_loop * sizeof (int));
+  zero_memory ((char *) uid_loop_num, max_uid_for_loop * sizeof (int));
 
   /* Allocate tables for recording each loop.  We set each entry, so they need
      not be zeroed.  */
@@ -513,7 +513,7 @@ loop_optimize (f, dumpfile, unroll_p, bct_p)
 #ifdef HAVE_decrement_and_branch_on_count
   /* Allocate for BCT optimization */
   loop_used_count_register = (int *) alloca (max_loop_num * sizeof (int));
-  bzero ((char *) loop_used_count_register, max_loop_num * sizeof (int));
+  zero_memory ((char *) loop_used_count_register, max_loop_num * sizeof (int));
 #endif  /* HAVE_decrement_and_branch_on_count */
 
   /* Find and process each loop.
@@ -776,7 +776,7 @@ scan_loop (loop_start, end, loop_cont, unroll_p, bct_p)
       VARRAY_CHAR (may_not_optimize, i) = 1;
 #endif
 
-  bcopy ((char *) &set_in_loop->data, 
+  copy_memory ((char *) &set_in_loop->data, 
 	 (char *) &n_times_set->data, nregs * sizeof (int));
 
   if (loop_dump_stream)
@@ -1458,7 +1458,7 @@ combine_movables (movables, nregs)
 	register struct movable *m1;
 	int regno = m->regno;
 
-	bzero (matched_regs, nregs);
+	zero_memory (matched_regs, nregs);
 	matched_regs[regno] = 1;
 
 	/* We want later insns to match the first one.  Don't make the first
@@ -1752,8 +1752,8 @@ move_movables (movables, threshold, insn_count, loop_start, end, nregs)
   rtx *reg_map = (rtx *) alloca (nregs * sizeof (rtx));
   char *already_moved = (char *) alloca (nregs);
 
-  bzero (already_moved, nregs);
-  bzero ((char *) reg_map, nregs * sizeof (rtx));
+  zero_memory (already_moved, nregs);
+  zero_memory ((char *) reg_map, nregs * sizeof (rtx));
 
   num_movables = 0;
 
@@ -3506,7 +3506,7 @@ count_loop_regs_set (from, to, may_not_move, single_usage, count_ptr, nregs)
   register rtx insn;
   register int count = 0;
 
-  bzero ((char *) last_set, nregs * sizeof (rtx));
+  zero_memory ((char *) last_set, nregs * sizeof (rtx));
   for (insn = from; insn != to; insn = NEXT_INSN (insn))
     {
       if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
@@ -3536,7 +3536,7 @@ count_loop_regs_set (from, to, may_not_move, single_usage, count_ptr, nregs)
 	}
 
       if (GET_CODE (insn) == CODE_LABEL || GET_CODE (insn) == JUMP_INSN)
-	bzero ((char *) last_set, nregs * sizeof (rtx));
+	zero_memory ((char *) last_set, nregs * sizeof (rtx));
     }
   *count_ptr = count;
 }
@@ -3710,7 +3710,7 @@ strength_reduce (scan_start, end, loop_top, insn_count,
   VARRAY_GENERIC_PTR_INIT (reg_iv_info, max_reg_before_loop, "reg_iv_info");
   reg_biv_class = (struct iv_class **)
     alloca (max_reg_before_loop * sizeof (struct iv_class *));
-  bzero ((char *) reg_biv_class, (max_reg_before_loop
+  zero_memory ((char *) reg_biv_class, (max_reg_before_loop
 				  * sizeof (struct iv_class *)));
 
   loop_iv_list = 0;
@@ -4463,7 +4463,7 @@ strength_reduce (scan_start, end, loop_top, insn_count,
      reg_iv_type for a suitable size.  */
   reg_map_size = reg_iv_type->num_elements;
   reg_map = (rtx *) alloca (reg_map_size * sizeof (rtx));
-  bzero ((char *) reg_map, reg_map_size * sizeof (rtx));
+  zero_memory ((char *) reg_map, reg_map_size * sizeof (rtx));
 
   /* Examine each iv class for feasibility of strength reduction/induction
      variable elimination.  */
@@ -6845,10 +6845,10 @@ combine_givs (bl)
       giv_array[i++] = g1;
 
   stats = (struct combine_givs_stats *) alloca (giv_count * sizeof (*stats));
-  bzero ((char *) stats, giv_count * sizeof (*stats));
+  zero_memory ((char *) stats, giv_count * sizeof (*stats));
 
   can_combine = (rtx *) alloca (giv_count * giv_count * sizeof(rtx));
-  bzero ((char *) can_combine, giv_count * giv_count * sizeof(rtx));
+  zero_memory ((char *) can_combine, giv_count * giv_count * sizeof(rtx));
 
   for (i = 0; i < giv_count; i++)
     {
@@ -9258,10 +9258,10 @@ load_mems_and_recount_loop_regs_set (scan_start, end, loop_top, start,
 	    VARRAY_GROW (reg_single_usage, nregs);
 	}
       /* Clear the arrays */
-      bzero ((char *) &set_in_loop->data, nregs * sizeof (int));
-      bzero ((char *) &may_not_optimize->data, nregs * sizeof (char));
+      zero_memory ((char *) &set_in_loop->data, nregs * sizeof (int));
+      zero_memory ((char *) &may_not_optimize->data, nregs * sizeof (char));
       if (reg_single_usage)
-	bzero ((char *) &reg_single_usage->data, nregs * sizeof (rtx));
+	zero_memory ((char *) &reg_single_usage->data, nregs * sizeof (rtx));
 
       count_loop_regs_set (loop_top ? loop_top : start, end,
 			   may_not_optimize, reg_single_usage,
@@ -9282,7 +9282,7 @@ load_mems_and_recount_loop_regs_set (scan_start, end, loop_top, start,
 #endif
 
       /* Set n_times_set for the new registers.  */
-      bcopy ((char *) (&set_in_loop->data.i[0] + old_nregs),
+      copy_memory ((char *) (&set_in_loop->data.i[0] + old_nregs),
 	     (char *) (&n_times_set->data.i[0] + old_nregs),
 	     (nregs - old_nregs) * sizeof (int));
     }

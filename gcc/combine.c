@@ -479,8 +479,8 @@ combine_instructions (f, nregs)
     = (unsigned HOST_WIDE_INT *) alloca (nregs * sizeof (HOST_WIDE_INT));
   reg_sign_bit_copies = (char *) alloca (nregs * sizeof (char));
 
-  bzero ((char *) reg_nonzero_bits, nregs * sizeof (HOST_WIDE_INT));
-  bzero (reg_sign_bit_copies, nregs * sizeof (char));
+  zero_memory ((char *) reg_nonzero_bits, nregs * sizeof (HOST_WIDE_INT));
+  zero_memory (reg_sign_bit_copies, nregs * sizeof (char));
 
   reg_last_death = (rtx *) alloca (nregs * sizeof (rtx));
   reg_last_set = (rtx *) alloca (nregs * sizeof (rtx));
@@ -686,15 +686,15 @@ init_reg_last_arrays ()
 {
   int nregs = combine_max_regno;
 
-  bzero ((char *) reg_last_death, nregs * sizeof (rtx));
-  bzero ((char *) reg_last_set, nregs * sizeof (rtx));
-  bzero ((char *) reg_last_set_value, nregs * sizeof (rtx));
-  bzero ((char *) reg_last_set_table_tick, nregs * sizeof (int));
-  bzero ((char *) reg_last_set_label, nregs * sizeof (int));
-  bzero (reg_last_set_invalid, nregs * sizeof (char));
-  bzero ((char *) reg_last_set_mode, nregs * sizeof (enum machine_mode));
-  bzero ((char *) reg_last_set_nonzero_bits, nregs * sizeof (HOST_WIDE_INT));
-  bzero (reg_last_set_sign_bit_copies, nregs * sizeof (char));
+  zero_memory ((char *) reg_last_death, nregs * sizeof (rtx));
+  zero_memory ((char *) reg_last_set, nregs * sizeof (rtx));
+  zero_memory ((char *) reg_last_set_value, nregs * sizeof (rtx));
+  zero_memory ((char *) reg_last_set_table_tick, nregs * sizeof (int));
+  zero_memory ((char *) reg_last_set_label, nregs * sizeof (int));
+  zero_memory (reg_last_set_invalid, nregs * sizeof (char));
+  zero_memory ((char *) reg_last_set_mode, nregs * sizeof (enum machine_mode));
+  zero_memory ((char *) reg_last_set_nonzero_bits, nregs * sizeof (HOST_WIDE_INT));
+  zero_memory (reg_last_set_sign_bit_copies, nregs * sizeof (char));
 }
 
 /* Set up any promoted values for incoming argument registers.  */
@@ -1902,7 +1902,7 @@ try_combine (i3, i2, i1)
 	  rtvec old = XVEC (newpat, 0);
 	  total_sets = XVECLEN (newpat, 0) + added_sets_1 + added_sets_2;
 	  newpat = gen_rtx_PARALLEL (VOIDmode, rtvec_alloc (total_sets));
-	  bcopy ((char *) &old->elem[0], (char *) XVEC (newpat, 0)->elem,
+	  copy_memory ((char *) &old->elem[0], (char *) XVEC (newpat, 0)->elem,
 		 sizeof (old->elem[0]) * old->num_elem);
 	}
       else

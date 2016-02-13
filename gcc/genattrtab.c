@@ -800,7 +800,7 @@ attr_string (str, len)
 
   /* Not found; create a permanent copy and add it to the hash table.  */
   new_str = (char *) obstack_alloc (hash_obstack, len + 1);
-  bcopy (str, new_str, len);
+  copy_memory (str, new_str, len);
   new_str[len] = '\0';
   attr_hash_add_string (hashcode, new_str);
 
@@ -1939,7 +1939,7 @@ expand_units ()
 	    * sizeof (struct function_unit_op *));
 
   for (unit = units, i = 0; unit; i += unit->num_opclasses, unit = unit->next)
-    bcopy ((char *) unit_ops[unit->num], (char *) &op_array[i],
+    copy_memory ((char *) unit_ops[unit->num], (char *) &op_array[i],
 	   unit->num_opclasses * sizeof (struct function_unit_op *));
 
   /* Compute the ready cost function for each unit by computing the
@@ -2507,7 +2507,7 @@ simplify_cond (exp, insn_code, insn_index)
   /* This lets us free all storage allocated below, if appropriate.  */
   first_spacer = (char *) obstack_finish (rtl_obstack);
 
-  bcopy ((char *) XVEC (exp, 0)->elem, (char *) tests, len * sizeof (rtunion));
+  copy_memory ((char *) XVEC (exp, 0)->elem, (char *) tests, len * sizeof (rtunion));
 
   /* See if default value needs simplification.  */
   if (GET_CODE (defval) == COND)
@@ -2599,7 +2599,7 @@ simplify_cond (exp, insn_code, insn_index)
       rtx newexp = rtx_alloc (COND);
 
       XVEC (newexp, 0) = rtvec_alloc (len);
-      bcopy ((char *) tests, (char *) XVEC (newexp, 0)->elem,
+      copy_memory ((char *) tests, (char *) XVEC (newexp, 0)->elem,
 	     len * sizeof (rtunion));
       XEXP (newexp, 1) = new_defval;
       return newexp;
@@ -3416,7 +3416,7 @@ optimize_attrs ()
   insn_code_values
     = (struct attr_value_list **) alloca ((insn_code_number + 2)
 					  * sizeof (struct attr_value_list *));
-  bzero ((char *) insn_code_values,
+  zero_memory ((char *) insn_code_values,
 	 (insn_code_number + 2) * sizeof (struct attr_value_list *));
 
   /* Offset the table address so we can index by -2 or -1.  */
@@ -5811,7 +5811,7 @@ copy_rtx_unchanging (orig)
   PUT_MODE (copy, GET_MODE (orig));
   RTX_UNCHANGING_P (copy) = 1;
   
-  bcopy ((char *) &XEXP (orig, 0), (char *) &XEXP (copy, 0),
+  copy_memory ((char *) &XEXP (orig, 0), (char *) &XEXP (copy, 0),
 	 GET_RTX_LENGTH (GET_CODE (copy)) * sizeof (rtx));
   return copy;
 #endif

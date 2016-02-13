@@ -1652,10 +1652,8 @@ emit_block_move (x, y, size, align)
      int align;
 {
   rtx retval = 0;
-#ifdef TARGET_MEM_FUNCTIONS
   static tree fn;
   tree call_expr, arg_list;
-#endif
 
   if (GET_MODE (x) != BLKmode)
     abort ();
@@ -1727,7 +1725,6 @@ emit_block_move (x, y, size, align)
 	    }
 	}
 
-#ifdef TARGET_MEM_FUNCTIONS
       /* It is incorrect to use the libcall calling conventions to call
 	 memcpy in this context.
 
@@ -1782,14 +1779,6 @@ emit_block_move (x, y, size, align)
       TREE_SIDE_EFFECTS (call_expr) = 1;
 
       retval = expand_expr (call_expr, NULL_RTX, VOIDmode, 0);
-#else
-      emit_library_call (bcopy_libfunc, 0,
-			 VOIDmode, 3, XEXP (y, 0), Pmode,
-			 XEXP (x, 0), Pmode,
-			 convert_to_mode (TYPE_MODE (integer_type_node), size,
-					  TREE_UNSIGNED (integer_type_node)),
-			 TYPE_MODE (integer_type_node));
-#endif
     }
 
   return retval;
@@ -2395,10 +2384,8 @@ clear_storage (object, size, align)
      rtx size;
      int align;
 {
-#ifdef TARGET_MEM_FUNCTIONS
   static tree fn;
   tree call_expr, arg_list;
-#endif
   rtx retval = 0;
 
   if (GET_MODE (object) == BLKmode)
@@ -2462,7 +2449,6 @@ clear_storage (object, size, align)
 	    }
 
 
-#ifdef TARGET_MEM_FUNCTIONS
       /* It is incorrect to use the libcall calling conventions to call
 	 memset in this context.
 
@@ -2517,15 +2503,6 @@ clear_storage (object, size, align)
       TREE_SIDE_EFFECTS (call_expr) = 1;
 
       retval = expand_expr (call_expr, NULL_RTX, VOIDmode, 0);
-#else
-	  emit_library_call (bzero_libfunc, 0,
-			     VOIDmode, 2,
-			     XEXP (object, 0), Pmode,	
-			     convert_to_mode
-			     (TYPE_MODE (integer_type_node), size,
-			      TREE_UNSIGNED (integer_type_node)),
-			     TYPE_MODE (integer_type_node));
-#endif
 	}
     }
   else
@@ -3085,20 +3062,11 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 	  /* Make inhibit_defer_pop nonzero around the library call
 	     to force it to pop the bcopy-arguments right away.  */
 	  NO_DEFER_POP;
-#ifdef TARGET_MEM_FUNCTIONS
 	  emit_library_call (memcpy_libfunc, 0,
 			     VOIDmode, 3, temp, Pmode, XEXP (xinner, 0), Pmode,
 			     convert_to_mode (TYPE_MODE (sizetype),
 					      size, TREE_UNSIGNED (sizetype)),
 			     TYPE_MODE (sizetype));
-#else
-	  emit_library_call (bcopy_libfunc, 0,
-			     VOIDmode, 3, XEXP (xinner, 0), Pmode, temp, Pmode,
-			     convert_to_mode (TYPE_MODE (integer_type_node),
-					      size,
-					      TREE_UNSIGNED (integer_type_node)),
-			     TYPE_MODE (integer_type_node));
-#endif
 	  OK_DEFER_POP;
 	}
     }
@@ -3496,21 +3464,12 @@ expand_assignment (to, from, want_value, suggest_reg)
 					    size, TREE_UNSIGNED (sizetype)),
 			   TYPE_MODE (sizetype));
 
-#ifdef TARGET_MEM_FUNCTIONS
       emit_library_call (memcpy_libfunc, 0,
 			 VOIDmode, 3, XEXP (to_rtx, 0), Pmode,
 			 XEXP (from_rtx, 0), Pmode,
 			 convert_to_mode (TYPE_MODE (sizetype),
 					  size, TREE_UNSIGNED (sizetype)),
 			 TYPE_MODE (sizetype));
-#else
-      emit_library_call (bcopy_libfunc, 0,
-			 VOIDmode, 3, XEXP (from_rtx, 0), Pmode,
-			 XEXP (to_rtx, 0), Pmode,
-			 convert_to_mode (TYPE_MODE (integer_type_node),
-					  size, TREE_UNSIGNED (integer_type_node)),
-			 TYPE_MODE (integer_type_node));
-#endif
 
       preserve_temp_slots (to_rtx);
       free_temp_slots ();
@@ -3831,7 +3790,6 @@ store_expr (exp, target, want_value)
 				       size, TYPE_MODE (sizetype),
  				       GEN_INT (MEMORY_USE_WO), 
 				       TYPE_MODE (integer_type_node));
-#ifdef TARGET_MEM_FUNCTIONS
 		  emit_library_call (memset_libfunc, 0, VOIDmode, 3,
 				     addr, ptr_mode,
 				     const0_rtx, TYPE_MODE (integer_type_node),
@@ -3839,14 +3797,6 @@ store_expr (exp, target, want_value)
 						      size,
 						      TREE_UNSIGNED (sizetype)),
 				     TYPE_MODE (sizetype));
-#else
-		  emit_library_call (bzero_libfunc, 0, VOIDmode, 2,
-				     addr, ptr_mode,
-				     convert_to_mode (TYPE_MODE (integer_type_node),
-						      size,
-						      TREE_UNSIGNED (integer_type_node)),
-				     TYPE_MODE (integer_type_node));
-#endif
 		}
 
 	      if (label)
@@ -4487,9 +4437,7 @@ store_constructor (exp, target, cleared)
 	  tree startbit = TREE_PURPOSE (elt);
 	  /* end of range of element, or element value */
 	  tree endbit   = TREE_VALUE (elt);
-#ifdef TARGET_MEM_FUNCTIONS
 	  HOST_WIDE_INT startb, endb;
-#endif
 	  rtx  bitlength_rtx, startbit_rtx, endbit_rtx, targetx;
 
 	  bitlength_rtx = expand_expr (bitlength,
@@ -4525,7 +4473,6 @@ store_constructor (exp, target, cleared)
 	  else
 	    abort ();
 
-#ifdef TARGET_MEM_FUNCTIONS
 	  /* Optimization:  If startbit and endbit are
 	     constants divisible by BITS_PER_UNIT,
 	     call memset instead.  */
@@ -4544,7 +4491,6 @@ store_constructor (exp, target, cleared)
 				 TYPE_MODE (sizetype));
 	    }
 	  else
-#endif
 	    {
 	      emit_library_call (gen_rtx_SYMBOL_REF (Pmode, "__setbits"),
 				 0, VOIDmode, 4, XEXP (targetx, 0), Pmode,

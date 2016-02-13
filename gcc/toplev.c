@@ -2199,7 +2199,7 @@ set_float_handler (handler)
 {
   float_handled = (handler != 0);
   if (handler)
-    bcopy ((char *) handler, (char *) float_handler, sizeof (float_handler));
+    copy_memory ((char *) handler, (char *) float_handler, sizeof (float_handler));
 
   if (float_handled && ! float_handler_set)
     {
@@ -2237,7 +2237,7 @@ pop_float_handler (handled, handler)
 {
   float_handled = handled;
   if (handled)
-    bcopy ((char *) handler, (char *) float_handler, sizeof (float_handler));
+    copy_memory ((char *) handler, (char *) float_handler, sizeof (float_handler));
 }
 
 /* Handler for SIGPIPE.  */

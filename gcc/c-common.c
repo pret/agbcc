@@ -1462,12 +1462,12 @@ check_format_info (info, params)
 	}
       else if (info->format_type == strftime_format_type)
         {
-	  while (*format_chars != 0 && index ("_-0^#", *format_chars) != 0)
+	  while (*format_chars != 0 && strchr ("_-0^#", *format_chars) != 0)
 	    {
 	      if (pedantic)
 		warning ("ANSI C does not support the strftime `%c' flag",
 			 *format_chars);
-	      if (index (flag_chars, *format_chars) != 0)
+	      if (strchr (flag_chars, *format_chars) != 0)
 		{
 		  warning ("repeated `%c' flag in format",
 			   *format_chars);
@@ -1530,9 +1530,9 @@ check_format_info (info, params)
 		}
 	    }
 
-	  while (*format_chars != 0 && index (" +#0-", *format_chars) != 0)
+	  while (*format_chars != 0 && strchr (" +#0-", *format_chars) != 0)
 	    {
-	      if (index (flag_chars, *format_chars) != 0)
+	      if (strchr (flag_chars, *format_chars) != 0)
 		warning ("repeated `%c' flag in format", *format_chars++);
 	      else
 		{
@@ -1543,13 +1543,13 @@ check_format_info (info, params)
 	    }
 	  /* "If the space and + flags both appear,
 	     the space flag will be ignored."  */
-	  if (index (flag_chars, ' ') != 0
-	      && index (flag_chars, '+') != 0)
+	  if (strchr (flag_chars, ' ') != 0
+	      && strchr (flag_chars, '+') != 0)
 	    warning ("use of both ` ' and `+' flags in format");
 	  /* "If the 0 and - flags both appear,
 	     the 0 flag will be ignored."  */
-	  if (index (flag_chars, '0') != 0
-	      && index (flag_chars, '-') != 0)
+	  if (strchr (flag_chars, '0') != 0
+	      && strchr (flag_chars, '-') != 0)
 	    warning ("use of both `0' and `-' flags in format");
 	  if (*format_chars == '*')
 	    {
@@ -1702,7 +1702,7 @@ check_format_info (info, params)
 	  abort ();
 	}
       while (fci->format_chars != 0
-	     && index (fci->format_chars, format_char) == 0)
+	     && strchr (fci->format_chars, format_char) == 0)
 	  ++fci;
       if (fci->format_chars == 0)
 	{
@@ -1716,22 +1716,22 @@ check_format_info (info, params)
 	}
       if (pedantic)
 	{
-	  if (index (fci->flag_chars, 'G') != 0)
+	  if (strchr (fci->flag_chars, 'G') != 0)
 	    warning ("ANSI C does not support `%%%c'", format_char);
-	  if (index (fci->flag_chars, 'o') != 0
-	      && index (flag_chars, 'O') != 0)
+	  if (strchr (fci->flag_chars, 'o') != 0
+	      && strchr (flag_chars, 'O') != 0)
 	    warning ("ANSI C does not support `%%O%c'", format_char);
 	}
-      if (wide && index (fci->flag_chars, 'w') == 0)
+      if (wide && strchr (fci->flag_chars, 'w') == 0)
 	warning ("width used with `%c' format", format_char);
-      if (index (fci->flag_chars, '2') != 0)
+      if (strchr (fci->flag_chars, '2') != 0)
 	warning ("`%%%c' yields only last 2 digits of year", format_char);
-      else if (index (fci->flag_chars, '3') != 0)
+      else if (strchr (fci->flag_chars, '3') != 0)
 	warning ("`%%%c' yields only last 2 digits of year in some locales",
 		 format_char);
-      if (precise && index (fci->flag_chars, 'p') == 0)
+      if (precise && strchr (fci->flag_chars, 'p') == 0)
 	warning ("precision used with `%c' format", format_char);
-      if (aflag && index (fci->flag_chars, 'a') == 0)
+      if (aflag && strchr (fci->flag_chars, 'a') == 0)
 	{
 	  warning ("`a' flag used with `%c' format", format_char);
 	  /* To simplify the following code.  */
@@ -1757,19 +1757,19 @@ check_format_info (info, params)
 	}
       if (suppressed)
 	{
-	  if (index (fci->flag_chars, '*') == 0)
+	  if (strchr (fci->flag_chars, '*') == 0)
 	    warning ("suppression of `%c' conversion in format", format_char);
 	  continue;
 	}
       for (i = 0; flag_chars[i] != 0; ++i)
 	{
-	  if (index (fci->flag_chars, flag_chars[i]) == 0)
+	  if (strchr (fci->flag_chars, flag_chars[i]) == 0)
 	    warning ("flag `%c' used with type `%c'",
 		     flag_chars[i], format_char);
 	}
       if (info->format_type == strftime_format_type)
 	continue;
-      if (precise && index (flag_chars, '0') != 0
+      if (precise && strchr (flag_chars, '0') != 0
 	  && (format_char == 'd' || format_char == 'i'
 	      || format_char == 'o' || format_char == 'u'
 	      || format_char == 'x' || format_char == 'X'))

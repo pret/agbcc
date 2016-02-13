@@ -1804,7 +1804,7 @@ extract_insn (insn)
 		recog_n_alternatives += (*p++ == ',');
 	    }
 #ifndef REGISTER_CONSTRAINTS
-	  bzero (recog_operand_address_p, sizeof recog_operand_address_p);
+	  zero_memory (recog_operand_address_p, sizeof recog_operand_address_p);
 #endif
 	  break;
 	}

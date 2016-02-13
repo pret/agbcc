@@ -207,7 +207,7 @@ static rtx top_of_stack[MAX_MACHINE_MODE];
 
 /* Linked list of reg_info structures allocated for reg_n_info array.
    Grouping all of the allocated structures together in one lump
-   means only one call to bzero to clear them, rather than n smaller
+   means only one call to zero_memory to clear them, rather than n smaller
    calls.  */
 struct reg_info_data {
   struct reg_info_data *next;	/* next set of reg_info structures */
@@ -241,9 +241,9 @@ init_reg_sets ()
 	  SET_HARD_REG_BIT (reg_class_contents[i], j);
     }
 
-  bcopy (initial_fixed_regs, fixed_regs, sizeof fixed_regs);
-  bcopy (initial_call_used_regs, call_used_regs, sizeof call_used_regs);
-  bzero (global_regs, sizeof global_regs);
+  copy_memory (initial_fixed_regs, fixed_regs, sizeof fixed_regs);
+  copy_memory (initial_call_used_regs, call_used_regs, sizeof call_used_regs);
+  zero_memory (global_regs, sizeof global_regs);
 
   /* Do any additional initialization regsets may need */
   INIT_ONCE_REG_SET ();
@@ -266,7 +266,7 @@ init_reg_sets_1 ()
 
   /* Compute number of hard regs in each class.  */
 
-  bzero ((char *) reg_class_size, sizeof reg_class_size);
+  zero_memory ((char *) reg_class_size, sizeof reg_class_size);
   for (i = 0; i < N_REG_CLASSES; i++)
     for (j = 0; j < FIRST_PSEUDO_REGISTER; j++)
       if (TEST_HARD_REG_BIT (reg_class_contents[i], j))
@@ -373,7 +373,7 @@ init_reg_sets_1 ()
   CLEAR_HARD_REG_SET (call_used_reg_set);
   CLEAR_HARD_REG_SET (call_fixed_reg_set);
 
-  bcopy (fixed_regs, call_fixed_regs, sizeof call_fixed_regs);
+  copy_memory (fixed_regs, call_fixed_regs, sizeof call_fixed_regs);
 
   n_non_fixed_regs = 0;
 
@@ -1038,10 +1038,10 @@ regclass (f, nregs)
     {
       /* Zero out our accumulation of the cost of each class for each reg.  */
 
-      bzero ((char *) costs, nregs * sizeof (struct costs));
+      zero_memory ((char *) costs, nregs * sizeof (struct costs));
 
 #ifdef FORBIDDEN_INC_DEC_CLASSES
-      bzero (in_inc_dec, nregs);
+      zero_memory (in_inc_dec, nregs);
 #endif
 
       loop_depth = 0, loop_cost = 1;
@@ -1194,7 +1194,7 @@ record_reg_classes (n_alts, n_ops, ops, modes, constraints, insn)
 	  if (*p == 0)
 	    {
 	      if (GET_CODE (op) == REG && REGNO (op) >= FIRST_PSEUDO_REGISTER)
-		bzero ((char *) &this_op_costs[i], sizeof this_op_costs[i]);
+		zero_memory ((char *) &this_op_costs[i], sizeof this_op_costs[i]);
 
 	      continue;
 	    }
@@ -1894,7 +1894,7 @@ allocate_reg_info (num_regs, new_p, renumber_p)
 	      if (!reg_data->used_p)	/* page just allocated with calloc */
 		reg_data->used_p = 1;	/* no need to zero */
 	      else
-		bzero ((char *) &reg_data->data[local_min],
+		zero_memory ((char *) &reg_data->data[local_min],
 		       sizeof (reg_info) * (max - min_index - local_min + 1));
 
 	      for (i = min_index+local_min; i <= max; i++)

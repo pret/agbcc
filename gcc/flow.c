@@ -400,14 +400,14 @@ find_basic_blocks (f, nregs, file)
   x_basic_block_end = XNMALLOC (rtx, n_basic_blocks);
   basic_block_succ = XNMALLOC (int_list_ptr, n_basic_blocks);
   basic_block_pred = XNMALLOC (int_list_ptr, n_basic_blocks);
-  bzero ((char *)basic_block_succ, n_basic_blocks * sizeof (int_list_ptr));
-  bzero ((char *)basic_block_pred, n_basic_blocks * sizeof (int_list_ptr));
+  zero_memory ((char *)basic_block_succ, n_basic_blocks * sizeof (int_list_ptr));
+  zero_memory ((char *)basic_block_pred, n_basic_blocks * sizeof (int_list_ptr));
 
   basic_block_computed_jump_target = (char *) oballoc (n_basic_blocks);
   basic_block_loop_depth = XNMALLOC (short, n_basic_blocks);
   uid_block_number = XNMALLOC (int, (max_uid_for_flow + 1));
   uid_volatile = XNMALLOC (char, (max_uid_for_flow + 1));
-  bzero (uid_volatile, max_uid_for_flow + 1);
+  zero_memory (uid_volatile, max_uid_for_flow + 1);
 
   find_basic_blocks_1 (f, nonlocal_label_list);
 }
@@ -458,11 +458,11 @@ find_basic_blocks_1 (f, nonlocal_labels)
 
   label_value_list = 0;
   block_live_static = block_live;
-  bzero (block_live, n_basic_blocks);
-  bzero (block_marked, n_basic_blocks);
-  bzero (basic_block_computed_jump_target, n_basic_blocks);
-  bzero ((char *) active_eh_region, (max_uid_for_flow + 1) * sizeof (int));
-  bzero ((char *) nested_eh_region, (max_label_num () + 1) * sizeof (int));
+  zero_memory (block_live, n_basic_blocks);
+  zero_memory (block_marked, n_basic_blocks);
+  zero_memory (basic_block_computed_jump_target, n_basic_blocks);
+  zero_memory ((char *) active_eh_region, (max_uid_for_flow + 1) * sizeof (int));
+  zero_memory ((char *) nested_eh_region, (max_label_num () + 1) * sizeof (int));
   current_function_has_computed_jump = 0;
 
   /* Initialize with just block 0 reachable and no blocks marked.  */
@@ -1415,9 +1415,9 @@ life_analysis_1 (f, nregs)
      Reload will make some registers as live even though they do not appear
      in the rtl.  */
   if (reload_completed)
-    bcopy (regs_ever_live, save_regs_ever_live, (sizeof (regs_ever_live)));
+    copy_memory (regs_ever_live, save_regs_ever_live, (sizeof (regs_ever_live)));
 
-  bzero (regs_ever_live, sizeof regs_ever_live);
+  zero_memory (regs_ever_live, sizeof regs_ever_live);
 
   /* Allocate and zero out many data structures
      that will record the data from lifetime analysis.  */
@@ -1425,7 +1425,7 @@ life_analysis_1 (f, nregs)
   allocate_for_life_analysis ();
 
   reg_next_use = (rtx *) alloca (nregs * sizeof (rtx));
-  bzero ((char *) reg_next_use, nregs * sizeof (rtx));
+  zero_memory ((char *) reg_next_use, nregs * sizeof (rtx));
 
   /* Set up several regset-vectors used internally within this function.
      Their meanings are documented above, with their declarations.  */
@@ -1634,7 +1634,7 @@ life_analysis_1 (f, nregs)
 
   /* Restore regs_ever_live that was provided by reload.  */
   if (reload_completed)
-    bcopy (save_regs_ever_live, regs_ever_live, (sizeof (regs_ever_live)));
+    copy_memory (save_regs_ever_live, regs_ever_live, (sizeof (regs_ever_live)));
 
   free_regset_vector (basic_block_live_at_end, n_basic_blocks);
   free_regset_vector (basic_block_new_live_at_end, n_basic_blocks);
@@ -3570,10 +3570,10 @@ compute_preds_succs (s_preds, s_succs, num_preds, num_succs, split_edges)
   int bb;
   int changed = 0;
 
-  bzero ((char *) s_preds, n_basic_blocks * sizeof (int_list_ptr));
-  bzero ((char *) s_succs, n_basic_blocks * sizeof (int_list_ptr));
-  bzero ((char *) num_preds, n_basic_blocks * sizeof (int));
-  bzero ((char *) num_succs, n_basic_blocks * sizeof (int));
+  zero_memory ((char *) s_preds, n_basic_blocks * sizeof (int_list_ptr));
+  zero_memory ((char *) s_succs, n_basic_blocks * sizeof (int_list_ptr));
+  zero_memory ((char *) num_preds, n_basic_blocks * sizeof (int));
+  zero_memory ((char *) num_succs, n_basic_blocks * sizeof (int));
 
   /* It's somewhat stupid to simply copy the information.  The passes
      which use this function ought to be changed to refer directly to
@@ -3611,7 +3611,7 @@ compute_preds_succs (s_preds, s_succs, num_preds, num_succs, split_edges)
 	 to any given block from being split.  */
       char *split_edge_to_block = (char *) alloca (n_basic_blocks);
 
-      bzero (split_edge_to_block, n_basic_blocks);
+      zero_memory (split_edge_to_block, n_basic_blocks);
 
       for (bb = 0; bb < n_basic_blocks; bb++)
 	{

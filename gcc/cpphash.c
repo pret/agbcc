@@ -182,7 +182,7 @@ install (name, len, type, ivalue, value, hash)
   else
     hp->value.cpval = value;
   hp->name = ((U_CHAR *) hp) + sizeof (HASHNODE);
-  bcopy (name, hp->name, len);
+  copy_memory (name, hp->name, len);
   hp->name[len] = 0;
   return hp;
 }

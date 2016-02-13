@@ -361,7 +361,7 @@ from the machine description file `md'.  */\n\n");
 	      unit = (struct function_unit *)
 		alloca (sizeof (struct function_unit));
 	      unit->name = (char *) alloca (len);
-	      bcopy (name, unit->name, len);
+	      copy_memory (name, unit->name, len);
 	      unit->multiplicity = multiplicity;
 	      unit->simultaneity = simultaneity;
 	      unit->ready_cost.min = unit->ready_cost.max = ready_cost;

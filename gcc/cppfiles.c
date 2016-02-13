@@ -431,7 +431,7 @@ find_include_file (pfile, fname, search_start, ihash, before)
 
   for (l = search_start; l; l = l->next)
     {
-      bcopy (l->name, name, l->nlen);
+      copy_memory (l->name, name, l->nlen);
       name[l->nlen] = '/';
       strcpy (&name[l->nlen+1], fname);
       simplify_pathname (name);
@@ -632,7 +632,7 @@ remap_filename (pfile, name, loc)
      looking in.  Thus #include <sys/types.h> will look up sys/types.h
      in /usr/include/header.gcc and look up types.h in
      /usr/include/sys/header.gcc.  */
-  p = rindex (name, '/');
+  p = strrchr (name, '/');
   if (!p)
     p = name;
   if (loc && loc->name
@@ -649,7 +649,7 @@ remap_filename (pfile, name, loc)
   else
     {
       char * newdir = (char *) alloca (p - name + 1);
-      bcopy (name, newdir, p - name);
+      copy_memory (name, newdir, p - name);
       newdir[p - name] = '\0';
       dir = newdir;
       from = p + 1;
@@ -796,7 +796,7 @@ actual_directory (pfile, fname)
   struct file_name_list *x;
   
   dir = xstrdup (fname);
-  last_slash = rindex (dir, '/');
+  last_slash = strrchr (dir, '/');
   if (last_slash)
     {
       if (last_slash == dir)
@@ -917,13 +917,13 @@ deps_output (pfile, string, spacer)
 
   if (cr)
     {
-      bcopy (" \\\n  ", &pfile->deps_buffer[pfile->deps_size], 5);
+      copy_memory (" \\\n  ", &pfile->deps_buffer[pfile->deps_size], 5);
       pfile->deps_size += 5;
     }
   
   if (spacer == ' ' && pfile->deps_column > 0)
     pfile->deps_buffer[pfile->deps_size++] = ' ';
-  bcopy (string, &pfile->deps_buffer[pfile->deps_size], size);
+  copy_memory (string, &pfile->deps_buffer[pfile->deps_size], size);
   pfile->deps_size += size;
   pfile->deps_column += size;
   if (spacer == ':')

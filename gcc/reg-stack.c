@@ -498,8 +498,8 @@ reg_to_stack (first, file)
 
   block_stack_in = (stack) alloca (blocks * sizeof (struct stack_def));
   block_out_reg_set = (HARD_REG_SET *) alloca (blocks * sizeof (HARD_REG_SET));
-  bzero ((char *) block_stack_in, blocks * sizeof (struct stack_def));
-  bzero ((char *) block_out_reg_set, blocks * sizeof (HARD_REG_SET));
+  zero_memory ((char *) block_stack_in, blocks * sizeof (struct stack_def));
+  zero_memory ((char *) block_out_reg_set, blocks * sizeof (HARD_REG_SET));
 
   block_number = (int *) alloca ((max_uid + 1) * sizeof (int));
 
@@ -688,7 +688,7 @@ record_asm_reg_life (insn, regstack)
      Also enforce rule #5: Output operands must start at the top of
      the reg-stack: output operands may not "skip" a reg.  */
 
-  bzero ((char *) reg_used_as_output, sizeof (reg_used_as_output));
+  zero_memory ((char *) reg_used_as_output, sizeof (reg_used_as_output));
   for (i = 0; i < n_outputs; i++)
     if (STACK_REG_P (recog_operand[i]))
       {
@@ -722,7 +722,7 @@ record_asm_reg_life (insn, regstack)
      to the top of the reg-stack than any input that is not implicitly
      popped.  */
 
-  bzero ((char *) implicitly_dies, sizeof (implicitly_dies));
+  zero_memory ((char *) implicitly_dies, sizeof (implicitly_dies));
   for (i = n_outputs; i < n_outputs + n_inputs; i++)
     if (STACK_REG_P (recog_operand[i]))
       {
@@ -2232,7 +2232,7 @@ subst_asm_stack_regs (insn, regstack)
 	  }
     }
 
-  bcopy ((char *) regstack, (char *) &temp_stack, sizeof (temp_stack));
+  copy_memory ((char *) regstack, (char *) &temp_stack, sizeof (temp_stack));
 
   /* Put the input regs into the desired place in TEMP_STACK.  */
 
@@ -2531,7 +2531,7 @@ change_stack (insn, old, new, when)
 	 the old stack order.  */
 
       new->top = old->top;
-      bcopy (old->reg, new->reg, sizeof (new->reg));
+      copy_memory (old->reg, new->reg, sizeof (new->reg));
     }
   else
     {

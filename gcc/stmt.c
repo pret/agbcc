@@ -1283,7 +1283,7 @@ expand_asm_operands (string, outputs, inputs, clobbers, vol, filename, line)
       if (p != constraint)
 	{
 	  j = *p;
-	  bcopy (constraint, constraint+1, p-constraint);
+	  copy_memory (constraint, constraint+1, p-constraint);
 	  *constraint = j;
 
 	  warning ("output constraint `%c' for operand %d is not at the beginning", j, i);
@@ -4784,7 +4784,7 @@ check_for_full_enumeration_handling (type)
     {
       long i;
       tree v = TYPE_VALUES (type);
-      bzero (cases_seen, bytes_needed);
+      zero_memory (cases_seen, bytes_needed);
 
       /* The time complexity of this code is normally O(N), where
 	 N being the number of members in the enumerated type.
@@ -5205,7 +5205,7 @@ expand_end_case (orig_index)
 
 	  ncases = TREE_INT_CST_LOW (range) + 1;
 	  labelvec = (rtx *) alloca (ncases * sizeof (rtx));
-	  bzero ((char *) labelvec, ncases * sizeof (rtx));
+	  zero_memory ((char *) labelvec, ncases * sizeof (rtx));
 
 	  for (n = thiscase->data.case_stmt.case_list; n; n = n->right)
 	    {
@@ -5349,7 +5349,7 @@ estimate_case_costs (node)
   if (cost_table == NULL)
     {
       cost_table = ((short *) xmalloc (129 * sizeof (short))) + 1;
-      bzero ((char *) (cost_table - 1), 129 * sizeof (short));
+      zero_memory ((char *) (cost_table - 1), 129 * sizeof (short));
 
       for (i = 0; i < 128; i++)
 	{

@@ -18,7 +18,7 @@ main ()
 {
   int a[SIZE];
   int i;
-  bzero (a, SIZE * 4);
+  zero_memory (a, SIZE * 4);
   for (i = 0;  i < 100;  i++)
     {
       memtst (a, SIZE);

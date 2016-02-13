@@ -539,19 +539,19 @@ gen_reg_rtx (mode)
       rtx *new1;
       char *new =
 	(char *) savealloc (regno_pointer_flag_length * 2);
-      bcopy (regno_pointer_flag, new, regno_pointer_flag_length);
-      bzero (&new[regno_pointer_flag_length], regno_pointer_flag_length);
+      copy_memory (regno_pointer_flag, new, regno_pointer_flag_length);
+      zero_memory (&new[regno_pointer_flag_length], regno_pointer_flag_length);
       regno_pointer_flag = new;
 
       new = (char *) savealloc (regno_pointer_flag_length * 2);
-      bcopy (regno_pointer_align, new, regno_pointer_flag_length);
-      bzero (&new[regno_pointer_flag_length], regno_pointer_flag_length);
+      copy_memory (regno_pointer_align, new, regno_pointer_flag_length);
+      zero_memory (&new[regno_pointer_flag_length], regno_pointer_flag_length);
       regno_pointer_align = new;
 
       new1 = (rtx *) savealloc (regno_pointer_flag_length * 2 * sizeof (rtx));
-      bcopy ((char *) regno_reg_rtx, (char *) new1,
+      copy_memory ((char *) regno_reg_rtx, (char *) new1,
 	     regno_pointer_flag_length * sizeof (rtx));
-      bzero ((char *) &new1[regno_pointer_flag_length],
+      zero_memory ((char *) &new1[regno_pointer_flag_length],
 	     regno_pointer_flag_length * sizeof (rtx));
       regno_reg_rtx = new1;
 
@@ -1767,7 +1767,7 @@ copy_rtx_if_shared (orig)
       register rtx copy;
 
       copy = rtx_alloc (code);
-      bcopy ((char *) x, (char *) copy,
+      copy_memory ((char *) x, (char *) copy,
 	     (sizeof (*copy) - sizeof (copy->fld)
 	      + sizeof (copy->fld[0]) * GET_RTX_LENGTH (code)));
       x = copy;
@@ -3408,15 +3408,15 @@ init_emit ()
 
   regno_pointer_flag 
     = (char *) savealloc (regno_pointer_flag_length);
-  bzero (regno_pointer_flag, regno_pointer_flag_length);
+  zero_memory (regno_pointer_flag, regno_pointer_flag_length);
 
   regno_pointer_align
     = (char *) savealloc (regno_pointer_flag_length);
-  bzero (regno_pointer_align, regno_pointer_flag_length);
+  zero_memory (regno_pointer_align, regno_pointer_flag_length);
 
   regno_reg_rtx 
     = (rtx *) savealloc (regno_pointer_flag_length * sizeof (rtx));
-  bzero ((char *) regno_reg_rtx, regno_pointer_flag_length * sizeof (rtx));
+  zero_memory ((char *) regno_reg_rtx, regno_pointer_flag_length * sizeof (rtx));
 
   /* Put copies of all the virtual register rtx into regno_reg_rtx.  */
   init_virtual_regs ();
@@ -3532,10 +3532,10 @@ init_emit_once (line_numbers)
 	  rtx tem = rtx_alloc (CONST_DOUBLE);
 	  union real_extract u;
 
-	  bzero ((char *) &u, sizeof u);  /* Zero any holes in a structure.  */
+	  zero_memory ((char *) &u, sizeof u);  /* Zero any holes in a structure.  */
 	  u.d = i == 0 ? dconst0 : i == 1 ? dconst1 : dconst2;
 
-	  bcopy ((char *) &u, (char *) &CONST_DOUBLE_LOW (tem), sizeof u);
+	  copy_memory ((char *) &u, (char *) &CONST_DOUBLE_LOW (tem), sizeof u);
 	  CONST_DOUBLE_MEM (tem) = cc0_rtx;
 	  PUT_MODE (tem, mode);
 

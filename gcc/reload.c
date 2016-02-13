@@ -714,7 +714,7 @@ get_secondary_mem (x, mode, opnum, type)
 void
 clear_secondary_mem ()
 {
-  bzero ((char *) secondary_memlocs, sizeof secondary_memlocs);
+  zero_memory ((char *) secondary_memlocs, sizeof secondary_memlocs);
 }
 #endif /* SECONDARY_MEMORY_NEEDED */
 
@@ -1553,7 +1553,7 @@ remove_address_replacements (in_rtx)
   char reload_flags[MAX_RELOADS];
   int something_changed = 0;
 
-  bzero (reload_flags, sizeof reload_flags);
+  zero_memory (reload_flags, sizeof reload_flags);
   for (i = 0, j = 0; i < n_replacements; i++)
     {
       if (loc_mentioned_in_p (replacements[i].where, in_rtx))
@@ -2461,7 +2461,7 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
   /* The eliminated forms of any secondary memory locations are per-insn, so
      clear them out here.  */
 
-  bzero ((char *) secondary_memlocs_elim, sizeof secondary_memlocs_elim);
+  zero_memory ((char *) secondary_memlocs_elim, sizeof secondary_memlocs_elim);
 #endif
 
   /* Dispose quickly of (set (reg..) (reg..)) if both have hard regs and it
@@ -2488,9 +2488,9 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
   insn_code_number = INSN_CODE (insn);
   this_insn_is_asm = insn_code_number < 0;
 
-  bcopy ((char *) recog_operand_mode, (char *) operand_mode,
+  copy_memory ((char *) recog_operand_mode, (char *) operand_mode,
 	 noperands * sizeof (enum machine_mode));
-  bcopy ((char *) recog_constraints, (char *) constraints,
+  copy_memory ((char *) recog_constraints, (char *) constraints,
 	 noperands * sizeof (char *));
 
   commutative = -1;
@@ -3479,7 +3479,7 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 	  pref_or_nothing[commutative] = pref_or_nothing[commutative + 1];
 	  pref_or_nothing[commutative + 1] = t;
 
-	  bcopy ((char *) recog_constraints, (char *) constraints,
+	  copy_memory ((char *) recog_constraints, (char *) constraints,
 		 noperands * sizeof (char *));
 	  goto try_swapped;
 	}

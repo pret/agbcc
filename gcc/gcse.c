@@ -829,7 +829,7 @@ compute_can_copy ()
   rtx reg,insn;
   char *free_point = (char *) oballoc (1);
 
-  bzero (can_copy_p, NUM_MACHINE_MODES);
+  zero_memory (can_copy_p, NUM_MACHINE_MODES);
 
   start_sequence ();
   for (i = 0; i < NUM_MACHINE_MODES; i++)
@@ -909,7 +909,7 @@ alloc_gcse_mem (f)
   max_uid = get_max_uid ();
   n = (max_uid + 1) * sizeof (int);
   uid_cuid = (int *) gmalloc (n);
-  bzero ((char *) uid_cuid, n);
+  zero_memory ((char *) uid_cuid, n);
   for (insn = f, i = 0; insn; insn = NEXT_INSN (insn))
     {
       if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
@@ -923,7 +923,7 @@ alloc_gcse_mem (f)
   max_cuid = i;
   n = (max_cuid + 1) * sizeof (rtx);
   cuid_insn = (rtx *) gmalloc (n);
-  bzero ((char *) cuid_insn, n);
+  zero_memory ((char *) cuid_insn, n);
   for (insn = f, i = 0; insn; insn = NEXT_INSN (insn))
     {
       if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
@@ -1085,7 +1085,7 @@ alloc_reg_set_mem (n_regs)
   reg_set_table_size = n_regs + REG_SET_TABLE_SLOP;
   n = reg_set_table_size * sizeof (struct reg_set *);
   reg_set_table = (struct reg_set **) gmalloc (n);
-  bzero ((char *) reg_set_table, n);
+  zero_memory ((char *) reg_set_table, n);
 
   gcc_obstack_init (&reg_set_obstack);
 }
@@ -1114,7 +1114,7 @@ record_one_set (regno, insn)
       reg_set_table = (struct reg_set **)
 	grealloc ((char *) reg_set_table,
 		  new_size * sizeof (struct reg_set *));
-      bzero ((char *) (reg_set_table + reg_set_table_size),
+      zero_memory ((char *) (reg_set_table + reg_set_table_size),
 	     (new_size - reg_set_table_size) * sizeof (struct reg_set *));
       reg_set_table_size = new_size;
     }
@@ -2078,7 +2078,7 @@ dump_hash_table (file, name, table, table_size, total_size)
   struct expr **flat_table = (struct expr **) alloca (total_size * sizeof (struct expr *));
   unsigned int *hash_val = (unsigned int *) alloca (total_size * sizeof (unsigned int));
 
-  bzero ((char *) flat_table, total_size * sizeof (struct expr *));
+  zero_memory ((char *) flat_table, total_size * sizeof (struct expr *));
   for (i = 0; i < table_size; i++)
     {
       struct expr *expr;
@@ -2188,7 +2188,7 @@ compute_hash_table (set_p)
      ??? This isn't needed during const/copy propagation, but it's cheap to
      compute.  Later.  */
   sbitmap_vector_zero (reg_set_in_block, n_basic_blocks);
-  bzero ((rtx *) modify_mem_list, n_basic_blocks * sizeof (rtx *));
+  zero_memory ((rtx *) modify_mem_list, n_basic_blocks * sizeof (rtx *));
 
   /* Some working arrays used to track first and last set in each block.  */
   /* ??? One could use alloca here, but at some size a threshold is crossed
@@ -2313,7 +2313,7 @@ compute_set_hash_table ()
 {
   /* Initialize count of number of entries in hash table.  */
   n_sets = 0;
-  bzero ((char *) set_hash_table, set_hash_table_size * sizeof (struct expr *));
+  zero_memory ((char *) set_hash_table, set_hash_table_size * sizeof (struct expr *));
 
   compute_hash_table (1);
 }
@@ -2355,7 +2355,7 @@ compute_expr_hash_table ()
 {
   /* Initialize count of number of entries in hash table.  */
   n_exprs = 0;
-  bzero ((char *) expr_hash_table, expr_hash_table_size * sizeof (struct expr *));
+  zero_memory ((char *) expr_hash_table, expr_hash_table_size * sizeof (struct expr *));
 
   compute_hash_table (0);
 }
@@ -2439,7 +2439,7 @@ reset_opr_set_tables ()
   /* Also keep a record of the last instruction to modify memory.
      For now this is very trivial, we only record whether any memory
      location has been modified.  */
-  bzero ((char *)modify_mem_list, n_basic_blocks * sizeof (rtx *));
+  zero_memory ((char *)modify_mem_list, n_basic_blocks * sizeof (rtx *));
 }
 
 /* Return non-zero if the operands of X are not set before INSN in
@@ -3002,7 +3002,7 @@ expr_reaches_here_p (occr, expr, bb, check_self_loop, visited)
   if (visited == NULL)
     {
       visited = (char *) alloca (n_basic_blocks);
-      bzero (visited, n_basic_blocks);
+      zero_memory (visited, n_basic_blocks);
     }
 
   for (pred = s_preds[bb]; pred != NULL; pred = pred->next)
@@ -4183,7 +4183,7 @@ pre_expr_reaches_here_p (occr_bb, expr, bb, check_pre_comp, visited)
   if (visited == NULL)
     {
       visited = (char *) alloca (n_basic_blocks);
-      bzero (visited, n_basic_blocks);
+      zero_memory (visited, n_basic_blocks);
     }
 
   for (pred = s_preds[bb]; pred != NULL; pred = pred->next)
@@ -4636,7 +4636,7 @@ pre_gcse ()
      hash table entry.  */
 
   index_map = (struct expr **) alloca (n_exprs * sizeof (struct expr *));
-  bzero ((char *) index_map, n_exprs * sizeof (struct expr *));
+  zero_memory ((char *) index_map, n_exprs * sizeof (struct expr *));
   for (i = 0; i < expr_hash_table_size; i++)
     {
       struct expr *expr;
@@ -4887,7 +4887,7 @@ hoist_expr_reaches_here_p (expr_bb, expr_index, bb, visited)
   if (visited == NULL)
     {
       visited = (char *) alloca (n_basic_blocks);
-      bzero (visited, n_basic_blocks);
+      zero_memory (visited, n_basic_blocks);
     }
 
   visited[expr_bb] = 1;
@@ -4930,7 +4930,7 @@ hoist_code ()
      hash table entry.  */
 
   index_map = (struct expr **) alloca (n_exprs * sizeof (struct expr *));
-  bzero ((char *) index_map, n_exprs * sizeof (struct expr *));
+  zero_memory ((char *) index_map, n_exprs * sizeof (struct expr *));
   for (i = 0; i < expr_hash_table_size; i++)
     {
       struct expr *expr;

@@ -268,7 +268,7 @@ gencode (f)
   fputs ("static rtx obstack_alloc_rtx (length)\n", f);
   fputs ("     register int length;\n{\n", f);
   fputs ("  rtx rt = (rtx) obstack_alloc (rtl_obstack, length);\n\n", f);
-  fputs ("  bzero((char *) rt, sizeof(struct rtx_def) - sizeof(rtunion));\n\n", f);
+  fputs ("  zero_memory((char *) rt, sizeof(struct rtx_def) - sizeof(rtunion));\n\n", f);
   fputs ("  return rt;\n}\n\n", f);
 
   for (fmt = formats; *fmt; ++fmt)

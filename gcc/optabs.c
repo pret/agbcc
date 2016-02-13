@@ -116,11 +116,8 @@ rtx truncxfdf2_libfunc;
 rtx trunctfdf2_libfunc;
 
 rtx memcpy_libfunc;
-rtx bcopy_libfunc;
 rtx memcmp_libfunc;
-rtx bcmp_libfunc;
 rtx memset_libfunc;
-rtx bzero_libfunc;
 
 rtx throw_libfunc;
 rtx rethrow_libfunc;
@@ -2809,22 +2806,12 @@ emit_cmp_insn (x, y, comparison, size, mode, unsignedp, align)
 	{
 	  rtx result;
 
-#ifdef TARGET_MEM_FUNCTIONS
 	  emit_library_call (memcmp_libfunc, 0,
 			     TYPE_MODE (integer_type_node), 3,
 			     XEXP (x, 0), Pmode, XEXP (y, 0), Pmode,
 			     convert_to_mode (TYPE_MODE (sizetype), size,
 					      TREE_UNSIGNED (sizetype)),
 			     TYPE_MODE (sizetype));
-#else
-	  emit_library_call (bcmp_libfunc, 0,
-			     TYPE_MODE (integer_type_node), 3,
-			     XEXP (x, 0), Pmode, XEXP (y, 0), Pmode,
-			     convert_to_mode (TYPE_MODE (integer_type_node),
-					      size,
-					      TREE_UNSIGNED (integer_type_node)),
-			     TYPE_MODE (integer_type_node));
-#endif
 
 	  /* Immediately move the result of the libcall into a pseudo
 	     register so reload doesn't clobber the value if it needs
@@ -4365,11 +4352,8 @@ init_optabs ()
   trunctfdf2_libfunc = gen_rtx_SYMBOL_REF (Pmode, "__trunctfdf2");
 
   memcpy_libfunc = gen_rtx_SYMBOL_REF (Pmode, "memcpy");
-  bcopy_libfunc = gen_rtx_SYMBOL_REF (Pmode, "bcopy");
   memcmp_libfunc = gen_rtx_SYMBOL_REF (Pmode, "memcmp");
-  bcmp_libfunc = gen_rtx_SYMBOL_REF (Pmode, "__gcc_bcmp");
   memset_libfunc = gen_rtx_SYMBOL_REF (Pmode, "memset");
-  bzero_libfunc = gen_rtx_SYMBOL_REF (Pmode, "bzero");
 
   throw_libfunc = gen_rtx_SYMBOL_REF (Pmode, "__throw");
   rethrow_libfunc = gen_rtx_SYMBOL_REF (Pmode, "__rethrow");

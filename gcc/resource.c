@@ -1146,11 +1146,11 @@ init_resource_info (epilogue_insn)
   target_hash_table
     = (struct target_info **) xmalloc ((TARGET_HASH_PRIME
 				       * sizeof (struct target_info *)));
-  bzero ((char *) target_hash_table,
+  zero_memory ((char *) target_hash_table,
 	 TARGET_HASH_PRIME * sizeof (struct target_info *));
 
   bb_ticks = (int *) xmalloc (n_basic_blocks * sizeof (int));
-  bzero ((char *) bb_ticks, n_basic_blocks * sizeof (int));
+  zero_memory ((char *) bb_ticks, n_basic_blocks * sizeof (int));
 }
 
 /* Free up the resources allcated to mark_target_live_regs ().  This

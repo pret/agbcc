@@ -208,7 +208,7 @@ jump_optimize (f, cross_jump, noop_moves, after_regscan)
      we make.  */
   max_jump_chain = max_uid * 14 / 10;
   jump_chain = (rtx *) alloca (max_jump_chain * sizeof (rtx));
-  bzero ((char *) jump_chain, max_jump_chain * sizeof (rtx));
+  zero_memory ((char *) jump_chain, max_jump_chain * sizeof (rtx));
 
   mark_all_labels (f, cross_jump);
 
@@ -2666,7 +2666,7 @@ duplicate_loop_exit_test (loop_start)
 	    if (reg_map == 0)
 	      {
 		reg_map = (rtx *) alloca (max_reg * sizeof (rtx));
-		bzero ((char *) reg_map, max_reg * sizeof (rtx));
+		zero_memory ((char *) reg_map, max_reg * sizeof (rtx));
 	      }
 
 	    REG_LOOP_TEST_P (reg) = 1;
@@ -4726,10 +4726,10 @@ thread_jumps (f, max_reg, flag_before_loop)
 	      || JUMP_LABEL (b1) == 0)
 	    continue;
 
-	  bzero (modified_regs, max_reg * sizeof (char));
+	  zero_memory (modified_regs, max_reg * sizeof (char));
 	  modified_mem = 0;
 
-	  bcopy ((char *) all_reset, (char *) same_regs,
+	  copy_memory ((char *) all_reset, (char *) same_regs,
 		 max_reg * sizeof (int));
 	  num_same_regs = 0;
 
@@ -5240,7 +5240,7 @@ conditional_execution (insn)
   rtx seq;
 
   fix_insns = (cexec *) alloca (sizeof (cexec) * max);
-  bzero ((char *)fix_insns, sizeof (cexec) * max);
+  zero_memory ((char *)fix_insns, sizeof (cexec) * max);
 
   true_false = (XEXP (SET_SRC (PATTERN (insn)), 1) != pc_rtx);
   for (p = next_nonnote_insn (insn); ; p = next_nonnote_insn (p))

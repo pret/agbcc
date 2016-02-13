@@ -1950,7 +1950,7 @@ dwarf2out_frame_init ()
   /* Allocate the initial hunk of the fde_table.  */
   fde_table
     = (dw_fde_ref) xmalloc (FDE_TABLE_INCREMENT * sizeof (dw_fde_node));
-  bzero ((char *) fde_table, FDE_TABLE_INCREMENT * sizeof (dw_fde_node));
+  zero_memory ((char *) fde_table, FDE_TABLE_INCREMENT * sizeof (dw_fde_node));
   fde_table_allocated = FDE_TABLE_INCREMENT;
   fde_table_in_use = 0;
 
@@ -4179,7 +4179,7 @@ equate_decl_number_to_die (decl, decl_die)
 	= (dw_die_ref *) xrealloc (decl_die_table,
 				   sizeof (dw_die_ref) * num_allocated);
 
-      bzero ((char *) &decl_die_table[decl_die_table_allocated],
+      zero_memory ((char *) &decl_die_table[decl_die_table_allocated],
 	     (num_allocated - decl_die_table_allocated) * sizeof (dw_die_ref));
       decl_die_table_allocated = num_allocated;
     }
@@ -4451,7 +4451,7 @@ build_abbrev_table (die)
 	    = (dw_die_ref *) xrealloc (abbrev_die_table,
 				       sizeof (dw_die_ref) * n_alloc);
 
-	  bzero ((char *) &abbrev_die_table[abbrev_die_table_allocated],
+	  zero_memory ((char *) &abbrev_die_table[abbrev_die_table_allocated],
 		 (n_alloc - abbrev_die_table_allocated) * sizeof (dw_die_ref));
 	  abbrev_die_table_allocated = n_alloc;
 	}
@@ -9764,7 +9764,7 @@ dwarf2out_init (asm_out_file, main_input_filename)
 
   /* Allocate the initial hunk of the file_table.  */
   file_table = (char **) xmalloc (FILE_TABLE_INCREMENT * sizeof (char *));
-  bzero ((char *) file_table, FILE_TABLE_INCREMENT * sizeof (char *));
+  zero_memory ((char *) file_table, FILE_TABLE_INCREMENT * sizeof (char *));
   file_table_allocated = FILE_TABLE_INCREMENT;
 
   /* Skip the first entry - file numbers begin at 1.  */
@@ -9773,7 +9773,7 @@ dwarf2out_init (asm_out_file, main_input_filename)
   /* Allocate the initial hunk of the decl_die_table.  */
   decl_die_table
     = (dw_die_ref *) xmalloc (DECL_DIE_TABLE_INCREMENT * sizeof (dw_die_ref));
-  bzero ((char *) decl_die_table,
+  zero_memory ((char *) decl_die_table,
 	 DECL_DIE_TABLE_INCREMENT * sizeof (dw_die_ref));
   decl_die_table_allocated = DECL_DIE_TABLE_INCREMENT;
   decl_die_table_in_use = 0;
@@ -9782,7 +9782,7 @@ dwarf2out_init (asm_out_file, main_input_filename)
   decl_scope_table
     = (decl_scope_node *) xmalloc (DECL_SCOPE_TABLE_INCREMENT
 				   * sizeof (decl_scope_node));
-  bzero ((char *) decl_scope_table,
+  zero_memory ((char *) decl_scope_table,
 	 DECL_SCOPE_TABLE_INCREMENT * sizeof (decl_scope_node));
   decl_scope_table_allocated = DECL_SCOPE_TABLE_INCREMENT;
   decl_scope_depth = 0;
@@ -9791,7 +9791,7 @@ dwarf2out_init (asm_out_file, main_input_filename)
   abbrev_die_table
     = (dw_die_ref *) xmalloc (ABBREV_DIE_TABLE_INCREMENT
 			      * sizeof (dw_die_ref));
-  bzero ((char *) abbrev_die_table,
+  zero_memory ((char *) abbrev_die_table,
 	 ABBREV_DIE_TABLE_INCREMENT * sizeof (dw_die_ref));
   abbrev_die_table_allocated = ABBREV_DIE_TABLE_INCREMENT;
   /* Zero-th entry is allocated, but unused */
@@ -9801,7 +9801,7 @@ dwarf2out_init (asm_out_file, main_input_filename)
   line_info_table
     = (dw_line_info_ref) xmalloc (LINE_INFO_TABLE_INCREMENT
 				  * sizeof (dw_line_info_entry));
-  bzero ((char *) line_info_table,
+  zero_memory ((char *) line_info_table,
 	 LINE_INFO_TABLE_INCREMENT * sizeof (dw_line_info_entry));
   line_info_table_allocated = LINE_INFO_TABLE_INCREMENT;
   /* Zero-th entry is allocated, but unused */

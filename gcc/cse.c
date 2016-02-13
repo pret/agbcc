@@ -797,11 +797,11 @@ new_basic_block ()
 
   next_qty = max_reg;
 
-  bzero ((char *) reg_tick, max_reg * sizeof (int));
+  zero_memory ((char *) reg_tick, max_reg * sizeof (int));
 
-  bcopy ((char *) all_minus_one, (char *) reg_in_table,
+  copy_memory ((char *) all_minus_one, (char *) reg_in_table,
 	 max_reg * sizeof (int));
-  bcopy ((char *) consec_ints, (char *) reg_qty, max_reg * sizeof (int));
+  copy_memory ((char *) consec_ints, (char *) reg_qty, max_reg * sizeof (int));
   CLEAR_HARD_REG_SET (hard_regs_in_table);
 
   /* The per-quantity values used to be initialized here, but it is
@@ -817,7 +817,7 @@ new_basic_block ()
 	}
     }
 
-  bzero ((char *) table, sizeof table);
+  zero_memory ((char *) table, sizeof table);
 
   prev_insn = 0;
 
@@ -4371,7 +4371,7 @@ simplify_plus_minus (code, mode, op0, op1)
   int first = 1, negate = 0, changed;
   int i, j;
 
-  bzero ((char *) ops, sizeof ops);
+  zero_memory ((char *) ops, sizeof ops);
   
   /* Set up the two operands and then expand them until nothing has been
      changed.  If we run out of room in our array, give up; this should
@@ -8584,7 +8584,7 @@ cse_main (f, nregs, after_loop, file)
 
   /* Discard all the free elements of the previous function
      since they are allocated in the temporarily obstack.  */
-  bzero ((char *) table, sizeof table);
+  zero_memory ((char *) table, sizeof table);
   free_element_chain = 0;
   n_elements_made = 0;
 
@@ -8592,7 +8592,7 @@ cse_main (f, nregs, after_loop, file)
 
   max_uid = get_max_uid ();
   uid_cuid = (int *) alloca ((max_uid + 1) * sizeof (int));
-  bzero ((char *) uid_cuid, (max_uid + 1) * sizeof (int));
+  zero_memory ((char *) uid_cuid, (max_uid + 1) * sizeof (int));
 
   /* Compute the mapping from uids to cuids.
      CUIDs are numbers assigned to insns, like uids,
@@ -9056,7 +9056,7 @@ delete_trivially_dead_insns (insns, nreg)
   int in_libcall = 0, dead_libcall = 0;
 
   /* First count the number of times each register is used.  */
-  bzero ((char *) counts, sizeof (int) * nreg);
+  zero_memory ((char *) counts, sizeof (int) * nreg);
   for (insn = next_real_insn (insns); insn; insn = next_real_insn (insn))
     count_reg_usage (insn, counts, NULL_RTX, 1);
 

@@ -457,11 +457,8 @@ extern rtx truncxfdf2_libfunc;
 extern rtx trunctfdf2_libfunc;
 
 extern rtx memcpy_libfunc;
-extern rtx bcopy_libfunc;
 extern rtx memcmp_libfunc;
-extern rtx bcmp_libfunc;
 extern rtx memset_libfunc;
-extern rtx bzero_libfunc;
 
 extern rtx throw_libfunc;
 extern rtx rethrow_libfunc;

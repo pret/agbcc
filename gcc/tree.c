@@ -297,7 +297,7 @@ init_obstacks ()
   rtl_obstack = saveable_obstack = &permanent_obstack;
 
   /* Init the hash table of identifiers.  */
-  bzero ((char *) hash_table, sizeof hash_table);
+  zero_memory ((char *) hash_table, sizeof hash_table);
 }
 
 void
@@ -713,7 +713,7 @@ perm_calloc (nelem, size)
      long size;
 {
   char *rval = (char *) obstack_alloc (&permanent_obstack, nelem * size);
-  bzero (rval, nelem * size);
+  zero_memory (rval, nelem * size);
   return rval;
 }
 
@@ -1070,7 +1070,7 @@ make_node (code)
     }
 
   t = (tree) obstack_alloc (obstack, length);
-  bzero (t, length);
+  zero_memory (t, length);
 
 #ifdef GATHER_STATISTICS
   tree_node_counts[(int)kind]++;
@@ -1268,7 +1268,7 @@ get_identifier (text)
   for (idp = hash_table[hi]; idp; idp = TREE_CHAIN (idp))
     if (IDENTIFIER_LENGTH (idp) == len
 	&& IDENTIFIER_POINTER (idp)[0] == text[0]
-	&& !bcmp (IDENTIFIER_POINTER (idp), text, len))
+	&& !memcmp (IDENTIFIER_POINTER (idp), text, len))
       return idp;		/* <-- return if found */
 
   /* Not found; optionally warn about a similar identifier */
@@ -1331,7 +1331,7 @@ maybe_get_identifier (text)
   for (idp = hash_table[hi]; idp; idp = TREE_CHAIN (idp))
     if (IDENTIFIER_LENGTH (idp) == len
 	&& IDENTIFIER_POINTER (idp)[0] == text[0]
-	&& !bcmp (IDENTIFIER_POINTER (idp), text, len))
+	&& !memcmp (IDENTIFIER_POINTER (idp), text, len))
       return idp;		/* <-- return if found */
 
   return NULL_TREE;
@@ -1551,7 +1551,7 @@ make_tree_vec (len)
 #endif
 
   t = (tree) obstack_alloc (obstack, length);
-  bzero (t, length);
+  zero_memory (t, length);
 
   TREE_SET_CODE (t, TREE_VEC);
   TREE_VEC_LENGTH (t) = len;
@@ -3058,7 +3058,7 @@ build1 (code, type, node)
   length = sizeof (struct tree_exp);
 
   t = (tree) obstack_alloc (obstack, length);
-  bzero (t, length);
+  zero_memory (t, length);
 
 #ifdef GATHER_STATISTICS
   tree_node_counts[(int)kind]++;
@@ -3968,7 +3968,7 @@ simple_cst_equal (t1, t2)
 
     case STRING_CST:
       return TREE_STRING_LENGTH (t1) == TREE_STRING_LENGTH (t2)
-	&& !bcmp (TREE_STRING_POINTER (t1), TREE_STRING_POINTER (t2),
+	&& !memcmp (TREE_STRING_POINTER (t1), TREE_STRING_POINTER (t2),
 		  TREE_STRING_LENGTH (t1));
 
     case CONSTRUCTOR:

@@ -734,7 +734,7 @@ shorten_branches (first)
   min_labelno = get_first_label_num ();
   label_align = (struct label_alignment *) xmalloc (
     (max_labelno - min_labelno + 1) * sizeof (struct label_alignment));
-  bzero ((char *) label_align,
+  zero_memory ((char *) label_align,
     (max_labelno - min_labelno + 1) * sizeof (struct label_alignment));
 
   uid_shuid = (int *) xmalloc (max_uid * sizeof *uid_shuid);
@@ -859,12 +859,12 @@ shorten_branches (first)
   insn_lengths_max_uid = max_uid;
   /* Syntax errors can lead to labels being outside of the main insn stream.
      Initialize insn_addresses, so that we get reproducible results.  */
-  bzero ((char *)insn_addresses, max_uid * sizeof *insn_addresses);
+  zero_memory ((char *)insn_addresses, max_uid * sizeof *insn_addresses);
   uid_align = (rtx *) xmalloc (max_uid * sizeof *uid_align);
 
   varying_length = (char *) xmalloc (max_uid * sizeof (char));
 
-  bzero (varying_length, max_uid);
+  zero_memory (varying_length, max_uid);
 
   /* Initialize uid_align.  We scan instructions
      from end to start, and keep in align_tab[n] the last seen insn
@@ -872,7 +872,7 @@ shorten_branches (first)
      in the alignment chain for an insn that does / has a known
      alignment of n.  */
 
-  bzero ((char *) uid_align, max_uid * sizeof *uid_align);
+  zero_memory ((char *) uid_align, max_uid * sizeof *uid_align);
 
   for (i = MAX_CODE_ALIGN; --i >= 0; )
     align_tab[i] = NULL_RTX;
@@ -1427,7 +1427,7 @@ final (first, file, optimize, prescan)
             max_line = NOTE_LINE_NUMBER (insn);
 
   line_note_exists = (char *) oballoc (max_line + 1);
-  bzero (line_note_exists, max_line + 1);
+  zero_memory (line_note_exists, max_line + 1);
 
   for (insn = first; insn; insn = NEXT_INSN (insn))
     {

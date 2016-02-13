@@ -30,13 +30,9 @@ Boston, MA 02111-1307, USA.  */
 
 /* Default to IEEE float if not specified.  Nearly all machines use it.  */
 
-#ifndef TARGET_FLOAT_FORMAT
 #define	TARGET_FLOAT_FORMAT	IEEE_FLOAT_FORMAT
-#endif
 
-#ifndef HOST_FLOAT_FORMAT
 #define	HOST_FLOAT_FORMAT	IEEE_FLOAT_FORMAT
-#endif
 
 #if TARGET_FLOAT_FORMAT == IEEE_FLOAT_FORMAT
 #define REAL_INFINITY
@@ -64,56 +60,11 @@ Boston, MA 02111-1307, USA.  */
    that can produce a target machine format differing by more
    than just endian-ness from the host's format.  The emulator
    is also used to support extended real XFmode.  */
-#ifndef LONG_DOUBLE_TYPE_SIZE
 #define LONG_DOUBLE_TYPE_SIZE 64
-#endif
-#if (LONG_DOUBLE_TYPE_SIZE == 96) || (LONG_DOUBLE_TYPE_SIZE == 128)
-#ifndef REAL_ARITHMETIC
-#define REAL_ARITHMETIC
-#endif
-#endif
-#ifdef REAL_ARITHMETIC
+
 /* **** Start of software floating point emulator interface macros **** */
 
-/* Support 80-bit extended real XFmode if LONG_DOUBLE_TYPE_SIZE
-   has been defined to be 96 in the tm.h machine file. */
-#if (LONG_DOUBLE_TYPE_SIZE == 96)
-#define REAL_IS_NOT_DOUBLE
-#define REAL_ARITHMETIC
-typedef struct {
-  HOST_WIDE_INT r[(11 + sizeof (HOST_WIDE_INT))/(sizeof (HOST_WIDE_INT))];
-} realvaluetype;
-#define REAL_VALUE_TYPE realvaluetype
-
-#else /* no XFmode support */
-
-#if (LONG_DOUBLE_TYPE_SIZE == 128)
-
-#define REAL_IS_NOT_DOUBLE
-#define REAL_ARITHMETIC
-typedef struct {
-  HOST_WIDE_INT r[(19 + sizeof (HOST_WIDE_INT))/(sizeof (HOST_WIDE_INT))];
-} realvaluetype;
-#define REAL_VALUE_TYPE realvaluetype
-
-#else /* not TFmode */
-
-#if HOST_FLOAT_FORMAT != TARGET_FLOAT_FORMAT
-/* If no XFmode support, then a REAL_VALUE_TYPE is 64 bits wide
-   but it is not necessarily a host machine double. */
-#define REAL_IS_NOT_DOUBLE
-typedef struct {
-  HOST_WIDE_INT r[(7 + sizeof (HOST_WIDE_INT))/(sizeof (HOST_WIDE_INT))];
-} realvaluetype;
-#define REAL_VALUE_TYPE realvaluetype
-#else
-/* If host and target formats are compatible, then a REAL_VALUE_TYPE
-   is actually a host machine double. */
 #define REAL_VALUE_TYPE double
-#endif
-
-#endif /* no TFmode support */
-#endif /* no XFmode support */
 
 extern int significand_size	PROTO((enum machine_mode));
 
@@ -122,7 +73,6 @@ extern int significand_size	PROTO((enum machine_mode));
    they invoke emulator functions. This will succeed only if the machine
    files have been updated to use these macros in place of any
    references to host machine `double' or `float' types.  */
-#ifdef REAL_ARITHMETIC
 #undef REAL_ARITHMETIC
 #define REAL_ARITHMETIC(value, code, d1, d2) \
   earith (&(value), (code), &(d1), &(d2))
@@ -198,11 +148,7 @@ extern REAL_VALUE_TYPE real_value_truncate	PROTO ((enum machine_mode,
   ereal_from_uint (&d, lo, hi, mode)
 
 /* IN is a REAL_VALUE_TYPE.  OUT is an array of longs. */
-#if LONG_DOUBLE_TYPE_SIZE == 96
-#define REAL_VALUE_TO_TARGET_LONG_DOUBLE(IN, OUT) (etarldouble ((IN), (OUT)))
-#else
 #define REAL_VALUE_TO_TARGET_LONG_DOUBLE(IN, OUT) (etartdouble ((IN), (OUT)))
-#endif
 #define REAL_VALUE_TO_TARGET_DOUBLE(IN, OUT) (etardouble ((IN), (OUT)))
 
 /* IN is a REAL_VALUE_TYPE.  OUT is a long. */
@@ -224,45 +170,7 @@ extern REAL_VALUE_TYPE real_value_truncate	PROTO ((enum machine_mode,
 /* Conversions to decimal ASCII string.  */
 #define REAL_VALUE_TO_DECIMAL(r, fmt, s) (ereal_to_decimal (r, s))
 
-#endif /* REAL_ARITHMETIC defined */
-
 /* **** End of software floating point emulator interface macros **** */
-#else /* No XFmode or TFmode and REAL_ARITHMETIC not defined */
-
-/* old interface */
-#ifdef REAL_ARITHMETIC
-/* Defining REAL_IS_NOT_DOUBLE breaks certain initializations
-   when REAL_ARITHMETIC etc. are not defined.  */
-
-/* Now see if the host and target machines use the same format. 
-   If not, define REAL_IS_NOT_DOUBLE (even if we end up representing
-   reals as doubles because we have no better way in this cross compiler.)
-   This turns off various optimizations that can happen when we know the
-   compiler's float format matches the target's float format.
-   */
-#if HOST_FLOAT_FORMAT != TARGET_FLOAT_FORMAT
-#define	REAL_IS_NOT_DOUBLE
-#ifndef REAL_VALUE_TYPE
-typedef struct {
-    HOST_WIDE_INT r[sizeof (double)/sizeof (HOST_WIDE_INT)];
-  } realvaluetype;
-#define REAL_VALUE_TYPE realvaluetype
-#endif /* no REAL_VALUE_TYPE */
-#endif /* formats differ */
-#endif /* 0 */
-
-#endif /* emulator not used */
-
-/* If we are not cross-compiling, use a `double' to represent the
-   floating-point value.  Otherwise, use some other type
-   (probably a struct containing an array of longs).  */
-#ifndef REAL_VALUE_TYPE
-#define REAL_VALUE_TYPE double
-#else
-#define REAL_IS_NOT_DOUBLE
-#endif
-
-#if HOST_FLOAT_FORMAT == TARGET_FLOAT_FORMAT
 
 /* Convert a type `double' value in host format first to a type `float'
    value in host format and then to a single type `long' value which
@@ -302,19 +210,13 @@ do {									\
     (OUT)[1] = u.l[0], (OUT)[0] = u.l[1];				\
 } while (0)
 #endif
-#endif /* HOST_FLOAT_FORMAT == TARGET_FLOAT_FORMAT */
-
-/* In this configuration, double and long double are the same. */
-#ifndef REAL_VALUE_TO_TARGET_LONG_DOUBLE
-#define REAL_VALUE_TO_TARGET_LONG_DOUBLE(a, b) REAL_VALUE_TO_TARGET_DOUBLE (a, b)
-#endif
 
 /* Compare two floating-point objects for bitwise identity.
    This is not the same as comparing for equality on IEEE hosts:
    -0.0 equals 0.0 but they are not identical, and conversely
    two NaNs might be identical but they cannot be equal.  */
 #define REAL_VALUES_IDENTICAL(x, y) \
-  (!bcmp ((char *) &(x), (char *) &(y), sizeof (REAL_VALUE_TYPE)))
+  (!memcmp ((char *) &(x), (char *) &(y), sizeof (REAL_VALUE_TYPE)))
 
 /* Compare two floating-point values for equality.  */
 #ifndef REAL_VALUES_EQUAL
@@ -355,25 +257,12 @@ extern double ldexp ();
 
 /* Convert the string X to a floating-point value.  */
 #ifndef REAL_VALUE_ATOF
-#if 1
 /* Use real.c to convert decimal numbers to binary, ... */
 REAL_VALUE_TYPE ereal_atof ();
 #define REAL_VALUE_ATOF(x, s) ereal_atof (x, s)
 /* Could use ereal_atof here for hexadecimal floats too, but real_hex_to_f
    is OK and it uses faster native fp arithmetic.  */
 /* #define REAL_VALUE_HTOF(x, s) ereal_atof (x, s) */
-#else
-/* ... or, if you like the host computer's atof, go ahead and use it: */
-#define REAL_VALUE_ATOF(x, s) atof (x)
-#if defined (MIPSEL) || defined (MIPSEB)
-/* MIPS compiler can't handle parens around the function name.
-   This problem *does not* appear to be connected with any
-   macro definition for atof.  It does not seem there is one.  */
-extern double atof ();
-#else
-extern double (atof) ();
-#endif
-#endif
 #endif
 
 /* Hexadecimal floating constant input for use with host computer's

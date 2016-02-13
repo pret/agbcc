@@ -994,7 +994,7 @@ cpp_parse_expr (pfile)
 	  else
 	    {
 	      new_stack = (struct operation *) xmalloc (new_size);
-	      bcopy ((char *) stack, (char *) new_stack, old_size);
+	      copy_memory ((char *) stack, (char *) new_stack, old_size);
 	    }
 	  stack = new_stack;
 	  top = (struct operation *) ((char *) new_stack + old_size);

@@ -3980,7 +3980,7 @@ assign_parms (fndecl, second_time)
 			       
   max_parm_reg = LAST_VIRTUAL_REGISTER + 1;
   parm_reg_stack_loc = (rtx *) savealloc (max_parm_reg * sizeof (rtx));
-  bzero ((char *) parm_reg_stack_loc, max_parm_reg * sizeof (rtx));
+  zero_memory ((char *) parm_reg_stack_loc, max_parm_reg * sizeof (rtx));
 
 #ifdef INIT_CUMULATIVE_INCOMING_ARGS
   INIT_CUMULATIVE_INCOMING_ARGS (args_so_far, fntype, NULL_RTX);
@@ -4558,9 +4558,9 @@ assign_parms (fndecl, second_time)
 		 precisely correct.  */
 	      max_parm_reg = regno + 1;
 	      new = (rtx *) savealloc (max_parm_reg * sizeof (rtx));
-	      bcopy ((char *) parm_reg_stack_loc, (char *) new,
+	      copy_memory ((char *) parm_reg_stack_loc, (char *) new,
 		     old_max_parm_reg * sizeof (rtx));
-	      bzero ((char *) (new + old_max_parm_reg),
+	      zero_memory ((char *) (new + old_max_parm_reg),
 		     (max_parm_reg - old_max_parm_reg) * sizeof (rtx));
 	      parm_reg_stack_loc = new;
 	    }

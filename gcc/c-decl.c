@@ -2096,7 +2096,7 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
   {
     register unsigned olddecl_uid = DECL_UID (olddecl);
 
-    bcopy ((char *) newdecl + sizeof (struct tree_common),
+    copy_memory ((char *) newdecl + sizeof (struct tree_common),
 	   (char *) olddecl + sizeof (struct tree_common),
 	   sizeof (struct tree_decl) - sizeof (struct tree_common));
     DECL_UID (olddecl) = olddecl_uid;
