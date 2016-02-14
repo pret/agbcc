@@ -75,30 +75,6 @@ thumb_shiftable_const(HOST_WIDE_INT val)
     return 0;
 }
 
-int
-thumb_trivial_epilogue()
-{
-    int regno;
-
-    /* ??? If this function ever returns 1, we get a function without any
-       epilogue at all.  It appears that the intent was to cause a "return"
-       insn to be emitted, but that does not happen.  */
-    return 0;
-
-#if 0
-    if (get_frame_size()
-        || current_function_outgoing_args_size
-        || current_function_pretend_args_size)
-        return 0;
-
-    for (regno = 8; regno < 13; regno++)
-        if (regs_ever_live[regno] && !call_used_regs[regno])
-            return 0;
-
-    return 1;
-#endif
-}
-
 /* Routines for handling the constant pool */
 /* This is unashamedly hacked from the version in sh.c, since the problem is
    extremely similar.  */

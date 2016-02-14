@@ -1148,12 +1148,8 @@ int thumb_shiftable_const ();
    limited PC addressing range: */
 #define MACHINE_DEPENDENT_REORG(INSN) thumb_reorg ((INSN))
 
-
-/* Options specific to Thumb */
-
 /* True if a return instruction can be used in this function. */
-int thumb_trivial_epilogue ();
-#define USE_RETURN (reload_completed && thumb_trivial_epilogue ())
+#define USE_RETURN reload_completed
 
 extern char * thumb_unexpanded_epilogue ();
 extern char * output_move_mem_multiple ();
