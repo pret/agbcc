@@ -18,6 +18,9 @@ along with GNU CC; see the file COPYING.  If not, write to
 the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
+#ifndef _TREE_H
+#define _TREE_H
+
 #include "machmode.h"
 
 #ifndef RTX_CODE
@@ -2330,3 +2333,5 @@ extern void dwarf2out_begin_prologue	PROTO((void));
    code for a function definition.  */
 
 extern void dwarf2out_end_epilogue	PROTO((void));
+
+#endif /* _TREE_H */

@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.  */
 #define CPP_PREDEFINES "-Dthumb -Dthumbelf -D__thumb -Acpu(arm) -Amachine(arm)"
 
 #include "arm/thumb.h"
+#include "tree.h"
 
 /* Run-time Target Specification.  */
 #undef TARGET_VERSION
@@ -42,7 +43,6 @@ Boston, MA 02111-1307, USA.  */
 extern int arm_structure_size_boundary;
 
 /* Debug */
-#define DWARF_DEBUGGING_INFO
 #define DWARF2_DEBUGGING_INFO
 #define PREFERRED_DEBUGGING_TYPE DWARF2_DEBUG
 
@@ -82,8 +82,6 @@ do {								  \
   else							 	  \
       fprintf (STREAM, "\t.section %s,\"aw\"\n", (NAME));	  \
 } while (0)
-
-/* Support the ctors/dtors and other sections.  */
 
 #undef INIT_SECTION_ASM_OP
 
@@ -96,11 +94,6 @@ do {								  \
 #define READONLY_DATA_SECTION	rdata_section
 #undef RDATA_SECTION_ASM_OP
 #define RDATA_SECTION_ASM_OP	"\t.section .rodata"
-
-#undef  CTORS_SECTION_ASM_OP
-#define CTORS_SECTION_ASM_OP	"\t.section .ctors,\"aw\""
-#undef  DTORS_SECTION_ASM_OP
-#define DTORS_SECTION_ASM_OP	"\t.section .dtors,\"aw\""
 
 #define USER_LABEL_PREFIX ""
 
@@ -181,20 +174,13 @@ do {								\
 /* A list of other sections which the compiler might be "in" at any
    given time.  */
 #undef EXTRA_SECTIONS
-#define EXTRA_SECTIONS SUBTARGET_EXTRA_SECTIONS in_rdata, in_ctors, in_dtors
-
-#define SUBTARGET_EXTRA_SECTIONS
+#define EXTRA_SECTIONS in_rdata
 
 /* A list of extra section function definitions.  */
 
 #undef EXTRA_SECTION_FUNCTIONS
 #define EXTRA_SECTION_FUNCTIONS \
-  RDATA_SECTION_FUNCTION	\
-  CTORS_SECTION_FUNCTION	\
-  DTORS_SECTION_FUNCTION	\
-  SUBTARGET_EXTRA_SECTION_FUNCTIONS
-
-#define SUBTARGET_EXTRA_SECTION_FUNCTIONS
+  RDATA_SECTION_FUNCTION
 
 #define RDATA_SECTION_FUNCTION \
 void									\
@@ -207,46 +193,6 @@ rdata_section ()							\
     }									\
 }
 
-#define CTOR_LIST_BEGIN                                 \
-asm (CTORS_SECTION_ASM_OP);                             \
-func_ptr __CTOR_LIST__[1] = { (func_ptr) (-1) }
-
-#define CTOR_LIST_END                                   \
-asm (CTORS_SECTION_ASM_OP);                             \
-func_ptr __CTOR_END__[1] = { (func_ptr) 0 };
-
-#define DTOR_LIST_BEGIN                                 \
-asm (DTORS_SECTION_ASM_OP);                             \
-func_ptr __DTOR_LIST__[1] = { (func_ptr) (-1) }
-
-#define DTOR_LIST_END                                   \
-asm (DTORS_SECTION_ASM_OP);                             \
-func_ptr __DTOR_END__[1] = { (func_ptr) 0 };
-
-#define CTORS_SECTION_FUNCTION \
-void									\
-ctors_section ()							\
-{									\
-  if (in_section != in_ctors)						\
-    {									\
-      fprintf (asm_out_file, "%s\n", CTORS_SECTION_ASM_OP);		\
-      in_section = in_ctors;						\
-    }									\
-}
-
-#define DTORS_SECTION_FUNCTION \
-void									\
-dtors_section ()							\
-{									\
-  if (in_section != in_dtors)						\
-    {									\
-      fprintf (asm_out_file, "%s\n", DTORS_SECTION_ASM_OP);		\
-      in_section = in_dtors;						\
-    }									\
-}
-
-/* Support the ctors/dtors sections for g++.  */
-
 #define INT_ASM_OP ".word"
 
 #define INVOKE__main
@@ -257,31 +203,12 @@ dtors_section ()							\
 #undef  ENDFILE_SPEC
 #define ENDFILE_SPEC "crtend%O%s"
 
-/* A C statement (sans semicolon) to output an element in the table of
-   global constructors.  */
-#undef ASM_OUTPUT_CONSTRUCTOR
-#define ASM_OUTPUT_CONSTRUCTOR(STREAM,NAME) \
-do {						\
-  ctors_section ();				\
-  fprintf (STREAM, "\t%s\t ", INT_ASM_OP);	\
-  assemble_name (STREAM, NAME);			\
-  fprintf (STREAM, "\n");			\
-} while (0)
-
-/* A C statement (sans semicolon) to output an element in the table of
-   global destructors.  */
-#undef ASM_OUTPUT_DESTRUCTOR
-#define ASM_OUTPUT_DESTRUCTOR(STREAM,NAME) \
-do {						\
-  dtors_section ();                   		\
-  fprintf (STREAM, "\t%s\t ", INT_ASM_OP);	\
-  assemble_name (STREAM, NAME);              	\
-  fprintf (STREAM, "\n");			\
-} while (0)
-
-/* The ARM development system has atexit and doesn't have _exit,
-   so define this for now.  */
-#define HAVE_ATEXIT
+/* A C expression whose value is nonzero if IDENTIFIER with arguments ARGS
+   is a valid machine specific attribute for DECL.
+   The attributes in ATTRIBUTES have previously been assigned to DECL.  */
+extern int arm_valid_machine_decl_attribute(tree decl, tree attributes, tree attr, tree args);
+#define VALID_MACHINE_DECL_ATTRIBUTE(DECL, ATTRIBUTES, IDENTIFIER, ARGS) \
+  arm_valid_machine_decl_attribute(DECL, ATTRIBUTES, IDENTIFIER, ARGS)
 
 /* The ARM development system defines __main.  */
 #define NAME__MAIN "__gccmain"
@@ -368,10 +295,7 @@ do {								\
       fprintf (FILE, TYPE_OPERAND_FMT, "function");	\
       putc ('\n', FILE);				\
       ASM_DECLARE_RESULT (FILE, DECL_RESULT (DECL));	\
-      if (! is_called_in_ARM_mode (decl))		\
-        fprintf (FILE, "\t.thumb_func\n") ;		\
-      else						\
-        fprintf (FILE, "\t.code\t32\n") ;		\
+      fprintf (FILE, "\t.thumb_func\n") ;		\
       ASM_OUTPUT_LABEL(FILE, NAME);			\
     }							\
   while (0)

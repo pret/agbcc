@@ -58,10 +58,7 @@ Boston, MA 02111-1307, USA.  */
 
 /* Nonzero if we should compile with BYTES_BIG_ENDIAN set to 1.  */
 #define THUMB_FLAG_BIG_END      		0x0001
-#define THUMB_FLAG_BACKTRACE    		0x0002
-#define THUMB_FLAG_LEAF_BACKTRACE		0x0004
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
-#define THUMB_FLAG_CALLEE_SUPER_INTERWORKING	0x40000 
 #define THUMB_FLAG_CALLER_SUPER_INTERWORKING	0x80000 
 
 /* Nonzero if all call instructions should be indirect.  */
@@ -73,14 +70,6 @@ extern int target_flags;
 #define TARGET_DEFAULT          0 /* ARM_FLAG_THUMB */
 #define TARGET_BIG_END          (target_flags & THUMB_FLAG_BIG_END)
 #define TARGET_THUMB_INTERWORK	(target_flags & ARM_FLAG_THUMB)
-#define TARGET_BACKTRACE	(leaf_function_p()			      \
-				 ? (target_flags & THUMB_FLAG_LEAF_BACKTRACE) \
-				 : (target_flags & THUMB_FLAG_BACKTRACE))
-
-/* Set if externally visable functions should assume that they
-   might be called in ARM mode, from a non-thumb aware code.  */
-#define TARGET_CALLEE_INTERWORKING	\
-     (target_flags & THUMB_FLAG_CALLEE_SUPER_INTERWORKING)
 
 /* Set if calls via function pointers should assume that their
    destination is non-Thumb aware.  */
@@ -100,12 +89,6 @@ extern int target_flags;
   {"little-endian",	           -THUMB_FLAG_BIG_END},	\
   {"thumb-interwork",		    ARM_FLAG_THUMB},		\
   {"no-thumb-interwork",           -ARM_FLAG_THUMB},		\
-  {"tpcs-frame",		    THUMB_FLAG_BACKTRACE},	\
-  {"no-tpcs-frame",                -THUMB_FLAG_BACKTRACE},	\
-  {"tpcs-leaf-frame",	  	    THUMB_FLAG_LEAF_BACKTRACE},	\
-  {"no-tpcs-leaf-frame",           -THUMB_FLAG_LEAF_BACKTRACE},	\
-  {"callee-super-interworking",	    THUMB_FLAG_CALLEE_SUPER_INTERWORKING}, \
-  {"no-callee-super-interworking", -THUMB_FLAG_CALLEE_SUPER_INTERWORKING}, \
   {"caller-super-interworking",	    THUMB_FLAG_CALLER_SUPER_INTERWORKING}, \
   {"no-caller-super-interworking", -THUMB_FLAG_CALLER_SUPER_INTERWORKING}, \
   {"long-calls",		ARM_FLAG_LONG_CALLS,		\
@@ -680,11 +663,6 @@ int thumb_shiftable_const ();
 	  count_regs++;						\
       if (count_regs || ! leaf_function_p () || far_jump_used_p())	\
 	(OFFSET) += 4 * (count_regs + 1);			\
-      if (TARGET_BACKTRACE) {					\
-	if ((count_regs & 0xFF) == 0 && (regs_ever_live[3] != 0))	\
-	  (OFFSET) += 20;					\
-	else							\
-	  (OFFSET) += 16; }					\
     }								\
   if ((TO) == STACK_POINTER_REGNUM)				\
     (OFFSET) += current_function_outgoing_args_size;		\
@@ -1111,15 +1089,6 @@ int thumb_shiftable_const ();
 
 #define PRINT_OPERAND_PUNCT_VALID_P(CODE) ((CODE) == '@' || ((CODE) == '_'))
 
-/* Emit a special directive when defining a function name.
-   This is used by the assembler to assit with interworking.  */
-#define ASM_DECLARE_FUNCTION_NAME(file, name, decl)             \
-  if (! is_called_in_ARM_mode (decl))			\
-    fprintf (file, "\t.thumb_func\n") ;			\
-  else							\
-    fprintf (file, "\t.code\t32\n") ;			\
-  ASM_OUTPUT_LABEL (file, name)
-
 #define ASM_OUTPUT_REG_PUSH(STREAM,REGNO)			\
   asm_fprintf ((STREAM), "\tpush {%R%s}\n", reg_names[(REGNO)])
 
@@ -1191,5 +1160,4 @@ extern char * output_move_mem_multiple ();
 extern char * thumb_load_double_from_address ();
 extern char * output_return ();
 extern int    far_jump_used_p();
-extern int    is_called_in_ARM_mode ();
 

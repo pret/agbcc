@@ -546,11 +546,6 @@ thumb_reload_out_si (operands)
   abort ();
 }
 
-/* CYGNUS LOCAL nickc/thumb-pe */
-
-#ifdef THUMB_PE
-/* Return non-zero if FUNC is a naked function.  */
-
 static int
 arm_naked_function_p (func)
      tree func;
@@ -563,31 +558,7 @@ arm_naked_function_p (func)
   a = lookup_attribute ("naked", DECL_MACHINE_ATTRIBUTES (func));
   return a != NULL_TREE;
 }
-#endif
-/* END CYGNUS LOCAL nickc/thumb-pe */
 
-/* Return non-zero if FUNC must be entered in ARM mode.  */
-int
-is_called_in_ARM_mode (func)
-     tree func;
-{
-  if (TREE_CODE (func) != FUNCTION_DECL)
-    abort ();
-
-  /* Ignore the problem about functions whoes address is taken.  */
-  if (TARGET_CALLEE_INTERWORKING && TREE_PUBLIC (func))
-    return TRUE;
-
-/* CYGNUS LOCAL nickc/thumb-pe */
-#ifdef THUMB_PE 
-  return lookup_attribute ("interfacearm", DECL_MACHINE_ATTRIBUTES (func)) != NULL_TREE;
-#else
-  return FALSE;
-#endif
-/* END CYGNUS LOCAL */
-}
-
-
 /* Routines for emitting code */
 
 void
@@ -604,10 +575,7 @@ final_prescan_insn(insn)
 
 static void thumb_pushpop ( FILE *, int, int ); /* Forward declaration.  */
 
-#ifdef __GNUC__
-inline
-#endif
-static int
+static inline int
 number_of_first_bit_set (mask)
      int mask;
 {
@@ -660,13 +628,6 @@ thumb_exit (f, reg_containing_return_addr)
       ++ pops_needed;
     }
 
-  if (TARGET_BACKTRACE)
-    {
-      /* Restore frame pointer and stack pointer.  */
-      regs_to_pop |= (1 << FRAME_POINTER) | (1 << STACK_POINTER);
-      pops_needed += 2;
-    }
-
   /* If there is nothing to pop then just emit the BX instruction and return.*/
   if (pops_needed == 0)
     {
@@ -675,12 +636,10 @@ thumb_exit (f, reg_containing_return_addr)
       return;
     }
 
-  /* Otherwise if we are not supporting interworking and we have not created
-     a backtrace structure and the function was not entered in ARM mode then
-     just pop the return address straight into the PC. */
-  else if (   ! TARGET_THUMB_INTERWORK
-	   && ! TARGET_BACKTRACE
-	   && ! is_called_in_ARM_mode (current_function_decl))
+  /* Otherwise if we are not supporting interworking,
+     then just pop the return address straight into the PC.
+  */
+  else if (   ! TARGET_THUMB_INTERWORK)
     {
       asm_fprintf (f, "\tpop\t{pc}\n" );
 
@@ -690,7 +649,6 @@ thumb_exit (f, reg_containing_return_addr)
   /* Find out how many of the (return) argument registers we can corrupt. */
   regs_available_for_popping = 0;
   
-#ifdef RTX_CODE
   /* If we can deduce the registers used from the function's return value.
      This is more reliable that examining regs_ever_live[] because that
      will be set if the register is ever used in the function, not just if
@@ -699,7 +657,6 @@ thumb_exit (f, reg_containing_return_addr)
   if (current_function_return_rtx != 0)
       mode = GET_MODE (current_function_return_rtx);
   else
-#endif
       mode = DECL_MODE (DECL_RESULT (current_function_decl));
 
   size = GET_MODE_SIZE (mode);
@@ -949,7 +906,7 @@ thumb_pushpop (f, mask, push)
     {
       /* Catch popping the PC.  */
       
-      if (TARGET_THUMB_INTERWORK || TARGET_BACKTRACE)
+      if (TARGET_THUMB_INTERWORK)
 	{
 	  /* The PC is never poped directly, instead
 	     it is popped into r3 and then BX is used. */
@@ -1006,13 +963,9 @@ output_return ()
   int regno;
   int live_regs_mask = 0;
 
-  /* CYGNUS LOCAL nickc/thumb-pe */
-#ifdef THUMB_PE
   /* If a function is naked, don't use the "return" insn.  */
   if (arm_naked_function_p (current_function_decl))
     return "";
-#endif
-  /* END CYGNUS LOCAL nickc/thumb-pe */
 
   return_used_this_function = 1;
 
@@ -1026,9 +979,7 @@ output_return ()
 	{
 	  thumb_exit (asm_out_file, 14);	      
 	}
-      else if (   TARGET_THUMB_INTERWORK
-	       || TARGET_BACKTRACE
-	       || is_called_in_ARM_mode (current_function_decl))
+      else if (   TARGET_THUMB_INTERWORK)
 	{
 	  thumb_exit (asm_out_file, -1);
 	}
@@ -1047,9 +998,7 @@ output_return ()
 		asm_fprintf (asm_out_file, ", ");
 	  }
 
-      if (   TARGET_THUMB_INTERWORK
-	  || TARGET_BACKTRACE
-	  || is_called_in_ARM_mode (current_function_decl))
+      if (   TARGET_THUMB_INTERWORK)
 	{
 	  asm_fprintf (asm_out_file, "}\n");
 	  thumb_exit (asm_out_file, -1);
@@ -1072,42 +1021,8 @@ thumb_function_prologue (f, frame_size)
   int store_arg_regs = 0;
   int regno;
 
-/* CYGNUS LOCAL nickc/thumb-pe */
-#ifdef THUMB_PE
   if (arm_naked_function_p (current_function_decl))
     return;
-#endif
-/* CYGNUS LOCAL nickc/thumb-pe */
-
-  if (is_called_in_ARM_mode (current_function_decl))
-    {
-      char * name;
-      if (GET_CODE (DECL_RTL (current_function_decl)) != MEM)
-	abort();
-      if (GET_CODE (XEXP (DECL_RTL (current_function_decl), 0)) != SYMBOL_REF)
-	abort();
-      name = XSTR  (XEXP (DECL_RTL (current_function_decl), 0), 0);
-      
-      /* Generate code sequence to switch us into Thumb mode.  */
-      /* The .code 32 directive has already been emitted by
-	 ASM_DECLARE_FUNCITON_NAME */
-      asm_fprintf (f, "\torr\tr12, pc, #1\n");
-      asm_fprintf (f, "\tbx\tr12\n");
-
-      /* Generate a label, so that the debugger will notice the
-	 change in instruction sets.  This label is also used by
-	 the assembler to bypass the ARM code when this function
-	 is called from a Thumb encoded function elsewhere in the
-	 same file.  Hence the definition of STUB_NAME here must
-	 agree with the definition in gas/config/tc-arm.c  */
-      
-#define STUB_NAME ".real_start_of"
-      
-      asm_fprintf (f, "\t.code\t16\n");
-      asm_fprintf (f, "\t.globl %s%U%s\n", STUB_NAME, name);
-      asm_fprintf (f, "\t.thumb_func\n");
-      asm_fprintf (f, "%s%U%s:\n", STUB_NAME, name);
-    }
     
   if (current_function_anonymous_args && current_function_pretend_args_size)
     store_arg_regs = 1;
@@ -1134,90 +1049,7 @@ thumb_function_prologue (f, frame_size)
   if (live_regs_mask || ! leaf_function_p () || far_jump_used_p())
     live_regs_mask |= 1 << 14;
 
-  if (TARGET_BACKTRACE)
-    {
-      char * name;
-      int    offset;
-      int    work_register = 0;
-      
-      
-      /* We have been asked to create a stack backtrace structure.
-         The code looks like this:
-	 
-	 0   .align 2
-	 0   func:
-         0     sub   SP, #16         Reserve space for 4 registers.
-	 2     push  {R7}            Get a work register.
-         4     add   R7, SP, #20     Get the stack pointer before the push.
-         6     str   R7, [SP, #8]    Store the stack pointer (before reserving the space).
-         8     mov   R7, PC          Get hold of the start of this code plus 12.
-        10     str   R7, [SP, #16]   Store it.
-        12     mov   R7, FP          Get hold of the current frame pointer.
-        14     str   R7, [SP, #4]    Store it.
-        16     mov   R7, LR          Get hold of the current return address.
-        18     str   R7, [SP, #12]   Store it.
-        20     add   R7, SP, #16     Point at the start of the backtrace structure.
-        22     mov   FP, R7          Put this value into the frame pointer.  */
-
-      if ((live_regs_mask & 0xFF) == 0)
-	{
-	  /* See if the a4 register is free.  */
-
-	  if (regs_ever_live[ 3 ] == 0)
-	    work_register = 3;
-	  else	  /* We must push a register of our own */
-	    live_regs_mask |= (1 << 7);
-	}
-
-      if (work_register == 0)
-	{
-	  /* Select a register from the list that will be pushed to use as our work register. */
-
-	  for (work_register = 8; work_register--;)
-	    if ((1 << work_register) & live_regs_mask)
-	      break;
-	}
-      
-      name = reg_names[ work_register ];
-      
-      asm_fprintf (f, "\tsub\tsp, sp, #16\t@ Create stack backtrace structure\n");
-      
-      if (live_regs_mask)
-	thumb_pushpop (f, live_regs_mask, 1);
-      
-      for (offset = 0, work_register = 1 << 15; work_register; work_register >>= 1)
-	if (work_register & live_regs_mask)
-	  offset += 4;
-      
-      asm_fprintf (f, "\tadd\t%s, sp, #%d\n",
-		   name, offset + 16 + current_function_pretend_args_size);
-      
-      asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset + 4);
-
-      /* Make sure that the instruction fetching the PC is in the right place
-	 to calculate "start of backtrace creation code + 12".  */
-      
-      if (live_regs_mask)
-	{
-	  asm_fprintf (f, "\tmov\t%s, pc\n", name);
-	  asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset + 12);
-	  asm_fprintf (f, "\tmov\t%s, fp\n", name);
-	  asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset);
-	}
-      else
-	{
-	  asm_fprintf (f, "\tmov\t%s, fp\n", name);
-	  asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset);
-	  asm_fprintf (f, "\tmov\t%s, pc\n", name);
-	  asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset + 12);
-	}
-      
-      asm_fprintf (f, "\tmov\t%s, lr\n", name);
-      asm_fprintf (f, "\tstr\t%s, [sp, #%d]\n", name, offset + 8);
-      asm_fprintf (f, "\tadd\t%s, sp, #%d\n", name, offset + 12);
-      asm_fprintf (f, "\tmov\tfp, %s\t\t@ Backtrace structure created\n", name);
-    }
-  else if (live_regs_mask)
+  if (live_regs_mask)
     thumb_pushpop (f, live_regs_mask, 1);
 
   for (regno = 8; regno < 13; regno++)
@@ -1287,13 +1119,8 @@ thumb_expand_prologue ()
   int regno;
   int live_regs_mask;
 
-  /* CYGNUS LOCAL nickc/thumb-pe */
-#ifdef THUMB_PE
-  /* Naked functions don't have prologues.  */
   if (arm_naked_function_p (current_function_decl))
     return;
-#endif
-  /* END CYGNUS LOCAL nickc/thumb-pe */
   
   if (amount)
     {
@@ -1358,13 +1185,8 @@ thumb_expand_epilogue ()
 			  + current_function_outgoing_args_size);
   int regno;
 
-  /* CYGNUS LOCAL nickc/thumb-pe */
-#ifdef THUMB_PE
-  /* Naked functions don't have epilogues.  */
   if (arm_naked_function_p (current_function_decl))
     return;
-#endif
-  /* END CYGNUS LOCAL nickc/thumb-pe */
 
   if (amount)
     {
@@ -1438,7 +1260,6 @@ thumb_unexpanded_epilogue ()
       int size;
       int mode;
        
-#ifdef RTX_CODE
       /* If we can deduce the registers used from the function's return value.
 	 This is more reliable that examining regs_ever_live[] because that
 	 will be set if the register is ever used in the function, not just if
@@ -1449,7 +1270,6 @@ thumb_unexpanded_epilogue ()
 	  mode = GET_MODE (current_function_return_rtx);
 	}
       else
-#endif
 	{
 	  mode = DECL_MODE (DECL_RESULT (current_function_decl));
 	}
@@ -1505,24 +1325,12 @@ thumb_unexpanded_epilogue ()
 
   had_to_push_lr = (live_regs_mask || ! leaf_function || far_jump_used_p());
   
-  if (TARGET_BACKTRACE && ((live_regs_mask & 0xFF) == 0) && regs_ever_live[ ARG_4_REGISTER ] != 0)
+  if (current_function_pretend_args_size == 0)
     {
-      /* The stack backtrace structure creation code had to
-	 push R7 in order to get a work register, so we pop
-	 it now.   */
-      
-      live_regs_mask |= (1 << WORK_REGISTER);
-    }
-  
-  if (current_function_pretend_args_size == 0 || TARGET_BACKTRACE)
-    {
-      if (had_to_push_lr
-	  && ! is_called_in_ARM_mode (current_function_decl))
+      if (had_to_push_lr)
 	live_regs_mask |= 1 << PROGRAM_COUNTER;
 
-      /* Either no argument registers were pushed or a backtrace
-	 structure was created which includes an adjusted stack
-	 pointer, so just pop everything.  */
+      /* No argument registers were pushed, so just pop everything.  */
       
       if (live_regs_mask)
 	thumb_pushpop (asm_out_file, live_regs_mask, FALSE);
@@ -1533,10 +1341,7 @@ thumb_unexpanded_epilogue ()
 	 return by doing a pop {pc}.  */
       
       if ((live_regs_mask & (1 << PROGRAM_COUNTER)) == 0)
-	thumb_exit (asm_out_file,
-		    (had_to_push_lr
-		     && is_called_in_ARM_mode (current_function_decl)) ?
-		    -1 : LINK_REGISTER);
+	thumb_exit (asm_out_file, LINK_REGISTER);
     }
   else
     {
@@ -1883,94 +1688,6 @@ thumb_print_operand (f, x, code)
     abort ();
 }
 
-#ifdef AOF_ASSEMBLER
-int arm_text_section_count = 1;
-
-char *
-aof_text_section (in_readonly)
-     int in_readonly;
-{
-  static char buf[100];
-  if (in_readonly)
-    return "";
-  sprintf (buf, "\tCODE16\n\tAREA |C$$code%d|, CODE, READONLY",
-	   arm_text_section_count++);
-  return buf;
-}
-
-static int arm_data_section_count = 1;
-
-char *
-aof_data_section ()
-{
-  static char buf[100];
-  sprintf (buf, "\tAREA |C$$data%d|, DATA", arm_data_section_count++);
-  return buf;
-}
-
-/* The AOF thumb assembler is religiously strict about declarations of
-   imported and exported symbols, so that it is impossible to declare a
-   function as imported near the begining of the file, and then to export
-   it later on.  It is, however, possible to delay the decision until all 
-   the functions in the file have been compiled.  To get around this, we
-   maintain a list of the imports and exports, and delete from it any that
-   are subsequently defined.  At the end of compilation we spit the 
-   remainder of the list out before the END directive.  */
-
-struct import
-{
-  struct import *next;
-  char *name;
-};
-
-static struct import *imports_list = NULL;
-
-void
-thumb_aof_add_import (name)
-     char *name;
-{
-  struct import *new;
-
-  for (new = imports_list; new; new = new->next)
-    if (new->name == name)
-      return;
-
-  new = (struct import *) xmalloc (sizeof (struct import));
-  new->next = imports_list;
-  imports_list = new;
-  new->name = name;
-}
-
-void
-thumb_aof_delete_import (name)
-     char *name;
-{
-  struct import **old;
-
-  for (old = &imports_list; *old; old = & (*old)->next)
-    {
-      if ((*old)->name == name)
-	{
-	  *old = (*old)->next;
-	  return;
-	}
-    }
-}
-
-void
-thumb_aof_dump_imports (f)
-     FILE *f;
-{
-  while (imports_list)
-    {
-      fprintf (f, "\tIMPORT\t");
-      assemble_name (f, imports_list->name);
-      fputc ('\n', f);
-      imports_list = imports_list->next;
-    }
-}
-#endif
-
 /* Decide whether a type should be returned in memory (true)
    or in a register (false).  This is called by the macro
    RETURN_IN_MEMORY.  */
@@ -2068,9 +1785,6 @@ thumb_override_options ()
     }
 }
 
-/* CYGNUS LOCAL nickc/thumb-pe */
-
-#ifdef THUMB_PE
 /* Return nonzero if ATTR is a valid attribute for DECL.
    ATTRIBUTES are any existing attributes and ARGS are the arguments
    supplied with ATTR.
@@ -2079,10 +1793,7 @@ thumb_override_options ()
 
    naked: don't output any prologue or epilogue code, the user is assumed
    to do the right thing.
-
-   interfacearm: Always assume that this function will be entered in ARM
-   mode, not Thumb mode, and that the caller wishes to be returned to in
-   ARM mode.  */
+*/
 int
 arm_valid_machine_decl_attribute (decl, attributes, attr, args)
      tree decl;
@@ -2096,13 +1807,8 @@ arm_valid_machine_decl_attribute (decl, attributes, attr, args)
   if (is_attribute_p ("naked", attr))
     return TREE_CODE (decl) == FUNCTION_DECL;
   
-  if (is_attribute_p ("interfacearm", attr))
-    return TREE_CODE (decl) == FUNCTION_DECL;
-  
   return 0;
 }
-#endif /* THUMB_PE */
-/* END CYGNUS LOCAL nickc/thumb-pe */
 
 /* s_register_operand is the same as register_operand, but it doesn't accept
    (SUBREG (MEM)...).
