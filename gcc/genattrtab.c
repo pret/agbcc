@@ -2056,9 +2056,6 @@ expand_units ()
 
 	  for (op = unit->ops; op; op = op->next)
 	    {
-#ifdef HAIFA
-	      rtx blockage = op->issue_exp;
-#else
 	      rtx blockage = operate_exp (POS_MINUS_OP, readycost,
 					  make_numeric_value (1));
 
@@ -2074,7 +2071,6 @@ expand_units ()
 				      blockage);
 
 	      blockage = operate_exp (MAX_OP, blockage, op->issue_exp);
-#endif
 	      blockage = simplify_knowing (blockage, unit->condexp);
 
 	      /* Add this op's contribution to MAX (BLOCKAGE (E,*)) and

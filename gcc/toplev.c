@@ -512,10 +512,6 @@ static char *offset_info_file_name;
 
 int flag_shared_data;
 
-/* Nonzero means schedule into delayed branch slots if supported.  */
-
-int flag_delayed_branch;
-
 /* Nonzero means generate extra code for exception handling and enable
    exception handling.  */
 
@@ -542,30 +538,6 @@ int flag_pretend_float;
 
 int flag_pedantic_errors = 0;
 
-/* flag_schedule_insns means schedule insns within basic blocks (before
-   local_alloc).
-   flag_schedule_insns_after_reload means schedule insns after
-   global_alloc.  */
-
-int flag_schedule_insns = 0;
-int flag_schedule_insns_after_reload = 0;
-
-#ifdef HAIFA
-/* The following flags have effect only for scheduling before register
-   allocation:
-
-   flag_schedule_interblock means schedule insns accross basic blocks.
-   flag_schedule_speculative means allow speculative motion of non-load insns.
-   flag_schedule_speculative_load means allow speculative motion of some
-   load insns.
-   flag_schedule_speculative_load_dangerous allows speculative motion of more
-   load insns.  */
-
-int flag_schedule_interblock = 1;
-int flag_schedule_speculative = 1;
-int flag_schedule_speculative_load = 0;
-int flag_schedule_speculative_load_dangerous = 0;
-#endif  /* HAIFA */
 
 /* flag_on_branch_count_reg means try to replace add-1,compare,branch tupple
    by a cheaper branch, on a count register. */
@@ -762,8 +734,6 @@ lang_independent_options f_options[] =
    "Return 'short' aggregates in memory, not registers" },
   {"reg-struct-return", &flag_pcc_struct_return, 0,
    "Return 'short' aggregates in registers" },
-  {"delayed-branch", &flag_delayed_branch, 1,
-   "Attempt to fill delay slots of branch instructions" },
   {"gcse", &flag_gcse, 1,
    "Perform the global common subexpression elimination" },
   {"rerun-cse-after-loop", &flag_rerun_cse_after_loop, 1,
@@ -772,20 +742,6 @@ lang_independent_options f_options[] =
    "Run the loop optimiser twice"},
   {"pretend-float", &flag_pretend_float, 1,
    "Pretend that host and target use the same FP format"},
-  {"schedule-insns", &flag_schedule_insns, 1,
-   "Reschedule instructions to avoid pipeline stalls"},
-  {"schedule-insns2", &flag_schedule_insns_after_reload, 1,
-  "Run two passes of the instruction scheduler"},
-#ifdef HAIFA
-  {"sched-interblock",&flag_schedule_interblock, 1,
-   "Enable scheduling across basic blocks" },
-  {"sched-spec",&flag_schedule_speculative, 1,
-   "Allow speculative motion of non-loads" },
-  {"sched-spec-load",&flag_schedule_speculative_load, 1,
-   "Allow speculative motion of some loads" },
-  {"sched-spec-load-dangerous",&flag_schedule_speculative_load_dangerous, 1,
-   "Allow speculative motion of more loads" },
-#endif  /* HAIFA */
   {"branch-count-reg",&flag_branch_on_count_reg, 1,
    "Replace add,compare,branch with branch on count reg"},
 /* END CYGNUS LOCAL meissner/nortel */
@@ -3605,29 +3561,6 @@ rest_of_compilation (decl)
 	}
     }
 
-  /* Print function header into sched dump now
-     because doing the sched analysis makes some of the dump.  */
-
-  if (optimize > 0 && flag_schedule_insns)
-    {
-      if (sched_dump)
-	open_dump_file (".sched", decl_printable_name (decl, 2));
-
-      /* Do control and data sched analysis,
-	 and write some of the results to dump file.  */
-
-      TIMEVAR (sched_time, schedule_insns (rtl_dump_file));
-
-      /* Dump rtl after instruction scheduling.  */
-
-      if (sched_dump)
-	{
-	  close_dump_file (print_rtl_with_bb, insns);
-	  if (graph_dump_format != no_graph)
-	    print_rtl_graph_with_bb (dump_base_name, ".sched", insns);
-	}
-    }
-
   /* Unless we did stupid register allocation,
      allocate pseudo-regs that are used only within 1 basic block.  */
 
@@ -3676,34 +3609,6 @@ rest_of_compilation (decl)
   if (optimize > 0)
     reload_cse_regs (insns);
 
-  /* If optimizing and we are performing instruction scheduling after
-     reload, then go ahead and split insns now since we are about to
-     recompute flow information anyway.
-
-     reload_cse_regs may expose more splitting opportunities, expecially
-     for double-word operations.  */
-  if (optimize > 0 && flag_schedule_insns_after_reload)
-    {
-      rtx insn;
-
-      for (insn = insns; insn; insn = NEXT_INSN (insn))
-	{
-	  rtx last;
-
-	  if (GET_RTX_CLASS (GET_CODE (insn)) != 'i')
-	    continue;
-
-	  last = try_split (PATTERN (insn), insn, 1);
-
-	  if (last != insn)
-	    {
-	      PUT_CODE (insn, NOTE);
-	      NOTE_SOURCE_FILE (insn) = 0;
-	      NOTE_LINE_NUMBER (insn) = NOTE_INSN_DELETED;
-	    }
-	}
-    }
-
   /* Re-create the death notes which were deleted during reload.  */
   if (optimize)
     TIMEVAR
@@ -3728,24 +3633,6 @@ rest_of_compilation (decl)
       close_dump_file (print_rtl_with_bb, insns);
       if (graph_dump_format != no_graph)
 	print_rtl_graph_with_bb (dump_base_name, ".greg", insns);
-    }
-  if (optimize > 0 && flag_schedule_insns_after_reload)
-    {
-      if (sched2_dump)
-	open_dump_file (".sched2", decl_printable_name (decl, 2));
-
-      /* Do control and data sched analysis again,
-	 and write some more of the results to dump file.  */
-
-      TIMEVAR (sched2_time, schedule_insns (rtl_dump_file));
-
-      /* Dump rtl after post-reorder instruction scheduling.  */
-      if (sched2_dump)
-	{
-	  close_dump_file (print_rtl_with_bb, insns);
-	  if (graph_dump_format != no_graph)
-	    print_rtl_graph_with_bb (dump_base_name, ".sched2", insns);
-	}
     }
 
   /* One more attempt to remove jumps to .+1
@@ -3962,9 +3849,6 @@ display_help ()
   printf ("  -version                Display the compiler's version\n");
   printf ("  -d[letters]             Enable dumps from specific passes of the compiler\n");
   printf ("  -dumpbase <file>        Base name to be used for dumps from specific passes\n");
-#if defined HAIFA || defined INSN_SCHEDULING
-  printf ("  -sched-verbose-<number> Set the verbosity level of the scheduler\n");
-#endif
   printf ("  --help                  Display this information\n");
 
   undoc = 0;
@@ -4248,10 +4132,6 @@ main (argc, argv)
       flag_rerun_loop_opt = 1;
       flag_caller_saves = 1;
       flag_force_mem = 1;
-#ifdef INSN_SCHEDULING
-      flag_schedule_insns = 1;
-      flag_schedule_insns_after_reload = 1;
-#endif
       flag_regmove = 1;
       flag_strict_aliasing = 1;
     }
@@ -4437,12 +4317,6 @@ main (argc, argv)
 
 	      if (found)
 		;
-#ifdef HAIFA
-#ifdef INSN_SCHEDULING
-	      else if (!strncmp (p, "sched-verbose-",14))
-		fix_sched_param("verbose",&p[14]);
-#endif
-#endif  /* HAIFA */
 	      else if (!strncmp (p, "fixed-", 6))
 		fix_register (&p[6], 1, 1);
 	      else if (!strncmp (p, "call-used-", 10))
@@ -4750,14 +4624,6 @@ main (argc, argv)
       flag_strength_reduce = 1;
       flag_rerun_cse_after_loop = 1;
     }
-
-  /* Warn about options that are not supported on this machine.  */
-#ifndef INSN_SCHEDULING
-  if (flag_schedule_insns || flag_schedule_insns_after_reload)
-    warning ("instruction scheduling not supported on this target machine");
-#endif
-  if (flag_delayed_branch)
-    warning ("this target machine does not have delayed branches");
 
   user_label_prefix = USER_LABEL_PREFIX;
   if (flag_leading_underscore != -1)

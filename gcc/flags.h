@@ -302,30 +302,6 @@ extern int flag_gen_aux_info;
 
 extern int flag_shared_data;
 
-/* flag_schedule_insns means schedule insns within basic blocks (before
-   local_alloc).
-   flag_schedule_insns_after_reload means schedule insns after
-   global_alloc.  */
-
-extern int flag_schedule_insns;
-extern int flag_schedule_insns_after_reload;
-
-#ifdef HAIFA
-/* The following flags have effect only for scheduling before register
-   allocation:
-
-   flag_schedule_interblock means schedule insns accross basic blocks.
-   flag_schedule_speculative means allow speculative motion of non-load insns.
-   flag_schedule_speculative_load means allow speculative motion of some
-   load insns.
-   flag_schedule_speculative_load_dangerous allows speculative motion of more
-   load insns.  */
-
-extern int flag_schedule_interblock;
-extern int flag_schedule_speculative;
-extern int flag_schedule_speculative_load;
-extern int flag_schedule_speculative_load_dangerous;
-#endif  /* HAIFA */
 
 /* flag_on_branch_count_reg means try to replace add-1,compare,branch tupple
    by a cheaper branch, on a count register. */
@@ -335,10 +311,6 @@ extern int flag_branch_on_count_reg;
 /* CYGNUS LOCAL meissner/nortel */
 extern int flag_optimize_comparisons;
 /* END CYGNUS LOCAL meissner/nortel */
-
-/* Nonzero means put things in delayed-branch slots if supported. */
-
-extern int flag_delayed_branch;
 
 /* Nonzero means suppress output of instruction numbers and line number
    notes in debugging dumps.  */

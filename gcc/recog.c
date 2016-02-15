@@ -920,14 +920,6 @@ general_operand (op, mode)
 
   if (code == SUBREG)
     {
-#ifdef INSN_SCHEDULING
-      /* On machines that have insn scheduling, we want all memory
-	 reference to be explicit, so outlaw paradoxical SUBREGs.  */
-      if (GET_CODE (SUBREG_REG (op)) == MEM
-	  && GET_MODE_SIZE (mode) > GET_MODE_SIZE (GET_MODE (SUBREG_REG (op))))
-	return 0;
-#endif
-
       op = SUBREG_REG (op);
       code = GET_CODE (op);
 #if 0
@@ -2408,9 +2400,6 @@ split_block_insns (b, do_split)
 	    {
 	      /* try_split returns the NOTE that INSN became.  */
 	      first = NEXT_INSN (first);
-#ifdef INSN_SCHEDULING
-	      update_flow_info (notes, first, last, insn);
-#endif
 	      PUT_CODE (insn, NOTE);
 	      NOTE_SOURCE_FILE (insn) = 0;
 	      NOTE_LINE_NUMBER (insn) = NOTE_INSN_DELETED;

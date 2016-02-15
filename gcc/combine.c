@@ -2130,14 +2130,6 @@ try_combine (i3, i2, i1)
 	      split_code = GET_CODE (*split);
 	    }
 
-#ifdef INSN_SCHEDULING
-	  /* If *SPLIT is a paradoxical SUBREG, when we split it, it should
-	     be written as a ZERO_EXTEND.  */
-	  if (split_code == SUBREG && GET_CODE (SUBREG_REG (*split)) == MEM)
-	    SUBST (*split, gen_rtx_combine (ZERO_EXTEND, split_mode,
-					    XEXP (*split, 0)));
-#endif
-
 	  newi2pat = gen_rtx_combine (SET, VOIDmode, newdest, *split);
 	  SUBST (*split, newdest);
 	  i2_code_number = recog_for_combine (&newi2pat, i2, &new_i2_notes);
@@ -2705,12 +2697,6 @@ find_split_point (loc, insn)
   switch (code)
     {
     case SUBREG:
-#ifdef INSN_SCHEDULING
-      /* If we are making a paradoxical SUBREG invalid, it becomes a split
-	 point.  */
-      if (GET_CODE (SUBREG_REG (x)) == MEM)
-	return loc;
-#endif
       return find_split_point (&SUBREG_REG (x), insn);
 
     case MEM:

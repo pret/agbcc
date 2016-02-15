@@ -1809,7 +1809,6 @@ jump_optimize (f, cross_jump, noop_moves, after_regscan)
 		   Also don't do it when we are called after reload since
 		   it will confuse reorg.  */
 		if (! first
-		    && (reload_completed ? ! flag_delayed_branch : 1)
 		    /* Make sure INSN is something we can invert.  */
 		    && condjump_p (insn)
 		    && label1 != 0
