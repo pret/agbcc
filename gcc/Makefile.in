@@ -148,7 +148,7 @@ USER_H = $(srcdir)/ginclude/stdarg.h $(srcdir)/ginclude/stddef.h \
 # want to set this empty.
 INSTALL_ASSERT_H = install-assert-h
 
-# The GCC to use for compiling libgcc2.a, enquire, and libgcc1-test.
+# The GCC to use for compiling libgcc2.a, and libgcc1-test.
 # Usually the one we just built.
 # Don't use this as a dependency--use $(GCC_PASSES) or $(GCC_PARTS).
 GCC_FOR_TARGET = ./xgcc -B./ -B$(build_tooldir)/bin/
@@ -611,7 +611,7 @@ STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  gencheck$(build_exeext) \
  xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES) \
  $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
- cc1obj$(exeext) enquire$(exeext) \
+ cc1obj$(exeext) \
  specs underscore.c \
  *.greg *.lreg *.combine *.flow *.cse *.jump *.rtl *.tree *.loop \
  *.dbr *.jump2 *.cse2 *.stack *.gcse \
@@ -744,8 +744,6 @@ config.status: configure version.c
 
 all.internal: start.encap rest.encap
 # This is what to compile if making a cross-compiler.
-# Note that we can compile enquire using the cross-compiler just built,
-# although we can't run it on this machine.
 all.cross: native gcc-cross specs $(LIBGCC) \
 	$(LIBGCC1_TEST) lang.all.cross
 # This is what to compile if making gcc with a cross-compiler.
@@ -1878,7 +1876,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f */*.tree */*.loop */*.dbr */*.jump2 */*.cse2
 	-rm -f */*.stack */*.regmove */*.gcse
 # Delete some files made during installation.
-	-rm -f specs enquire SYSCALLS.c.X SYSCALLS.c
+	-rm -f specs SYSCALLS.c.X SYSCALLS.c
 	-rm -f collect mips-tfile mips-tdump alloca.s
 # CYGNUS LOCAL: binary installation
 # Delete unwanted output files from TeX.
