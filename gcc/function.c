@@ -162,11 +162,6 @@ int current_function_calls_alloca;
 
 int current_function_returns_pointer;
 
-/* If some insns can be deferred to the delay slots of the epilogue, the
-   delay list for them is recorded here.  */
-
-rtx current_function_epilogue_delay_list;
-
 /* If function's args have a fixed size, this is that size, in bytes.
    Otherwise, it is -1.
    May affect compilation of return insn or of function epilogue.  */
@@ -565,7 +560,6 @@ push_function_context_to (context)
   p->target_temp_slot_level = target_temp_slot_level;
   p->var_temp_slot_level = var_temp_slot_level;
   p->fixup_var_refs_queue = 0;
-  p->epilogue_delay_list = current_function_epilogue_delay_list;
   p->args_info = current_function_args_info;
   p->check_memory_usage = current_function_check_memory_usage;
   p->instrument_entry_exit = current_function_instrument_entry_exit;
@@ -651,7 +645,6 @@ pop_function_context_from (context)
   temp_slot_level = p->temp_slot_level;
   target_temp_slot_level = p->target_temp_slot_level;
   var_temp_slot_level = p->var_temp_slot_level;
-  current_function_epilogue_delay_list = p->epilogue_delay_list;
   reg_renumber = 0;
   current_function_args_info = p->args_info;
   current_function_check_memory_usage = p->check_memory_usage;
@@ -5627,7 +5620,6 @@ init_function_start (subr, filename, line)
 
   current_function_returns_pcc_struct = 0;
   current_function_returns_struct = 0;
-  current_function_epilogue_delay_list = 0;
   current_function_uses_const_pool = 0;
   current_function_uses_pic_offset_table = 0;
   current_function_cannot_inline = 0;

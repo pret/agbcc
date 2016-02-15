@@ -444,11 +444,6 @@ extern char *current_function_name;
    DECL_RTL (DECL_RESULT (current_function_decl)).  */
 
 extern rtx current_function_return_rtx;
-
-/* If some insns can be deferred to the delay slots of the epilogue, the
-   delay list for them is recorded here.  */
-
-extern rtx current_function_epilogue_delay_list;
 #endif
 
 /* Nonzero means generate position-independent code.

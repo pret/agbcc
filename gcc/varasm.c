@@ -3596,12 +3596,6 @@ mark_constant_pool ()
   for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
     if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
       mark_constants (PATTERN (insn));
-
-  for (insn = current_function_epilogue_delay_list;
-       insn;
-       insn = XEXP (insn, 1))
-    if (GET_RTX_CLASS (GET_CODE (insn)) == 'i')
-      mark_constants (PATTERN (insn));
 }
 
 static void

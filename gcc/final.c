@@ -2976,15 +2976,6 @@ leaf_function_p ()
 	  && GET_CODE (XVECEXP (PATTERN (insn), 0, 0)) == CALL_INSN)
 	return 0;
     }
-  for (insn = current_function_epilogue_delay_list; insn; insn = XEXP (insn, 1))
-    {
-      if (GET_CODE (XEXP (insn, 0)) == CALL_INSN)
-	return 0;
-      if (GET_CODE (XEXP (insn, 0)) == INSN
-	  && GET_CODE (PATTERN (XEXP (insn, 0))) == SEQUENCE
-	  && GET_CODE (XVECEXP (PATTERN (XEXP (insn, 0)), 0, 0)) == CALL_INSN)
-	return 0;
-    }
 
   return 1;
 }
