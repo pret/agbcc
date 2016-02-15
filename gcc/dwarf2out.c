@@ -2699,10 +2699,7 @@ restart:
   switch (GET_CODE (x))
     {
     case PC:
-      if (flag_pic)
-	dyn_string_append (str, ",");
-      else
-	abort ();
+      abort ();
       break;
 
     case SYMBOL_REF:

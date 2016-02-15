@@ -149,7 +149,6 @@ rtx struct_value_rtx;		/* (REG:Pmode STRUCT_VALUE_REGNUM) */
 rtx struct_value_incoming_rtx;	/* (REG:Pmode STRUCT_VALUE_INCOMING_REGNUM) */
 rtx static_chain_rtx;		/* (REG:Pmode STATIC_CHAIN_REGNUM) */
 rtx static_chain_incoming_rtx;	/* (REG:Pmode STATIC_CHAIN_INCOMING_REGNUM) */
-rtx pic_offset_table_rtx;	/* (REG:Pmode PIC_OFFSET_TABLE_REGNUM) */
 
 /* This is used to implement __builtin_return_address for some machines.
    See for instance the MIPS port.  */
@@ -3630,9 +3629,6 @@ init_emit_once (line_numbers)
 #endif
 #endif
 
-#ifdef PIC_OFFSET_TABLE_REGNUM
-  pic_offset_table_rtx = gen_rtx_REG (Pmode, PIC_OFFSET_TABLE_REGNUM);
-#endif
 
 #ifdef INIT_EXPANDERS
   /* This is to initialize save_machine_status and restore_machine_status before

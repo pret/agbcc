@@ -943,9 +943,6 @@ mark_target_live_regs (insns, target, res)
 #if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 		    && ! (i == ARG_POINTER_REGNUM && fixed_regs[i])
 #endif
-#ifdef PIC_OFFSET_TABLE_REGNUM
-		    && ! (i == PIC_OFFSET_TABLE_REGNUM && flag_pic)
-#endif
 		    )
 		  CLEAR_HARD_REG_BIT (current_live_regs, i);
 

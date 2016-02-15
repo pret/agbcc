@@ -195,13 +195,8 @@ struct function
   /* For integrate.c.  */
   int uses_const_pool;
 
-  /* For md files.  */
-  int uses_pic_offset_table;
   /* tm.h can use this to store whatever it likes.  */
   struct machine_function *machine;
-
-  /* For reorg.  */
-  rtx epilogue_delay_list;
 
   /* For varasm.  */
   struct constant_descriptor **const_rtx_hash_table;

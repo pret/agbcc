@@ -693,11 +693,6 @@ reload (first, global, dumpfile)
 	{
 	  rtx note = find_reg_note (insn, REG_EQUIV, NULL_RTX);
 	  if (note
-#ifdef LEGITIMATE_PIC_OPERAND_P
-	      && (! function_invariant_p (XEXP (note, 0))
-		  || ! flag_pic
-		  || LEGITIMATE_PIC_OPERAND_P (XEXP (note, 0)))
-#endif
 	      )
 	    {
 	      rtx x = XEXP (note, 0);

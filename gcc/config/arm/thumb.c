@@ -1495,12 +1495,6 @@ thumb_override_options()
         else
             warning("Structure size boundary can only be set to 8 or 32");
     }
-
-    if (flag_pic)
-    {
-        warning("Position independent code not supported.  Ignored");
-        flag_pic = 0;
-    }
 }
 
 /* Return nonzero if ATTR is a valid attribute for DECL.

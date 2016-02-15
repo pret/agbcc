@@ -360,7 +360,6 @@ int optimize = 0;
    They won't actually be used.  */
 
 struct _global_rtl global_rtl;
-rtx pic_offset_table_rtx;
 
 static void attr_hash_add_rtx	PROTO((int, rtx));
 static void attr_hash_add_string PROTO((int, char *));

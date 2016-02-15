@@ -3101,9 +3101,6 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 		  break;
 	      case 'i':
 		if (CONSTANT_P (operand)
-#ifdef LEGITIMATE_PIC_OPERAND_P
-		    && (! flag_pic || LEGITIMATE_PIC_OPERAND_P (operand))
-#endif
 		    )
 		  win = 1;
 		break;
@@ -3139,11 +3136,6 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 		    && GET_CODE (operand) != PLUS
 		    /* A SCRATCH is not a valid operand.  */
 		    && GET_CODE (operand) != SCRATCH
-#ifdef LEGITIMATE_PIC_OPERAND_P
-		    && (! CONSTANT_P (operand) 
-			|| ! flag_pic 
-			|| LEGITIMATE_PIC_OPERAND_P (operand))
-#endif
 		    && (GENERAL_REGS == ALL_REGS
 			|| GET_CODE (operand) != REG
 			|| (REGNO (operand) >= FIRST_PSEUDO_REGISTER

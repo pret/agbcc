@@ -213,9 +213,6 @@ rtx current_function_return_rtx;
 
 int current_function_uses_const_pool;
 
-/* Nonzero if the current function uses pic_offset_table_rtx.  */
-int current_function_uses_pic_offset_table;
-
 /* The arg pointer hard register, or the pseudo into which it was copied.  */
 rtx current_function_internal_arg_pointer;
 
@@ -531,7 +528,6 @@ push_function_context_to (context)
   p->varargs = current_function_varargs;
   p->stdarg = current_function_stdarg;
   p->uses_const_pool = current_function_uses_const_pool;
-  p->uses_pic_offset_table = current_function_uses_pic_offset_table;
   p->internal_arg_pointer = current_function_internal_arg_pointer;
   p->cannot_inline = current_function_cannot_inline;
   p->max_parm_reg = max_parm_reg;
@@ -617,7 +613,6 @@ pop_function_context_from (context)
   current_function_varargs = p->varargs;
   current_function_stdarg = p->stdarg;
   current_function_uses_const_pool = p->uses_const_pool;
-  current_function_uses_pic_offset_table = p->uses_pic_offset_table;
   current_function_internal_arg_pointer = p->internal_arg_pointer;
   current_function_cannot_inline = p->cannot_inline;
   max_parm_reg = p->max_parm_reg;
@@ -5621,7 +5616,6 @@ init_function_start (subr, filename, line)
   current_function_returns_pcc_struct = 0;
   current_function_returns_struct = 0;
   current_function_uses_const_pool = 0;
-  current_function_uses_pic_offset_table = 0;
   current_function_cannot_inline = 0;
   /* CYGNUS LOCAL -- Branch Prediction */
   current_function_uses_expect = 0;

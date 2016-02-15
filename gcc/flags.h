@@ -356,11 +356,6 @@ extern int flag_pretend_float;
 
 extern int flag_pedantic_errors;
 
-/* Nonzero means generate position-independent code.
-   This is not fully implemented yet.  */
-
-extern int flag_pic;
-
 /* Nonzero means generate extra code for exception handling and enable
    exception handling.  */
 

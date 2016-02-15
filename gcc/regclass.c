@@ -1341,9 +1341,6 @@ record_reg_classes (n_alts, n_ops, ops, modes, constraints, insn)
 		  break;
 	      case 'i':
 		if (CONSTANT_P (op)
-#ifdef LEGITIMATE_PIC_OPERAND_P
-		    && (! flag_pic || LEGITIMATE_PIC_OPERAND_P (op))
-#endif
 		    )
 		  win = 1;
 		break;
@@ -1386,9 +1383,6 @@ record_reg_classes (n_alts, n_ops, ops, modes, constraints, insn)
 	      case 'g':
 		if (GET_CODE (op) == MEM
 		    || (CONSTANT_P (op)
-#ifdef LEGITIMATE_PIC_OPERAND_P
-			&& (! flag_pic || LEGITIMATE_PIC_OPERAND_P (op))
-#endif
 			))
 		  win = 1;
 		allows_mem = 1;

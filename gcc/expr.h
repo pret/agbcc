@@ -94,9 +94,6 @@ extern rtx current_function_arg_offset_rtx;
 /* This is nonzero if the current function uses the constant pool.  */
 extern int current_function_uses_const_pool;
 
-/* This is nonzero if the current function uses pic_offset_table_rtx.  */
-extern int current_function_uses_pic_offset_table;
-
 /* The arg pointer hard register, or the pseudo into which it was copied.  */
 extern rtx current_function_internal_arg_pointer;
 

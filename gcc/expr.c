@@ -4953,20 +4953,6 @@ force_operand (value, target)
   /* Use subtarget as the target for operand 0 of a binary operation.  */
   register rtx subtarget = (target != 0 && GET_CODE (target) == REG ? target : 0);
 
-  /* Check for a PIC address load.  */
-  if (flag_pic
-      && (GET_CODE (value) == PLUS || GET_CODE (value) == MINUS)
-      && XEXP (value, 0) == pic_offset_table_rtx
-      && (GET_CODE (XEXP (value, 1)) == SYMBOL_REF
-	  || GET_CODE (XEXP (value, 1)) == LABEL_REF
-	  || GET_CODE (XEXP (value, 1)) == CONST))
-    {
-      if (!subtarget)
-	subtarget = gen_reg_rtx (GET_MODE (value));
-      emit_move_insn (subtarget, value);
-      return subtarget;
-    }
-
   if (GET_CODE (value) == PLUS)
     binoptab = add_optab;
   else if (GET_CODE (value) == MINUS)
@@ -11605,14 +11591,6 @@ do_tablejump (index, mode, range, table_label, default_label)
   if (mode != Pmode)
     index = convert_to_mode (Pmode, index, 1);
 
-  /* Don't let a MEM slip thru, because then INDEX that comes
-     out of PIC_CASE_VECTOR_ADDRESS won't be a valid address,
-     and break_out_memory_refs will go to work on it and mess it up.  */
-#ifdef PIC_CASE_VECTOR_ADDRESS
-  if (flag_pic && GET_CODE (index) != REG)
-    index = copy_to_mode_reg (Pmode, index);
-#endif
-
   /* If flag_force_addr were to affect this address
      it could interfere with the tricky assumptions made
      about addresses that contain label-refs,
@@ -11625,12 +11603,8 @@ do_tablejump (index, mode, range, table_label, default_label)
 			gen_rtx_MULT (Pmode, index,
 				      GEN_INT (GET_MODE_SIZE (CASE_VECTOR_MODE))),
 			gen_rtx_LABEL_REF (Pmode, table_label));
-#ifdef PIC_CASE_VECTOR_ADDRESS
-  if (flag_pic)
-    index = PIC_CASE_VECTOR_ADDRESS (index);
-  else
-#endif
-    index = memory_address_noforce (CASE_VECTOR_MODE, index);
+
+  index = memory_address_noforce (CASE_VECTOR_MODE, index);
   temp = gen_reg_rtx (CASE_VECTOR_MODE);
   vector = gen_rtx_MEM (CASE_VECTOR_MODE, index);
   RTX_UNCHANGING_P (vector) = 1;
@@ -11638,9 +11612,9 @@ do_tablejump (index, mode, range, table_label, default_label)
 
   emit_jump_insn (gen_tablejump (temp, table_label));
 
-  /* If we are generating PIC code or if the table is PC-relative, the
+  /* If the table is PC-relative, the
      table and JUMP_INSN must be adjacent, so don't output a BARRIER.  */
-  if (! CASE_VECTOR_PC_RELATIVE && ! flag_pic)
+  if (! CASE_VECTOR_PC_RELATIVE)
     emit_barrier ();
 }
 

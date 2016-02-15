@@ -516,13 +516,6 @@ int flag_shared_data;
 
 int flag_delayed_branch;
 
-/* Nonzero if we are compiling pure (sharable) code.
-   Value is 1 if we are doing reasonable (i.e. simple
-   offset into offset table) pic.  Value is 2 if we can
-   only perform register offsets.  */
-
-int flag_pic;
-
 /* Nonzero means generate extra code for exception handling and enable
    exception handling.  */
 
@@ -799,9 +792,6 @@ lang_independent_options f_options[] =
   {"optimize-comparisons", &flag_optimize_comparisons, 1,
    "Make some comparison operations sequence optimizations"},
 /* END CYGNUS LOCAL meissner/nortel */
-  {"pic", &flag_pic, 1,
-   "Generate position independent code, if possible"},
-  {"PIC", &flag_pic, 2, ""},
   {"exceptions", &flag_exceptions, 1,
    "Enable exception handling" },
   {"new-exceptions", &flag_new_exceptions, 1,
@@ -3290,15 +3280,6 @@ rest_of_compilation (decl)
 
   /* Emit code to get eh context, if needed. */
   emit_eh_context ();
-
-#ifdef FINALIZE_PIC
-  /* If we are doing position-independent code generation, now
-     is the time to output special prologues and epilogues.
-     We do not want to do this earlier, because it just clutters
-     up inline functions with meaningless insns.  */
-  if (flag_pic)
-    FINALIZE_PIC;
-#endif
 
   /* From now on, allocate rtl in current_obstack, not in saveable_obstack.
      Note that that may have been done above, in save_for_inline_copying.

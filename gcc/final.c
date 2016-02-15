@@ -2627,10 +2627,7 @@ output_addr_const (file, x)
   switch (GET_CODE (x))
     {
     case PC:
-      if (flag_pic)
-	putc ('.', file);
-      else
-	abort ();
+      abort ();
       break;
 
     case SYMBOL_REF:

@@ -4944,9 +4944,6 @@ expand_end_case (orig_index)
 	       || count < (unsigned int) CASE_VALUES_THRESHOLD
 	       || ((unsigned HOST_WIDE_INT) (TREE_INT_CST_LOW (range))
 		   > 10 * count)
-#ifndef ASM_OUTPUT_ADDR_DIFF_ELT
-	       || flag_pic
-#endif
 	       || TREE_CODE (index_expr) == INTEGER_CST
 	       /* These will reduce to a constant.  */
 	       || (TREE_CODE (index_expr) == CALL_EXPR
@@ -5156,7 +5153,7 @@ expand_end_case (orig_index)
 	  /* Output the table */
 	  emit_label (table_label);
 
-	  if (CASE_VECTOR_PC_RELATIVE || flag_pic)
+	  if (CASE_VECTOR_PC_RELATIVE)
 	    emit_jump_insn (gen_rtx_ADDR_DIFF_VEC (CASE_VECTOR_MODE,
 						   gen_rtx_LABEL_REF (Pmode, table_label),
 						   gen_rtvec_v (ncases, labelvec),

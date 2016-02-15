@@ -2398,10 +2398,6 @@ set_nonvarying_address_components (addr, size, pbase, pstart, pend)
   start = 0;
   end = 0;
 
-  if (flag_pic && GET_CODE (base) == PLUS
-      && XEXP (base, 0) == pic_offset_table_rtx)
-    base = XEXP (base, 1);
-
   /* Registers with nonvarying addresses usually have constant equivalents;
      but the frame pointer register is also possible.  */
   if (GET_CODE (base) == REG
@@ -8633,9 +8629,6 @@ cse_main (f, nregs, after_loop, file)
 #endif
 #if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 	 && ! (i == ARG_POINTER_REGNUM && fixed_regs[i])
-#endif
-#if defined (PIC_OFFSET_TABLE_REGNUM) && !defined (PIC_OFFSET_TABLE_REG_CALL_CLOBBERED)
-	 && ! (i == PIC_OFFSET_TABLE_REGNUM && flag_pic)
 #endif
 	 )
 	|| global_regs[i])

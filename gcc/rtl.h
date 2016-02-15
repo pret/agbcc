@@ -713,7 +713,6 @@ extern char *note_insn_name[];
 #define FUNCTION_FLAGS_RETURNS_POINTER 0100
 #define FUNCTION_FLAGS_USES_CONST_POOL 0200
 #define FUNCTION_FLAGS_CALLS_LONGJMP 0400
-#define FUNCTION_FLAGS_USES_PIC_OFFSET_TABLE 01000
 
 /* Define a macro to look for REG_INC notes,
    but save time on machines where they never exist.  */
@@ -1108,7 +1107,6 @@ extern struct _global_rtl
 #define stack_pointer_rtx	(&global_rtl.stack_pointer_val)
 #define frame_pointer_rtx	(&global_rtl.frame_pointer_val)
 
-extern rtx pic_offset_table_rtx;
 extern rtx struct_value_rtx;
 extern rtx struct_value_incoming_rtx;
 extern rtx static_chain_rtx;

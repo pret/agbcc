@@ -446,14 +446,6 @@ extern char *current_function_name;
 extern rtx current_function_return_rtx;
 #endif
 
-/* Nonzero means generate position-independent code.
-   This is not fully implemented yet.  */
-
-extern int flag_pic;
-
-/* This is nonzero if the current function uses pic_offset_table_rtx.  */
-extern int current_function_uses_pic_offset_table;
-
 /* This is nonzero if the current function uses the constant pool.  */
 extern int current_function_uses_const_pool;
 
@@ -481,7 +473,7 @@ extern FILE *rtl_dump_file;
    && DECL_INITIAL (DECL)				\
    && (DECL_INITIAL (DECL) == error_mark_node		\
        || TREE_CONSTANT (DECL_INITIAL (DECL)))		\
-   && ! (RELOC && (flag_pic || DECL_ONE_ONLY (DECL))))
+   && ! (RELOC && (DECL_ONE_ONLY (DECL))))
 
 /* User label prefix in effect for this compilation.  */
 extern char *user_label_prefix;

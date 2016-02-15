@@ -464,10 +464,7 @@ exception_section ()
 #ifdef ASM_OUTPUT_SECTION_NAME
   named_section (NULL_TREE, ".gcc_except_table", 0);
 #else
-  if (flag_pic)
-    data_section ();
-  else
-    readonly_data_section ();
+  readonly_data_section ();
 #endif
 #endif
 }
@@ -2942,8 +2939,7 @@ output_constant_def_contents (exp, reloc, labelno)
 #ifdef SELECT_SECTION
       SELECT_SECTION (exp, reloc);
 #else
-      if (((TREE_CODE (exp) == STRING_CST) && flag_writable_strings)
-	  || (flag_pic && reloc))
+      if ((TREE_CODE (exp) == STRING_CST) && flag_writable_strings)
 	data_section ();
       else
 	readonly_data_section ();

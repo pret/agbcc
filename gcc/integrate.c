@@ -296,8 +296,7 @@ initialize_for_inline (fndecl, min_labelno, max_labelno, max_reg, copy)
        + current_function_needs_context * FUNCTION_FLAGS_NEEDS_CONTEXT
        + current_function_has_nonlocal_label * FUNCTION_FLAGS_HAS_NONLOCAL_LABEL
        + current_function_returns_pointer * FUNCTION_FLAGS_RETURNS_POINTER
-       + current_function_uses_const_pool * FUNCTION_FLAGS_USES_CONST_POOL
-       + current_function_uses_pic_offset_table * FUNCTION_FLAGS_USES_PIC_OFFSET_TABLE);
+       + current_function_uses_const_pool * FUNCTION_FLAGS_USES_CONST_POOL);
 
   /* Clear out PARMDECL_MAP.  It was allocated in the caller's frame.  */
   zero_memory ((char *) parmdecl_map, max_parm_reg * sizeof (tree));
@@ -1588,11 +1587,6 @@ expand_inline_function (fndecl, parms, target, ignore, type,
      function.  */
   if (OUTGOING_ARGS_SIZE (header) > current_function_outgoing_args_size)
     current_function_outgoing_args_size = OUTGOING_ARGS_SIZE (header);
-
-  /* If the inline function needs to make PIC references, that means
-     that this function's PIC offset table must be used.  */
-  if (FUNCTION_FLAGS (header) & FUNCTION_FLAGS_USES_PIC_OFFSET_TABLE)
-    current_function_uses_pic_offset_table = 1;
 
   /* If this function needs a context, set it up.  */
   if (FUNCTION_FLAGS (header) & FUNCTION_FLAGS_NEEDS_CONTEXT)
@@ -3405,9 +3399,6 @@ output_inline_function (fndecl)
 
   if (FUNCTION_FLAGS (head) & FUNCTION_FLAGS_USES_CONST_POOL)
     current_function_uses_const_pool = 1;
-
-  if (FUNCTION_FLAGS (head) & FUNCTION_FLAGS_USES_PIC_OFFSET_TABLE)
-    current_function_uses_pic_offset_table = 1;
 
   current_function_outgoing_args_size = OUTGOING_ARGS_SIZE (head);
   current_function_pops_args = POPS_ARGS (head);
