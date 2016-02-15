@@ -24,10 +24,8 @@ Boston, MA 02111-1307, USA.  */
 /* HARD_REG_ELT_TYPE is a typedef of the unsigned integral type which
    will be used for hard reg sets, either alone or in an array.
 
-   If HARD_REG_SET is a macro, its definition is HARD_REG_ELT_TYPE,
-   and it has enough bits to represent all the target machine's hard
-   registers.  Otherwise, it is a typedef for a suitably sized array
-   of HARD_REG_ELT_TYPEs.  HARD_REG_SET_LONGS is defined as how many.
+   HARD_REG_SET is a macro. Its definition is HARD_REG_ELT_TYPE,
+   and it has enough bits to represent all the THUMB hard registers.
 
    Note that lots of code assumes that the first part of a regset is
    the same format as a HARD_REG_SET.  To help make sure this is true,
@@ -38,18 +36,7 @@ Boston, MA 02111-1307, USA.  */
 
 typedef unsigned HOST_WIDE_INT HARD_REG_ELT_TYPE;
 
-#if FIRST_PSEUDO_REGISTER <= HOST_BITS_PER_WIDE_INT
-
 #define HARD_REG_SET HARD_REG_ELT_TYPE
-
-#else
-
-#define HARD_REG_SET_LONGS \
- ((FIRST_PSEUDO_REGISTER + HOST_BITS_PER_WIDE_INT - 1)	\
-  / HOST_BITS_PER_WIDE_INT)
-typedef HARD_REG_ELT_TYPE HARD_REG_SET[HARD_REG_SET_LONGS];
-
-#endif
 
 /* HARD_CONST is used to cast a constant to the appropriate type
    for use with a HARD_REG_SET.  */
@@ -83,8 +70,6 @@ typedef HARD_REG_ELT_TYPE HARD_REG_SET[HARD_REG_SET_LONGS];
    if X is a subset of Y, go to TO.
 */
 
-#ifdef HARD_REG_SET
-
 #define SET_HARD_REG_BIT(SET, BIT)  \
  ((SET) |= HARD_CONST (1) << (BIT))
 #define CLEAR_HARD_REG_BIT(SET, BIT)  \
@@ -106,282 +91,6 @@ typedef HARD_REG_ELT_TYPE HARD_REG_SET[HARD_REG_SET_LONGS];
 #define GO_IF_HARD_REG_SUBSET(X,Y,TO) if (HARD_CONST (0) == ((X) & ~(Y))) goto TO
 
 #define GO_IF_HARD_REG_EQUAL(X,Y,TO) if ((X) == (Y)) goto TO
-
-#else
-
-#define UHOST_BITS_PER_WIDE_INT ((unsigned) HOST_BITS_PER_WIDE_INT)
-
-#define SET_HARD_REG_BIT(SET, BIT)		\
-  ((SET)[(BIT) / UHOST_BITS_PER_WIDE_INT]	\
-   |= HARD_CONST (1) << ((BIT) % UHOST_BITS_PER_WIDE_INT))
-
-#define CLEAR_HARD_REG_BIT(SET, BIT)		\
-  ((SET)[(BIT) / UHOST_BITS_PER_WIDE_INT]	\
-   &= ~(HARD_CONST (1) << ((BIT) % UHOST_BITS_PER_WIDE_INT)))
-
-#define TEST_HARD_REG_BIT(SET, BIT)		\
-  ((SET)[(BIT) / UHOST_BITS_PER_WIDE_INT]	\
-   & (HARD_CONST (1) << ((BIT) % UHOST_BITS_PER_WIDE_INT)))
-
-#if FIRST_PSEUDO_REGISTER <= 2*HOST_BITS_PER_WIDE_INT
-#define CLEAR_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = 0;						\
-     scan_tp_[1] = 0; } while (0)
-
-#define SET_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = -1;						\
-     scan_tp_[1] = -1; } while (0)
-
-#define COPY_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM);	\
-     scan_tp_[0] = scan_fp_[0];					\
-     scan_tp_[1] = scan_fp_[1]; } while (0)
-
-#define COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] = ~ scan_fp_[0];				\
-     scan_tp_[1] = ~ scan_fp_[1]; } while (0)
-
-#define AND_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= scan_fp_[0];					\
-     scan_tp_[1] &= scan_fp_[1]; } while (0)
-
-#define AND_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= ~ scan_fp_[0];				\
-     scan_tp_[1] &= ~ scan_fp_[1]; } while (0)
-
-#define IOR_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= scan_fp_[0];				\
-     scan_tp_[1] |= scan_fp_[1]; } while (0)
-
-#define IOR_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= ~ scan_fp_[0];				\
-     scan_tp_[1] |= ~ scan_fp_[1]; } while (0)
-
-#define GO_IF_HARD_REG_SUBSET(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((0 == (scan_xp_[0] & ~ scan_yp_[0]))			\
-	 && (0 == (scan_xp_[1] & ~ scan_yp_[1])))		\
-	goto TO; } while (0)
-
-#define GO_IF_HARD_REG_EQUAL(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((scan_xp_[0] == scan_yp_[0])				\
-	 && (scan_xp_[1] == scan_yp_[1]))			\
-	goto TO; } while (0)
-
-#else
-#if FIRST_PSEUDO_REGISTER <= 3*HOST_BITS_PER_WIDE_INT
-#define CLEAR_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = 0;						\
-     scan_tp_[1] = 0;						\
-     scan_tp_[2] = 0; } while (0)
-
-#define SET_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = -1;						\
-     scan_tp_[1] = -1;						\
-     scan_tp_[2] = -1; } while (0)
-
-#define COPY_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM);	\
-     scan_tp_[0] = scan_fp_[0];					\
-     scan_tp_[1] = scan_fp_[1];					\
-     scan_tp_[2] = scan_fp_[2]; } while (0)
-
-#define COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] = ~ scan_fp_[0];				\
-     scan_tp_[1] = ~ scan_fp_[1];				\
-     scan_tp_[2] = ~ scan_fp_[2]; } while (0)
-
-#define AND_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= scan_fp_[0];					\
-     scan_tp_[1] &= scan_fp_[1];					\
-     scan_tp_[2] &= scan_fp_[2]; } while (0)
-
-#define AND_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= ~ scan_fp_[0];				\
-     scan_tp_[1] &= ~ scan_fp_[1];				\
-     scan_tp_[2] &= ~ scan_fp_[2]; } while (0)
-
-#define IOR_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= scan_fp_[0];				\
-     scan_tp_[1] |= scan_fp_[1];				\
-     scan_tp_[2] |= scan_fp_[2]; } while (0)
-
-#define IOR_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= ~ scan_fp_[0];				\
-     scan_tp_[1] |= ~ scan_fp_[1];				\
-     scan_tp_[2] |= ~ scan_fp_[2]; } while (0)
-
-#define GO_IF_HARD_REG_SUBSET(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((0 == (scan_xp_[0] & ~ scan_yp_[0]))			\
-	 && (0 == (scan_xp_[1] & ~ scan_yp_[1]))		\
-	 && (0 == (scan_xp_[2] & ~ scan_yp_[2])))		\
-	goto TO; } while (0)
-
-#define GO_IF_HARD_REG_EQUAL(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((scan_xp_[0] == scan_yp_[0])				\
-	 && (scan_xp_[1] == scan_yp_[1])			\
-	 && (scan_xp_[2] == scan_yp_[2]))			\
-	goto TO; } while (0)
-
-#else
-#if FIRST_PSEUDO_REGISTER <= 4*HOST_BITS_PER_WIDE_INT
-#define CLEAR_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = 0;						\
-     scan_tp_[1] = 0;						\
-     scan_tp_[2] = 0;						\
-     scan_tp_[3] = 0; } while (0)
-
-#define SET_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     scan_tp_[0] = -1;						\
-     scan_tp_[1] = -1;						\
-     scan_tp_[2] = -1;						\
-     scan_tp_[3] = -1; } while (0)
-
-#define COPY_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM);	\
-     scan_tp_[0] = scan_fp_[0];					\
-     scan_tp_[1] = scan_fp_[1];					\
-     scan_tp_[2] = scan_fp_[2];					\
-     scan_tp_[3] = scan_fp_[3]; } while (0)
-
-#define COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] = ~ scan_fp_[0];				\
-     scan_tp_[1] = ~ scan_fp_[1];				\
-     scan_tp_[2] = ~ scan_fp_[2];				\
-     scan_tp_[3] = ~ scan_fp_[3]; } while (0)
-
-#define AND_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= scan_fp_[0];					\
-     scan_tp_[1] &= scan_fp_[1];					\
-     scan_tp_[2] &= scan_fp_[2];					\
-     scan_tp_[3] &= scan_fp_[3]; } while (0)
-
-#define AND_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] &= ~ scan_fp_[0];				\
-     scan_tp_[1] &= ~ scan_fp_[1];				\
-     scan_tp_[2] &= ~ scan_fp_[2];				\
-     scan_tp_[3] &= ~ scan_fp_[3]; } while (0)
-
-#define IOR_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= scan_fp_[0];				\
-     scan_tp_[1] |= scan_fp_[1];				\
-     scan_tp_[2] |= scan_fp_[2];				\
-     scan_tp_[3] |= scan_fp_[3]; } while (0)
-
-#define IOR_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     scan_tp_[0] |= ~ scan_fp_[0];				\
-     scan_tp_[1] |= ~ scan_fp_[1];				\
-     scan_tp_[2] |= ~ scan_fp_[2];				\
-     scan_tp_[3] |= ~ scan_fp_[3]; } while (0)
-
-#define GO_IF_HARD_REG_SUBSET(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((0 == (scan_xp_[0] & ~ scan_yp_[0]))			\
-	 && (0 == (scan_xp_[1] & ~ scan_yp_[1]))		\
-	 && (0 == (scan_xp_[2] & ~ scan_yp_[2]))		\
-	 && (0 == (scan_xp_[3] & ~ scan_yp_[3])))		\
-	goto TO; } while (0)
-
-#define GO_IF_HARD_REG_EQUAL(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     if ((scan_xp_[0] == scan_yp_[0])				\
-	 && (scan_xp_[1] == scan_yp_[1])			\
-	 && (scan_xp_[2] == scan_yp_[2])			\
-	 && (scan_xp_[3] == scan_yp_[3]))			\
-	goto TO; } while (0)
-
-#else /* FIRST_PSEUDO_REGISTER > 3*HOST_BITS_PER_WIDE_INT */
-
-#define CLEAR_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ = 0; } while (0)
-
-#define SET_HARD_REG_SET(TO)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO);		\
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ = -1; } while (0)
-
-#define COPY_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ = *scan_fp_++; } while (0)
-
-#define COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ = ~ *scan_fp_++; } while (0)
-
-#define AND_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ &= *scan_fp_++; } while (0)
-
-#define AND_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ &= ~ *scan_fp_++; } while (0)
-
-#define IOR_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ |= *scan_fp_++; } while (0)
-
-#define IOR_COMPL_HARD_REG_SET(TO, FROM)  \
-do { register HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       *scan_tp_++ |= ~ *scan_fp_++; } while (0)
-
-#define GO_IF_HARD_REG_SUBSET(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       if (0 != (*scan_xp_++ & ~ *scan_yp_++)) break;		\
-     if (i == HARD_REG_SET_LONGS) goto TO; } while (0)
-
-#define GO_IF_HARD_REG_EQUAL(X,Y,TO)  \
-do { register HARD_REG_ELT_TYPE *scan_xp_ = (X), *scan_yp_ = (Y); \
-     register int i;						\
-     for (i = 0; i < HARD_REG_SET_LONGS; i++)			\
-       if (*scan_xp_++ != *scan_yp_++) break;			\
-     if (i == HARD_REG_SET_LONGS) goto TO; } while (0)
-
-#endif
-#endif
-#endif
-#endif
 
 /* Define some standard sets of registers.  */
 
@@ -428,21 +137,6 @@ extern HARD_REG_SET call_fixed_reg_set;
    and are also considered fixed.  */
 
 extern char global_regs[FIRST_PSEUDO_REGISTER];
-
-/* Table of register numbers in the order in which to try to use them.  */
-
-#ifdef REG_ALLOC_ORDER   /* Avoid undef symbol in certain broken linkers.  */
-extern int reg_alloc_order[FIRST_PSEUDO_REGISTER];
-#endif
-
-/* CYGNUS LOCAL z8k */
-/* Table of register numbers in the order in which to try to use them
-   for reloads.  */
-/* ??? Hack, see reload1.c.  */
-#ifdef RELOAD_ALLOC_ORDER
-extern int reload_alloc_order[FIRST_PSEUDO_REGISTER];
-#endif
-/* END CYGNUS LOCAL */
 
 /* For each reg class, a HARD_REG_SET saying which registers are in it.  */
 

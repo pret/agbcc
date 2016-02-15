@@ -542,11 +542,7 @@ stupid_find_reg (call_preserved, class, mode,
 
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
-#ifdef REG_ALLOC_ORDER
-      int regno = reg_alloc_order[i];
-#else
       int regno = i;
-#endif
 
       /* If a register has screwy overlap problems,
 	 don't use it at all if not optimizing.
@@ -574,9 +570,7 @@ stupid_find_reg (call_preserved, class, mode,
 		}
 	      return regno;
 	    }
-#ifndef REG_ALLOC_ORDER
 	  i += j;		/* Skip starting points we know will lose */
-#endif
 	}
     }
 

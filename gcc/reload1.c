@@ -4001,39 +4001,8 @@ order_regs_for_reload (chain)
   FREE_REG_SET (pseudos_counted);
 
   /* Prefer registers not so far used, for use in temporary loading.
-     Among them, if REG_ALLOC_ORDER is defined, use that order.
-     Otherwise, prefer registers not preserved by calls.  */
+     Prefer registers not preserved by calls.  */
 
-/* CYGNUS LOCAL z8k */
-#ifdef RELOAD_ALLOC_ORDER
-  /* ??? This is a hack.  This will give poor code, but is used for the
-     z8k because it is currently the only way to ensure that we will be
-     able to satisfy all of the reloads.  Possible other solutions:
-     - make reload keep track of how many groups of each size are needed,
-       instead of just remembering the maximum group size
-     - improve code for making group 4 reloads
-     -- try looking for combinations of single register spills and potential
-        reload regs (sample uncompleted code exists for this)
-     -- try expanding an existing group 2 reload to a group 4 reload
-     -- unallocate a group 2 reload, try to allocate the group 4 reload,
-        then reallocate the group 2 reload, if one step fails then all do
-     - add code to deal with overlapping register groups(?).  */
-  for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-    potential_reload_regs[i] = reload_alloc_order[i];
-#else
-/* END CYGNUS LOCAL */
-
-
-#ifdef REG_ALLOC_ORDER
-  for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-    {
-      int regno = reg_alloc_order[i];
-
-      if (hard_reg_n_uses[regno].uses == 0
-	  && ! TEST_HARD_REG_BIT (bad_spill_regs, regno))
-	potential_reload_regs[o++] = regno;
-    }
-#else
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
       if (hard_reg_n_uses[i].uses == 0 && call_used_regs[i]
@@ -4046,7 +4015,6 @@ order_regs_for_reload (chain)
 	  && ! TEST_HARD_REG_BIT (bad_spill_regs, i))
 	potential_reload_regs[o++] = i;
     }
-#endif
 
   qsort (hard_reg_n_uses, FIRST_PSEUDO_REGISTER,
 	 sizeof hard_reg_n_uses[0], hard_reg_use_compare);
@@ -4062,9 +4030,6 @@ order_regs_for_reload (chain)
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     if (TEST_HARD_REG_BIT (bad_spill_regs, hard_reg_n_uses[i].regno))
       potential_reload_regs[o++] = hard_reg_n_uses[i].regno;
-/* CYGNUS LOCAL z8k */
-#endif
-/* END CYGNUS LOCAL */
 }
 
 /* Reload pseudo-registers into hard regs around each insn as needed.
@@ -5308,19 +5273,9 @@ allocate_reload_reg (chain, r, last_reload, noerror)
 	 allocating the first one in such a way that we are not left with
 	 sufficient groups to handle the rest.  */
 
-/* CYGNUS LOCAL z8k */
-#ifndef RELOAD_ALLOC_ORDER
-      /* If RELOAD_ALLOC_ORDER is defined, then we must always take spill
-        registers in that defined order, so this round-robin must be
-        disabled.  */
-/* END CYGNUS LOCAL */
-
       if (noerror || ! force_group)
 	i = last_spill_reg;
       else
-/* CYGNUS LOCAL z8k */
-#endif
-/* END CYGNUS LOCAL */
 	i = -1;
 	  
       for (count = 0; count < n_spills; count++)

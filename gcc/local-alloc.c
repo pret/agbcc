@@ -1955,11 +1955,7 @@ find_free_reg (class, mode, qty, accept_call_clobbered, just_try_suggested,
 
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
-#ifdef REG_ALLOC_ORDER
-      int regno = reg_alloc_order[i];
-#else
       int regno = i;
-#endif
       if (! TEST_HARD_REG_BIT (first_used, regno)
 	  && HARD_REGNO_MODE_OK (regno, mode)
 	  && (qty_n_calls_crossed[qty] == 0
@@ -1976,9 +1972,7 @@ find_free_reg (class, mode, qty, accept_call_clobbered, just_try_suggested,
 	      post_mark_life (regno, mode, 1, born_index, dead_index);
 	      return regno;
 	    }
-#ifndef REG_ALLOC_ORDER
 	  i += j;		/* Skip starting points we know will lose */
-#endif
 	}
     }
 

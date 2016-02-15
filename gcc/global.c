@@ -990,11 +990,7 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 
       for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
 	{
-#ifdef REG_ALLOC_ORDER
-	  int regno = reg_alloc_order[i];
-#else
 	  int regno = i;
-#endif
 	  if (! TEST_HARD_REG_BIT (used, regno)
 	      && HARD_REGNO_MODE_OK (regno, mode)
 	      && (allocno_calls_crossed[allocno] == 0
@@ -1012,9 +1008,7 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 		  best_reg = regno;
 		  break;
 		}
-#ifndef REG_ALLOC_ORDER
 	      i = j;			/* Skip starting points we know will lose */
-#endif
 	    }
 	  }
       }
@@ -1145,11 +1139,7 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
       /* Count from the end, to find the least-used ones first.  */
       for (i = FIRST_PSEUDO_REGISTER - 1; i >= 0; i--)
 	{
-#ifdef REG_ALLOC_ORDER
-	  int regno = reg_alloc_order[i];
-#else
 	  int regno = i;
-#endif
 
 	  if (local_reg_n_refs[regno] != 0
 	      /* Don't use a reg no good for this pseudo.  */

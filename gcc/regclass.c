@@ -111,20 +111,6 @@ int n_non_fixed_regs;
    and are also considered fixed.  */
 
 char global_regs[FIRST_PSEUDO_REGISTER];
-  
-/* Table of register numbers in the order in which to try to use them.  */
-#ifdef REG_ALLOC_ORDER
-int reg_alloc_order[FIRST_PSEUDO_REGISTER] = REG_ALLOC_ORDER;
-#endif
-
-/* CYGNUS LOCAL z8k */
-/* Table of register numbers in the order in which to try to use them
-   for reloads.  */
-/* ??? Hack, see reload1.c.  */
-#ifdef RELOAD_ALLOC_ORDER
-int reload_alloc_order[FIRST_PSEUDO_REGISTER] = RELOAD_ALLOC_ORDER;
-#endif
-/* END CYGNUS LOCAL */
 
 /* For each reg class, a HARD_REG_SET saying which registers are in it.  */
 
@@ -257,13 +243,6 @@ init_reg_sets_1 ()
 {
   register unsigned int i, j;
 
-  /* This macro allows the fixed or call-used registers
-     and the register classes to depend on target flags.  */
-
-#ifdef CONDITIONAL_REGISTER_USAGE
-  CONDITIONAL_REGISTER_USAGE;
-#endif
-
   /* Compute number of hard regs in each class.  */
 
   zero_memory ((char *) reg_class_size, sizeof reg_class_size);
@@ -280,11 +259,8 @@ init_reg_sets_1 ()
     {
       for (j = 0; j < N_REG_CLASSES; j++)
 	{
-#ifdef HARD_REG_SET
-	  register		/* Declare it register if it's a scalar.  */
-#endif
-	    HARD_REG_SET c;
-	  register int k;
+    HARD_REG_SET c;
+	int k;
 
 	  COPY_HARD_REG_SET (c, reg_class_contents[i]);
 	  IOR_HARD_REG_SET (c, reg_class_contents[j]);
@@ -314,11 +290,8 @@ init_reg_sets_1 ()
     {
       for (j = 0; j < N_REG_CLASSES; j++)
 	{
-#ifdef HARD_REG_SET
-	  register		/* Declare it register if it's a scalar.  */
-#endif
-	    HARD_REG_SET c;
-	  register int k;
+    HARD_REG_SET c;
+    int k;
 
 	  COPY_HARD_REG_SET (c, reg_class_contents[i]);
 	  IOR_HARD_REG_SET (c, reg_class_contents[j]);
@@ -2184,9 +2157,6 @@ reg_classes_intersect_p (c1, c2)
      register enum reg_class c1;
      register enum reg_class c2;
 {
-#ifdef HARD_REG_SET
-  register
-#endif
     HARD_REG_SET c;
 
   if (c1 == c2) return 1;
