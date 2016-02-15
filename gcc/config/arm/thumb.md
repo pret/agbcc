@@ -1098,7 +1098,7 @@
 
 (define_expand "epilogue"
   [(unspec_volatile [(const_int 0)] 1)]
-  "! thumb_trivial_epilogue ()"
+  ""
   "
   thumb_expand_epilogue ();
 ")

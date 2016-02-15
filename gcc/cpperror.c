@@ -163,5 +163,5 @@ cpp_pfatal_with_name (pfile, name)
      const char *name;
 {
   cpp_perror_with_name (pfile, name);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }

@@ -132,7 +132,6 @@ static int next_index;
    allocate in each subroutine we make.  */
 
 static int max_depth;
-
 /* This table contains a list of the rtl codes that can possibly match a
    predicate defined in recog.c.  The function `not_both_true' uses it to
    deduce that there are no expressions that can be matches by certain pairs
@@ -199,16 +198,13 @@ static void mybcopy		PROTO((char *, char *, unsigned));
 static void fatal		PVPROTO((const char *, ...))
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
 void fancy_abort		PROTO((void)) ATTRIBUTE_NORETURN;
-
 /* Construct and return a sequence of decisions
    that will recognize INSN.
 
    TYPE says what type of routine we are recognizing (RECOG or SPLIT).  */
 
 static struct decision_head
-make_insn_sequence (insn, type)
-     rtx insn;
-     enum routine_type type;
+make_insn_sequence(rtx insn, enum routine_type type)
 {
   rtx x;
   char *c_test = XSTR (insn, type == RECOG ? 2 : 1);
@@ -312,7 +308,6 @@ make_insn_sequence (insn, type)
 
   return head;
 }
-
 /* Create a chain of nodes to verify that an rtl expression matches
    PATTERN.
 
@@ -324,10 +319,7 @@ make_insn_sequence (insn, type)
    A pointer to the final node in the chain is returned.  */
 
 static struct decision *
-add_to_sequence (pattern, last, position)
-     rtx pattern;
-     struct decision_head *last;
-     const char *position;
+add_to_sequence(rtx pattern, struct decision_head *last, const char *position)
 {
   register RTX_CODE code;
   register struct decision *new
@@ -607,7 +599,6 @@ add_to_sequence (pattern, last, position)
     }
   return new;
 }
-
 /* Return 1 if we can prove that there is no RTL that can match both
    D1 and D2.  Otherwise, return 0 (it may be that there is an RTL that
    can match both or just that we couldn't prove there wasn't such an RTL).
@@ -616,9 +607,7 @@ add_to_sequence (pattern, last, position)
    recursively descend.  */
 
 static int
-not_both_true (d1, d2, toplevel)
-     struct decision *d1, *d2;
-     int toplevel;
+not_both_true(struct decision *d1, struct decision *d2, int toplevel)
 {
   struct decision *p1, *p2;
 
@@ -705,7 +694,6 @@ not_both_true (d1, d2, toplevel)
 
   return 1;
 }
-
 /* Assuming that we can reorder all the alternatives at a specific point in
    the tree (see discussion in merge_trees), we would prefer an ordering of
    nodes where groups of consecutive nodes test the same mode and, within each
@@ -723,10 +711,7 @@ not_both_true (d1, d2, toplevel)
    of the list.  */
 
 static int
-position_merit (p, mode, code)
-     struct decision *p;
-     enum machine_mode mode;
-     enum rtx_code code;
+position_merit(struct decision *p, enum machine_mode mode, enum rtx_code code)
 {
   enum machine_mode p_mode;
 
@@ -774,13 +759,11 @@ position_merit (p, mode, code)
   /* Otherwise, we have the worst case.  */
   return 3;
 }
-
 /* Merge two decision tree listheads OLDH and ADDH,
    modifying OLDH destructively, and return the merged tree.  */
 
 static struct decision_head
-merge_trees (oldh, addh)
-     register struct decision_head oldh, addh;
+merge_trees(struct decision_head oldh, struct decision_head addh)
 {
   struct decision *add, *next;
 
@@ -994,7 +977,6 @@ merge_trees (oldh, addh)
 
   return oldh;
 }
-
 /* Count the number of subnodes of HEAD.  If the number is high enough,
    make the first node in HEAD start a separate subroutine in the C code
    that is generated.
@@ -1005,10 +987,7 @@ merge_trees (oldh, addh)
    it out here.  */
 
 static int
-break_out_subroutines (head, type, initial)
-     struct decision_head head;
-     enum routine_type type;
-     int initial;
+break_out_subroutines(struct decision_head head, enum routine_type type, int initial)
 {
   int size = 0;
   struct decision *sub;
@@ -1024,14 +1003,11 @@ break_out_subroutines (head, type, initial)
     }
   return size;
 }
-
 /* Write out a subroutine of type TYPE to do comparisons starting at node
    TREE.  */
 
 static void
-write_subroutine (tree, type)
-     struct decision *tree;
-     enum routine_type type;
+write_subroutine(struct decision *tree, enum routine_type type)
 {
   int i;
 
@@ -1066,7 +1042,6 @@ write_subroutine (tree, type)
   write_tree (tree, "", NULL_PTR, 1, type);
   printf (" ret0: return %d;\n}\n\n", type == SPLIT ? 0 : -1);
 }
-
 /* This table is used to indent the recog_* functions when we are inside
    conditions or switch statements.  We only support small indentations
    and always indent at least two spaces.  */
@@ -1098,11 +1073,7 @@ static const char *indents[]
    or code.  */
 
 static void
-write_tree_1 (tree, prevpos, afterward, type)
-     struct decision *tree;
-     const char *prevpos;
-     struct decision *afterward;
-     enum routine_type type;
+write_tree_1(struct decision *tree, const char *prevpos, struct decision *afterward, enum routine_type type)
 {
   register struct decision *p, *p1;
   register int depth = tree ? strlen (tree->position) : 0;
@@ -1528,8 +1499,7 @@ write_tree_1 (tree, prevpos, afterward, type)
 }
 
 static void
-print_code (code)
-     enum rtx_code code;
+print_code(enum rtx_code code)
 {
   register char *p1;
   for (p1 = GET_RTX_NAME (code); *p1; p1++)
@@ -1542,9 +1512,7 @@ print_code (code)
 }
 
 static int
-same_codes (p, code)
-     register struct decision *p;
-     register enum rtx_code code;
+same_codes(register struct decision *p, register enum rtx_code code)
 {
   for (; p; p = p->next)
     if (p->code != code)
@@ -1554,17 +1522,14 @@ same_codes (p, code)
 }
 
 static void
-clear_codes (p)
-     register struct decision *p;
+clear_codes(register struct decision *p)
 {
   for (; p; p = p->next)
     p->ignore_code = 1;
 }
 
 static int
-same_modes (p, mode)
-     register struct decision *p;
-     register enum machine_mode mode;
+same_modes(register struct decision *p, register enum machine_mode mode)
 {
   for (; p; p = p->next)
     if ((p->enforce_mode ? p->mode : VOIDmode) != mode)
@@ -1574,13 +1539,11 @@ same_modes (p, mode)
 }
 
 static void
-clear_modes (p)
-     register struct decision *p;
+clear_modes(register struct decision *p)
 {
   for (; p; p = p->next)
     p->enforce_mode = 0;
 }
-
 /* Write out the decision tree starting at TREE for a subroutine of type TYPE.
 
    PREVPOS is the position at the node that branched to this node.
@@ -1590,12 +1553,7 @@ clear_modes (p)
    If all nodes are false, branch to the node AFTERWARD.  */
 
 static void
-write_tree (tree, prevpos, afterward, initial, type)
-     struct decision *tree;
-     const char *prevpos;
-     struct decision *afterward;
-     int initial;
-     enum routine_type type;
+write_tree(struct decision *tree, const char *prevpos, struct decision *afterward, int initial, enum routine_type type)
 {
   register struct decision *p;
   const char *name_prefix = (type == SPLIT ? "split" : "recog");
@@ -1630,17 +1588,13 @@ write_tree (tree, prevpos, afterward, initial, type)
 		  p->afterward ? p->afterward : afterward, 0, type);
 }
 
-
 /* Assuming that the state of argument is denoted by OLDPOS, take whatever
    actions are necessary to move to NEWPOS.
 
    INDENT says how many blanks to place at the front of lines.  */
 
 static void
-change_state (oldpos, newpos, indent)
-     const char *oldpos;
-     const char *newpos;
-     int indent;
+change_state(const char *oldpos, const char *newpos, int indent)
 {
   int odepth = strlen (oldpos);
   int depth = odepth;
@@ -1664,10 +1618,8 @@ change_state (oldpos, newpos, indent)
       ++depth;
     }
 }
-
 static char *
-copystr (s1)
-  const char *s1;
+copystr(const char *s1)
 {
   register char *tem;
 
@@ -1681,27 +1633,21 @@ copystr (s1)
 }
 
 static void
-mybzero (b, length)
-     register char *b;
-     register unsigned length;
+mybzero(char *b, unsigned length)
 {
   while (length-- > 0)
     *b++ = 0;
 }
 
 static void
-mybcopy (in, out, length)
-     register char *in, *out;
-     register unsigned length;
+mybcopy(char *in, char *out, unsigned length)
 {
   while (length-- > 0)
     *out++ = *in++;
 }
 
 PTR
-xrealloc (old, size)
-  PTR old;
-  size_t size;
+xrealloc(PTR old, size_t size)
 {
   register PTR ptr;
   if (old)
@@ -1714,8 +1660,7 @@ xrealloc (old, size)
 }
 
 PTR
-xmalloc (size)
-  size_t size;
+xmalloc(size_t size)
 {
   register PTR val = (PTR) malloc (size);
 
@@ -1743,22 +1688,19 @@ fatal VPROTO ((const char *format, ...))
   va_end (ap);
   fprintf (stderr, "\n");
   fprintf (stderr, "after %d definitions\n", next_index);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 /* More 'friendly' abort that prints the line and file.
    config.h can #define abort fancy_abort if you like that sort of thing.  */
 
 void
-fancy_abort ()
+fancy_abort()
 {
   fatal ("Internal gcc abort.");
 }
-
 int
-main (argc, argv)
-     int argc;
-     char **argv;
+main(int argc, char **argv)
 {
   rtx desc;
   struct decision_head recog_tree;
@@ -1776,7 +1718,7 @@ main (argc, argv)
   if (infile == 0)
     {
       perror (argv[1]);
-      exit (FATAL_EXIT_CODE);
+      exit (EXIT_FAILURE);
     }
 
   init_rtl ();
@@ -1855,7 +1797,7 @@ from the machine description file `md'.  */\n\n");
   write_subroutine (split_tree.first, SPLIT);
 
   fflush (stdout);
-  exit (ferror (stdout) != 0 ? FATAL_EXIT_CODE : SUCCESS_EXIT_CODE);
+  exit (ferror (stdout) != 0 ? EXIT_FAILURE : EXIT_SUCCESS);
   /* NOTREACHED */
   return 0;
 }

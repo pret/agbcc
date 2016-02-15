@@ -1260,7 +1260,7 @@ pfatal_with_name (name)
 {
   fprintf (stderr, "%s: ", progname);
   perror (name);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 void
@@ -1268,7 +1268,7 @@ fatal_io_error (name)
      char *name;
 {
   fprintf (stderr, "%s: %s: I/O error\n", progname, name);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 /* Called to give a better error message for a bad insn rather than
@@ -1690,7 +1690,7 @@ vfatal (s, ap)
      va_list ap;
 {
   verror (s, ap);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 void
@@ -4901,10 +4901,10 @@ main (argc, argv)
   compile_file (filename);
 
   if (errorcount)
-    exit (FATAL_EXIT_CODE);
+    exit (EXIT_FAILURE);
   if (sorrycount)
-    exit (FATAL_EXIT_CODE);
-  exit (SUCCESS_EXIT_CODE);
+    exit (EXIT_FAILURE);
+  exit (EXIT_SUCCESS);
   return 0;
 }
 

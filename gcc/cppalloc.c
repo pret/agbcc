@@ -32,7 +32,7 @@ static void
 memory_full ()
 {
   fprintf (stderr, "%s: Memory exhausted.\n", progname);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 PTR

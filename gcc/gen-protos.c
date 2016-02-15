@@ -212,5 +212,5 @@ fatal (s)
      char *s;
 {
   fprintf (stderr, "%s: %s\n", "gen-protos", s);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }

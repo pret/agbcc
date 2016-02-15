@@ -1,10 +1,6 @@
 /* obstack.c - subroutines used implicitly by object stack macros
    Copyright (C) 1988,89,90,91,92,93,94,96,97 Free Software Foundation, Inc.
 
-
-   NOTE: The canonical source of this file is maintained with the GNU C Library.
-   Bugs can be reported to bug-glibc@gnu.org.
-
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
@@ -20,36 +16,9 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
+#include <stdio.h>
+#include <stdlib.h>
 #include "obstack.h"
-
-/* NOTE BEFORE MODIFYING THIS FILE: This version number must be
-   incremented whenever callers compiled using an old obstack.h can no
-   longer properly call the functions in this obstack.c.  */
-#define OBSTACK_INTERFACE_VERSION 1
-
-/* Comment out all this code if we are using the GNU C Library, and are not
-   actually compiling the library itself, and the installed library
-   supports the same library interface we do.  This code is part of the GNU
-   C Library, but also included in many other GNU distributions.  Compiling
-   and linking in this code is a waste when using the GNU C library
-   (especially if it is a shared library).  Rather than having every GNU
-   program understand `configure --with-gnu-libc' and omit the object
-   files, it is simpler to just do this in the source for each such file.  */
-
-#include <stdio.h>		/* Random thing to get __GNU_LIBRARY__.  */
-#if !defined (_LIBC) && defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
-#include <gnu-versions.h>
-#if _GNU_OBSTACK_INTERFACE_VERSION == OBSTACK_INTERFACE_VERSION
-#define ELIDE_CODE
-#endif
-#endif
-
-
-#ifndef ELIDE_CODE
 
 
 #if defined (__STDC__) && __STDC__
@@ -450,137 +419,9 @@ _obstack_memory_used (h)
 }
 
 /* Define the error handler.  */
-#ifndef _
-#define _(Str) (Str)
-#endif
-
 static void
 print_and_abort ()
 {
-  fputs (_("memory exhausted\n"), stderr);
+  fputs ("memory exhausted\n", stderr);
   exit (obstack_exit_failure);
 }
-
-#if 0
-/* These are now turned off because the applications do not use it
-   and it uses bcopy via obstack_grow, which causes trouble on sysV.  */
-
-/* Now define the functional versions of the obstack macros.
-   Define them to simply use the corresponding macros to do the job.  */
-
-#if defined (__STDC__) && __STDC__
-/* These function definitions do not work with non-ANSI preprocessors;
-   they won't pass through the macro names in parentheses.  */
-
-/* The function names appear in parentheses in order to prevent
-   the macro-definitions of the names from being expanded there.  */
-
-POINTER (obstack_base) (obstack)
-     struct obstack *obstack;
-{
-  return obstack_base (obstack);
-}
-
-POINTER (obstack_next_free) (obstack)
-     struct obstack *obstack;
-{
-  return obstack_next_free (obstack);
-}
-
-int (obstack_object_size) (obstack)
-     struct obstack *obstack;
-{
-  return obstack_object_size (obstack);
-}
-
-int (obstack_room) (obstack)
-     struct obstack *obstack;
-{
-  return obstack_room (obstack);
-}
-
-int (obstack_make_room) (obstack, length)
-     struct obstack *obstack;
-     int length;
-{
-  return obstack_make_room (obstack, length);
-}
-
-void (obstack_grow) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
-{
-  obstack_grow (obstack, pointer, length);
-}
-
-void (obstack_grow0) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
-{
-  obstack_grow0 (obstack, pointer, length);
-}
-
-void (obstack_1grow) (obstack, character)
-     struct obstack *obstack;
-     int character;
-{
-  obstack_1grow (obstack, character);
-}
-
-void (obstack_blank) (obstack, length)
-     struct obstack *obstack;
-     int length;
-{
-  obstack_blank (obstack, length);
-}
-
-void (obstack_1grow_fast) (obstack, character)
-     struct obstack *obstack;
-     int character;
-{
-  obstack_1grow_fast (obstack, character);
-}
-
-void (obstack_blank_fast) (obstack, length)
-     struct obstack *obstack;
-     int length;
-{
-  obstack_blank_fast (obstack, length);
-}
-
-POINTER (obstack_finish) (obstack)
-     struct obstack *obstack;
-{
-  return obstack_finish (obstack);
-}
-
-POINTER (obstack_alloc) (obstack, length)
-     struct obstack *obstack;
-     int length;
-{
-  return obstack_alloc (obstack, length);
-}
-
-POINTER (obstack_copy) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
-{
-  return obstack_copy (obstack, pointer, length);
-}
-
-POINTER (obstack_copy0) (obstack, pointer, length)
-     struct obstack *obstack;
-     POINTER pointer;
-     int length;
-{
-  return obstack_copy0 (obstack, pointer, length);
-}
-
-#endif /* __STDC__ */
-
-#endif /* 0 */
-
-#endif	/* !ELIDE_CODE */

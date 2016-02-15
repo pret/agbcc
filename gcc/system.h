@@ -188,7 +188,7 @@ Boston, MA 02111-1307, USA.  */
 
 #define abort() \
     (fprintf (stderr, "%s:%d: Internal compiler error\n", __FILE__, __LINE__), \
-     exit (FATAL_EXIT_CODE))
+     exit (EXIT_FAILURE))
 
 #define STRINGIFY(STRING) #STRING
 

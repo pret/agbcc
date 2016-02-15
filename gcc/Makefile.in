@@ -376,7 +376,7 @@ COMPILERS = cc1$(exeext) @all_compilers@
 
 # List of things which should already be built whenever we try to use xgcc
 # to compile anything (without linking).
-GCC_PASSES=xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES)
+GCC_PASSES=xgcc$(exeext) cc1$(exeext) $(EXTRA_PASSES)
 
 # List of things which should already be built whenever we try to use xgcc
 # to link anything.
@@ -600,8 +600,6 @@ OBJS = toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
 GEN= genemit genoutput genrecog genextract genflags gencodes genconfig \
  genpeep gengenrtl gencheck
 
-CCCP=@cpp_main@
-
 # Files to be copied away after each stage in building.
 STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  insn-output.c insn-recog.c insn-emit.c insn-extract.c insn-peep.c \
@@ -616,7 +614,7 @@ STAGESTUFF = *$(objext) insn-flags.h insn-config.h insn-codes.h \
  gencheck$(build_exeext) \
  xgcc$(exeext) cc1$(exeext) cpp$(exeext) $(EXTRA_PASSES) \
  $(EXTRA_PROGRAMS) gcc-cross$(exeext) \
- $(CCCP)$(exeext) cc1obj$(exeext) enquire$(exeext) \
+ cc1obj$(exeext) enquire$(exeext) \
  specs underscore.c \
  *.greg *.lreg *.combine *.flow *.cse *.jump *.rtl *.tree *.loop \
  *.dbr *.jump2 *.sched *.cse2 *.sched2 *.stack *.gcse \
@@ -761,7 +759,7 @@ start.encap: native xgcc$(exeext) specs $(LIBGCC1) lang.start.encap
 rest.encap: $(LIBGCC) lang.rest.encap
 # This is what is made with the host's compiler
 # whether making a cross compiler or not.
-native: config.status auto-host.h cpp$(exeext) $(LANGUAGES) \
+native: config.status auto-host.h $(LANGUAGES) \
 	$(EXTRA_PASSES) $(EXTRA_PROGRAMS)
 
 # Define the names for selecting languages in LANGUAGES.
@@ -1736,30 +1734,6 @@ $(HOST_PREFIX_1):
 #
 # Remake cpp.
 
-# Making the preprocessor
-cpp$(exeext): $(CCCP)$(exeext)
-	-rm -f cpp$(exeext)
-	$(LN) $(CCCP)$(exeext) cpp$(exeext)
-cccp$(exeext): cccp.o cexp.o version.o prefix.o mbchar.o @extra_cpp_objs@ $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ cccp.o cexp.o prefix.o mbchar.o \
-	  version.o @extra_cpp_objs@ $(LIBS)
-# CYGNUS LOCAL: built in build directory
-cexp.o: cexp.c $(CONFIG_H) system.h
-	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) -c cexp.c
-cexp.c: $(srcdir)/cexp.y
-	$(BISON) $(BISONFLAGS) $(srcdir)/cexp.y -o cexp.c
-# We use $(libsubdir)/$(unlibsubdir) to match the
-# -iprefix argument which gcc will pass if GCC_EXEC_PREFIX is used.
-cccp.o: cccp.c $(CONFIG_H) pcp.h version.c config.status system.h \
-           mbchar.h prefix.h Makefile
-	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
-	  -DGCC_INCLUDE_DIR=\"$(libsubdir)/include\" \
-	  -DGPLUSPLUS_INCLUDE_DIR=\"$(gcc_gxx_include_dir)\" \
-	  -DLOCAL_INCLUDE_DIR=\"$(includedir)\" \
-	  -DCROSS_INCLUDE_DIR=\"$(gcc_tooldir)/sys-include\" \
-	  -DTOOL_INCLUDE_DIR=\"$(gcc_tooldir)/include\" \
-	  -c `echo $(srcdir)/cccp.c | sed 's,^\./,,'`
-
 LIBCPP_OBJS =	cpplib.o cpphash.o cppalloc.o cpperror.o cppexp.o cppfiles.o \
 		cppulp.o prefix.o version.o \
 		mbchar.o
@@ -1770,12 +1744,6 @@ LIBCPP_OBJS =	cpplib.o cpphash.o cppalloc.o cpperror.o cppexp.o cppfiles.o \
 libcpp.a: $(LIBCPP_OBJS)
 	$(AR) $(AR_FLAGS) libcpp.a $(LIBCPP_OBJS)
 	if $(RANLIB_TEST) ; then $(RANLIB) libcpp.a ; else true ; fi
-
-cppmain$(exeext): cppmain.o libcpp.a $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o cppmain$(exeext) cppmain.o \
-	libcpp.a $(LIBS)
-
-cppmain.o: cppmain.c $(CONFIG_H) cpplib.h machmode.h system.h
 
 cpplib.o: cpplib.c $(CONFIG_H) cpplib.h machmode.h cpphash.h config.status \
 	system.h prefix.h Makefile
@@ -2215,10 +2183,6 @@ uninstall: lang.uninstall
 	-rm -rf $(bindir)/$(GCC_CROSS_NAME)$(exeext)
 	-rm -rf $(man1dir)/$(GCC_INSTALL_NAME)$(manext)
 	-rm -rf $(man1dir)/$(GCC_CROSS_NAME)$(manext)
-	-rm -rf $(man1dir)/cccp$(manext)
-# CYGNUS LOCAL: We install cpp.1.
-	-rm -rf $(man1dir)/cpp$(manext)
-	-rm -f $(infodir)/cpp.info* $(infodir)/gcc.info*
 #
 # These targets are for the dejagnu testsuites. The file site.exp 
 # contains global variables that all the testsuites will use.

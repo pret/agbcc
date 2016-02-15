@@ -44,7 +44,7 @@ fatal (s)
      char *s;
 {
   fputs (s, stderr);
-  exit (FATAL_EXIT_CODE);
+  exit (EXIT_FAILURE);
 }
 
 void
@@ -77,12 +77,12 @@ main (argc, argv)
   if (argi < argc && ! CPP_FATAL_ERRORS (&parse_in))
     cpp_fatal (&parse_in, "Invalid option `%s'", argv[argi]);
   if (CPP_FATAL_ERRORS (&parse_in))
-    exit (FATAL_EXIT_CODE);
+    exit (EXIT_FAILURE);
       
   parse_in.show_column = 1;
 
   if (! cpp_start_read (&parse_in, opts->in_fname))
-    exit (FATAL_EXIT_CODE);
+    exit (EXIT_FAILURE);
 
   /* Now that we know the input file is valid, open the output.  */
 
@@ -107,6 +107,6 @@ main (argc, argv)
   cpp_finish (&parse_in);
 
   if (parse_in.errors)
-    exit (FATAL_EXIT_CODE);
-  exit (SUCCESS_EXIT_CODE);
+    exit (EXIT_FAILURE);
+  exit (EXIT_SUCCESS);
 }

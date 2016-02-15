@@ -286,7 +286,7 @@ xmalloc (nbytes)
     {
       fprintf (stderr, "can't allocate %d bytes (out of virtual memory)\n",
 	       nbytes);
-      exit (FATAL_EXIT_CODE);
+      exit (EXIT_FAILURE);
     }
 
   return tmp;
