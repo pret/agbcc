@@ -97,22 +97,10 @@ typedef union rtunion_def
 
 typedef struct rtx_def
 {
-#ifdef ONLY_INT_FIELDS
-#ifdef CODE_FIELD_BUG
-  unsigned int code : 16;
-#else
-  unsigned short code;
-#endif
-#else
   /* The kind of expression this is.  */
   enum rtx_code code : 16;
-#endif
   /* The kind of value the expression has.  */
-#ifdef ONLY_INT_FIELDS
-  int mode : 8;
-#else
   enum machine_mode mode : 8;
-#endif
   /* 1 in an INSN if it can alter flow of control
      within this function.  Not yet used!  */
   unsigned int jump : 1;

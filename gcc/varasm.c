@@ -3079,13 +3079,8 @@ enum kind { RTX_DOUBLE, RTX_INT };
 
 struct rtx_const
 {
-#ifdef ONLY_INT_FIELDS
-  unsigned int kind : 16;
-  unsigned int mode : 16;
-#else
   enum kind kind : 16;
   enum machine_mode mode : 16;
-#endif
   union {
     union real_extract du;
     struct addr_const addr;

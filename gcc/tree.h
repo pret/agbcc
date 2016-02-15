@@ -167,11 +167,7 @@ struct tree_common
 {
   union tree_node *chain;
   union tree_node *type;
-#ifdef ONLY_INT_FIELDS
-  unsigned int code : 8;
-#else
   enum tree_code code : 8;
-#endif
 
   unsigned side_effects_flag : 1;
   unsigned constant_flag : 1;
@@ -896,11 +892,7 @@ struct tree_type
   unsigned uid;
 
   unsigned char precision;
-#ifdef ONLY_INT_FIELDS
-  int mode : 8;
-#else
   enum machine_mode mode : 8;
-#endif
 
   unsigned string_flag : 1;
   unsigned no_force_blk_flag : 1;
@@ -1285,11 +1277,7 @@ struct tree_decl
   int linenum;
   unsigned int uid;
   union tree_node *size;
-#ifdef ONLY_INT_FIELDS
-  int mode : 8;
-#else
   enum machine_mode mode : 8;
-#endif
 
   unsigned external_flag : 1;
   unsigned nonlocal_flag : 1;
