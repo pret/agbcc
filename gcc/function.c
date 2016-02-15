@@ -6162,7 +6162,6 @@ expand_function_end (filename, line, end_bindings)
 	use_variable (current_function_internal_arg_pointer);
     }
 
-  clear_pending_stack_adjust ();
   do_pending_stack_adjust ();
 
   /* Mark the end of the function body.
@@ -6220,12 +6219,8 @@ expand_function_end (filename, line, end_bindings)
 			 Pmode);
     }
 
-  /* If we had calls to alloca, and this machine needs
-     an accurate stack pointer to exit the function,
-     insert some code to save and restore the stack pointer.  */
-#ifdef EXIT_IGNORE_STACK
-  if (! EXIT_IGNORE_STACK)
-#endif
+  /* If we had calls to alloca, insert some code to save and restore the
+     stack pointer.  */
     if (current_function_calls_alloca)
       {
 	rtx tem = 0;

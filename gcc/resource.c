@@ -1071,9 +1071,8 @@ init_resource_info (epilogue_insn)
 
   /* Indicate what resources are required to be valid at the end of the current
      function.  The condition code never is and memory always is.  If the
-     frame pointer is needed, it is and so is the stack pointer unless
-     EXIT_IGNORE_STACK is non-zero.  If the frame pointer is not needed, the
-     stack pointer is.  Registers used to return the function value are
+     frame pointer is needed, it is. The stack pointer is needed.
+     Registers used to return the function value are
      needed.  Registers holding global variables are needed.  */
 
   end_of_function_needs.cc = 0;
@@ -1084,13 +1083,8 @@ init_resource_info (epilogue_insn)
   if (frame_pointer_needed)
     {
       SET_HARD_REG_BIT (end_of_function_needs.regs, FRAME_POINTER_REGNUM);
-#ifdef EXIT_IGNORE_STACK
-      if (! EXIT_IGNORE_STACK
-	  || current_function_sp_is_unchanging)
-#endif
-	SET_HARD_REG_BIT (end_of_function_needs.regs, STACK_POINTER_REGNUM);
     }
-  else
+
     SET_HARD_REG_BIT (end_of_function_needs.regs, STACK_POINTER_REGNUM);
 
   if (current_function_return_rtx != 0)
@@ -1098,11 +1092,7 @@ init_resource_info (epilogue_insn)
 			       &end_of_function_needs, 1);
 
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-    if (global_regs[i]
-#ifdef EPILOGUE_USES
-	|| EPILOGUE_USES (i)
-#endif
-	)
+    if (global_regs[i])
       SET_HARD_REG_BIT (end_of_function_needs.regs, i);
 
   /* The registers required to be live at the end of the function are

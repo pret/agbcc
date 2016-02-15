@@ -1336,15 +1336,7 @@ mark_regs_live_at_end (set)
 {
   int i;
   
-#ifdef EXIT_IGNORE_STACK
-  if (! EXIT_IGNORE_STACK
-      || (! FRAME_POINTER_REQUIRED
-	  && ! current_function_calls_alloca
-	  && flag_omit_frame_pointer)
-      || current_function_sp_is_unchanging)
-#endif
-    /* If exiting needs the right stack value,
-       consider the stack pointer live at the end of the function.  */
+    /* Consider the stack pointer live at the end of the function.  */
     SET_REGNO_REG_SET (set, STACK_POINTER_REGNUM);
 
   /* Mark the frame pointer is needed at the end of the function.  If
@@ -1358,11 +1350,7 @@ mark_regs_live_at_end (set)
      as being live at the end of the function since they may be
      referenced by our caller.  */
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-    if (global_regs[i]
-#ifdef EPILOGUE_USES
-	|| EPILOGUE_USES (i)
-#endif
-	)
+    if (global_regs[i])
       SET_REGNO_REG_SET (set, i);
 }
 
@@ -3031,25 +3019,12 @@ mark_used_regs (needed, live, x, final, insn)
       break;
 
     case RETURN:
-      /* If exiting needs the right stack value, consider this insn as
-	 using the stack pointer.  In any event, consider it as using
-	 all global registers and all registers used by return.  */
-
-#ifdef EXIT_IGNORE_STACK
-      if (! EXIT_IGNORE_STACK
-	  || (! FRAME_POINTER_REQUIRED
-	      && ! current_function_calls_alloca
-	      && flag_omit_frame_pointer)
-	  || current_function_sp_is_unchanging)
-#endif
+      /* Consider this insn as using the stack pointer, all global registers
+         and all registers used by return.  */
 	SET_REGNO_REG_SET (live, STACK_POINTER_REGNUM);
 
       for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-	if (global_regs[i]
-#ifdef EPILOGUE_USES
-	    || EPILOGUE_USES (i)
-#endif
-	    )
+	if (global_regs[i])
 	  SET_REGNO_REG_SET (live, i);
       break;
 

@@ -830,10 +830,6 @@ extern rtx expand_expr PROTO((tree, rtx, enum machine_mode,
    arguments waiting to be popped.  */
 extern void init_pending_stack_adjust PROTO((void));
 
-/* When exiting from function, if safe, clear out any pending stack adjust
-   so the adjustment won't get done.  */
-extern void clear_pending_stack_adjust PROTO((void));
-
 /* Pop any previously-pushed arguments that have not been popped yet.  */
 extern void do_pending_stack_adjust PROTO((void));
 

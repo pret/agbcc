@@ -777,7 +777,6 @@ expand_goto_internal (body, label, last_insn)
 	  /* Ensure stack adjust isn't done by emit_jump, as this
 	     would clobber the stack pointer.  This one should be
 	     deleted as dead by flow.  */
-	  clear_pending_stack_adjust ();
 	  do_pending_stack_adjust ();
 	  emit_stack_restore (SAVE_BLOCK, stack_level, NULL_RTX);
 	}
@@ -2459,7 +2458,6 @@ expand_null_return_1 (last_insn, use_goto)
 {
   rtx end_label = cleanup_label ? cleanup_label : return_label;
 
-  clear_pending_stack_adjust ();
   do_pending_stack_adjust ();
   last_expr_type = 0;
 
