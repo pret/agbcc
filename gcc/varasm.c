@@ -895,12 +895,7 @@ assemble_start_function (decl, fnname)
   /* CYGNUS LOCAL law */
   if (align > 0)
     {
-#ifdef ASM_OUTPUT_MAX_SKIP_ALIGN
-      ASM_OUTPUT_MAX_SKIP_ALIGN (asm_out_file, align,
-				 FUNCTION_BOUNDARY_MAX_SKIP);
-#else
       ASM_OUTPUT_ALIGN (asm_out_file, align);
-#endif
     }
   /* END CYGNUS LOCAL */
 

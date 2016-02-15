@@ -531,11 +531,6 @@ stupid_find_reg (call_preserved, class, mode,
   for (ins = born_insn; ins < dead_insn; ins++)
     IOR_HARD_REG_SET (used, after_insn_hard_regs[ins]);
 
-#ifdef STACK_REGS
-  if (current_function_has_computed_jump)
-    for (i = FIRST_STACK_REG; i <= LAST_STACK_REG; i++)
-      SET_HARD_REG_BIT (used, i);
-#endif
   
   IOR_COMPL_HARD_REG_SET (used, reg_class_contents[(int) class]);
 

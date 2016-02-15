@@ -2398,9 +2398,6 @@ static unsigned pending_types;
 
 /* Record whether the function being analyzed contains inlined functions.  */
 static int current_function_has_inlines;
-#if 0 && defined (MIPS_DEBUGGING_INFO)
-static int comp_unit_has_inlines;
-#endif
 
 /* A pointer to the ..._DECL node which we have most recently been working
    on.  We keep this around just in case something about it looks screwy and
@@ -7095,10 +7092,6 @@ add_location_or_const_value_attribute (die, decl)
     return;
 
   rtl = eliminate_regs (rtl, 0, NULL_RTX);
-#ifdef LEAF_REG_REMAP
-  if (leaf_function)
-    leaf_renumber_regs_insn (rtl);
-#endif
 
   switch (GET_CODE (rtl))
     {
@@ -8422,17 +8415,6 @@ gen_subprogram_die (decl, context_die)
       current_function_has_inlines = 0;
       decls_for_scope (outer_scope, subr_die, 0);
 
-#if 0 && defined (MIPS_DEBUGGING_INFO)
-      if (current_function_has_inlines)
-	{
-	  add_AT_flag (subr_die, DW_AT_MIPS_has_inlines, 1);
-	  if (! comp_unit_has_inlines)
-	    {
-	      add_AT_flag (comp_unit_die, DW_AT_MIPS_has_inlines, 1);
-	      comp_unit_has_inlines = 1;
-	    }
-	}
-#endif
     }
 
   pop_decl_scope ();

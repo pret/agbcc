@@ -9865,12 +9865,6 @@ expand_builtin_apply_args ()
 
 	tem = gen_rtx_REG (mode, INCOMING_REGNO (regno));
 
-#ifdef STACK_REGS
-        /* For reg-stack.c's stack register household.
-	   Compare with a similar piece of code in function.c.  */
-
-        emit_insn (gen_rtx_USE (mode, tem));
-#endif
 
 	emit_move_insn (change_address (registers, mode,
 					plus_constant (XEXP (registers, 0),

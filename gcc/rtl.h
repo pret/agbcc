@@ -1477,11 +1477,6 @@ extern void fix_register		PROTO ((char *, int, int));
 extern void regmove_optimize		PROTO ((rtx, int, FILE *));
 #endif
 
-/* In reorg.c */
-#ifdef BUFSIZ
-extern void dbr_schedule		PROTO ((rtx, FILE *));
-#endif
-
 /* In optabs.c */
 extern void init_optabs			PROTO ((void));
 
@@ -1502,12 +1497,6 @@ extern int reload			PROTO ((rtx, int, FILE *));
 
 /* In caller-save.c */
 extern void init_caller_save		PROTO ((void));
-
-/* In reg-stack.c */
-#ifdef BUFSIZ
-extern void reg_to_stack		PROTO ((rtx, FILE *));
-#endif
-extern int stack_regs_mentioned_p	PROTO ((rtx));
 
 /* In fold-const.c */
 extern int add_double		PROTO ((HOST_WIDE_INT, HOST_WIDE_INT,
