@@ -374,17 +374,6 @@ find_end_label ()
       end_of_function_label = gen_label_rtx ();
       LABEL_NUSES (end_of_function_label) = 0;
       emit_label (end_of_function_label);
-#ifdef HAVE_return
-      if (HAVE_return)
-	{
-	  /* The return we make may have delay slots too.  */
-	  rtx insn = gen_return ();
-	  insn = emit_jump_insn (insn);
-	  emit_barrier ();
-          if (num_delay_slots (insn) > 0)
-	    obstack_ptr_grow (&unfilled_slots_obstack, insn);
-	}
-#endif
     }
 
   /* Show one additional use for this label so it won't go away until
@@ -3353,129 +3342,6 @@ relax_delay_slots (first)
     }
 }
 
-#ifdef HAVE_return
-
-/* Look for filled jumps to the end of function label.  We can try to convert
-   them into RETURN insns if the insns in the delay slot are valid for the
-   RETURN as well.  */
-
-static void
-make_return_insns (first)
-     rtx first;
-{
-  rtx insn, jump_insn, pat;
-  rtx real_return_label = end_of_function_label;
-  int slots, i;
-
-  /* See if there is a RETURN insn in the function other than the one we
-     made for END_OF_FUNCTION_LABEL.  If so, set up anything we can't change
-     into a RETURN to jump to it.  */
-  for (insn = first; insn; insn = NEXT_INSN (insn))
-    if (GET_CODE (insn) == JUMP_INSN && GET_CODE (PATTERN (insn)) == RETURN)
-      {
-	real_return_label = get_label_before (insn);
-	break;
-      }
-  
-  /* Show an extra usage of REAL_RETURN_LABEL so it won't go away if it
-     was equal to END_OF_FUNCTION_LABEL.  */
-  LABEL_NUSES (real_return_label)++;
-
-  /* Clear the list of insns to fill so we can use it.  */
-  obstack_free (&unfilled_slots_obstack, unfilled_firstobj);
-
-  for (insn = first; insn; insn = NEXT_INSN (insn))
-    {
-      int flags;
-
-      /* Only look at filled JUMP_INSNs that go to the end of function
-	 label.  */
-      if (GET_CODE (insn) != INSN
-	  || GET_CODE (PATTERN (insn)) != SEQUENCE
-	  || GET_CODE (XVECEXP (PATTERN (insn), 0, 0)) != JUMP_INSN
-	  || JUMP_LABEL (XVECEXP (PATTERN (insn), 0, 0)) != end_of_function_label)
-	continue;
-
-      pat = PATTERN (insn);
-      jump_insn = XVECEXP (pat, 0, 0);
-
-      /* If we can't make the jump into a RETURN, try to redirect it to the best
-	 RETURN and go on to the next insn.  */
-      if (! reorg_redirect_jump (jump_insn, NULL_RTX))
-	{
-	  /* Make sure redirecting the jump will not invalidate the delay
-	     slot insns.  */
-	  if (redirect_with_delay_slots_safe_p (jump_insn,
-						real_return_label,
-						insn))
-	    reorg_redirect_jump (jump_insn, real_return_label);
-	  continue;
-	}
-
-      /* See if this RETURN can accept the insns current in its delay slot.
-	 It can if it has more or an equal number of slots and the contents
-	 of each is valid.  */
-
-      flags = get_jump_flags (jump_insn, JUMP_LABEL (jump_insn));
-      slots = num_delay_slots (jump_insn);
-      if (slots >= XVECLEN (pat, 0) - 1)
-	{
-	  for (i = 1; i < XVECLEN (pat, 0); i++)
-	    if (! (
-#ifdef ANNUL_IFFALSE_SLOTS
-		   (INSN_ANNULLED_BRANCH_P (jump_insn)
-		    && INSN_FROM_TARGET_P (XVECEXP (pat, 0, i)))
-		   ? eligible_for_annul_false (jump_insn, i - 1,
-					       XVECEXP (pat, 0, i), flags) :
-#endif
-#ifdef ANNUL_IFTRUE_SLOTS
-		   (INSN_ANNULLED_BRANCH_P (jump_insn)
-		    && ! INSN_FROM_TARGET_P (XVECEXP (pat, 0, i)))
-		   ? eligible_for_annul_true (jump_insn, i - 1,
-					      XVECEXP (pat, 0, i), flags) :
-#endif
-		   eligible_for_delay (jump_insn, i -1, XVECEXP (pat, 0, i), flags)))
-	      break;
-	}
-      else
-	i = 0;
-
-      if (i == XVECLEN (pat, 0))
-	continue;
-
-      /* We have to do something with this insn.  If it is an unconditional
-	 RETURN, delete the SEQUENCE and output the individual insns,
-	 followed by the RETURN.  Then set things up so we try to find
-	 insns for its delay slots, if it needs some.  */
-      if (GET_CODE (PATTERN (jump_insn)) == RETURN)
-	{
-	  rtx prev = PREV_INSN (insn);
-
-	  delete_insn (insn);
-	  for (i = 1; i < XVECLEN (pat, 0); i++)
-	    prev = emit_insn_after (PATTERN (XVECEXP (pat, 0, i)), prev);
-
-	  insn = emit_jump_insn_after (PATTERN (jump_insn), prev);
-	  emit_barrier_after (insn);
-
-	  if (slots)
-	    obstack_ptr_grow (&unfilled_slots_obstack, insn);
-	}
-      else
-	/* It is probably more efficient to keep this with its current
-	   delay slot as a branch to a RETURN.  */
-	reorg_redirect_jump (jump_insn, real_return_label);
-    }
-
-  /* Now delete REAL_RETURN_LABEL if we never used it.  Then try to fill any
-     new delay slots we have created.  */
-  if (--LABEL_NUSES (real_return_label) == 0)
-    delete_insn (real_return_label);
-
-  fill_simple_delay_slots (1);
-  fill_simple_delay_slots (0);
-}
-#endif
 
 /* Try to find insns to place in delay slots.  */
 
@@ -3589,10 +3455,6 @@ dbr_schedule (first, file)
   if (end_of_function_label && --LABEL_NUSES (end_of_function_label) == 0)
     delete_insn (end_of_function_label);
 
-#ifdef HAVE_return
-  if (HAVE_return && end_of_function_label != 0)
-    make_return_insns (first);
-#endif
 
   obstack_free (&unfilled_slots_obstack, unfilled_firstobj);
 

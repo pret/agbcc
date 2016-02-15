@@ -5690,9 +5690,6 @@ init_function_start (subr, filename, line)
   /* Set flags used by final.c.  */
   if (aggregate_value_p (DECL_RESULT (subr)))
     {
-#ifdef PCC_STATIC_STRUCT_RETURN
-      current_function_returns_pcc_struct = 1;
-#endif
       current_function_returns_struct = 1;
     }
 
@@ -5799,17 +5796,7 @@ expand_function_start (subr, parms_have_cleanups)
   /* Make the label for return statements to jump to, if this machine
      does not have a one-instruction return and uses an epilogue,
      or if it returns a structure, or if it has parm cleanups.  */
-#ifdef HAVE_return
-  if (cleanup_label == 0 && HAVE_return
-      && ! current_function_instrument_entry_exit
-      && ! current_function_returns_pcc_struct
-      && ! (current_function_returns_struct && ! optimize))
-    return_label = 0;
-  else
-    return_label = gen_label_rtx ();
-#else
   return_label = gen_label_rtx ();
-#endif
 
   /* Initialize rtx used to return the value.  */
   /* Do this before assign_parms so that we copy the struct value address
@@ -5821,15 +5808,7 @@ expand_function_start (subr, parms_have_cleanups)
       /* Returning something that won't go in a register.  */
       register rtx value_address = 0;
 
-#ifdef PCC_STATIC_STRUCT_RETURN
-      if (current_function_returns_pcc_struct)
-	{
-	  int size = int_size_in_bytes (TREE_TYPE (DECL_RESULT (subr)));
-	  value_address = assemble_static_space (size);
-	}
-      else
-#endif
-	{
+
 	  /* Expect to be passed the address of a place to store the value.
 	     If it is passed as an argument, assign_parms will take care of
 	     it.  */
@@ -5838,7 +5817,6 @@ expand_function_start (subr, parms_have_cleanups)
 	      value_address = gen_reg_rtx (Pmode);
 	      emit_move_insn (value_address, struct_value_incoming_rtx);
 	    }
-	}
       if (value_address)
 	{
 	  DECL_RTL (DECL_RESULT (subr))
@@ -6370,13 +6348,6 @@ expand_function_end (filename, line, end_bindings)
      Otherwise, let the rtl chain end here, to drop through
      into the epilogue.  */
 
-#ifdef HAVE_return
-  if (HAVE_return)
-    {
-      emit_jump_insn (gen_return ());
-      emit_barrier ();
-    }
-#endif
 
   /* Fix up any gotos that jumped out to the outermost
      binding level of the function.

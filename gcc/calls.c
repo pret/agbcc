@@ -1025,21 +1025,6 @@ expand_call (exp, target, ignore)
       /* This call returns a big structure.  */
       is_const = 0;
 
-#ifdef PCC_STATIC_STRUCT_RETURN
-      {
-	pcc_struct_value = 1;
-	/* Easier than making that case work right.  */
-	if (is_integrable)
-	  {
-	    /* In case this is a static function, note that it has been
-	       used.  */
-	    if (! TREE_ADDRESSABLE (fndecl))
-	      mark_addressable (fndecl);
-	    is_integrable = 0;
-	  }
-      }
-#else /* not PCC_STATIC_STRUCT_RETURN */
-      {
 	struct_value_size = int_size_in_bytes (TREE_TYPE (exp));
 
 	if (target && GET_CODE (target) == MEM)
@@ -1065,8 +1050,6 @@ expand_call (exp, target, ignore)
 	    TREE_USED (d) = 1;
 	    target = 0;
 	  }
-      }
-#endif /* not PCC_STATIC_STRUCT_RETURN */
     }
 
   /* If called function is inline, try to integrate it.  */
@@ -2912,21 +2895,11 @@ emit_library_call_value VPROTO((rtx orgfun, rtx value, int no_queue,
      decide where in memory it should come back.  */
   if (aggregate_value_p (type_for_mode (outmode, 0)))
     {
-#ifdef PCC_STATIC_STRUCT_RETURN
-      rtx pointer_reg
-	= hard_function_value (build_pointer_type (type_for_mode (outmode, 0)),
-			       0);
-      mem_value = gen_rtx_MEM (outmode, pointer_reg);
-      pcc_struct_value = 1;
-      if (value == 0)
-	value = gen_reg_rtx (outmode);
-#else /* not PCC_STATIC_STRUCT_RETURN */
       struct_value_size = GET_MODE_SIZE (outmode);
       if (value != 0 && GET_CODE (value) == MEM)
 	mem_value = value;
       else
 	mem_value = assign_stack_temp (outmode, GET_MODE_SIZE (outmode), 0);
-#endif
 
       /* This call returns a big structure.  */
       is_const = 0;

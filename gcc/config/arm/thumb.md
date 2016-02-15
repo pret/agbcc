@@ -993,12 +993,6 @@
   ""
   "mov\\tpc, %0")
 
-(define_insn "return"
-  [(return)]
-  "USE_RETURN"
-  "* return output_return ();"
-[(set_attr "length" "18")])
-
 ;; Call insns
 
 (define_expand "call"

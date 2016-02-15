@@ -741,65 +741,6 @@ far_jump_used_p()
 
 static int return_used_this_function = 0;
 
-char *
-output_return()
-{
-    int regno;
-    int live_regs_mask = 0;
-
-    /* If a function is naked, don't use the "return" insn.  */
-    if (arm_naked_function_p(current_function_decl))
-        return "";
-
-    return_used_this_function = 1;
-
-    for (regno = 0; regno < 8; regno++)
-        if (regs_ever_live[regno] && !call_used_regs[regno])
-            live_regs_mask |= 1 << regno;
-
-    if (live_regs_mask == 0)
-    {
-        if (leaf_function_p() && !far_jump_used_p())
-        {
-            thumb_exit(asm_out_file, 14);
-        }
-        else if (TARGET_THUMB_INTERWORK)
-        {
-            thumb_exit(asm_out_file, -1);
-        }
-        else
-        {
-            asm_fprintf(asm_out_file, "\tpop\t{pc}\n");
-        }
-    }
-    else
-    {
-        asm_fprintf(asm_out_file,  "\tpop\t{");
-
-        for (regno = 0; live_regs_mask; regno++, live_regs_mask >>= 1)
-        {
-            if (live_regs_mask & 1)
-            {
-                asm_fprintf(asm_out_file, reg_names[regno]);
-                if (live_regs_mask & ~1)
-                    asm_fprintf(asm_out_file, ", ");
-            }
-        }
-
-        if (TARGET_THUMB_INTERWORK)
-        {
-            asm_fprintf(asm_out_file, "}\n");
-            thumb_exit(asm_out_file, -1);
-        }
-        else
-        {
-            asm_fprintf(asm_out_file, ", pc}\n");
-        }
-    }
-
-    return "";
-}
-
 void
 thumb_function_prologue(FILE *f, int frame_size)
 {

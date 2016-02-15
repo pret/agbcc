@@ -2472,17 +2472,6 @@ expand_null_return_1 (last_insn, use_goto)
       return;
     }
 
-  /* Otherwise output a simple return-insn if one is available,
-     unless it won't do the job.  */
-#ifdef HAVE_return
-  if (HAVE_return && use_goto == 0 && cleanup_label == 0)
-    {
-      emit_jump_insn (gen_return ());
-      emit_barrier ();
-      return;
-    }
-#endif
-
   /* Otherwise jump to the epilogue.  */
   expand_goto_internal (NULL_TREE, end_label, last_insn);
 }
@@ -2578,70 +2567,6 @@ expand_return (retval)
   if (optimize_tail_recursion (retval_rhs, last_insn))
     return;
 
-#ifdef HAVE_return
-  /* This optimization is safe if there are local cleanups
-     because expand_null_return takes care of them.
-     ??? I think it should also be safe when there is a cleanup label,
-     because expand_null_return takes care of them, too.
-     Any reason why not?  */
-  if (HAVE_return && cleanup_label == 0
-      && ! current_function_returns_pcc_struct
-      && BRANCH_COST <= 1)
-    {
-      /* If this is  return x == y;  then generate
-	 if (x == y) return 1; else return 0;
-	 if we can do it with explicit return insns and branches are cheap,
-	 but not if we have the corresponding scc insn.  */
-      int has_scc = 0;
-      if (retval_rhs)
-	switch (TREE_CODE (retval_rhs))
-	  {
-	  case EQ_EXPR:
-#ifdef HAVE_seq
-	    has_scc = HAVE_seq;
-#endif
-	  case NE_EXPR:
-#ifdef HAVE_sne
-	    has_scc = HAVE_sne;
-#endif
-	  case GT_EXPR:
-#ifdef HAVE_sgt
-	    has_scc = HAVE_sgt;
-#endif
-	  case GE_EXPR:
-#ifdef HAVE_sge
-	    has_scc = HAVE_sge;
-#endif
-	  case LT_EXPR:
-#ifdef HAVE_slt
-	    has_scc = HAVE_slt;
-#endif
-	  case LE_EXPR:
-#ifdef HAVE_sle
-	    has_scc = HAVE_sle;
-#endif
-	  case TRUTH_ANDIF_EXPR:
-	  case TRUTH_ORIF_EXPR:
-	  case TRUTH_AND_EXPR:
-	  case TRUTH_OR_EXPR:
-	  case TRUTH_NOT_EXPR:
-	  case TRUTH_XOR_EXPR:
-	    if (! has_scc)
-	      {
-		op0 = gen_label_rtx ();
-		jumpifnot (retval_rhs, op0);
-		expand_value_return (const1_rtx);
-		emit_label (op0);
-		expand_value_return (const0_rtx);
-		return;
-	      }
-	    break;
-
-	  default:
-	    break;
-	  }
-    }
-#endif /* HAVE_return */
 
   /* If the result is an aggregate that is being returned in one (or more)
      registers, load the registers here.  The compiler currently can't handle
