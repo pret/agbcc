@@ -699,7 +699,7 @@ expand_goto (label)
 	     to the location of the function's incoming static chain info.
 	     The non-local goto handler will then adjust it to contain the
 	     proper value and reload the argument pointer, if needed.  */
-	  emit_move_insn (hard_frame_pointer_rtx, lookup_static_chain (label));
+	  emit_move_insn (frame_pointer_rtx, lookup_static_chain (label));
 
 	  /* We have now loaded the frame pointer hardware register with
 	     the address of that corresponds to the start of the virtual
@@ -710,20 +710,20 @@ expand_goto (label)
 	     which will do any cleanups and then jump to the label.  */
 	  addr = copy_rtx (handler_slot);
 	  temp = copy_to_reg (replace_rtx (addr, virtual_stack_vars_rtx,
-					   hard_frame_pointer_rtx));
+					   frame_pointer_rtx));
 	  
 	  /* Restore the stack pointer.  Note this uses fp just restored.  */
 	  addr = p->nonlocal_goto_stack_level;
 	  if (addr)
 	    addr = replace_rtx (copy_rtx (addr),
 				virtual_stack_vars_rtx,
-				hard_frame_pointer_rtx);
+				frame_pointer_rtx);
 
 	  emit_stack_restore (SAVE_NONLOCAL, addr, NULL_RTX);
 
-	  /* USE of hard_frame_pointer_rtx added for consistency; not clear if
+	  /* USE of frame_pointer_rtx added for consistency; not clear if
 	     really needed.  */
-	  emit_insn (gen_rtx_USE (VOIDmode, hard_frame_pointer_rtx));
+	  emit_insn (gen_rtx_USE (VOIDmode, frame_pointer_rtx));
 	  emit_insn (gen_rtx_USE (VOIDmode, stack_pointer_rtx));
 	  emit_indirect_jump (temp);
 	}
@@ -3005,12 +3005,10 @@ expand_nl_goto_receiver ()
        the original assignment true.
        So the following insn will actually be
        decrementing fp by STARTING_FRAME_OFFSET.  */
-    emit_move_insn (virtual_stack_vars_rtx, hard_frame_pointer_rtx);
+    emit_move_insn (virtual_stack_vars_rtx, frame_pointer_rtx);
 
-#if ARG_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
   if (fixed_regs[ARG_POINTER_REGNUM])
     {
-#ifdef ELIMINABLE_REGS
       /* If the argument pointer can be eliminated in favor of the
 	 frame pointer, we don't need to restore it.  We assume here
 	 that if such an elimination is present, it can always be used.
@@ -3021,11 +3019,10 @@ expand_nl_goto_receiver ()
 
       for (i = 0; i < sizeof elim_regs / sizeof elim_regs[0]; i++)
 	if (elim_regs[i].from == ARG_POINTER_REGNUM
-	    && elim_regs[i].to == HARD_FRAME_POINTER_REGNUM)
+	    && elim_regs[i].to == FRAME_POINTER_REGNUM)
 	  break;
 
       if (i == sizeof elim_regs / sizeof elim_regs [0])
-#endif
 	{
 	  /* Now restore our arg pointer from the address at which it
 	     was saved in our stack frame.
@@ -3040,7 +3037,6 @@ expand_nl_goto_receiver ()
 			  copy_to_reg (arg_pointer_save_area));
 	}
     }
-#endif
 
 #ifdef HAVE_nonlocal_goto_receiver
   if (HAVE_nonlocal_goto_receiver)

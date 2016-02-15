@@ -399,11 +399,7 @@ copy_all_regs (x)
 {
   if (GET_CODE (x) == REG)
     {
-      if (REGNO (x) != FRAME_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	  && REGNO (x) != HARD_FRAME_POINTER_REGNUM
-#endif
-	  )
+      if (REGNO (x) != FRAME_POINTER_REGNUM)
 	x = copy_to_reg (x);
     }
   else if (GET_CODE (x) == MEM)

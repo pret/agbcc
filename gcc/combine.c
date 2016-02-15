@@ -1283,13 +1283,8 @@ combinable_i3pat (i3, loc, i2dest, i1dest, i1_not_in_src, pi3dest_killed)
       if (pi3dest_killed && GET_CODE (dest) == REG
 	  && reg_referenced_p (dest, PATTERN (i3))
 	  && REGNO (dest) != FRAME_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	  && REGNO (dest) != HARD_FRAME_POINTER_REGNUM
-#endif
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 	  && (REGNO (dest) != ARG_POINTER_REGNUM
 	      || ! fixed_regs [REGNO (dest)])
-#endif
 	  && REGNO (dest) != STACK_POINTER_REGNUM)
 	{
 	  if (*pi3dest_killed)
@@ -3626,12 +3621,7 @@ simplify_rtx (x, op0_mode, last, in_dest)
       if (GET_CODE (SUBREG_REG (x)) == REG
 	  && REGNO (SUBREG_REG (x)) < FIRST_PSEUDO_REGISTER
 	  && REGNO (SUBREG_REG (x)) != FRAME_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	  && REGNO (SUBREG_REG (x)) != HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	  && REGNO (SUBREG_REG (x)) != ARG_POINTER_REGNUM
-#endif
 	  && REGNO (SUBREG_REG (x)) != STACK_POINTER_REGNUM)
 	{
 	  if (HARD_REGNO_MODE_OK (REGNO (SUBREG_REG (x)) + SUBREG_WORD (x),
@@ -4845,10 +4835,6 @@ simplify_set (x)
 	   / UNITS_PER_WORD)
 	  == ((GET_MODE_SIZE (GET_MODE (SUBREG_REG (src)))
 	       + (UNITS_PER_WORD - 1)) / UNITS_PER_WORD))
-#ifndef WORD_REGISTER_OPERATIONS
-      && (GET_MODE_SIZE (GET_MODE (src))
-	  < GET_MODE_SIZE (GET_MODE (SUBREG_REG (src))))
-#endif
 #ifdef CLASS_CANNOT_CHANGE_SIZE
       && ! (GET_CODE (dest) == REG && REGNO (dest) < FIRST_PSEUDO_REGISTER
 	    && (TEST_HARD_REG_BIT
@@ -7543,24 +7529,6 @@ nonzero_bits (x, mode)
        just return the mode mask.  Those tests will then be false.  */
     return nonzero;
 
-#ifndef WORD_REGISTER_OPERATIONS
-  /* If MODE is wider than X, but both are a single word for both the host
-     and target machines, we can compute this from which bits of the 
-     object might be nonzero in its own mode, taking into account the fact
-     that on many CISC machines, accessing an object in a wider mode
-     causes the high-order bits to become undefined.  So they are
-     not known to be zero.  */
-
-  if (GET_MODE (x) != VOIDmode && GET_MODE (x) != mode
-      && GET_MODE_BITSIZE (GET_MODE (x)) <= BITS_PER_WORD
-      && GET_MODE_BITSIZE (GET_MODE (x)) <= HOST_BITS_PER_WIDE_INT
-      && GET_MODE_BITSIZE (mode) > GET_MODE_BITSIZE (GET_MODE (x)))
-    {
-      nonzero &= nonzero_bits (x, GET_MODE (x));
-      nonzero |= GET_MODE_MASK (mode) & ~ GET_MODE_MASK (GET_MODE (x));
-      return nonzero;
-    }
-#endif
 
   code = GET_CODE (x);
   switch (code)
@@ -7587,7 +7555,6 @@ nonzero_bits (x, mode)
 
       if ((x == frame_pointer_rtx
 	   || x == stack_pointer_rtx
-	   || x == hard_frame_pointer_rtx
 	   || (REGNO (x) >= FIRST_VIRTUAL_REGISTER
 	       && REGNO (x) <= LAST_VIRTUAL_REGISTER))
 #ifdef STACK_BIAS
@@ -7597,10 +7564,6 @@ nonzero_bits (x, mode)
 	{
 	  int sp_alignment = STACK_BOUNDARY / BITS_PER_UNIT;
 
-#ifdef PUSH_ROUNDING
-	  if (REGNO (x) == STACK_POINTER_REGNUM)
-	    sp_alignment = MIN (PUSH_ROUNDING (1), sp_alignment);
-#endif
 
 	  /* We must return here, otherwise we may get a worse result from
 	     one of the choices below.  There is nothing useful below as
@@ -7852,7 +7815,7 @@ nonzero_bits (x, mode)
 	{
 	  nonzero &= nonzero_bits (SUBREG_REG (x), mode);
 
-#if defined (WORD_REGISTER_OPERATIONS) && defined (LOAD_EXTEND_OP)
+#if defined (LOAD_EXTEND_OP)
 	  /* If this is a typical RISC machine, we only have to worry
 	     about the way loads are extended.  */
 	  if (LOAD_EXTEND_OP (GET_MODE (SUBREG_REG (x))) == SIGN_EXTEND
@@ -7974,12 +7937,6 @@ num_sign_bit_copies (x, mode)
      
   if (GET_MODE (x) != VOIDmode && bitwidth > GET_MODE_BITSIZE (GET_MODE (x)))
     {
-#ifndef WORD_REGISTER_OPERATIONS
-  /* If this machine does not do all register operations on the entire
-     register and MODE is wider than the mode of X, we can say nothing
-     at all about the high-order bits.  */
-      return 1;
-#else
       /* Likewise on machines that do, if the mode of the object is smaller
 	 than a word and loads of that size don't sign extend, we can say
 	 nothing about the high order bits.  */
@@ -7989,7 +7946,6 @@ num_sign_bit_copies (x, mode)
 #endif
 	  )
 	return 1;
-#endif
     }
 
   switch (code)
@@ -8055,7 +8011,6 @@ num_sign_bit_copies (x, mode)
 			     - bitwidth)));
 	}
 
-#ifdef WORD_REGISTER_OPERATIONS
 #ifdef LOAD_EXTEND_OP
       /* For paradoxical SUBREGs on machines where all register operations
 	 affect the entire register, just look inside.  Note that we are
@@ -8071,7 +8026,6 @@ num_sign_bit_copies (x, mode)
 	   > GET_MODE_SIZE (GET_MODE (SUBREG_REG (x))))
 	  && LOAD_EXTEND_OP (GET_MODE (SUBREG_REG (x))) == SIGN_EXTEND)
 	return num_sign_bit_copies (SUBREG_REG (x), mode);
-#endif
 #endif
       break;
 
@@ -9551,33 +9505,6 @@ simplify_comparison (code, pop0, pop1)
   /* Try a few ways of applying the same transformation to both operands.  */
   while (1)
     {
-#ifndef WORD_REGISTER_OPERATIONS
-      /* The test below this one won't handle SIGN_EXTENDs on these machines,
-	 so check specially.  */
-      if (code != GTU && code != GEU && code != LTU && code != LEU
-	  && GET_CODE (op0) == ASHIFTRT && GET_CODE (op1) == ASHIFTRT
-	  && GET_CODE (XEXP (op0, 0)) == ASHIFT
-	  && GET_CODE (XEXP (op1, 0)) == ASHIFT
-	  && GET_CODE (XEXP (XEXP (op0, 0), 0)) == SUBREG
-	  && GET_CODE (XEXP (XEXP (op1, 0), 0)) == SUBREG
-	  && (GET_MODE (SUBREG_REG (XEXP (XEXP (op0, 0), 0)))
-	      == GET_MODE (SUBREG_REG (XEXP (XEXP (op1, 0), 0))))
-	  && GET_CODE (XEXP (op0, 1)) == CONST_INT
-	  && GET_CODE (XEXP (op1, 1)) == CONST_INT
-	  && GET_CODE (XEXP (XEXP (op0, 0), 1)) == CONST_INT
-	  && GET_CODE (XEXP (XEXP (op1, 0), 1)) == CONST_INT
-	  && INTVAL (XEXP (op0, 1)) == INTVAL (XEXP (op1, 1))
-	  && INTVAL (XEXP (op0, 1)) == INTVAL (XEXP (XEXP (op0, 0), 1))
-	  && INTVAL (XEXP (op0, 1)) == INTVAL (XEXP (XEXP (op1, 0), 1))
-	  && (INTVAL (XEXP (op0, 1))
-	      == (GET_MODE_BITSIZE (GET_MODE (op0))
-		  - (GET_MODE_BITSIZE
-		     (GET_MODE (SUBREG_REG (XEXP (XEXP (op0, 0), 0))))))))
-	{
-	  op0 = SUBREG_REG (XEXP (XEXP (op0, 0), 0));
-	  op1 = SUBREG_REG (XEXP (XEXP (op1, 0), 0));
-	}
-#endif
 
       /* If both operands are the same constant shift, see if we can ignore the
 	 shift.  We can if the shift is a rotate or if the bits shifted out of
@@ -10323,20 +10250,8 @@ simplify_comparison (code, pop0, pop1)
 	  if (GET_CODE (XEXP (op0, 0)) == SUBREG
 	      && ((mode_width
 		   >= GET_MODE_BITSIZE (GET_MODE (SUBREG_REG (XEXP (op0, 0)))))
-#ifdef WORD_REGISTER_OPERATIONS
 		  || subreg_lowpart_p (XEXP (op0, 0))
-#endif
 		  )
-#ifndef WORD_REGISTER_OPERATIONS
-	      /* It is unsafe to commute the AND into the SUBREG if the SUBREG
-		 is paradoxical and WORD_REGISTER_OPERATIONS is not defined.
-		 As originally written the upper bits have a defined value
-		 due to the AND operation.  However, if we commute the AND
-		 inside the SUBREG then they no longer have defined values
-		 and the meaning of the code has been changed.  */
-	      && (GET_MODE_SIZE (GET_MODE (XEXP (op0, 0)))
-		  <= GET_MODE_SIZE (GET_MODE (SUBREG_REG (XEXP (op0, 0)))))
-#endif
 	      && GET_CODE (XEXP (op0, 1)) == CONST_INT
 	      && mode_width <= HOST_BITS_PER_WIDE_INT
 	      && (GET_MODE_BITSIZE (GET_MODE (SUBREG_REG (XEXP (op0, 0))))
@@ -11010,12 +10925,6 @@ use_crosses_set_p (x, from_cuid)
       int endreg = regno + (regno < FIRST_PSEUDO_REGISTER
 			    ? HARD_REGNO_NREGS (regno, GET_MODE (x)) : 1);
       
-#ifdef PUSH_ROUNDING
-      /* Don't allow uses of the stack pointer to be moved,
-	 because we don't know whether the move crosses a push insn.  */
-      if (regno == STACK_POINTER_REGNUM)
-	return 1;
-#endif
       for (;regno < endreg; regno++)
 	if (reg_last_set[regno]
 	    && INSN_CUID (reg_last_set[regno]) > from_cuid)
@@ -11182,12 +11091,7 @@ mark_used_regs_combine (x)
 	{
 	  /* None of this applies to the stack, frame or arg pointers */
 	  if (regno == STACK_POINTER_REGNUM
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-	      || regno == HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	      || (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
 	      || regno == FRAME_POINTER_REGNUM)
 	    return;
 

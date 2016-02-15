@@ -61,7 +61,6 @@ rtx_unstable_p (x)
 
   if (code == REG)
     return ! (REGNO (x) == FRAME_POINTER_REGNUM
-	      || REGNO (x) == HARD_FRAME_POINTER_REGNUM
 	      || REGNO (x) == ARG_POINTER_REGNUM
 	      || RTX_UNCHANGING_P (x));
 
@@ -104,7 +103,7 @@ rtx_varies_p (x)
 	 and arg pointers and not just the register number in case we have
 	 eliminated the frame and/or arg pointer and are using it
 	 for pseudos.  */
-      return ! (x == frame_pointer_rtx || x == hard_frame_pointer_rtx
+      return ! (x == frame_pointer_rtx
 		|| x == arg_pointer_rtx);
 
     case LO_SUM:
@@ -144,7 +143,7 @@ rtx_addr_can_trap_p (x)
 
     case REG:
       /* As in rtx_varies_p, we have to use the actual rtx, not reg number.  */
-      return ! (x == frame_pointer_rtx || x == hard_frame_pointer_rtx
+      return ! (x == frame_pointer_rtx
 		|| x == stack_pointer_rtx || x == arg_pointer_rtx);
 
     case CONST:

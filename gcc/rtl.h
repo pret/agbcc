@@ -1120,35 +1120,7 @@ extern rtx gen_rtx_MEM PROTO((enum machine_mode, rtx));
    and without prototypes.  */
 #define GEN_INT(N)  gen_rtx_CONST_INT (VOIDmode, (HOST_WIDE_INT) (N))
 
-
-/* If HARD_FRAME_POINTER_REGNUM is defined, then a special dummy reg
-   is used to represent the frame pointer.  This is because the
-   hard frame pointer and the automatic variables are separated by an amount
-   that cannot be determined until after register allocation.  We can assume
-   that in this case ELIMINABLE_REGS will be defined, one action of which
-   will be to eliminate FRAME_POINTER_REGNUM into HARD_FRAME_POINTER_REGNUM. */
-#ifndef HARD_FRAME_POINTER_REGNUM
-#define HARD_FRAME_POINTER_REGNUM FRAME_POINTER_REGNUM
-#endif
-
-/* For register elimination to work properly these hard_frame_pointer_rtx,
-   frame_pointer_rtx, and arg_pointer_rtx must be the same if they refer to
-   the same register.  */
-#if HARD_FRAME_POINTER_REGNUM == FRAME_POINTER_REGNUM
-#define hard_frame_pointer_rtx	(&global_rtl.frame_pointer_val)
-#else
-#define hard_frame_pointer_rtx	(&global_rtl.hard_frame_pointer_val)
-#endif
-
-#if FRAME_POINTER_REGNUM == ARG_POINTER_REGNUM
-#define arg_pointer_rtx		(&global_rtl.frame_pointer_val)
-#else
-#if HARD_FRAME_POINTER_REGNUM == ARG_POINTER_REGNUM
-#define arg_pointer_rtx		(&global_rtl.hard_frame_pointer_val)
-#else
 #define arg_pointer_rtx		(&global_rtl.arg_pointer_val)
-#endif
-#endif
 
 /* Virtual registers are used during RTL generation to refer to locations into
    the stack frame when the actual location isn't known until RTL generation

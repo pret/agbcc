@@ -136,13 +136,6 @@ REAL_VALUE_TYPE dconstm1;
    But references that were originally to the frame-pointer can be
    distinguished from the others because they contain frame_pointer_rtx.
 
-   When to use frame_pointer_rtx and hard_frame_pointer_rtx is a little
-   tricky: until register elimination has taken place hard_frame_pointer_rtx
-   should be used if it is being set, and frame_pointer_rtx otherwise.  After 
-   register elimination hard_frame_pointer_rtx should always be used.
-   On machines where the two registers are same (most) then these are the
-   same.
-
    In an inline procedure, the stack and frame pointer rtxs may not be
    used for anything else.  */
 rtx struct_value_rtx;		/* (REG:Pmode STRUCT_VALUE_REGNUM) */
@@ -286,14 +279,8 @@ gen_rtx_REG (mode, regno)
     {
       if (regno == FRAME_POINTER_REGNUM)
 	return frame_pointer_rtx;
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-      if (regno == HARD_FRAME_POINTER_REGNUM)
-	return hard_frame_pointer_rtx;
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM && HARD_FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
       if (regno == ARG_POINTER_REGNUM)
 	return arg_pointer_rtx;
-#endif
 #ifdef RETURN_ADDRESS_POINTER_REGNUM
       if (regno == RETURN_ADDRESS_POINTER_REGNUM)
 	return return_address_pointer_rtx;
@@ -3424,7 +3411,6 @@ init_emit ()
      all pointers.  */
   REGNO_POINTER_FLAG (STACK_POINTER_REGNUM) = 1;
   REGNO_POINTER_FLAG (FRAME_POINTER_REGNUM) = 1;
-  REGNO_POINTER_FLAG (HARD_FRAME_POINTER_REGNUM) = 1;
   REGNO_POINTER_FLAG (ARG_POINTER_REGNUM) = 1;
 
   REGNO_POINTER_FLAG (VIRTUAL_INCOMING_ARGS_REGNUM) = 1;
@@ -3436,8 +3422,6 @@ init_emit ()
 #ifdef STACK_BOUNDARY
   REGNO_POINTER_ALIGN (STACK_POINTER_REGNUM) = STACK_BOUNDARY / BITS_PER_UNIT;
   REGNO_POINTER_ALIGN (FRAME_POINTER_REGNUM) = STACK_BOUNDARY / BITS_PER_UNIT;
-  REGNO_POINTER_ALIGN (HARD_FRAME_POINTER_REGNUM)
-    = STACK_BOUNDARY / BITS_PER_UNIT;
   REGNO_POINTER_ALIGN (ARG_POINTER_REGNUM) = STACK_BOUNDARY / BITS_PER_UNIT;
 
   REGNO_POINTER_ALIGN (VIRTUAL_INCOMING_ARGS_REGNUM)
@@ -3566,14 +3550,8 @@ init_emit_once (line_numbers)
   PUT_MODE (stack_pointer_rtx, Pmode);
   REGNO (frame_pointer_rtx) = FRAME_POINTER_REGNUM;
   PUT_MODE (frame_pointer_rtx, Pmode);
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-  REGNO (hard_frame_pointer_rtx) = HARD_FRAME_POINTER_REGNUM;
-  PUT_MODE (hard_frame_pointer_rtx, Pmode);
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM && HARD_FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
   REGNO (arg_pointer_rtx) = ARG_POINTER_REGNUM;
   PUT_MODE (arg_pointer_rtx, Pmode);
-#endif
 
   REGNO (virtual_incoming_args_rtx) = VIRTUAL_INCOMING_ARGS_REGNUM;
   PUT_MODE (virtual_incoming_args_rtx, Pmode);

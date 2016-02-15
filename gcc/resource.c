@@ -309,9 +309,6 @@ mark_referenced_resources (x, res, include_delayed_effects)
 	  if (frame_pointer_needed)
 	    {
 	      SET_HARD_REG_BIT (res->regs, FRAME_POINTER_REGNUM);
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-	      SET_HARD_REG_BIT (res->regs, HARD_FRAME_POINTER_REGNUM);
-#endif
 	    }
 
 	  for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
@@ -937,12 +934,6 @@ mark_target_live_regs (insns, target, res)
 		if (call_used_regs[i]
 		    && i != STACK_POINTER_REGNUM && i != FRAME_POINTER_REGNUM
 		    && i != ARG_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-		    && i != HARD_FRAME_POINTER_REGNUM
-#endif
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
-		    && ! (i == ARG_POINTER_REGNUM && fixed_regs[i])
-#endif
 		    )
 		  CLEAR_HARD_REG_BIT (current_live_regs, i);
 
@@ -1093,9 +1084,6 @@ init_resource_info (epilogue_insn)
   if (frame_pointer_needed)
     {
       SET_HARD_REG_BIT (end_of_function_needs.regs, FRAME_POINTER_REGNUM);
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-      SET_HARD_REG_BIT (end_of_function_needs.regs, HARD_FRAME_POINTER_REGNUM);
-#endif
 #ifdef EXIT_IGNORE_STACK
       if (! EXIT_IGNORE_STACK
 	  || current_function_sp_is_unchanging)

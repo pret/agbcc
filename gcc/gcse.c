@@ -2224,13 +2224,7 @@ compute_hash_table (set_p)
 	      for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
 		if ((call_used_regs[regno]
 		     && regno != STACK_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-		     && regno != HARD_FRAME_POINTER_REGNUM
-#endif
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 		     && ! (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
-
 		     && regno != FRAME_POINTER_REGNUM)
 		    || global_regs[regno])
 		  record_last_reg_set_info (insn, regno);
@@ -2678,13 +2672,8 @@ compute_kill_rd ()
                     {
 		      if ((call_used_regs[regno]
 			   && regno != STACK_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-			   && regno != HARD_FRAME_POINTER_REGNUM
-#endif
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 			   && ! (regno == ARG_POINTER_REGNUM
 				 && fixed_regs[regno])
-#endif
 			   && regno != FRAME_POINTER_REGNUM)
 			  || global_regs[regno])
 			handle_rd_kill_set (insn, regno, bb);

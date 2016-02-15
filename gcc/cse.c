@@ -453,18 +453,9 @@ struct table_elt
 /* Determine whether register number N is considered a fixed register for CSE.
    It is desirable to replace other regs with fixed regs, to reduce need for
    non-fixed hard regs.
-   A reg wins if it is either the frame pointer or designated as fixed,
-   but not if it is an overlapping register.  */
-#ifdef OVERLAPPING_REGNO_P
+   A reg wins if it is either the frame pointer or designated as fixed.  */
 #define FIXED_REGNO_P(N)  \
-  (((N) == FRAME_POINTER_REGNUM || (N) == HARD_FRAME_POINTER_REGNUM \
-    || fixed_regs[N] || global_regs[N])	  \
-   && ! OVERLAPPING_REGNO_P ((N)))
-#else
-#define FIXED_REGNO_P(N)  \
-  ((N) == FRAME_POINTER_REGNUM || (N) == HARD_FRAME_POINTER_REGNUM \
-   || fixed_regs[N] || global_regs[N])
-#endif
+  ((N) == FRAME_POINTER_REGNUM || fixed_regs[N] || global_regs[N])
 
 /* Compute cost of X, as stored in the `cost' field of a table_elt.  Fixed
    hard registers and pointers into the frame are the cheapest with a cost
@@ -472,7 +463,7 @@ struct table_elt
    a cost of 2.  Aside from these special cases, call `rtx_cost'.  */
 
 #define CHEAP_REGNO(N) \
-  ((N) == FRAME_POINTER_REGNUM || (N) == HARD_FRAME_POINTER_REGNUM 	\
+  ((N) == FRAME_POINTER_REGNUM	\
    || (N) == STACK_POINTER_REGNUM || (N) == ARG_POINTER_REGNUM	     	\
    || ((N) >= FIRST_VIRTUAL_REGISTER && (N) <= LAST_VIRTUAL_REGISTER) 	\
    || ((N) < FIRST_PSEUDO_REGISTER					\
@@ -569,13 +560,12 @@ struct cse_basic_block_data {
    by integrate.c, which is called before virtual register instantiation.  */
 
 #define FIXED_BASE_PLUS_P(X)					\
-  ((X) == frame_pointer_rtx || (X) == hard_frame_pointer_rtx	\
+  ((X) == frame_pointer_rtx	\
    || (X) == arg_pointer_rtx					\
    || (X) == virtual_stack_vars_rtx				\
    || (X) == virtual_incoming_args_rtx				\
    || (GET_CODE (X) == PLUS && GET_CODE (XEXP (X, 1)) == CONST_INT \
        && (XEXP (X, 0) == frame_pointer_rtx			\
-	   || XEXP (X, 0) == hard_frame_pointer_rtx		\
 	   || XEXP (X, 0) == arg_pointer_rtx			\
 	   || XEXP (X, 0) == virtual_stack_vars_rtx		\
 	   || XEXP (X, 0) == virtual_incoming_args_rtx))	\
@@ -588,12 +578,11 @@ struct cse_basic_block_data {
    the i960, the arg pointer is zero when it is unused.  */
 
 #define NONZERO_BASE_PLUS_P(X)					\
-  ((X) == frame_pointer_rtx || (X) == hard_frame_pointer_rtx	\
+  ((X) == frame_pointer_rtx	\
    || (X) == virtual_stack_vars_rtx				\
    || (X) == virtual_incoming_args_rtx				\
    || (GET_CODE (X) == PLUS && GET_CODE (XEXP (X, 1)) == CONST_INT \
        && (XEXP (X, 0) == frame_pointer_rtx			\
-	   || XEXP (X, 0) == hard_frame_pointer_rtx		\
 	   || XEXP (X, 0) == arg_pointer_rtx			\
 	   || XEXP (X, 0) == virtual_stack_vars_rtx		\
 	   || XEXP (X, 0) == virtual_incoming_args_rtx))	\
@@ -1997,7 +1986,6 @@ canon_hash (x, mode)
 		|| (SMALL_REGISTER_CLASSES
 		    && ! fixed_regs[regno]
 		    && regno != FRAME_POINTER_REGNUM
-		    && regno != HARD_FRAME_POINTER_REGNUM
 		    && regno != ARG_POINTER_REGNUM
 		    && regno != STACK_POINTER_REGNUM)))
 	  {
@@ -2707,11 +2695,10 @@ find_best_addr (insn, loc)
        && GET_CODE (XEXP (addr, 0)) == REG
        && GET_CODE (XEXP (addr, 1)) == CONST_INT
        && (regno = REGNO (XEXP (addr, 0)),
-	   regno == FRAME_POINTER_REGNUM || regno == HARD_FRAME_POINTER_REGNUM
+	   regno == FRAME_POINTER_REGNUM
 	   || regno == ARG_POINTER_REGNUM))
       || (GET_CODE (addr) == REG
 	  && (regno = REGNO (addr), regno == FRAME_POINTER_REGNUM
-	      || regno == HARD_FRAME_POINTER_REGNUM
 	      || regno == ARG_POINTER_REGNUM))
       || GET_CODE (addr) == ADDRESSOF
       || CONSTANT_ADDRESS_P (addr))
@@ -7253,14 +7240,6 @@ cse_insn (insn, libcall_insn)
 
       if (GET_CODE (dest) == MEM)
 	{
-#ifdef PUSH_ROUNDING
-	  /* Stack pushes invalidate the stack pointer.  */
-	  rtx addr = XEXP (dest, 0);
-	  if ((GET_CODE (addr) == PRE_DEC || GET_CODE (addr) == PRE_INC
-	       || GET_CODE (addr) == POST_DEC || GET_CODE (addr) == POST_INC)
-	      && XEXP (addr, 0) == stack_pointer_rtx)
-	    invalidate (stack_pointer_rtx, Pmode);
-#endif
 	  dest = fold_rtx (dest, insn);
 	}
 
@@ -8624,12 +8603,7 @@ cse_main (f, nregs, after_loop, file)
 
 	 && i != STACK_POINTER_REGNUM
 	 && i != FRAME_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	 && i != HARD_FRAME_POINTER_REGNUM
-#endif
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 	 && ! (i == ARG_POINTER_REGNUM && fixed_regs[i])
-#endif
 	 )
 	|| global_regs[i])
       SET_HARD_REG_BIT (regs_invalidated_by_call, i);

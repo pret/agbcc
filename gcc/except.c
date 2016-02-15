@@ -2807,7 +2807,7 @@ expand_eh_return ()
   /* Set the return address to the stub label.  */
 
   ra = expand_builtin_return_addr (BUILT_IN_RETURN_ADDRESS,
-				   0, hard_frame_pointer_rtx);
+				   0, frame_pointer_rtx);
   if (GET_CODE (ra) == REG && REGNO (ra) >= FIRST_PSEUDO_REGISTER)
     abort();
 

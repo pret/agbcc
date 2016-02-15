@@ -1427,10 +1427,6 @@ init_alias_analysis ()
 	= gen_rtx_ADDRESS (Pmode, arg_pointer_rtx);
       new_reg_base_value[FRAME_POINTER_REGNUM]
 	= gen_rtx_ADDRESS (Pmode, frame_pointer_rtx);
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-      new_reg_base_value[HARD_FRAME_POINTER_REGNUM]
-	= gen_rtx_ADDRESS (Pmode, hard_frame_pointer_rtx);
-#endif
       if (struct_value_incoming_rtx
 	  && GET_CODE (struct_value_incoming_rtx) == REG)
 	new_reg_base_value[REGNO (struct_value_incoming_rtx)]

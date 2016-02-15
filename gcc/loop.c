@@ -3197,7 +3197,7 @@ invariant_p (x)
       /* We used to check RTX_UNCHANGING_P (x) here, but that is invalid
 	 since the reg might be set by initialization within the loop.  */
 
-      if ((x == frame_pointer_rtx || x == hard_frame_pointer_rtx
+      if ((x == frame_pointer_rtx
 	   || x == arg_pointer_rtx)
 	  && ! current_function_has_nonlocal_goto)
 	return 1;

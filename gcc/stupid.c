@@ -500,13 +500,8 @@ stupid_find_reg (call_preserved, class, mode,
      int changes_size ATTRIBUTE_UNUSED;
 {
   register int i, ins;
-#ifdef HARD_REG_SET
-  register		/* Declare them register if they are scalars.  */
-#endif
     HARD_REG_SET used, this_reg;
-#ifdef ELIMINABLE_REGS
   static struct {int from, to; } eliminables[] = ELIMINABLE_REGS;
-#endif
 
   /* If this register's life is more than 5,000 insns, we probably
      can't allocate it, so don't waste the time trying.  This avoids
@@ -518,15 +513,8 @@ stupid_find_reg (call_preserved, class, mode,
   COPY_HARD_REG_SET (used,
 		     call_preserved ? call_used_reg_set : fixed_reg_set);
 
-#ifdef ELIMINABLE_REGS
   for (i = 0; i < (int)(sizeof eliminables / sizeof eliminables[0]); i++)
     SET_HARD_REG_BIT (used, eliminables[i].from);
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-  SET_HARD_REG_BIT (used, HARD_FRAME_POINTER_REGNUM);
-#endif
-#else
-  SET_HARD_REG_BIT (used, FRAME_POINTER_REGNUM);
-#endif
 
   for (ins = born_insn; ins < dead_insn; ins++)
     IOR_HARD_REG_SET (used, after_insn_hard_regs[ins]);

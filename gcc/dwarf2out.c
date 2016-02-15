@@ -517,7 +517,7 @@ static void dwarf2out_stack_adjust	PROTO((rtx));
 rtx
 expand_builtin_dwarf_fp_regnum ()
 {
-  return GEN_INT (DWARF_FRAME_REGNUM (HARD_FRAME_POINTER_REGNUM));
+  return GEN_INT (DWARF_FRAME_REGNUM (FRAME_POINTER_REGNUM));
 }
 
 /* The offset from the incoming value of %sp to the top of the stack frame
@@ -1257,7 +1257,7 @@ dwarf2out_frame_debug (insn)
 	    abort ();
 	  if (REGNO (dest) != STACK_POINTER_REGNUM
 	      && !(frame_pointer_needed
-		   && REGNO (dest) == HARD_FRAME_POINTER_REGNUM))
+		   && REGNO (dest) == FRAME_POINTER_REGNUM))
 	    abort ();
 	  cfa_reg = REGNO (dest);
 	  break;
@@ -1281,10 +1281,10 @@ dwarf2out_frame_debug (insn)
 		  abort ();
 		}
 
-	      if (XEXP (src, 0) == hard_frame_pointer_rtx)
+	      if (XEXP (src, 0) == frame_pointer_rtx)
 		{
 		  /* Restoring SP from FP in the epilogue.  */
-		  if (cfa_reg != (unsigned) HARD_FRAME_POINTER_REGNUM)
+		  if (cfa_reg != (unsigned) FRAME_POINTER_REGNUM)
 		    abort ();
 		  cfa_reg = STACK_POINTER_REGNUM;
 		}
@@ -1298,12 +1298,12 @@ dwarf2out_frame_debug (insn)
 	      if (cfa_store_reg == STACK_POINTER_REGNUM)
 		cfa_store_offset += offset;
 	    }
-          else if (dest == hard_frame_pointer_rtx)
+          else if (dest == frame_pointer_rtx)
             {
               /* Either setting the FP from an offset of the SP,
                  or adjusting the FP */
 	      if (! frame_pointer_needed
-		  || REGNO (dest) != HARD_FRAME_POINTER_REGNUM)
+		  || REGNO (dest) != FRAME_POINTER_REGNUM)
 		abort ();
 
               if (XEXP (src, 0) == stack_pointer_rtx
@@ -1315,12 +1315,12 @@ dwarf2out_frame_debug (insn)
                   if (GET_CODE (src) == PLUS)
                     offset = -offset;
                   cfa_offset += offset;
-                  cfa_reg = HARD_FRAME_POINTER_REGNUM;
+                  cfa_reg = FRAME_POINTER_REGNUM;
                 }
-              else if (XEXP (src, 0) == hard_frame_pointer_rtx
+              else if (XEXP (src, 0) == frame_pointer_rtx
                        && GET_CODE (XEXP (src, 1)) == CONST_INT)
                 {
-		  if (cfa_reg != (unsigned) HARD_FRAME_POINTER_REGNUM)
+		  if (cfa_reg != (unsigned) FRAME_POINTER_REGNUM)
 		    abort ();
                   offset = INTVAL (XEXP (src, 1));
                   if (GET_CODE (src) == PLUS)
@@ -6426,7 +6426,7 @@ based_loc_descr (reg, offset)
      registers, since the RTL for local variables is relative to one of
      them.  */
   register unsigned fp_reg = DBX_REGISTER_NUMBER (frame_pointer_needed
-						  ? HARD_FRAME_POINTER_REGNUM
+						  ? FRAME_POINTER_REGNUM
 						  : STACK_POINTER_REGNUM);
 
   if (reg == fp_reg)
@@ -8323,7 +8323,7 @@ gen_subprogram_die (decl, context_die)
          frame pointer or stack pointer registers, since the RTL for local
          variables is relative to one of them.  */
       fp_reg
-	= frame_pointer_needed ? hard_frame_pointer_rtx : stack_pointer_rtx;
+	= frame_pointer_needed ? frame_pointer_rtx : stack_pointer_rtx;
       add_AT_loc (subr_die, DW_AT_frame_base, reg_loc_descriptor (fp_reg));
 
 #if 0

@@ -2518,9 +2518,6 @@ fixup_stack_1 (x, insn)
 	  && ((REGNO (XEXP (ad, 0)) >= FIRST_VIRTUAL_REGISTER
 	       && REGNO (XEXP (ad, 0)) <= LAST_VIRTUAL_REGISTER)
 	      || REGNO (XEXP (ad, 0)) == FRAME_POINTER_REGNUM
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	      || REGNO (XEXP (ad, 0)) == HARD_FRAME_POINTER_REGNUM
-#endif
 	      || REGNO (XEXP (ad, 0)) == STACK_POINTER_REGNUM
 	      || REGNO (XEXP (ad, 0)) == ARG_POINTER_REGNUM
 	      || XEXP (ad, 0) == current_function_internal_arg_pointer)
@@ -3531,24 +3528,14 @@ instantiate_virtual_regs_1 (loc, object, extra_insns)
 
       temp = XEXP (x, 0);
       if (CONSTANT_ADDRESS_P (temp)
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	  || temp == arg_pointer_rtx
-#endif
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	  || temp == hard_frame_pointer_rtx
-#endif
 	  || temp == frame_pointer_rtx)
 	return 1;
 
       if (GET_CODE (temp) == PLUS
 	  && CONSTANT_ADDRESS_P (XEXP (temp, 1))
 	  && (XEXP (temp, 0) == frame_pointer_rtx
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	      || XEXP (temp, 0) == hard_frame_pointer_rtx
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	      || XEXP (temp, 0) == arg_pointer_rtx
-#endif
 	      ))
 	return 1;
 
@@ -4911,10 +4898,6 @@ locate_and_pad_parm (passed_mode, type, in_regs, fndecl,
   pad_to_arg_alignment (initial_offset_ptr, boundary);
   *offset_ptr = *initial_offset_ptr;
 
-#ifdef PUSH_ROUNDING
-  if (passed_mode != BLKmode)
-    sizetree = size_int (PUSH_ROUNDING (TREE_INT_CST_LOW (sizetree)));
-#endif
 
   /* Pad_below needs the pre-rounded size to know how much to pad below
      so this must be done before rounding up.  */
@@ -5935,7 +5918,7 @@ expand_function_start (subr, parms_have_cleanups)
 			 fun, Pmode,
 			 expand_builtin_return_addr (BUILT_IN_RETURN_ADDRESS,
 						     0,
-						     hard_frame_pointer_rtx),
+						     frame_pointer_rtx),
 			 Pmode);
     }
 
@@ -6233,7 +6216,7 @@ expand_function_end (filename, line, end_bindings)
 			 fun, Pmode,
 			 expand_builtin_return_addr (BUILT_IN_RETURN_ADDRESS,
 						     0,
-						     hard_frame_pointer_rtx),
+						     frame_pointer_rtx),
 			 Pmode);
     }
 

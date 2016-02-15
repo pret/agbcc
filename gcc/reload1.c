@@ -323,17 +323,7 @@ static struct elim_table_1
 {
   int from;
   int to;
-} reg_eliminate_1[] =
-
-/* If a set of eliminable registers was specified, define the table from it.
-   Otherwise, default to the normal case of the frame pointer being
-   replaced by the stack pointer.  */
-
-#ifdef ELIMINABLE_REGS
-  ELIMINABLE_REGS;
-#else
-  {{ FRAME_POINTER_REGNUM, STACK_POINTER_REGNUM}};
-#endif
+} reg_eliminate_1[] = ELIMINABLE_REGS;
 
 #define NUM_ELIMINABLE_REGS (sizeof reg_eliminate_1/sizeof reg_eliminate_1[0])
 
@@ -478,7 +468,7 @@ init_reload ()
   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
       tem = gen_rtx_PLUS (Pmode,
-			  gen_rtx_REG (Pmode, HARD_FRAME_POINTER_REGNUM),
+			  gen_rtx_REG (Pmode, FRAME_POINTER_REGNUM),
 			  gen_rtx_REG (Pmode, i));
       /* This way, we make sure that reg+reg is an offsettable address.  */
       tem = plus_constant (tem, 4);
@@ -610,10 +600,6 @@ reload (first, global, dumpfile)
   /* Enable find_equiv_reg to distinguish insns made by reload.  */
   reload_first_uid = get_max_uid ();
 
-#ifdef SECONDARY_MEMORY_NEEDED
-  /* Initialize the secondary memory table.  */
-  clear_secondary_mem ();
-#endif
 
   /* We don't have a stack slot for any spill reg yet.  */
   zero_memory ((char *) spill_stack_slot, sizeof spill_stack_slot);
@@ -838,10 +824,6 @@ reload (first, global, dumpfile)
     if (! ep->can_eliminate)
       spill_hard_reg (ep->from, dumpfile, 1);
 
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-  if (frame_pointer_needed)
-    spill_hard_reg (HARD_FRAME_POINTER_REGNUM, dumpfile, 1);
-#endif
   finish_spills (global, dumpfile);
 
   /* From now on, we may need to generate moves differently.  We may also
@@ -1056,7 +1038,7 @@ reload (first, global, dumpfile)
   if (! frame_pointer_needed)
     for (i = 0; i < n_basic_blocks; i++)
       CLEAR_REGNO_REG_SET (basic_block_live_at_start[i],
-			   HARD_FRAME_POINTER_REGNUM);
+			   FRAME_POINTER_REGNUM);
 
   /* Come here (with failure set nonzero) if we can't get enough spill regs
      and we decide not to abort about it.  */
@@ -2802,10 +2784,6 @@ eliminate_regs (x, mem_mode, insn)
 	    int size = GET_MODE_SIZE (mem_mode);
 
 	    /* If more bytes than MEM_MODE are pushed, account for them.  */
-#ifdef PUSH_ROUNDING
-	    if (ep->to_rtx == stack_pointer_rtx)
-	      size = PUSH_ROUNDING (size);
-#endif
 	    if (code == PRE_DEC || code == POST_DEC)
 	      ep->offset += size;
 	    else
@@ -2840,30 +2818,7 @@ eliminate_regs (x, mem_mode, insn)
 	  && reg_equiv_memory_loc != 0
 	  && reg_equiv_memory_loc[REGNO (SUBREG_REG (x))] != 0)
 	{
-#if 0
-	  new = eliminate_regs (reg_equiv_memory_loc[REGNO (SUBREG_REG (x))],
-				mem_mode, insn);
-
-	  /* If we didn't change anything, we must retain the pseudo.  */
-	  if (new == reg_equiv_memory_loc[REGNO (SUBREG_REG (x))])
-	    new = SUBREG_REG (x);
-	  else
-	    {
-	      /* In this case, we must show that the pseudo is used in this
-		 insn so that delete_output_reload will do the right thing.  */
-	      if (insn != 0 && GET_CODE (insn) != EXPR_LIST
-		  && GET_CODE (insn) != INSN_LIST)
-		REG_NOTES (emit_insn_before (gen_rtx_USE (VOIDmode,
-							  SUBREG_REG (x)),
-							  insn))
-		  = gen_rtx_EXPR_LIST (REG_EQUAL, new, NULL_RTX);
-
-	      /* Ensure NEW isn't shared in case we have to reload it.  */
-	      new = copy_rtx (new);
-	    }
-#else
 	  new = SUBREG_REG (x);
-#endif
 	}
       else
 	new = eliminate_regs (SUBREG_REG (x), mem_mode, insn);
@@ -2875,8 +2830,7 @@ eliminate_regs (x, mem_mode, insn)
 
 	  if (GET_CODE (new) == MEM
 	      && ((x_size < new_size
-#ifdef WORD_REGISTER_OPERATIONS
-		   /* On these machines, combine can create rtl of the form
+		   /* Since THUMB has WORD_REGISTER_OPERATIONS, combine can create rtl of the form
 		      (set (subreg:m1 (reg:m2 R) 0) ...)
 		      where m1 < m2, and expects something interesting to 
 		      happen to the entire word.  Moreover, it will use the
@@ -2884,7 +2838,6 @@ eliminate_regs (x, mem_mode, insn)
 		      So if the number of words is the same, preserve the 
 		      subreg so that push_reloads can see it.  */
 		   && ! ((x_size-1)/UNITS_PER_WORD == (new_size-1)/UNITS_PER_WORD)
-#endif
 		   )
 		  || (x_size == new_size))
 	      )
@@ -2992,7 +2945,7 @@ eliminate_regs (x, mem_mode, insn)
 	  for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS];
 	       ep++)
 	    if (ep->to_rtx == SET_DEST (x)
-		&& SET_DEST (x) != hard_frame_pointer_rtx)
+		&& SET_DEST (x) != frame_pointer_rtx)
 	      {
 		/* If it is being incremented, adjust the offset.  Otherwise,
 		   this elimination can't be done.  */
@@ -3144,72 +3097,6 @@ eliminate_regs_in_insn (insn, replace)
       for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
 	if (ep->from_rtx == SET_DEST (old_set) && ep->can_eliminate)
 	  {
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-	    /* If this is setting the frame pointer register to the
-	       hardware frame pointer register and this is an elimination
-	       that will be done (tested above), this insn is really
-	       adjusting the frame pointer downward to compensate for
-	       the adjustment done before a nonlocal goto.  */
-	    if (ep->from == FRAME_POINTER_REGNUM
-		&& ep->to == HARD_FRAME_POINTER_REGNUM)
-	      {
-		rtx src = SET_SRC (old_set);
-		int offset = 0, ok = 0;
-		rtx prev_insn, prev_set;
-
-		if (src == ep->to_rtx)
-		  offset = 0, ok = 1;
-		else if (GET_CODE (src) == PLUS
-			 && GET_CODE (XEXP (src, 0)) == CONST_INT
-			 && XEXP (src, 1) == ep->to_rtx)
-		  offset = INTVAL (XEXP (src, 0)), ok = 1;
-		else if (GET_CODE (src) == PLUS
-			 && GET_CODE (XEXP (src, 1)) == CONST_INT
-			 && XEXP (src, 0) == ep->to_rtx)
-		  offset = INTVAL (XEXP (src, 1)), ok = 1;
-		else if ((prev_insn = prev_nonnote_insn (insn)) != 0
-			 && (prev_set = single_set (prev_insn)) != 0
-			 && rtx_equal_p (SET_DEST (prev_set), src))
-		  {
-		    src = SET_SRC (prev_set);
-		    if (src == ep->to_rtx)
-		      offset = 0, ok = 1;
-		    else if (GET_CODE (src) == PLUS
-			     && GET_CODE (XEXP (src, 0)) == CONST_INT
-			     && XEXP (src, 1) == ep->to_rtx)
-		      offset = INTVAL (XEXP (src, 0)), ok = 1;
-		    else if (GET_CODE (src) == PLUS
-			     && GET_CODE (XEXP (src, 1)) == CONST_INT
-			     && XEXP (src, 0) == ep->to_rtx)
-		      offset = INTVAL (XEXP (src, 1)), ok = 1;
-		  }
-
-		if (ok)
-		  {
-		    if (replace)
-		      {
-			rtx src
-			  = plus_constant (ep->to_rtx, offset - ep->offset);
-
-			/* First see if this insn remains valid when we
-			   make the change.  If not, keep the INSN_CODE
-			   the same and let reload fit it up.  */
-			validate_change (insn, &SET_SRC (old_set), src, 1);
-			validate_change (insn, &SET_DEST (old_set),
-					 ep->to_rtx, 1);
-			if (! apply_change_group ())
-			  {
-			    SET_SRC (old_set) = src;
-			    SET_DEST (old_set) = ep->to_rtx;
-			  }
-		      }
-
-		    val = 1;
-		    goto done;
-		  }
-	      }
-#endif
-
 	    /* In this case this insn isn't serving a useful purpose.  We
 	       will delete it in reload_as_needed once we know that this
 	       elimination is, in fact, being done.
@@ -3397,7 +3284,7 @@ mark_not_eliminable (dest, x)
   if (GET_CODE (dest) == SUBREG)
     dest = SUBREG_REG (dest);
 
-  if (dest == hard_frame_pointer_rtx)
+  if (dest == frame_pointer_rtx)
     return;
 
   for (i = 0; i < NUM_ELIMINABLE_REGS; i++)
@@ -3421,8 +3308,6 @@ static void
 verify_initial_elim_offsets ()
 {
   int t;
-
-#ifdef ELIMINABLE_REGS
   struct elim_table *ep;
 
   for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
@@ -3431,11 +3316,6 @@ verify_initial_elim_offsets ()
       if (t != ep->initial_offset)
 	abort ();
     }
-#else
-  INITIAL_FRAME_POINTER_OFFSET (t);
-  if (t != reg_eliminate[0].initial_offset)
-    abort ();
-#endif  
 }
 
 /* Reset all offsets on eliminable registers to their initial values.  */
@@ -3444,16 +3324,11 @@ set_initial_elim_offsets ()
 {
   struct elim_table *ep = reg_eliminate;
 
-#ifdef ELIMINABLE_REGS
   for (; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
     {
       INITIAL_ELIMINATION_OFFSET (ep->from, ep->to, ep->initial_offset);
       ep->previous_offset = ep->offset = ep->initial_offset;
     }
-#else
-  INITIAL_FRAME_POINTER_OFFSET (ep->initial_offset);
-  ep->previous_offset = ep->offset = ep->initial_offset;
-#endif
 
   num_not_at_initial_offset = 0;
 }
@@ -3505,17 +3380,11 @@ static void
 update_eliminables (pset)
      HARD_REG_SET *pset;
 {
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-  int previous_frame_pointer_needed = frame_pointer_needed;
-#endif
   struct elim_table *ep;
 
   for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
-    if ((ep->from == HARD_FRAME_POINTER_REGNUM && FRAME_POINTER_REQUIRED)
-#ifdef ELIMINABLE_REGS
-	|| ! CAN_ELIMINATE (ep->from, ep->to)
-#endif
-	)
+    if ((ep->from == FRAME_POINTER_REGNUM && FRAME_POINTER_REQUIRED)
+	|| ! CAN_ELIMINATE (ep->from, ep->to))
       ep->can_eliminate = 0;
 
   /* Look for the case where we have discovered that we can't replace
@@ -3561,7 +3430,7 @@ update_eliminables (pset)
   for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
     {
       if (ep->can_eliminate && ep->from == FRAME_POINTER_REGNUM
-	  && ep->to != HARD_FRAME_POINTER_REGNUM)
+	  && ep->to != FRAME_POINTER_REGNUM)
 	frame_pointer_needed = 0;
 
       if (! ep->can_eliminate && ep->can_eliminate_previous)
@@ -3571,13 +3440,6 @@ update_eliminables (pset)
 	  num_eliminable--;
 	}
     }
-
-#if HARD_FRAME_POINTER_REGNUM != FRAME_POINTER_REGNUM
-  /* If we didn't need a frame pointer last time, but we do now, spill
-     the hard frame pointer.  */
-  if (frame_pointer_needed && ! previous_frame_pointer_needed)
-    SET_HARD_REG_BIT (*pset, HARD_FRAME_POINTER_REGNUM);
-#endif
 }
 
 /* Initialize the table of registers to eliminate.  */
@@ -3585,9 +3447,7 @@ static void
 init_elim_table ()
 {
   struct elim_table *ep;
-#ifdef ELIMINABLE_REGS
   struct elim_table_1 *ep1;
-#endif
 
   if (!reg_eliminate)
     {
@@ -3599,36 +3459,17 @@ init_elim_table ()
   
   /* Does this function require a frame pointer?  */
 
-  frame_pointer_needed = (! flag_omit_frame_pointer
-#ifdef EXIT_IGNORE_STACK
-			  /* ?? If EXIT_IGNORE_STACK is set, we will not save
-			     and restore sp for alloca.  So we can't eliminate
-			     the frame pointer in that case.  At some point,
-			     we should improve this by emitting the
-			     sp-adjusting insns for this case.  */
-			  || (current_function_calls_alloca
-			      && EXIT_IGNORE_STACK)
-#endif
-			  || FRAME_POINTER_REQUIRED);
+  frame_pointer_needed = (! flag_omit_frame_pointer || FRAME_POINTER_REQUIRED);
 
   num_eliminable = 0;
 
-#ifdef ELIMINABLE_REGS
   for (ep = reg_eliminate, ep1 = reg_eliminate_1;
        ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++, ep1++)
     {
       ep->from = ep1->from;
       ep->to = ep1->to;
-      ep->can_eliminate = ep->can_eliminate_previous
-	= (CAN_ELIMINATE (ep->from, ep->to)
-	   && ! (ep->to == STACK_POINTER_REGNUM && frame_pointer_needed));
+      ep->can_eliminate = ep->can_eliminate_previous = (CAN_ELIMINATE (ep->from, ep->to) && ! (ep->to == STACK_POINTER_REGNUM && frame_pointer_needed));
     }
-#else
-  reg_eliminate[0].from = reg_eliminate_1[0].from;
-  reg_eliminate[0].to = reg_eliminate_1[0].to;
-  reg_eliminate[0].can_eliminate = reg_eliminate[0].can_eliminate_previous
-    = ! frame_pointer_needed;
-#endif
 
   /* Count the number of eliminable registers and build the FROM and TO
      REG rtx's.  Note that code in gen_rtx will cause, e.g.,
@@ -4290,13 +4131,6 @@ reload_as_needed (live_known)
 
       /* In case registers overlap, allow certain insns to invalidate
 	 particular hard registers.  */
-
-#ifdef INSN_CLOBBERS_REGNO_P
-      for (i = 0 ; i < FIRST_PSEUDO_REGISTER; i++)
-	if (TEST_HARD_REG_BIT (reg_reloaded_valid, i)
-	    && INSN_CLOBBERS_REGNO_P (insn, i))
-	  CLEAR_HARD_REG_BIT (reg_reloaded_valid, i);
-#endif
 
 #ifdef USE_C_ALLOCA
       alloca (0);
@@ -5743,10 +5577,6 @@ choose_reload_regs (chain)
 								last_reg)
 				  == NO_REGS)
 #endif
-#ifdef SECONDARY_MEMORY_NEEDED
-			      && ! SECONDARY_MEMORY_NEEDED (last_class, class,
-							    mode)
-#endif
 			      ))
 
 		      && (reload_nregs[r] == max_group_size
@@ -5797,7 +5627,7 @@ choose_reload_regs (chain)
 				  && reload_out[r]
 				  && ! TEST_HARD_REG_BIT (reg_reloaded_dead, i))
 			      /* Don't clobber the frame pointer.  */
-			      || (i == HARD_FRAME_POINTER_REGNUM
+			      || (i == FRAME_POINTER_REGNUM
 				  && reload_out[r])
 			      /* Don't really use the inherited spill reg
 				 if we need it wider than we've got it.  */
@@ -5933,7 +5763,7 @@ choose_reload_regs (chain)
 
 	      /* If we found an equivalent reg, say no code need be generated
 		 to load it, and use it as our reload reg.  */
-	      if (equiv != 0 && regno != HARD_FRAME_POINTER_REGNUM)
+	      if (equiv != 0 && regno != FRAME_POINTER_REGNUM)
 		{
 		  int nr = HARD_REGNO_NREGS (regno, reload_mode[r]);
 		  int k;
@@ -6487,11 +6317,6 @@ emit_reload_insns (chain)
 		      || (SECONDARY_INPUT_RELOAD_CLASS (reload_reg_class[j],
 							mode, oldequiv)
 			  != NO_REGS)
-#endif
-#ifdef SECONDARY_MEMORY_NEEDED
-		      || SECONDARY_MEMORY_NEEDED (REGNO_REG_CLASS (regno),
-						  reload_reg_class[j],
-						  mode)
 #endif
 		      ))
 		oldequiv = 0;
@@ -7678,27 +7503,6 @@ gen_reload (out, in, opnum, type)
       REG_NOTES (insn) = gen_rtx_EXPR_LIST (REG_EQUIV, in, REG_NOTES (insn));
     }
 
-#ifdef SECONDARY_MEMORY_NEEDED
-  /* If we need a memory location to do the move, do it that way.  */
-  else if (GET_CODE (in) == REG && REGNO (in) < FIRST_PSEUDO_REGISTER
-	   && GET_CODE (out) == REG && REGNO (out) < FIRST_PSEUDO_REGISTER
-	   && SECONDARY_MEMORY_NEEDED (REGNO_REG_CLASS (REGNO (in)),
-				       REGNO_REG_CLASS (REGNO (out)),
-				       GET_MODE (out)))
-    {
-      /* Get the memory to use and rewrite both registers to its mode.  */
-      rtx loc = get_secondary_mem (in, GET_MODE (out), opnum, type);
-
-      if (GET_MODE (loc) != GET_MODE (out))
-	out = gen_rtx_REG (GET_MODE (loc), REGNO (out));
-
-      if (GET_MODE (loc) != GET_MODE (in))
-	in = gen_rtx_REG (GET_MODE (loc), REGNO (in));
-
-      gen_reload (loc, in, opnum, type);
-      gen_reload (out, loc, opnum, type);
-    }
-#endif
 
   /* If IN is a simple operand, use gen_move_insn.  */
   else if (GET_RTX_CLASS (GET_CODE (in)) == 'o' || GET_CODE (in) == SUBREG)

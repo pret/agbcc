@@ -49,13 +49,6 @@ Boston, MA 02111-1307, USA.  */
    They should if the stack and args grow in opposite directions, but
    only if we have push insns.  */
 
-#ifdef PUSH_ROUNDING
-
-#if defined (STACK_GROWS_DOWNWARD) != defined (ARGS_GROW_DOWNWARD)
-#define PUSH_ARGS_REVERSED	/* If it's last to first */
-#endif
-
-#endif
 
 #ifndef STACK_PUSH_CODE
 #ifdef STACK_GROWS_DOWNWARD
@@ -2663,16 +2656,6 @@ emit_move_insn_1 (x, y)
     {
       rtx last_insn = 0;
       
-#ifdef PUSH_ROUNDING
-
-      /* If X is a push on the stack, do the push now and replace
-	 X with a reference to the stack pointer.  */
-      if (push_operand (x, GET_MODE (x)))
-	{
-	  anti_adjust_stack (GEN_INT (GET_MODE_SIZE (GET_MODE (x))));
-	  x = change_address (x, VOIDmode, stack_pointer_rtx);
-	}
-#endif
 			     
       /* Show the output dies here.  This is necessary for pseudos;
 	 hard regs shouldn't appear here except as return values.
@@ -2889,56 +2872,6 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 	 by setting SKIP to 0.  */
       skip = (reg_parm_stack_space == 0) ? 0 : used;
 
-#ifdef PUSH_ROUNDING
-      /* Do it with several push insns if that doesn't take lots of insns
-	 and if there is no difficulty with push insns that skip bytes
-	 on the stack for alignment purposes.  */
-      if (args_addr == 0
-	  && GET_CODE (size) == CONST_INT
-	  && skip == 0
-	  && (MOVE_BY_PIECES_P ((unsigned) INTVAL (size) - used, align))
-	  /* Here we avoid the case of a structure whose weak alignment
-	     forces many pushes of a small amount of data,
-	     and such small pushes do rounding that causes trouble.  */
-	  && ((! SLOW_UNALIGNED_ACCESS)
-	      || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT
-	      || PUSH_ROUNDING (align) == align)
-	  && PUSH_ROUNDING (INTVAL (size)) == INTVAL (size))
-	{
-	  /* Push padding now if padding above and stack grows down,
-	     or if padding below and stack grows up.
-	     But if space already allocated, this has already been done.  */
-	  if (extra && args_addr == 0
-	      && where_pad != none && where_pad != stack_direction)
-	    anti_adjust_stack (GEN_INT (extra));
-
-	  move_by_pieces (gen_rtx_MEM (BLKmode, gen_push_operand ()), xinner,
-			  INTVAL (size) - used, align);
-
-	  if (current_function_check_memory_usage && ! in_check_memory_usage)
-	    {
-	      rtx temp;
-	      
-	      in_check_memory_usage = 1;
-	      temp = get_push_address (INTVAL(size) - used);
-	      if (GET_CODE (x) == MEM && type && AGGREGATE_TYPE_P (type))
-		emit_library_call (chkr_copy_bitmap_libfunc, 1, VOIDmode, 3,
-				   temp, ptr_mode,
-				   XEXP (xinner, 0), ptr_mode,
-				   GEN_INT (INTVAL(size) - used),
-				   TYPE_MODE (sizetype));
-	      else
-		emit_library_call (chkr_set_right_libfunc, 1, VOIDmode, 3,
-				   temp, ptr_mode,
-			 	   GEN_INT (INTVAL(size) - used),
-				   TYPE_MODE (sizetype),
-				   GEN_INT (MEMORY_USE_RW),
-				   TYPE_MODE (integer_type_node));
-	      in_check_memory_usage = 0;
-	    }
-	}
-      else
-#endif /* PUSH_ROUNDING */
 	{
 	  /* Otherwise make space on the stack and copy the data
 	     to the address of that space.  */
@@ -3143,11 +3076,6 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 	  && where_pad != none && where_pad != stack_direction)
 	anti_adjust_stack (GEN_INT (extra));
 
-#ifdef PUSH_ROUNDING
-      if (args_addr == 0)
-	addr = gen_push_operand ();
-      else
-#endif
 	{
 	  if (GET_CODE (args_so_far) == CONST_INT)
 	    addr
@@ -4092,7 +4020,6 @@ store_constructor (exp, target, cleared)
 	      RTX_UNCHANGING_P (to_rtx) = 1;
 	    }
 
-#ifdef WORD_REGISTER_OPERATIONS
 	  /* If this initializes a field that is smaller than a word, at the
 	     start of a word, try to widen it to a full word.
 	     This special case allows us to output C++ member function
@@ -4119,7 +4046,6 @@ store_constructor (exp, target, cleared)
 	      bitsize = BITS_PER_WORD;
 	      mode = word_mode;
 	    }
-#endif
 	  store_constructor_field (to_rtx, bitsize, bitpos,
 				   mode, value, type, cleared);
 	}
@@ -8410,7 +8336,7 @@ expand_builtin_setjmp (buf_addr, target, first_label, next_label)
 
   /* Clobber the FP when we get here, so we have to make sure it's
      marked as used by this function.  */
-  emit_insn (gen_rtx_USE (VOIDmode, hard_frame_pointer_rtx));
+  emit_insn (gen_rtx_USE (VOIDmode, frame_pointer_rtx));
 
   /* Mark the static chain as clobbered here so life information
      doesn't get messed up for it.  */
@@ -8422,22 +8348,19 @@ expand_builtin_setjmp (buf_addr, target, first_label, next_label)
 #ifdef HAVE_nonlocal_goto
   if (! HAVE_nonlocal_goto)
 #endif
-    emit_move_insn (virtual_stack_vars_rtx, hard_frame_pointer_rtx);
+    emit_move_insn (virtual_stack_vars_rtx, frame_pointer_rtx);
 
-#if ARG_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
   if (fixed_regs[ARG_POINTER_REGNUM])
     {
-#ifdef ELIMINABLE_REGS
       size_t i;
       static struct elims {int from, to;} elim_regs[] = ELIMINABLE_REGS;
 
       for (i = 0; i < sizeof elim_regs / sizeof elim_regs[0]; i++)
 	if (elim_regs[i].from == ARG_POINTER_REGNUM
-	    && elim_regs[i].to == HARD_FRAME_POINTER_REGNUM)
+	    && elim_regs[i].to == FRAME_POINTER_REGNUM)
 	  break;
 
       if (i == sizeof elim_regs / sizeof elim_regs [0])
-#endif
 	{
 	  /* Now restore our arg pointer from the address at which it
 	     was saved in our stack frame.
@@ -8450,7 +8373,6 @@ expand_builtin_setjmp (buf_addr, target, first_label, next_label)
 			  copy_to_reg (arg_pointer_save_area));
 	}
     }
-#endif
 
 #ifdef HAVE_builtin_setjmp_receiver
   if (HAVE_builtin_setjmp_receiver)
@@ -8520,10 +8442,10 @@ expand_builtin_longjmp (buf_addr, value)
 	{
 	  lab = copy_to_reg (lab);
 
-	  emit_move_insn (hard_frame_pointer_rtx, fp);
+	  emit_move_insn (frame_pointer_rtx, fp);
 	  emit_stack_restore (SAVE_NONLOCAL, stack, NULL_RTX);
 
-	  emit_insn (gen_rtx_USE (VOIDmode, hard_frame_pointer_rtx));
+	  emit_insn (gen_rtx_USE (VOIDmode, frame_pointer_rtx));
 	  emit_insn (gen_rtx_USE (VOIDmode, stack_pointer_rtx));
 	  emit_indirect_jump (lab);
 	}
@@ -9059,7 +8981,7 @@ expand_builtin (exp, target, subtarget, mode, ignore)
 	{
 	  rtx tem = expand_builtin_return_addr (DECL_FUNCTION_CODE (fndecl),
 						TREE_INT_CST_LOW (TREE_VALUE (arglist)),
-						hard_frame_pointer_rtx);
+						frame_pointer_rtx);
 
 	  /* Some ports cannot access arbitrary stack frames.  */
 	  if (tem == NULL)

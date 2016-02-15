@@ -559,13 +559,7 @@ fix_register (name, fixed, call_used)
 
   if ((i = decode_reg_name (name)) >= 0)
     {
-      if ((i == STACK_POINTER_REGNUM
-#ifdef HARD_FRAME_POINTER_REGNUM
-	   || i == HARD_FRAME_POINTER_REGNUM
-#else
-	   || i == FRAME_POINTER_REGNUM
-#endif
-	   )
+      if ((i == STACK_POINTER_REGNUM || i == FRAME_POINTER_REGNUM)
 	  && (fixed == 0 || call_used == 0))
 	{
 	  static char* what_option[2][2] = {

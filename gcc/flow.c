@@ -1352,10 +1352,6 @@ mark_regs_live_at_end (set)
      of each basic block by reload.  */
 
   SET_REGNO_REG_SET (set, FRAME_POINTER_REGNUM);
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-  /* If they are different, also mark the hard frame pointer as live */
-  SET_REGNO_REG_SET (set, HARD_FRAME_POINTER_REGNUM);
-#endif      
 
 
   /* Mark all global registers and all registers used by the epilogue
@@ -2082,15 +2078,10 @@ insn_dead_p (x, needed, call_ok, notes)
 	  if ((regno < FIRST_PSEUDO_REGISTER && global_regs[regno])
 	      /* Make sure insns to set frame pointer aren't deleted.  */
 	      || regno == FRAME_POINTER_REGNUM
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-	      || regno == HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	      /* Make sure insns to set arg pointer are never deleted
 		 (if the arg pointer isn't fixed, there will be a USE for
 		 it, so we can treat it normally).  */
 	      || (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
 	      || REGNO_REG_SET_P (needed, regno))
 	    return 0;
 
@@ -2390,12 +2381,7 @@ mark_set_1 (needed, dead, x, insn, significant)
 
   if (GET_CODE (reg) == REG
       && (regno = REGNO (reg), regno != FRAME_POINTER_REGNUM)
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-      && regno != HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
       && ! (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
       && ! (regno < FIRST_PSEUDO_REGISTER && global_regs[regno]))
     /* && regno != STACK_POINTER_REGNUM) -- let's try without this.  */
     {
@@ -2853,12 +2839,7 @@ mark_used_regs (needed, live, x, final, insn)
 	    /* For stack ptr or fixed arg pointer,
 	       nothing below can be necessary, so waste no more time.  */
 	    if (regno == STACK_POINTER_REGNUM
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-		|| regno == HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 		|| (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
 		|| regno == FRAME_POINTER_REGNUM)
 	      {
 		/* If this is a register we are going to try to eliminate,
@@ -3036,12 +3017,7 @@ mark_used_regs (needed, live, x, final, insn)
 	     && GET_MODE (testreg) == BLKmode)
 	    || (GET_CODE (testreg) == REG
 		&& (regno = REGNO (testreg), regno != FRAME_POINTER_REGNUM)
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-		&& regno != HARD_FRAME_POINTER_REGNUM
-#endif
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 		&& ! (regno == ARG_POINTER_REGNUM && fixed_regs[regno])
-#endif
 		))
 	  /* We used to exclude global_regs here, but that seems wrong.
 	     Storing in them is like storing in mem.  */

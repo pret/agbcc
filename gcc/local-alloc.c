@@ -1914,17 +1914,8 @@ find_free_reg (class, mode, qty, accept_call_clobbered, just_try_suggested,
      to another hard reg.  It can move only regs made by global-alloc.
 
      This is true of any register that can be eliminated.  */
-#ifdef ELIMINABLE_REGS
   for (i = 0; i < (int)(sizeof eliminables / sizeof eliminables[0]); i++)
     SET_HARD_REG_BIT (used, eliminables[i].from);
-#if FRAME_POINTER_REGNUM != HARD_FRAME_POINTER_REGNUM
-  /* If FRAME_POINTER_REGNUM is not a real register, then protect the one
-     that it might be eliminated into.  */
-  SET_HARD_REG_BIT (used, HARD_FRAME_POINTER_REGNUM);
-#endif
-#else
-  SET_HARD_REG_BIT (used, FRAME_POINTER_REGNUM);
-#endif
 
 #ifdef CLASS_CANNOT_CHANGE_SIZE
   if (qty_changes_size[qty])

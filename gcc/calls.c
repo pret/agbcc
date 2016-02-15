@@ -39,13 +39,6 @@ Boston, MA 02111-1307, USA.  */
    They should if the stack and args grow in opposite directions, but
    only if we have push insns.  */
 
-#ifdef PUSH_ROUNDING
-
-#if defined (STACK_GROWS_DOWNWARD) != defined (ARGS_GROW_DOWNWARD)
-#define PUSH_ARGS_REVERSED	/* If it's last to first */
-#endif
-
-#endif
 
 /* Like PREFERRED_STACK_BOUNDARY but in units of bytes, not bits.  */
 #define STACK_BYTES (PREFERRED_STACK_BOUNDARY / BITS_PER_UNIT)
@@ -892,11 +885,7 @@ expand_call (exp, target, ignore)
      So the entire argument block must then be preallocated (i.e., we
      ignore PUSH_ROUNDING in that case).  */
 
-#ifdef PUSH_ROUNDING
-  int must_preallocate = 0;
-#else
   int must_preallocate = 1;
-#endif
 
   /* Size of the stack reserved for parameter registers.  */
   int reg_parm_stack_space = 0;
@@ -1007,10 +996,6 @@ expand_call (exp, target, ignore)
 #endif
 #endif
 
-#if defined(PUSH_ROUNDING) && ! defined(OUTGOING_REG_PARM_STACK_SPACE)
-  if (reg_parm_stack_space > 0)
-    must_preallocate = 1;
-#endif
 
   /* Warn if this value is an aggregate type,
      regardless of which calling convention we are using for it.  */
@@ -2551,9 +2536,7 @@ emit_library_call VPROTO((rtx orgfun, int no_queue, enum machine_mode outmode,
 
   argblock = virtual_outgoing_args_rtx;
 #else /* not ACCUMULATE_OUTGOING_ARGS */
-#ifndef PUSH_ROUNDING
   argblock = push_block (GEN_INT (args_size.constant), 0, 0);
-#endif
 #endif
 
 #ifdef PUSH_ARGS_REVERSED
@@ -3104,9 +3087,7 @@ emit_library_call_value VPROTO((rtx orgfun, rtx value, int no_queue,
 
   argblock = virtual_outgoing_args_rtx;
 #else /* not ACCUMULATE_OUTGOING_ARGS */
-#ifndef PUSH_ROUNDING
   argblock = push_block (GEN_INT (args_size.constant), 0, 0);
-#endif
 #endif
 
 #ifdef PUSH_ARGS_REVERSED
@@ -3637,9 +3618,6 @@ store_one_arg (arg, argblock, may_be_alloca, variable_size,
       /* Compute how much space the push instruction will push.
 	 On many machines, pushing a byte will advance the stack
 	 pointer by a halfword.  */
-#ifdef PUSH_ROUNDING
-      size = PUSH_ROUNDING (size);
-#endif
       used = size;
 
       /* Compute how much space the argument should get:
