@@ -62,7 +62,7 @@ typedef struct varray_head_tag {
 
 /* Allocate a virtual array with NUM elements, each of which is SIZE bytes
    long, named NAME.  Array elements are zeroed.  */
-extern varray_type varray_init	PROTO ((size_t, size_t, const char *));
+extern varray_type varray_init	(size_t, size_t, const char *);
 
 #define VARRAY_CHAR_INIT(va, num, name) \
   va = varray_init (num, sizeof (char), name)
@@ -124,7 +124,7 @@ extern varray_type varray_init	PROTO ((size_t, size_t, const char *));
   do { if (vp) { free (vp); vp = (varray_type)0; } } while (0)
 
 /* Grow/shrink the virtual array VA to N elements.  */
-extern varray_type varray_grow	PROTO((varray_type, size_t));
+extern varray_type varray_grow	(varray_type, size_t);
 
 #define VARRAY_GROW(VA, N) ((VA) = varray_grow (VA, N))
 

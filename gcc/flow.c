@@ -262,46 +262,46 @@ static rtx mem_set_list;
 static HARD_REG_SET elim_reg_set;
 
 /* Forward declarations */
-static void find_basic_blocks_1		PROTO((rtx, rtx));
-static void add_edge			PROTO((int, int));
-static void add_edge_to_label		PROTO((int, rtx));
-static void make_edges			PROTO((int));
-static void mark_label_ref		PROTO((int, rtx));
-static void delete_unreachable_blocks	PROTO((void));
-static int delete_block			PROTO((int));
-static void life_analysis_1		PROTO((rtx, int));
-static void propagate_block		PROTO((regset, rtx, rtx, int, 
-					       regset, int));
-static int set_noop_p			PROTO((rtx));
-static int noop_move_p			PROTO((rtx));
-static void record_volatile_insns	PROTO((rtx));
-static void mark_regs_live_at_end	PROTO((regset));
-static int insn_dead_p			PROTO((rtx, regset, int, rtx));
-static int libcall_dead_p		PROTO((rtx, regset, rtx, rtx));
-static void mark_set_regs		PROTO((regset, regset, rtx,
-					       rtx, regset));
-static void mark_set_1			PROTO((regset, regset, rtx,
-					       rtx, regset));
+static void find_basic_blocks_1		(rtx, rtx);
+static void add_edge			(int, int);
+static void add_edge_to_label		(int, rtx);
+static void make_edges			(int);
+static void mark_label_ref		(int, rtx);
+static void delete_unreachable_blocks	(void);
+static int delete_block			(int);
+static void life_analysis_1		(rtx, int);
+static void propagate_block		(regset, rtx, rtx, int, 
+					       regset, int);
+static int set_noop_p			(rtx);
+static int noop_move_p			(rtx);
+static void record_volatile_insns	(rtx);
+static void mark_regs_live_at_end	(regset);
+static int insn_dead_p			(rtx, regset, int, rtx);
+static int libcall_dead_p		(rtx, regset, rtx, rtx);
+static void mark_set_regs		(regset, regset, rtx,
+					       rtx, regset);
+static void mark_set_1			(regset, regset, rtx,
+					       rtx, regset);
 #ifdef AUTO_INC_DEC
-static void find_auto_inc		PROTO((regset, rtx, rtx));
-static int try_pre_increment_1		PROTO((rtx));
-static int try_pre_increment		PROTO((rtx, rtx, HOST_WIDE_INT));
+static void find_auto_inc		(regset, rtx, rtx);
+static int try_pre_increment_1		(rtx);
+static int try_pre_increment		(rtx, rtx, HOST_WIDE_INT);
 #endif
-static void mark_used_regs		PROTO((regset, regset, rtx, int, rtx));
-void dump_flow_info			PROTO((FILE *));
-static void add_pred_succ		PROTO ((int, int, int_list_ptr *,
-						int_list_ptr *, int *, int *));
-static int_list_ptr alloc_int_list_node PROTO ((int_list_block **));
-static int_list_ptr add_int_list_node   PROTO ((int_list_block **,
-						int_list **, int));
+static void mark_used_regs		(regset, regset, rtx, int, rtx);
+void dump_flow_info			(FILE *);
+static void add_pred_succ		(int, int, int_list_ptr *,
+						int_list_ptr *, int *, int *);
+static int_list_ptr alloc_int_list_node (int_list_block **);
+static int_list_ptr add_int_list_node   (int_list_block **,
+						int_list **, int);
 /* CYGNUS LOCAL LRS */
-void init_regset_vector		PROTO ((regset *, int,
-						struct obstack *));
-static void count_reg_sets_1		PROTO ((rtx));
-static void count_reg_sets		PROTO ((rtx));
-static void count_reg_references	PROTO ((rtx));
-static void notice_stack_pointer_modification PROTO ((rtx, rtx));
-static void invalidate_mems_from_autoinc	PROTO ((rtx));
+void init_regset_vector		(regset *, int,
+						struct obstack *);
+static void count_reg_sets_1		(rtx);
+static void count_reg_sets		(rtx);
+static void count_reg_references	(rtx);
+static void notice_stack_pointer_modification (rtx, rtx);
+static void invalidate_mems_from_autoinc	(rtx);
 
 /* Find basic blocks of the current function.
    F is the first insn of the function and NREGS the number of register numbers

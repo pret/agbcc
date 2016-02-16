@@ -50,8 +50,8 @@ typedef struct align_stack
 
 static struct align_stack * alignment_stack = NULL;
 
-static int  push_alignment PROTO((int));
-static int  pop_alignment  PROTO((void));
+static int  push_alignment (int);
+static int  pop_alignment  (void);
 
 /* Push an alignment value onto the stack.  */
 static int
@@ -193,7 +193,7 @@ insert_pack_attributes (node, attributes, prefix)
 #endif /* HANDLE_PRAGMA_PACK_PUSH_POP */
 
 #ifdef HANDLE_PRAGMA_WEAK
-static int add_weak PROTO((char *, char *));
+static int add_weak (char *, char *);
 
 static int
 add_weak (name, value)

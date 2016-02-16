@@ -63,35 +63,35 @@ Boston, MA 02111-1307, USA.  */
 #include "recog.h"
 #include "basic-block.h"
 
-static void compute_antinout 	PROTO ((int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *, sbitmap *));
-static void compute_earlyinout	PROTO ((int, int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *, sbitmap *));
-static void compute_delayinout  PROTO ((int, int, int_list_ptr *, sbitmap *,
+static void compute_antinout 	(int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *, sbitmap *);
+static void compute_earlyinout	(int, int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *, sbitmap *);
+static void compute_delayinout  (int, int, int_list_ptr *, sbitmap *,
 					sbitmap *, sbitmap *,
-					sbitmap *, sbitmap *));
-static void compute_latein	PROTO ((int, int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *));
-static void compute_isoinout	PROTO ((int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *, sbitmap *));
-static void compute_optimal	PROTO ((int, sbitmap *,
-					sbitmap *, sbitmap *));
-static void compute_redundant	PROTO ((int, int, sbitmap *,
-					sbitmap *, sbitmap *, sbitmap *));
+					sbitmap *, sbitmap *);
+static void compute_latein	(int, int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *);
+static void compute_isoinout	(int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *, sbitmap *);
+static void compute_optimal	(int, sbitmap *,
+					sbitmap *, sbitmap *);
+static void compute_redundant	(int, int, sbitmap *,
+					sbitmap *, sbitmap *, sbitmap *);
 
 /* Similarly, but for the reversed flowgraph.  */
-static void compute_avinout 	PROTO ((int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *, sbitmap *));
-static void compute_fartherinout	PROTO ((int, int, int_list_ptr *,
+static void compute_avinout 	(int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *, sbitmap *);
+static void compute_fartherinout	(int, int, int_list_ptr *,
 						sbitmap *, sbitmap *,
-						sbitmap *, sbitmap *));
-static void compute_earlierinout  PROTO ((int, int, int_list_ptr *, sbitmap *,
+						sbitmap *, sbitmap *);
+static void compute_earlierinout  (int, int, int_list_ptr *, sbitmap *,
 					  sbitmap *, sbitmap *,
-					  sbitmap *, sbitmap *));
-static void compute_firstout	PROTO ((int, int, int_list_ptr *, sbitmap *,
-					sbitmap *, sbitmap *));
-static void compute_rev_isoinout PROTO ((int, int_list_ptr *, sbitmap *,
-					 sbitmap *, sbitmap *, sbitmap *));
+					  sbitmap *, sbitmap *);
+static void compute_firstout	(int, int, int_list_ptr *, sbitmap *,
+					sbitmap *, sbitmap *);
+static void compute_rev_isoinout (int, int_list_ptr *, sbitmap *,
+					 sbitmap *, sbitmap *, sbitmap *);
 
 /* Given local properties TRANSP, ANTLOC, return the redundant and optimal
    computation points for expressions.

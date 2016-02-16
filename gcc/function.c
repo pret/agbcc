@@ -346,8 +346,8 @@ static int virtuals_instantiated;
 /* These variables hold pointers to functions to
    save and restore machine-specific data,
    in push_function_context and pop_function_context.  */
-void (*save_machine_status) PROTO((struct function *));
-void (*restore_machine_status) PROTO((struct function *));
+void (*save_machine_status) (struct function *);
+void (*restore_machine_status) (struct function *);
 
 /* Nonzero if we need to distinguish between the return value of this function
    and the return value of a function called by this function.  This helps
@@ -435,45 +435,45 @@ struct fixup_replacement
    
 /* Forward declarations.  */
 
-static rtx assign_outer_stack_local PROTO ((enum machine_mode, HOST_WIDE_INT,
-					    int, struct function *));
-static struct temp_slot *find_temp_slot_from_address  PROTO((rtx));
-static void put_reg_into_stack	PROTO((struct function *, rtx, tree,
+static rtx assign_outer_stack_local (enum machine_mode, HOST_WIDE_INT,
+					    int, struct function *);
+static struct temp_slot *find_temp_slot_from_address  (rtx);
+static void put_reg_into_stack	(struct function *, rtx, tree,
 				       enum machine_mode, enum machine_mode,
-				       int, int, int));
-static void fixup_var_refs	PROTO((rtx, enum machine_mode, int));
+				       int, int, int);
+static void fixup_var_refs	(rtx, enum machine_mode, int);
 static struct fixup_replacement
-  *find_fixup_replacement	PROTO((struct fixup_replacement **, rtx));
-static void fixup_var_refs_insns PROTO((rtx, enum machine_mode, int,
-					rtx, int));
-static void fixup_var_refs_1	PROTO((rtx, enum machine_mode, rtx *, rtx,
-				       struct fixup_replacement **));
-static rtx fixup_memory_subreg	PROTO((rtx, rtx, int));
-static rtx walk_fixup_memory_subreg  PROTO((rtx, rtx, int));
-static rtx fixup_stack_1	PROTO((rtx, rtx));
-static void optimize_bit_field	PROTO((rtx, rtx, rtx *));
-static void instantiate_decls	PROTO((tree, int));
-static void instantiate_decls_1	PROTO((tree, int));
-static void instantiate_decl	PROTO((rtx, int, int));
-static int instantiate_virtual_regs_1 PROTO((rtx *, rtx, int));
-static void delete_handlers	PROTO((void));
-static void pad_to_arg_alignment PROTO((struct args_size *, int));
+  *find_fixup_replacement	(struct fixup_replacement **, rtx);
+static void fixup_var_refs_insns (rtx, enum machine_mode, int,
+					rtx, int);
+static void fixup_var_refs_1	(rtx, enum machine_mode, rtx *, rtx,
+				       struct fixup_replacement **);
+static rtx fixup_memory_subreg	(rtx, rtx, int);
+static rtx walk_fixup_memory_subreg  (rtx, rtx, int);
+static rtx fixup_stack_1	(rtx, rtx);
+static void optimize_bit_field	(rtx, rtx, rtx *);
+static void instantiate_decls	(tree, int);
+static void instantiate_decls_1	(tree, int);
+static void instantiate_decl	(rtx, int, int);
+static int instantiate_virtual_regs_1 (rtx *, rtx, int);
+static void delete_handlers	(void);
+static void pad_to_arg_alignment (struct args_size *, int);
 #ifndef ARGS_GROW_DOWNWARD
-static void pad_below		PROTO((struct args_size *, enum  machine_mode,
-				       tree));
+static void pad_below		(struct args_size *, enum  machine_mode,
+				       tree);
 #endif
 #ifdef ARGS_GROW_DOWNWARD
-static tree round_down		PROTO((tree, int));
+static tree round_down		(tree, int);
 #endif
-static rtx round_trampoline_addr PROTO((rtx));
-static tree blocks_nreverse	PROTO((tree));
-static int all_blocks		PROTO((tree, tree *));
+static rtx round_trampoline_addr (rtx);
+static tree blocks_nreverse	(tree);
+static int all_blocks		(tree, tree *);
 #if defined (HAVE_prologue) || defined (HAVE_epilogue)
-static int *record_insns	PROTO((rtx));
-static int contains		PROTO((rtx, int *));
+static int *record_insns	(rtx);
+static int contains		(rtx, int *);
 #endif /* HAVE_prologue || HAVE_epilogue */
-static void put_addressof_into_stack PROTO((rtx));
-static void purge_addressof_1	PROTO((rtx *, rtx, int, int));
+static void put_addressof_into_stack (rtx);
+static void purge_addressof_1	(rtx *, rtx, int, int);
 
 /* Pointer to chain of `struct function' for containing functions.  */
 struct function *outer_function_chain;
@@ -5946,7 +5946,7 @@ expand_function_start (subr, parms_have_cleanups)
 
 static void
 diddle_return_value (doit, arg)
-     void (*doit) PARAMS ((rtx, void *));
+     void (*doit) (rtx, void *);
      void *arg;
 {
   rtx outgoing = current_function_return_rtx;

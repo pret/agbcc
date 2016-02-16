@@ -282,7 +282,7 @@ static int undeclared_variable_notice;
 /* Tell yyparse how to print a token's value, if yydebug is set.  */
 
 #define YYPRINT(FILE,YYCHAR,YYLVAL) yyprint(FILE,YYCHAR,YYLVAL)
-extern void yyprint			PROTO ((FILE *, int, YYSTYPE));
+extern void yyprint			(FILE *, int, YYSTYPE);
 
 
 /* Line 216 of yacc.c.  */

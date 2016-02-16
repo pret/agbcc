@@ -30,9 +30,9 @@ Boston, MA 02111-1307, USA.  */
 #define ISEUCJP(c)   ((c) >= 0xa1 && (c) <= 0xfe)
 #define ISJIS(c)     ((c) >= 0x21 && (c) <= 0x7e)
 
-int local_mbtowc     PROTO ((wchar_t *, const char *, size_t));
-int local_mblen      PROTO ((const char *, size_t));
-int local_mb_cur_max PROTO ((void));
+int local_mbtowc     (wchar_t *, const char *, size_t);
+int local_mblen      (const char *, size_t);
+int local_mb_cur_max (void);
 
 /* The locale being used for multibyte characters in string/char literals.  */
 extern char *literal_codeset;

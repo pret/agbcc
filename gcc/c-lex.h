@@ -75,14 +75,14 @@ extern tree lastiddecl;
 
 extern char *token_buffer;	/* Pointer to token buffer.  */
 
-extern tree make_pointer_declarator PROTO((tree, tree));
-extern void reinit_parse_for_function PROTO((void));
-extern void position_after_white_space PROTO((void));
-extern int check_newline PROTO((void));
+extern tree make_pointer_declarator (tree, tree);
+extern void reinit_parse_for_function (void);
+extern void position_after_white_space (void);
+extern int check_newline (void);
 
-extern int yylex PROTO((void));
-extern void yyerror PROTO((char *));
+extern int yylex (void);
+extern void yyerror (char *);
 
-extern void forget_protocol_qualifiers PROTO((void));
-extern void remember_protocol_qualifiers PROTO((void));
-extern tree is_class_name PROTO((tree));
+extern void forget_protocol_qualifiers (void);
+extern void remember_protocol_qualifiers (void);
+extern tree is_class_name (tree);

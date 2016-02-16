@@ -53,15 +53,15 @@ static int max_insns_per_split = 1;
 static int clobbers_seen_this_insn;
 static int dup_operands_seen_this_insn;
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
-static void walk_insn_part PROTO((rtx, int, int));
-static void gen_insn PROTO((rtx));
-static void gen_expand PROTO((rtx));
-static void gen_split PROTO((rtx));
-static void gen_peephole PROTO((rtx));
+static void walk_insn_part (rtx, int, int);
+static void gen_insn (rtx);
+static void gen_expand (rtx);
+static void gen_split (rtx);
+static void gen_peephole (rtx);
 
 /* RECOG_P will be non-zero if this pattern was seen in a context where it will
    be used to recognize, rather than just generate an insn. 
@@ -296,7 +296,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

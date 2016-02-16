@@ -192,21 +192,21 @@ static int *splittable_regs_updates;
 
 /* Forward declarations.  */
 
-static void init_reg_map PROTO((struct inline_remap *, int));
-static rtx calculate_giv_inc PROTO((rtx, rtx, int));
-static rtx initial_reg_note_copy PROTO((rtx, struct inline_remap *));
-static void final_reg_note_copy PROTO((rtx, struct inline_remap *));
-static void copy_loop_body PROTO((rtx, rtx, struct inline_remap *, rtx, int,
-				  enum unroll_types, rtx, rtx, rtx, rtx));
-static void iteration_info PROTO((rtx, rtx *, rtx *, rtx, rtx));
-static int find_splittable_regs PROTO((enum unroll_types, rtx, rtx, rtx, int,
-				       unsigned HOST_WIDE_INT));
-static int find_splittable_givs PROTO((struct iv_class *, enum unroll_types,
-				       rtx, rtx, rtx, int));
-static int reg_dead_after_loop PROTO((rtx, rtx, rtx));
-static rtx fold_rtx_mult_add PROTO((rtx, rtx, rtx, enum machine_mode));
-static int verify_addresses PROTO((struct induction *, rtx, int));
-static rtx remap_split_bivs PROTO((rtx));
+static void init_reg_map (struct inline_remap *, int);
+static rtx calculate_giv_inc (rtx, rtx, int);
+static rtx initial_reg_note_copy (rtx, struct inline_remap *);
+static void final_reg_note_copy (rtx, struct inline_remap *);
+static void copy_loop_body (rtx, rtx, struct inline_remap *, rtx, int,
+				  enum unroll_types, rtx, rtx, rtx, rtx);
+static void iteration_info (rtx, rtx *, rtx *, rtx, rtx);
+static int find_splittable_regs (enum unroll_types, rtx, rtx, rtx, int,
+				       unsigned HOST_WIDE_INT);
+static int find_splittable_givs (struct iv_class *, enum unroll_types,
+				       rtx, rtx, rtx, int);
+static int reg_dead_after_loop (rtx, rtx, rtx);
+static rtx fold_rtx_mult_add (rtx, rtx, rtx, enum machine_mode);
+static int verify_addresses (struct induction *, rtx, int);
+static rtx remap_split_bivs (rtx);
 
 /* Try to unroll one loop and split induction variables in the loop.
 

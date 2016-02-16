@@ -182,25 +182,25 @@ static unsigned current_funcdef_fde;
 
 /* Forward declarations for functions defined in this file.  */
 
-static char *stripattributes		PROTO((char *));
-static char *dwarf_cfi_name		PROTO((unsigned));
-static dw_cfi_ref new_cfi		PROTO((void));
-static void add_cfi			PROTO((dw_cfi_ref *, dw_cfi_ref));
-static unsigned long size_of_uleb128	PROTO((unsigned long));
-static unsigned long size_of_sleb128	PROTO((long));
-static void output_uleb128		PROTO((unsigned long));
-static void output_sleb128		PROTO((long));
-static void add_fde_cfi			PROTO((char *, dw_cfi_ref));
-static void lookup_cfa_1		PROTO((dw_cfi_ref, unsigned long *,
-					       long *));
-static void lookup_cfa			PROTO((unsigned long *, long *));
-static void reg_save			PROTO((char *, unsigned, unsigned,
-					       long));
-static void initial_return_save		PROTO((rtx));
-static void output_cfi			PROTO((dw_cfi_ref, dw_fde_ref));
-static void output_call_frame_info	PROTO((int));
-static unsigned reg_number		PROTO((rtx));
-static void dwarf2out_stack_adjust	PROTO((rtx));
+static char *stripattributes		(char *);
+static char *dwarf_cfi_name		(unsigned);
+static dw_cfi_ref new_cfi		(void);
+static void add_cfi			(dw_cfi_ref *, dw_cfi_ref);
+static unsigned long size_of_uleb128	(unsigned long);
+static unsigned long size_of_sleb128	(long);
+static void output_uleb128		(unsigned long);
+static void output_sleb128		(long);
+static void add_fde_cfi			(char *, dw_cfi_ref);
+static void lookup_cfa_1		(dw_cfi_ref, unsigned long *,
+					       long *);
+static void lookup_cfa			(unsigned long *, long *);
+static void reg_save			(char *, unsigned, unsigned,
+					       long);
+static void initial_return_save		(rtx);
+static void output_cfi			(dw_cfi_ref, dw_fde_ref);
+static void output_call_frame_info	(int);
+static unsigned reg_number		(rtx);
+static void dwarf2out_stack_adjust	(rtx);
 
 /* Definitions of defaults for assembler-dependent names of various
    pseudo-ops and section names.
@@ -1982,7 +1982,7 @@ dwarf2out_frame_finish ()
 /* And now, the support for symbolic debugging information.  */
 #ifdef DWARF2_DEBUGGING_INFO
 
-extern char *getpwd PROTO((void));
+extern char *getpwd (void);
 
 /* NOTE: In the comments in this file, many references are made to
    "Debugging Information Entries".  This term is abbreviated as `DIE'
@@ -2399,186 +2399,186 @@ static tree dwarf_last_decl;
 
 /* Forward declarations for functions defined in this file.  */
 
-static void addr_const_to_string	PROTO((dyn_string_t, rtx));
-static char *addr_to_string		PROTO((rtx));
-static int is_pseudo_reg		PROTO((rtx));
-static tree type_main_variant		PROTO((tree));
-static int is_tagged_type		PROTO((tree));
-static char *dwarf_tag_name		PROTO((unsigned));
-static char *dwarf_attr_name		PROTO((unsigned));
-static char *dwarf_form_name		PROTO((unsigned));
-static char *dwarf_stack_op_name	PROTO((unsigned));
+static void addr_const_to_string	(dyn_string_t, rtx);
+static char *addr_to_string		(rtx);
+static int is_pseudo_reg		(rtx);
+static tree type_main_variant		(tree);
+static int is_tagged_type		(tree);
+static char *dwarf_tag_name		(unsigned);
+static char *dwarf_attr_name		(unsigned);
+static char *dwarf_form_name		(unsigned);
+static char *dwarf_stack_op_name	(unsigned);
 #if 0
-static char *dwarf_type_encoding_name	PROTO((unsigned));
+static char *dwarf_type_encoding_name	(unsigned);
 #endif
-static tree decl_ultimate_origin	PROTO((tree));
-static tree block_ultimate_origin	PROTO((tree));
-static tree decl_class_context		PROTO((tree));
-static void add_dwarf_attr		PROTO((dw_die_ref, dw_attr_ref));
-static void add_AT_flag			PROTO((dw_die_ref,
+static tree decl_ultimate_origin	(tree);
+static tree block_ultimate_origin	(tree);
+static tree decl_class_context		(tree);
+static void add_dwarf_attr		(dw_die_ref, dw_attr_ref);
+static void add_AT_flag			(dw_die_ref,
 					       enum dwarf_attribute,
-					       unsigned));
-static void add_AT_int			PROTO((dw_die_ref,
-					       enum dwarf_attribute, long));
-static void add_AT_unsigned		PROTO((dw_die_ref,
+					       unsigned);
+static void add_AT_int			(dw_die_ref,
+					       enum dwarf_attribute, long);
+static void add_AT_unsigned		(dw_die_ref,
 					       enum dwarf_attribute,
-					       unsigned long));
-static void add_AT_long_long		PROTO((dw_die_ref,
+					       unsigned long);
+static void add_AT_long_long		(dw_die_ref,
 					       enum dwarf_attribute,
-					       unsigned long, unsigned long));
-static void add_AT_float		PROTO((dw_die_ref,
+					       unsigned long, unsigned long);
+static void add_AT_float		(dw_die_ref,
 					       enum dwarf_attribute,
-					       unsigned, long *));
-static void add_AT_string		PROTO((dw_die_ref,
-					       enum dwarf_attribute, char *));
-static void add_AT_die_ref		PROTO((dw_die_ref,
+					       unsigned, long *);
+static void add_AT_string		(dw_die_ref,
+					       enum dwarf_attribute, char *);
+static void add_AT_die_ref		(dw_die_ref,
 					       enum dwarf_attribute,
-					       dw_die_ref));
-static void add_AT_fde_ref		PROTO((dw_die_ref,
+					       dw_die_ref);
+static void add_AT_fde_ref		(dw_die_ref,
 					       enum dwarf_attribute,
-					       unsigned));
-static void add_AT_loc			PROTO((dw_die_ref,
+					       unsigned);
+static void add_AT_loc			(dw_die_ref,
 					       enum dwarf_attribute,
-					       dw_loc_descr_ref));
-static void add_AT_addr			PROTO((dw_die_ref,
-					       enum dwarf_attribute, char *));
-static void add_AT_lbl_id		PROTO((dw_die_ref,
-					       enum dwarf_attribute, char *));
-static void add_AT_section_offset	PROTO((dw_die_ref,
-					       enum dwarf_attribute, char *));
-static int is_extern_subr_die		PROTO((dw_die_ref));
-static dw_attr_ref get_AT		PROTO((dw_die_ref,
-					       enum dwarf_attribute));
-static char *get_AT_low_pc		PROTO((dw_die_ref));
-static char *get_AT_hi_pc		PROTO((dw_die_ref));
-static char *get_AT_string		PROTO((dw_die_ref,
-					       enum dwarf_attribute));
-static int get_AT_flag			PROTO((dw_die_ref,
-					       enum dwarf_attribute));
-static unsigned get_AT_unsigned		PROTO((dw_die_ref,
-					       enum dwarf_attribute));
-static int is_c_family			PROTO((void));
-static int is_fortran			PROTO((void));
-static void remove_AT			PROTO((dw_die_ref,
-					       enum dwarf_attribute));
-static void remove_children		PROTO((dw_die_ref));
-static void add_child_die		PROTO((dw_die_ref, dw_die_ref));
-static dw_die_ref new_die		PROTO((enum dwarf_tag, dw_die_ref));
-static dw_die_ref lookup_type_die	PROTO((tree));
-static void equate_type_number_to_die	PROTO((tree, dw_die_ref));
-static dw_die_ref lookup_decl_die	PROTO((tree));
-static void equate_decl_number_to_die	PROTO((tree, dw_die_ref));
-static dw_loc_descr_ref new_loc_descr	PROTO((enum dwarf_location_atom,
-					       unsigned long, unsigned long));
-static void add_loc_descr		PROTO((dw_loc_descr_ref *,
-					       dw_loc_descr_ref));
-static void print_spaces		PROTO((FILE *));
-static void print_die			PROTO((dw_die_ref, FILE *));
-static void print_dwarf_line_table	PROTO((FILE *));
-static void add_sibling_attributes	PROTO((dw_die_ref));
-static void build_abbrev_table		PROTO((dw_die_ref));
-static unsigned long size_of_string	PROTO((char *));
-static unsigned long size_of_loc_descr	PROTO((dw_loc_descr_ref));
-static unsigned long size_of_locs	PROTO((dw_loc_descr_ref));
-static int constant_size		PROTO((long unsigned));
-static unsigned long size_of_die	PROTO((dw_die_ref));
-static void calc_die_sizes		PROTO((dw_die_ref));
-static unsigned long size_of_line_prolog	PROTO((void));
-static unsigned long size_of_line_info	PROTO((void));
-static unsigned long size_of_pubnames	PROTO((void));
-static unsigned long size_of_aranges	PROTO((void));
-static enum dwarf_form value_format	PROTO((dw_val_ref));
-static void output_value_format		PROTO((dw_val_ref));
-static void output_abbrev_section	PROTO((void));
-static void output_loc_operands		PROTO((dw_loc_descr_ref));
-static unsigned long sibling_offset	PROTO((dw_die_ref));
-static void output_die			PROTO((dw_die_ref));
-static void output_compilation_unit_header PROTO((void));
-static char *dwarf2_name		PROTO((tree, int));
-static void add_pubname			PROTO((tree, dw_die_ref));
-static void output_pubnames		PROTO((void));
-static void add_arange			PROTO((tree, dw_die_ref));
-static void output_aranges		PROTO((void));
-static void output_line_info		PROTO((void));
-static int is_body_block		PROTO((tree));
-static dw_die_ref base_type_die		PROTO((tree));
-static tree root_type			PROTO((tree));
-static int is_base_type			PROTO((tree));
-static dw_die_ref modified_type_die	PROTO((tree, int, int, dw_die_ref));
-static int type_is_enum			PROTO((tree));
-static dw_loc_descr_ref reg_loc_descriptor PROTO((rtx));
-static dw_loc_descr_ref based_loc_descr	PROTO((unsigned, long));
-static int is_based_loc			PROTO((rtx));
-static dw_loc_descr_ref mem_loc_descriptor PROTO((rtx));
-static dw_loc_descr_ref concat_loc_descriptor PROTO((rtx, rtx));
-static dw_loc_descr_ref loc_descriptor	PROTO((rtx));
-static unsigned ceiling			PROTO((unsigned, unsigned));
-static tree field_type			PROTO((tree));
-static unsigned simple_type_align_in_bits PROTO((tree));
-static unsigned simple_type_size_in_bits PROTO((tree));
-static unsigned field_byte_offset		PROTO((tree));
-static void add_AT_location_description	PROTO((dw_die_ref,
-					       enum dwarf_attribute, rtx));
-static void add_data_member_location_attribute PROTO((dw_die_ref, tree));
-static void add_const_value_attribute	PROTO((dw_die_ref, rtx));
-static void add_location_or_const_value_attribute PROTO((dw_die_ref, tree));
-static void add_name_attribute		PROTO((dw_die_ref, char *));
-static void add_bound_info		PROTO((dw_die_ref,
-					       enum dwarf_attribute, tree));
-static void add_subscript_info		PROTO((dw_die_ref, tree));
-static void add_byte_size_attribute	PROTO((dw_die_ref, tree));
-static void add_bit_offset_attribute	PROTO((dw_die_ref, tree));
-static void add_bit_size_attribute	PROTO((dw_die_ref, tree));
-static void add_prototyped_attribute	PROTO((dw_die_ref, tree));
-static void add_abstract_origin_attribute PROTO((dw_die_ref, tree));
-static void add_pure_or_virtual_attribute PROTO((dw_die_ref, tree));
-static void add_src_coords_attributes	PROTO((dw_die_ref, tree));
-static void add_name_and_src_coords_attributes PROTO((dw_die_ref, tree));
-static void push_decl_scope		PROTO((tree));
-static dw_die_ref scope_die_for		PROTO((tree, dw_die_ref));
-static void pop_decl_scope		PROTO((void));
-static void add_type_attribute		PROTO((dw_die_ref, tree, int, int,
-					       dw_die_ref));
-static char *type_tag			PROTO((tree));
-static tree member_declared_type	PROTO((tree));
+					       dw_loc_descr_ref);
+static void add_AT_addr			(dw_die_ref,
+					       enum dwarf_attribute, char *);
+static void add_AT_lbl_id		(dw_die_ref,
+					       enum dwarf_attribute, char *);
+static void add_AT_section_offset	(dw_die_ref,
+					       enum dwarf_attribute, char *);
+static int is_extern_subr_die		(dw_die_ref);
+static dw_attr_ref get_AT		(dw_die_ref,
+					       enum dwarf_attribute);
+static char *get_AT_low_pc		(dw_die_ref);
+static char *get_AT_hi_pc		(dw_die_ref);
+static char *get_AT_string		(dw_die_ref,
+					       enum dwarf_attribute);
+static int get_AT_flag			(dw_die_ref,
+					       enum dwarf_attribute);
+static unsigned get_AT_unsigned		(dw_die_ref,
+					       enum dwarf_attribute);
+static int is_c_family			(void);
+static int is_fortran			(void);
+static void remove_AT			(dw_die_ref,
+					       enum dwarf_attribute);
+static void remove_children		(dw_die_ref);
+static void add_child_die		(dw_die_ref, dw_die_ref);
+static dw_die_ref new_die		(enum dwarf_tag, dw_die_ref);
+static dw_die_ref lookup_type_die	(tree);
+static void equate_type_number_to_die	(tree, dw_die_ref);
+static dw_die_ref lookup_decl_die	(tree);
+static void equate_decl_number_to_die	(tree, dw_die_ref);
+static dw_loc_descr_ref new_loc_descr	(enum dwarf_location_atom,
+					       unsigned long, unsigned long);
+static void add_loc_descr		(dw_loc_descr_ref *,
+					       dw_loc_descr_ref);
+static void print_spaces		(FILE *);
+static void print_die			(dw_die_ref, FILE *);
+static void print_dwarf_line_table	(FILE *);
+static void add_sibling_attributes	(dw_die_ref);
+static void build_abbrev_table		(dw_die_ref);
+static unsigned long size_of_string	(char *);
+static unsigned long size_of_loc_descr	(dw_loc_descr_ref);
+static unsigned long size_of_locs	(dw_loc_descr_ref);
+static int constant_size		(long unsigned);
+static unsigned long size_of_die	(dw_die_ref);
+static void calc_die_sizes		(dw_die_ref);
+static unsigned long size_of_line_prolog	(void);
+static unsigned long size_of_line_info	(void);
+static unsigned long size_of_pubnames	(void);
+static unsigned long size_of_aranges	(void);
+static enum dwarf_form value_format	(dw_val_ref);
+static void output_value_format		(dw_val_ref);
+static void output_abbrev_section	(void);
+static void output_loc_operands		(dw_loc_descr_ref);
+static unsigned long sibling_offset	(dw_die_ref);
+static void output_die			(dw_die_ref);
+static void output_compilation_unit_header (void);
+static char *dwarf2_name		(tree, int);
+static void add_pubname			(tree, dw_die_ref);
+static void output_pubnames		(void);
+static void add_arange			(tree, dw_die_ref);
+static void output_aranges		(void);
+static void output_line_info		(void);
+static int is_body_block		(tree);
+static dw_die_ref base_type_die		(tree);
+static tree root_type			(tree);
+static int is_base_type			(tree);
+static dw_die_ref modified_type_die	(tree, int, int, dw_die_ref);
+static int type_is_enum			(tree);
+static dw_loc_descr_ref reg_loc_descriptor (rtx);
+static dw_loc_descr_ref based_loc_descr	(unsigned, long);
+static int is_based_loc			(rtx);
+static dw_loc_descr_ref mem_loc_descriptor (rtx);
+static dw_loc_descr_ref concat_loc_descriptor (rtx, rtx);
+static dw_loc_descr_ref loc_descriptor	(rtx);
+static unsigned ceiling			(unsigned, unsigned);
+static tree field_type			(tree);
+static unsigned simple_type_align_in_bits (tree);
+static unsigned simple_type_size_in_bits (tree);
+static unsigned field_byte_offset		(tree);
+static void add_AT_location_description	(dw_die_ref,
+					       enum dwarf_attribute, rtx);
+static void add_data_member_location_attribute (dw_die_ref, tree);
+static void add_const_value_attribute	(dw_die_ref, rtx);
+static void add_location_or_const_value_attribute (dw_die_ref, tree);
+static void add_name_attribute		(dw_die_ref, char *);
+static void add_bound_info		(dw_die_ref,
+					       enum dwarf_attribute, tree);
+static void add_subscript_info		(dw_die_ref, tree);
+static void add_byte_size_attribute	(dw_die_ref, tree);
+static void add_bit_offset_attribute	(dw_die_ref, tree);
+static void add_bit_size_attribute	(dw_die_ref, tree);
+static void add_prototyped_attribute	(dw_die_ref, tree);
+static void add_abstract_origin_attribute (dw_die_ref, tree);
+static void add_pure_or_virtual_attribute (dw_die_ref, tree);
+static void add_src_coords_attributes	(dw_die_ref, tree);
+static void add_name_and_src_coords_attributes (dw_die_ref, tree);
+static void push_decl_scope		(tree);
+static dw_die_ref scope_die_for		(tree, dw_die_ref);
+static void pop_decl_scope		(void);
+static void add_type_attribute		(dw_die_ref, tree, int, int,
+					       dw_die_ref);
+static char *type_tag			(tree);
+static tree member_declared_type	(tree);
 #if 0
-static char *decl_start_label		PROTO((tree));
+static char *decl_start_label		(tree);
 #endif
-static void gen_array_type_die		PROTO((tree, dw_die_ref));
-static void gen_set_type_die		PROTO((tree, dw_die_ref));
+static void gen_array_type_die		(tree, dw_die_ref);
+static void gen_set_type_die		(tree, dw_die_ref);
 #if 0
-static void gen_entry_point_die		PROTO((tree, dw_die_ref));
+static void gen_entry_point_die		(tree, dw_die_ref);
 #endif
-static void pend_type			PROTO((tree));
-static void output_pending_types_for_scope PROTO((dw_die_ref));
-static void gen_inlined_enumeration_type_die PROTO((tree, dw_die_ref));
-static void gen_inlined_structure_type_die PROTO((tree, dw_die_ref));
-static void gen_inlined_union_type_die	PROTO((tree, dw_die_ref));
-static void gen_enumeration_type_die	PROTO((tree, dw_die_ref));
-static dw_die_ref gen_formal_parameter_die PROTO((tree, dw_die_ref));
-static void gen_unspecified_parameters_die PROTO((tree, dw_die_ref));
-static void gen_formal_types_die	PROTO((tree, dw_die_ref));
-static void gen_subprogram_die		PROTO((tree, dw_die_ref));
-static void gen_variable_die		PROTO((tree, dw_die_ref));
-static void gen_label_die		PROTO((tree, dw_die_ref));
-static void gen_lexical_block_die	PROTO((tree, dw_die_ref, int));
-static void gen_inlined_subroutine_die	PROTO((tree, dw_die_ref, int));
-static void gen_field_die		PROTO((tree, dw_die_ref));
-static void gen_ptr_to_mbr_type_die	PROTO((tree, dw_die_ref));
-static void gen_compile_unit_die	PROTO((char *));
-static void gen_string_type_die		PROTO((tree, dw_die_ref));
-static void gen_inheritance_die		PROTO((tree, dw_die_ref));
-static void gen_member_die		PROTO((tree, dw_die_ref));
-static void gen_struct_or_union_type_die PROTO((tree, dw_die_ref));
-static void gen_subroutine_type_die	PROTO((tree, dw_die_ref));
-static void gen_typedef_die		PROTO((tree, dw_die_ref));
-static void gen_type_die		PROTO((tree, dw_die_ref));
-static void gen_tagged_type_instantiation_die PROTO((tree, dw_die_ref));
-static void gen_block_die		PROTO((tree, dw_die_ref, int));
-static void decls_for_scope		PROTO((tree, dw_die_ref, int));
-static int is_redundant_typedef		PROTO((tree));
-static void gen_decl_die		PROTO((tree, dw_die_ref));
-static unsigned lookup_filename		PROTO((char *));
+static void pend_type			(tree);
+static void output_pending_types_for_scope (dw_die_ref);
+static void gen_inlined_enumeration_type_die (tree, dw_die_ref);
+static void gen_inlined_structure_type_die (tree, dw_die_ref);
+static void gen_inlined_union_type_die	(tree, dw_die_ref);
+static void gen_enumeration_type_die	(tree, dw_die_ref);
+static dw_die_ref gen_formal_parameter_die (tree, dw_die_ref);
+static void gen_unspecified_parameters_die (tree, dw_die_ref);
+static void gen_formal_types_die	(tree, dw_die_ref);
+static void gen_subprogram_die		(tree, dw_die_ref);
+static void gen_variable_die		(tree, dw_die_ref);
+static void gen_label_die		(tree, dw_die_ref);
+static void gen_lexical_block_die	(tree, dw_die_ref, int);
+static void gen_inlined_subroutine_die	(tree, dw_die_ref, int);
+static void gen_field_die		(tree, dw_die_ref);
+static void gen_ptr_to_mbr_type_die	(tree, dw_die_ref);
+static void gen_compile_unit_die	(char *);
+static void gen_string_type_die		(tree, dw_die_ref);
+static void gen_inheritance_die		(tree, dw_die_ref);
+static void gen_member_die		(tree, dw_die_ref);
+static void gen_struct_or_union_type_die (tree, dw_die_ref);
+static void gen_subroutine_type_die	(tree, dw_die_ref);
+static void gen_typedef_die		(tree, dw_die_ref);
+static void gen_type_die		(tree, dw_die_ref);
+static void gen_tagged_type_instantiation_die (tree, dw_die_ref);
+static void gen_block_die		(tree, dw_die_ref, int);
+static void decls_for_scope		(tree, dw_die_ref, int);
+static int is_redundant_typedef		(tree);
+static void gen_decl_die		(tree, dw_die_ref);
+static unsigned lookup_filename		(char *);
 
 /* Section names used to hold DWARF debugging information.  */
 #ifndef DEBUG_INFO_SECTION

@@ -43,11 +43,11 @@ static int bitmap_obstack_init = FALSE;
 bitmap_element bitmap_zero;		/* An element of all zero bits. */
 bitmap_element *bitmap_free;		/* Freelist of bitmap elements. */
 
-static void bitmap_element_free		PROTO((bitmap, bitmap_element *));
-static bitmap_element *bitmap_element_allocate PROTO((void));
-static int bitmap_element_zerop		PROTO((bitmap_element *));
-static void bitmap_element_link		PROTO((bitmap, bitmap_element *));
-static bitmap_element *bitmap_find_bit	PROTO((bitmap, unsigned int));
+static void bitmap_element_free		(bitmap, bitmap_element *);
+static bitmap_element *bitmap_element_allocate (void);
+static int bitmap_element_zerop		(bitmap_element *);
+static void bitmap_element_link		(bitmap, bitmap_element *);
+static bitmap_element *bitmap_find_bit	(bitmap, unsigned int);
 
 /* Free a bitmap element */
 

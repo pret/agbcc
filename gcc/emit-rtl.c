@@ -236,9 +236,9 @@ extern int rtx_equal_function_value_matters;
 extern char *emit_filename;
 extern int emit_lineno;
 
-static rtx make_jump_insn_raw		PROTO((rtx));
-static rtx make_call_insn_raw		PROTO((rtx));
-static rtx find_line_note		PROTO((rtx));
+static rtx make_jump_insn_raw		(rtx);
+static rtx make_call_insn_raw		(rtx);
+static rtx find_line_note		(rtx);
 
 rtx
 gen_rtx_CONST_INT (mode, arg)
@@ -334,7 +334,7 @@ gen_rtx_MEM (mode, addr)
 
 /*VARARGS2*/
 rtx
-gen_rtx VPROTO((enum rtx_code code, enum machine_mode mode, ...))
+gen_rtx (enum rtx_code code, enum machine_mode mode, ...)
 {
 #ifndef ANSI_PROTOTYPES
   enum rtx_code code;
@@ -417,7 +417,7 @@ gen_rtx VPROTO((enum rtx_code code, enum machine_mode mode, ...))
 
 /*VARARGS1*/
 rtvec
-gen_rtvec VPROTO((int n, ...))
+gen_rtvec (int n, ...)
 {
 #ifndef ANSI_PROTOTYPES
   int n;

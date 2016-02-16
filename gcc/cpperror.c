@@ -109,7 +109,7 @@ v_cpp_message (pfile, is_error, msg, ap)
 }
 
 void
-cpp_message VPROTO ((cpp_reader *pfile, int is_error, const char *msg, ...))
+cpp_message (cpp_reader *pfile, int is_error, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -137,7 +137,7 @@ cpp_message VPROTO ((cpp_reader *pfile, int is_error, const char *msg, ...))
    CPP_FATAL_ERRORS.  */
 
 void
-cpp_fatal VPROTO ((cpp_reader *pfile, const char *str, ...))
+cpp_fatal (cpp_reader *pfile, const char *str, ...)
 {  
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;

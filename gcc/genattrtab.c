@@ -119,9 +119,9 @@ struct obstack *temp_obstack = &obstack2;
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 /* enough space to reserve for printing out ints */
 #define MAX_DIGITS (HOST_BITS_PER_INT * 3 / 10 + 3)
@@ -361,99 +361,99 @@ int optimize = 0;
 
 struct _global_rtl global_rtl;
 
-static void attr_hash_add_rtx	PROTO((int, rtx));
-static void attr_hash_add_string PROTO((int, char *));
-static rtx attr_rtx		PVPROTO((enum rtx_code, ...));
-static char *attr_printf	PVPROTO((int, const char *, ...))
+static void attr_hash_add_rtx	(int, rtx);
+static void attr_hash_add_string (int, char *);
+static rtx attr_rtx		(enum rtx_code, ...);
+static char *attr_printf	(int, const char *, ...)
   ATTRIBUTE_PRINTF_2;
-static char *attr_string        PROTO((const char *, int));
-static rtx check_attr_test	PROTO((rtx, int));
-static rtx check_attr_value	PROTO((rtx, struct attr_desc *));
-static rtx convert_set_attr_alternative PROTO((rtx, int, int));
-static rtx convert_set_attr	PROTO((rtx, int, int));
-static void check_defs		PROTO((void));
+static char *attr_string        (const char *, int);
+static rtx check_attr_test	(rtx, int);
+static rtx check_attr_value	(rtx, struct attr_desc *);
+static rtx convert_set_attr_alternative (rtx, int, int);
+static rtx convert_set_attr	(rtx, int, int);
+static void check_defs		(void);
 #if 0
-static rtx convert_const_symbol_ref PROTO((rtx, struct attr_desc *));
+static rtx convert_const_symbol_ref (rtx, struct attr_desc *);
 #endif
-static rtx make_canonical	PROTO((struct attr_desc *, rtx));
-static struct attr_value *get_attr_value PROTO((rtx, struct attr_desc *, int));
-static rtx copy_rtx_unchanging	PROTO((rtx));
-static rtx copy_boolean		PROTO((rtx));
-static void expand_delays	PROTO((void));
-static rtx operate_exp		PROTO((enum operator, rtx, rtx));
-static void expand_units	PROTO((void));
-static rtx simplify_knowing	PROTO((rtx, rtx));
-static rtx encode_units_mask	PROTO((rtx));
-static void fill_attr		PROTO((struct attr_desc *));
+static rtx make_canonical	(struct attr_desc *, rtx);
+static struct attr_value *get_attr_value (rtx, struct attr_desc *, int);
+static rtx copy_rtx_unchanging	(rtx);
+static rtx copy_boolean		(rtx);
+static void expand_delays	(void);
+static rtx operate_exp		(enum operator, rtx, rtx);
+static void expand_units	(void);
+static rtx simplify_knowing	(rtx, rtx);
+static rtx encode_units_mask	(rtx);
+static void fill_attr		(struct attr_desc *);
 /* dpx2 compiler chokes if we specify the arg types of the args.  */
-static rtx substitute_address	PROTO((rtx, rtx (*) (), rtx (*) ()));
-static void make_length_attrs	PROTO((void));
-static rtx identity_fn		PROTO((rtx));
-static rtx zero_fn		PROTO((rtx));
-static rtx one_fn		PROTO((rtx));
-static rtx max_fn		PROTO((rtx));
-static void write_length_unit_log PROTO ((void));
-static rtx simplify_cond	PROTO((rtx, int, int));
+static rtx substitute_address	(rtx, rtx (*) (), rtx (*) ());
+static void make_length_attrs	(void);
+static rtx identity_fn		(rtx);
+static rtx zero_fn		(rtx);
+static rtx one_fn		(rtx);
+static rtx max_fn		(rtx);
+static void write_length_unit_log (void);
+static rtx simplify_cond	(rtx, int, int);
 #if 0
-static rtx simplify_by_alternatives PROTO((rtx, int, int));
+static rtx simplify_by_alternatives (rtx, int, int);
 #endif
-static rtx simplify_by_exploding PROTO((rtx));
-static int find_and_mark_used_attributes PROTO((rtx, rtx *, int *));
-static void unmark_used_attributes PROTO((rtx, struct dimension *, int));
-static int add_values_to_cover	PROTO((struct dimension *));
-static int increment_current_value PROTO((struct dimension *, int));
-static rtx test_for_current_value PROTO((struct dimension *, int));
-static rtx simplify_with_current_value PROTO((rtx, struct dimension *, int));
-static rtx simplify_with_current_value_aux PROTO((rtx));
-static void clear_struct_flag PROTO((rtx));
-static int count_sub_rtxs    PROTO((rtx, int));
-static void remove_insn_ent  PROTO((struct attr_value *, struct insn_ent *));
-static void insert_insn_ent  PROTO((struct attr_value *, struct insn_ent *));
-static rtx insert_right_side	PROTO((enum rtx_code, rtx, rtx, int, int));
-static rtx make_alternative_compare PROTO((int));
-static int compute_alternative_mask PROTO((rtx, enum rtx_code));
-static rtx evaluate_eq_attr	PROTO((rtx, rtx, int, int));
-static rtx simplify_and_tree	PROTO((rtx, rtx *, int, int));
-static rtx simplify_or_tree	PROTO((rtx, rtx *, int, int));
-static rtx simplify_test_exp	PROTO((rtx, int, int));
-static void optimize_attrs	PROTO((void));
-static void gen_attr		PROTO((rtx));
-static int count_alternatives	PROTO((rtx));
-static int compares_alternatives_p PROTO((rtx));
-static int contained_in_p	PROTO((rtx, rtx));
-static void gen_insn		PROTO((rtx));
-static void gen_delay		PROTO((rtx));
-static void gen_unit		PROTO((rtx));
-static void write_test_expr	PROTO((rtx, int));
-static int max_attr_value	PROTO((rtx));
-static int or_attr_value	PROTO((rtx));
-static void walk_attr_value	PROTO((rtx));
-static void write_attr_get	PROTO((struct attr_desc *));
-static rtx eliminate_known_true PROTO((rtx, rtx, int, int));
-static void write_attr_set	PROTO((struct attr_desc *, int, rtx,
+static rtx simplify_by_exploding (rtx);
+static int find_and_mark_used_attributes (rtx, rtx *, int *);
+static void unmark_used_attributes (rtx, struct dimension *, int);
+static int add_values_to_cover	(struct dimension *);
+static int increment_current_value (struct dimension *, int);
+static rtx test_for_current_value (struct dimension *, int);
+static rtx simplify_with_current_value (rtx, struct dimension *, int);
+static rtx simplify_with_current_value_aux (rtx);
+static void clear_struct_flag (rtx);
+static int count_sub_rtxs    (rtx, int);
+static void remove_insn_ent  (struct attr_value *, struct insn_ent *);
+static void insert_insn_ent  (struct attr_value *, struct insn_ent *);
+static rtx insert_right_side	(enum rtx_code, rtx, rtx, int, int);
+static rtx make_alternative_compare (int);
+static int compute_alternative_mask (rtx, enum rtx_code);
+static rtx evaluate_eq_attr	(rtx, rtx, int, int);
+static rtx simplify_and_tree	(rtx, rtx *, int, int);
+static rtx simplify_or_tree	(rtx, rtx *, int, int);
+static rtx simplify_test_exp	(rtx, int, int);
+static void optimize_attrs	(void);
+static void gen_attr		(rtx);
+static int count_alternatives	(rtx);
+static int compares_alternatives_p (rtx);
+static int contained_in_p	(rtx, rtx);
+static void gen_insn		(rtx);
+static void gen_delay		(rtx);
+static void gen_unit		(rtx);
+static void write_test_expr	(rtx, int);
+static int max_attr_value	(rtx);
+static int or_attr_value	(rtx);
+static void walk_attr_value	(rtx);
+static void write_attr_get	(struct attr_desc *);
+static rtx eliminate_known_true (rtx, rtx, int, int);
+static void write_attr_set	(struct attr_desc *, int, rtx,
 				       const char *, const char *, rtx,
-				       int, int));
-static void write_attr_case	PROTO((struct attr_desc *, struct attr_value *,
-				       int, const char *, const char *, int, rtx));
-static void write_unit_name	PROTO((const char *, int, const char *));
-static void write_attr_valueq	PROTO((struct attr_desc *, char *));
-static void write_attr_value	PROTO((struct attr_desc *, rtx));
-static void write_upcase	PROTO((char *));
-static void write_indent	PROTO((int));
-static void write_eligible_delay PROTO((const char *));
-static void write_function_unit_info PROTO((void));
-static void write_complex_function PROTO((struct function_unit *, const char *,
-					  const char *));
-static int write_expr_attr_cache PROTO((rtx, struct attr_desc *));
-static void write_toplevel_expr	PROTO((rtx));
-static int n_comma_elts		PROTO((char *));
-static char *next_comma_elt	PROTO((char **));
-static struct attr_desc *find_attr PROTO((const char *, int));
-static void make_internal_attr	PROTO((const char *, rtx, int));
-static struct attr_value *find_most_used  PROTO((struct attr_desc *));
-static rtx find_single_value	PROTO((struct attr_desc *));
-static rtx make_numeric_value	PROTO((int));
-static void extend_range	PROTO((struct range *, int, int));
+				       int, int);
+static void write_attr_case	(struct attr_desc *, struct attr_value *,
+				       int, const char *, const char *, int, rtx);
+static void write_unit_name	(const char *, int, const char *);
+static void write_attr_valueq	(struct attr_desc *, char *);
+static void write_attr_value	(struct attr_desc *, rtx);
+static void write_upcase	(char *);
+static void write_indent	(int);
+static void write_eligible_delay (const char *);
+static void write_function_unit_info (void);
+static void write_complex_function (struct function_unit *, const char *,
+					  const char *);
+static int write_expr_attr_cache (rtx, struct attr_desc *);
+static void write_toplevel_expr	(rtx);
+static int n_comma_elts		(char *);
+static char *next_comma_elt	(char **);
+static struct attr_desc *find_attr (const char *, int);
+static void make_internal_attr	(const char *, rtx, int);
+static struct attr_value *find_most_used  (struct attr_desc *);
+static rtx find_single_value	(struct attr_desc *);
+static rtx make_numeric_value	(int);
+static void extend_range	(struct range *, int, int);
 
 #define oballoc(size) obstack_alloc (hash_obstack, size)
 
@@ -535,7 +535,7 @@ attr_hash_add_string (hashcode, str)
 
 /*VARARGS1*/
 static rtx
-attr_rtx VPROTO((enum rtx_code code, ...))
+attr_rtx (enum rtx_code code, ...)
 {
 #ifndef ANSI_PROTOTYPES
   enum rtx_code code;
@@ -732,7 +732,7 @@ attr_rtx VPROTO((enum rtx_code code, ...))
 
 /*VARARGS2*/
 static char *
-attr_printf VPROTO((register int len, const char *fmt, ...))
+attr_printf (register int len, const char *fmt, ...)
 {
 #ifndef ANSI_PROTOTYPES
   register int len;
@@ -2384,8 +2384,8 @@ make_length_attrs ()
   static const char *new_names[] = {"*insn_default_length",
 				      "*insn_variable_length_p",
 				      "*insn_current_length"};
-  static rtx (*no_address_fn[]) PROTO((rtx)) = {identity_fn, zero_fn, zero_fn};
-  static rtx (*address_fn[]) PROTO((rtx)) = {max_fn, one_fn, identity_fn};
+  static rtx (*no_address_fn[]) (rtx) = {identity_fn, zero_fn, zero_fn};
+  static rtx (*address_fn[]) (rtx) = {max_fn, one_fn, identity_fn};
   size_t i;
   struct attr_desc *length_attr, *new_attr;
   struct attr_value *av, *new_av;
@@ -5813,7 +5813,7 @@ copy_rtx_unchanging (orig)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

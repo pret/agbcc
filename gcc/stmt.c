@@ -425,31 +425,31 @@ struct label_chain
 static int using_eh_for_cleanups_p = 0;
 
 
-static int n_occurrences		PROTO((int, char *));
-static void expand_goto_internal	PROTO((tree, rtx, rtx));
-static int expand_fixup			PROTO((tree, rtx, rtx));
-static void expand_nl_handler_label	PROTO((rtx, rtx));
-static void expand_nl_goto_receiver	PROTO((void));
-static void expand_nl_goto_receivers	PROTO((struct nesting *));
-static void fixup_gotos			PROTO((struct nesting *, rtx, tree,
-					       rtx, int));
-static void expand_null_return_1	PROTO((rtx, int));
-static void expand_value_return		PROTO((rtx));
-static int tail_recursion_args		PROTO((tree, tree));
-static void expand_cleanups		PROTO((tree, tree, int, int));
-static void check_seenlabel		PROTO((void));
-static void do_jump_if_equal		PROTO((rtx, rtx, rtx, int));
-static int estimate_case_costs		PROTO((case_node_ptr));
-static void group_case_nodes		PROTO((case_node_ptr));
-static void balance_case_nodes		PROTO((case_node_ptr *,
-					       case_node_ptr));
-static int node_has_low_bound		PROTO((case_node_ptr, tree));
-static int node_has_high_bound		PROTO((case_node_ptr, tree));
-static int node_is_bounded		PROTO((case_node_ptr, tree));
-static void emit_jump_if_reachable	PROTO((rtx));
-static void emit_case_nodes		PROTO((rtx, case_node_ptr, rtx, tree));
-static int add_case_node		PROTO((tree, tree, tree, tree *));
-static struct case_node *case_tree2list	PROTO((case_node *, case_node *));
+static int n_occurrences		(int, char *);
+static void expand_goto_internal	(tree, rtx, rtx);
+static int expand_fixup			(tree, rtx, rtx);
+static void expand_nl_handler_label	(rtx, rtx);
+static void expand_nl_goto_receiver	(void);
+static void expand_nl_goto_receivers	(struct nesting *);
+static void fixup_gotos			(struct nesting *, rtx, tree,
+					       rtx, int);
+static void expand_null_return_1	(rtx, int);
+static void expand_value_return		(rtx);
+static int tail_recursion_args		(tree, tree);
+static void expand_cleanups		(tree, tree, int, int);
+static void check_seenlabel		(void);
+static void do_jump_if_equal		(rtx, rtx, rtx, int);
+static int estimate_case_costs		(case_node_ptr);
+static void group_case_nodes		(case_node_ptr);
+static void balance_case_nodes		(case_node_ptr *,
+					       case_node_ptr);
+static int node_has_low_bound		(case_node_ptr, tree);
+static int node_has_high_bound		(case_node_ptr, tree);
+static int node_is_bounded		(case_node_ptr, tree);
+static void emit_jump_if_reachable	(rtx);
+static void emit_case_nodes		(rtx, case_node_ptr, rtx, tree);
+static int add_case_node		(tree, tree, tree, tree *);
+static struct case_node *case_tree2list	(case_node *, case_node *);
 
 void
 using_eh_for_cleanups ()
@@ -4093,7 +4093,7 @@ check_seenlabel ()
 int
 pushcase (value, converter, label, duplicate)
      register tree value;
-     tree (*converter) PROTO((tree, tree));
+     tree (*converter) (tree, tree);
      register tree label;
      tree *duplicate;
 {
@@ -4155,7 +4155,7 @@ pushcase (value, converter, label, duplicate)
 int
 pushcase_range (value1, value2, converter, label, duplicate)
      register tree value1, value2;
-     tree (*converter) PROTO((tree, tree));
+     tree (*converter) (tree, tree);
      register tree label;
      tree *duplicate;
 {

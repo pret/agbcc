@@ -70,7 +70,7 @@ Boston, MA 02111-1307, USA.  */
    change a conditional jump around code into conditional {true,false}
    execution.  */
 #ifdef HAVE_conditional_execution
-static rtx conditional_execution	PROTO((rtx));
+static rtx conditional_execution	(rtx);
 
 #ifndef MAX_CONDITIONAL_EXECUTE
 #ifdef HAVE_cc0
@@ -127,29 +127,29 @@ int can_reach_end;
 
 static int cross_jump_death_matters = 0;
 
-static int init_label_info		PROTO((rtx));
-static void delete_barrier_successors	PROTO((rtx));
-static void mark_all_labels		PROTO((rtx, int));
-static rtx delete_unreferenced_labels	PROTO((rtx));
-static void delete_noop_moves		PROTO((rtx));
-static int calculate_can_reach_end	PROTO((rtx, int, int));
-static int duplicate_loop_exit_test	PROTO((rtx));
-static void find_cross_jump		PROTO((rtx, rtx, int, rtx *, rtx *));
-static void do_cross_jump		PROTO((rtx, rtx, rtx));
-static int jump_back_p			PROTO((rtx, rtx));
-static int tension_vector_labels	PROTO((rtx, int));
-static void mark_jump_label		PROTO((rtx, rtx, int));
-static void delete_computation		PROTO((rtx));
-static void delete_from_jump_chain	PROTO((rtx));
-static int delete_labelref_insn		PROTO((rtx, rtx, int));
-static void mark_modified_reg		PROTO((rtx, rtx));
-static void redirect_tablejump		PROTO((rtx, rtx));
+static int init_label_info		(rtx);
+static void delete_barrier_successors	(rtx);
+static void mark_all_labels		(rtx, int);
+static rtx delete_unreferenced_labels	(rtx);
+static void delete_noop_moves		(rtx);
+static int calculate_can_reach_end	(rtx, int, int);
+static int duplicate_loop_exit_test	(rtx);
+static void find_cross_jump		(rtx, rtx, int, rtx *, rtx *);
+static void do_cross_jump		(rtx, rtx, rtx);
+static int jump_back_p			(rtx, rtx);
+static int tension_vector_labels	(rtx, int);
+static void mark_jump_label		(rtx, rtx, int);
+static void delete_computation		(rtx);
+static void delete_from_jump_chain	(rtx);
+static int delete_labelref_insn		(rtx, rtx, int);
+static void mark_modified_reg		(rtx, rtx);
+static void redirect_tablejump		(rtx, rtx);
 /* CYGNUS LOCAL -- branch prediction */
-static rtx branch_predict_move		PROTO((rtx, rtx, rtx, rtx));
-static void branch_predict_reorg	PROTO((rtx));
+static rtx branch_predict_move		(rtx, rtx, rtx, rtx);
+static void branch_predict_reorg	(rtx);
 /* END CYGNUS LOCAL */
 #ifndef HAVE_cc0
-static rtx find_insert_position         PROTO((rtx, rtx));
+static rtx find_insert_position         (rtx, rtx);
 #endif
 
 /* Delete no-op jumps and optimize jumps to jumps

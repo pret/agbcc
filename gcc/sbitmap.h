@@ -89,34 +89,34 @@ do {									\
 #define sbitmap_free(map)		free(map)
 #define sbitmap_vector_free(vec)	free(vec)
 
-extern void dump_sbitmap PROTO ((FILE *, sbitmap));
-extern void dump_sbitmap_vector PROTO ((FILE *, char *, char *,
-					sbitmap *, int));
+extern void dump_sbitmap (FILE *, sbitmap);
+extern void dump_sbitmap_vector (FILE *, char *, char *,
+					sbitmap *, int);
 
-extern sbitmap sbitmap_alloc PROTO ((int));
-extern sbitmap *sbitmap_vector_alloc PROTO ((int, int));
+extern sbitmap sbitmap_alloc (int);
+extern sbitmap *sbitmap_vector_alloc (int, int);
 
-extern void sbitmap_copy PROTO ((sbitmap, sbitmap));
-extern void sbitmap_zero PROTO ((sbitmap));
-extern void sbitmap_ones PROTO ((sbitmap));
-extern void sbitmap_vector_zero PROTO ((sbitmap *, int));
-extern void sbitmap_vector_ones PROTO ((sbitmap *, int));
+extern void sbitmap_copy (sbitmap, sbitmap);
+extern void sbitmap_zero (sbitmap);
+extern void sbitmap_ones (sbitmap);
+extern void sbitmap_vector_zero (sbitmap *, int);
+extern void sbitmap_vector_ones (sbitmap *, int);
 
-extern int sbitmap_union_of_diff PROTO ((sbitmap, sbitmap, sbitmap, sbitmap));
-extern void sbitmap_difference PROTO ((sbitmap, sbitmap, sbitmap));
-extern void sbitmap_not PROTO ((sbitmap, sbitmap));
-extern int sbitmap_a_or_b_and_c PROTO ((sbitmap, sbitmap, sbitmap, sbitmap));
-extern int sbitmap_a_and_b_or_c PROTO ((sbitmap, sbitmap, sbitmap, sbitmap));
-extern int sbitmap_a_and_b PROTO ((sbitmap, sbitmap, sbitmap));
-extern int sbitmap_a_or_b PROTO ((sbitmap, sbitmap, sbitmap));
+extern int sbitmap_union_of_diff (sbitmap, sbitmap, sbitmap, sbitmap);
+extern void sbitmap_difference (sbitmap, sbitmap, sbitmap);
+extern void sbitmap_not (sbitmap, sbitmap);
+extern int sbitmap_a_or_b_and_c (sbitmap, sbitmap, sbitmap, sbitmap);
+extern int sbitmap_a_and_b_or_c (sbitmap, sbitmap, sbitmap, sbitmap);
+extern int sbitmap_a_and_b (sbitmap, sbitmap, sbitmap);
+extern int sbitmap_a_or_b (sbitmap, sbitmap, sbitmap);
 
 struct int_list;
-extern void sbitmap_intersect_of_predsucc PROTO ((sbitmap, sbitmap *,
-						  int, struct int_list **));
+extern void sbitmap_intersect_of_predsucc (sbitmap, sbitmap *,
+						  int, struct int_list **);
 #define sbitmap_intersect_of_predecessors  sbitmap_intersect_of_predsucc
 #define sbitmap_intersect_of_successors    sbitmap_intersect_of_predsucc
 
-extern void sbitmap_union_of_predsucc PROTO ((sbitmap, sbitmap *, int,
-					      struct int_list **));
+extern void sbitmap_union_of_predsucc (sbitmap, sbitmap *, int,
+					      struct int_list **);
 #define sbitmap_union_of_predecessors  sbitmap_union_of_predsucc
 #define sbitmap_union_of_successors    sbitmap_union_of_predsucc

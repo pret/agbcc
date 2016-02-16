@@ -417,20 +417,20 @@ static struct binding_level *label_level_chain;
 
 /* Forward declarations.  */
 
-static struct binding_level * make_binding_level	PROTO((void));
-static void clear_limbo_values		PROTO((tree));
-static int duplicate_decls		PROTO((tree, tree, int));
-static char *redeclaration_error_message PROTO((tree, tree));
-static void storedecls			PROTO((tree));
-static void storetags			PROTO((tree));
-static tree lookup_tag			PROTO((enum tree_code, tree,
-					       struct binding_level *, int));
-static tree lookup_tag_reverse		PROTO((tree));
-static tree grokdeclarator		PROTO((tree, tree, enum decl_context,
-					       int));
-static tree grokparms			PROTO((tree, int));
-static int field_decl_cmp		PROTO((const GENERIC_PTR, const GENERIC_PTR));
-static void layout_array_type		PROTO((tree));
+static struct binding_level * make_binding_level	(void);
+static void clear_limbo_values		(tree);
+static int duplicate_decls		(tree, tree, int);
+static char *redeclaration_error_message (tree, tree);
+static void storedecls			(tree);
+static void storetags			(tree);
+static tree lookup_tag			(enum tree_code, tree,
+					       struct binding_level *, int);
+static tree lookup_tag_reverse		(tree);
+static tree grokdeclarator		(tree, tree, enum decl_context,
+					       int);
+static tree grokparms			(tree, int);
+static int field_decl_cmp		(const GENERIC_PTR, const GENERIC_PTR);
+static void layout_array_type		(tree);
 
 /* C-specific option variables.  */
 

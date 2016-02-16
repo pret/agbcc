@@ -40,17 +40,17 @@ struct rtx_definition defs[] =
 
 const char *formats[NUM_RTX_CODE];
 
-static const char *type_from_format PROTO((int));
-static const char *accessor_from_format PROTO((int));
-static int special_format PROTO((const char *));
-static int special_rtx PROTO((int));
-static void find_formats PROTO((void));
-static void gendecl PROTO((FILE *, const char *));
-static void genmacro PROTO((FILE *, int));
-static void gendef PROTO((FILE *, const char *));
-static void genlegend PROTO((FILE *));
-static void genheader PROTO((FILE *));
-static void gencode PROTO((FILE *));
+static const char *type_from_format (int);
+static const char *accessor_from_format (int);
+static int special_format (const char *);
+static int special_rtx (int);
+static void find_formats (void);
+static void gendecl (FILE *, const char *);
+static void genmacro (FILE *, int);
+static void gendef (FILE *, const char *);
+static void genlegend (FILE *);
+static void genheader (FILE *);
+static void gencode (FILE *);
 
 static const char *
 type_from_format (c)
@@ -158,12 +158,12 @@ gendecl (f, format)
   const char *p;
   int i;
   
-  fprintf (f, "extern rtx gen_rtx_fmt_%s PROTO((RTX_CODE, enum machine_mode mode",
+  fprintf (f, "extern rtx gen_rtx_fmt_%s (RTX_CODE, enum machine_mode mode",
 	   format);
   for (p = format, i = 0; *p ; ++p)
     if (*p != '0')
       fprintf (f, ", %s arg%d", type_from_format (*p), i++);
-  fprintf (f, "));\n");
+  fprintf (f, ");\n");
 }
 
 static void 
@@ -264,9 +264,8 @@ gencode (f)
   fputs ("#include \"obstack.h\"\n", f);
   fputs ("#include \"rtl.h\"\n\n", f);
   fputs ("extern struct obstack *rtl_obstack;\n\n", f);
-  fputs ("static rtx obstack_alloc_rtx PROTO((int length));\n", f);
-  fputs ("static rtx obstack_alloc_rtx (length)\n", f);
-  fputs ("     register int length;\n{\n", f);
+  fputs ("static rtx obstack_alloc_rtx(int length)\n", f);
+  fputs ("{\n", f);
   fputs ("  rtx rt = (rtx) obstack_alloc (rtl_obstack, length);\n\n", f);
   fputs ("  zero_memory((char *) rt, sizeof(struct rtx_def) - sizeof(rtunion));\n\n", f);
   fputs ("  return rt;\n}\n\n", f);

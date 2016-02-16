@@ -84,9 +84,9 @@ struct arglist {
    number with SUM's sign, where A, B, and SUM are all C integers.  */
 #define possible_sum_sign(a, b, sum) ((((a) ^ (b)) | ~ ((a) ^ (sum))) < 0)
 
-static void integer_overflow PARAMS ((cpp_reader *));
-static long left_shift PARAMS ((cpp_reader *, long, int, unsigned long));
-static long right_shift PARAMS ((cpp_reader *, long, int, unsigned long));
+static void integer_overflow (cpp_reader *);
+static long left_shift (cpp_reader *, long, int, unsigned long);
+static long right_shift (cpp_reader *, long, int, unsigned long);
 
 #define ERROR 299
 #define OROR 300

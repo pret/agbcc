@@ -46,9 +46,9 @@ struct link
   int vecelt;
 };
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 static int max_opno;
 
@@ -61,10 +61,10 @@ static int n_operands;
 
 static int insn_code_number = 0;
 
-static void gen_peephole PROTO((rtx));
-static void match_rtx PROTO((rtx, struct link *, int));
-static void print_path PROTO((struct link *));
-static void print_code PROTO((RTX_CODE));
+static void gen_peephole (rtx);
+static void match_rtx (rtx, struct link *, int);
+static void print_path (struct link *);
+static void print_code (RTX_CODE);
 
 static void
 gen_peephole (peep)
@@ -411,7 +411,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

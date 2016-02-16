@@ -26,7 +26,7 @@ typedef struct dyn_string
   char *s; /* The string itself, NUL-terminated.  */
 }* dyn_string_t;
 
-extern dyn_string_t dyn_string_new      PROTO((int));
-extern void dyn_string_delete           PROTO((dyn_string_t));
-extern dyn_string_t dyn_string_append   PROTO((dyn_string_t, char*));
-extern dyn_string_t dyn_string_resize   PROTO((dyn_string_t, int));
+extern dyn_string_t dyn_string_new      (int);
+extern void dyn_string_delete           (dyn_string_t);
+extern dyn_string_t dyn_string_append   (dyn_string_t, char*);
+extern dyn_string_t dyn_string_resize   (dyn_string_t, int);

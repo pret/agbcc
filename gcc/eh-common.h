@@ -101,7 +101,7 @@ typedef struct exception_descriptor
     3 - exception table region is in (exception descriptor *)
 */
 
-typedef void * (*__eh_matcher)          PROTO ((void *, void *, void *));
+typedef void * (*__eh_matcher)          (void *, void *, void *);
 
 /* This value is to be checked as a 'match all' case in the runtime field. */
 

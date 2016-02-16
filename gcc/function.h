@@ -225,7 +225,7 @@ extern rtx stack_slot_list;
 
 /* Given a function decl for a containing function,
    return the `struct function' for it.  */
-struct function *find_function_data PROTO((tree));
+struct function *find_function_data (tree);
 
 /* Pointer to chain of `struct function' for containing functions.  */
 extern struct function *outer_function_chain;
@@ -233,36 +233,36 @@ extern struct function *outer_function_chain;
 /* Put all this function's BLOCK nodes into a vector and return it.
    Also store in each NOTE for the beginning or end of a block
    the index of that block in the vector.  */
-extern tree *identify_blocks PROTO((tree, rtx));
+extern tree *identify_blocks (tree, rtx);
 
 /* Return size needed for stack frame based on slots so far allocated.
    This size counts from zero.  It is not rounded to STACK_BOUNDARY;
    the caller may have to do that.  */
-extern HOST_WIDE_INT get_frame_size PROTO((void));
+extern HOST_WIDE_INT get_frame_size (void);
 
 /* These variables hold pointers to functions to
    save and restore machine-specific data,
    in push_function_context and pop_function_context.  */
-extern void (*save_machine_status) PROTO((struct function *));
-extern void (*restore_machine_status) PROTO((struct function *));
+extern void (*save_machine_status) (struct function *);
+extern void (*restore_machine_status) (struct function *);
 
 /* Save and restore status information for a nested function.  */
-extern void save_tree_status		PROTO((struct function *, tree));
-extern void restore_tree_status		PROTO((struct function *, tree));
-extern void save_varasm_status		PROTO((struct function *, tree));
-extern void restore_varasm_status	PROTO((struct function *));
-extern void save_eh_status		PROTO((struct function *));
-extern void restore_eh_status		PROTO((struct function *));
-extern void save_stmt_status		PROTO((struct function *));
-extern void restore_stmt_status		PROTO((struct function *));
-extern void save_expr_status		PROTO((struct function *));
-extern void restore_expr_status		PROTO((struct function *));
-extern void save_emit_status		PROTO((struct function *));
-extern void restore_emit_status		PROTO((struct function *));
-extern void save_storage_status		PROTO((struct function *));
-extern void restore_storage_status	PROTO((struct function *));
+extern void save_tree_status		(struct function *, tree);
+extern void restore_tree_status		(struct function *, tree);
+extern void save_varasm_status		(struct function *, tree);
+extern void restore_varasm_status	(struct function *);
+extern void save_eh_status		(struct function *);
+extern void restore_eh_status		(struct function *);
+extern void save_stmt_status		(struct function *);
+extern void restore_stmt_status		(struct function *);
+extern void save_expr_status		(struct function *);
+extern void restore_expr_status		(struct function *);
+extern void save_emit_status		(struct function *);
+extern void restore_emit_status		(struct function *);
+extern void save_storage_status		(struct function *);
+extern void restore_storage_status	(struct function *);
 
-extern rtx get_first_block_beg		PROTO((void));
+extern rtx get_first_block_beg		(void);
 
 #ifdef rtx
 #undef rtx

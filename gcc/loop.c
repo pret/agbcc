@@ -280,68 +280,68 @@ FILE *loop_dump_stream;
 
 /* Forward declarations.  */
 
-static void verify_dominator PROTO((int));
-static void find_and_verify_loops PROTO((rtx));
-static void mark_loop_jump PROTO((rtx, int));
-static void prescan_loop PROTO((rtx, rtx));
-static int reg_in_basic_block_p PROTO((rtx, rtx));
-static int consec_sets_invariant_p PROTO((rtx, int, rtx));
-static rtx libcall_other_reg PROTO((rtx, rtx));
-static int labels_in_range_p PROTO((rtx, int));
-static void count_one_set PROTO((rtx, rtx, varray_type, rtx *));
+static void verify_dominator (int);
+static void find_and_verify_loops (rtx);
+static void mark_loop_jump (rtx, int);
+static void prescan_loop (rtx, rtx);
+static int reg_in_basic_block_p (rtx, rtx);
+static int consec_sets_invariant_p (rtx, int, rtx);
+static rtx libcall_other_reg (rtx, rtx);
+static int labels_in_range_p (rtx, int);
+static void count_one_set (rtx, rtx, varray_type, rtx *);
 
-static void count_loop_regs_set PROTO((rtx, rtx, varray_type, varray_type,
-				       int *, int)); 
-static void note_addr_stored PROTO((rtx, rtx));
-static int loop_reg_used_before_p PROTO((rtx, rtx, rtx, rtx, rtx));
-static void scan_loop PROTO((rtx, rtx, rtx, int, int));
+static void count_loop_regs_set (rtx, rtx, varray_type, varray_type,
+				       int *, int); 
+static void note_addr_stored (rtx, rtx);
+static int loop_reg_used_before_p (rtx, rtx, rtx, rtx, rtx);
+static void scan_loop (rtx, rtx, rtx, int, int);
 #if 0
-static void replace_call_address PROTO((rtx, rtx, rtx));
+static void replace_call_address (rtx, rtx, rtx);
 #endif
-static rtx skip_consec_insns PROTO((rtx, int));
-static int libcall_benefit PROTO((rtx));
-static void ignore_some_movables PROTO((struct movable *));
-static void force_movables PROTO((struct movable *));
-static void combine_movables PROTO((struct movable *, int));
-static int regs_match_p PROTO((rtx, rtx, struct movable *));
-static int rtx_equal_for_loop_p PROTO((rtx, rtx, struct movable *));
-static void add_label_notes PROTO((rtx, rtx));
-static void move_movables PROTO((struct movable *, int, int, rtx, rtx, int));
-static int count_nonfixed_reads PROTO((rtx));
-static void strength_reduce PROTO((rtx, rtx, rtx, int, rtx, rtx, rtx, int, int));
-static void find_single_use_in_loop PROTO((rtx, rtx, varray_type));
-static int valid_initial_value_p PROTO((rtx, rtx, int, rtx));
-static void find_mem_givs PROTO((rtx, rtx, int, rtx, rtx));
-static void record_biv PROTO((struct induction *, rtx, rtx, rtx, rtx, rtx *, int, int));
-static void check_final_value PROTO((struct induction *, rtx, rtx, 
-				     unsigned HOST_WIDE_INT));
-static void record_giv PROTO((struct induction *, rtx, rtx, rtx, rtx, rtx, int, enum g_types, int, rtx *, rtx, rtx));
-static void update_giv_derive PROTO((rtx));
-static int basic_induction_var PROTO((rtx, enum machine_mode, rtx, rtx, rtx *, rtx *, rtx **));
-static rtx simplify_giv_expr PROTO((rtx, int *));
-static int general_induction_var PROTO((rtx, rtx *, rtx *, rtx *, int, int *));
-static int consec_sets_giv PROTO((int, rtx, rtx, rtx, rtx *, rtx *, rtx *));
-static int check_dbra_loop PROTO((rtx, int, rtx, struct loop_info *));
-static rtx express_from_1 PROTO((rtx, rtx, rtx));
-static rtx combine_givs_p PROTO((struct induction *, struct induction *));
-static void combine_givs PROTO((struct iv_class *));
+static rtx skip_consec_insns (rtx, int);
+static int libcall_benefit (rtx);
+static void ignore_some_movables (struct movable *);
+static void force_movables (struct movable *);
+static void combine_movables (struct movable *, int);
+static int regs_match_p (rtx, rtx, struct movable *);
+static int rtx_equal_for_loop_p (rtx, rtx, struct movable *);
+static void add_label_notes (rtx, rtx);
+static void move_movables (struct movable *, int, int, rtx, rtx, int);
+static int count_nonfixed_reads (rtx);
+static void strength_reduce (rtx, rtx, rtx, int, rtx, rtx, rtx, int, int);
+static void find_single_use_in_loop (rtx, rtx, varray_type);
+static int valid_initial_value_p (rtx, rtx, int, rtx);
+static void find_mem_givs (rtx, rtx, int, rtx, rtx);
+static void record_biv (struct induction *, rtx, rtx, rtx, rtx, rtx *, int, int);
+static void check_final_value (struct induction *, rtx, rtx, 
+				     unsigned HOST_WIDE_INT);
+static void record_giv (struct induction *, rtx, rtx, rtx, rtx, rtx, int, enum g_types, int, rtx *, rtx, rtx);
+static void update_giv_derive (rtx);
+static int basic_induction_var (rtx, enum machine_mode, rtx, rtx, rtx *, rtx *, rtx **);
+static rtx simplify_giv_expr (rtx, int *);
+static int general_induction_var (rtx, rtx *, rtx *, rtx *, int, int *);
+static int consec_sets_giv (int, rtx, rtx, rtx, rtx *, rtx *, rtx *);
+static int check_dbra_loop (rtx, int, rtx, struct loop_info *);
+static rtx express_from_1 (rtx, rtx, rtx);
+static rtx combine_givs_p (struct induction *, struct induction *);
+static void combine_givs (struct iv_class *);
 struct recombine_givs_stats;
-static int find_life_end PROTO((rtx,  struct recombine_givs_stats *, rtx, rtx));
-static void recombine_givs PROTO((struct iv_class *, rtx, rtx, int));
-static int product_cheap_p PROTO((rtx, rtx));
-static int maybe_eliminate_biv PROTO((struct iv_class *, rtx, rtx, int, int, int));
-static int maybe_eliminate_biv_1 PROTO((rtx, rtx, struct iv_class *, int, rtx));
-static int last_use_this_basic_block PROTO((rtx, rtx));
-static void record_initial PROTO((rtx, rtx));
-static void update_reg_last_use PROTO((rtx, rtx));
-static rtx next_insn_in_loop PROTO((rtx, rtx, rtx, rtx));
-static void load_mems_and_recount_loop_regs_set PROTO((rtx, rtx, rtx,
+static int find_life_end (rtx,  struct recombine_givs_stats *, rtx, rtx);
+static void recombine_givs (struct iv_class *, rtx, rtx, int);
+static int product_cheap_p (rtx, rtx);
+static int maybe_eliminate_biv (struct iv_class *, rtx, rtx, int, int, int);
+static int maybe_eliminate_biv_1 (rtx, rtx, struct iv_class *, int, rtx);
+static int last_use_this_basic_block (rtx, rtx);
+static void record_initial (rtx, rtx);
+static void update_reg_last_use (rtx, rtx);
+static rtx next_insn_in_loop (rtx, rtx, rtx, rtx);
+static void load_mems_and_recount_loop_regs_set (rtx, rtx, rtx,
 						       rtx, varray_type, 
-						       int *));
-static void load_mems PROTO((rtx, rtx, rtx, rtx));
-static int insert_loop_mem PROTO((rtx *, void *));
-static int replace_loop_mem PROTO((rtx *, void *));
-static int replace_label PROTO((rtx *, void *));
+						       int *);
+static void load_mems (rtx, rtx, rtx, rtx);
+static int insert_loop_mem (rtx *, void *);
+static int replace_loop_mem (rtx *, void *);
+static int replace_label (rtx *, void *);
 
 typedef struct rtx_and_int {
   rtx r;
@@ -361,22 +361,22 @@ typedef struct rtx_pair {
 
 #ifdef HAVE_decrement_and_branch_on_count
 /* Test whether BCT applicable and safe.  */
-static void insert_bct PROTO((rtx, rtx, struct loop_info *));
+static void insert_bct (rtx, rtx, struct loop_info *);
 
 /* Auxiliary function that inserts the BCT pattern into the loop.  */
-static void instrument_loop_bct PROTO((rtx, rtx, rtx));
+static void instrument_loop_bct (rtx, rtx, rtx);
 #endif /* HAVE_decrement_and_branch_on_count */
 
 /* Indirect_jump_in_function is computed once per function.  */
 int indirect_jump_in_function = 0;
-static int indirect_jump_in_function_p PROTO((rtx));
+static int indirect_jump_in_function_p (rtx);
 
-static int compute_luids PROTO((rtx, rtx, int));
+static int compute_luids (rtx, rtx, int);
 
-static int loop_insn_first_p PROTO((rtx, rtx));
+static int loop_insn_first_p (rtx, rtx);
 
-static int biv_elimination_giv_has_0_offset PROTO((struct induction *,
-						   struct induction *, rtx));
+static int biv_elimination_giv_has_0_offset (struct induction *,
+						   struct induction *, rtx);
 
 /* Relative gain of eliminating various kinds of operations.  */
 static int add_cost;
@@ -6059,8 +6059,8 @@ general_induction_var (x, src_reg, add_val, mult_val, is_addr, pbenefit)
 
    *BENEFIT will be incremented by the benefit of any sub-giv encountered.  */
 
-static rtx sge_plus PROTO ((enum machine_mode, rtx, rtx));
-static rtx sge_plus_constant PROTO ((rtx, rtx));
+static rtx sge_plus (enum machine_mode, rtx, rtx);
+static rtx sge_plus_constant (rtx, rtx);
 
 static rtx
 simplify_giv_expr (x, benefit)

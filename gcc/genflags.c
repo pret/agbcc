@@ -33,9 +33,9 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 /* Names for patterns.  Need to allow linking with print-rtl.  */
 char **insn_name_ptr;
@@ -46,10 +46,10 @@ static struct obstack call_obstack, normal_obstack;
 /* Max size of names encountered.  */
 static int max_id_len;
 
-static int num_operands PROTO((rtx));
-static void gen_proto PROTO((rtx));
-static void gen_nonproto PROTO((rtx));
-static void gen_insn PROTO((rtx));
+static int num_operands (rtx);
+static void gen_proto (rtx);
+static void gen_nonproto (rtx);
+static void gen_insn (rtx);
 
 
 /* Count the number of match_operand's found.  */
@@ -97,7 +97,7 @@ gen_proto (insn)
      rtx insn;
 {
   int num = num_operands (insn);
-  printf ("extern rtx gen_%-*s PROTO((", max_id_len, XSTR (insn, 0));
+  printf ("extern rtx gen_%-*s (", max_id_len, XSTR (insn, 0));
 
   if (num == 0)
     printf ("void");
@@ -109,7 +109,7 @@ gen_proto (insn)
       printf ("rtx");
     }
 
-  printf ("));\n");
+  printf (");\n");
 }
 
 /* Print out a function declaration without a prototype.  */
@@ -203,7 +203,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

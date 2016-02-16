@@ -143,51 +143,51 @@ extern int maximum_field_alignment;
 extern struct obstack permanent_obstack;
 extern rtx arg_pointer_save_area;
 
-static rtx get_push_address	PROTO ((int));
+static rtx get_push_address	(int);
 
-static rtx enqueue_insn		PROTO((rtx, rtx));
-static int queued_subexp_p	PROTO((rtx));
-static void init_queue		PROTO((void));
-static int move_by_pieces_ninsns PROTO((unsigned int, int));
-static void move_by_pieces_1	PROTO((rtx (*) (rtx, ...), enum machine_mode,
-				       struct move_by_pieces *));
-static void clear_by_pieces	PROTO((rtx, int, int));
-static void clear_by_pieces_1	PROTO((rtx (*) (rtx, ...), enum machine_mode,
-				       struct clear_by_pieces *));
-static int is_zeros_p		PROTO((tree));
-static int mostly_zeros_p	PROTO((tree));
-static void store_constructor_field PROTO((rtx, int, int, enum machine_mode,
-					   tree, tree, int));
-static void store_constructor	PROTO((tree, rtx, int));
-static rtx store_field		PROTO((rtx, int, int, enum machine_mode, tree,
+static rtx enqueue_insn		(rtx, rtx);
+static int queued_subexp_p	(rtx);
+static void init_queue		(void);
+static int move_by_pieces_ninsns (unsigned int, int);
+static void move_by_pieces_1	(rtx (*) (rtx, ...), enum machine_mode,
+				       struct move_by_pieces *);
+static void clear_by_pieces	(rtx, int, int);
+static void clear_by_pieces_1	(rtx (*) (rtx, ...), enum machine_mode,
+				       struct clear_by_pieces *);
+static int is_zeros_p		(tree);
+static int mostly_zeros_p	(tree);
+static void store_constructor_field (rtx, int, int, enum machine_mode,
+					   tree, tree, int);
+static void store_constructor	(tree, rtx, int);
+static rtx store_field		(rtx, int, int, enum machine_mode, tree,
 				       enum machine_mode, int, int,
-				       int, int));
+				       int, int);
 static enum memory_use_mode
-  get_memory_usage_from_modifier PROTO((enum expand_modifier));
-static tree save_noncopied_parts PROTO((tree, tree));
-static tree init_noncopied_parts PROTO((tree, tree));
-static int safe_from_p		PROTO((rtx, tree, int));
-static int fixed_type_p		PROTO((tree));
-static rtx var_rtx		PROTO((tree));
-static int get_pointer_alignment PROTO((tree, unsigned));
-static tree string_constant	PROTO((tree, tree *));
-static tree c_strlen		PROTO((tree));
-static rtx get_memory_rtx	PROTO((tree));
-static rtx expand_builtin	PROTO((tree, rtx, rtx,
-				       enum machine_mode, int));
-static int apply_args_size	PROTO((void));
-static int apply_result_size	PROTO((void));
-static rtx result_vector	PROTO((int, rtx));
-static rtx expand_builtin_apply_args PROTO((void));
-static rtx expand_builtin_apply	PROTO((rtx, rtx, rtx));
-static void expand_builtin_return PROTO((rtx));
-static rtx expand_increment	PROTO((tree, int, int));
-static void preexpand_calls	PROTO((tree));
-static void do_jump_by_parts_greater PROTO((tree, int, rtx, rtx));
-static void do_jump_by_parts_equality PROTO((tree, rtx, rtx));
-static void do_jump_for_compare	PROTO((rtx, rtx, rtx));
-static rtx compare		PROTO((tree, enum rtx_code, enum rtx_code));
-static rtx do_store_flag	PROTO((tree, rtx, enum machine_mode, int));
+  get_memory_usage_from_modifier (enum expand_modifier);
+static tree save_noncopied_parts (tree, tree);
+static tree init_noncopied_parts (tree, tree);
+static int safe_from_p		(rtx, tree, int);
+static int fixed_type_p		(tree);
+static rtx var_rtx		(tree);
+static int get_pointer_alignment (tree, unsigned);
+static tree string_constant	(tree, tree *);
+static tree c_strlen		(tree);
+static rtx get_memory_rtx	(tree);
+static rtx expand_builtin	(tree, rtx, rtx,
+				       enum machine_mode, int);
+static int apply_args_size	(void);
+static int apply_result_size	(void);
+static rtx result_vector	(int, rtx);
+static rtx expand_builtin_apply_args (void);
+static rtx expand_builtin_apply	(rtx, rtx, rtx);
+static void expand_builtin_return (rtx);
+static rtx expand_increment	(tree, int, int);
+static void preexpand_calls	(tree);
+static void do_jump_by_parts_greater (tree, int, rtx, rtx);
+static void do_jump_by_parts_equality (tree, rtx, rtx);
+static void do_jump_for_compare	(rtx, rtx, rtx);
+static rtx compare		(tree, enum rtx_code, enum rtx_code);
+static rtx do_store_flag	(tree, rtx, enum machine_mode, int);
 
 /* Record for each mode whether we can move a register directly to or
    from an object of that mode in memory.  If we can't, we won't try
@@ -1582,7 +1582,7 @@ move_by_pieces_ninsns (l, align)
 
 static void
 move_by_pieces_1 (genfun, mode, data)
-     rtx (*genfun) PROTO ((rtx, ...));
+     rtx (*genfun) (rtx, ...);
      enum machine_mode mode;
      struct move_by_pieces *data;
 {
@@ -2334,7 +2334,7 @@ clear_by_pieces (to, len, align)
 
 static void
 clear_by_pieces_1 (genfun, mode, data)
-     rtx (*genfun) PROTO ((rtx, ...));
+     rtx (*genfun) (rtx, ...);
      enum machine_mode mode;
      struct clear_by_pieces *data;
 {

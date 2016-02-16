@@ -223,27 +223,27 @@ extern int first_increment_giv, last_increment_giv;
 
 /* Forward declarations for non-static functions declared in loop.c and
    unroll.c.  */
-int invariant_p PROTO((rtx));
-rtx get_condition_for_loop PROTO((rtx));
-void emit_iv_add_mult PROTO((rtx, rtx, rtx, rtx, rtx));
-rtx express_from PROTO((struct induction *, struct induction *));
+int invariant_p (rtx);
+rtx get_condition_for_loop (rtx);
+void emit_iv_add_mult (rtx, rtx, rtx, rtx, rtx);
+rtx express_from (struct induction *, struct induction *);
 
 /* Forward declarations for non-static functions declared in stmt.c.  */
-void find_loop_tree_blocks PROTO((void));
-void unroll_block_trees PROTO((void));
+void find_loop_tree_blocks (void);
+void unroll_block_trees (void);
 
-void unroll_loop PROTO((rtx, int, rtx, rtx, struct loop_info *, int));
-rtx biv_total_increment PROTO((struct iv_class *, rtx, rtx));
-unsigned HOST_WIDE_INT loop_iterations PROTO((rtx, rtx, struct loop_info *));
-int precondition_loop_p PROTO((rtx, struct loop_info *, 
+void unroll_loop (rtx, int, rtx, rtx, struct loop_info *, int);
+rtx biv_total_increment (struct iv_class *, rtx, rtx);
+unsigned HOST_WIDE_INT loop_iterations (rtx, rtx, struct loop_info *);
+int precondition_loop_p (rtx, struct loop_info *, 
 			       rtx *, rtx *, rtx *, 
-			       enum machine_mode *mode));
-rtx final_biv_value PROTO((struct iv_class *, rtx, rtx,
-			   unsigned HOST_WIDE_INT));
-rtx final_giv_value PROTO((struct induction *, rtx, rtx,
-			   unsigned HOST_WIDE_INT));
-void emit_unrolled_add PROTO((rtx, rtx, rtx));
-int back_branch_in_range_p PROTO((rtx, rtx, rtx));
+			       enum machine_mode *mode);
+rtx final_biv_value (struct iv_class *, rtx, rtx,
+			   unsigned HOST_WIDE_INT);
+rtx final_giv_value (struct induction *, rtx, rtx,
+			   unsigned HOST_WIDE_INT);
+void emit_unrolled_add (rtx, rtx, rtx);
+int back_branch_in_range_p (rtx, rtx, rtx);
 
 extern int *loop_unroll_number;
 

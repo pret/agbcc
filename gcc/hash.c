@@ -37,11 +37,11 @@ Boston, MA 02111-1307, USA.  */
 boolean
 hash_table_init_n (table, newfunc, hash, comp, size)
      struct hash_table *table;
-     struct hash_entry *(*newfunc) PARAMS ((struct hash_entry *,
+     struct hash_entry *(*newfunc) (struct hash_entry *,
 					    struct hash_table *,
-					    hash_table_key));
-     unsigned long (*hash) PARAMS ((hash_table_key));
-     boolean (*comp) PARAMS ((hash_table_key, hash_table_key));
+					    hash_table_key);
+     unsigned long (*hash) (hash_table_key);
+     boolean (*comp) (hash_table_key, hash_table_key);
      unsigned int size;
 {
   unsigned int alloc;
@@ -72,11 +72,11 @@ hash_table_init_n (table, newfunc, hash, comp, size)
 boolean
 hash_table_init (table, newfunc, hash, comp)
      struct hash_table *table;
-     struct hash_entry *(*newfunc) PARAMS ((struct hash_entry *,
+     struct hash_entry *(*newfunc) (struct hash_entry *,
 					    struct hash_table *,
-					    hash_table_key));
-     unsigned long (*hash) PARAMS ((hash_table_key));
-     boolean (*comp) PARAMS ((hash_table_key, hash_table_key));
+					    hash_table_key);
+     unsigned long (*hash) (hash_table_key);
+     boolean (*comp) (hash_table_key, hash_table_key);
 {
   return hash_table_init_n (table, newfunc, hash, comp, DEFAULT_SIZE);
 }
@@ -98,8 +98,8 @@ hash_lookup (table, key, create, copy)
      struct hash_table *table;
      hash_table_key key;
      boolean create;
-     hash_table_key (*copy) PARAMS ((struct obstack* memory, 
-				     hash_table_key key));
+     hash_table_key (*copy) (struct obstack* memory, 
+				     hash_table_key key);
 {
   register unsigned long hash;
   struct hash_entry *hashp;
@@ -168,7 +168,7 @@ hash_allocate (table, size)
 void
 hash_traverse (table, func, info)
      struct hash_table *table;
-     boolean (*func) PARAMS ((struct hash_entry *, hash_table_key));
+     boolean (*func) (struct hash_entry *, hash_table_key);
      PTR info;
 {
   unsigned int i;

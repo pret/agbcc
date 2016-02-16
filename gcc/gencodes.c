@@ -33,16 +33,16 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
 
 static int insn_code_number;
 
-static void gen_insn PROTO((rtx));
+static void gen_insn (rtx);
 
 static void
 gen_insn (insn)
@@ -83,7 +83,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

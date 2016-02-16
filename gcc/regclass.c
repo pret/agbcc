@@ -41,8 +41,8 @@ Boston, MA 02111-1307, USA.  */
 #define REGISTER_MOVE_COST(x, y) 2
 #endif
 
-static void init_reg_sets_1	PROTO((void));
-static void init_reg_modes	PROTO((void));
+static void init_reg_sets_1	(void);
+static void init_reg_modes	(void);
 
 /* If we have auto-increment or auto-decrement and we can have secondary
    reloads, we are not allowed to use classes requiring secondary
@@ -667,17 +667,17 @@ static int loop_depth;
 
 static int loop_cost;
 
-static int n_occurrences	PROTO((int, char *));
-static rtx scan_one_insn	PROTO((rtx, int));
-static void record_reg_classes	PROTO((int, int, rtx *, enum machine_mode *,
-				       char **, rtx));
-static int copy_cost		PROTO((rtx, enum machine_mode, 
-				       enum reg_class, int));
-static void record_address_regs	PROTO((rtx, enum reg_class, int));
+static int n_occurrences	(int, char *);
+static rtx scan_one_insn	(rtx, int);
+static void record_reg_classes	(int, int, rtx *, enum machine_mode *,
+				       char **, rtx);
+static int copy_cost		(rtx, enum machine_mode, 
+				       enum reg_class, int);
+static void record_address_regs	(rtx, enum reg_class, int);
 #ifdef FORBIDDEN_INC_DEC_CLASSES
-static int auto_inc_dec_reg_p	PROTO((rtx, enum machine_mode));
+static int auto_inc_dec_reg_p	(rtx, enum machine_mode);
 #endif
-static void reg_scan_mark_refs	PROTO((rtx, rtx, int, int));
+static void reg_scan_mark_refs	(rtx, rtx, int, int);
 
 /* Return the reg_class in which pseudo reg number REGNO is best allocated.
    This function is sometimes called before the info has been computed.

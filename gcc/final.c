@@ -230,20 +230,20 @@ static char *line_note_exists;
 extern int range_max_number;
 /* END CYGNUS LOCAL */
 
-extern rtx peephole		PROTO((rtx));
+extern rtx peephole		(rtx);
 
 #ifdef HAVE_ATTR_length
-static int asm_insn_count	PROTO((rtx));
+static int asm_insn_count	(rtx);
 #endif
-static void output_source_line	PROTO((FILE *, rtx));
-static rtx walk_alter_subreg	PROTO((rtx));
-static void output_asm_name	PROTO((void));
-static void output_operand	PROTO((rtx, int));
+static void output_source_line	(FILE *, rtx);
+static rtx walk_alter_subreg	(rtx);
+static void output_asm_name	(void);
+static void output_operand	(rtx, int);
 #ifdef LEAF_REGISTERS
-static void leaf_renumber_regs	PROTO((rtx));
+static void leaf_renumber_regs	(rtx);
 #endif
 #ifdef HAVE_cc0
-static int alter_cond		PROTO((rtx));
+static int alter_cond		(rtx);
 #endif
 
 extern char *getpwd ();
@@ -2731,7 +2731,7 @@ output_addr_const (file, x)
    We handle alternate assembler dialects here, just like output_asm_insn.  */
 
 void
-asm_fprintf VPROTO((FILE *file, char *p, ...))
+asm_fprintf (FILE *file, char *p, ...)
 {
 #ifndef ANSI_PROTOTYPES
   FILE *file;

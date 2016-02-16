@@ -59,32 +59,32 @@ extern struct obstack *function_maybepermanent_obstack;
    : (8 * (8 + list_length (DECL_ARGUMENTS (DECL)))))
 #endif
 
-static rtx initialize_for_inline	PROTO((tree, int, int, int, int));
-static void finish_inline		PROTO((tree, rtx));
-static void adjust_copied_decl_tree	PROTO((tree));
-static tree copy_decl_list		PROTO((tree));
-static tree copy_decl_tree		PROTO((tree));
-static void copy_decl_rtls		PROTO((tree));
-static void save_constants		PROTO((rtx *));
-static void note_modified_parmregs	PROTO((rtx, rtx));
-static rtx copy_for_inline		PROTO((rtx));
-static void integrate_parm_decls	PROTO((tree, struct inline_remap *,
-					       rtvec));
-static void integrate_decl_tree		PROTO((tree, int,
-					       struct inline_remap *));
-static void save_constants_in_decl_trees PROTO ((tree));
-static void subst_constants		PROTO((rtx *, rtx,
-					       struct inline_remap *));
-static void restore_constants		PROTO((rtx *));
-static void set_block_origin_self	PROTO((tree));
-static void set_decl_origin_self	PROTO((tree));
-static void set_block_abstract_flags	PROTO((tree, int));
-static void process_reg_param		PROTO((struct inline_remap *, rtx,
-					       rtx));
+static rtx initialize_for_inline	(tree, int, int, int, int);
+static void finish_inline		(tree, rtx);
+static void adjust_copied_decl_tree	(tree);
+static tree copy_decl_list		(tree);
+static tree copy_decl_tree		(tree);
+static void copy_decl_rtls		(tree);
+static void save_constants		(rtx *);
+static void note_modified_parmregs	(rtx, rtx);
+static rtx copy_for_inline		(rtx);
+static void integrate_parm_decls	(tree, struct inline_remap *,
+					       rtvec);
+static void integrate_decl_tree		(tree, int,
+					       struct inline_remap *);
+static void save_constants_in_decl_trees (tree);
+static void subst_constants		(rtx *, rtx,
+					       struct inline_remap *);
+static void restore_constants		(rtx *);
+static void set_block_origin_self	(tree);
+static void set_decl_origin_self	(tree);
+static void set_block_abstract_flags	(tree, int);
+static void process_reg_param		(struct inline_remap *, rtx,
+					       rtx);
 
 
-void set_decl_abstract_flags		PROTO((tree, int));
-static tree copy_and_set_decl_abstract_origin PROTO((tree));
+void set_decl_abstract_flags		(tree, int);
+static tree copy_and_set_decl_abstract_origin (tree);
 
 /* Returns the Ith entry in the label_map contained in MAP.  If the
    Ith entry has not yet been set, return a fresh label.  This function

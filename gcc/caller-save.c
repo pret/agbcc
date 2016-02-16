@@ -83,14 +83,14 @@ static HARD_REG_SET referenced_regs;
 static HARD_REG_SET this_insn_sets;
 
 
-static void mark_set_regs		PROTO((rtx, rtx));
-static void mark_referenced_regs	PROTO((rtx));
-static int insert_save			PROTO((struct insn_chain *, int, int,
-					       HARD_REG_SET *));
-static int insert_restore		PROTO((struct insn_chain *, int, int,
-					       int));
-static void insert_one_insn		PROTO((struct insn_chain *, int,
-					       enum insn_code, rtx));
+static void mark_set_regs		(rtx, rtx);
+static void mark_referenced_regs	(rtx);
+static int insert_save			(struct insn_chain *, int, int,
+					       HARD_REG_SET *);
+static int insert_restore		(struct insn_chain *, int, int,
+					       int);
+static void insert_one_insn		(struct insn_chain *, int,
+					       enum insn_code, rtx);
 
 /* Initialize for caller-save.
 

@@ -53,10 +53,10 @@ int maximum_field_alignment;
    May be overridden by front-ends.  */
 int set_alignment = 0;
 
-static enum machine_mode smallest_mode_for_size  PROTO((unsigned int,
-							enum mode_class));
-static tree layout_record	PROTO((tree));
-static void layout_union	PROTO((tree));
+static enum machine_mode smallest_mode_for_size  (unsigned int,
+							enum mode_class);
+static tree layout_record	(tree);
+static void layout_union	(tree);
 
 /* SAVE_EXPRs for sizes of types and decls, waiting to be expanded.  */
 

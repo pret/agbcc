@@ -55,7 +55,7 @@ static int indent;
 
 extern char **insn_name_ptr;
 
-static void print_rtx		PROTO ((rtx));
+static void print_rtx		(rtx);
 
 /* Nonzero means suppress output of instruction numbers and line number
    notes in debugging dumps.

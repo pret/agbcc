@@ -41,7 +41,7 @@ Boston, MA 02111-1307, USA.  */
 #define HANDLE_PRAGMA_PACK 1
 #define PRAGMA_INSERT_ATTRIBUTES(node, pattr, prefix_attr) \
   insert_pack_attributes (node, pattr, prefix_attr)
-extern void insert_pack_attributes PROTO((tree, tree *, tree *));
+extern void insert_pack_attributes (tree, tree *, tree *);
 #endif /* HANDLE_PRAGMA_PACK_PUSH_POP */
 
 
@@ -94,7 +94,7 @@ enum pragma_state
 };
 
 /* Handle a C style pragma */
-extern int handle_pragma_token PROTO((char *, tree));
+extern int handle_pragma_token (char *, tree);
 
 #endif /* HANDLE_GENERIC_PRAGMAS */
 #endif /* _C_PRAGMA_H */

@@ -120,36 +120,36 @@ struct constant_descriptor;
 struct rtx_const;
 struct pool_constant;
 
-static char *strip_reg_name		PROTO((char *));
-static int contains_pointers_p		PROTO((tree));
-static void decode_addr_const		PROTO((tree, struct addr_const *));
-static int const_hash			PROTO((tree));
-static int compare_constant		PROTO((tree,
-					       struct constant_descriptor *));
-static char *compare_constant_1		PROTO((tree, char *));
-static struct constant_descriptor *record_constant PROTO((tree));
-static void record_constant_1		PROTO((tree));
-static tree copy_constant		PROTO((tree));
-static void output_constant_def_contents  PROTO((tree, int, int));
-static void decode_rtx_const		PROTO((enum machine_mode, rtx,
-					       struct rtx_const *));
-static int const_hash_rtx		PROTO((enum machine_mode, rtx));
-static int compare_constant_rtx		PROTO((enum machine_mode, rtx,
-					       struct constant_descriptor *));
-static struct constant_descriptor *record_constant_rtx PROTO((enum machine_mode,
-							      rtx));
-static struct pool_constant *find_pool_constant PROTO((rtx));
-static void mark_constant_pool		PROTO((void));
-static void mark_constants		PROTO((rtx));
-static int output_addressed_constants	PROTO((tree));
-static void output_after_function_constants PROTO((void));
-static void output_constructor		PROTO((tree, int));
+static char *strip_reg_name		(char *);
+static int contains_pointers_p		(tree);
+static void decode_addr_const		(tree, struct addr_const *);
+static int const_hash			(tree);
+static int compare_constant		(tree,
+					       struct constant_descriptor *);
+static char *compare_constant_1		(tree, char *);
+static struct constant_descriptor *record_constant (tree);
+static void record_constant_1		(tree);
+static tree copy_constant		(tree);
+static void output_constant_def_contents  (tree, int, int);
+static void decode_rtx_const		(enum machine_mode, rtx,
+					       struct rtx_const *);
+static int const_hash_rtx		(enum machine_mode, rtx);
+static int compare_constant_rtx		(enum machine_mode, rtx,
+					       struct constant_descriptor *);
+static struct constant_descriptor *record_constant_rtx (enum machine_mode,
+							      rtx);
+static struct pool_constant *find_pool_constant (rtx);
+static void mark_constant_pool		(void);
+static void mark_constants		(rtx);
+static int output_addressed_constants	(tree);
+static void output_after_function_constants (void);
+static void output_constructor		(tree, int);
 #ifdef ASM_OUTPUT_BSS
-static void asm_output_bss		PROTO((FILE *, tree, char *, int, int));
+static void asm_output_bss		(FILE *, tree, char *, int, int);
 #endif
 #ifdef BSS_SECTION_ASM_OP
 #ifdef ASM_OUTPUT_ALIGNED_BSS
-static void asm_output_aligned_bss	PROTO((FILE *, tree, char *, int, int));
+static void asm_output_aligned_bss	(FILE *, tree, char *, int, int);
 #endif
 #endif /* BSS_SECTION_ASM_OP */
 

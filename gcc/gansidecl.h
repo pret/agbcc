@@ -27,13 +27,6 @@ Boston, MA 02111-1307, USA.  */
 
 #include "ansidecl.h"
 
-/* Undef ansidecl.h's "obsolete" version. */
-#undef PROTO
-/* These macros are deprecated, use ansidecl.h's PARAMS style instead. */
-#define PROTO(ARGS) PARAMS(ARGS)
-#define VPROTO(ARGS) VPARAMS(ARGS)
-#define PVPROTO(ARGS) PARAMS(ARGS)
-
 #if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
 # define __attribute__(x)
 #endif

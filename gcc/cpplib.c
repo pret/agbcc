@@ -139,46 +139,46 @@ struct cpp_pending {
 
 /* Forward declarations.  */
 
-extern void cpp_hash_cleanup PARAMS ((cpp_reader *));
+extern void cpp_hash_cleanup (cpp_reader *);
 
-static char *my_strerror		PROTO ((int));
-static void make_assertion		PROTO ((cpp_reader *, char *, U_CHAR *));
-static void path_include		PROTO ((cpp_reader *, char *));
-static void initialize_builtins		PROTO ((cpp_reader *));
-static void initialize_char_syntax	PROTO ((void));
+static char *my_strerror		(int);
+static void make_assertion		(cpp_reader *, char *, U_CHAR *);
+static void path_include		(cpp_reader *, char *);
+static void initialize_builtins		(cpp_reader *);
+static void initialize_char_syntax	(void);
 #if 0
 static void trigraph_pcp ();
 #endif
-static void validate_else		PROTO ((cpp_reader *, char *));
-static int comp_def_part		PROTO ((int, U_CHAR *, int, U_CHAR *,
-						int, int));
+static void validate_else		(cpp_reader *, char *);
+static int comp_def_part		(int, U_CHAR *, int, U_CHAR *,
+						int, int);
 #ifdef abort
 extern void fancy_abort ();
 #endif
 /* CYGNUS LOCAL - obscured headers */
-static int open_include_file_name PARAMS ((cpp_reader*, char *));
+static int open_include_file_name (cpp_reader*, char *);
 /* END CYGNUS LOCAL - obscured headers */
-static int check_macro_name		PROTO ((cpp_reader *, U_CHAR *, char *));
-static int compare_defs			PROTO ((cpp_reader *,
-						DEFINITION *, DEFINITION *));
-static HOST_WIDE_INT eval_if_expression	PROTO ((cpp_reader *));
-static int change_newlines		PROTO ((U_CHAR *, int));
-static void push_macro_expansion PARAMS ((cpp_reader *,
-					  U_CHAR *, int, HASHNODE *));
-static struct cpp_pending *nreverse_pending PARAMS ((struct cpp_pending *));
+static int check_macro_name		(cpp_reader *, U_CHAR *, char *);
+static int compare_defs			(cpp_reader *,
+						DEFINITION *, DEFINITION *);
+static HOST_WIDE_INT eval_if_expression	(cpp_reader *);
+static int change_newlines		(U_CHAR *, int);
+static void push_macro_expansion (cpp_reader *,
+					  U_CHAR *, int, HASHNODE *);
+static struct cpp_pending *nreverse_pending (struct cpp_pending *);
 
-static void conditional_skip		PROTO ((cpp_reader *, int,
-						enum node_type, U_CHAR *));
-static void skip_if_group		PROTO ((cpp_reader *));
-static int parse_name                   PARAMS ((cpp_reader *, int));
-static void print_help                  PROTO ((void));
+static void conditional_skip		(cpp_reader *, int,
+						enum node_type, U_CHAR *);
+static void skip_if_group		(cpp_reader *);
+static int parse_name                   (cpp_reader *, int);
+static void print_help                  (void);
 
 /* Last arg to output_line_command.  */
 enum file_change_code {same_file, enter_file, leave_file};
 
 /* External declarations.  */
 
-extern HOST_WIDE_INT cpp_parse_expr PARAMS ((cpp_reader *));
+extern HOST_WIDE_INT cpp_parse_expr (cpp_reader *);
 
 extern char *version_string;
 extern struct tm *localtime ();
@@ -245,7 +245,7 @@ static struct default_include {
 struct directive {
   int length;			/* Length of name */
   int (*func)			/* Function to handle directive */
-    PARAMS ((cpp_reader *, struct directive *));
+    (cpp_reader *, struct directive *);
   char *name;			/* Name of directive */
   enum node_type type;		/* Code which describes which directive.  */
 };
@@ -254,24 +254,24 @@ struct directive {
    are going to be placed in a table and some old compilers have trouble with
    pointers to functions returning void.  */
 
-static int do_define PARAMS ((cpp_reader *, struct directive *));
-static int do_line PARAMS ((cpp_reader *, struct directive *));
-static int do_include PARAMS ((cpp_reader *, struct directive *));
-static int do_undef PARAMS ((cpp_reader *, struct directive *));
-static int do_error PARAMS ((cpp_reader *, struct directive *));
-static int do_pragma PARAMS ((cpp_reader *, struct directive *));
-static int do_ident PARAMS ((cpp_reader *, struct directive *));
-static int do_if PARAMS ((cpp_reader *, struct directive *));
-static int do_xifdef PARAMS ((cpp_reader *, struct directive *));
-static int do_else PARAMS ((cpp_reader *, struct directive *));
-static int do_elif PARAMS ((cpp_reader *, struct directive *));
-static int do_endif PARAMS ((cpp_reader *, struct directive *));
+static int do_define (cpp_reader *, struct directive *);
+static int do_line (cpp_reader *, struct directive *);
+static int do_include (cpp_reader *, struct directive *);
+static int do_undef (cpp_reader *, struct directive *);
+static int do_error (cpp_reader *, struct directive *);
+static int do_pragma (cpp_reader *, struct directive *);
+static int do_ident (cpp_reader *, struct directive *);
+static int do_if (cpp_reader *, struct directive *);
+static int do_xifdef (cpp_reader *, struct directive *);
+static int do_else (cpp_reader *, struct directive *);
+static int do_elif (cpp_reader *, struct directive *);
+static int do_endif (cpp_reader *, struct directive *);
 #ifdef SCCS_DIRECTIVE
-static int do_sccs PARAMS ((cpp_reader *, struct directive *));
+static int do_sccs (cpp_reader *, struct directive *);
 #endif
-static int do_assert PARAMS ((cpp_reader *, struct directive *));
-static int do_unassert PARAMS ((cpp_reader *, struct directive *));
-static int do_warning PARAMS ((cpp_reader *, struct directive *));
+static int do_assert (cpp_reader *, struct directive *);
+static int do_unassert (cpp_reader *, struct directive *);
+static int do_warning (cpp_reader *, struct directive *);
 
 #define IS_INCLUDE_DIRECTIVE_TYPE(t) \
 ((int) T_INCLUDE <= (int) (t) && (int) (t) <= (int) T_IMPORT)
@@ -6248,7 +6248,7 @@ v_cpp_error (pfile, msg, ap)
 }
 
 void
-cpp_error VPROTO ((cpp_reader * pfile, const char *msg, ...))
+cpp_error (cpp_reader * pfile, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6287,7 +6287,7 @@ v_cpp_warning (pfile, msg, ap)
 }
 
 void
-cpp_warning VPROTO ((cpp_reader * pfile, const char *msg, ...))
+cpp_warning (cpp_reader * pfile, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6309,7 +6309,7 @@ cpp_warning VPROTO ((cpp_reader * pfile, const char *msg, ...))
 /* Print an error message and maybe count it.  */
 
 void
-cpp_pedwarn VPROTO ((cpp_reader * pfile, const char *msg, ...))
+cpp_pedwarn (cpp_reader * pfile, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6350,7 +6350,7 @@ v_cpp_error_with_line (pfile, line, column, msg, ap)
 }
 
 void
-cpp_error_with_line VPROTO ((cpp_reader * pfile, int line, int column, const char *msg, ...))
+cpp_error_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6401,7 +6401,7 @@ v_cpp_warning_with_line (pfile, line, column, msg, ap)
 
 #if 0
 static void
-cpp_warning_with_line VPROTO ((cpp_reader * pfile, int line, int column, const char *msg, ...))
+cpp_warning_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6426,7 +6426,7 @@ cpp_warning_with_line VPROTO ((cpp_reader * pfile, int line, int column, const c
 #endif
 
 void
-cpp_pedwarn_with_line VPROTO ((cpp_reader * pfile, int line, int column, const char *msg, ...))
+cpp_pedwarn_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;
@@ -6456,7 +6456,7 @@ cpp_pedwarn_with_line VPROTO ((cpp_reader * pfile, int line, int column, const c
    giving specified file name and line number, not current.  */
 
 void
-cpp_pedwarn_with_file_and_line VPROTO ((cpp_reader *pfile, char *file, int line, const char *msg, ...))
+cpp_pedwarn_with_file_and_line (cpp_reader *pfile, char *file, int line, const char *msg, ...)
 {
 #ifndef ANSI_PROTOTYPES
   cpp_reader *pfile;

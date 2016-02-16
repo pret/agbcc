@@ -58,14 +58,14 @@ enum attrs {A_PACKED, A_NOCOMMON, A_COMMON, A_NORETURN, A_CONST, A_T_UNION,
 enum format_type { printf_format_type, scanf_format_type,
 		   strftime_format_type };
 
-static void declare_hidden_char_array	PROTO((char *, char *));
-static void add_attribute		PROTO((enum attrs, char *,
-					       int, int, int));
-static void init_attributes		PROTO((void));
-static void record_function_format	PROTO((tree, tree, enum format_type,
-					       int, int));
-static void record_international_format	PROTO((tree, tree, int));
-static tree c_find_base_decl            PROTO((tree));
+static void declare_hidden_char_array	(char *, char *);
+static void add_attribute		(enum attrs, char *,
+					       int, int, int);
+static void init_attributes		(void);
+static void record_function_format	(tree, tree, enum format_type,
+					       int, int);
+static void record_international_format	(tree, tree, int);
+static tree c_find_base_decl            (tree);
 
 /* Keep a stack of if statements.  We record the number of compound
    statements seen up to the if keyword, as well as the line number
@@ -1176,7 +1176,7 @@ typedef struct international_format_info
 
 static international_format_info *international_format_list = NULL;
 
-static void check_format_info		PROTO((function_format_info *, tree));
+static void check_format_info		(function_format_info *, tree);
 
 /* Initialize the table of functions to perform format checking on.
    The ANSI functions are always checked (whether <stdio.h> is

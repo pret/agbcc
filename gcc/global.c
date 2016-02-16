@@ -263,24 +263,24 @@ static int n_regs_set;
 
 static HARD_REG_SET eliminable_regset;
 
-static int allocno_compare	PROTO((const GENERIC_PTR, const GENERIC_PTR));
-static void global_conflicts	PROTO((void));
-static void expand_preferences	PROTO((void));
-static void prune_preferences	PROTO((void));
-static void find_reg		PROTO((int, HARD_REG_SET, int, int, int));
-static void record_one_conflict PROTO((int));
-static void record_conflicts	PROTO((int *, int));
-static void mark_reg_store	PROTO((rtx, rtx));
-static void mark_reg_clobber	PROTO((rtx, rtx));
-static void mark_reg_conflicts	PROTO((rtx));
-static void mark_reg_death	PROTO((rtx));
-static void mark_reg_live_nc	PROTO((int, enum machine_mode));
-static void set_preference	PROTO((rtx, rtx));
-static void dump_conflicts	PROTO((FILE *));
-static void reg_becomes_live	PROTO((rtx, rtx));
-static void reg_dies		PROTO((int, enum machine_mode));
-static void build_insn_chain	PROTO((rtx));
-static void global_init		PROTO((FILE *));
+static int allocno_compare	(const GENERIC_PTR, const GENERIC_PTR);
+static void global_conflicts	(void);
+static void expand_preferences	(void);
+static void prune_preferences	(void);
+static void find_reg		(int, HARD_REG_SET, int, int, int);
+static void record_one_conflict (int);
+static void record_conflicts	(int *, int);
+static void mark_reg_store	(rtx, rtx);
+static void mark_reg_clobber	(rtx, rtx);
+static void mark_reg_conflicts	(rtx);
+static void mark_reg_death	(rtx);
+static void mark_reg_live_nc	(int, enum machine_mode);
+static void set_preference	(rtx, rtx);
+static void dump_conflicts	(FILE *);
+static void reg_becomes_live	(rtx, rtx);
+static void reg_dies		(int, enum machine_mode);
+static void build_insn_chain	(rtx);
+static void global_init		(FILE *);
 
 /* Perform allocation of pseudo-registers not allocated by local_alloc.
    FILE is a file to output debugging information on,

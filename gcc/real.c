@@ -256,103 +256,103 @@ extern int extra_warnings;
 extern unsigned EMUSHORT ezero[], ehalf[], eone[], etwo[];
 extern unsigned EMUSHORT elog2[], esqrt2[];
 
-static void endian	PROTO((unsigned EMUSHORT *, long *,
-			       enum machine_mode));
-static void eclear	PROTO((unsigned EMUSHORT *));
-static void emov	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void eneg	PROTO((unsigned EMUSHORT *));
-static int eisneg	PROTO((unsigned EMUSHORT *));
-static int eisinf	PROTO((unsigned EMUSHORT *));
-static int eisnan	PROTO((unsigned EMUSHORT *));
-static void einfin	PROTO((unsigned EMUSHORT *));
-static void enan	PROTO((unsigned EMUSHORT *, int));
-static void emovi	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void emovo	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void ecleaz	PROTO((unsigned EMUSHORT *));
-static void ecleazs	PROTO((unsigned EMUSHORT *));
-static void emovz	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void einan	PROTO((unsigned EMUSHORT *));
-static int eiisnan	PROTO((unsigned EMUSHORT *));
-static int eiisneg	PROTO((unsigned EMUSHORT *));
-static int eiisinf	PROTO((unsigned EMUSHORT *));
-static int ecmpm	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void eshdn1	PROTO((unsigned EMUSHORT *));
-static void eshup1	PROTO((unsigned EMUSHORT *));
-static void eshdn8	PROTO((unsigned EMUSHORT *));
-static void eshup8	PROTO((unsigned EMUSHORT *));
-static void eshup6	PROTO((unsigned EMUSHORT *));
-static void eshdn6	PROTO((unsigned EMUSHORT *));
-static void eaddm	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void esubm	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void m16m	PROTO((unsigned int, unsigned short *,
-			       unsigned short *));
-static int edivm	PROTO((unsigned short *, unsigned short *));
-static int emulm	PROTO((unsigned short *, unsigned short *));
-static void emdnorm	PROTO((unsigned EMUSHORT *, int, int, EMULONG, int));
-static void esub	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       unsigned EMUSHORT *));
-static void eadd	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       unsigned EMUSHORT *));
-static void eadd1	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       unsigned EMUSHORT *));
-static void ediv	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       unsigned EMUSHORT *));
-static void emul	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       unsigned EMUSHORT *));
-static void e53toe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void e64toe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void e113toe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void e24toe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void etoe113	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void toe113	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void etoe64	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void toe64	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void etoe53	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void toe53	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void etoe24	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void toe24	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static int ecmp		PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void ltoe	PROTO((HOST_WIDE_INT *, unsigned EMUSHORT *));
-static void ultoe	PROTO((unsigned HOST_WIDE_INT *, unsigned EMUSHORT *));
-static void eifrac	PROTO((unsigned EMUSHORT *, HOST_WIDE_INT *,
-			       unsigned EMUSHORT *));
-static void euifrac	PROTO((unsigned EMUSHORT *, unsigned HOST_WIDE_INT *,
-			       unsigned EMUSHORT *));
-static int eshift	PROTO((unsigned EMUSHORT *, int));
-static int enormlz	PROTO((unsigned EMUSHORT *));
-static void etoasc	PROTO((unsigned EMUSHORT *, char *, int));
-static void asctoe24	PROTO((char *, unsigned EMUSHORT *));
-static void asctoe53	PROTO((char *, unsigned EMUSHORT *));
-static void asctoe64	PROTO((char *, unsigned EMUSHORT *));
-static void asctoe113	PROTO((char *, unsigned EMUSHORT *));
-static void asctoe	PROTO((char *, unsigned EMUSHORT *));
-static void asctoeg	PROTO((char *, unsigned EMUSHORT *, int));
-static void efloor	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void eldexp	PROTO((unsigned EMUSHORT *, int, unsigned EMUSHORT *));
-static void eiremain	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void mtherr	PROTO((char *, int));
+static void endian	(unsigned EMUSHORT *, long *,
+			       enum machine_mode);
+static void eclear	(unsigned EMUSHORT *);
+static void emov	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void eneg	(unsigned EMUSHORT *);
+static int eisneg	(unsigned EMUSHORT *);
+static int eisinf	(unsigned EMUSHORT *);
+static int eisnan	(unsigned EMUSHORT *);
+static void einfin	(unsigned EMUSHORT *);
+static void enan	(unsigned EMUSHORT *, int);
+static void emovi	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void emovo	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void ecleaz	(unsigned EMUSHORT *);
+static void ecleazs	(unsigned EMUSHORT *);
+static void emovz	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void einan	(unsigned EMUSHORT *);
+static int eiisnan	(unsigned EMUSHORT *);
+static int eiisneg	(unsigned EMUSHORT *);
+static int eiisinf	(unsigned EMUSHORT *);
+static int ecmpm	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void eshdn1	(unsigned EMUSHORT *);
+static void eshup1	(unsigned EMUSHORT *);
+static void eshdn8	(unsigned EMUSHORT *);
+static void eshup8	(unsigned EMUSHORT *);
+static void eshup6	(unsigned EMUSHORT *);
+static void eshdn6	(unsigned EMUSHORT *);
+static void eaddm	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void esubm	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void m16m	(unsigned int, unsigned short *,
+			       unsigned short *);
+static int edivm	(unsigned short *, unsigned short *);
+static int emulm	(unsigned short *, unsigned short *);
+static void emdnorm	(unsigned EMUSHORT *, int, int, EMULONG, int);
+static void esub	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       unsigned EMUSHORT *);
+static void eadd	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       unsigned EMUSHORT *);
+static void eadd1	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       unsigned EMUSHORT *);
+static void ediv	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       unsigned EMUSHORT *);
+static void emul	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       unsigned EMUSHORT *);
+static void e53toe	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void e64toe	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void e113toe	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void e24toe	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void etoe113	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void toe113	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void etoe64	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void toe64	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void etoe53	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void toe53	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void etoe24	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void toe24	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static int ecmp		(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void ltoe	(HOST_WIDE_INT *, unsigned EMUSHORT *);
+static void ultoe	(unsigned HOST_WIDE_INT *, unsigned EMUSHORT *);
+static void eifrac	(unsigned EMUSHORT *, HOST_WIDE_INT *,
+			       unsigned EMUSHORT *);
+static void euifrac	(unsigned EMUSHORT *, unsigned HOST_WIDE_INT *,
+			       unsigned EMUSHORT *);
+static int eshift	(unsigned EMUSHORT *, int);
+static int enormlz	(unsigned EMUSHORT *);
+static void etoasc	(unsigned EMUSHORT *, char *, int);
+static void asctoe24	(char *, unsigned EMUSHORT *);
+static void asctoe53	(char *, unsigned EMUSHORT *);
+static void asctoe64	(char *, unsigned EMUSHORT *);
+static void asctoe113	(char *, unsigned EMUSHORT *);
+static void asctoe	(char *, unsigned EMUSHORT *);
+static void asctoeg	(char *, unsigned EMUSHORT *, int);
+static void efloor	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void eldexp	(unsigned EMUSHORT *, int, unsigned EMUSHORT *);
+static void eiremain	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void mtherr	(char *, int);
 #ifdef DEC
-static void dectoe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void etodec	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
-static void todec	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *));
+static void dectoe	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void etodec	(unsigned EMUSHORT *, unsigned EMUSHORT *);
+static void todec	(unsigned EMUSHORT *, unsigned EMUSHORT *);
 #endif
 #ifdef IBM
-static void ibmtoe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       enum machine_mode));
-static void etoibm	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       enum machine_mode));
-static void toibm	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
-			       enum machine_mode));
+static void ibmtoe	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       enum machine_mode);
+static void etoibm	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       enum machine_mode);
+static void toibm	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+			       enum machine_mode);
 #endif
 #ifdef C4X
-static void c4xtoe	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
- 			       enum machine_mode));
-static void etoc4x	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
- 			       enum machine_mode));
-static void toc4x	PROTO((unsigned EMUSHORT *, unsigned EMUSHORT *,
- 			       enum machine_mode));
+static void c4xtoe	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+ 			       enum machine_mode);
+static void etoc4x	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+ 			       enum machine_mode);
+static void toc4x	(unsigned EMUSHORT *, unsigned EMUSHORT *,
+ 			       enum machine_mode);
 #endif
-static void make_nan	PROTO((unsigned EMUSHORT *, int, enum machine_mode));
+static void make_nan	(unsigned EMUSHORT *, int, enum machine_mode);
 
 /* Copy 32-bit numbers obtained from array containing 16-bit numbers,
    swapping ends if required, into output array of longs.  The

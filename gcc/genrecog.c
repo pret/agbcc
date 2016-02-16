@@ -169,35 +169,35 @@ static struct pred_table
 
 #define NUM_KNOWN_PREDS (sizeof preds / sizeof preds[0])
 
-static struct decision_head make_insn_sequence PROTO((rtx, enum routine_type));
-static struct decision *add_to_sequence PROTO((rtx, struct decision_head *,
-					       const char *));
-static int not_both_true	PROTO((struct decision *, struct decision *,
-				       int));
-static int position_merit	PROTO((struct decision *, enum machine_mode,
-				       enum rtx_code));
-static struct decision_head merge_trees PROTO((struct decision_head,
-					       struct decision_head));
-static int break_out_subroutines PROTO((struct decision_head,
-					enum routine_type, int));
-static void write_subroutine	PROTO((struct decision *, enum routine_type));
-static void write_tree_1	PROTO((struct decision *, const char *,
-				       struct decision *, enum routine_type));
-static void print_code		PROTO((enum rtx_code));
-static int same_codes		PROTO((struct decision *, enum rtx_code));
-static void clear_codes		PROTO((struct decision *));
-static int same_modes		PROTO((struct decision *, enum machine_mode));
-static void clear_modes		PROTO((struct decision *));
-static void write_tree		PROTO((struct decision *, const char *,
+static struct decision_head make_insn_sequence (rtx, enum routine_type);
+static struct decision *add_to_sequence (rtx, struct decision_head *,
+					       const char *);
+static int not_both_true	(struct decision *, struct decision *,
+				       int);
+static int position_merit	(struct decision *, enum machine_mode,
+				       enum rtx_code);
+static struct decision_head merge_trees (struct decision_head,
+					       struct decision_head);
+static int break_out_subroutines (struct decision_head,
+					enum routine_type, int);
+static void write_subroutine	(struct decision *, enum routine_type);
+static void write_tree_1	(struct decision *, const char *,
+				       struct decision *, enum routine_type);
+static void print_code		(enum rtx_code);
+static int same_codes		(struct decision *, enum rtx_code);
+static void clear_codes		(struct decision *);
+static int same_modes		(struct decision *, enum machine_mode);
+static void clear_modes		(struct decision *);
+static void write_tree		(struct decision *, const char *,
 				       struct decision *, int,
-				       enum routine_type));
-static void change_state	PROTO((const char *, const char *, int));
-static char *copystr		PROTO((const char *));
-static void mybzero		PROTO((char *, unsigned));
-static void mybcopy		PROTO((char *, char *, unsigned));
-static void fatal		PVPROTO((const char *, ...))
+				       enum routine_type);
+static void change_state	(const char *, const char *, int);
+static char *copystr		(const char *);
+static void mybzero		(char *, unsigned);
+static void mybcopy		(char *, char *, unsigned);
+static void fatal		(const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort		PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort		(void) ATTRIBUTE_NORETURN;
 /* Construct and return a sequence of decisions
    that will recognize INSN.
 
@@ -1670,7 +1670,7 @@ xmalloc(size_t size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

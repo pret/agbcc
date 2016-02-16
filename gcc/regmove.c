@@ -42,11 +42,11 @@ Boston, MA 02111-1307, USA.  */
 #include "obstack.h"
 /* END CYGNUS LOCAL */
 
-static int optimize_reg_copy_1	PROTO((rtx, rtx, rtx));
-static void optimize_reg_copy_2	PROTO((rtx, rtx, rtx));
-static void optimize_reg_copy_3	PROTO((rtx, rtx, rtx));
-static rtx gen_add3_insn	PROTO((rtx, rtx, rtx));
-static void copy_src_to_dest	PROTO((rtx, rtx, rtx, int, int));
+static int optimize_reg_copy_1	(rtx, rtx, rtx);
+static void optimize_reg_copy_2	(rtx, rtx, rtx);
+static void optimize_reg_copy_3	(rtx, rtx, rtx);
+static rtx gen_add3_insn	(rtx, rtx, rtx);
+static void copy_src_to_dest	(rtx, rtx, rtx, int, int);
 static int *regmove_bb_head;
 
 struct match {
@@ -56,27 +56,27 @@ struct match {
   int early_clobber[MAX_RECOG_OPERANDS];
 };
 
-static int try_auto_increment PROTO((rtx, rtx, rtx, rtx, HOST_WIDE_INT, int));
-static int find_matches PROTO((rtx, struct match *));
-static int fixup_match_1 PROTO((rtx, rtx, rtx, rtx, rtx, int, int, int, FILE *))
+static int try_auto_increment (rtx, rtx, rtx, rtx, HOST_WIDE_INT, int);
+static int find_matches (rtx, struct match *);
+static int fixup_match_1 (rtx, rtx, rtx, rtx, rtx, int, int, int, FILE *)
 ;
-static int reg_is_remote_constant_p PROTO((rtx, rtx, rtx));
-static int stable_but_for_p PROTO((rtx, rtx, rtx));
-static int regclass_compatible_p PROTO((int, int));
+static int reg_is_remote_constant_p (rtx, rtx, rtx);
+static int stable_but_for_p (rtx, rtx, rtx);
+static int regclass_compatible_p (int, int);
 /* CYGNUS LOCAL SH4-OPT */
-static struct rel_use *lookup_related PROTO((int, enum reg_class, HOST_WIDE_INT));
-static void rel_build_chain PROTO((struct rel_use *, struct rel_use *, int));
-static void rel_record_mem PROTO((rtx *, rtx, int, int, int, rtx, int, int));
-static void invalidate_related PROTO((rtx, int));
-static void find_related PROTO((rtx *, rtx, int, int));
-static int chain_starts_earlier PROTO((const GENERIC_PTR, const GENERIC_PTR));
-static int chain_ends_later PROTO((const GENERIC_PTR, const GENERIC_PTR));
-static struct related *optimize_related_values_1 PROTO((struct related *, int,
-							int, rtx, FILE *));
-static void optimize_related_values_0 PROTO((struct related *, int, int,
-					     rtx, FILE *));
-static void optimize_related_values PROTO((int, FILE *));
-static void count_sets PROTO((rtx, rtx));
+static struct rel_use *lookup_related (int, enum reg_class, HOST_WIDE_INT);
+static void rel_build_chain (struct rel_use *, struct rel_use *, int);
+static void rel_record_mem (rtx *, rtx, int, int, int, rtx, int, int);
+static void invalidate_related (rtx, int);
+static void find_related (rtx *, rtx, int, int);
+static int chain_starts_earlier (const GENERIC_PTR, const GENERIC_PTR);
+static int chain_ends_later (const GENERIC_PTR, const GENERIC_PTR);
+static struct related *optimize_related_values_1 (struct related *, int,
+							int, rtx, FILE *);
+static void optimize_related_values_0 (struct related *, int, int,
+					     rtx, FILE *);
+static void optimize_related_values (int, FILE *);
+static void count_sets (rtx, rtx);
 /* END CYGNUS LOCAL */
 static int loop_depth;
 

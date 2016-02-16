@@ -72,12 +72,12 @@ Boston, MA 02111-1307, USA.  */
 
 static const char *std_prefix = PREFIX;
 
-static const char *get_key_value	PROTO((char *));
-static const char *translate_name	PROTO((const char *));
-static char *save_string		PROTO((const char *, int));
+static const char *get_key_value	(char *);
+static const char *translate_name	(const char *);
+static char *save_string		(const char *, int);
 
 #ifdef _WIN32
-static char *lookup_key		PROTO((char *));
+static char *lookup_key		(char *);
 static HKEY reg_key = (HKEY) INVALID_HANDLE_VALUE;
 #endif
 
@@ -111,7 +111,7 @@ get_key_value (key)
    This function is based on the one in libiberty.  */
 
 char *
-concat VPROTO((const char *first, ...))
+concat (const char *first, ...)
 {
   register int length;
   register char *newstr;

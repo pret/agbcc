@@ -116,14 +116,14 @@ struct inline_remap
 
 /* Return a copy of an rtx (as needed), substituting pseudo-register,
    labels, and frame-pointer offsets as necessary.  */
-extern rtx copy_rtx_and_substitute PROTO((rtx, struct inline_remap *));
+extern rtx copy_rtx_and_substitute (rtx, struct inline_remap *);
 
-extern void try_constants PROTO((rtx, struct inline_remap *));
+extern void try_constants (rtx, struct inline_remap *);
 
-extern void mark_stores PROTO((rtx, rtx));
+extern void mark_stores (rtx, rtx);
 
 /* Return the label indicated.  */
-extern rtx get_label_from_map PROTO((struct inline_remap *, int));
+extern rtx get_label_from_map (struct inline_remap *, int);
 
 /* Set the label indicated.  */
 #define set_label_in_map(MAP, I, X) ((MAP)->label_map[I] = (X))

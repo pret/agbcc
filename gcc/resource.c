@@ -70,12 +70,12 @@ static HARD_REG_SET current_live_regs;
 
 static HARD_REG_SET pending_dead_regs;
 
-static void update_live_status		PROTO ((rtx, rtx));
-static int find_basic_block		PROTO ((rtx));
-static rtx next_insn_no_annul		PROTO ((rtx));
-static rtx find_dead_or_set_registers	PROTO ((rtx, struct resources*,
+static void update_live_status		(rtx, rtx);
+static int find_basic_block		(rtx);
+static rtx next_insn_no_annul		(rtx);
+static rtx find_dead_or_set_registers	(rtx, struct resources*,
 						rtx*, int, struct resources,
-						struct resources));
+						struct resources);
 
 /* Utility function called from mark_target_live_regs via note_stores.
    It deadens any CLOBBERed registers and livens any SET registers.  */

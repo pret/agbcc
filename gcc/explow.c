@@ -35,8 +35,8 @@ Boston, MA 02111-1307, USA.  */
 #define PREFERRED_STACK_BOUNDARY STACK_BOUNDARY
 #endif
 
-static rtx break_out_memory_refs	PROTO((rtx));
-static void emit_stack_probe		PROTO((rtx));
+static rtx break_out_memory_refs	(rtx);
+static void emit_stack_probe		(rtx);
 /* Return an rtx for the sum of X and the integer C.
 
    This function should be used via the `plus_constant' macro.  */
@@ -888,7 +888,7 @@ emit_stack_save (save_level, psave, after)
 {
   rtx sa = *psave;
   /* The default is that we use a move insn and save in a Pmode object.  */
-  rtx (*fcn) PROTO ((rtx, rtx)) = gen_move_insn;
+  rtx (*fcn) (rtx, rtx) = gen_move_insn;
   enum machine_mode mode = STACK_SAVEAREA_MODE (save_level);
 
   /* See if this machine has anything special to do for this kind of save.  */
@@ -970,7 +970,7 @@ emit_stack_restore (save_level, sa, after)
      rtx sa;
 {
   /* The default is that we use a move insn.  */
-  rtx (*fcn) PROTO ((rtx, rtx)) = gen_move_insn;
+  rtx (*fcn) (rtx, rtx) = gen_move_insn;
 
   /* See if this machine has anything special to do for this kind of save.  */
   switch (save_level)

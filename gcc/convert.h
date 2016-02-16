@@ -18,7 +18,7 @@ along with GNU CC; see the file COPYING.  If not, write to
 the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-extern tree convert_to_integer PROTO ((tree, tree));
-extern tree convert_to_pointer PROTO ((tree, tree));
-extern tree convert_to_real PROTO ((tree, tree));
-extern tree convert_to_complex PROTO ((tree, tree));
+extern tree convert_to_integer (tree, tree);
+extern tree convert_to_pointer (tree, tree);
+extern tree convert_to_real (tree, tree);
+extern tree convert_to_complex (tree, tree);

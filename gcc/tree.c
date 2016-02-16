@@ -46,7 +46,7 @@ Boston, MA 02111-1307, USA.  */
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 /* obstack.[ch] explicitly declined to prototype this. */
-extern int _obstack_allocated_p PROTO ((struct obstack *h, GENERIC_PTR obj));
+extern int _obstack_allocated_p (struct obstack *h, GENERIC_PTR obj);
 
 /* Tree nodes of permanent duration are allocated in this obstack.
    They are the identifier nodes, and everything outside of
@@ -258,14 +258,14 @@ static int next_type_uid = 1;
 
 /* The language-specific function for alias analysis.  If NULL, the
    language does not do any special alias analysis.  */
-int (*lang_get_alias_set) PROTO((tree));
+int (*lang_get_alias_set) (tree);
 
 /* Here is how primitive or already-canonicalized types' hash
    codes are made.  */
 #define TYPE_HASH(TYPE) ((unsigned long) (TYPE) & 0777777)
 
-static void set_type_quals PROTO((tree, int));
-static void append_random_chars PROTO((char *));
+static void set_type_quals (tree, int);
+static void append_random_chars (char *);
 
 extern char *mode_name[];
 
@@ -2965,7 +2965,7 @@ stabilize_reference_1 (e)
    Constants, decls, types and misc nodes cannot be.  */
 
 tree
-build VPROTO((enum tree_code code, tree tt, ...))
+build (enum tree_code code, tree tt, ...)
 {
 #ifndef ANSI_PROTOTYPES
   enum tree_code code;
@@ -3089,7 +3089,7 @@ build1 (code, type, node)
    or even garbage if their values do not matter.  */
 
 tree
-build_nt VPROTO((enum tree_code code, ...))
+build_nt (enum tree_code code, ...)
 {
 #ifndef ANSI_PROTOTYPES
   enum tree_code code;
@@ -3119,7 +3119,7 @@ build_nt VPROTO((enum tree_code code, ...))
    on the temp_decl_obstack, regardless.  */
 
 tree
-build_parse_node VPROTO((enum tree_code code, ...))
+build_parse_node (enum tree_code code, ...)
 {
 #ifndef ANSI_PROTOTYPES
   enum tree_code code;

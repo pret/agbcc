@@ -173,7 +173,7 @@ typedef struct int_list_block {
 
 #define INT_LIST_SET_VAL(p, new_val) ((p)->val = (new_val))
 
-extern void free_int_list               PROTO ((int_list_block **));
+extern void free_int_list               (int_list_block **);
 
 /* Stuff for recording basic block info.  */
 
@@ -185,31 +185,31 @@ extern void free_int_list               PROTO ((int_list_block **));
 #define EXIT_BLOCK (-2)
 
 /* from flow.c */
-extern void free_regset_vector PROTO ((regset *, int nelts));
+extern void free_regset_vector (regset *, int nelts);
 extern int *uid_block_number;
 #define BLOCK_NUM(INSN)    uid_block_number[INSN_UID (INSN)]
 
-extern void dump_bb_data       PROTO ((FILE *, int_list_ptr *, int_list_ptr *,
-				       int));
-extern void free_bb_mem        PROTO ((void));
-extern void free_basic_block_vars	PROTO ((int));
+extern void dump_bb_data       (FILE *, int_list_ptr *, int_list_ptr *,
+				       int);
+extern void free_bb_mem        (void);
+extern void free_basic_block_vars	(int);
 
 /* CYGNUS LOCAL edge_splitting/law */
-extern int compute_preds_succs PROTO ((int_list_ptr *, int_list_ptr *,
-				       int *, int *, int));
+extern int compute_preds_succs (int_list_ptr *, int_list_ptr *,
+				       int *, int *, int);
 /* END CYGNUS LOCAL */
-extern void compute_dominators PROTO ((sbitmap *, sbitmap *,
-				       int_list_ptr *, int_list_ptr *));
+extern void compute_dominators (sbitmap *, sbitmap *,
+				       int_list_ptr *, int_list_ptr *);
 
 /* CYGNUS LOCAL lcm/law */
 /* In lcm.c */
-extern void pre_lcm 			PROTO ((int, int, int_list_ptr *,
+extern void pre_lcm 			(int, int, int_list_ptr *,
 						int_list_ptr *,
 						sbitmap *, sbitmap *,
-						sbitmap *, sbitmap *));
-extern void pre_rev_lcm 		PROTO ((int, int, int_list_ptr *,
+						sbitmap *, sbitmap *);
+extern void pre_rev_lcm 		(int, int, int_list_ptr *,
 						int_list_ptr *,
 						sbitmap *, sbitmap *,
-						sbitmap *, sbitmap *));
+						sbitmap *, sbitmap *);
 
 /* END CYGNUS LOCAL */

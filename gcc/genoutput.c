@@ -107,13 +107,13 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
-static void error PVPROTO ((const char *, ...)) ATTRIBUTE_PRINTF_1;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
+static void error (const char *, ...) ATTRIBUTE_PRINTF_1;
 static void mybcopy ();
 static void mybzero ();
-static int n_occurrences PROTO((int, char *));
+static int n_occurrences (int, char *);
 
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
@@ -172,17 +172,17 @@ int have_constraints;
 
 static int have_error;
 
-static char * name_for_index PROTO((int));
-static void output_prologue PROTO((void));
-static void output_epilogue PROTO((void));
-static void scan_operands PROTO((rtx, int, int));
-static void process_template PROTO((struct data *, char *));
-static void validate_insn_alternatives PROTO((struct data *));
-static void gen_insn PROTO((rtx));
-static void gen_peephole PROTO((rtx));
-static void gen_expand PROTO((rtx));
-static void gen_split PROTO((rtx));
-static int n_occurrences PROTO((int, char *));
+static char * name_for_index (int);
+static void output_prologue (void);
+static void output_epilogue (void);
+static void scan_operands (rtx, int, int);
+static void process_template (struct data *, char *);
+static void validate_insn_alternatives (struct data *);
+static void gen_insn (rtx);
+static void gen_peephole (rtx);
+static void gen_expand (rtx);
+static void gen_split (rtx);
+static int n_occurrences (int, char *);
 
 static char *
 name_for_index (index)
@@ -950,7 +950,7 @@ mybcopy (b1, b2, length)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;
@@ -980,7 +980,7 @@ fancy_abort ()
 }
 
 static void
-error VPROTO ((const char *format, ...))
+error (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

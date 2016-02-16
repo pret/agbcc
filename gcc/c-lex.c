@@ -42,7 +42,7 @@ Boston, MA 02111-1307, USA.  */
 extern cpp_reader  parse_in;
 extern cpp_options parse_options;
 
-extern void yyprint			PROTO((FILE *, int, YYSTYPE));
+extern void yyprint			(FILE *, int, YYSTYPE);
 
 /* The elements of `ridpointers' are identifier nodes
    for the reserved type names and storage classes.
@@ -92,13 +92,13 @@ static int end_of_file;
 
 
 #ifdef HANDLE_GENERIC_PRAGMAS
-static int handle_generic_pragma	PROTO((int));
+static int handle_generic_pragma	(int);
 #endif /* HANDLE_GENERIC_PRAGMAS */
-static int whitespace_cr		PROTO((int));
-static int skip_white_space		PROTO((int));
-static int skip_white_space_on_line	PROTO((void));
-static char *extend_token_buffer	PROTO((char *));
-static int readescape			PROTO((int *));
+static int whitespace_cr		(int);
+static int skip_white_space		(int);
+static int skip_white_space_on_line	(void);
+static char *extend_token_buffer	(char *);
+static int readescape			(int *);
 
 /* Do not insert generated code into the source, instead, include it.
    This allows us to build gcc automatically even for targets that

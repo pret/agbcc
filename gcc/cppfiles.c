@@ -33,20 +33,20 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
    so it's static anyway. */
 
 /* CYGNUS LOCAL - obscured headers */
-static int open_include_file_name PARAMS ((cpp_reader*, char *));
+static int open_include_file_name (cpp_reader*, char *);
 /* END CYGNUS LOCAL - obscured headers */
 static struct include_hash *redundant_include_p
-					PROTO ((cpp_reader *,
+					(cpp_reader *,
 						struct include_hash *,
-						struct file_name_list *));
-static struct file_name_map *read_name_map	PROTO ((cpp_reader *,
-							const char *));
-static char *read_filename_string	PROTO ((int, FILE *));
-static char *remap_filename 		PROTO ((cpp_reader *, char *,
-						struct file_name_list *));
-static long safe_read			PROTO ((int, char *, int));
-static void simplify_pathname		PROTO ((char *));
-static struct file_name_list *actual_directory PROTO ((cpp_reader *, char *));
+						struct file_name_list *);
+static struct file_name_map *read_name_map	(cpp_reader *,
+							const char *);
+static char *read_filename_string	(int, FILE *);
+static char *remap_filename 		(cpp_reader *, char *,
+						struct file_name_list *);
+static long safe_read			(int, char *, int);
+static void simplify_pathname		(char *);
+static struct file_name_list *actual_directory (cpp_reader *, char *);
 
 /* Windows does not natively support inodes, and neither does MSDOS. */
 #if (defined _WIN32 && !defined CYGWIN) || defined __MSDOS__

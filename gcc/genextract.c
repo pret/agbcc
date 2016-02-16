@@ -95,14 +95,14 @@ static int dupnums[MAX_DUP_OPERANDS];
 
 static struct code_ptr *peepholes;
 
-static void gen_insn PROTO ((rtx));
-static void walk_rtx PROTO ((rtx, const char *));
-static void print_path PROTO ((char *));
-static void fatal PVPROTO ((const char *, ...))
+static void gen_insn (rtx);
+static void walk_rtx (rtx, const char *);
+static void print_path (char *);
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-static char *copystr PROTO ((const char *));
+static char *copystr (const char *);
 static void mybzero ();
-void fancy_abort PROTO ((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 static void
 gen_insn (insn)
@@ -373,7 +373,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

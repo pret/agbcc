@@ -66,53 +66,53 @@ struct operand_alternative
 };
 
 
-extern void init_recog			PROTO((void));
-extern void init_recog_no_volatile	PROTO((void));
-extern int recog_memoized		PROTO((rtx));
-extern int check_asm_operands		PROTO((rtx));
-extern int validate_change		PROTO((rtx, rtx *, rtx, int));
-extern int apply_change_group		PROTO((void));
-extern int num_validated_changes	PROTO((void));
-extern void cancel_changes		PROTO((int));
-extern int constrain_operands		PROTO((int));
-extern int memory_address_p		PROTO((enum machine_mode, rtx));
-extern int strict_memory_address_p	PROTO((enum machine_mode, rtx));
-extern int validate_replace_rtx		PROTO((rtx, rtx, rtx));
-extern void validate_replace_rtx_group	PROTO((rtx, rtx, rtx));
-extern int validate_replace_src		PROTO((rtx, rtx, rtx));
+extern void init_recog			(void);
+extern void init_recog_no_volatile	(void);
+extern int recog_memoized		(rtx);
+extern int check_asm_operands		(rtx);
+extern int validate_change		(rtx, rtx *, rtx, int);
+extern int apply_change_group		(void);
+extern int num_validated_changes	(void);
+extern void cancel_changes		(int);
+extern int constrain_operands		(int);
+extern int memory_address_p		(enum machine_mode, rtx);
+extern int strict_memory_address_p	(enum machine_mode, rtx);
+extern int validate_replace_rtx		(rtx, rtx, rtx);
+extern void validate_replace_rtx_group	(rtx, rtx, rtx);
+extern int validate_replace_src		(rtx, rtx, rtx);
 #ifdef HAVE_cc0
-extern int next_insn_tests_no_inequality PROTO ((rtx));
+extern int next_insn_tests_no_inequality (rtx);
 #endif
-extern int reg_fits_class_p		PROTO((rtx, enum reg_class, int,
-					       enum machine_mode));
-extern rtx *find_single_use		PROTO((rtx, rtx, rtx *));
+extern int reg_fits_class_p		(rtx, enum reg_class, int,
+					       enum machine_mode);
+extern rtx *find_single_use		(rtx, rtx, rtx *);
 
-extern int general_operand		PROTO((rtx, enum machine_mode));
-extern int address_operand		PROTO((rtx, enum machine_mode));
-extern int register_operand		PROTO((rtx, enum machine_mode));
-extern int scratch_operand		PROTO((rtx, enum machine_mode));
-extern int immediate_operand		PROTO((rtx, enum machine_mode));
-extern int const_int_operand		PROTO((rtx, enum machine_mode));
-extern int const_double_operand		PROTO((rtx, enum machine_mode));
-extern int nonimmediate_operand		PROTO((rtx, enum machine_mode));
-extern int nonmemory_operand		PROTO((rtx, enum machine_mode));
-extern int push_operand			PROTO((rtx, enum machine_mode));
-extern int pop_operand			PROTO((rtx, enum machine_mode));
-extern int memory_operand		PROTO((rtx, enum machine_mode));
-extern int indirect_operand		PROTO((rtx, enum machine_mode));
-extern int mode_independent_operand	PROTO((rtx, enum machine_mode));
-extern int comparison_operator		PROTO((rtx, enum machine_mode));
+extern int general_operand		(rtx, enum machine_mode);
+extern int address_operand		(rtx, enum machine_mode);
+extern int register_operand		(rtx, enum machine_mode);
+extern int scratch_operand		(rtx, enum machine_mode);
+extern int immediate_operand		(rtx, enum machine_mode);
+extern int const_int_operand		(rtx, enum machine_mode);
+extern int const_double_operand		(rtx, enum machine_mode);
+extern int nonimmediate_operand		(rtx, enum machine_mode);
+extern int nonmemory_operand		(rtx, enum machine_mode);
+extern int push_operand			(rtx, enum machine_mode);
+extern int pop_operand			(rtx, enum machine_mode);
+extern int memory_operand		(rtx, enum machine_mode);
+extern int indirect_operand		(rtx, enum machine_mode);
+extern int mode_independent_operand	(rtx, enum machine_mode);
+extern int comparison_operator		(rtx, enum machine_mode);
 
-extern int offsettable_memref_p		PROTO((rtx));
-extern int offsettable_nonstrict_memref_p	PROTO((rtx));
-extern int offsettable_address_p	PROTO((int, enum machine_mode, rtx));
-extern int mode_dependent_address_p	PROTO((rtx));
+extern int offsettable_memref_p		(rtx);
+extern int offsettable_nonstrict_memref_p	(rtx);
+extern int offsettable_address_p	(int, enum machine_mode, rtx);
+extern int mode_dependent_address_p	(rtx);
 
-extern int recog			PROTO((rtx, rtx, int *));
-extern void add_clobbers		PROTO((rtx, int));
-extern void insn_extract		PROTO((rtx));
-extern void extract_insn		PROTO((rtx));
-extern void preprocess_constraints	PROTO((void));
+extern int recog			(rtx, rtx, int *);
+extern void add_clobbers		(rtx, int);
+extern void insn_extract		(rtx);
+extern void extract_insn		(rtx);
+extern void preprocess_constraints	(void);
 
 /* Nonzero means volatile operands are recognized.  */
 extern int volatile_ok;

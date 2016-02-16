@@ -298,39 +298,39 @@ static int output_reloadnum;
       : (type)))
 
 #ifdef HAVE_SECONDARY_RELOADS
-static int push_secondary_reload PROTO((int, rtx, int, int, enum reg_class,
+static int push_secondary_reload (int, rtx, int, int, enum reg_class,
 					enum machine_mode, enum reload_type,
-					enum insn_code *));
+					enum insn_code *);
 #endif
-static enum reg_class find_valid_class PROTO((enum machine_mode, int));
-static int push_reload		PROTO((rtx, rtx, rtx *, rtx *, enum reg_class,
+static enum reg_class find_valid_class (enum machine_mode, int);
+static int push_reload		(rtx, rtx, rtx *, rtx *, enum reg_class,
 				       enum machine_mode, enum machine_mode,
-				       int, int, int, enum reload_type));
-static void push_replacement	PROTO((rtx *, int, enum machine_mode));
-static void combine_reloads	PROTO((void));
-static rtx find_dummy_reload	PROTO((rtx, rtx, rtx *, rtx *,
+				       int, int, int, enum reload_type);
+static void push_replacement	(rtx *, int, enum machine_mode);
+static void combine_reloads	(void);
+static rtx find_dummy_reload	(rtx, rtx, rtx *, rtx *,
 				       enum machine_mode, enum machine_mode,
-				       enum reg_class, int, int));
-static int earlyclobber_operand_p PROTO((rtx));
-static int hard_reg_set_here_p	PROTO((int, int, rtx));
-static struct decomposition decompose PROTO((rtx));
-static int immune_p		PROTO((rtx, rtx, struct decomposition));
-static int alternative_allows_memconst PROTO((char *, int));
-static rtx find_reloads_toplev	PROTO((rtx, int, enum reload_type, int, int, rtx));
-static rtx make_memloc		PROTO((rtx, int));
-static int find_reloads_address	PROTO((enum machine_mode, rtx *, rtx, rtx *,
-				       int, enum reload_type, int, rtx));
-static rtx subst_reg_equivs	PROTO((rtx, rtx));
-static rtx subst_indexed_address PROTO((rtx));
-static int find_reloads_address_1 PROTO((enum machine_mode, rtx, int, rtx *,
-					 int, enum reload_type,int, rtx));
-static void find_reloads_address_part PROTO((rtx, rtx *, enum reg_class,
+				       enum reg_class, int, int);
+static int earlyclobber_operand_p (rtx);
+static int hard_reg_set_here_p	(int, int, rtx);
+static struct decomposition decompose (rtx);
+static int immune_p		(rtx, rtx, struct decomposition);
+static int alternative_allows_memconst (char *, int);
+static rtx find_reloads_toplev	(rtx, int, enum reload_type, int, int, rtx);
+static rtx make_memloc		(rtx, int);
+static int find_reloads_address	(enum machine_mode, rtx *, rtx, rtx *,
+				       int, enum reload_type, int, rtx);
+static rtx subst_reg_equivs	(rtx, rtx);
+static rtx subst_indexed_address (rtx);
+static int find_reloads_address_1 (enum machine_mode, rtx, int, rtx *,
+					 int, enum reload_type,int, rtx);
+static void find_reloads_address_part (rtx, rtx *, enum reg_class,
 					     enum machine_mode, int,
-					     enum reload_type, int));
-static rtx find_reloads_subreg_address PROTO((rtx, int, int, enum reload_type,
-					      int, rtx));
-static int find_inc_amount	PROTO((rtx, rtx));
-static int loc_mentioned_in_p	PROTO((rtx *, rtx));
+					     enum reload_type, int);
+static rtx find_reloads_subreg_address (rtx, int, int, enum reload_type,
+					      int, rtx);
+static int find_inc_amount	(rtx, rtx);
+static int loc_mentioned_in_p	(rtx *, rtx);
 
 #ifdef HAVE_SECONDARY_RELOADS
 

@@ -220,4 +220,4 @@ extern int caller_save_needed;
 #endif
 
 /* Allocate reg_n_info tables */
-extern void allocate_reg_info PROTO((size_t, int, int));
+extern void allocate_reg_info (size_t, int, int);

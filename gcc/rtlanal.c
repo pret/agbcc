@@ -23,13 +23,13 @@ Boston, MA 02111-1307, USA.  */
 #include "system.h"
 #include "rtl.h"
 
-static int rtx_addr_can_trap_p	PROTO((rtx));
-static void reg_set_p_1		PROTO((rtx, rtx));
-static void reg_set_last_1	PROTO((rtx, rtx));
+static int rtx_addr_can_trap_p	(rtx);
+static void reg_set_p_1		(rtx, rtx);
+static void reg_set_last_1	(rtx, rtx);
 
 
 /* Forward declarations */
-static int jmp_uses_reg_or_mem		PROTO((rtx));
+static int jmp_uses_reg_or_mem		(rtx);
 
 /* Bit flags that specify the machine subtype we are compiling for.
    Bits are tested using macros TARGET_... defined in the tm.h file

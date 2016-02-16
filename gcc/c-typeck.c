@@ -42,37 +42,37 @@ Boston, MA 02111-1307, USA.  */
    message within this initializer.  */
 static int missing_braces_mentioned;
 
-static tree qualify_type		PROTO((tree, tree));
-static int comp_target_types		PROTO((tree, tree));
-static int function_types_compatible_p	PROTO((tree, tree));
-static int type_lists_compatible_p	PROTO((tree, tree));
-static int self_promoting_type_p	PROTO((tree));
-static tree decl_constant_value		PROTO((tree));
-static tree lookup_field		PROTO((tree, tree, tree *));
-static tree convert_arguments		PROTO((tree, tree, tree, tree));
-static tree pointer_int_sum		PROTO((enum tree_code, tree, tree));
-static tree pointer_diff		PROTO((tree, tree));
-static tree unary_complex_lvalue	PROTO((enum tree_code, tree));
-static void pedantic_lvalue_warning	PROTO((enum tree_code));
-static tree internal_build_compound_expr PROTO((tree, int));
-static tree convert_for_assignment	PROTO((tree, tree, char *, tree,
-					       tree, int));
-static void warn_for_assignment		PROTO((char *, char *, tree, int));
-static tree valid_compound_expr_initializer PROTO((tree, tree));
-static void push_string			PROTO((char *));
-static void push_member_name		PROTO((tree));
-static void push_array_bounds		PROTO((int));
-static int spelling_length		PROTO((void));
-static char *print_spelling		PROTO((char *));
-static char *get_spelling		PROTO((char *));
-static void warning_init		PROTO((char *, char *,
-					       char *));
-static tree digest_init			PROTO((tree, tree, int, int));
-static void check_init_type_bitfields	PROTO((tree));
-static void output_init_element		PROTO((tree, tree, tree, int));
-static void output_pending_init_elements PROTO((int));
-static void add_pending_init		PROTO((tree, tree));
-static int pending_init_member		PROTO((tree));
+static tree qualify_type		(tree, tree);
+static int comp_target_types		(tree, tree);
+static int function_types_compatible_p	(tree, tree);
+static int type_lists_compatible_p	(tree, tree);
+static int self_promoting_type_p	(tree);
+static tree decl_constant_value		(tree);
+static tree lookup_field		(tree, tree, tree *);
+static tree convert_arguments		(tree, tree, tree, tree);
+static tree pointer_int_sum		(enum tree_code, tree, tree);
+static tree pointer_diff		(tree, tree);
+static tree unary_complex_lvalue	(enum tree_code, tree);
+static void pedantic_lvalue_warning	(enum tree_code);
+static tree internal_build_compound_expr (tree, int);
+static tree convert_for_assignment	(tree, tree, char *, tree,
+					       tree, int);
+static void warn_for_assignment		(char *, char *, tree, int);
+static tree valid_compound_expr_initializer (tree, tree);
+static void push_string			(char *);
+static void push_member_name		(tree);
+static void push_array_bounds		(int);
+static int spelling_length		(void);
+static char *print_spelling		(char *);
+static char *get_spelling		(char *);
+static void warning_init		(char *, char *,
+					       char *);
+static tree digest_init			(tree, tree, int, int);
+static void check_init_type_bitfields	(tree);
+static void output_init_element		(tree, tree, tree, int);
+static void output_pending_init_elements (int);
+static void add_pending_init		(tree, tree);
+static int pending_init_member		(tree);
 
 /* Do `exp = require_complete_type (exp);' to make sure exp
    does not have an incomplete type.  (That includes void types.)  */

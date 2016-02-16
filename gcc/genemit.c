@@ -30,9 +30,9 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-static void fatal PVPROTO ((const char *, ...))
+static void fatal (const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort (void) ATTRIBUTE_NORETURN;
 
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
@@ -63,15 +63,15 @@ struct clobber_ent
   struct clobber_ent *next;
 };
 
-static void max_operand_1		PROTO((rtx));
-static int max_operand_vec		PROTO((rtx, int));
-static void print_code			PROTO((RTX_CODE));
-static void gen_exp			PROTO((rtx));
-static void gen_insn			PROTO((rtx));
-static void gen_expand			PROTO((rtx));
-static void gen_split			PROTO((rtx));
-static void output_add_clobbers		PROTO((void));
-static void output_init_mov_optab	PROTO((void));
+static void max_operand_1		(rtx);
+static int max_operand_vec		(rtx, int);
+static void print_code			(RTX_CODE);
+static void gen_exp			(rtx);
+static void gen_insn			(rtx);
+static void gen_expand			(rtx);
+static void gen_split			(rtx);
+static void output_add_clobbers		(void);
+static void output_init_mov_optab	(void);
 
 
 static void
@@ -706,7 +706,7 @@ xrealloc (old, size)
 }
 
 static void
-fatal VPROTO ((const char *format, ...))
+fatal (const char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   const char *format;

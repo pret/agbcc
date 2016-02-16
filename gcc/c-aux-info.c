@@ -37,12 +37,12 @@ typedef enum formals_style_enum formals_style;
 
 static char *data_type;
 
-static char *affix_data_type		PROTO((char *));
-static char *gen_formal_list_for_type	PROTO((tree, formals_style));
-static int   deserves_ellipsis		PROTO((tree));
-static char *gen_formal_list_for_func_def PROTO((tree, formals_style));
-static char *gen_type			PROTO((char *, tree, formals_style));
-static char *gen_decl			PROTO((tree, int, formals_style));
+static char *affix_data_type		(char *);
+static char *gen_formal_list_for_type	(tree, formals_style);
+static int   deserves_ellipsis		(tree);
+static char *gen_formal_list_for_func_def (tree, formals_style);
+static char *gen_type			(char *, tree, formals_style);
+static char *gen_decl			(tree, int, formals_style);
 
 /* Given a string representing an entire type or an entire declaration
    which only lacks the actual "data-type" specifier (at its left end),

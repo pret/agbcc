@@ -240,20 +240,20 @@ enum insn_code setcc_gen_code[NUM_RTX_CODE];
 enum insn_code movcc_gen_code[NUM_MACHINE_MODES];
 #endif
 
-static int add_equal_note	PROTO((rtx, rtx, enum rtx_code, rtx, rtx));
-static rtx widen_operand	PROTO((rtx, enum machine_mode,
-				       enum machine_mode, int, int));
-static enum insn_code can_fix_p	PROTO((enum machine_mode, enum machine_mode,
-				       int, int *));
-static enum insn_code can_float_p PROTO((enum machine_mode, enum machine_mode,
-					 int));
-static rtx ftruncify	PROTO((rtx));
-static optab init_optab	PROTO((enum rtx_code));
-static void init_libfuncs PROTO((optab, int, int, char *, int));
-static void init_integral_libfuncs PROTO((optab, char *, int));
-static void init_floating_libfuncs PROTO((optab, char *, int));
+static int add_equal_note	(rtx, rtx, enum rtx_code, rtx, rtx);
+static rtx widen_operand	(rtx, enum machine_mode,
+				       enum machine_mode, int, int);
+static enum insn_code can_fix_p	(enum machine_mode, enum machine_mode,
+				       int, int *);
+static enum insn_code can_float_p (enum machine_mode, enum machine_mode,
+					 int);
+static rtx ftruncify	(rtx);
+static optab init_optab	(enum rtx_code);
+static void init_libfuncs (optab, int, int, char *, int);
+static void init_integral_libfuncs (optab, char *, int);
+static void init_floating_libfuncs (optab, char *, int);
 #ifdef HAVE_conditional_trap
-static void init_traps PROTO((void));
+static void init_traps (void);
 #endif
 
 /* Add a REG_EQUAL note to the last insn in SEQ.  TARGET is being set to

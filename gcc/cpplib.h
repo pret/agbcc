@@ -69,8 +69,8 @@ enum cpp_token {
   CPP_POP
 };
 
-typedef enum cpp_token (*parse_underflow_t) PARAMS((cpp_reader *));
-typedef int (*parse_cleanup_t) PARAMS((cpp_buffer *, cpp_reader *));
+typedef enum cpp_token (*parse_underflow_t) (cpp_reader *);
+typedef int (*parse_cleanup_t) (cpp_buffer *, cpp_reader *);
 
 /* A parse_marker indicates a previous position,
    which we can backtrack to. */
@@ -81,19 +81,19 @@ struct parse_marker {
   int position;
 };
 
-extern void parse_set_mark PARAMS ((struct parse_marker *, cpp_reader *));
-extern void parse_clear_mark PARAMS ((struct parse_marker *));
-extern void parse_goto_mark PARAMS((struct parse_marker *, cpp_reader *));
-extern void parse_move_mark PARAMS((struct parse_marker *, cpp_reader *));
+extern void parse_set_mark (struct parse_marker *, cpp_reader *);
+extern void parse_clear_mark (struct parse_marker *);
+extern void parse_goto_mark (struct parse_marker *, cpp_reader *);
+extern void parse_move_mark (struct parse_marker *, cpp_reader *);
 
-extern int cpp_handle_option PARAMS ((cpp_reader *, int, char **));
-extern int cpp_handle_options PARAMS ((cpp_reader *, int, char **));
-extern enum cpp_token cpp_get_token PARAMS ((cpp_reader *));
-extern void cpp_skip_hspace PARAMS((cpp_reader *));
-extern enum cpp_token cpp_get_non_space_token PARAMS ((cpp_reader *));
+extern int cpp_handle_option (cpp_reader *, int, char **);
+extern int cpp_handle_options (cpp_reader *, int, char **);
+extern enum cpp_token cpp_get_token (cpp_reader *);
+extern void cpp_skip_hspace (cpp_reader *);
+extern enum cpp_token cpp_get_non_space_token (cpp_reader *);
 
 /* This frees resources used by PFILE. */
-extern void cpp_cleanup PARAMS ((cpp_reader *PFILE));
+extern void cpp_cleanup (cpp_reader *PFILE);
 
 /* If we have a huge buffer, may need to cache more recent counts */
 #define CPP_LINE_BASE(BUF) ((BUF)->buf + (BUF)->line_base)
@@ -666,65 +666,65 @@ typedef struct if_stack IF_STACK_FRAME;
 #include "machmode.h"
 #endif
 
-extern void cpp_buf_line_and_col PARAMS((cpp_buffer *, long *, long *));
-extern cpp_buffer* cpp_file_buffer PARAMS((cpp_reader *));
-extern void cpp_define PARAMS ((cpp_reader*, unsigned char *));
+extern void cpp_buf_line_and_col (cpp_buffer *, long *, long *);
+extern cpp_buffer* cpp_file_buffer (cpp_reader *);
+extern void cpp_define (cpp_reader*, unsigned char *);
 
-extern void cpp_error PVPROTO ((cpp_reader *, const char *, ...))
+extern void cpp_error (cpp_reader *, const char *, ...)
   ATTRIBUTE_PRINTF_2;
-extern void cpp_warning PVPROTO ((cpp_reader *, const char *, ...))
+extern void cpp_warning (cpp_reader *, const char *, ...)
   ATTRIBUTE_PRINTF_2;
-extern void cpp_pedwarn PVPROTO ((cpp_reader *, const char *, ...))
+extern void cpp_pedwarn (cpp_reader *, const char *, ...)
   ATTRIBUTE_PRINTF_2;
-extern void cpp_error_with_line PVPROTO ((cpp_reader *, int, int, const char *, ...))
+extern void cpp_error_with_line (cpp_reader *, int, int, const char *, ...)
   ATTRIBUTE_PRINTF_4;
-extern void cpp_pedwarn_with_line PVPROTO ((cpp_reader *, int, int, const char *, ...))
+extern void cpp_pedwarn_with_line (cpp_reader *, int, int, const char *, ...)
   ATTRIBUTE_PRINTF_4;
-extern void cpp_pedwarn_with_file_and_line PVPROTO ((cpp_reader *, char *, int, const char *, ...))
+extern void cpp_pedwarn_with_file_and_line (cpp_reader *, char *, int, const char *, ...)
   ATTRIBUTE_PRINTF_4;
-extern void cpp_message_from_errno PROTO ((cpp_reader *, int, const char *));
-extern void cpp_error_from_errno PROTO ((cpp_reader *, const char *));
-extern void cpp_perror_with_name PROTO ((cpp_reader *, const char *));
-extern void v_cpp_message PROTO ((cpp_reader *, int, const char *, va_list));
+extern void cpp_message_from_errno (cpp_reader *, int, const char *);
+extern void cpp_error_from_errno (cpp_reader *, const char *);
+extern void cpp_perror_with_name (cpp_reader *, const char *);
+extern void v_cpp_message (cpp_reader *, int, const char *, va_list);
 
-extern void cpp_grow_buffer PARAMS ((cpp_reader *, long));
-extern HOST_WIDE_INT cpp_parse_escape PARAMS ((cpp_reader *, char **, HOST_WIDE_INT));
-extern cpp_buffer *cpp_push_buffer PARAMS ((cpp_reader *,
-					    unsigned char *, long));
-extern cpp_buffer *cpp_pop_buffer PARAMS ((cpp_reader *));
+extern void cpp_grow_buffer (cpp_reader *, long);
+extern HOST_WIDE_INT cpp_parse_escape (cpp_reader *, char **, HOST_WIDE_INT);
+extern cpp_buffer *cpp_push_buffer (cpp_reader *,
+					    unsigned char *, long);
+extern cpp_buffer *cpp_pop_buffer (cpp_reader *);
 
-extern cpp_hashnode *cpp_lookup PARAMS ((cpp_reader *, const unsigned char *,
-					 int, int));
-extern void cpp_reader_init PARAMS ((cpp_reader *));
-extern void cpp_options_init PARAMS ((cpp_options *));
-extern int cpp_start_read PARAMS ((cpp_reader *, char *));
-extern int cpp_read_check_assertion PARAMS ((cpp_reader *));
-extern int scan_decls PARAMS ((cpp_reader *, int, char **));
-extern void skip_rest_of_line PARAMS ((cpp_reader *));
-extern void cpp_finish PARAMS ((cpp_reader *));
+extern cpp_hashnode *cpp_lookup (cpp_reader *, const unsigned char *,
+					 int, int);
+extern void cpp_reader_init (cpp_reader *);
+extern void cpp_options_init (cpp_options *);
+extern int cpp_start_read (cpp_reader *, char *);
+extern int cpp_read_check_assertion (cpp_reader *);
+extern int scan_decls (cpp_reader *, int, char **);
+extern void skip_rest_of_line (cpp_reader *);
+extern void cpp_finish (cpp_reader *);
 
 /* From cpperror.c */
-extern void cpp_fatal PVPROTO ((cpp_reader *, const char *, ...))
+extern void cpp_fatal (cpp_reader *, const char *, ...)
   ATTRIBUTE_PRINTF_2;
-extern void cpp_message PVPROTO ((cpp_reader *, int, const char *, ...))
+extern void cpp_message (cpp_reader *, int, const char *, ...)
   ATTRIBUTE_PRINTF_3;
-extern void cpp_pfatal_with_name PROTO ((cpp_reader *, const char *));
-extern void cpp_file_line_for_message PROTO ((cpp_reader *, char *, int, int));
-extern void cpp_print_containing_files PROTO ((cpp_reader *));
+extern void cpp_pfatal_with_name (cpp_reader *, const char *);
+extern void cpp_file_line_for_message (cpp_reader *, char *, int, int);
+extern void cpp_print_containing_files (cpp_reader *);
 
 /* In cppfiles.c */
-extern void append_include_chain	PROTO ((cpp_reader *,
+extern void append_include_chain	(cpp_reader *,
 						struct file_name_list **,
-						const char *, int));
-extern void merge_include_chains	PROTO ((struct cpp_options *));
-extern int find_include_file		PROTO ((cpp_reader *, char *,
+						const char *, int);
+extern void merge_include_chains	(struct cpp_options *);
+extern int find_include_file		(cpp_reader *, char *,
 						struct file_name_list *,
 						struct include_hash **,
-						int *));
-extern int finclude			PROTO ((cpp_reader *, int,
-					        struct include_hash *));
-extern void deps_output			PROTO ((cpp_reader *, char *, int));
-extern struct include_hash *include_hash PROTO ((cpp_reader *, char *, int));
+						int *);
+extern int finclude			(cpp_reader *, int,
+					        struct include_hash *);
+extern void deps_output			(cpp_reader *, char *, int);
+extern struct include_hash *include_hash (cpp_reader *, char *, int);
 
 #ifndef INCLUDE_LEN_FUDGE
 #define INCLUDE_LEN_FUDGE 0

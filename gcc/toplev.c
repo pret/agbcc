@@ -82,7 +82,7 @@ extern tree last_assemble_variable_decl;
 extern void check_line_directive();
 extern void cpplib_init();
 
-extern char *init_parse PVPROTO((char *));
+extern char *init_parse (char *);
 extern void finish_parse ();
 extern void init_decl_processing ();
 extern void init_obstacks ();
@@ -101,56 +101,56 @@ extern void print_rtl ();
 extern void print_rtl_with_bb ();
 
 void rest_of_decl_compilation ();
-void error_with_file_and_line PVPROTO((char *file, int line, char *s, ...));
-void error_with_decl PVPROTO((tree decl, char *s, ...));
-void error PVPROTO((char *s, ...));
-void fatal PVPROTO((char *s, ...));
-void warning_with_file_and_line PVPROTO((char *file, int line, char *s, ...));
-void warning_with_decl PVPROTO((tree decl, char *s, ...));
-void warning PVPROTO((char *s, ...));
-void pedwarn PVPROTO((char *s, ...));
-void pedwarn_with_decl PVPROTO((tree decl, char *s, ...));
-void pedwarn_with_file_and_line PVPROTO((char *file, int line, char *s, ...));
-void sorry PVPROTO((char *s, ...));
-static void set_target_switch PROTO((char *));
-static char *decl_name PROTO((tree, int));
-static void vmessage PROTO((char *, char *, va_list));
-static void v_message_with_file_and_line PROTO((char *, int, char *,
-						char *, va_list));
-static void v_message_with_decl PROTO((tree, char *, char *, va_list));
-static void file_and_line_for_asm PROTO((rtx, char **, int *));
-static void v_error_with_file_and_line PROTO((char *, int, char *, va_list));
-static void v_error_with_decl PROTO((tree, char *, va_list));
-static void v_error_for_asm PROTO((rtx, char *, va_list));
-static void verror PROTO((char *, va_list));
-static void vfatal PROTO((char *, va_list)) ATTRIBUTE_NORETURN;
-static void v_warning_with_file_and_line PROTO ((char *, int, char *, va_list));
-static void v_warning_with_decl PROTO((tree, char *, va_list));
-static void v_warning_for_asm PROTO((rtx, char *, va_list));
-static void vwarning PROTO((char *, va_list));
-static void vpedwarn PROTO((char *, va_list));
-static void v_pedwarn_with_decl PROTO((tree, char *, va_list));
-static void v_pedwarn_with_file_and_line PROTO((char *, int, char *, va_list));
-static void vsorry PROTO((char *, va_list));
-static void v_really_sorry PROTO((char *, va_list)) ATTRIBUTE_NORETURN;
-static void float_signal PROTO((int)) ATTRIBUTE_NORETURN;
-static void pipe_closed PROTO((int)) ATTRIBUTE_NORETURN;
-static void open_dump_file PROTO((char *, char *));
-static void close_dump_file PROTO((void (*) (FILE *, rtx), rtx));
-static void dump_rtl PROTO((char *, tree, void (*) (FILE *, rtx), rtx));
-static void clean_dump_file PROTO((char *));
-static void compile_file PROTO((char *));
-static void display_help PROTO ((void));
+void error_with_file_and_line (char *file, int line, char *s, ...);
+void error_with_decl (tree decl, char *s, ...);
+void error (char *s, ...);
+void fatal (char *s, ...);
+void warning_with_file_and_line (char *file, int line, char *s, ...);
+void warning_with_decl (tree decl, char *s, ...);
+void warning (char *s, ...);
+void pedwarn (char *s, ...);
+void pedwarn_with_decl (tree decl, char *s, ...);
+void pedwarn_with_file_and_line (char *file, int line, char *s, ...);
+void sorry (char *s, ...);
+static void set_target_switch (char *);
+static char *decl_name (tree, int);
+static void vmessage (char *, char *, va_list);
+static void v_message_with_file_and_line (char *, int, char *,
+						char *, va_list);
+static void v_message_with_decl (tree, char *, char *, va_list);
+static void file_and_line_for_asm (rtx, char **, int *);
+static void v_error_with_file_and_line (char *, int, char *, va_list);
+static void v_error_with_decl (tree, char *, va_list);
+static void v_error_for_asm (rtx, char *, va_list);
+static void verror (char *, va_list);
+static void vfatal (char *, va_list) ATTRIBUTE_NORETURN;
+static void v_warning_with_file_and_line (char *, int, char *, va_list);
+static void v_warning_with_decl (tree, char *, va_list);
+static void v_warning_for_asm (rtx, char *, va_list);
+static void vwarning (char *, va_list);
+static void vpedwarn (char *, va_list);
+static void v_pedwarn_with_decl (tree, char *, va_list);
+static void v_pedwarn_with_file_and_line (char *, int, char *, va_list);
+static void vsorry (char *, va_list);
+static void v_really_sorry (char *, va_list) ATTRIBUTE_NORETURN;
+static void float_signal (int) ATTRIBUTE_NORETURN;
+static void pipe_closed (int) ATTRIBUTE_NORETURN;
+static void open_dump_file (char *, char *);
+static void close_dump_file (void (*) (FILE *, rtx), rtx);
+static void dump_rtl (char *, tree, void (*) (FILE *, rtx), rtx);
+static void clean_dump_file (char *);
+static void compile_file (char *);
+static void display_help (void);
 
-static void print_version PROTO((FILE *, char *));
-static int print_single_switch PROTO((FILE *, int, int, char *, char *, char *,
-				      char *, char *));
-static void print_switch_values PROTO((FILE *, int, int, char *, char *,
-				       char *));
+static void print_version (FILE *, char *);
+static int print_single_switch (FILE *, int, int, char *, char *, char *,
+				      char *, char *);
+static void print_switch_values (FILE *, int, int, char *, char *,
+				       char *);
 
-void print_rtl_graph_with_bb PROTO ((const char *, const char *, rtx));
-void clean_graph_dump_file PROTO ((const char *, const char *));
-void finish_graph_dump_file PROTO ((const char *, const char *));
+void print_rtl_graph_with_bb (const char *, const char *, rtx);
+void clean_graph_dump_file (const char *, const char *);
+void finish_graph_dump_file (const char *, const char *);
 /* Length of line when printing switch values.  */
 #define MAX_LINE 75
 
@@ -272,20 +272,20 @@ int sorrycount = 0;
      2: and any other information that might be interesting, such as function
         parameter types in C++.  */
 
-char *(*decl_printable_name)		PROTO ((tree, int));
+char *(*decl_printable_name)		(tree, int);
 
 /* Pointer to function to compute rtl for a language-specific tree code.  */
 
 typedef rtx (*lang_expand_expr_t)
-  PROTO ((union tree_node *, rtx, enum machine_mode,
-	  enum expand_modifier modifier));
+  (union tree_node *, rtx, enum machine_mode,
+	  enum expand_modifier modifier);
 
 lang_expand_expr_t lang_expand_expr = 0;
 
 /* Pointer to function to finish handling an incomplete decl at the
    end of compilation.  */
 
-void (*incomplete_decl_finalize_hook) PROTO((tree)) = 0;
+void (*incomplete_decl_finalize_hook) (tree) = 0;
 
 /* Nonzero for -pedantic switch: warn about anything
    that standard spec forbids.  */
@@ -1314,7 +1314,7 @@ default_print_error_function (file)
 /* Called by report_error_function to print out function name.
  * Default may be overridden by language front-ends.  */
 
-void (*print_error_function) PROTO((char *)) = default_print_error_function;
+void (*print_error_function) (char *) = default_print_error_function;
 
 /* Prints out, if necessary, the name of the current function
   that caused an error.  Called from all error and warning functions.  */
@@ -1496,7 +1496,7 @@ v_error_with_file_and_line (file, line, s, ap)
 }
 
 void
-error_with_file_and_line VPROTO((char *file, int line, char *s, ...))
+error_with_file_and_line (char *file, int line, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *file;
@@ -1533,7 +1533,7 @@ v_error_with_decl (decl, s, ap)
 }
 
 void
-error_with_decl VPROTO((tree decl, char *s, ...))
+error_with_decl (tree decl, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   tree decl;
@@ -1572,7 +1572,7 @@ v_error_for_asm (insn, s, ap)
 }
 
 void
-error_for_asm VPROTO((rtx insn, char *s, ...))
+error_for_asm (rtx insn, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   rtx insn;
@@ -1602,7 +1602,7 @@ verror (s, ap)
 }
 
 void
-error VPROTO((char *s, ...))
+error (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -1631,7 +1631,7 @@ vfatal (s, ap)
 }
 
 void
-fatal VPROTO((char *s, ...))
+fatal (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -1665,7 +1665,7 @@ v_warning_with_file_and_line (file, line, s, ap)
 }
 
 void
-warning_with_file_and_line VPROTO((char *file, int line, char *s, ...))
+warning_with_file_and_line (char *file, int line, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *file;
@@ -1704,7 +1704,7 @@ v_warning_with_decl (decl, s, ap)
 }
 
 void
-warning_with_decl VPROTO((tree decl, char *s, ...))
+warning_with_decl (tree decl, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   tree decl;
@@ -1745,7 +1745,7 @@ v_warning_for_asm (insn, s, ap)
 }
 
 void
-warning_for_asm VPROTO((rtx insn, char *s, ...))
+warning_for_asm (rtx insn, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   rtx insn;
@@ -1775,7 +1775,7 @@ vwarning (s, ap)
 }
 
 void
-warning VPROTO((char *s, ...))
+warning (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -1807,7 +1807,7 @@ vpedwarn (s, ap)
 }
 
 void
-pedwarn VPROTO((char *s, ...))
+pedwarn (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -1847,7 +1847,7 @@ v_pedwarn_with_decl (decl, s, ap)
 }
 
 void
-pedwarn_with_decl VPROTO((tree decl, char *s, ...))
+pedwarn_with_decl (tree decl, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   tree decl;
@@ -1880,7 +1880,7 @@ v_pedwarn_with_file_and_line (file, line, s, ap)
 }
 
 void
-pedwarn_with_file_and_line VPROTO((char *file, int line, char *s, ...))
+pedwarn_with_file_and_line (char *file, int line, char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *file;
@@ -1918,7 +1918,7 @@ vsorry (s, ap)
 }
 
 void
-sorry VPROTO((char *s, ...))
+sorry (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -1952,7 +1952,7 @@ v_really_sorry (s, ap)
 }
 
 void
-really_sorry VPROTO((char *s, ...))
+really_sorry (char *s, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *s;
@@ -2302,7 +2302,7 @@ open_dump_file (suffix, function_name)
 /* Routine to close a dump file.  */
 static void
 close_dump_file (func, insns)
-     void (*func) PROTO ((FILE *, rtx));
+     void (*func) (FILE *, rtx);
      rtx    insns;
 {
   TIMEVAR
@@ -2325,7 +2325,7 @@ static void
 dump_rtl (suffix, decl, func, insns)
      char *suffix;
      tree   decl;
-     void (*func) PROTO ((FILE *, rtx));
+     void (*func) (FILE *, rtx);
      rtx    insns;
 {
   open_dump_file (suffix, decl_printable_name (decl, 2));

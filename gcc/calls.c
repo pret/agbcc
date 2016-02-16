@@ -117,23 +117,23 @@ static int highest_outgoing_arg_in_use;
 int stack_arg_under_construction;
 #endif
 
-static int calls_function	PROTO ((tree, int));
-static int calls_function_1	PROTO ((tree, int));
-static void emit_call_1		PROTO ((rtx, tree, tree, HOST_WIDE_INT,
+static int calls_function	(tree, int);
+static int calls_function_1	(tree, int);
+static void emit_call_1		(rtx, tree, tree, HOST_WIDE_INT,
 				        HOST_WIDE_INT, rtx, rtx,
-				        int, rtx, int));
-static void special_function_p	PROTO ((char *, tree, int *, int *,
-					int *, int *));
-static void precompute_register_parameters	PROTO ((int, struct arg_data *,
-							int *));
-static void store_one_arg	PROTO ((struct arg_data *, rtx, int, int,
-					int));
-static void store_unaligned_arguments_into_pseudos PROTO ((struct arg_data *,
-							   int));
+				        int, rtx, int);
+static void special_function_p	(char *, tree, int *, int *,
+					int *, int *);
+static void precompute_register_parameters	(int, struct arg_data *,
+							int *);
+static void store_one_arg	(struct arg_data *, rtx, int, int,
+					int);
+static void store_unaligned_arguments_into_pseudos (struct arg_data *,
+							   int);
 
 #if defined(ACCUMULATE_OUTGOING_ARGS) && defined(REG_PARM_STACK_SPACE)
-static rtx save_fixed_argument_area	PROTO ((int, rtx, int *, int *));
-static void restore_fixed_argument_area	PROTO ((rtx, rtx, int, int));
+static rtx save_fixed_argument_area	(int, rtx, int *, int *);
+static void restore_fixed_argument_area	(rtx, rtx, int, int);
 #endif
 
 /* If WHICH is 1, return 1 if EXP contains a call to the built-in function
@@ -2317,8 +2317,7 @@ expand_call (exp, target, ignore)
    move memory references across the non-const call.  */
 
 void
-emit_library_call VPROTO((rtx orgfun, int no_queue, enum machine_mode outmode,
-			  int nargs, ...))
+emit_library_call (rtx orgfun, int no_queue, enum machine_mode outmode, int nargs, ...)
 {
 #ifndef ANSI_PROTOTYPES
   rtx orgfun;
@@ -2805,8 +2804,8 @@ emit_library_call VPROTO((rtx orgfun, int no_queue, enum machine_mode outmode,
    If VALUE is nonzero, VALUE is returned.  */
 
 rtx
-emit_library_call_value VPROTO((rtx orgfun, rtx value, int no_queue,
-				enum machine_mode outmode, int nargs, ...))
+emit_library_call_value (rtx orgfun, rtx value, int no_queue,
+				enum machine_mode outmode, int nargs, ...)
 {
 #ifndef ANSI_PROTOTYPES
   rtx orgfun;

@@ -165,53 +165,53 @@ extern char *version_string;
 /* Forward declaration for prototypes.  */
 struct path_prefix;
 
-static void init_spec		PROTO((void));
-static void read_specs		PROTO((char *, int));
-static void set_spec		PROTO((char *, char *));
-static struct compiler *lookup_compiler PROTO((char *, size_t, char *));
-static char *build_search_list	PROTO((struct path_prefix *, char *, int));
-static void putenv_from_prefixes PROTO((struct path_prefix *, char *));
+static void init_spec		(void);
+static void read_specs		(char *, int);
+static void set_spec		(char *, char *);
+static struct compiler *lookup_compiler (char *, size_t, char *);
+static char *build_search_list	(struct path_prefix *, char *, int);
+static void putenv_from_prefixes (struct path_prefix *, char *);
 /* CYGNUS LOCAL -- meissner/relative pathnames */
-static char **split_directories	PROTO((char *, int *));
-static void free_split_directories PROTO((char **));
-static char *make_relative_prefix PROTO((char *, char *, char *));
+static char **split_directories	(char *, int *);
+static void free_split_directories (char **);
+static char *make_relative_prefix (char *, char *, char *);
 /* END CYGNUS LOCAL -- meissner/relative pathnames */
-static char *find_a_file	PROTO((struct path_prefix *, char *, int));
-static void add_prefix		PROTO((struct path_prefix *, const char *,
-				       const char *, int, int, int *));
-static char *skip_whitespace	PROTO((char *));
-static void record_temp_file	PROTO((char *, int, int));
-static void delete_if_ordinary	PROTO((char *));
-static void delete_temp_files	PROTO((void));
-static void delete_failure_queue PROTO((void));
-static void clear_failure_queue PROTO((void));
-static int check_live_switch	PROTO((int, int));
-static char *handle_braces	PROTO((char *));
-static char *save_string	PROTO((const char *, int));
-extern int do_spec		PROTO((char *));
-static int do_spec_1		PROTO((char *, int, char *));
-static char *find_file		PROTO((char *));
-static int is_directory		PROTO((char *, char *, int));
-static void validate_switches	PROTO((char *));
-static void validate_all_switches PROTO((void));
-static void give_switch		PROTO((int, int, int));
-static int used_arg		PROTO((char *, int));
-static int default_arg		PROTO((char *, int));
-static void set_multilib_dir	PROTO((void));
-static void print_multilib_info	PROTO((void));
-static void pfatal_with_name	PROTO((char *)) ATTRIBUTE_NORETURN;
-static void perror_with_name	PROTO((char *));
-static void pfatal_pexecute	PROTO((char *, char *)) ATTRIBUTE_NORETURN;
-static void fatal		PVPROTO((char *, ...))
+static char *find_a_file	(struct path_prefix *, char *, int);
+static void add_prefix		(struct path_prefix *, const char *,
+				       const char *, int, int, int *);
+static char *skip_whitespace	(char *);
+static void record_temp_file	(char *, int, int);
+static void delete_if_ordinary	(char *);
+static void delete_temp_files	(void);
+static void delete_failure_queue (void);
+static void clear_failure_queue (void);
+static int check_live_switch	(int, int);
+static char *handle_braces	(char *);
+static char *save_string	(const char *, int);
+extern int do_spec		(char *);
+static int do_spec_1		(char *, int, char *);
+static char *find_file		(char *);
+static int is_directory		(char *, char *, int);
+static void validate_switches	(char *);
+static void validate_all_switches (void);
+static void give_switch		(int, int, int);
+static int used_arg		(char *, int);
+static int default_arg		(char *, int);
+static void set_multilib_dir	(void);
+static void print_multilib_info	(void);
+static void pfatal_with_name	(char *) ATTRIBUTE_NORETURN;
+static void perror_with_name	(char *);
+static void pfatal_pexecute	(char *, char *) ATTRIBUTE_NORETURN;
+static void fatal		(char *, ...)
   ATTRIBUTE_NORETURN ATTRIBUTE_PRINTF_1;
-static void error		PVPROTO((char *, ...)) ATTRIBUTE_PRINTF_1;
-static void display_help 	PROTO((void));
+static void error		(char *, ...) ATTRIBUTE_PRINTF_1;
+static void display_help 	(void);
 
-void fancy_abort		PROTO((void)) ATTRIBUTE_NORETURN;
+void fancy_abort		(void) ATTRIBUTE_NORETURN;
 
 #ifdef LANG_SPECIFIC_DRIVER
 /* Called before processing to change/add/remove arguments. */
-extern void lang_specific_driver PROTO ((void (*) PVPROTO((char *, ...)), int *, char ***, int *));
+extern void lang_specific_driver (void (*)(char *, ...), int *, char ***, int *);
 
 /* Called before linking.  Returns 0 on success and -1 on failure. */
 extern int lang_specific_pre_link ();
@@ -776,7 +776,6 @@ static struct compiler default_compilers[] =
     "%{!M:%{!MM:%{!E:%{!S:as %a %Y\
                     %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
 		    %{!pipe:%g.s} %A\n }}}}"}},
-#include "specs.h"
   /* Mark end of table */
   {0, {0}}
 };
@@ -1378,7 +1377,7 @@ static int argbuf_index;
 #define MKTEMP_EACH_FILE
 
 
-extern char *make_temp_file PROTO((char *));
+extern char *make_temp_file (char *);
 
 /* This is the list of suffixes and codes (%g/%u/%U) and the associated
    temp file.  */
@@ -5619,7 +5618,7 @@ fancy_abort ()
 /* Output an error message and exit */
 
 static void
-fatal VPROTO((char *format, ...))
+fatal (char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *format;
@@ -5641,7 +5640,7 @@ fatal VPROTO((char *format, ...))
 }
 
 static void
-error VPROTO((char *format, ...))
+error (char *format, ...)
 {
 #ifndef ANSI_PROTOTYPES
   char *format;

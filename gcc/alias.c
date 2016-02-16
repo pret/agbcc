@@ -72,25 +72,25 @@ typedef struct alias_set_entry {
   splay_tree children;
 }* alias_set_entry;
 
-static rtx canon_rtx			PROTO((rtx));
-static int rtx_equal_for_memref_p	PROTO((rtx, rtx));
-static rtx find_symbolic_term		PROTO((rtx));
-static int memrefs_conflict_p		PROTO((int, rtx, int, rtx,
-					       HOST_WIDE_INT));
-static void record_set			PROTO((rtx, rtx));
-static rtx find_base_term		PROTO((rtx));
-static int base_alias_check		PROTO((rtx, rtx, enum machine_mode,
-					       enum machine_mode));
-static rtx find_base_value		PROTO((rtx));
-static int mems_in_disjoint_alias_sets_p PROTO((rtx, rtx));
-static int alias_set_compare            PROTO((splay_tree_key, 
-					       splay_tree_key));
-static int insert_subset_children       PROTO((splay_tree_node,
-					       void*));
-static alias_set_entry get_alias_set_entry PROTO((int));
-static rtx fixed_scalar_and_varying_struct_p PROTO((rtx, rtx, int (*)(rtx)));
-static int aliases_everything_p         PROTO((rtx));
-static int write_dependence_p           PROTO((rtx, rtx, int));
+static rtx canon_rtx			(rtx);
+static int rtx_equal_for_memref_p	(rtx, rtx);
+static rtx find_symbolic_term		(rtx);
+static int memrefs_conflict_p		(int, rtx, int, rtx,
+					       HOST_WIDE_INT);
+static void record_set			(rtx, rtx);
+static rtx find_base_term		(rtx);
+static int base_alias_check		(rtx, rtx, enum machine_mode,
+					       enum machine_mode);
+static rtx find_base_value		(rtx);
+static int mems_in_disjoint_alias_sets_p (rtx, rtx);
+static int alias_set_compare            (splay_tree_key, 
+					       splay_tree_key);
+static int insert_subset_children       (splay_tree_node,
+					       void*);
+static alias_set_entry get_alias_set_entry (int);
+static rtx fixed_scalar_and_varying_struct_p (rtx, rtx, int (*)(rtx));
+static int aliases_everything_p         (rtx);
+static int write_dependence_p           (rtx, rtx, int);
 
 /* Set up all info needed to perform alias analysis on memory references.  */
 
@@ -1150,7 +1150,7 @@ static rtx
 fixed_scalar_and_varying_struct_p (mem1, mem2, varies_p)
      rtx mem1;
      rtx mem2;
-     int (*varies_p) PROTO((rtx));
+     int (*varies_p) (rtx);
 {
   rtx mem1_addr = XEXP (mem1, 0);
   rtx mem2_addr = XEXP (mem2, 0);
@@ -1196,7 +1196,7 @@ true_dependence (mem, mem_mode, x, varies)
      rtx mem;
      enum machine_mode mem_mode;
      rtx x;
-     int (*varies) PROTO((rtx));
+     int (*varies) (rtx);
 {
   register rtx x_addr, mem_addr;
 

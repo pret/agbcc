@@ -33,14 +33,14 @@ struct resources
   HARD_REG_SET regs;	/* Which registers are set or needed.  */
 };
 
-extern void mark_target_live_regs 	PROTO((rtx, rtx, struct resources *));
-extern void mark_set_resources		PROTO((rtx, struct resources *, int,
-					       int));
-extern void mark_referenced_resources	PROTO((rtx, struct resources *, int));
-extern void clear_hashed_info_for_insn	PROTO((rtx));
-extern void incr_ticks_for_insn		PROTO((rtx));
-extern void mark_end_of_function_resources PROTO ((rtx, int));
-extern void init_resource_info		PROTO((rtx));
-extern void free_resource_info		PROTO((void));
-extern rtx find_free_register		PROTO((rtx, char *, int,
-					       HARD_REG_SET *));
+extern void mark_target_live_regs 	(rtx, rtx, struct resources *);
+extern void mark_set_resources		(rtx, struct resources *, int,
+					       int);
+extern void mark_referenced_resources	(rtx, struct resources *, int);
+extern void clear_hashed_info_for_insn	(rtx);
+extern void incr_ticks_for_insn		(rtx);
+extern void mark_end_of_function_resources (rtx, int);
+extern void init_resource_info		(rtx);
+extern void free_resource_info		(void);
+extern rtx find_free_register		(rtx, char *, int,
+					       HARD_REG_SET *);
