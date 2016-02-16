@@ -290,10 +290,6 @@ CLIB=
 # system library.
 OBSTACK=obstack.o
 
-# Configure will set these if you need vfprintf and possibly _doprnt support.
-VFPRINTF=@vfprintf@
-DOPRINT=@doprint@
-
 # Specify the rule for actually making libgcc.a,
 LIBGCC = libgcc.a
 # and the rule for installing it.
@@ -403,11 +399,6 @@ HOST_CFLAGS=$(ALL_CFLAGS)
 HOST_CLIB=$(CLIB)
 HOST_LDFLAGS=$(LDFLAGS)
 HOST_CPPFLAGS=$(ALL_CPPFLAGS)
-HOST_ALLOCA=$(ALLOCA)
-HOST_MALLOC=$(MALLOC)
-HOST_OBSTACK=$(OBSTACK)
-HOST_VFPRINTF=$(VFPRINTF)
-HOST_DOPRINT=$(DOPRINT)
 
 # Actual name to use when installing a native compiler.
 GCC_INSTALL_NAME = `t='$(program_transform_name)'; echo gcc | sed -e $$t`
@@ -475,34 +466,6 @@ ALL_CFLAGS = $(INTERNAL_CFLAGS) $(X_CFLAGS) $(T_CFLAGS) $(CFLAGS) $(XCFLAGS) \
 
 # Likewise.
 ALL_CPPFLAGS = $(CPPFLAGS) $(X_CPPFLAGS) $(T_CPPFLAGS)
-
-# Even if ALLOCA is set, don't use it if compiling with GCC.
-USE_ALLOCA= ${ALLOCA}
-USE_HOST_ALLOCA= ` case "${HOST_ALLOCA}" in ?*) echo ${HOST_PREFIX}${HOST_ALLOCA} ;; esac `
-USE_HOST_MALLOC= ` case "${HOST_MALLOC}" in ?*) echo ${HOST_PREFIX}${HOST_MALLOC} ;; esac `
-USE_HOST_OBSTACK= ` case "${HOST_OBSTACK}" in ?*) echo ${HOST_PREFIX}${HOST_OBSTACK} ;; esac `
-USE_HOST_VFPRINTF= ` case "${HOST_VFPRINTF}" in ?*) echo ${HOST_PREFIX}${HOST_VFPRINTF} ;; esac `
-USE_HOST_DOPRINT= ` case "${HOST_DOPRINT}" in ?*) echo ${HOST_PREFIX}${HOST_DOPRINT} ;; esac `
-
-# Dependency on obstack, alloca, malloc or whatever library facilities
-# are not installed in the system libraries.
-# We don't use USE_ALLOCA because backquote expansion doesn't work in deps.
-LIBDEPS= $(OBSTACK) $(ALLOCA) $(MALLOC) $(VFPRINTF) $(DOPRINT)
-
-# Likewise, for use in the tools that must run on this machine
-# even if we are cross-building GCC.
-# We don't use USE_ALLOCA because backquote expansion doesn't work in deps.
-HOST_LIBDEPS= $(HOST_PREFIX)$(HOST_OBSTACK) $(HOST_PREFIX)$(HOST_ALLOCA) $(HOST_PREFIX)$(HOST_MALLOC) $(HOST_PREFIX)$(HOST_VFPRINTF) $(HOST_PREFIX)$(HOST_DOPRINT)
-
-# How to link with both our special library facilities
-# and the system's installed libraries.
-LIBS = $(OBSTACK) $(USE_ALLOCA) $(MALLOC) $(VFPRINTF) $(DOPRINT) $(CLIB) \
-	../libiberty/libiberty.a
-
-# Likewise, for use in the tools that must run on this machine
-# even if we are cross-building GCC.
-HOST_LIBS = $(USE_HOST_OBSTACK) $(USE_HOST_ALLOCA) $(USE_HOST_MALLOC)  \
-	    $(USE_HOST_VFPRINTF) $(USE_HOST_DOPRINT) $(HOST_CLIB)
 
 HOST_RTL = $(HOST_PREFIX)rtl.o $(HOST_PREFIX)bitmap.o
 HOST_RTLANAL = $(HOST_PREFIX)rtlanal.o
@@ -789,9 +752,9 @@ stamp-objlist: $(OBJS)
 # to avoid confusion if the current directory is in the path
 # and CC is `gcc'.  It is renamed to `gcc' when it is installed.
 xgcc$(exeext): gcc.o version.o choose-temp.o pexecute.o prefix.o version.o \
-   mkstemp.o $(LIBDEPS) $(EXTRA_GCC_OBJS)
+   mkstemp.o $(EXTRA_GCC_OBJS)
 	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ gcc.o prefix.o version.o \
-	  choose-temp.o pexecute.o mkstemp.o $(EXTRA_GCC_OBJS) $(LIBS)
+	  choose-temp.o pexecute.o mkstemp.o $(EXTRA_GCC_OBJS)
 
 # Dump a specs file to make -B./ read these specs over installed ones.
 specs: xgcc$(exeext)
@@ -804,8 +767,8 @@ specs: xgcc$(exeext)
 gcc-cross: xgcc$(exeext)
 	cp xgcc$(exeext) gcc-cross$(exeext)
 
-cc1$(exeext): $(P) $(OBJS) $(C_OBJS) $(LIBDEPS)
-	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(C_OBJS) $(LIBS)
+cc1$(exeext): $(P) $(OBJS) $(C_OBJS)
+	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(C_OBJS)
 
 # Build libgcc.a.
 # This is done in two parts because some functions, in libgcc1.c,
@@ -1205,11 +1168,6 @@ pexecute.o: $(srcdir)/../libiberty/pexecute.c $(CONFIG_H) system.h
 	$(LN_S) $(srcdir)/../libiberty/pexecute.c pexecute.c
 	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) pexecute.c
 
-vfprintf.o: $(srcdir)/../libiberty/vfprintf.c $(CONFIG_H) system.h
-	rm -f vfprintf.c
-	$(LN_S) $(srcdir)/../libiberty/vfprintf.c vfprintf.c
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) vfprintf.c
-
 splay-tree.o: $(srcdir)/../libiberty/splay-tree.c \
   $(srcdir)/../include/splay-tree.h $(srcdir)/../include/libiberty.h
 	rm -f splay-tree.c
@@ -1259,9 +1217,9 @@ s-check : gencheck $(srcdir)/move-if-change
 	$(srcdir)/move-if-change tmp-check.h tree-check.h
 	touch s-check
 
-gencheck : gencheck.o tree.def $(lang_tree_files) $(HOST_LIBDEPS)
+gencheck : gencheck.o tree.def $(lang_tree_files)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 gencheck.o $(HOST_LIBS)
+	 gencheck.o
 
 gencheck.o : gencheck.c hconfig.h system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/gencheck.c
@@ -1414,15 +1372,6 @@ $(out_object_file): $(out_file) $(CONFIG_H) $(TREE_H) \
    insn-flags.h output.h insn-attr.h insn-codes.h system.h toplev.h
 	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) $(out_file)
 
-# Normally this target is not used; but it is used if you
-# define ALLOCA=alloca.o.  In that case, you must get a suitable alloca.c
-# from the GNU Emacs distribution.
-alloca.o:	$(srcdir)/../libiberty/alloca.c
-	rm -f alloca.c
-	$(LN_S) $(srcdir)/../libiberty/alloca.c alloca.c
-	$(CC) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) $(ALLOCA_FLAGS) \
-	  -c `echo alloca.c | sed 's,^\./,,'`
-	$(ALLOCA_FINISH)
 #
 # Generate header and source files from the machine description, 
 # and compile them.
@@ -1578,86 +1527,86 @@ $(MD_FILE): $(MD_DEPS)
 	$(MD_CPP) $(MD_CPPFLAGS) $(md_file) | sed 's/^# /; /g' > tmp-$@
 	mv tmp-$@ $@
 
-genconfig : genconfig.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genconfig : genconfig.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	  genconfig.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	  genconfig.o $(HOST_RTL) $(HOST_PRINT)
 
 genconfig.o : genconfig.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genconfig.c
 
-genflags : genflags.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genflags : genflags.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genflags.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genflags.o $(HOST_RTL) $(HOST_PRINT)
 
 genflags.o : genflags.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genflags.c
 
-gencodes : gencodes.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+gencodes : gencodes.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 gencodes.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 gencodes.o $(HOST_RTL) $(HOST_PRINT)
 
 gencodes.o : gencodes.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/gencodes.c
 
-genemit : genemit.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genemit : genemit.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genemit.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genemit.o $(HOST_RTL) $(HOST_PRINT)
 
 genemit.o : genemit.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genemit.c
 
-genopinit : genopinit.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genopinit : genopinit.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genopinit.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genopinit.o $(HOST_RTL) $(HOST_PRINT)
 
 genopinit.o : genopinit.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genopinit.c
 
-genrecog : genrecog.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genrecog : genrecog.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genrecog.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genrecog.o $(HOST_RTL) $(HOST_PRINT)
 
 genrecog.o : genrecog.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genrecog.c
 
-genextract : genextract.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genextract : genextract.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genextract.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genextract.o $(HOST_RTL) $(HOST_PRINT)
 
 genextract.o : genextract.c $(RTL_H) $(build_xm_file) system.h insn-config.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genextract.c
 
-genpeep : genpeep.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genpeep : genpeep.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genpeep.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genpeep.o $(HOST_RTL) $(HOST_PRINT)
 
 genpeep.o : genpeep.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genpeep.c
 
-genattr : genattr.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genattr : genattr.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genattr.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genattr.o $(HOST_RTL) $(HOST_PRINT)
 
 genattr.o : genattr.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genattr.c
 
-genattrtab : genattrtab.o $(HOST_RTL) $(HOST_PRINT) $(HOST_RTLANAL) $(HOST_LIBDEPS)
+genattrtab : genattrtab.o $(HOST_RTL) $(HOST_PRINT) $(HOST_RTLANAL)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genattrtab.o $(HOST_RTL) $(HOST_PRINT) $(HOST_RTLANAL) $(HOST_LIBS)
+	 genattrtab.o $(HOST_RTL) $(HOST_PRINT) $(HOST_RTLANAL)
 
 genattrtab.o : genattrtab.c $(RTL_H)  $(build_xm_file) system.h insn-config.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genattrtab.c
 
-genoutput : genoutput.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBDEPS)
+genoutput : genoutput.o $(HOST_RTL) $(HOST_PRINT)
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 genoutput.o $(HOST_RTL) $(HOST_PRINT) $(HOST_LIBS)
+	 genoutput.o $(HOST_RTL) $(HOST_PRINT)
 
 genoutput.o : genoutput.c $(RTL_H) $(build_xm_file) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/genoutput.c
 
-gengenrtl : gengenrtl.o $(HOST_LIBDEPS)
+gengenrtl : gengenrtl.o
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ \
-	 gengenrtl.o $(HOST_LIBS)
+	 gengenrtl.o
 
 gengenrtl.o : gengenrtl.c $(RTL_BASE_H) system.h
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(srcdir)/gengenrtl.c
@@ -1688,30 +1637,10 @@ $(HOST_PREFIX_1)rtlanal.o: $(srcdir)/rtlanal.c $(CONFIG_H) $(RTL_H)
 	sed -e 's/config[.]h/hconfig.h/' $(srcdir)/rtlanal.c > $(HOST_PREFIX)rtlanal.c
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)rtlanal.c
 
-$(HOST_PREFIX_1)alloca.o: $(srcdir)/../libiberty/alloca.c
-	rm -f $(HOST_PREFIX)alloca.c
-	$(LN_S) $(srcdir)/../libiberty/alloca.c $(HOST_PREFIX)alloca.c
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)alloca.c
-
 $(HOST_PREFIX_1)obstack.o: $(srcdir)/../libiberty/obstack.c
 	rm -f $(HOST_PREFIX)obstack.c
 	sed -e 's/config[.]h/hconfig.h/' $(srcdir)/../libiberty/obstack.c > $(HOST_PREFIX)obstack.c
 	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)obstack.c
-
-$(HOST_PREFIX_1)vfprintf.o: $(srcdir)/../libiberty/vfprintf.c
-	rm -f $(HOST_PREFIX)vfprintf.c
-	sed -e 's/config[.]h/hconfig.h/' $(srcdir)/../libiberty/vfprintf.c > $(HOST_PREFIX)vfprintf.c
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)vfprintf.c
-
-$(HOST_PREFIX_1)doprint.o: doprint.c
-	rm -f $(HOST_PREFIX)doprint.c
-	sed -e 's/config[.]h/hconfig.h/' $(srcdir)/doprint.c > $(HOST_PREFIX)doprint.c
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)doprint.c
-
-$(HOST_PREFIX_1)malloc.o: malloc.c
-	rm -f $(HOST_PREFIX)malloc.c
-	sed -e 's/config[.]h/hconfig.h/' $(srcdir)/malloc.c > $(HOST_PREFIX)malloc.c
-	$(HOST_CC) -c $(HOST_CFLAGS) $(HOST_CPPFLAGS) $(INCLUDES) $(HOST_PREFIX)malloc.c
 
 # This satisfies the dependency that we get if you cross-compile a compiler
 # that does not need to compile alloca, malloc or whatever.
@@ -1753,28 +1682,6 @@ cppfiles.o: cppfiles.c $(CONFIG_H) cpplib.h machmode.h system.h
 cpphash.o: cpphash.c cpplib.h machmode.h cpphash.h $(CONFIG_H) system.h
 
 cppalloc.o: cppalloc.c $(CONFIG_H) cpplib.h machmode.h system.h
-
-# Note for the stamp targets, we run the program `true' instead of
-# having an empty command (nothing following the semicolon).
-
-getopt.o: $(srcdir)/../libiberty/getopt.c $(srcdir)/../include/getopt.h
-	rm -f getopt.c
-	$(LN_S) $(srcdir)/../libiberty/getopt.c getopt.c
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) getopt.c
-
-getopt1.o: $(srcdir)/../libiberty/getopt1.c $(srcdir)/../include/getopt.h
-	rm -f getopt1.c
-	$(LN_S) $(srcdir)/../libiberty/getopt1.c getopt1.c
-	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) getopt1.c
-
-# This info describes the target machine, so compile with GCC just built.
-SYSCALLS.c.X: $(srcdir)/sys-types.h $(srcdir)/sys-protos.h $(GCC_PASSES) \
-   stmp-int-hdrs
-	-rm -f SYSCALLS.c tmp-SYSCALLS.s
-	cat $(srcdir)/sys-types.h $(srcdir)/sys-protos.h > SYSCALLS.c
-	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
-	  -aux-info $@ -S -o tmp-SYSCALLS.s SYSCALLS.c
-	-rm -f SYSCALLS.c tmp-SYSCALLS.s
 
 # Build the include directory.  The stamp files are stmp-* rather than
 # s-* so that mostlyclean does not force the include directory to
@@ -1858,7 +1765,6 @@ mostlyclean: lang.mostlyclean
 	-rm -f $(STAGESTUFF)
 # Delete the temporary source copies for cross compilation.
 	-rm -f $(HOST_PREFIX_1)rtl.c $(HOST_PREFIX_1)rtlanal.c
-	-rm -f $(HOST_PREFIX_1)alloca.c $(HOST_PREFIX_1)malloc.c
 	-rm -f $(HOST_PREFIX_1)obstack.c 
 # Delete the temp files made in the course of building libgcc.a.
 	-rm -f tmplibgcc* tmpcopy libgcc1-test
@@ -1876,7 +1782,7 @@ mostlyclean: lang.mostlyclean
 	-rm -f */*.tree */*.loop */*.dbr */*.jump2 */*.cse2
 	-rm -f */*.stack */*.regmove */*.gcse
 # Delete some files made during installation.
-	-rm -f specs SYSCALLS.c.X SYSCALLS.c
+	-rm -f specs
 	-rm -f collect mips-tfile mips-tdump alloca.s
 # CYGNUS LOCAL: binary installation
 # Delete unwanted output files from TeX.
