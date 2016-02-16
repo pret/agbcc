@@ -27,6 +27,7 @@ Boston, MA 02111-1307, USA.  */
    DWARF2_DEBUGGING_INFO, deals with the other DWARF 2 debugging
    information.  */
 
+#include <assert.h>
 #include "config.h"
 #include "system.h"
 #include "defaults.h"
@@ -44,15 +45,6 @@ Boston, MA 02111-1307, USA.  */
 #include "dwarf2out.h"
 #include "toplev.h"
 #include "dyn-string.h"
-
-/* We cannot use <assert.h> in GCC source, since that would include
-   GCC's assert.h, which may not be compatible with the host compiler.  */
-#undef assert
-#ifdef NDEBUG
-# define assert(e)
-#else
-# define assert(e) do { if (! (e)) abort (); } while (0)
-#endif
 
 /* Decide whether we want to emit frame unwind information for the current
    translation unit.  */
