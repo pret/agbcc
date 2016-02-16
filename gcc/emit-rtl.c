@@ -341,7 +341,7 @@ gen_rtx (enum rtx_code code, enum machine_mode mode, ...)
   register char *fmt;		/* Current rtx's format...		*/
   register rtx rt_val;		/* RTX to return to caller...		*/
 
-  VA_START (p, mode);
+  va_start (p, mode);
 
 
   if (code == CONST_INT)
@@ -415,7 +415,7 @@ gen_rtvec (int n, ...)
   va_list p;
   rtx *vector;
 
-  VA_START (p, n);
+  va_start (p, n);
 
 
   if (n == 0)

@@ -6252,7 +6252,7 @@ cpp_error (cpp_reader * pfile, const char *msg, ...)
 {
   va_list ap;
 
-  VA_START(ap, msg);
+  va_start(ap, msg);
   
 
   v_cpp_error (pfile, msg, ap);
@@ -6283,7 +6283,7 @@ cpp_warning (cpp_reader * pfile, const char *msg, ...)
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   v_cpp_warning (pfile, msg, ap);
@@ -6297,7 +6297,7 @@ cpp_pedwarn (cpp_reader * pfile, const char *msg, ...)
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   if (CPP_OPTIONS (pfile)->pedantic_errors)
@@ -6330,7 +6330,7 @@ cpp_error_with_line (cpp_reader * pfile, int line, int column, const char *msg, 
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   v_cpp_error_with_line(pfile, line, column, msg, ap);
@@ -6369,7 +6369,7 @@ cpp_warning_with_line (cpp_reader * pfile, int line, int column, const char *msg
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   v_cpp_warning_with_line (pfile, line, column, msg, ap);
@@ -6382,7 +6382,7 @@ cpp_pedwarn_with_line (cpp_reader * pfile, int line, int column, const char *msg
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   if (CPP_OPTIONS (pfile)->pedantic_errors)
@@ -6400,7 +6400,7 @@ cpp_pedwarn_with_file_and_line (cpp_reader *pfile, char *file, int line, const c
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
 
 
   if (!CPP_OPTIONS (pfile)->pedantic_errors

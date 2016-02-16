@@ -2972,7 +2972,7 @@ build (enum tree_code code, tree tt, ...)
   register int length;
   register int i;
 
-  VA_START (p, tt);
+  va_start (p, tt);
 
 
   t = make_node (code);
@@ -3088,7 +3088,7 @@ build_nt (enum tree_code code, ...)
   register int length;
   register int i;
 
-  VA_START (p, code);
+  va_start (p, code);
 
 
   t = make_node (code);
@@ -3113,7 +3113,7 @@ build_parse_node (enum tree_code code, ...)
   register int length;
   register int i;
 
-  VA_START (p, code);
+  va_start (p, code);
 
 
   expression_obstack = &temp_decl_obstack;

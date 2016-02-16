@@ -1500,7 +1500,7 @@ error_with_file_and_line (char *file, int line, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_error_with_file_and_line (file, line, s, ap);
@@ -1527,7 +1527,7 @@ error_with_decl (tree decl, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_error_with_decl (decl, s, ap);
@@ -1558,7 +1558,7 @@ error_for_asm (rtx insn, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_error_for_asm (insn, s, ap);
@@ -1580,7 +1580,7 @@ error (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   verror (s, ap);
@@ -1603,7 +1603,7 @@ fatal (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   vfatal (s, ap);
@@ -1631,7 +1631,7 @@ warning_with_file_and_line (char *file, int line, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_warning_with_file_and_line (file, line, s, ap);
@@ -1660,7 +1660,7 @@ warning_with_decl (tree decl, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_warning_with_decl (decl, s, ap);
@@ -1693,7 +1693,7 @@ warning_for_asm (rtx insn, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_warning_for_asm (insn, s, ap);
@@ -1715,7 +1715,7 @@ warning (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   vwarning (s, ap);
@@ -1741,7 +1741,7 @@ pedwarn (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   vpedwarn (s, ap);
@@ -1775,7 +1775,7 @@ pedwarn_with_decl (tree decl, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_pedwarn_with_decl (decl, s, ap);
@@ -1800,7 +1800,7 @@ pedwarn_with_file_and_line (char *file, int line, char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_pedwarn_with_file_and_line (file, line, s, ap);
@@ -1828,7 +1828,7 @@ sorry (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   vsorry (s, ap);
@@ -1856,7 +1856,7 @@ really_sorry (char *s, ...)
 {
   va_list ap;
 
-  VA_START (ap, s);
+  va_start (ap, s);
 
 
   v_really_sorry (s, ap);

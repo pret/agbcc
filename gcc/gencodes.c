@@ -87,7 +87,7 @@ fatal (const char *format, ...)
 {
   va_list ap;
 
-  VA_START (ap, format);
+  va_start (ap, format);
 
 
   fprintf (stderr, "gencodes: ");

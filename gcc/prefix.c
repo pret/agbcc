@@ -121,7 +121,7 @@ concat (const char *first, ...)
 
   /* First compute the size of the result and get sufficient memory.  */
 
-  VA_START (args, first);
+  va_start (args, first);
 
   arg = first;
   length = 0;
@@ -137,7 +137,7 @@ concat (const char *first, ...)
 
   /* Now copy the individual pieces to the result string.  */
 
-  VA_START (args, first);
+  va_start (args, first);
 
   end = newstr;
   arg = first;

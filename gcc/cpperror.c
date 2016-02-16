@@ -113,7 +113,7 @@ cpp_message (cpp_reader *pfile, int is_error, const char *msg, ...)
 {
   va_list ap;
   
-  VA_START (ap, msg);
+  va_start (ap, msg);
   
 
   v_cpp_message(pfile, is_error, msg, ap);
@@ -131,7 +131,7 @@ cpp_fatal (cpp_reader *pfile, const char *str, ...)
 {  
   va_list ap;
   
-  VA_START (ap, str);
+  va_start (ap, str);
   
 
   fprintf (stderr, "%s: ", progname);

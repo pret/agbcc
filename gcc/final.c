@@ -2737,7 +2737,7 @@ asm_fprintf (FILE *file, char *p, ...)
   char buf[10];
   char *q, c;
 
-  VA_START (argptr, p);
+  va_start (argptr, p);
 
 
   buf[0] = '%';

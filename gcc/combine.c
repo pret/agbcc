@@ -9349,7 +9349,7 @@ gen_rtx_combine (enum rtx_code code, enum machine_mode mode, ...)
   rtx rt;
   struct undo *undo;
 
-  VA_START (p, mode);
+  va_start (p, mode);
 
 
   n_args = GET_RTX_LENGTH (code);

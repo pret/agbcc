@@ -545,7 +545,7 @@ attr_rtx (enum rtx_code code, ...)
   register struct attr_hash *h;
   struct obstack *old_obstack = rtl_obstack;
 
-  VA_START (p, code);
+  va_start (p, code);
 
 
   /* For each of several cases, search the hash table for an existing entry.
@@ -731,7 +731,7 @@ attr_printf (register int len, const char *fmt, ...)
   va_list p;
   register char *str;
 
-  VA_START (p, fmt);
+  va_start (p, fmt);
 
 
   /* Print the string into a temporary location.  */
@@ -5803,7 +5803,7 @@ fatal (const char *format, ...)
 {
   va_list ap;
 
-  VA_START (ap, format);
+  va_start (ap, format);
 
 
   fprintf (stderr, "genattrtab: ");

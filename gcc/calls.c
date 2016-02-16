@@ -2358,7 +2358,7 @@ emit_library_call (rtx orgfun, int no_queue, enum machine_mode outmode, int narg
 #endif
 #endif
 
-  VA_START (p, nargs);
+  va_start (p, nargs);
 
 
   fun = orgfun;
@@ -2841,7 +2841,7 @@ emit_library_call_value (rtx orgfun, rtx value, int no_queue,
 #endif
 #endif
 
-  VA_START (p, nargs);
+  va_start (p, nargs);
 
 
   is_const = no_queue;
