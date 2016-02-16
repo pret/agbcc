@@ -336,10 +336,6 @@ gen_rtx_MEM (mode, addr)
 rtx
 gen_rtx (enum rtx_code code, enum machine_mode mode, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum rtx_code code;
-  enum machine_mode mode;
-#endif
   va_list p;
   register int i;		/* Array indices...			*/
   register char *fmt;		/* Current rtx's format...		*/
@@ -347,10 +343,6 @@ gen_rtx (enum rtx_code code, enum machine_mode mode, ...)
 
   VA_START (p, mode);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum rtx_code);
-  mode = va_arg (p, enum machine_mode);
-#endif
 
   if (code == CONST_INT)
     rt_val = gen_rtx_CONST_INT (mode, va_arg (p, HOST_WIDE_INT));
@@ -419,18 +411,12 @@ gen_rtx (enum rtx_code code, enum machine_mode mode, ...)
 rtvec
 gen_rtvec (int n, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  int n;
-#endif
   int i;
   va_list p;
   rtx *vector;
 
   VA_START (p, n);
 
-#ifndef ANSI_PROTOTYPES
-  n = va_arg (p, int);
-#endif
 
   if (n == 0)
     return NULL_RTVEC;		/* Don't allocate an empty rtvec...	*/

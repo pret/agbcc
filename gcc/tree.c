@@ -2967,10 +2967,6 @@ stabilize_reference_1 (e)
 tree
 build (enum tree_code code, tree tt, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum tree_code code;
-  tree tt;
-#endif
   va_list p;
   register tree t;
   register int length;
@@ -2978,10 +2974,6 @@ build (enum tree_code code, tree tt, ...)
 
   VA_START (p, tt);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum tree_code);
-  tt = va_arg (p, tree);
-#endif
 
   t = make_node (code);
   length = tree_code_length[(int) code];
@@ -3091,9 +3083,6 @@ build1 (code, type, node)
 tree
 build_nt (enum tree_code code, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum tree_code code;
-#endif
   va_list p;
   register tree t;
   register int length;
@@ -3101,9 +3090,6 @@ build_nt (enum tree_code code, ...)
 
   VA_START (p, code);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum tree_code);
-#endif
 
   t = make_node (code);
   length = tree_code_length[(int) code];
@@ -3121,9 +3107,6 @@ build_nt (enum tree_code code, ...)
 tree
 build_parse_node (enum tree_code code, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum tree_code code;
-#endif
   register struct obstack *ambient_obstack = expression_obstack;
   va_list p;
   register tree t;
@@ -3132,9 +3115,6 @@ build_parse_node (enum tree_code code, ...)
 
   VA_START (p, code);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum tree_code);
-#endif
 
   expression_obstack = &temp_decl_obstack;
 

@@ -5620,16 +5620,10 @@ fancy_abort ()
 static void
 fatal (char *format, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *format;
-#endif
   va_list ap;
 
   VA_START (ap, format);
 
-#ifndef ANSI_PROTOTYPES
-  format = va_arg (ap, char *);
-#endif
 
   fprintf (stderr, "%s: ", programname);
   vfprintf (stderr, format, ap);
@@ -5642,16 +5636,10 @@ fatal (char *format, ...)
 static void
 error (char *format, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *format;
-#endif
   va_list ap;
 
   VA_START (ap, format);
 
-#ifndef ANSI_PROTOTYPES
-  format = va_arg (ap, char *);
-#endif
 
   fprintf (stderr, "%s: ", programname);
   vfprintf (stderr, format, ap);

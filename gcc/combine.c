@@ -9341,10 +9341,6 @@ gen_lowpart_for_combine (mode, x)
 static rtx
 gen_rtx_combine (enum rtx_code code, enum machine_mode mode, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum rtx_code code;
-  enum machine_mode mode;
-#endif
   va_list p;
   int n_args;
   rtx args[3];
@@ -9355,10 +9351,6 @@ gen_rtx_combine (enum rtx_code code, enum machine_mode mode, ...)
 
   VA_START (p, mode);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum rtx_code);
-  mode = va_arg (p, enum machine_mode);
-#endif
 
   n_args = GET_RTX_LENGTH (code);
   fmt = GET_RTX_FORMAT (code);

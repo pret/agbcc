@@ -118,16 +118,10 @@ concat (const char *first, ...)
   register char *end;
   register const char *arg;
   va_list args;
-#ifndef ANSI_PROTOTYPES
-  const char *first;
-#endif
 
   /* First compute the size of the result and get sufficient memory.  */
 
   VA_START (args, first);
-#ifndef ANSI_PROTOTYPES
-  first = va_arg (args, const char *);
-#endif
 
   arg = first;
   length = 0;
@@ -144,9 +138,6 @@ concat (const char *first, ...)
   /* Now copy the individual pieces to the result string.  */
 
   VA_START (args, first);
-#ifndef ANSI_PROTOTYPES
-  first = va_arg (args, char *);
-#endif
 
   end = newstr;
   arg = first;

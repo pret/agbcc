@@ -952,16 +952,10 @@ mybcopy (b1, b2, length)
 static void
 fatal (const char *format, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  const char *format;
-#endif
   va_list ap;
 
   VA_START (ap, format);
 
-#ifndef ANSI_PROTOTYPES
-  format = va_arg (ap, const char *);
-#endif
 
   fprintf (stderr, "genoutput: ");
   vfprintf (stderr, format, ap);
@@ -982,16 +976,10 @@ fancy_abort ()
 static void
 error (const char *format, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  const char *format;
-#endif
   va_list ap;
 
   VA_START (ap, format);
 
-#ifndef ANSI_PROTOTYPES
-  format = va_arg (ap, const char *);
-#endif
 
   fprintf (stderr, "genoutput: ");
   vfprintf (stderr, format, ap);

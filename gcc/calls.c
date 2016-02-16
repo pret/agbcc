@@ -2319,12 +2319,6 @@ expand_call (exp, target, ignore)
 void
 emit_library_call (rtx orgfun, int no_queue, enum machine_mode outmode, int nargs, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  rtx orgfun;
-  int no_queue;
-  enum machine_mode outmode;
-  int nargs;
-#endif
   va_list p;
   /* Total size in bytes of all the stack-parms scanned so far.  */
   struct args_size args_size;
@@ -2366,12 +2360,6 @@ emit_library_call (rtx orgfun, int no_queue, enum machine_mode outmode, int narg
 
   VA_START (p, nargs);
 
-#ifndef ANSI_PROTOTYPES
-  orgfun = va_arg (p, rtx);
-  no_queue = va_arg (p, int);
-  outmode = va_arg (p, enum machine_mode);
-  nargs = va_arg (p, int);
-#endif
 
   fun = orgfun;
 
@@ -2807,13 +2795,6 @@ rtx
 emit_library_call_value (rtx orgfun, rtx value, int no_queue,
 				enum machine_mode outmode, int nargs, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  rtx orgfun;
-  rtx value;
-  int no_queue;
-  enum machine_mode outmode;
-  int nargs;
-#endif
   va_list p;
   /* Total size in bytes of all the stack-parms scanned so far.  */
   struct args_size args_size;
@@ -2862,13 +2843,6 @@ emit_library_call_value (rtx orgfun, rtx value, int no_queue,
 
   VA_START (p, nargs);
 
-#ifndef ANSI_PROTOTYPES
-  orgfun = va_arg (p, rtx);
-  value = va_arg (p, rtx);
-  no_queue = va_arg (p, int);
-  outmode = va_arg (p, enum machine_mode);
-  nargs = va_arg (p, int);
-#endif
 
   is_const = no_queue;
   fun = orgfun;

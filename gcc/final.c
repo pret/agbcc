@@ -2733,20 +2733,12 @@ output_addr_const (file, x)
 void
 asm_fprintf (FILE *file, char *p, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  FILE *file;
-  char *p;
-#endif
   va_list argptr;
   char buf[10];
   char *q, c;
 
   VA_START (argptr, p);
 
-#ifndef ANSI_PROTOTYPES
-  file = va_arg (argptr, FILE *);
-  p = va_arg (argptr, char *);
-#endif
 
   buf[0] = '%';
 

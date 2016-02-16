@@ -21,10 +21,8 @@ Boston, MA 02111-1307, USA.  */
 #ifndef __GCC_TOPLEV_H__
 #define __GCC_TOPLEV_H__
 
-#ifdef ANSI_PROTOTYPES
 union tree_node;
 struct rtx_def;
-#endif
 
 extern int count_error			(int);
 extern void strip_off_ending		(char *, int);

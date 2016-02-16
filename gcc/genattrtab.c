@@ -537,9 +537,6 @@ attr_hash_add_string (hashcode, str)
 static rtx
 attr_rtx (enum rtx_code code, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  enum rtx_code code;
-#endif
   va_list p;
   register int i;		/* Array indices...			*/
   register char *fmt;		/* Current rtx's format...		*/
@@ -550,9 +547,6 @@ attr_rtx (enum rtx_code code, ...)
 
   VA_START (p, code);
 
-#ifndef ANSI_PROTOTYPES
-  code = va_arg (p, enum rtx_code);
-#endif
 
   /* For each of several cases, search the hash table for an existing entry.
      Use that entry if one is found; otherwise create a new RTL and add it
@@ -734,19 +728,11 @@ attr_rtx (enum rtx_code code, ...)
 static char *
 attr_printf (register int len, const char *fmt, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  register int len;
-  const char *fmt;
-#endif
   va_list p;
   register char *str;
 
   VA_START (p, fmt);
 
-#ifndef ANSI_PROTOTYPES
-  len = va_arg (p, int);
-  fmt = va_arg (p, const char *);
-#endif
 
   /* Print the string into a temporary location.  */
   str = (char *) alloca (len);
@@ -5815,16 +5801,10 @@ copy_rtx_unchanging (orig)
 static void
 fatal (const char *format, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  const char *format;
-#endif
   va_list ap;
 
   VA_START (ap, format);
 
-#ifndef ANSI_PROTOTYPES
-  format = va_arg (ap, const char *);
-#endif
 
   fprintf (stderr, "genattrtab: ");
   vfprintf (stderr, format, ap);

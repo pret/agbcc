@@ -1498,20 +1498,10 @@ v_error_with_file_and_line (file, line, s, ap)
 void
 error_with_file_and_line (char *file, int line, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *file;
-  int line;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  file = va_arg (ap, char *);
-  line = va_arg (ap, int);
-  s = va_arg (ap, char *);
-#endif
 
   v_error_with_file_and_line (file, line, s, ap);
   va_end (ap);
@@ -1535,18 +1525,10 @@ v_error_with_decl (decl, s, ap)
 void
 error_with_decl (tree decl, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  tree decl;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  decl = va_arg (ap, tree);
-  s = va_arg (ap, char *);
-#endif
 
   v_error_with_decl (decl, s, ap);
   va_end (ap);
@@ -1574,18 +1556,10 @@ v_error_for_asm (insn, s, ap)
 void
 error_for_asm (rtx insn, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  rtx insn;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  insn = va_arg (ap, rtx);
-  s = va_arg (ap, char *);
-#endif
 
   v_error_for_asm (insn, s, ap);
   va_end (ap);
@@ -1604,16 +1578,10 @@ verror (s, ap)
 void
 error (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   verror (s, ap);
   va_end (ap);
@@ -1633,16 +1601,10 @@ vfatal (s, ap)
 void
 fatal (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   vfatal (s, ap);
   va_end (ap);
@@ -1667,20 +1629,10 @@ v_warning_with_file_and_line (file, line, s, ap)
 void
 warning_with_file_and_line (char *file, int line, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *file;
-  int line;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  file = va_arg (ap, char *);
-  line = va_arg (ap, int);
-  s = va_arg (ap, char *);
-#endif
 
   v_warning_with_file_and_line (file, line, s, ap);
   va_end (ap);
@@ -1706,18 +1658,10 @@ v_warning_with_decl (decl, s, ap)
 void
 warning_with_decl (tree decl, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  tree decl;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  decl = va_arg (ap, tree);
-  s = va_arg (ap, char *);
-#endif
 
   v_warning_with_decl (decl, s, ap);
   va_end (ap);
@@ -1747,18 +1691,10 @@ v_warning_for_asm (insn, s, ap)
 void
 warning_for_asm (rtx insn, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  rtx insn;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  insn = va_arg (ap, rtx);
-  s = va_arg (ap, char *);
-#endif
 
   v_warning_for_asm (insn, s, ap);
   va_end (ap);
@@ -1777,16 +1713,10 @@ vwarning (s, ap)
 void
 warning (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   vwarning (s, ap);
   va_end (ap);
@@ -1809,16 +1739,10 @@ vpedwarn (s, ap)
 void
 pedwarn (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   vpedwarn (s, ap);
   va_end (ap);
@@ -1849,18 +1773,10 @@ v_pedwarn_with_decl (decl, s, ap)
 void
 pedwarn_with_decl (tree decl, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  tree decl;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  decl = va_arg (ap, tree);
-  s = va_arg (ap, char *);
-#endif
 
   v_pedwarn_with_decl (decl, s, ap);
   va_end (ap);
@@ -1882,20 +1798,10 @@ v_pedwarn_with_file_and_line (file, line, s, ap)
 void
 pedwarn_with_file_and_line (char *file, int line, char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *file;
-  int line;
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  file = va_arg (ap, char *);
-  line = va_arg (ap, int);
-  s = va_arg (ap, char *);
-#endif
 
   v_pedwarn_with_file_and_line (file, line, s, ap);
   va_end (ap);
@@ -1920,16 +1826,10 @@ vsorry (s, ap)
 void
 sorry (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   vsorry (s, ap);
   va_end (ap);
@@ -1954,16 +1854,10 @@ v_really_sorry (s, ap)
 void
 really_sorry (char *s, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  char *s;
-#endif
   va_list ap;
 
   VA_START (ap, s);
 
-#ifndef ANSI_PROTOTYPES
-  s = va_arg (ap, char *);
-#endif
 
   v_really_sorry (s, ap);
   va_end (ap);

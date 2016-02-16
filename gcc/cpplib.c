@@ -6250,18 +6250,10 @@ v_cpp_error (pfile, msg, ap)
 void
 cpp_error (cpp_reader * pfile, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  const char *msg;
-#endif
   va_list ap;
 
   VA_START(ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  msg = va_arg (ap, const char *);
-#endif
 
   v_cpp_error (pfile, msg, ap);
   va_end(ap);
@@ -6289,18 +6281,10 @@ v_cpp_warning (pfile, msg, ap)
 void
 cpp_warning (cpp_reader * pfile, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  msg = va_arg (ap, const char *);
-#endif
 
   v_cpp_warning (pfile, msg, ap);
   va_end(ap);
@@ -6311,18 +6295,10 @@ cpp_warning (cpp_reader * pfile, const char *msg, ...)
 void
 cpp_pedwarn (cpp_reader * pfile, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  msg = va_arg (ap, const char *);
-#endif
 
   if (CPP_OPTIONS (pfile)->pedantic_errors)
     v_cpp_error (pfile, msg, ap);
@@ -6352,22 +6328,10 @@ v_cpp_error_with_line (pfile, line, column, msg, ap)
 void
 cpp_error_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  int line;
-  int column;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  line = va_arg (ap, int);
-  column = va_arg (ap, int);
-  msg = va_arg (ap, const char *);
-#endif
 
   v_cpp_error_with_line(pfile, line, column, msg, ap);
   va_end(ap);
@@ -6403,22 +6367,10 @@ v_cpp_warning_with_line (pfile, line, column, msg, ap)
 static void
 cpp_warning_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  int line;
-  int column;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  line = va_arg (ap, int);
-  column = va_arg (ap, int);
-  msg = va_arg (ap, const char *);
-#endif
 
   v_cpp_warning_with_line (pfile, line, column, msg, ap);
   va_end(ap);
@@ -6428,22 +6380,10 @@ cpp_warning_with_line (cpp_reader * pfile, int line, int column, const char *msg
 void
 cpp_pedwarn_with_line (cpp_reader * pfile, int line, int column, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  int line;
-  int column;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  line = va_arg (ap, int);
-  column = va_arg (ap, int);
-  msg = va_arg (ap, const char *);
-#endif
 
   if (CPP_OPTIONS (pfile)->pedantic_errors)
     v_cpp_error_with_line (pfile, column, line, msg, ap);
@@ -6458,22 +6398,10 @@ cpp_pedwarn_with_line (cpp_reader * pfile, int line, int column, const char *msg
 void
 cpp_pedwarn_with_file_and_line (cpp_reader *pfile, char *file, int line, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  char *file;
-  int line;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
 
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  file = va_arg (ap, char *);
-  line = va_arg (ap, int);
-  msg = va_arg (ap, const char *);
-#endif
 
   if (!CPP_OPTIONS (pfile)->pedantic_errors
       && CPP_OPTIONS (pfile)->inhibit_warnings)

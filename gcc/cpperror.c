@@ -111,20 +111,10 @@ v_cpp_message (pfile, is_error, msg, ap)
 void
 cpp_message (cpp_reader *pfile, int is_error, const char *msg, ...)
 {
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  int is_error;
-  const char *msg;
-#endif
   va_list ap;
   
   VA_START (ap, msg);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  is_error = va_arg (ap, int);
-  msg = va_arg (ap, const char *);
-#endif
 
   v_cpp_message(pfile, is_error, msg, ap);
   va_end(ap);
@@ -139,18 +129,10 @@ cpp_message (cpp_reader *pfile, int is_error, const char *msg, ...)
 void
 cpp_fatal (cpp_reader *pfile, const char *str, ...)
 {  
-#ifndef ANSI_PROTOTYPES
-  cpp_reader *pfile;
-  const char *str;
-#endif
   va_list ap;
   
   VA_START (ap, str);
   
-#ifndef ANSI_PROTOTYPES
-  pfile = va_arg (ap, cpp_reader *);
-  str = va_arg (ap, const char *);
-#endif
 
   fprintf (stderr, "%s: ", progname);
   v_cpp_message (pfile, 2, str, ap);
