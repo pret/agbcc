@@ -394,12 +394,12 @@ static void spill_hard_reg		(int, FILE *, int);
 static int finish_spills		(int, FILE *);
 static void ior_hard_reg_set		(HARD_REG_SET *, HARD_REG_SET *);
 static void scan_paradoxical_subregs	(rtx);
-static int hard_reg_use_compare		(const GENERIC_PTR, const GENERIC_PTR);
+static int hard_reg_use_compare		(const void *, const void *);
 static void count_pseudo		(struct hard_reg_n_uses *, int);
 static void order_regs_for_reload	(struct insn_chain *);
 static void reload_as_needed		(int);
 static void forget_old_reloads_1	(rtx, rtx);
-static int reload_reg_class_lower	(const GENERIC_PTR, const GENERIC_PTR);
+static int reload_reg_class_lower	(const void *, const void *);
 static void mark_reload_reg_in_use	(int, int, enum reload_type,
 					       enum machine_mode);
 static void clear_reload_reg_in_use	(int, int, enum reload_type,
@@ -583,7 +583,7 @@ reload (first, global, dumpfile)
 
   /* The two pointers used to track the true location of the memory used
      for label offsets.  */
-  char *real_known_ptr = NULL_PTR;
+  char *real_known_ptr = NULL;
   int (*real_at_ptr)[NUM_ELIMINABLE_REGS];
 
   /* Make sure even insns with volatile mem refs are recognizable.  */
@@ -595,7 +595,7 @@ reload (first, global, dumpfile)
 
   /* Make sure that the last insn in the chain
      is not something that needs reloading.  */
-  emit_note (NULL_PTR, NOTE_INSN_DELETED);
+  emit_note (NULL, NOTE_INSN_DELETED);
 
   /* Enable find_equiv_reg to distinguish insns made by reload.  */
   reload_first_uid = get_max_uid ();
@@ -3453,7 +3453,7 @@ init_elim_table ()
     {
       reg_eliminate = (struct elim_table *)
 	xmalloc(sizeof(struct elim_table) * NUM_ELIMINABLE_REGS);
-      zero_memory ((PTR) reg_eliminate,
+      zero_memory (reg_eliminate,
 	     sizeof(struct elim_table) * NUM_ELIMINABLE_REGS);
     }
   
@@ -3741,8 +3741,8 @@ scan_paradoxical_subregs (x)
 
 static int
 hard_reg_use_compare (p1p, p2p)
-     const GENERIC_PTR p1p;
-     const GENERIC_PTR p2p;
+     const void * p1p;
+     const void * p2p;
 {  
   struct hard_reg_n_uses *p1 = (struct hard_reg_n_uses *)p1p;
   struct hard_reg_n_uses *p2 = (struct hard_reg_n_uses *)p2p;
@@ -4205,8 +4205,8 @@ static int reload_nregs[MAX_RELOADS];
 
 static int
 reload_reg_class_lower (r1p, r2p)
-     const GENERIC_PTR r1p;
-     const GENERIC_PTR r2p;
+     const void * r1p;
+     const void * r2p;
 {
   register int r1 = *(short *)r1p, r2 = *(short *)r2p;
   register int t;
@@ -5685,7 +5685,7 @@ choose_reload_regs (chain)
 	    {
 	      register rtx equiv
 		= find_equiv_reg (reload_in[r], insn, reload_reg_class[r],
-				  -1, NULL_PTR, 0, reload_mode[r]);
+				  -1, NULL, 0, reload_mode[r]);
 	      int regno;
 
 	      if (equiv != 0)
@@ -6272,7 +6272,7 @@ emit_reload_insns (chain)
 	    oldequiv
 	      = find_equiv_reg (old, insn,
 				reload_reg_class[reload_secondary_in_reload[j]],
-				-1, NULL_PTR, 0, mode);
+				-1, NULL, 0, mode);
 #endif
 
 	  /* If reloading from memory, see if there is a register
@@ -6289,7 +6289,7 @@ emit_reload_insns (chain)
 		      && REGNO (old) >= FIRST_PSEUDO_REGISTER
 		      && reg_renumber[REGNO (old)] < 0)))
 	    oldequiv = find_equiv_reg (old, insn, ALL_REGS,
-				       -1, NULL_PTR, 0, mode);
+				       -1, NULL, 0, mode);
 
 	  if (oldequiv)
 	    {
@@ -8128,7 +8128,7 @@ reload_cse_invalidate_regno (regno, mode, clobber)
       for (x = reg_values[i]; x; x = XEXP (x, 1))
 	{
 	  if (XEXP (x, 0) != 0
-	      && refers_to_regno_p (regno, endregno, XEXP (x, 0), NULL_PTR))
+	      && refers_to_regno_p (regno, endregno, XEXP (x, 0), NULL))
 	    {
 	      /* If this is the only entry on the list, clear
                  reg_values[i].  Otherwise, just clear this entry on
@@ -8161,7 +8161,7 @@ reload_cse_invalidate_regno (regno, mode, clobber)
 	      PUT_MODE (invalidate_regno_rtx, GET_MODE (x));
 	      REGNO (invalidate_regno_rtx) = i;
 	      if (refers_to_regno_p (regno, endregno, invalidate_regno_rtx,
-				     NULL_PTR))
+				     NULL))
 		{
 		  reload_cse_invalidate_regno (i, VOIDmode, 1);
 		  break;

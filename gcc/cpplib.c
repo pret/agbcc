@@ -1393,7 +1393,7 @@ create_definition (buf, limit, pfile, predefinition)
 	}
       }
     /* now everything from bp before limit is the definition.  */
-    defn = collect_expansion (pfile, bp, limit, -1, NULL_PTR);
+    defn = collect_expansion (pfile, bp, limit, -1, NULL);
     defn->args.argnames = (U_CHAR *) "";
   }
 
@@ -3524,7 +3524,7 @@ do_if (pfile, keyword)
      struct directive *keyword ATTRIBUTE_UNUSED;
 {
   HOST_WIDE_INT value = eval_if_expression (pfile);
-  conditional_skip (pfile, value == 0, T_IF, NULL_PTR);
+  conditional_skip (pfile, value == 0, T_IF, NULL);
   return 0;
 }
 

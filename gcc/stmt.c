@@ -908,9 +908,9 @@ expand_fixup (tree_label, rtl_label, last_insn)
 
         start_sequence ();
         pushlevel (0);
-        start = emit_note (NULL_PTR, NOTE_INSN_BLOCK_BEG);
-	fixup->before_jump = emit_note (NULL_PTR, NOTE_INSN_DELETED);
-        last_block_end_note = emit_note (NULL_PTR, NOTE_INSN_BLOCK_END);
+        start = emit_note (NULL, NOTE_INSN_BLOCK_BEG);
+	fixup->before_jump = emit_note (NULL, NOTE_INSN_DELETED);
+        last_block_end_note = emit_note (NULL, NOTE_INSN_BLOCK_END);
         fixup->context = poplevel (1, 0, 0);  /* Create the BLOCK node now! */
         end_sequence ();
         emit_insns_after (start, original_before_jump);
@@ -940,7 +940,7 @@ void
 expand_fixups (first_insn)
      rtx first_insn;
 {
-  fixup_gotos (NULL_PTR, NULL_RTX, NULL_TREE, first_insn, 0);
+  fixup_gotos (NULL, NULL_RTX, NULL_TREE, first_insn, 0);
 }
 
 /* When exiting a binding contour, process all pending gotos requiring fixups.
@@ -1973,7 +1973,7 @@ expand_start_loop (exit_flag)
 
   do_pending_stack_adjust ();
   emit_queue ();
-  emit_note (NULL_PTR, NOTE_INSN_LOOP_BEG);
+  emit_note (NULL, NOTE_INSN_LOOP_BEG);
   emit_label (thisloop->data.loop.start_label);
 
   return thisloop;
@@ -2000,7 +2000,7 @@ void
 expand_loop_continue_here ()
 {
   do_pending_stack_adjust ();
-  emit_note (NULL_PTR, NOTE_INSN_LOOP_CONT);
+  emit_note (NULL, NOTE_INSN_LOOP_CONT);
   emit_label (loop_stack->data.loop.continue_label);
 }
 
@@ -2234,7 +2234,7 @@ expand_end_loop ()
     }
 
   emit_jump (start_label);
-  emit_note (NULL_PTR, NOTE_INSN_LOOP_END);
+  emit_note (NULL, NOTE_INSN_LOOP_END);
   emit_label (loop_stack->data.loop.end_label);
 
   POPSTACK (loop_stack);
@@ -2828,7 +2828,7 @@ expand_start_bindings (exit_flag)
      int exit_flag;
 {
   struct nesting *thisblock = ALLOC_NESTING ();
-  rtx note = emit_note (NULL_PTR, NOTE_INSN_BLOCK_BEG);
+  rtx note = emit_note (NULL, NOTE_INSN_BLOCK_BEG);
 
   /* Make an entry on block_stack for the block we are entering.  */
 
@@ -3248,7 +3248,7 @@ expand_end_bindings (vars, mark_ends, dont_jump_in)
      just going out of scope, so they are in scope for their cleanups.  */
 
   if (mark_ends)
-    last_block_end_note = emit_note (NULL_PTR, NOTE_INSN_BLOCK_END);
+    last_block_end_note = emit_note (NULL, NOTE_INSN_BLOCK_END);
   else
     /* Get rid of the beginning-mark if we don't make an end-mark.  */
     NOTE_LINE_NUMBER (thisblock->data.block.first_insn) = NOTE_INSN_DELETED;
@@ -3984,7 +3984,7 @@ expand_start_case (exit_flag, expr, type, printname)
   /* Make sure case_stmt.start points to something that won't
      need any transformation before expand_end_case.  */
   if (GET_CODE (get_last_insn ()) != NOTE)
-    emit_note (NULL_PTR, NOTE_INSN_DELETED);
+    emit_note (NULL, NOTE_INSN_DELETED);
 
   thiscase->data.case_stmt.start = get_last_insn ();
 
@@ -5023,7 +5023,7 @@ expand_end_case (orig_index)
 		= (TREE_CODE (TREE_TYPE (orig_index)) != ENUMERAL_TYPE
 		   && estimate_case_costs (thiscase->data.case_stmt.case_list));
 	      balance_case_nodes (&thiscase->data.case_stmt.case_list, 
-				  NULL_PTR);
+				  NULL);
 	      emit_case_nodes (index, thiscase->data.case_stmt.case_list,
 			       default_label, index_type);
 	      emit_jump_if_reachable (default_label);

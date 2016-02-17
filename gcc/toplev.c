@@ -1898,16 +1898,16 @@ botch (s)
 
 /* Same as `malloc' but report error if no memory available.  */
 
-PTR
+void *
 xmalloc (size)
   size_t size;
 {
-  register PTR value;
+  register void *value;
 
   if (size == 0)
     size = 1;
 
-  value = (PTR) malloc (size);
+  value = malloc (size);
   if (value == 0)
     fatal ("virtual memory exhausted");
   return value;
@@ -1915,16 +1915,16 @@ xmalloc (size)
 
 /* Same as `calloc' but report error if no memory available.  */
 
-PTR
+void *
 xcalloc (size1, size2)
   size_t size1, size2;
 {
-  register PTR value;
+  register void *value;
 
   if (size1 == 0 || size2 == 0)
     size1 = size2 = 1;
 
-  value = (PTR) calloc (size1, size2);
+  value = calloc (size1, size2);
   if (value == 0)
     fatal ("virtual memory exhausted");
   return value;
@@ -1934,17 +1934,17 @@ xcalloc (size1, size2)
 /* Same as `realloc' but report error if no memory available.  
    Also handle null PTR even if the vendor realloc gets it wrong.  */
 
-PTR
+void *
 xrealloc (ptr, size)
-  PTR ptr;
+  void *ptr;
   size_t size;
 {
-  register PTR result;
+  register void *result;
 
   if (size == 0)
     size = 1;
 
-  result = (ptr ? (PTR) realloc (ptr, size) : (PTR) malloc (size));
+  result = (ptr ? realloc (ptr, size) : malloc (size));
 
   if (!result)
     fatal ("virtual memory exhausted");
@@ -2654,7 +2654,7 @@ compile_file (name)
 		    || TREE_SYMBOL_REFERENCED (DECL_ASSEMBLER_NAME (decl))))
 	      {
 		reconsider = 1;
-		rest_of_decl_compilation (decl, NULL_PTR, 1, 1);
+		rest_of_decl_compilation (decl, NULL, 1, 1);
 	      }
 
 	    if (TREE_CODE (decl) == FUNCTION_DECL

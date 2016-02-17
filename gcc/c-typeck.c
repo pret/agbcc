@@ -6528,7 +6528,7 @@ process_init_element (value)
   if (constructor_stack->replacement_value != 0)
     {
       error_init ("excess elements in struct initializer%s",
-		  " after `%s'", NULL_PTR);
+		  " after `%s'", NULL);
       return;
     }
 
@@ -6564,7 +6564,7 @@ process_init_element (value)
 	  if (constructor_fields == 0)
 	    {
 	      pedwarn_init ("excess elements in struct initializer%s",
-			    " after `%s'", NULL_PTR);
+			    " after `%s'", NULL);
 	      break;
 	    }
 
@@ -6629,7 +6629,7 @@ process_init_element (value)
 	  if (constructor_fields == 0)
 	    {
 	      pedwarn_init ("excess elements in union initializer%s",
-			    " after `%s'", NULL_PTR);
+			    " after `%s'", NULL);
 	      break;
 	    }
 
@@ -6704,7 +6704,7 @@ process_init_element (value)
 	      && tree_int_cst_lt (constructor_max_index, constructor_index))
 	    {
 	      pedwarn_init ("excess elements in array initializer%s",
-			    " after `%s'", NULL_PTR);
+			    " after `%s'", NULL);
 	      break;
 	    }
 
@@ -6716,7 +6716,7 @@ process_init_element (value)
 				      constructor_range_end))
 		{
 		  pedwarn_init ("excess elements in array initializer%s",
-				" after `%s'", NULL_PTR);
+				" after `%s'", NULL);
 		  TREE_INT_CST_HIGH (constructor_range_end)
 		    = TREE_INT_CST_HIGH (constructor_max_index);
 		  TREE_INT_CST_LOW (constructor_range_end)
@@ -6768,7 +6768,7 @@ process_init_element (value)
       if (constructor_fields == 0)
 	{
 	  pedwarn_init ("excess elements in scalar initializer%s",
-			" after `%s'", NULL_PTR);
+			" after `%s'", NULL);
 	  break;
 	}
 

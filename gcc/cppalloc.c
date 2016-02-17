@@ -35,36 +35,36 @@ memory_full ()
   exit (EXIT_FAILURE);
 }
 
-PTR
+void *
 xmalloc (size)
   size_t size;
 {
-  register PTR ptr = (PTR) malloc (size);
+  register void *ptr = malloc (size);
   if (ptr == 0)
     memory_full ();
   return ptr;
 }
 
-PTR
+void *
 xcalloc (number, size)
   size_t number, size;
 {
-  register PTR ptr = (PTR) calloc (number, size);
+  register void *ptr = calloc (number, size);
   if (ptr == 0)
     memory_full ();
   return ptr;
 }
 
-PTR
+void *
 xrealloc (old, size)
-  PTR old;
+  void *old;
   size_t size;
 {
-  register PTR ptr;
+  register void *ptr;
   if (old)
-    ptr = (PTR) realloc (old, size);
+    ptr = realloc (old, size);
   else
-    ptr = (PTR) malloc (size);
+    ptr = malloc (size);
   if (ptr == 0)
     memory_full ();
   return ptr;

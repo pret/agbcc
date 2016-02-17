@@ -861,7 +861,7 @@ push_reload (in, out, inloc, outloc, class,
 	 order as the reloads.  Thus if the outer reload is also of type
 	 RELOAD_OTHER, we are guaranteed that this inner reload will be
 	 output before the outer reload.  */
-      push_reload (SUBREG_REG (in), NULL_RTX, &SUBREG_REG (in), NULL_PTR,
+      push_reload (SUBREG_REG (in), NULL_RTX, &SUBREG_REG (in), NULL,
 		   find_valid_class (inmode, SUBREG_WORD (in)),
 		   VOIDmode, VOIDmode, 0, 0, opnum, type);
       dont_remove_subreg = 1;
@@ -1756,7 +1756,7 @@ find_dummy_reload (real_in, real_out, inloc, outloc,
       register int regno = REGNO (in) + in_offset;
       int nwords = HARD_REGNO_NREGS (regno, inmode);
 
-      if (! refers_to_regno_for_reload_p (regno, regno + nwords, out, NULL_PTR)
+      if (! refers_to_regno_for_reload_p (regno, regno + nwords, out, NULL)
 	  && ! hard_reg_set_here_p (regno, regno + nwords,
 				    PATTERN (this_insn))
 	  && (! earlyclobber
@@ -2150,7 +2150,7 @@ immune_p (x, y, ydata)
   struct decomposition xdata;
 
   if (ydata.reg_flag)
-    return !refers_to_regno_for_reload_p (ydata.start, ydata.end, x, NULL_PTR);
+    return !refers_to_regno_for_reload_p (ydata.start, ydata.end, x, NULL);
   if (ydata.safe)
     return 1;
 
@@ -2422,7 +2422,7 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 	;
       else if (constraints[i][0] == 'p')
 	{
-	  find_reloads_address (VOIDmode, NULL_PTR,
+	  find_reloads_address (VOIDmode, NULL,
 				recog_operand[i], recog_operand_loc[i],
 				i, operand_type[i], ind_levels, insn);
 
@@ -3438,7 +3438,7 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 	  {
 	    operand_reloadnum[i]
 	      = push_reload (XEXP (recog_operand[i], 0), NULL_RTX,
-			     &XEXP (recog_operand[i], 0), NULL_PTR,
+			     &XEXP (recog_operand[i], 0), NULL,
 			     MODE_BASE_REG_CLASS (VOIDmode),
 			     GET_MODE (XEXP (recog_operand[i], 0)),
 			     VOIDmode, 0, 0, i, RELOAD_FOR_INPUT);
@@ -4043,7 +4043,7 @@ find_reloads (insn, replace, ind_levels, live_known, reload_reg_p)
 
       if (insn_code_number >= 0)
 	if (insn_operand_address_p[insn_code_number][i])
-	  find_reloads_address (VOIDmode, NULL_PTR,
+	  find_reloads_address (VOIDmode, NULL,
 				recog_operand[i], recog_operand_loc[i],
 				i, RELOAD_FOR_INPUT, ind_levels, insn);
 
@@ -4368,7 +4368,7 @@ find_reloads_address (mode, memrefloc, ad, loc, opnum, type, ind_levels, insn)
 	      tem = make_memloc (ad, regno);
 	      if (! strict_memory_address_p (GET_MODE (tem), XEXP (tem, 0)))
 		{
-		  find_reloads_address (GET_MODE (tem), NULL_PTR, XEXP (tem, 0),
+		  find_reloads_address (GET_MODE (tem), NULL, XEXP (tem, 0),
 					&XEXP (tem, 0), opnum, ADDR_TYPE (type),
 					ind_levels, insn);
 		}
@@ -4412,7 +4412,7 @@ find_reloads_address (mode, memrefloc, ad, loc, opnum, type, ind_levels, insn)
 	return 0;
 
       /* If we do not have one of the cases above, we must do the reload.  */
-      push_reload (ad, NULL_RTX, loc, NULL_PTR, MODE_BASE_REG_CLASS (mode),
+      push_reload (ad, NULL_RTX, loc, NULL, MODE_BASE_REG_CLASS (mode),
 		   GET_MODE (ad), VOIDmode, 0, 0, opnum, type);
       return 1;
     }
@@ -4500,7 +4500,7 @@ find_reloads_address (mode, memrefloc, ad, loc, opnum, type, ind_levels, insn)
 	{
 	  /* Must use TEM here, not AD, since it is the one that will
 	     have any subexpressions reloaded, if needed.  */
-	  push_reload (tem, NULL_RTX, loc, NULL_PTR,
+	  push_reload (tem, NULL_RTX, loc, NULL,
 		       MODE_BASE_REG_CLASS (mode), GET_MODE (tem),
 		       VOIDmode, 0,
 		       0, opnum, type);
@@ -5081,7 +5081,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 	      else
 		{
 		  reloadnum
-		    = push_reload (x, NULL_RTX, loc, NULL_PTR,
+		    = push_reload (x, NULL_RTX, loc, NULL,
 				   (context ? INDEX_REG_CLASS
 				    : MODE_BASE_REG_CLASS (mode)),
 				   GET_MODE (x), GET_MODE (x), 0, 0,
@@ -5128,7 +5128,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 				XEXP (XEXP (x, 0), 0), &XEXP (XEXP (x, 0), 0),
 				opnum, type, ind_levels, insn);
 
-	  reloadnum = push_reload (x, NULL_RTX, loc, NULL_PTR,
+	  reloadnum = push_reload (x, NULL_RTX, loc, NULL,
 				   (context ? INDEX_REG_CLASS
 				    : MODE_BASE_REG_CLASS (mode)),
 				   GET_MODE (x), VOIDmode, 0, 0, opnum, type);
@@ -5158,7 +5158,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 
       find_reloads_address (GET_MODE (x), loc, XEXP (x, 0), &XEXP (x, 0),
 			    opnum, ADDR_TYPE (type), ind_levels, insn);
-      push_reload (*loc, NULL_RTX, loc, NULL_PTR,
+      push_reload (*loc, NULL_RTX, loc, NULL,
 		   (context ? INDEX_REG_CLASS : MODE_BASE_REG_CLASS (mode)),
 		   GET_MODE (x), VOIDmode, 0, 0, opnum, type);
       return 1;
@@ -5180,7 +5180,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 	 that feeds this insn.  */
 	if (reg_equiv_mem[regno] != 0)
 	  {
-	    push_reload (reg_equiv_mem[regno], NULL_RTX, loc, NULL_PTR,
+	    push_reload (reg_equiv_mem[regno], NULL_RTX, loc, NULL,
 			 (context ? INDEX_REG_CLASS
 			  : MODE_BASE_REG_CLASS (mode)),
 			 GET_MODE (x), VOIDmode, 0, 0, opnum, type);
@@ -5209,7 +5209,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 	     || !(context ? REGNO_OK_FOR_INDEX_P (regno)
 		  : REGNO_MODE_OK_FOR_BASE_P (regno, mode))))
 	  {
-	    push_reload (x, NULL_RTX, loc, NULL_PTR,
+	    push_reload (x, NULL_RTX, loc, NULL,
 			 (context ? INDEX_REG_CLASS
 			  : MODE_BASE_REG_CLASS (mode)),
 			 GET_MODE (x), VOIDmode, 0, 0, opnum, type);
@@ -5222,7 +5222,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 	   from before this insn to after it.  */
 	if (regno_clobbered_p (regno, this_insn))
 	  {
-	    push_reload (x, NULL_RTX, loc, NULL_PTR,
+	    push_reload (x, NULL_RTX, loc, NULL,
 			 (context ? INDEX_REG_CLASS
 			  : MODE_BASE_REG_CLASS (mode)),
 			 GET_MODE (x), VOIDmode, 0, 0, opnum, type);
@@ -5244,7 +5244,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 	      if (! (context ? REGNO_OK_FOR_INDEX_P (regno)
 		     : REGNO_MODE_OK_FOR_BASE_P (regno, mode)))
 		{
-		  push_reload (x, NULL_RTX, loc, NULL_PTR,
+		  push_reload (x, NULL_RTX, loc, NULL,
 			       (context ? INDEX_REG_CLASS
 				: MODE_BASE_REG_CLASS (mode)),
 			       GET_MODE (x), VOIDmode, 0, 0, opnum, type);
@@ -5262,7 +5262,7 @@ find_reloads_address_1 (mode, x, context, loc, opnum, type, ind_levels, insn)
 		{
 		  x = find_reloads_subreg_address (x, 0, opnum, type,
 						   ind_levels, insn);
-		  push_reload (x, NULL_RTX, loc, NULL_PTR, class,
+		  push_reload (x, NULL_RTX, loc, NULL, class,
 			       GET_MODE (x), VOIDmode, 0, 0, opnum, type);
 		  return 1;
 		}
@@ -5354,7 +5354,7 @@ find_reloads_address_part (x, loc, class, mode, opnum, type, ind_levels)
 			    opnum, type, ind_levels, 0);
     }
 
-  push_reload (x, NULL_RTX, loc, NULL_PTR, class,
+  push_reload (x, NULL_RTX, loc, NULL, class,
 	       mode, VOIDmode, 0, 0, opnum, type);
 }
 
@@ -5638,7 +5638,7 @@ refers_to_regno_for_reload_p (regno, endregno, x, loc)
 	  if (reg_equiv_memory_loc[i])
 	    return refers_to_regno_for_reload_p (regno, endregno,
 						 reg_equiv_memory_loc[i],
-						 NULL_PTR);
+						 NULL);
 
 	  if (reg_equiv_constant[i])
 	    return 0;
@@ -5781,7 +5781,7 @@ reg_overlap_mentioned_for_reload_p (x, in)
   endregno = regno + (regno < FIRST_PSEUDO_REGISTER
 		      ? HARD_REGNO_NREGS (regno, GET_MODE (x)) : 1);
 
-  return refers_to_regno_for_reload_p (regno, endregno, in, NULL_PTR);
+  return refers_to_regno_for_reload_p (regno, endregno, in, NULL);
 }
 
 /* Return nonzero if anything in X contains a MEM.  Look also for pseudo
@@ -6024,7 +6024,7 @@ find_equiv_reg (goal, insn, class, other, reload_reg_p, goalreg, mode)
       && refers_to_regno_for_reload_p (valueno,
 				       (valueno
 					+ HARD_REGNO_NREGS (valueno, mode)),
-				       goal, NULL_PTR))
+				       goal, NULL))
     return 0;
 
   /* Reject registers that overlap GOAL.  */

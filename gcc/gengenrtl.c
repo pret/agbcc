@@ -275,11 +275,11 @@ gencode (f)
 }
 
 #if defined(USE_C_ALLOCA)
-PTR
+void *
 xmalloc (nbytes)
   size_t nbytes;
 {
-  register PTR tmp = (PTR) malloc (nbytes);
+  register void *tmp = malloc (nbytes);
 
   if (!tmp)
     {

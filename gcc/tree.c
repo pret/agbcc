@@ -46,7 +46,7 @@ Boston, MA 02111-1307, USA.  */
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 /* obstack.[ch] explicitly declined to prototype this. */
-extern int _obstack_allocated_p (struct obstack *h, GENERIC_PTR obj);
+extern int _obstack_allocated_p (struct obstack *h, void * obj);
 
 /* Tree nodes of permanent duration are allocated in this obstack.
    They are the identifier nodes, and everything outside of
@@ -1482,7 +1482,7 @@ build_real_from_int_cst (type, i)
   /* Check for valid float value for this type on this target machine.  */
 
  got_it:
-  set_float_handler (NULL_PTR);
+  set_float_handler (NULL);
 
 #ifdef CHECK_FLOAT_VALUE
   CHECK_FLOAT_VALUE (TYPE_MODE (type), d, overflow);

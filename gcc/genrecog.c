@@ -955,7 +955,7 @@ merge_trees(struct decision_head oldh, struct decision_head addh)
 	abort ();
 
       if (old == 0
-	  && position_merit (NULL_PTR, add_mode, add->code) < best_merit)
+	  && position_merit (NULL, add_mode, add->code) < best_merit)
 	{
 	  add->prev = 0;
 	  add->next = oldh.first;
@@ -1039,7 +1039,7 @@ write_subroutine(struct decision *tree, enum routine_type type)
 
   printf ("x%d ATTRIBUTE_UNUSED;\n", max_depth);
   printf ("  %s tem ATTRIBUTE_UNUSED;\n", type == SPLIT ? "rtx" : "int");
-  write_tree (tree, "", NULL_PTR, 1, type);
+  write_tree (tree, "", NULL, 1, type);
   printf (" ret0: return %d;\n}\n\n", type == SPLIT ? 0 : -1);
 }
 /* This table is used to indent the recog_* functions when we are inside
@@ -1646,23 +1646,23 @@ mybcopy(char *in, char *out, unsigned length)
     *out++ = *in++;
 }
 
-PTR
-xrealloc(PTR old, size_t size)
+void *
+xrealloc(void *old, size_t size)
 {
-  register PTR ptr;
+  register void *ptr;
   if (old)
-    ptr = (PTR) realloc (old, size);
+    ptr = realloc (old, size);
   else
-    ptr = (PTR) malloc (size);
+    ptr = malloc (size);
   if (!ptr)
     fatal ("virtual memory exhausted");
   return ptr;
 }
 
-PTR
+void *
 xmalloc(size_t size)
 {
-  register PTR val = (PTR) malloc (size);
+  register void *val = malloc (size);
 
   if (val == 0)
     fatal ("virtual memory exhausted");

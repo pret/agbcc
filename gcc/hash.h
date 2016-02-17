@@ -27,7 +27,7 @@ Boston, MA 02111-1307, USA.  */
 
 typedef enum {false, true} boolean;
 
-typedef PTR hash_table_key;
+typedef void *hash_table_key;
 
 /* Hash table routines.  There is no way to free up a hash table.  */
 
@@ -107,7 +107,7 @@ extern struct hash_entry *hash_newfunc
 	   hash_table_key key);
 
 /* Grab some space for a hash table entry.  */
-extern PTR hash_allocate (struct hash_table *,
+extern void *hash_allocate (struct hash_table *,
 				  unsigned int);
 
 /* Traverse a hash table in a random order, calling a function on each

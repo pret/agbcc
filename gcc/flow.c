@@ -1627,7 +1627,7 @@ life_analysis_1 (f, nregs)
   basic_block_new_live_at_end = (regset *)0;
   basic_block_significant = (regset *)0;
 
-  obstack_free (&flow_obstack, NULL_PTR);
+  obstack_free (&flow_obstack, NULL);
 }
 
 /* Subroutines of life analysis.  */

@@ -59,7 +59,7 @@ hash_table_init_n (table, newfunc, hash, comp, size)
       error ("no memory");
       return false;
     }
-  memset ((PTR) table->table, 0, alloc);
+  memset (table->table, 0, alloc);
   table->size = size;
   table->newfunc = newfunc;
   table->hash = hash;
@@ -87,7 +87,7 @@ void
 hash_table_free (table)
      struct hash_table *table;
 {
-  obstack_free (&table->memory, (PTR) NULL);
+  obstack_free (&table->memory, NULL);
 }
 
 /* Look up KEY in TABLE.  If CREATE is non-NULL a new entry is
@@ -150,12 +150,12 @@ hash_newfunc (entry, table, p)
 
 /* Allocate space in a hash table.  */
 
-PTR
+void *
 hash_allocate (table, size)
      struct hash_table *table;
      unsigned int size;
 {
-  PTR ret;
+  void *ret;
 
   ret = obstack_alloc (&table->memory, size);
   if (ret == NULL && size != 0)
@@ -169,7 +169,7 @@ void
 hash_traverse (table, func, info)
      struct hash_table *table;
      boolean (*func) (struct hash_entry *, hash_table_key);
-     PTR info;
+     void *info;
 {
   unsigned int i;
 

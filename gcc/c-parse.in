@@ -1930,7 +1930,7 @@ stmt:
 		     that we end every loop we start.  */
 		  expand_start_loop (1);
 		  emit_line_note (input_filename, lineno);
-		  expand_exit_loop_if_false (NULL_PTR,
+		  expand_exit_loop_if_false (NULL,
 					     truthvalue_conversion ($4));
 		  position_after_white_space (); }
 	  lineno_labeled_stmt
@@ -1938,7 +1938,7 @@ stmt:
 	| do_stmt_start
 	  '(' expr ')' ';'
 		{ emit_line_note (input_filename, lineno);
-		  expand_exit_loop_if_false (NULL_PTR,
+		  expand_exit_loop_if_false (NULL,
 					     truthvalue_conversion ($3));
 		  expand_end_loop ();
 		  clear_momentary (); }
@@ -1970,7 +1970,7 @@ stmt:
 		  /* Emit the end-test, with a line number.  */
 		  emit_line_note ($<filename>8, $<lineno>7);
 		  if ($6)
-		    expand_exit_loop_if_false (NULL_PTR,
+		    expand_exit_loop_if_false (NULL,
 					       truthvalue_conversion ($6));
 		  /* Don't let the tree nodes for $9 be discarded by
 		     clear_momentary during the parsing of the next stmt.  */
@@ -2011,7 +2011,7 @@ stmt:
 	| CONTINUE ';'
 		{ stmt_count++;
 		  emit_line_note ($<filename>-1, $<lineno>0);
-		  if (! expand_continue_loop (NULL_PTR))
+		  if (! expand_continue_loop (NULL))
 		    error ("continue statement not within a loop"); }
 	| RETURN ';'
 		{ stmt_count++;

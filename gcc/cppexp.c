@@ -420,7 +420,7 @@ cpp_lex (pfile, skip_evaluation)
 		  || (num_chars == 1 && token_buffer[0] != '\0'))
 	        {
 		  wchar_t wc;
-		  (void) mbtowc (NULL_PTR, NULL_PTR, 0);
+		  (void) mbtowc (NULL, NULL, 0);
 		  if (mbtowc (& wc, token_buffer, num_chars) == num_chars)
 		    result = wc;
 		  else

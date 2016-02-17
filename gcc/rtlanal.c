@@ -960,7 +960,7 @@ reg_overlap_mentioned_p (x, in)
   endregno = regno + (regno < FIRST_PSEUDO_REGISTER
 		      ? HARD_REGNO_NREGS (regno, GET_MODE (x)) : 1);
 
-  return refers_to_regno_p (regno, endregno, in, NULL_PTR);
+  return refers_to_regno_p (regno, endregno, in, NULL);
 }
 
 /* Used for communications between the next few functions.  */

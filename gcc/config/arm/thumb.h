@@ -961,7 +961,7 @@ int thumb_shiftable_const ();
     {									\
       rtx orig_X = X;							\
       X = copy_rtx (X);							\
-      push_reload (orig_X, NULL_RTX, &X, NULL_PTR,			\
+      push_reload (orig_X, NULL_RTX, &X, NULL,			\
 		   BASE_REG_CLASS,					\
 		   Pmode, VOIDmode, 0, 0, OPNUM, TYPE);			\
       goto WIN;								\

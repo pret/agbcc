@@ -69,8 +69,8 @@ static void rel_build_chain (struct rel_use *, struct rel_use *, int);
 static void rel_record_mem (rtx *, rtx, int, int, int, rtx, int, int);
 static void invalidate_related (rtx, int);
 static void find_related (rtx *, rtx, int, int);
-static int chain_starts_earlier (const GENERIC_PTR, const GENERIC_PTR);
-static int chain_ends_later (const GENERIC_PTR, const GENERIC_PTR);
+static int chain_starts_earlier (const void *, const void *);
+static int chain_ends_later (const void *, const void *);
 static struct related *optimize_related_values_1 (struct related *, int,
 							int, rtx, FILE *);
 static void optimize_related_values_0 (struct related *, int, int,
@@ -421,7 +421,7 @@ rel_build_chain (new_use, match, base)
       new_chain->chain = new_use;
       new_use->prev_chain_ref = &new_chain->chain;
       new_use->next_chain = 0;
-      new_use->next_chain = NULL_PTR;
+      new_use->next_chain = NULL;
       new_chain->linked = 0;
       new_chain->prev = regno_related[base]->baseinfo->chains;
       regno_related[base]->baseinfo->chains = new_chain;
@@ -506,20 +506,20 @@ rel_record_mem (addrp, addr, size, pre_offs, post_offs, insn, luid, call_tally)
 	  if (HAVE_PRE_INCREMENT && match)
 	    {
 	      PUT_CODE (auto_inc, PRE_INC);
-	      if (recog (PATTERN (insn), insn, NULL_PTR) >= 0)
+	      if (recog (PATTERN (insn), insn, NULL) >= 0)
 		break;
 	    }
 	  match = lookup_related (regno, class, offset + size);
 	  if (HAVE_PRE_DECREMENT && match)
 	    {
 	      PUT_CODE (auto_inc, PRE_DEC);
-	      if (recog (PATTERN (insn), insn, NULL_PTR) >= 0)
+	      if (recog (PATTERN (insn), insn, NULL) >= 0)
 		break;
 	    }
 	  match = 0;
 	}
       PUT_CODE (auto_inc, POST_INC);
-      if (HAVE_POST_INCREMENT && recog (PATTERN (insn), insn, NULL_PTR) >= 0)
+      if (HAVE_POST_INCREMENT && recog (PATTERN (insn), insn, NULL) >= 0)
 	{
 	  struct rel_use *inc_use;
 
@@ -527,14 +527,14 @@ rel_record_mem (addrp, addr, size, pre_offs, post_offs, insn, luid, call_tally)
 	  *inc_use = *new_use;
 	  inc_use->sibling = new_use;
 	  new_use->sibling = inc_use;
-	  inc_use->prev_chain_ref = NULL_PTR;
-	  inc_use->next_chain = NULL_PTR;
+	  inc_use->prev_chain_ref = NULL;
+	  inc_use->next_chain = NULL;
 	  hash = REL_USE_HASH (inc_use->match_offset = offset + size);
 	  inc_use->next_hash = regno_related[base]->baseinfo->hashtab[hash];
 	  regno_related[base]->baseinfo->hashtab[hash] = inc_use;
 	}
       PUT_CODE (auto_inc, POST_DEC);
-      if (HAVE_POST_DECREMENT && recog (PATTERN (insn), insn, NULL_PTR) >= 0)
+      if (HAVE_POST_DECREMENT && recog (PATTERN (insn), insn, NULL) >= 0)
 	{
 	  struct rel_use *dec_use;
 
@@ -542,8 +542,8 @@ rel_record_mem (addrp, addr, size, pre_offs, post_offs, insn, luid, call_tally)
 	  *dec_use = *new_use;
 	  dec_use->sibling = new_use->sibling;
 	  new_use->sibling = dec_use;
-	  dec_use->prev_chain_ref = NULL_PTR;
-	  dec_use->next_chain = NULL_PTR;
+	  dec_use->prev_chain_ref = NULL;
+	  dec_use->next_chain = NULL;
 	  hash = REL_USE_HASH (dec_use->match_offset = offset + size);
 	  dec_use->next_hash = regno_related[base]->baseinfo->hashtab[hash];
 	  regno_related[base]->baseinfo->hashtab[hash] = dec_use;
@@ -962,8 +962,8 @@ find_related (xp, insn, luid, call_tally)
 /* Comparison functions for qsort.  */
 static int
 chain_starts_earlier (chain1, chain2)
-     const GENERIC_PTR chain1;
-     const GENERIC_PTR chain2;
+     const void * chain1;
+     const void * chain2;
 {
   int d = ((*(struct rel_use_chain **)chain2)->start_luid
 	   - (*(struct rel_use_chain **)chain1)->start_luid);
@@ -988,8 +988,8 @@ chain_starts_earlier (chain1, chain2)
 
 static int
 chain_ends_later (chain1, chain2)
-     const GENERIC_PTR chain1;
-     const GENERIC_PTR chain2;
+     const void * chain1;
+     const void * chain2;
 {
   int d = ((*(struct rel_use_chain **)chain1)->end_luid
 	   - (*(struct rel_use_chain **)chain2)->end_luid);

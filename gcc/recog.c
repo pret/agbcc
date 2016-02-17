@@ -150,7 +150,7 @@ recog_memoized (insn)
      rtx insn;
 {
   if (INSN_CODE (insn) < 0)
-    INSN_CODE (insn) = recog (PATTERN (insn), insn, NULL_PTR);
+    INSN_CODE (insn) = recog (PATTERN (insn), insn, NULL);
   return INSN_CODE (insn);
 }
 
@@ -171,7 +171,7 @@ check_asm_operands (x)
     return 1;
 
   operands = (rtx *) alloca (noperands * sizeof (rtx));
-  decode_asm_operands (x, operands, NULL_PTR, NULL_PTR, NULL_PTR);
+  decode_asm_operands (x, operands, NULL, NULL, NULL);
 
   for (i = 0; i < noperands; i++)
     if (!general_operand (operands[i], VOIDmode))

@@ -1818,7 +1818,7 @@ assemble_real (d, mode)
       abort ();
     }
 
-  set_float_handler (NULL_PTR);
+  set_float_handler (NULL);
 }
 
 /* Here we combine duplicate floating constants to make

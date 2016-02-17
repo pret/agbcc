@@ -803,7 +803,7 @@ gcse_main (f, file)
     }
 
   /* Free our obstack.  */
-  obstack_free (&gcse_obstack, NULL_PTR);
+  obstack_free (&gcse_obstack, NULL);
   /* Free reg_set_table.  */
   free_reg_set_mem ();
   /* Free storage used to record predecessor/successor data.  */
@@ -842,7 +842,7 @@ compute_can_copy ()
 #else
 	  reg = gen_rtx (REG, (enum machine_mode) i, LAST_VIRTUAL_REGISTER + 1);
 	  insn = emit_insn (gen_rtx (SET, VOIDmode, reg, reg));
-	  if (recog (PATTERN (insn), insn, NULL_PTR) >= 0)
+	  if (recog (PATTERN (insn), insn, NULL) >= 0)
 	    can_copy_p[i] = 1;
 #endif
 	  break;
@@ -1094,7 +1094,7 @@ static void
 free_reg_set_mem ()
 {
   free (reg_set_table);
-  obstack_free (&reg_set_obstack, NULL_PTR);
+  obstack_free (&reg_set_obstack, NULL);
 }
 
 /* Record REGNO in the reg_set table.  */

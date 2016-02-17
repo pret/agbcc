@@ -2119,7 +2119,7 @@ fixup_var_refs_1 (var, promoted_mode, loc, insn, replacements)
 	optimize_bit_field (x, insn, 0);
       if (GET_CODE (SET_SRC (x)) == SIGN_EXTRACT
 	  || GET_CODE (SET_SRC (x)) == ZERO_EXTRACT)
-	optimize_bit_field (x, insn, NULL_PTR);
+	optimize_bit_field (x, insn, NULL);
 
       /* For a paradoxical SUBREG inside a ZERO_EXTRACT, load the object
 	 into a register and then store it back out.  */
@@ -5644,7 +5644,7 @@ init_function_start (subr, filename, line)
   /* Make sure first insn is a note even if we don't want linenums.
      This makes sure the first insn will never be deleted.
      Also, final expects a note to appear there.  */
-  emit_note (NULL_PTR, NOTE_INSN_DELETED);
+  emit_note (NULL, NOTE_INSN_DELETED);
 
   /* Set flags used by final.c.  */
   if (aggregate_value_p (DECL_RESULT (subr)))
@@ -5844,12 +5844,12 @@ expand_function_start (subr, parms_have_cleanups)
      The move is supposed to make sdb output more accurate.  */
   /* Indicate the beginning of the function body,
      as opposed to parm setup.  */
-  emit_note (NULL_PTR, NOTE_INSN_FUNCTION_BEG);
+  emit_note (NULL, NOTE_INSN_FUNCTION_BEG);
 
   /* If doing stupid allocation, mark parms as born here.  */
 
   if (GET_CODE (get_last_insn ()) != NOTE)
-    emit_note (NULL_PTR, NOTE_INSN_DELETED);
+    emit_note (NULL, NOTE_INSN_DELETED);
   parm_birth_insn = get_last_insn ();
 
   if (obey_regdecls)
@@ -5925,7 +5925,7 @@ expand_function_start (subr, parms_have_cleanups)
   /* After the display initializations is where the tail-recursion label
      should go, if we end up needing one.   Ensure we have a NOTE here
      since some things (like trampolines) get placed before this.  */
-  tail_recursion_reentry = emit_note (NULL_PTR, NOTE_INSN_DELETED);
+  tail_recursion_reentry = emit_note (NULL, NOTE_INSN_DELETED);
 
   /* Evaluate now the sizes of any types declared among the arguments.  */
   for (tem = nreverse (get_pending_sizes ()); tem; tem = TREE_CHAIN (tem))
@@ -6167,7 +6167,7 @@ expand_function_end (filename, line, end_bindings)
   /* Mark the end of the function body.
      If control reaches this insn, the function can drop through
      without returning a value.  */
-  emit_note (NULL_PTR, NOTE_INSN_FUNCTION_END);
+  emit_note (NULL, NOTE_INSN_FUNCTION_END);
 
   /* Output a linenumber for the end of the function.
      SDB depends on this.  */

@@ -1523,7 +1523,7 @@ yylex ()
 		      warning ("floating point number exceeds range of `double'");
 		  }
 
-		set_float_handler (NULL_PTR);
+		set_float_handler (NULL);
 	    }
 #ifdef ERANGE
 	    /* ERANGE is also reported for underflow,
@@ -1750,7 +1750,7 @@ yylex ()
 	int max_chars;
 #ifdef MULTIBYTE_CHARS
 	int longest_char = local_mb_cur_max ();
-	(void) local_mbtowc (NULL_PTR, NULL_PTR, 0);
+	(void) local_mbtowc (NULL, NULL, 0);
 #endif
 
 	max_chars = TYPE_PRECISION (integer_type_node) / width;
@@ -1914,7 +1914,7 @@ yylex ()
 	                           : TYPE_PRECISION (char_type_node);
 #ifdef MULTIBYTE_CHARS
 	int longest_char = local_mb_cur_max ();
-	(void) local_mbtowc (NULL_PTR, NULL_PTR, 0);
+	(void) local_mbtowc (NULL, NULL, 0);
 #endif
 	c = GETC ();
 	p = token_buffer + 1;

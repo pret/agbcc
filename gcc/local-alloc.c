@@ -247,9 +247,9 @@ static void update_equiv_regs	(void);
 static void no_equiv		(rtx, rtx);
 static void block_alloc		(int);
 static int qty_sugg_compare    	(int, int);
-static int qty_sugg_compare_1	(const GENERIC_PTR, const GENERIC_PTR);
+static int qty_sugg_compare_1	(const void *, const void *);
 static int qty_compare    	(int, int);
-static int qty_compare_1	(const GENERIC_PTR, const GENERIC_PTR);
+static int qty_compare_1	(const void *, const void *);
 static int combine_regs		(rtx, rtx, int, int, rtx, int);
 static int reg_meets_class_p	(int, enum reg_class);
 static void update_qty_class	(int, int);
@@ -1445,8 +1445,8 @@ qty_compare (q1, q2)
 
 static int
 qty_compare_1 (q1p, q2p)
-     const GENERIC_PTR q1p;
-     const GENERIC_PTR q2p;
+     const void * q1p;
+     const void * q2p;
 {
   register int q1 = *(int *)q1p, q2 = *(int *)q2p;
   register int tem = QTY_CMP_PRI (q2) - QTY_CMP_PRI (q1);
@@ -1485,8 +1485,8 @@ qty_sugg_compare (q1, q2)
 
 static int
 qty_sugg_compare_1 (q1p, q2p)
-     const GENERIC_PTR q1p;
-     const GENERIC_PTR q2p;
+     const void * q1p;
+     const void * q2p;
 {
   register int q1 = *(int *)q1p, q2 = *(int *)q2p;
   register int tem = QTY_CMP_SUGG (q1) - QTY_CMP_SUGG (q2);

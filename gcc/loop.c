@@ -4349,7 +4349,7 @@ strength_reduce (scan_start, end, loop_top, insn_count,
 		p = last_consec_insn;
 
 	      record_giv (v, p, src_reg, dest_reg, mult_val, add_val, benefit,
-			  DEST_REG, not_every_iteration, NULL_PTR, loop_start,
+			  DEST_REG, not_every_iteration, NULL, loop_start,
 			  loop_end);
 
 	    }
@@ -8838,7 +8838,7 @@ rtx
 get_condition_for_loop (x)
      rtx x;
 {
-  rtx comparison = get_condition (x, NULL_PTR);
+  rtx comparison = get_condition (x, NULL);
 
   if (comparison == 0
       || ! invariant_p (XEXP (comparison, 0))

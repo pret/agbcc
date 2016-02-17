@@ -1744,7 +1744,7 @@ emit_block_move (x, y, size, align)
 	  DECL_EXTERNAL (fn) = 1;
 	  TREE_PUBLIC (fn) = 1;
 	  DECL_ARTIFICIAL (fn) = 1;
-	  make_decl_rtl (fn, NULL_PTR, 1);
+	  make_decl_rtl (fn, NULL, 1);
 	  assemble_external (fn);
 	  pop_obstacks ();
 	}
@@ -2468,7 +2468,7 @@ clear_storage (object, size, align)
 	  DECL_EXTERNAL (fn) = 1;
 	  TREE_PUBLIC (fn) = 1;
 	  DECL_ARTIFICIAL (fn) = 1;
-	  make_decl_rtl (fn, NULL_PTR, 1);
+	  make_decl_rtl (fn, NULL, 1);
 	  assemble_external (fn);
 	  pop_obstacks ();
 	}
@@ -5896,7 +5896,7 @@ expand_expr (exp, target, tmode, modifier)
       return const0_rtx;
 
     case EXIT_EXPR:
-      expand_exit_loop_if_false (NULL_PTR,
+      expand_exit_loop_if_false (NULL,
 				 invert_truthvalue (TREE_OPERAND (exp, 0)));
       return const0_rtx;
 

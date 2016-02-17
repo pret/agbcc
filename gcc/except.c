@@ -1154,7 +1154,7 @@ call_get_eh_context ()
       TREE_PUBLIC (fn) = 1;
       DECL_ARTIFICIAL (fn) = 1;
       TREE_READONLY (fn) = 1;
-      make_decl_rtl (fn, NULL_PTR, 1);
+      make_decl_rtl (fn, NULL, 1);
       assemble_external (fn);
       pop_obstacks ();
     }
@@ -1485,7 +1485,7 @@ expand_eh_region_start_for_decl (decl)
     }
 
   push_eh_entry (&ehstack);
-  note = emit_note (NULL_PTR, NOTE_INSN_EH_REGION_BEG);
+  note = emit_note (NULL, NOTE_INSN_EH_REGION_BEG);
   NOTE_BLOCK_NUMBER (note)
     = CODE_LABEL_NUMBER (ehstack.top->entry->exception_handler_label);
   if (exceptions_via_longjmp)
@@ -1524,7 +1524,7 @@ expand_eh_region_end (handler)
 
   entry = pop_eh_entry (&ehstack);
 
-  note = emit_note (NULL_PTR, NOTE_INSN_EH_REGION_END);
+  note = emit_note (NULL, NOTE_INSN_EH_REGION_END);
   ret = NOTE_BLOCK_NUMBER (note)
     = CODE_LABEL_NUMBER (entry->exception_handler_label);
   if (exceptions_via_longjmp == 0 && ! flag_new_exceptions

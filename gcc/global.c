@@ -263,7 +263,7 @@ static int n_regs_set;
 
 static HARD_REG_SET eliminable_regset;
 
-static int allocno_compare	(const GENERIC_PTR, const GENERIC_PTR);
+static int allocno_compare	(const void *, const void *);
 static void global_conflicts	(void);
 static void expand_preferences	(void);
 static void prune_preferences	(void);
@@ -603,8 +603,8 @@ global_alloc (FILE *file)
 
 static int
 allocno_compare (v1p, v2p)
-     const GENERIC_PTR v1p;
-     const GENERIC_PTR v2p;
+     const void * v1p;
+     const void * v2p;
 {
   int v1 = *(int *)v1p, v2 = *(int *)v2p;
   register int pri1;

@@ -4316,7 +4316,7 @@ yyreduce:
 		     that we end every loop we start.  */
 		  expand_start_loop (1);
 		  emit_line_note (input_filename, lineno);
-		  expand_exit_loop_if_false (NULL_PTR,
+		  expand_exit_loop_if_false (NULL,
 					     truthvalue_conversion ((yyvsp[(4) - (5)].ttype)));
 		  position_after_white_space (); ;}
     break;
@@ -4329,7 +4329,7 @@ yyreduce:
   case 342:
 
     { emit_line_note (input_filename, lineno);
-		  expand_exit_loop_if_false (NULL_PTR,
+		  expand_exit_loop_if_false (NULL,
 					     truthvalue_conversion ((yyvsp[(3) - (5)].ttype)));
 		  expand_end_loop ();
 		  clear_momentary (); ;}
@@ -4370,7 +4370,7 @@ yyreduce:
 		  /* Emit the end-test, with a line number.  */
 		  emit_line_note ((yyvsp[(8) - (10)].filename), (yyvsp[(7) - (10)].lineno));
 		  if ((yyvsp[(6) - (10)].ttype))
-		    expand_exit_loop_if_false (NULL_PTR,
+		    expand_exit_loop_if_false (NULL,
 					       truthvalue_conversion ((yyvsp[(6) - (10)].ttype)));
 		  /* Don't let the tree nodes for $9 be discarded by
 		     clear_momentary during the parsing of the next stmt.  */
@@ -4426,7 +4426,7 @@ yyreduce:
 
     { stmt_count++;
 		  emit_line_note ((yyvsp[(-1) - (2)].filename), (yyvsp[(0) - (2)].lineno));
-		  if (! expand_continue_loop (NULL_PTR))
+		  if (! expand_continue_loop (NULL))
 		    error ("continue statement not within a loop"); ;}
     break;
 

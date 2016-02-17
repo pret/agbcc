@@ -1578,7 +1578,7 @@ expand_inline_function (fndecl, parms, target, ignore, type,
      insn that can be used as an insertion point.  */
   map->insns_at_start = get_last_insn ();
   if (map->insns_at_start == 0)
-    map->insns_at_start = emit_note (NULL_PTR, NOTE_INSN_DELETED);
+    map->insns_at_start = emit_note (NULL, NOTE_INSN_DELETED);
 
   map->regno_pointer_flag = INLINE_REGNO_POINTER_FLAG (header);
   map->regno_pointer_align = INLINE_REGNO_POINTER_ALIGN (header);

@@ -1008,7 +1008,7 @@ mention_regs (x)
     {
       if (GET_CODE (XEXP (x, 0)) == REG
 	  && ! REGNO_QTY_VALID_P (REGNO (XEXP (x, 0))))
-	if (insert_regs (XEXP (x, 0), NULL_PTR, 0))
+	if (insert_regs (XEXP (x, 0), NULL, 0))
 	  {
 	    rehash_using_reg (XEXP (x, 0));
 	    changed = 1;
@@ -1016,7 +1016,7 @@ mention_regs (x)
 
       if (GET_CODE (XEXP (x, 1)) == REG
 	  && ! REGNO_QTY_VALID_P (REGNO (XEXP (x, 1))))
-	if (insert_regs (XEXP (x, 1), NULL_PTR, 0))
+	if (insert_regs (XEXP (x, 1), NULL, 0))
 	  {
 	    rehash_using_reg (XEXP (x, 1));
 	    changed = 1;
@@ -1093,7 +1093,7 @@ insert_regs (x, classp, modified)
     {
       int regno = REGNO (SUBREG_REG (x));
 
-      insert_regs (SUBREG_REG (x), NULL_PTR, 0);
+      insert_regs (SUBREG_REG (x), NULL, 0);
       /* Mention_regs checks if REG_TICK is exactly one larger than
 	 REG_IN_TABLE to find out if there was only a single preceding
 	 invalidation - for the SUBREG - or another one, which would be
@@ -1478,7 +1478,7 @@ insert (x, classp, hash, mode)
 	  subhash = safe_hash (subexp, mode) % NBUCKETS;
 	  subelt = lookup (subexp, subhash, mode);
 	  if (subelt == 0)
-	    subelt = insert (subexp, NULL_PTR, subhash, mode);
+	    subelt = insert (subexp, NULL, subhash, mode);
 	  /* Initialize SUBELT's circular chain if it has none.  */
 	  if (subelt->related_value == 0)
 	    subelt->related_value = subelt;
@@ -1716,7 +1716,7 @@ remove_invalid_refs (regno)
       {
 	next = p->next_same_hash;
 	if (GET_CODE (p->exp) != REG
-	    && refers_to_regno_p (regno, regno + 1, p->exp, NULL_PTR))
+	    && refers_to_regno_p (regno, regno + 1, p->exp, NULL))
 	  remove_from_table (p, i);
       }
 }
@@ -1747,7 +1747,7 @@ remove_invalid_subreg_refs (regno, word, mode)
 		      + (GET_MODE_SIZE (GET_MODE (exp)) - 1) / UNITS_PER_WORD)
 		     >= word)
 		 && SUBREG_WORD (exp) <= end))
-	    && refers_to_regno_p (regno, regno + 1, p->exp, NULL_PTR))
+	    && refers_to_regno_p (regno, regno + 1, p->exp, NULL))
 	  remove_from_table (p, i);
       }
 }
@@ -3372,7 +3372,7 @@ simplify_unary_operation (code, mode, op, op_mode)
 	}
 
       x = CONST_DOUBLE_FROM_REAL_VALUE (d, mode);
-      set_float_handler (NULL_PTR);
+      set_float_handler (NULL);
       return x;
     }
 
@@ -3406,7 +3406,7 @@ simplify_unary_operation (code, mode, op, op_mode)
 	  abort ();
 	}
 
-      set_float_handler (NULL_PTR);
+      set_float_handler (NULL);
 
       /* Clear the bits that don't belong in our mode,
 	 unless they and our sign bit are all one.
@@ -3565,7 +3565,7 @@ simplify_binary_operation (code, mode, op0, op1)
 #endif
 
       value = real_value_truncate (mode, value);
-      set_float_handler (NULL_PTR);
+      set_float_handler (NULL);
       return CONST_DOUBLE_FROM_REAL_VALUE (value, mode);
     }
 #endif  /* not REAL_IS_NOT_DOUBLE, or REAL_ARITHMETIC */
@@ -3970,7 +3970,7 @@ simplify_binary_operation (code, mode, op0, op1)
 	      REAL_VALUE_FROM_CONST_DOUBLE (d, op1);
 	      op1is2 = REAL_VALUES_EQUAL (d, dconst2);
 	      op1ism1 = REAL_VALUES_EQUAL (d, dconstm1);
-	      set_float_handler (NULL_PTR);
+	      set_float_handler (NULL);
 
 	      /* x*2 is x+x and x*(-1) is -x */
 	      if (op1is2 && GET_MODE (op0) == mode)
@@ -4624,7 +4624,7 @@ simplify_relational_operation (code, mode, op0, op1)
       equal = REAL_VALUES_EQUAL (d0, d1);
       op0lt = op0ltu = REAL_VALUES_LESS (d0, d1);
       op1lt = op1ltu = REAL_VALUES_LESS (d1, d0);
-      set_float_handler (NULL_PTR);
+      set_float_handler (NULL);
     }
 #endif  /* not REAL_IS_NOT_DOUBLE, or REAL_ARITHMETIC */
 
@@ -6125,7 +6125,7 @@ record_jump_cond (code, mode, op0, op1, reversed_nonequality)
 	 new quantity number.  */
       if (op0_elt == 0)
 	{
-	  if (insert_regs (op0, NULL_PTR, 0))
+	  if (insert_regs (op0, NULL, 0))
 	    {
 	      rehash_using_reg (op0);
 	      op0_hash = HASH (op0, mode);
@@ -6137,7 +6137,7 @@ record_jump_cond (code, mode, op0, op1, reversed_nonequality)
 		op1_hash = HASH (op1,mode);
 	    }
 
-	  op0_elt = insert (op0, NULL_PTR, op0_hash, mode);
+	  op0_elt = insert (op0, NULL, op0_hash, mode);
 	  op0_elt->in_memory = op0_in_memory;
 	  op0_elt->in_struct = op0_in_struct;
 	}
@@ -6151,13 +6151,13 @@ record_jump_cond (code, mode, op0, op1, reversed_nonequality)
 	  /* Put OP1 in the hash table so it gets a new quantity number.  */
 	  if (op1_elt == 0)
 	    {
-	      if (insert_regs (op1, NULL_PTR, 0))
+	      if (insert_regs (op1, NULL, 0))
 		{
 		  rehash_using_reg (op1);
 		  op1_hash = HASH (op1, mode);
 		}
 
-	      op1_elt = insert (op1, NULL_PTR, op1_hash, mode);
+	      op1_elt = insert (op1, NULL, op1_hash, mode);
 	      op1_elt->in_memory = op1_in_memory;
 	      op1_elt->in_struct = op1_in_struct;
 	    }
@@ -6179,26 +6179,26 @@ record_jump_cond (code, mode, op0, op1, reversed_nonequality)
 
   if (op0_elt == 0)
     {
-      if (insert_regs (op0, NULL_PTR, 0))
+      if (insert_regs (op0, NULL, 0))
 	{
 	  rehash_using_reg (op0);
 	  op0_hash = HASH (op0, mode);
 	}
 
-      op0_elt = insert (op0, NULL_PTR, op0_hash, mode);
+      op0_elt = insert (op0, NULL, op0_hash, mode);
       op0_elt->in_memory = op0_in_memory;
       op0_elt->in_struct = op0_in_struct;
     }
 
   if (op1_elt == 0)
     {
-      if (insert_regs (op1, NULL_PTR, 0))
+      if (insert_regs (op1, NULL, 0))
 	{
 	  rehash_using_reg (op1);
 	  op1_hash = HASH (op1, mode);
 	}
 
-      op1_elt = insert (op1, NULL_PTR, op1_hash, mode);
+      op1_elt = insert (op1, NULL, op1_hash, mode);
       op1_elt->in_memory = op1_in_memory;
       op1_elt->in_struct = op1_in_struct;
     }
