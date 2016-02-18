@@ -46,7 +46,7 @@ Boston, MA 02111-1307, USA.  */
    which returns 0 if the rtl could not be split, or
    it returns the split rtl in a SEQUENCE.  */
 
-#include "hconfig.h"
+#include "config.h"
 #include "system.h"
 #include "rtl.h"
 #include "obstack.h"

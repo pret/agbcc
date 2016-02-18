@@ -95,7 +95,7 @@ Boston, MA 02111-1307, USA.  */
       EQ_ATTR rtx is true if !volatil and false if volatil.  */
 
 
-#include "hconfig.h"
+#include "config.h"
 #include "system.h"
 #include "rtl.h"
 #include "insn-config.h"	/* For REGISTER_CONSTRAINTS */

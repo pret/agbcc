@@ -3264,33 +3264,6 @@ defines="host_xm_defines null_defines xm_defines build_xm_defines"
 rm -f config.bak
 if test -f config.status; then mv -f config.status config.bak; fi
 
-# Make the links.
-while test -n "$vars"
-do
-	set $vars; var=$1; shift; vars=$*
-	set $links; link=$1; shift; links=$*
-	set $defines; define=$1; shift; defines=$*
-
-	rm -f $link
-
-	# Define TARGET_CPU_DEFAULT if the system wants one.
-	# This substitutes for lots of *.h files.
-	if test "$target_cpu_default" != "" -a $link = tm.h
-	then
-		echo "#define TARGET_CPU_DEFAULT ($target_cpu_default)" >>$link
-	fi
-
-	for file in `eval echo '$'$var`; do
-		echo "#include \"$file\"" >>$link
-	done
-
-	for def in `eval echo '$'$define`; do
-		echo "#ifndef $def" >>$link
-		echo "#define $def" >>$link
-		echo "#endif" >>$link
-	done
-done
-
 # Truncate the target if necessary
 if test x$host_truncate_target != x; then
 	target=`echo $target | sed -e 's/\(..............\).*/\1/'`

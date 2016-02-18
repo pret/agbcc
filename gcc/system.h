@@ -72,6 +72,7 @@ Boston, MA 02111-1307, USA.  */
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/time.h>
+#include <sys/times.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 
