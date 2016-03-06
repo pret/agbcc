@@ -2561,7 +2561,7 @@ build_binary_op (code, orig_op0, orig_op1, convert_p)
 		      || TREE_CODE (primop1) == INTEGER_CST)
 		    {
 		      tree primop;
-		      long constant, mask;
+		      HOST_WIDE_INT constant, mask;
 		      int unsignedp, bits;
 
 		      if (TREE_CODE (primop0) == INTEGER_CST)
@@ -2579,9 +2579,9 @@ build_binary_op (code, orig_op0, orig_op1, convert_p)
 
 		      bits = TYPE_PRECISION (TREE_TYPE (primop));
 		      if (bits < TYPE_PRECISION (result_type)
-			  && bits < HOST_BITS_PER_LONG && unsignedp)
+			  && bits < HOST_BITS_PER_WIDE_INT && unsignedp)
 			{
-			  mask = (~0L) << bits;
+			  mask = (~((HOST_WIDE_INT)0)) << bits;
 			  if ((mask & constant) != mask)
 			    warning ("comparison of promoted ~unsigned with constant");
 			}

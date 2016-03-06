@@ -2768,26 +2768,6 @@ asm_fprintf (FILE *file, char *p, ...)
 	    fprintf (file, buf, va_arg (argptr, int));
 	    break;
 
-	  case 'w':
-	    /* This is a prefix to the 'd', 'i', 'u', 'x', 'p', and 'X' cases,
-	       but we do not check for those cases.  It means that the value
-	       is a HOST_WIDE_INT, which may be either `int' or `long'.  */
-
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-	    *q++ = 'l';
-#else
-	    *q++ = 'l';
-	    *q++ = 'l';
-#endif
-#endif
-
-	    *q++ = *p++;
-	    *q = 0;
-	    fprintf (file, buf, va_arg (argptr, HOST_WIDE_INT));
-	    break;
-
 	  case 'l':
 	    *q++ = c;
 	    *q++ = *p++;

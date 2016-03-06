@@ -56,37 +56,17 @@ struct arglist {
 #define WCHAR_TYPE_SIZE INT_TYPE_SIZE
 #endif
 
-#ifndef MAX_CHAR_TYPE_SIZE
-#define MAX_CHAR_TYPE_SIZE CHAR_TYPE_SIZE
-#endif
+#define CHAR_TYPE_MASK 0xFF
 
-#ifndef MAX_INT_TYPE_SIZE
-#define MAX_INT_TYPE_SIZE INT_TYPE_SIZE
-#endif
-
-#ifndef MAX_LONG_TYPE_SIZE
-#define MAX_LONG_TYPE_SIZE LONG_TYPE_SIZE
-#endif
-
-#ifndef MAX_WCHAR_TYPE_SIZE
-#define MAX_WCHAR_TYPE_SIZE WCHAR_TYPE_SIZE
-#endif
-
-#define MAX_CHAR_TYPE_MASK (MAX_CHAR_TYPE_SIZE < HOST_BITS_PER_WIDE_INT \
-			    ? (~ (~ (HOST_WIDE_INT) 0 << MAX_CHAR_TYPE_SIZE)) \
-			    : ~ (HOST_WIDE_INT) 0)
-
-#define MAX_WCHAR_TYPE_MASK (MAX_WCHAR_TYPE_SIZE < HOST_BITS_PER_WIDE_INT \
-			     ? ~ (~ (HOST_WIDE_INT) 0 << MAX_WCHAR_TYPE_SIZE) \
-			     : ~ (HOST_WIDE_INT) 0)
+#define WCHAR_TYPE_MASK 0xFFFFFFFF
 
 /* Yield nonzero if adding two numbers with A's and B's signs can yield a
    number with SUM's sign, where A, B, and SUM are all C integers.  */
 #define possible_sum_sign(a, b, sum) ((((a) ^ (b)) | ~ ((a) ^ (sum))) < 0)
 
 static void integer_overflow (cpp_reader *);
-static long left_shift (cpp_reader *, long, int, unsigned long);
-static long right_shift (cpp_reader *, long, int, unsigned long);
+static HOST_WIDE_INT left_shift (cpp_reader *, HOST_WIDE_INT, int, HOST_WIDE_UINT);
+static HOST_WIDE_INT right_shift (cpp_reader *, HOST_WIDE_INT, int, HOST_WIDE_UINT);
 
 #define ERROR 299
 #define OROR 300
@@ -139,7 +119,9 @@ parse_number (pfile, start, olen)
   struct operation op;
   register char *p = start;
   register int c;
-  register unsigned long n = 0, nd, ULONG_MAX_over_base;
+  HOST_WIDE_UINT n = 0;
+  HOST_WIDE_UINT cutoff;
+  HOST_WIDE_UINT gap;
   register int base = 10;
   register int len = olen;
   register int overflow = 0;
@@ -165,8 +147,8 @@ parse_number (pfile, start, olen)
   else if (*p == '0')
     base = 8;
 
-  /* Some buggy compilers (e.g. MPW C) seem to need both casts.  */
-  ULONG_MAX_over_base = ((unsigned long) -1) / ((unsigned long) base);
+  cutoff = ((HOST_WIDE_UINT)-1) / base;
+  gap = ((HOST_WIDE_UINT)-1) % base;
 
   for (; len > 0; len--) {
     c = *p++;
@@ -204,9 +186,9 @@ parse_number (pfile, start, olen)
     }
     if (largest_digit < digit)
       largest_digit = digit;
-    nd = n * base + digit;
-    overflow |= ULONG_MAX_over_base < n || nd < n;
-    n = nd;
+    if (n > cutoff || (n == cutoff && digit > gap))
+      overflow = 1;
+    n = n * base + digit;
   }
 
   if (len != 0)
@@ -223,7 +205,7 @@ parse_number (pfile, start, olen)
     cpp_pedwarn (pfile, "integer constant out of range");
 
   /* If too big to be signed, consider it unsigned.  */
-  if ((long) n < 0 && ! op.unsignedp)
+  if ((HOST_WIDE_INT) n < 0 && ! op.unsignedp)
     {
       if (base == 10)
 	cpp_warning (pfile, "integer constant is so large that it is unsigned");
@@ -321,9 +303,9 @@ cpp_lex (pfile, skip_evaluation)
 	 handles multicharacter constants and wide characters.
 	 It is mostly copied from c-lex.c.  */
       {
-        register int result = 0;
+        HOST_WIDE_INT result = 0;
 	register int num_chars = 0;
-	unsigned width = MAX_CHAR_TYPE_SIZE;
+	unsigned width = CHAR_TYPE_SIZE;
 	int wide_flag = 0;
 	int max_chars;
 	U_CHAR *ptr = tok_start;
@@ -333,10 +315,10 @@ cpp_lex (pfile, skip_evaluation)
 	if (token_buffer == NULL)
 	  {
 #ifdef MULTIBYTE_CHARS
-	    token_buffer = xmalloc (MAX_LONG_TYPE_SIZE/MAX_CHAR_TYPE_SIZE
+	    token_buffer = xmalloc (LONG_TYPE_SIZE/CHAR_TYPE_SIZE
 				    + MB_CUR_MAX);
 #else
-	    token_buffer = xmalloc (MAX_LONG_TYPE_SIZE/MAX_CHAR_TYPE_SIZE + 1);
+	    token_buffer = xmalloc (LONG_TYPE_SIZE/CHAR_TYPE_SIZE + 1);
 #endif
 	  }
 
@@ -344,7 +326,7 @@ cpp_lex (pfile, skip_evaluation)
 	  {
 	    ptr++;
 	    wide_flag = 1;
-	    width = MAX_WCHAR_TYPE_SIZE;
+	    width = WCHAR_TYPE_SIZE;
 #ifdef MULTIBYTE_CHARS
 	    max_chars = MB_CUR_MAX;
 #else
@@ -352,7 +334,7 @@ cpp_lex (pfile, skip_evaluation)
 #endif
 	  }
 	else
-	    max_chars = MAX_LONG_TYPE_SIZE / width;
+	    max_chars = LONG_TYPE_SIZE / width;
 
 	++ptr;
 	while (ptr < tok_end && ((c = *ptr++) != '\''))
@@ -360,8 +342,7 @@ cpp_lex (pfile, skip_evaluation)
 	    if (c == '\\')
 	      {
 		c = cpp_parse_escape (pfile, (char **) &ptr,
-				      wide_flag ? MAX_WCHAR_TYPE_MASK
-				      		: MAX_CHAR_TYPE_MASK);
+				      wide_flag ? WCHAR_TYPE_MASK : CHAR_TYPE_MASK);
 		if (width < HOST_BITS_PER_INT
 		  && (unsigned) c >= (unsigned)(1 << width))
 		    cpp_pedwarn (pfile,
@@ -404,10 +385,10 @@ cpp_lex (pfile, skip_evaluation)
 			    sizeof ("__CHAR_UNSIGNED__")-1, -1)
 		|| ((result >> (num_bits - 1)) & 1) == 0)
 		op.value
-		    = result & ((unsigned long) ~0 >> (HOST_BITS_PER_LONG - num_bits));
+		    = result & (~((HOST_WIDE_UINT)0) >> (HOST_BITS_PER_WIDE_INT - num_bits));
 	    else
 		op.value
-		    = result | ~((unsigned long) ~0 >> (HOST_BITS_PER_LONG - num_bits));
+		    = result | ~(~((HOST_WIDE_UINT)0) >> (HOST_BITS_PER_WIDE_INT - num_bits));
 	  }
 	else
 	  {
@@ -589,21 +570,21 @@ integer_overflow (pfile)
     cpp_pedwarn (pfile, "integer overflow in preprocessor expression");
 }
 
-static long
+static HOST_WIDE_INT
 left_shift (pfile, a, unsignedp, b)
      cpp_reader *pfile;
-     long a;
+     HOST_WIDE_INT a;
      int unsignedp;
-     unsigned long b;
+     HOST_WIDE_UINT b;
 {
-  if (b >= HOST_BITS_PER_LONG)
+  if (b >= HOST_BITS_PER_WIDE_INT)
     {
       if (! unsignedp && a != 0)
 	integer_overflow (pfile);
       return 0;
     }
   else if (unsignedp)
-    return (unsigned long) a << b;
+    return (HOST_WIDE_UINT) a << b;
   else
     {
       long l = a << b;
@@ -613,17 +594,17 @@ left_shift (pfile, a, unsignedp, b)
     }
 }
 
-static long
+static HOST_WIDE_INT
 right_shift (pfile, a, unsignedp, b)
      cpp_reader *pfile ATTRIBUTE_UNUSED;
-     long a;
+     HOST_WIDE_INT a;
      int unsignedp;
-     unsigned long b;
+     HOST_WIDE_UINT b;
 {
-  if (b >= HOST_BITS_PER_LONG)
-    return unsignedp ? 0 : a >> (HOST_BITS_PER_LONG - 1);
+  if (b >= HOST_BITS_PER_WIDE_INT)
+    return unsignedp ? 0 : a >> (HOST_BITS_PER_WIDE_INT - 1);
   else if (unsignedp)
-    return (unsigned long) a >> b;
+    return (HOST_WIDE_UINT) a >> b;
   else
     return a >> b;
 }
@@ -756,7 +737,7 @@ cpp_parse_expr (pfile)
       /* Push an operator, and check if we can reduce now.  */
       while (top->rprio > lprio)
 	{
-	  long v1 = top[-1].value, v2 = top[0].value;
+	  HOST_WIDE_INT v1 = top[-1].value, v2 = top[0].value;
 	  int unsigned1 = top[-1].unsignedp, unsigned2 = top[0].unsignedp;
 	  top--;
 	  if ((top[1].flags & LEFT_OPERAND_REQUIRED)
