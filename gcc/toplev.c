@@ -1973,7 +1973,7 @@ xstrdup (s)
 
 int
 exact_log2_wide (x)
-     register unsigned HOST_WIDE_INT x;
+     register HOST_WIDE_UINT x;
 {
   register int log = 0;
   /* Test for 0 or a power of 2.  */
@@ -1991,7 +1991,7 @@ exact_log2_wide (x)
 
 int
 floor_log2_wide (x)
-     register unsigned HOST_WIDE_INT x;
+     register HOST_WIDE_UINT x;
 {
   register int log = -1;
   while (x != 0)

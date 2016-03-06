@@ -313,10 +313,10 @@ static void etoe24	(unsigned EMUSHORT *, unsigned EMUSHORT *);
 static void toe24	(unsigned EMUSHORT *, unsigned EMUSHORT *);
 static int ecmp		(unsigned EMUSHORT *, unsigned EMUSHORT *);
 static void ltoe	(HOST_WIDE_INT *, unsigned EMUSHORT *);
-static void ultoe	(unsigned HOST_WIDE_INT *, unsigned EMUSHORT *);
+static void ultoe	(HOST_WIDE_UINT *, unsigned EMUSHORT *);
 static void eifrac	(unsigned EMUSHORT *, HOST_WIDE_INT *,
 			       unsigned EMUSHORT *);
-static void euifrac	(unsigned EMUSHORT *, unsigned HOST_WIDE_INT *,
+static void euifrac	(unsigned EMUSHORT *, HOST_WIDE_UINT *,
 			       unsigned EMUSHORT *);
 static int eshift	(unsigned EMUSHORT *, int);
 static int enormlz	(unsigned EMUSHORT *);
@@ -571,7 +571,7 @@ etrunci (x)
 }
 
 
-/* Truncate REAL_VALUE_TYPE toward zero to unsigned HOST_WIDE_INT;
+/* Truncate REAL_VALUE_TYPE toward zero to HOST_WIDE_UINT;
    implements REAL_VALUE_UNSIGNED_RNDZINT (x) (etruncui (x)).  */
 
 REAL_VALUE_TYPE
@@ -580,7 +580,7 @@ etruncui (x)
 {
   unsigned EMUSHORT f[NE], g[NE];
   REAL_VALUE_TYPE r;
-  unsigned HOST_WIDE_INT l;
+  HOST_WIDE_UINT l;
 
   GET_REAL (&x, g);
 #ifdef NANS
@@ -684,16 +684,16 @@ efixi (x)
   return l;
 }
 
-/* Round real toward zero to unsigned HOST_WIDE_INT
+/* Round real toward zero to HOST_WIDE_UINT
    implements  REAL_VALUE_UNSIGNED_FIX (x).
    Negative input returns zero.  */
 
-unsigned HOST_WIDE_INT
+HOST_WIDE_UINT
 efixui (x)
      REAL_VALUE_TYPE x;
 {
   unsigned EMUSHORT f[NE], g[NE];
-  unsigned HOST_WIDE_INT l;
+  HOST_WIDE_UINT l;
 
   GET_REAL (&x, f);
 #ifdef NANS
@@ -735,9 +735,9 @@ ereal_from_int (d, i, j, mode)
 	high += 1;
     }
   eldexp (eone, HOST_BITS_PER_WIDE_INT, df);
-  ultoe ((unsigned HOST_WIDE_INT *) &high, dg);
+  ultoe ((HOST_WIDE_UINT *) &high, dg);
   emul (dg, df, dg);
-  ultoe ((unsigned HOST_WIDE_INT *) &low, df);
+  ultoe ((HOST_WIDE_UINT *) &low, df);
   eadd (df, dg, dg);
   if (sign)
     eneg (dg);
@@ -780,11 +780,11 @@ ereal_from_int (d, i, j, mode)
 void
 ereal_from_uint (d, i, j, mode)
      REAL_VALUE_TYPE *d;
-     unsigned HOST_WIDE_INT i, j;
+     HOST_WIDE_UINT i, j;
      enum machine_mode mode;
 {
   unsigned EMUSHORT df[NE], dg[NE];
-  unsigned HOST_WIDE_INT low, high;
+  HOST_WIDE_UINT low, high;
 
   if (GET_MODE_CLASS (mode) != MODE_FLOAT)
     abort ();
@@ -858,9 +858,9 @@ ereal_to_int (low, high, rr)
     }
   eldexp (eone, HOST_BITS_PER_WIDE_INT, df);
   ediv (df, d, dg);		/* dg = d / 2^32 is the high word */
-  euifrac (dg, (unsigned HOST_WIDE_INT *) high, dh);
+  euifrac (dg, (HOST_WIDE_UINT *) high, dh);
   emul (df, dh, dg);		/* fractional part is the low word */
-  euifrac (dg, (unsigned HOST_WIDE_INT *)low, dh);
+  euifrac (dg, (HOST_WIDE_UINT *)low, dh);
   if (s)
     {
       /* complement and add 1 */
@@ -1250,7 +1250,7 @@ ereal_isneg (x)
  	efloor (a, b)		truncate to integer, toward -infinity
  	efrexp (a, exp, s)	extract exponent and significand
  	eifrac (e, &l, frac)    e to HOST_WIDE_INT and e type fraction
- 	euifrac (e, &l, frac)   e to unsigned HOST_WIDE_INT and e type fraction
+ 	euifrac (e, &l, frac)   e to HOST_WIDE_UINT and e type fraction
  	einfin (e)		set e to infinity, leaving its sign alone
  	eldexp (a, n, b)	multiply by 2**n
  	emov (a, b)		b = a
@@ -1271,7 +1271,7 @@ ereal_isneg (x)
  	etoe53 (e, &d)		convert e type to IEEE double precision
  	etoe64 (e, &d)		convert e type to IEEE long double precision
  	ltoe (&l, e)		HOST_WIDE_INT to e type
- 	ultoe (&l, e)		unsigned HOST_WIDE_INT to e type
+ 	ultoe (&l, e)		HOST_WIDE_UINT to e type
 	eisneg (e)              1 if sign bit of e != 0, else 0
 	eisinf (e)              1 if e has maximum exponent (non-IEEE)
  				or is infinite (IEEE)
@@ -3789,19 +3789,19 @@ ltoe (lp, y)
      unsigned EMUSHORT *y;
 {
   unsigned EMUSHORT yi[NI];
-  unsigned HOST_WIDE_INT ll;
+  HOST_WIDE_UINT ll;
   int k;
 
   ecleaz (yi);
   if (*lp < 0)
     {
       /* make it positive */
-      ll = (unsigned HOST_WIDE_INT) (-(*lp));
+      ll = (HOST_WIDE_UINT) (-(*lp));
       yi[0] = 0xffff;		/* put correct sign in the e type number */
     }
   else
     {
-      ll = (unsigned HOST_WIDE_INT) (*lp);
+      ll = (HOST_WIDE_UINT) (*lp);
     }
   /* move the long integer to yi significand area */
 #if HOST_BITS_PER_WIDE_INT == 64
@@ -3823,15 +3823,15 @@ ltoe (lp, y)
   emovo (yi, y);		/* output the answer */
 }
 
-/* Convert unsigned HOST_WIDE_INT LP to e type Y.  */
+/* Convert HOST_WIDE_UINT LP to e type Y.  */
 
 static void
 ultoe (lp, y)
-     unsigned HOST_WIDE_INT *lp;
+     HOST_WIDE_UINT *lp;
      unsigned EMUSHORT *y;
 {
   unsigned EMUSHORT yi[NI];
-  unsigned HOST_WIDE_INT ll;
+  HOST_WIDE_UINT ll;
   int k;
 
   ecleaz (yi);
@@ -3873,7 +3873,7 @@ eifrac (x, i, frac)
 {
   unsigned EMUSHORT xi[NI];
   int j, k;
-  unsigned HOST_WIDE_INT ll;
+  HOST_WIDE_UINT ll;
 
   emovi (x, xi);
   k = (int) xi[E] - (EXONE - 1);
@@ -3889,7 +3889,7 @@ eifrac (x, i, frac)
       /* long integer overflow: output large integer
 	 and correct fraction  */
       if (xi[0])
-	*i = ((unsigned HOST_WIDE_INT) 1) << (HOST_BITS_PER_WIDE_INT - 1);
+	*i = ((HOST_WIDE_UINT) 1) << (HOST_BITS_PER_WIDE_INT - 1);
       else
 	{
 #ifdef FIXUNS_TRUNC_LIKE_FIX_TRUNC
@@ -3899,7 +3899,7 @@ eifrac (x, i, frac)
 	  return;
 #else
 	  /* In other cases, return the largest positive integer.  */
-	  *i = (((unsigned HOST_WIDE_INT) 1) << (HOST_BITS_PER_WIDE_INT - 1)) - 1;
+	  *i = (((HOST_WIDE_UINT) 1) << (HOST_BITS_PER_WIDE_INT - 1)) - 1;
 #endif
 	}
       eshift (xi, k);
@@ -3944,17 +3944,17 @@ eifrac (x, i, frac)
 }
 
 
-/* Find unsigned HOST_WIDE_INT integer I and floating point fractional part
+/* Find HOST_WIDE_UINT integer I and floating point fractional part
    FRAC of e-type X.  A negative input yields integer output = 0 but
    correct fraction.  */
 
 static void
 euifrac (x, i, frac)
      unsigned EMUSHORT *x;
-     unsigned HOST_WIDE_INT *i;
+     HOST_WIDE_UINT *i;
      unsigned EMUSHORT *frac;
 {
-  unsigned HOST_WIDE_INT ll;
+  HOST_WIDE_UINT ll;
   unsigned EMUSHORT xi[NI];
   int j, k;
 

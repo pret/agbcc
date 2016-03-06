@@ -836,14 +836,14 @@ extern char *note_insn_name[];
    defined here and in tree.h.  */
 
 #ifndef exact_log2
-#define exact_log2(N) exact_log2_wide ((unsigned HOST_WIDE_INT) (N))
-#define floor_log2(N) floor_log2_wide ((unsigned HOST_WIDE_INT) (N))
+#define exact_log2(N) exact_log2_wide ((HOST_WIDE_UINT) (N))
+#define floor_log2(N) floor_log2_wide ((HOST_WIDE_UINT) (N))
 #endif
-extern int exact_log2_wide		(unsigned HOST_WIDE_INT);
-extern int floor_log2_wide		(unsigned HOST_WIDE_INT);
+extern int exact_log2_wide		(HOST_WIDE_UINT);
+extern int floor_log2_wide		(HOST_WIDE_UINT);
 
 /* In expmed.c */
-extern int ceil_log2			(unsigned HOST_WIDE_INT);
+extern int ceil_log2			(HOST_WIDE_UINT);
 
 #define plus_constant(X,C) plus_constant_wide (X, (HOST_WIDE_INT) (C))
 
@@ -1389,7 +1389,7 @@ extern void init_expmed			(void);
 extern void expand_inc			(rtx, rtx);
 extern void expand_dec			(rtx, rtx);
 extern rtx expand_mult_highpart		(enum machine_mode, rtx,
-						unsigned HOST_WIDE_INT, rtx,
+						HOST_WIDE_UINT, rtx,
 						int, int);
 
 /* In gcse.c */

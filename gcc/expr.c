@@ -1687,7 +1687,7 @@ emit_block_move (x, y, size, align)
 		 returned by the macro, it will definitely be less than the
 		 actual mode mask.  */
 	      && ((GET_CODE (size) == CONST_INT
-		   && ((unsigned HOST_WIDE_INT) INTVAL (size)
+		   && ((HOST_WIDE_UINT) INTVAL (size)
 		       <= (GET_MODE_MASK (mode) >> 1)))
 		  || GET_MODE_BITSIZE (mode) >= BITS_PER_WORD)
 	      && (insn_operand_predicate[(int) code][0] == 0
@@ -2410,7 +2410,7 @@ clear_storage (object, size, align)
 		     the mode mask, as it is returned by the macro, it will
 		     definitely be less than the actual mode mask.  */
 		  && ((GET_CODE (size) == CONST_INT
-		       && ((unsigned HOST_WIDE_INT) INTVAL (size)
+		       && ((HOST_WIDE_UINT) INTVAL (size)
 			   <= (GET_MODE_MASK (mode) >> 1)))
 		      || GET_MODE_BITSIZE (mode) >= BITS_PER_WORD)
 		  && (insn_operand_predicate[(int) code][0] == 0
@@ -2947,7 +2947,7 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 
 		  if (code != CODE_FOR_nothing
 		      && ((GET_CODE (size) == CONST_INT
-			   && ((unsigned HOST_WIDE_INT) INTVAL (size)
+			   && ((HOST_WIDE_UINT) INTVAL (size)
 			       <= (GET_MODE_MASK (mode) >> 1)))
 			  || GET_MODE_BITSIZE (mode) >= BITS_PER_WORD)
 		      && (insn_operand_predicate[(int) code][0] == 0

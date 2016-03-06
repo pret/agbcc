@@ -286,25 +286,7 @@ yyprint (file, yychar, yylval)
     case CONSTANT:
       t = yylval.ttype;
       if (TREE_CODE (t) == INTEGER_CST)
-	fprintf (file,
-#if HOST_BITS_PER_WIDE_INT == 64
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-		 " 0x%x%016x",
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-		 " 0x%lx%016lx",
-#else
-		 " 0x%llx%016llx",
-#endif
-#endif
-#else
-#if HOST_BITS_PER_WIDE_INT != HOST_BITS_PER_INT
-		 " 0x%lx%08lx",
-#else
-		 " 0x%x%08x",
-#endif
-#endif
-		 TREE_INT_CST_HIGH (t), TREE_INT_CST_LOW (t));
+	fprintf (file, " " HOST_WIDE_INT_PRINT_DOUBLE_HEX, TREE_INT_CST_HIGH (t), TREE_INT_CST_LOW (t));
       break;
     }
 }
@@ -1887,12 +1869,12 @@ yylex ()
 	    else if (TREE_UNSIGNED (char_type_node)
 		     || ((result >> (num_bits - 1)) & 1) == 0)
 	      yylval.ttype
-		= build_int_2 (result & (~(unsigned HOST_WIDE_INT) 0
+		= build_int_2 (result & (~(HOST_WIDE_UINT) 0
 					 >> (HOST_BITS_PER_WIDE_INT - num_bits)),
 			       0);
 	    else
 	      yylval.ttype
-		= build_int_2 (result | ~(~(unsigned HOST_WIDE_INT) 0
+		= build_int_2 (result | ~(~(HOST_WIDE_UINT) 0
 					  >> (HOST_BITS_PER_WIDE_INT - num_bits)),
 			       -1);
 	    TREE_TYPE (yylval.ttype) = integer_type_node;

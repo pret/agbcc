@@ -118,11 +118,11 @@ unsigned char mode_wider_mode[(int) MAX_MACHINE_MODE] = {
 #undef DEF_MACHMODE
 
 #define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  \
-  ((SIZE) * BITS_PER_UNIT >= HOST_BITS_PER_WIDE_INT) ? ~(unsigned HOST_WIDE_INT)0 : ((unsigned HOST_WIDE_INT) 1 << (SIZE) * BITS_PER_UNIT) - 1,
+  ((SIZE) * BITS_PER_UNIT >= HOST_BITS_PER_WIDE_INT) ? ~(HOST_WIDE_UINT)0 : ((HOST_WIDE_UINT) 1 << (SIZE) * BITS_PER_UNIT) - 1,
 
 /* Indexed by machine mode, gives mask of significant bits in mode.  */
 
-unsigned HOST_WIDE_INT mode_mask_array[(int) MAX_MACHINE_MODE] = {
+HOST_WIDE_UINT mode_mask_array[(int) MAX_MACHINE_MODE] = {
 #include "machmode.def"
 };
 
@@ -602,7 +602,7 @@ atoll(p)
       if (new_wide < tmp_wide)
 	{
 	  /* Return INT_MAX equiv on overflow.  */
-	  tmp_wide = (~(unsigned HOST_WIDE_INT)0) >> 1;
+	  tmp_wide = (~(HOST_WIDE_UINT)0) >> 1;
 	  break;
 	}
       tmp_wide = new_wide;

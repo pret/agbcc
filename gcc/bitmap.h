@@ -41,7 +41,7 @@ typedef struct bitmap_element_def
   struct bitmap_element_def *next;		/* Next element. */
   struct bitmap_element_def *prev;		/* Previous element. */
   unsigned int indx;			/* regno/BITMAP_ELEMENT_ALL_BITS. */
-  unsigned HOST_WIDE_INT bits[BITMAP_ELEMENT_WORDS]; /* Bits that are set. */
+  HOST_WIDE_UINT bits[BITMAP_ELEMENT_WORDS]; /* Bits that are set. */
 } bitmap_element;
 
 /* Head of bitmap linked list.  */
@@ -146,14 +146,14 @@ do {									\
     {									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  unsigned HOST_WIDE_INT word_ = ptr_->bits[word_num_];		\
+	  HOST_WIDE_UINT word_ = ptr_->bits[word_num_];		\
 									\
 	  if (word_ != 0)						\
 	    {								\
 	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
 		{							\
-		  unsigned HOST_WIDE_INT mask_				\
-		    = ((unsigned HOST_WIDE_INT) 1) << bit_num_;		\
+		  HOST_WIDE_UINT mask_				\
+		    = ((HOST_WIDE_UINT) 1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\
@@ -213,14 +213,14 @@ do {									\
 									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  unsigned HOST_WIDE_INT word_ = (ptr1_->bits[word_num_]	\
+	  HOST_WIDE_UINT word_ = (ptr1_->bits[word_num_]	\
 					  & ~ tmp2_->bits[word_num_]);	\
 	  if (word_ != 0)						\
 	    {								\
 	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
 		{							\
-		  unsigned HOST_WIDE_INT mask_				\
-		    = ((unsigned HOST_WIDE_INT)1) << bit_num_;		\
+		  HOST_WIDE_UINT mask_				\
+		    = ((HOST_WIDE_UINT)1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\
@@ -286,14 +286,14 @@ do {									\
 									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  unsigned HOST_WIDE_INT word_ = (ptr1_->bits[word_num_]	\
+	  HOST_WIDE_UINT word_ = (ptr1_->bits[word_num_]	\
 					  & ptr2_->bits[word_num_]);	\
 	  if (word_ != 0)						\
 	    {								\
 	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
 		{							\
-		  unsigned HOST_WIDE_INT mask_				\
-		    = ((unsigned HOST_WIDE_INT)1) << bit_num_;		\
+		  HOST_WIDE_UINT mask_				\
+		    = ((HOST_WIDE_UINT)1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\

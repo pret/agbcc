@@ -200,7 +200,7 @@ static void copy_loop_body (rtx, rtx, struct inline_remap *, rtx, int,
 				  enum unroll_types, rtx, rtx, rtx, rtx);
 static void iteration_info (rtx, rtx *, rtx *, rtx, rtx);
 static int find_splittable_regs (enum unroll_types, rtx, rtx, rtx, int,
-				       unsigned HOST_WIDE_INT);
+				       HOST_WIDE_UINT);
 static int find_splittable_givs (struct iv_class *, enum unroll_types,
 				       rtx, rtx, rtx, int);
 static int reg_dead_after_loop (rtx, rtx, rtx);
@@ -2387,7 +2387,7 @@ iteration_info (iteration_var, initial_value, increment, loop_start, loop_end)
 
   /* Reject iteration variables larger than the host wide int size, since they
      could result in a number of iterations greater than the range of our
-     `unsigned HOST_WIDE_INT' variable loop_info->n_iterations.  */
+     `HOST_WIDE_UINT' variable loop_info->n_iterations.  */
   else if ((GET_MODE_BITSIZE (GET_MODE (iteration_var))
 	    > HOST_BITS_PER_WIDE_INT))
     {
@@ -2483,7 +2483,7 @@ find_splittable_regs (unroll_type, loop_start, loop_end, end_insert_before,
      rtx loop_start, loop_end;
      rtx end_insert_before;
      int unroll_number;
-     unsigned HOST_WIDE_INT n_iterations;
+     HOST_WIDE_UINT n_iterations;
 {
   struct iv_class *bl;
   struct induction *v;
@@ -3224,7 +3224,7 @@ rtx
 final_biv_value (bl, loop_start, loop_end, n_iterations)
      struct iv_class *bl;
      rtx loop_start, loop_end;
-     unsigned HOST_WIDE_INT n_iterations;
+     HOST_WIDE_UINT n_iterations;
 {
   rtx increment, tem;
 
@@ -3301,7 +3301,7 @@ rtx
 final_giv_value (v, loop_start, loop_end, n_iterations)
      struct induction *v;
      rtx loop_start, loop_end;
-     unsigned HOST_WIDE_INT n_iterations;
+     HOST_WIDE_UINT n_iterations;
 {
   struct iv_class *bl;
   rtx insn;
@@ -3534,7 +3534,7 @@ find_common_reg_term (op0, op1)
 /* Calculate the number of loop iterations.  Returns the exact number of loop
    iterations if it can be calculated, otherwise returns zero.  */
 
-unsigned HOST_WIDE_INT
+HOST_WIDE_UINT
 loop_iterations (loop_start, loop_end, loop_info)
      rtx loop_start, loop_end;
      struct loop_info *loop_info;
@@ -3543,7 +3543,7 @@ loop_iterations (loop_start, loop_end, loop_info)
   rtx iteration_var, initial_value, increment, final_value;
   enum rtx_code comparison_code;
   HOST_WIDE_INT abs_inc;
-  unsigned HOST_WIDE_INT abs_diff;
+  HOST_WIDE_UINT abs_diff;
   int off_by_one;
   int increment_dir;
   int unsigned_p, compare_dir, final_larger;
@@ -3845,10 +3845,10 @@ loop_iterations (loop_start, loop_end, loop_info)
   /* Final_larger is 1 if final larger, 0 if they are equal, otherwise -1.  */
   if (unsigned_p)
     final_larger
-      = ((unsigned HOST_WIDE_INT) INTVAL (final_value)
-	 > (unsigned HOST_WIDE_INT) INTVAL (initial_value))
-	- ((unsigned HOST_WIDE_INT) INTVAL (final_value)
-	   < (unsigned HOST_WIDE_INT) INTVAL (initial_value));
+      = ((HOST_WIDE_UINT) INTVAL (final_value)
+	 > (HOST_WIDE_UINT) INTVAL (initial_value))
+	- ((HOST_WIDE_UINT) INTVAL (final_value)
+	   < (HOST_WIDE_UINT) INTVAL (initial_value));
   else
     final_larger = (INTVAL (final_value) > INTVAL (initial_value))
       - (INTVAL (final_value) < INTVAL (initial_value));

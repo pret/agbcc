@@ -116,10 +116,10 @@ static tree constant_boolean_node (int, tree);
    HOST_BITS_PER_WIDE_INT/2 bits stored in each word, as a positive number.  */
 
 #define LOWPART(x) \
-  ((x) & (((unsigned HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT/2)) - 1))
+  ((x) & (((HOST_WIDE_UINT) 1 << (HOST_BITS_PER_WIDE_INT/2)) - 1))
 #define HIGHPART(x) \
-  ((unsigned HOST_WIDE_INT) (x) >> HOST_BITS_PER_WIDE_INT/2)
-#define BASE ((unsigned HOST_WIDE_INT) 1 << HOST_BITS_PER_WIDE_INT/2)
+  ((HOST_WIDE_UINT) (x) >> HOST_BITS_PER_WIDE_INT/2)
+#define BASE ((HOST_WIDE_UINT) 1 << HOST_BITS_PER_WIDE_INT/2)
 
 /* Unpack a two-word integer into 4 words.
    LOW and HI are the integer, as two `HOST_WIDE_INT' pieces.
@@ -248,7 +248,7 @@ add_double (l1, h1, l2, h2, lv, hv)
   HOST_WIDE_INT l, h;
 
   l = l1 + l2;
-  h = h1 + h2 + ((unsigned HOST_WIDE_INT) l < l1);
+  h = h1 + h2 + ((HOST_WIDE_UINT) l < l1);
 
   *lv = l;
   *hv = h;
@@ -293,7 +293,7 @@ mul_double (l1, h1, l2, h2, lv, hv)
   HOST_WIDE_INT arg1[4];
   HOST_WIDE_INT arg2[4];
   HOST_WIDE_INT prod[4 * 2];
-  register unsigned HOST_WIDE_INT carry;
+  register HOST_WIDE_UINT carry;
   register int i, j, k;
   HOST_WIDE_INT toplow, tophigh, neglow, neghigh;
 
@@ -362,14 +362,14 @@ lshift_double (l1, h1, count, prec, lv, hv, arith)
 
   if (count >= HOST_BITS_PER_WIDE_INT)
     {
-      *hv = (unsigned HOST_WIDE_INT) l1 << (count - HOST_BITS_PER_WIDE_INT);
+      *hv = (HOST_WIDE_UINT) l1 << (count - HOST_BITS_PER_WIDE_INT);
       *lv = 0;
     }
   else
     {
-      *hv = (((unsigned HOST_WIDE_INT) h1 << count)
-	     | ((unsigned HOST_WIDE_INT) l1 >> (HOST_BITS_PER_WIDE_INT - count - 1) >> 1));
-      *lv = (unsigned HOST_WIDE_INT) l1 << count;
+      *hv = (((HOST_WIDE_UINT) h1 << count)
+	     | ((HOST_WIDE_UINT) l1 >> (HOST_BITS_PER_WIDE_INT - count - 1) >> 1));
+      *lv = (HOST_WIDE_UINT) l1 << count;
     }
 }
 
@@ -385,9 +385,9 @@ rshift_double (l1, h1, count, prec, lv, hv, arith)
      HOST_WIDE_INT *lv, *hv;
      int arith;
 {
-  unsigned HOST_WIDE_INT signmask;
+  HOST_WIDE_UINT signmask;
   signmask = (arith
-	      ? -((unsigned HOST_WIDE_INT) h1 >> (HOST_BITS_PER_WIDE_INT - 1))
+	      ? -((HOST_WIDE_UINT) h1 >> (HOST_BITS_PER_WIDE_INT - 1))
 	      : 0);
 
 #ifdef SHIFT_COUNT_TRUNCATED
@@ -399,14 +399,14 @@ rshift_double (l1, h1, count, prec, lv, hv, arith)
     {
       *hv = signmask;
       *lv = ((signmask << (2 * HOST_BITS_PER_WIDE_INT - count - 1) << 1)
-	     | ((unsigned HOST_WIDE_INT) h1 >> (count - HOST_BITS_PER_WIDE_INT)));
+	     | ((HOST_WIDE_UINT) h1 >> (count - HOST_BITS_PER_WIDE_INT)));
     }
   else
     {
-      *lv = (((unsigned HOST_WIDE_INT) l1 >> count)
-	     | ((unsigned HOST_WIDE_INT) h1 << (HOST_BITS_PER_WIDE_INT - count - 1) << 1));
+      *lv = (((HOST_WIDE_UINT) l1 >> count)
+	     | ((HOST_WIDE_UINT) h1 << (HOST_BITS_PER_WIDE_INT - count - 1) << 1));
       *hv = ((signmask << (HOST_BITS_PER_WIDE_INT - count))
-	     | ((unsigned HOST_WIDE_INT) h1 >> count));
+	     | ((HOST_WIDE_UINT) h1 >> count));
     }
 }
 
@@ -478,8 +478,8 @@ div_and_round_double (code, uns,
   HOST_WIDE_INT num[4 + 1];	/* extra element for scaling.  */
   HOST_WIDE_INT den[4], quo[4];
   register int i, j;
-  unsigned HOST_WIDE_INT work;
-  register unsigned HOST_WIDE_INT carry = 0;
+  HOST_WIDE_UINT work;
+  register HOST_WIDE_UINT carry = 0;
   HOST_WIDE_INT lnum = lnum_orig;
   HOST_WIDE_INT hnum = hnum_orig;
   HOST_WIDE_INT lden = lden_orig;
@@ -510,7 +510,7 @@ div_and_round_double (code, uns,
     {				/* single precision */
       *hquo = *hrem = 0;
       /* This unsigned division rounds toward zero.  */
-      *lquo = lnum / (unsigned HOST_WIDE_INT) lden;
+      *lquo = lnum / (HOST_WIDE_UINT) lden;
       goto finish_up;
     }
 
@@ -538,8 +538,8 @@ div_and_round_double (code, uns,
       for (i = 4 - 1; i >= 0; i--)
 	{
 	  work = num[i] + carry * BASE;
-	  quo[i] = work / (unsigned HOST_WIDE_INT) lden;
-	  carry = work % (unsigned HOST_WIDE_INT) lden;
+	  quo[i] = work / (HOST_WIDE_UINT) lden;
+	  carry = work % (HOST_WIDE_UINT) lden;
 	}
     }
   else
@@ -547,7 +547,7 @@ div_and_round_double (code, uns,
       /* Full double precision division,
 	 with thanks to Don Knuth's "Seminumerical Algorithms".  */
     int num_hi_sig, den_hi_sig;
-    unsigned HOST_WIDE_INT quo_est, scale;
+    HOST_WIDE_UINT quo_est, scale;
 
     /* Find the highest non-zero divisor digit.  */
     for (i = 4 - 1; ; i--)
@@ -583,7 +583,7 @@ div_and_round_double (code, uns,
       /* guess the next quotient digit, quo_est, by dividing the first
 	 two remaining dividend digits by the high order quotient digit.
 	 quo_est is never low and is at most 2 high.  */
-      unsigned HOST_WIDE_INT tmp;
+      HOST_WIDE_UINT tmp;
 
       num_hi_sig = i + den_hi_sig + 1;
       work = num[num_hi_sig] * BASE + num[num_hi_sig - 1];
@@ -686,12 +686,12 @@ div_and_round_double (code, uns,
 	/* if (2 * abs (lrem) >= abs (lden)) */
 	mul_double ((HOST_WIDE_INT) 2, (HOST_WIDE_INT) 0,
 		    labs_rem, habs_rem, &ltwice, &htwice);
-	if (((unsigned HOST_WIDE_INT) habs_den
-	     < (unsigned HOST_WIDE_INT) htwice)
-	    || (((unsigned HOST_WIDE_INT) habs_den
-		 == (unsigned HOST_WIDE_INT) htwice)
-		&& ((HOST_WIDE_INT unsigned) labs_den
-		    < (unsigned HOST_WIDE_INT) ltwice)))
+	if (((HOST_WIDE_UINT) habs_den
+	     < (HOST_WIDE_UINT) htwice)
+	    || (((HOST_WIDE_UINT) habs_den
+		 == (HOST_WIDE_UINT) htwice)
+		&& ((HOST_WIDE_UINT) labs_den
+		    < (HOST_WIDE_UINT) ltwice)))
 	  {
 	    if (*hquo < 0)
 	      /* quo = quo - 1;  */
@@ -980,7 +980,7 @@ real_hex_to_f (s, mode)
 {
    REAL_VALUE_TYPE ip;
    char *p = s;
-   unsigned HOST_WIDE_INT low, high;
+   HOST_WIDE_UINT low, high;
    int frexpon, expon, shcount, nrmcount, k;
    int sign, expsign, decpt, isfloat, isldouble, gotp, lost;
    char c;
@@ -1425,19 +1425,19 @@ int_const_binop (code, arg1, arg2, notrunc, forsize)
     case MAX_EXPR:
       if (uns)
 	{
-	  low = (((unsigned HOST_WIDE_INT) int1h
-		  < (unsigned HOST_WIDE_INT) int2h)
-		 || (((unsigned HOST_WIDE_INT) int1h
-		      == (unsigned HOST_WIDE_INT) int2h)
-		     && ((unsigned HOST_WIDE_INT) int1l
-			 < (unsigned HOST_WIDE_INT) int2l)));
+	  low = (((HOST_WIDE_UINT) int1h
+		  < (HOST_WIDE_UINT) int2h)
+		 || (((HOST_WIDE_UINT) int1h
+		      == (HOST_WIDE_UINT) int2h)
+		     && ((HOST_WIDE_UINT) int1l
+			 < (HOST_WIDE_UINT) int2l)));
 	}
       else
 	{
 	  low = ((int1h < int2h)
 		 || ((int1h == int2h)
-		     && ((unsigned HOST_WIDE_INT) int1l
-			 < (unsigned HOST_WIDE_INT) int2l)));
+		     && ((HOST_WIDE_UINT) int1l
+			 < (HOST_WIDE_UINT) int2l)));
 	}
       if (low == (code == MIN_EXPR))
 	low = int1l, hi = int1h;
@@ -1663,7 +1663,7 @@ const_binop (code, arg1, arg2, notrunc)
 
 tree
 size_int_wide (number, high, bit_p)
-     unsigned HOST_WIDE_INT number, high;
+     HOST_WIDE_UINT number, high;
      int bit_p;
 {
   register tree t;

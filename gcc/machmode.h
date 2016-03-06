@@ -24,82 +24,23 @@ Boston, MA 02111-1307, USA.  */
 /* Strictly speaking, this isn't the proper place to include these definitions,
    but this file is included by every GCC file. */
 
-/* Find the largest host integer type and set its size and type.  */
+#include <stdint.h>
+#include <inttypes.h>
 
-#ifndef HOST_BITS_PER_WIDE_INT
-
-#if HOST_BITS_PER_LONG > HOST_BITS_PER_INT
-#define HOST_BITS_PER_WIDE_INT HOST_BITS_PER_LONG
-#define HOST_WIDE_INT long
-#else
-#define HOST_BITS_PER_WIDE_INT HOST_BITS_PER_INT
-#define HOST_WIDE_INT int
-#endif
-
-#endif
+#define HOST_BITS_PER_WIDE_INT 32
+#define HOST_WIDE_INT int32_t
+#define HOST_WIDE_UINT uint32_t
 
 /* Provide defaults for the way to print a HOST_WIDE_INT
    in various manners.  */
 
-#ifndef HOST_WIDE_INT_PRINT_DEC
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#define HOST_WIDE_INT_PRINT_DEC "%d"
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-#define HOST_WIDE_INT_PRINT_DEC "%ld"
-#else
-#define HOST_WIDE_INT_PRINT_DEC "%lld"
-#endif
-#endif
-#endif
+#define HOST_WIDE_INT_PRINT_DEC "%" PRId32
 
-#ifndef HOST_WIDE_INT_PRINT_UNSIGNED
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#define HOST_WIDE_INT_PRINT_UNSIGNED "%u"
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-#define HOST_WIDE_INT_PRINT_UNSIGNED "%lu"
-#else
-#define HOST_WIDE_INT_PRINT_UNSIGNED "%llu"
-#endif
-#endif
-#endif
+#define HOST_WIDE_INT_PRINT_UNSIGNED "%" PRIu32
 
-#ifndef HOST_WIDE_INT_PRINT_HEX
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#define HOST_WIDE_INT_PRINT_HEX "0x%x"
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-#define HOST_WIDE_INT_PRINT_HEX "0x%lx"
-#else
-#define HOST_WIDE_INT_PRINT_HEX "0x%llx"
-#endif
-#endif
-#endif
+#define HOST_WIDE_INT_PRINT_HEX "0x%" PRIx32
 
-#ifndef HOST_WIDE_INT_PRINT_DOUBLE_HEX
-#if HOST_BITS_PER_WIDE_INT == 64
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%x%016x"
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%lx%016lx"
-#else
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%llx%016llx"
-#endif
-#endif
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_INT
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%x%08x"
-#else
-#if HOST_BITS_PER_WIDE_INT == HOST_BITS_PER_LONG
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%lx%08lx"
-#else
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%llx%08llx"
-#endif
-#endif
-#endif
-#endif
+#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%" PRIx32 "%08" PRIx32
 
 /* Make an enum class that gives all the machine modes.  */
 
@@ -172,7 +113,7 @@ extern int mode_unit_size[];
 /* Get a bitmask containing 1 for all bits in a word
    that fit within mode MODE.  */
 
-extern unsigned HOST_WIDE_INT mode_mask_array[];
+extern HOST_WIDE_UINT mode_mask_array[];
 
 #define GET_MODE_MASK(MODE) mode_mask_array[(int) (MODE)]
 

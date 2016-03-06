@@ -1428,7 +1428,7 @@ real_value_from_int_cst (type, i)
       e = ((double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2))
 	    * (double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2)));
       d *= e;
-      e = (double) (unsigned HOST_WIDE_INT) (~ TREE_INT_CST_LOW (i));
+      e = (double) (HOST_WIDE_UINT) (~ TREE_INT_CST_LOW (i));
       d += e;
       d = (- d - 1.0);
     }
@@ -1436,11 +1436,11 @@ real_value_from_int_cst (type, i)
     {
       REAL_VALUE_TYPE e;
 
-      d = (double) (unsigned HOST_WIDE_INT) TREE_INT_CST_HIGH (i);
+      d = (double) (HOST_WIDE_UINT) TREE_INT_CST_HIGH (i);
       e = ((double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2))
 	    * (double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2)));
       d *= e;
-      e = (double) (unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (i);
+      e = (double) (HOST_WIDE_UINT) TREE_INT_CST_LOW (i);
       d += e;
     }
 #endif /* not REAL_ARITHMETIC */
@@ -4147,7 +4147,7 @@ build_range_type (type, lowval, highval)
       if (highval && TREE_CODE (highval) == INTEGER_CST)
 	highint = TREE_INT_CST_LOW (highval);
       else
-	highint = (~(unsigned HOST_WIDE_INT)0) >> 1;
+	highint = (~(HOST_WIDE_UINT)0) >> 1;
 
       maxint = (int) (highint - lowint);
       return type_hash_canon (maxint < 0 ? ~maxint : maxint, itype);
@@ -4792,8 +4792,8 @@ append_random_chars (template)
 {
   static const char letters[]
     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  static unsigned HOST_WIDE_INT value;
-  unsigned HOST_WIDE_INT v;
+  static HOST_WIDE_UINT value;
+  HOST_WIDE_UINT v;
 
 #ifdef HAVE_GETTIMEOFDAY
   struct timeval tv;
@@ -4804,7 +4804,7 @@ append_random_chars (template)
 #ifdef HAVE_GETTIMEOFDAY
   /* Get some more or less random data.  */
   gettimeofday (&tv, NULL);
-  value += ((unsigned HOST_WIDE_INT) tv.tv_usec << 16) ^ tv.tv_sec ^ getpid ();
+  value += ((HOST_WIDE_UINT) tv.tv_usec << 16) ^ tv.tv_sec ^ getpid ();
 #else
   value += getpid ();
 #endif

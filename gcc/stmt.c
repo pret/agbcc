@@ -4936,7 +4936,7 @@ expand_end_case (orig_index)
 
       else if (TREE_INT_CST_HIGH (range) != 0
 	       || count < (unsigned int) CASE_VALUES_THRESHOLD
-	       || ((unsigned HOST_WIDE_INT) (TREE_INT_CST_LOW (range))
+	       || ((HOST_WIDE_UINT) (TREE_INT_CST_LOW (range))
 		   > 10 * count)
 	       || TREE_CODE (index_expr) == INTEGER_CST
 	       /* These will reduce to a constant.  */

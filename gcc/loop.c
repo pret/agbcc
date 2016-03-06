@@ -314,7 +314,7 @@ static int valid_initial_value_p (rtx, rtx, int, rtx);
 static void find_mem_givs (rtx, rtx, int, rtx, rtx);
 static void record_biv (struct induction *, rtx, rtx, rtx, rtx, rtx *, int, int);
 static void check_final_value (struct induction *, rtx, rtx, 
-				     unsigned HOST_WIDE_INT);
+				     HOST_WIDE_UINT);
 static void record_giv (struct induction *, rtx, rtx, rtx, rtx, rtx, int, enum g_types, int, rtx *, rtx, rtx);
 static void update_giv_derive (rtx);
 static int basic_induction_var (rtx, enum machine_mode, rtx, rtx, rtx *, rtx *, rtx **);
@@ -5519,7 +5519,7 @@ static void
 check_final_value (v, loop_start, loop_end, n_iterations)
      struct induction *v;
      rtx loop_start, loop_end;
-     unsigned HOST_WIDE_INT n_iterations;
+     HOST_WIDE_UINT n_iterations;
 {
   struct iv_class *bl;
   rtx final_value = 0;
@@ -7768,7 +7768,7 @@ check_dbra_loop (loop_end, insn_count, loop_start, loop_info)
 	      int nonneg = 0;
 	      enum rtx_code cmp_code;
 	      int comparison_const_width;
-	      unsigned HOST_WIDE_INT comparison_sign_mask;
+	      HOST_WIDE_UINT comparison_sign_mask;
 
 	      add_val = INTVAL (bl->biv->add_val);
 	      comparison_value = XEXP (comparison, 1);
@@ -7781,7 +7781,7 @@ check_dbra_loop (loop_end, insn_count, loop_start, loop_info)
 	      if (comparison_const_width > HOST_BITS_PER_WIDE_INT)
 		comparison_const_width = HOST_BITS_PER_WIDE_INT;
 	      comparison_sign_mask
-		= (unsigned HOST_WIDE_INT)1 << (comparison_const_width - 1);
+		= (HOST_WIDE_UINT)1 << (comparison_const_width - 1);
 
 	      /* If the comparison value is not a loop invariant, then we
 		 can not reverse this loop.
@@ -7811,7 +7811,7 @@ check_dbra_loop (loop_end, insn_count, loop_start, loop_info)
 		     current comparison code is LT.  */
 		  comparison_val = comparison_val + add_val - 1;
 		  comparison_val
-		    -= (unsigned HOST_WIDE_INT) comparison_val % add_val;
+		    -= (HOST_WIDE_UINT) comparison_val % add_val;
 		  /* We postpone overflow checks for COMPARISON_VAL here;
 		     even if there is an overflow, we might still be able to
 		     reverse the loop, if converting the loop exit test to
@@ -7861,7 +7861,7 @@ check_dbra_loop (loop_end, insn_count, loop_start, loop_info)
 	      if (initial_value == const0_rtx
 		  && GET_CODE (comparison_value) == CONST_INT)
 		{
-		  if (((unsigned HOST_WIDE_INT) comparison_val % add_val) != 0)
+		  if (((HOST_WIDE_UINT) comparison_val % add_val) != 0)
 		    return 0;
 		}
 	      else
@@ -8779,14 +8779,14 @@ get_condition (jump, earliest)
       && GET_MODE_BITSIZE (GET_MODE (op0)) <= HOST_BITS_PER_WIDE_INT)
     {
       HOST_WIDE_INT const_val = INTVAL (op1);
-      unsigned HOST_WIDE_INT uconst_val = const_val;
-      unsigned HOST_WIDE_INT max_val
-	= (unsigned HOST_WIDE_INT) GET_MODE_MASK (GET_MODE (op0));
+      HOST_WIDE_UINT uconst_val = const_val;
+      HOST_WIDE_UINT max_val
+	= (HOST_WIDE_UINT) GET_MODE_MASK (GET_MODE (op0));
 
       switch (code)
 	{
 	case LE:
-	  if ((unsigned HOST_WIDE_INT) const_val != max_val >> 1)
+	  if ((HOST_WIDE_UINT) const_val != max_val >> 1)
 	    code = LT,	op1 = GEN_INT (const_val + 1);
 	  break;
 
@@ -8862,7 +8862,7 @@ insert_bct (loop_start, loop_end, loop_info)
      struct loop_info *loop_info;
 {
   int i;
-  unsigned HOST_WIDE_INT n_iterations;
+  HOST_WIDE_UINT n_iterations;
 
   int increment_direction, compare_direction;
 
@@ -9001,7 +9001,7 @@ insert_bct (loop_start, loop_end, loop_info)
       rtx sequence;
       rtx iterations_num_reg;
 
-      unsigned HOST_WIDE_INT increment_value_abs
+      HOST_WIDE_UINT increment_value_abs
 	= INTVAL (increment) * increment_direction;
 
       /* make sure that the increment is a power of two, otherwise (an

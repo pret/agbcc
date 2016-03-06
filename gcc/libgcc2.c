@@ -26,44 +26,11 @@ Boston, MA 02111-1307, USA.  */
    This exception does not however invalidate any other reasons why
    the executable file might be covered by the GNU General Public License.  */
 
-/* It is incorrect to include config.h here, because this file is being
-   compiled for the target, and hence definitions concerning only the host
-   do not apply.  */
-
-#include "tconfig.h"
-
-/* We disable this when inhibit_libc, so that gcc can still be built without
-   needing header files first.  */
-/* ??? This is not a good solution, since prototypes may be required in
-   some cases for correct code.  See also frame.c.  */
-
-#include "machmode.h"
-#include "defaults.h" 
 #include <stddef.h>
 
 /* Don't use `fancy_abort' here even if config.h says to use it.  */
 #ifdef abort
 #undef abort
-#endif
-
-#if (SUPPORTS_WEAK == 1) && (defined (ASM_OUTPUT_DEF) || defined (ASM_OUTPUT_WEAK_ALIAS))
-#define WEAK_ALIAS
-#endif
-
-/* In a cross-compilation situation, default to inhibiting compilation
-   of routines that use libc.  */
-
-
-/* Permit the tm.h file to select the endianness to use just for this
-   file.  This is used when the endianness is determined when the
-   compiler is run.  */
-
-#ifndef LIBGCC2_WORDS_BIG_ENDIAN
-#define LIBGCC2_WORDS_BIG_ENDIAN WORDS_BIG_ENDIAN
-#endif
-
-#ifndef LIBGCC2_LONG_DOUBLE_TYPE_SIZE
-#define LIBGCC2_LONG_DOUBLE_TYPE_SIZE LONG_DOUBLE_TYPE_SIZE
 #endif
 
 /* In the first part of this file, we are interfacing to calls generated
@@ -84,13 +51,6 @@ typedef unsigned int UDItype	__attribute__ ((mode (DI)));
 typedef 	float SFtype	__attribute__ ((mode (SF)));
 typedef		float DFtype	__attribute__ ((mode (DF)));
 
-#if LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96
-typedef		float XFtype	__attribute__ ((mode (XF)));
-#endif
-#if LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 128
-typedef		float TFtype	__attribute__ ((mode (TF)));
-#endif
-
 typedef int word_type __attribute__ ((mode (__word__)));
 
 /* Make sure that we don't accidentally use any normal C language built-in
@@ -107,16 +67,9 @@ typedef int word_type __attribute__ ((mode (__word__)));
 #define float bogus_type
 #define double bogus_type
 
-#define SI_TYPE_SIZE (sizeof (SItype) * BITS_PER_UNIT)
+#define SI_TYPE_SIZE (sizeof (SItype) * 8)
 
-/* DIstructs are pairs of SItype values in the order determined by
-   LIBGCC2_WORDS_BIG_ENDIAN.  */
-
-#if LIBGCC2_WORDS_BIG_ENDIAN
-  struct DIstruct {SItype high, low;};
-#else
-  struct DIstruct {SItype low, high;};
-#endif
+struct DIstruct {SItype low, high;};
 
 /* We need this union to unpack/pack DImode values, since we don't have
    any arithmetic yet.  Incoming DImode parameters are stored into the
@@ -138,12 +91,6 @@ typedef union
 
 extern DItype __fixunssfdi (SFtype a);
 extern DItype __fixunsdfdi (DFtype a);
-#if LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96
-extern DItype __fixunsxfdi (XFtype a);
-#endif
-#if LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 128
-extern DItype __fixunstfdi (TFtype a);
-#endif
 
 #if defined (L_negdi2) || defined (L_divdi3) || defined (L_moddi3)
 #if defined (L_divdi3) || defined (L_moddi3)
@@ -179,7 +126,7 @@ __lshrdi3 (DItype u, word_type b)
 
   uu.ll = u;
 
-  bm = (sizeof (SItype) * BITS_PER_UNIT) - b;
+  bm = (sizeof (SItype) * 8) - b;
   if (bm <= 0)
     {
       w.s.high = 0;
@@ -209,7 +156,7 @@ __ashldi3 (DItype u, word_type b)
 
   uu.ll = u;
 
-  bm = (sizeof (SItype) * BITS_PER_UNIT) - b;
+  bm = (sizeof (SItype) * 8) - b;
   if (bm <= 0)
     {
       w.s.low = 0;
@@ -239,11 +186,11 @@ __ashrdi3 (DItype u, word_type b)
 
   uu.ll = u;
 
-  bm = (sizeof (SItype) * BITS_PER_UNIT) - b;
+  bm = (sizeof (SItype) * 8) - b;
   if (bm <= 0)
     {
       /* w.s.high = 1..1 or 0..0 */
-      w.s.high = uu.s.high >> (sizeof (SItype) * BITS_PER_UNIT - 1);
+      w.s.high = uu.s.high >> (sizeof (SItype) * 8 - 1);
       w.s.low = uu.s.high >> -bm;
     }
   else
@@ -270,7 +217,7 @@ __ffsdi2 (DItype u)
   w.s.low = ffs (uu.s.high);
   if (w.s.low != 0)
     {
-      w.s.low += BITS_PER_UNIT * sizeof (SItype);
+      w.s.low += 8 * sizeof (SItype);
       return w.ll;
     }
   return w.ll;
@@ -762,92 +709,8 @@ __ucmpdi2 (DItype a, DItype b)
 }
 #endif
 
-#if defined(L_fixunstfdi) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 128)
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
-#define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
-
-DItype
-__fixunstfdi (TFtype a)
-{
-  TFtype b;
-  UDItype v;
-
-  if (a < 0)
-    return 0;
-
-  /* Compute high word of result, as a flonum.  */
-  b = (a / HIGH_WORD_COEFF);
-  /* Convert that to fixed (but not to DItype!),
-     and shift it into the high word.  */
-  v = (USItype) b;
-  v <<= WORD_SIZE;
-  /* Remove high part from the TFtype, leaving the low part as flonum.  */
-  a -= (TFtype)v;
-  /* Convert that to fixed (but not to DItype!) and add it in.
-     Sometimes A comes out negative.  This is significant, since
-     A has more bits than a long int does.  */
-  if (a < 0)
-    v -= (USItype) (- a);
-  else
-    v += (USItype) a;
-  return v;
-}
-#endif
-
-#if defined(L_fixtfdi) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 128)
-DItype
-__fixtfdi (TFtype a)
-{
-  if (a < 0)
-    return - __fixunstfdi (-a);
-  return __fixunstfdi (a);
-}
-#endif
-
-#if defined(L_fixunsxfdi) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96)
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
-#define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
-
-DItype
-__fixunsxfdi (XFtype a)
-{
-  XFtype b;
-  UDItype v;
-
-  if (a < 0)
-    return 0;
-
-  /* Compute high word of result, as a flonum.  */
-  b = (a / HIGH_WORD_COEFF);
-  /* Convert that to fixed (but not to DItype!),
-     and shift it into the high word.  */
-  v = (USItype) b;
-  v <<= WORD_SIZE;
-  /* Remove high part from the XFtype, leaving the low part as flonum.  */
-  a -= (XFtype)v;
-  /* Convert that to fixed (but not to DItype!) and add it in.
-     Sometimes A comes out negative.  This is significant, since
-     A has more bits than a long int does.  */
-  if (a < 0)
-    v -= (USItype) (- a);
-  else
-    v += (USItype) a;
-  return v;
-}
-#endif
-
-#if defined(L_fixxfdi) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96)
-DItype
-__fixxfdi (XFtype a)
-{
-  if (a < 0)
-    return - __fixunsxfdi (-a);
-  return __fixunsxfdi (a);
-}
-#endif
-
 #ifdef L_fixunsdfdi
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
+#define WORD_SIZE (sizeof (SItype) * 8)
 #define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
 
 DItype
@@ -889,7 +752,7 @@ __fixdfdi (DFtype a)
 #endif
 
 #ifdef L_fixunssfdi
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
+#define WORD_SIZE (sizeof (SItype) * 8)
 #define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
 
 DItype
@@ -934,46 +797,8 @@ __fixsfdi (SFtype a)
 }
 #endif
 
-#if defined(L_floatdixf) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96)
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
-#define HIGH_HALFWORD_COEFF (((UDItype) 1) << (WORD_SIZE / 2))
-#define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
-
-XFtype
-__floatdixf (DItype u)
-{
-  XFtype d;
-
-  d = (SItype) (u >> WORD_SIZE);
-  d *= HIGH_HALFWORD_COEFF;
-  d *= HIGH_HALFWORD_COEFF;
-  d += (USItype) (u & (HIGH_WORD_COEFF - 1));
-
-  return d;
-}
-#endif
-
-#if defined(L_floatditf) && (LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 128)
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
-#define HIGH_HALFWORD_COEFF (((UDItype) 1) << (WORD_SIZE / 2))
-#define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
-
-TFtype
-__floatditf (DItype u)
-{
-  TFtype d;
-
-  d = (SItype) (u >> WORD_SIZE);
-  d *= HIGH_HALFWORD_COEFF;
-  d *= HIGH_HALFWORD_COEFF;
-  d += (USItype) (u & (HIGH_WORD_COEFF - 1));
-
-  return d;
-}
-#endif
-
 #ifdef L_floatdidf
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
+#define WORD_SIZE (sizeof (SItype) * 8)
 #define HIGH_HALFWORD_COEFF (((UDItype) 1) << (WORD_SIZE / 2))
 #define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
 
@@ -992,10 +817,10 @@ __floatdidf (DItype u)
 #endif
 
 #ifdef L_floatdisf
-#define WORD_SIZE (sizeof (SItype) * BITS_PER_UNIT)
+#define WORD_SIZE (sizeof (SItype) * 8)
 #define HIGH_HALFWORD_COEFF (((UDItype) 1) << (WORD_SIZE / 2))
 #define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
-#define DI_SIZE (sizeof (DItype) * BITS_PER_UNIT)
+#define DI_SIZE (sizeof (DItype) * 8)
 
 /* Define codes for all the float formats that we know of.  Note
    that this is copied from real.h.  */
@@ -1056,28 +881,6 @@ __floatdisf (DItype u)
   f += (USItype) (u & (HIGH_WORD_COEFF - 1));
 
   return (SFtype) f;
-}
-#endif
-
-#if defined(L_fixunsxfsi) && LIBGCC2_LONG_DOUBLE_TYPE_SIZE == 96
-/* Reenable the normal types, in case limits.h needs them.  */
-#undef char
-#undef short
-#undef int
-#undef long
-#undef unsigned
-#undef float
-#undef double
-#undef MIN
-#undef MAX
-#include <limits.h>
-
-USItype
-__fixunsxfsi (XFtype a)
-{
-  if (a >= - (DFtype) LONG_MIN)
-    return (SItype) (a + LONG_MIN) - LONG_MIN;
-  return (SItype) a;
 }
 #endif
 

@@ -34,7 +34,7 @@ Boston, MA 02111-1307, USA.  */
    registers and then only in the few cases where we have an array of
    HARD_REG_SETs, so it needn't be as complex as it used to be.  */
 
-typedef unsigned HOST_WIDE_INT HARD_REG_ELT_TYPE;
+typedef HOST_WIDE_UINT HARD_REG_ELT_TYPE;
 
 #define HARD_REG_SET HARD_REG_ELT_TYPE
 

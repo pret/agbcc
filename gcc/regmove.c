@@ -222,7 +222,7 @@ try_auto_increment (insn, inc_insn, inc_insn_set, reg, increment, pre)
    execution of the instruction.
    Here we define the size of the hash table, and the hash function to use.  */
 #define REL_USE_HASH_SIZE 43
-#define REL_USE_HASH(I) ((I) % (unsigned HOST_WIDE_INT) REL_USE_HASH_SIZE)
+#define REL_USE_HASH(I) ((I) % (HOST_WIDE_UINT) REL_USE_HASH_SIZE)
 
 /* For each register in a set of registers that are related, we keep a
    struct related.

@@ -5914,7 +5914,7 @@ finish_struct (t, fieldlist, attributes)
       /* Detect and ignore out of range field width.  */
       if (DECL_INITIAL (x))
 	{
-	  unsigned HOST_WIDE_INT width = TREE_INT_CST_LOW (DECL_INITIAL (x));
+	  HOST_WIDE_UINT width = TREE_INT_CST_LOW (DECL_INITIAL (x));
 
 	  if (tree_int_cst_sgn (DECL_INITIAL (x)) < 0)
 	    {

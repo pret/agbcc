@@ -1471,7 +1471,7 @@ hash_expr_1 (x, mode, do_not_record_p)
 
     case CONST_INT:
       {
-	unsigned HOST_WIDE_INT tem = INTVAL (x);
+	HOST_WIDE_UINT tem = INTVAL (x);
 	hash += ((unsigned) CONST_INT << 7) + (unsigned) mode + tem;
 	return hash;
       }

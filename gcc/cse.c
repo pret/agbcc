@@ -2012,7 +2012,7 @@ canon_hash (x, mode)
 
     case CONST_INT:
       {
-	unsigned HOST_WIDE_INT tem = INTVAL (x);
+	HOST_WIDE_UINT tem = INTVAL (x);
 	hash += ((unsigned) CONST_INT << 7) + (unsigned) mode + tem;
 	return hash;
       }
@@ -3085,7 +3085,7 @@ simplify_unary_operation (code, mode, op, op_mode)
 	  d = (double) (~ hv);
 	  d *= ((double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2))
 		* (double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2)));
-	  d += (double) (unsigned HOST_WIDE_INT) (~ lv);
+	  d += (double) (HOST_WIDE_UINT) (~ lv);
 	  d = (- d - 1.0);
 	}
       else
@@ -3093,7 +3093,7 @@ simplify_unary_operation (code, mode, op, op_mode)
 	  d = (double) hv;
 	  d *= ((double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2))
 		* (double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2)));
-	  d += (double) (unsigned HOST_WIDE_INT) lv;
+	  d += (double) (HOST_WIDE_UINT) lv;
 	}
 #endif  /* REAL_ARITHMETIC */
       d = real_value_truncate (mode, d);
@@ -3126,10 +3126,10 @@ simplify_unary_operation (code, mode, op, op_mode)
       REAL_VALUE_FROM_UNSIGNED_INT (d, lv, hv, mode);
 #else
 
-      d = (double) (unsigned HOST_WIDE_INT) hv;
+      d = (double) (HOST_WIDE_UINT) hv;
       d *= ((double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2))
 	    * (double) ((HOST_WIDE_INT) 1 << (HOST_BITS_PER_WIDE_INT / 2)));
-      d += (double) (unsigned HOST_WIDE_INT) lv;
+      d += (double) (HOST_WIDE_UINT) lv;
 #endif  /* REAL_ARITHMETIC */
       d = real_value_truncate (mode, d);
       return CONST_DOUBLE_FROM_REAL_VALUE (d, mode);
@@ -3625,8 +3625,8 @@ simplify_binary_operation (code, mode, op0, op1)
 	case SMIN:
 	  if (h1 < h2
 	      || (h1 == h2
-		  && ((unsigned HOST_WIDE_INT) l1
-		      < (unsigned HOST_WIDE_INT) l2)))
+		  && ((HOST_WIDE_UINT) l1
+		      < (HOST_WIDE_UINT) l2)))
 	    lv = l1, hv = h1;
 	  else
 	    lv = l2, hv = h2;
@@ -3635,28 +3635,28 @@ simplify_binary_operation (code, mode, op0, op1)
 	case SMAX:
 	  if (h1 > h2
 	      || (h1 == h2
-		  && ((unsigned HOST_WIDE_INT) l1
-		      > (unsigned HOST_WIDE_INT) l2)))
+		  && ((HOST_WIDE_UINT) l1
+		      > (HOST_WIDE_UINT) l2)))
 	    lv = l1, hv = h1;
 	  else
 	    lv = l2, hv = h2;
 	  break;
 
 	case UMIN:
-	  if ((unsigned HOST_WIDE_INT) h1 < (unsigned HOST_WIDE_INT) h2
+	  if ((HOST_WIDE_UINT) h1 < (HOST_WIDE_UINT) h2
 	      || (h1 == h2
-		  && ((unsigned HOST_WIDE_INT) l1
-		      < (unsigned HOST_WIDE_INT) l2)))
+		  && ((HOST_WIDE_UINT) l1
+		      < (HOST_WIDE_UINT) l2)))
 	    lv = l1, hv = h1;
 	  else
 	    lv = l2, hv = h2;
 	  break;
 
 	case UMAX:
-	  if ((unsigned HOST_WIDE_INT) h1 > (unsigned HOST_WIDE_INT) h2
+	  if ((HOST_WIDE_UINT) h1 > (HOST_WIDE_UINT) h2
 	      || (h1 == h2
-		  && ((unsigned HOST_WIDE_INT) l1
-		      > (unsigned HOST_WIDE_INT) l2)))
+		  && ((HOST_WIDE_UINT) l1
+		      > (HOST_WIDE_UINT) l2)))
 	    lv = l1, hv = h1;
 	  else
 	    lv = l2, hv = h2;
@@ -4117,7 +4117,7 @@ simplify_binary_operation (code, mode, op0, op1)
 	case SMAX:
 	  if (width <= HOST_BITS_PER_WIDE_INT && GET_CODE (op1) == CONST_INT
 	      && (INTVAL (op1)
-		  == (unsigned HOST_WIDE_INT) GET_MODE_MASK (mode) >> 1)
+		  == (HOST_WIDE_UINT) GET_MODE_MASK (mode) >> 1)
 	      && ! side_effects_p (op0))
 	    return op1;
 	  else if (rtx_equal_p (op0, op1) && ! side_effects_p (op0))
@@ -4201,13 +4201,13 @@ simplify_binary_operation (code, mode, op0, op1)
     case UDIV:
       if (arg1 == 0)
 	return 0;
-      val = (unsigned HOST_WIDE_INT) arg0 / arg1;
+      val = (HOST_WIDE_UINT) arg0 / arg1;
       break;
 
     case UMOD:
       if (arg1 == 0)
 	return 0;
-      val = (unsigned HOST_WIDE_INT) arg0 % arg1;
+      val = (HOST_WIDE_UINT) arg0 % arg1;
       break;
 
     case AND:
@@ -4233,7 +4233,7 @@ simplify_binary_operation (code, mode, op0, op1)
 	arg1 %= width;
 #endif
 
-      val = ((unsigned HOST_WIDE_INT) arg0) >> arg1;
+      val = ((HOST_WIDE_UINT) arg0) >> arg1;
       break;
 
     case ASHIFT:
@@ -4245,7 +4245,7 @@ simplify_binary_operation (code, mode, op0, op1)
 	arg1 %= width;
 #endif
 
-      val = ((unsigned HOST_WIDE_INT) arg0) << arg1;
+      val = ((HOST_WIDE_UINT) arg0) << arg1;
       break;
 
     case ASHIFTRT:
@@ -4271,8 +4271,8 @@ simplify_binary_operation (code, mode, op0, op1)
 	return 0;
 
       arg1 %= width;
-      val = ((((unsigned HOST_WIDE_INT) arg0) << (width - arg1))
-	     | (((unsigned HOST_WIDE_INT) arg0) >> arg1));
+      val = ((((HOST_WIDE_UINT) arg0) << (width - arg1))
+	     | (((HOST_WIDE_UINT) arg0) >> arg1));
       break;
 
     case ROTATE:
@@ -4280,8 +4280,8 @@ simplify_binary_operation (code, mode, op0, op1)
 	return 0;
 
       arg1 %= width;
-      val = ((((unsigned HOST_WIDE_INT) arg0) << arg1)
-	     | (((unsigned HOST_WIDE_INT) arg0) >> (width - arg1)));
+      val = ((((HOST_WIDE_UINT) arg0) << arg1)
+	     | (((HOST_WIDE_UINT) arg0) >> (width - arg1)));
       break;
 
     case COMPARE:
@@ -4293,8 +4293,8 @@ simplify_binary_operation (code, mode, op0, op1)
       break;
 
     case UMIN:
-      val = ((unsigned HOST_WIDE_INT) arg0
-	     <= (unsigned HOST_WIDE_INT) arg1 ? arg0 : arg1);
+      val = ((HOST_WIDE_UINT) arg0
+	     <= (HOST_WIDE_UINT) arg1 ? arg0 : arg1);
       break;
 
     case SMAX:
@@ -4302,8 +4302,8 @@ simplify_binary_operation (code, mode, op0, op1)
       break;
 
     case UMAX:
-      val = ((unsigned HOST_WIDE_INT) arg0
-	     > (unsigned HOST_WIDE_INT) arg1 ? arg0 : arg1);
+      val = ((HOST_WIDE_UINT) arg0
+	     > (HOST_WIDE_UINT) arg1 ? arg0 : arg1);
       break;
 
     default:
@@ -4635,7 +4635,7 @@ simplify_relational_operation (code, mode, op0, op1)
     {
       int width = GET_MODE_BITSIZE (mode);
       HOST_WIDE_INT l0s, h0s, l1s, h1s;
-      unsigned HOST_WIDE_INT l0u, h0u, l1u, h1u;
+      HOST_WIDE_UINT l0u, h0u, l1u, h1u;
 
       /* Get the two words comprising each integer constant.  */
       if (GET_CODE (op0) == CONST_DOUBLE)

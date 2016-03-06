@@ -41,7 +41,7 @@ typedef union varray_data_tag {
   long			 l[1];
   unsigned long		 ul[1];
   HOST_WIDE_INT		 hint[1];
-  unsigned HOST_WIDE_INT uhint[1];
+  HOST_WIDE_UINT uhint[1];
   void *		 generic[1];
   char			 *cptr[1];
   struct rtx_def	 *rtx[1];
@@ -92,7 +92,7 @@ extern varray_type varray_init	(size_t, size_t, const char *);
   va = varray_init (num, sizeof (HOST_WIDE_INT), name)
 
 #define VARRAY_UWIDE_INT_INIT(va, num, name) \
-  va = varray_init (num, sizeof (unsigned HOST_WIDE_INT), name)
+  va = varray_init (num, sizeof (HOST_WIDE_UINT), name)
 
 #define VARRAY_GENERIC_PTR_INIT(va, num, name) \
   va = varray_init (num, sizeof (void *), name)

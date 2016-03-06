@@ -71,8 +71,8 @@
    (set (match_dup 0) (ashift:SI (match_dup 0) (match_dup 2)))]
   "
 {
-  unsigned HOST_WIDE_INT val = INTVAL (operands[1]);
-  unsigned HOST_WIDE_INT mask = 0xff;
+  HOST_WIDE_UINT val = INTVAL (operands[1]);
+  HOST_WIDE_UINT mask = 0xff;
   int i;
   for (i = 0; i < 25; i++)
     if ((val & (mask << i)) == val)
@@ -633,7 +633,7 @@
    (set (match_dup 0)
 	(plus:SI (match_dup 0) (match_operand:SI 2 "register_operand" "k")))]
   "REGNO (operands[2]) == STACK_POINTER_REGNUM 
-   && (unsigned HOST_WIDE_INT) (INTVAL (operands[1])) < 1024
+   && (HOST_WIDE_UINT) (INTVAL (operands[1])) < 1024
    && (INTVAL (operands[1]) & 3) == 0"
   "add\\t%0, %2, %1")
 
@@ -693,7 +693,7 @@
   else
     {
       int i;
-      if (((unsigned HOST_WIDE_INT) ~ INTVAL (operands[2])) < 256)
+      if (((HOST_WIDE_UINT) ~ INTVAL (operands[2])) < 256)
 	{
 	  operands[2] = force_reg (SImode, GEN_INT (~INTVAL (operands[2])));
 	  emit_insn (gen_bicsi3 (operands[0], operands[2], operands[1]));
@@ -800,7 +800,7 @@
   if (GET_CODE (operands[1]) != REG && GET_CODE (operands[1]) != SUBREG)
     {
       if (GET_CODE (operands[1]) != CONST_INT
-	  || (unsigned HOST_WIDE_INT) (INTVAL (operands[1])) >= 256)
+	  || (HOST_WIDE_UINT) (INTVAL (operands[1])) >= 256)
 	{
 	  if (GET_CODE (operands[1]) != CONST_INT
 	      || INTVAL (operands[1]) < -255

@@ -369,14 +369,6 @@ do {									\
 
 #define WORDS_BIG_ENDIAN (BYTES_BIG_ENDIAN)
 
-/* LIBGCC2_WORDS_BIG_ENDIAN has to be a constant, so we define this based
-   on processor pre-defineds when compiling libgcc2.c.  */
-#if defined(__THUMBEB__) && !defined(__THUMBEL__)
-#define LIBGCC2_WORDS_BIG_ENDIAN 1
-#else
-#define LIBGCC2_WORDS_BIG_ENDIAN 0
-#endif
-
 #define FLOAT_WORDS_BIG_ENDIAN 1
 
 #define BITS_PER_UNIT 8
@@ -576,7 +568,7 @@ enum reg_class
   ((CONSTANT_P ((X)) && GET_CODE ((X)) != CONST_INT		\
     && ! CONSTANT_POOL_ADDRESS_P((X))) ? NO_REGS		\
    : (GET_CODE ((X)) == CONST_INT				\
-      && (unsigned HOST_WIDE_INT) INTVAL ((X)) > 255) ? NO_REGS	\
+      && (HOST_WIDE_UINT) INTVAL ((X)) > 255) ? NO_REGS	\
    : LO_REGS) */
 
 /* Must leave BASE_REGS and NONARG_LO_REGS reloads alone, see comment
@@ -593,13 +585,13 @@ enum reg_class
 int thumb_shiftable_const ();
 
 #define CONST_OK_FOR_LETTER_P(VAL,C)				\
-  ((C) == 'I' ? (unsigned HOST_WIDE_INT) (VAL) < 256		\
+  ((C) == 'I' ? (HOST_WIDE_UINT) (VAL) < 256		\
    : (C) == 'J' ? (VAL) > -256 && (VAL) <= 0			\
    : (C) == 'K' ? thumb_shiftable_const (VAL)			\
    : (C) == 'L' ? (VAL) > -8 && (VAL) < 8			\
-   : (C) == 'M' ? ((unsigned HOST_WIDE_INT) (VAL) < 1024	\
+   : (C) == 'M' ? ((HOST_WIDE_UINT) (VAL) < 1024	\
 		   && ((VAL) & 3) == 0)				\
-   : (C) == 'N' ? ((unsigned HOST_WIDE_INT) (VAL) < 32)		\
+   : (C) == 'N' ? ((HOST_WIDE_UINT) (VAL) < 32)		\
    : (C) == 'O' ? ((VAL) >= -508 && (VAL) <= 508)		\
    : 0)
 
@@ -831,8 +823,8 @@ int thumb_shiftable_const ();
 #define REG_OK_FOR_INDEXED_BASE_P(X) REG_OK_FOR_INDEX_P(X)
 
 #define LEGITIMATE_OFFSET(MODE,VAL)				\
-(GET_MODE_SIZE (MODE) == 1 ? ((unsigned HOST_WIDE_INT) (VAL) < 32)	\
- : GET_MODE_SIZE (MODE) == 2 ? ((unsigned HOST_WIDE_INT) (VAL) < 64	\
+(GET_MODE_SIZE (MODE) == 1 ? ((HOST_WIDE_UINT) (VAL) < 32)	\
+ : GET_MODE_SIZE (MODE) == 2 ? ((HOST_WIDE_UINT) (VAL) < 64	\
 				&& ((VAL) & 1) == 0)			\
  : ((VAL) >= 0 && ((VAL) + GET_MODE_SIZE (MODE)) <= 128			\
     && ((VAL) & 3) == 0))
@@ -936,7 +928,7 @@ int thumb_shiftable_const ();
 	       && REGNO (XEXP (X, 0)) == STACK_POINTER_REGNUM		\
 	       && GET_MODE_SIZE (MODE) >= 4				\
 	       && GET_CODE (XEXP (X, 1)) == CONST_INT			\
-	       && (unsigned HOST_WIDE_INT) INTVAL (XEXP (X, 1)) < 1024	\
+	       && (HOST_WIDE_UINT) INTVAL (XEXP (X, 1)) < 1024	\
 	       && (INTVAL (XEXP (X, 1)) & 3) == 0)			\
 	goto WIN;							\
     }									\
@@ -1011,7 +1003,7 @@ int thumb_shiftable_const ();
    if (GET_CODE (XEXP (X, 1)) == CONST_INT)			\
      {								\
        int cycles = 0;						\
-       unsigned HOST_WIDE_INT i = INTVAL (XEXP (X, 1));		\
+       HOST_WIDE_UINT i = INTVAL (XEXP (X, 1));		\
        while (i)						\
 	 {							\
 	   i >>= 2;						\
@@ -1032,7 +1024,7 @@ int thumb_shiftable_const ();
  case CONST_INT:						\
    if ((OUTER) == SET)						\
      {								\
-       if ((unsigned HOST_WIDE_INT) INTVAL (X) < 256)		\
+       if ((HOST_WIDE_UINT) INTVAL (X) < 256)		\
 	 return 0;						\
        if (thumb_shiftable_const (INTVAL (X)))			\
 	 return COSTS_N_INSNS (2);				\
@@ -1042,7 +1034,7 @@ int thumb_shiftable_const ();
 	    && INTVAL (X) < 256 && INTVAL (X) > -256)		\
      return 0;							\
    else if (OUTER == COMPARE					\
-	    && (unsigned HOST_WIDE_INT) INTVAL (X) < 256)	\
+	    && (HOST_WIDE_UINT) INTVAL (X) < 256)	\
      return 0;							\
    else if (OUTER == ASHIFT || OUTER == ASHIFTRT		\
 	    || OUTER == LSHIFTRT)				\

@@ -85,13 +85,13 @@ extern REAL_VALUE_TYPE etruncui	(REAL_VALUE_TYPE);
 extern REAL_VALUE_TYPE ereal_atof (char *, enum machine_mode);
 extern REAL_VALUE_TYPE ereal_negate (REAL_VALUE_TYPE);
 extern HOST_WIDE_INT efixi	(REAL_VALUE_TYPE);
-extern unsigned HOST_WIDE_INT efixui (REAL_VALUE_TYPE);
+extern HOST_WIDE_UINT efixui (REAL_VALUE_TYPE);
 extern void ereal_from_int	(REAL_VALUE_TYPE *,
 				       HOST_WIDE_INT, HOST_WIDE_INT,
 				       enum machine_mode);
 extern void ereal_from_uint	(REAL_VALUE_TYPE *,
-				       unsigned HOST_WIDE_INT,
-				       unsigned HOST_WIDE_INT,
+				       HOST_WIDE_UINT,
+				       HOST_WIDE_UINT,
 				       enum machine_mode);
 extern void ereal_to_int	(HOST_WIDE_INT *, HOST_WIDE_INT *,
 				       REAL_VALUE_TYPE);

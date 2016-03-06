@@ -180,7 +180,7 @@ struct loop_info
      iterations can be as high as 2^wordsize - 1.  For loops with a
      wider iterator, this number will be zero if the number of loop
      iterations is too large for an unsigned integer to hold.  */
-  unsigned HOST_WIDE_INT n_iterations;
+  HOST_WIDE_UINT n_iterations;
   /* The loop unrolling factor.
      Potential values:
      0: unrolled
@@ -234,14 +234,14 @@ void unroll_block_trees (void);
 
 void unroll_loop (rtx, int, rtx, rtx, struct loop_info *, int);
 rtx biv_total_increment (struct iv_class *, rtx, rtx);
-unsigned HOST_WIDE_INT loop_iterations (rtx, rtx, struct loop_info *);
+HOST_WIDE_UINT loop_iterations (rtx, rtx, struct loop_info *);
 int precondition_loop_p (rtx, struct loop_info *, 
 			       rtx *, rtx *, rtx *, 
 			       enum machine_mode *mode);
 rtx final_biv_value (struct iv_class *, rtx, rtx,
-			   unsigned HOST_WIDE_INT);
+			   HOST_WIDE_UINT);
 rtx final_giv_value (struct induction *, rtx, rtx,
-			   unsigned HOST_WIDE_INT);
+			   HOST_WIDE_UINT);
 void emit_unrolled_add (rtx, rtx, rtx);
 int back_branch_in_range_p (rtx, rtx, rtx);
 

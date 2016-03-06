@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.  */
    while more important issues are dealt with.  */
 
 #define SBITMAP_ELT_BITS HOST_BITS_PER_WIDE_INT
-#define SBITMAP_ELT_TYPE unsigned HOST_WIDE_INT
+#define SBITMAP_ELT_TYPE HOST_WIDE_UINT
 
 typedef struct simple_bitmap_def {
   /* Number of bits.  */

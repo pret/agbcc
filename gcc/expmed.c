@@ -855,7 +855,7 @@ store_split_bit_field (op0, bitsize, bitpos, value, align)
 
 	  /* Fetch successively less significant portions.  */
 	  if (GET_CODE (value) == CONST_INT)
-	    part = GEN_INT (((unsigned HOST_WIDE_INT) (INTVAL (value))
+	    part = GEN_INT (((HOST_WIDE_UINT) (INTVAL (value))
 			     >> (bitsize - bitsdone - thissize))
 			    & (((HOST_WIDE_INT) 1 << thissize) - 1));
 	  else
@@ -879,7 +879,7 @@ store_split_bit_field (op0, bitsize, bitpos, value, align)
 	{
 	  /* Fetch successively more significant portions.  */
 	  if (GET_CODE (value) == CONST_INT)
-	    part = GEN_INT (((unsigned HOST_WIDE_INT) (INTVAL (value))
+	    part = GEN_INT (((HOST_WIDE_UINT) (INTVAL (value))
 			     >> bitsdone)
 			    & (((HOST_WIDE_INT) 1 << thissize) - 1));
 	  else
@@ -1673,7 +1673,7 @@ mask_rtx (mode, bitpos, bitsize, complement)
     masklow = 0;
 
   if (bitpos + bitsize < HOST_BITS_PER_WIDE_INT)
-    masklow &= ((unsigned HOST_WIDE_INT) -1
+    masklow &= ((HOST_WIDE_UINT) -1
 		>> (HOST_BITS_PER_WIDE_INT - bitpos - bitsize));
   
   if (bitpos <= HOST_BITS_PER_WIDE_INT)
@@ -1682,7 +1682,7 @@ mask_rtx (mode, bitpos, bitsize, complement)
     maskhigh = (HOST_WIDE_INT) -1 << (bitpos - HOST_BITS_PER_WIDE_INT);
 
   if (bitpos + bitsize > HOST_BITS_PER_WIDE_INT)
-    maskhigh &= ((unsigned HOST_WIDE_INT) -1
+    maskhigh &= ((HOST_WIDE_UINT) -1
 		 >> (2 * HOST_BITS_PER_WIDE_INT - bitpos - bitsize));
   else
     maskhigh = 0;
@@ -1705,7 +1705,7 @@ lshift_value (mode, value, bitpos, bitsize)
      rtx value;
      int bitpos, bitsize;
 {
-  unsigned HOST_WIDE_INT v = INTVAL (value);
+  HOST_WIDE_UINT v = INTVAL (value);
   HOST_WIDE_INT low, high;
 
   if (bitsize < HOST_BITS_PER_WIDE_INT)
@@ -1891,9 +1891,9 @@ expand_shift (code, mode, shifted, amount, target, unsignedp)
   if (SHIFT_COUNT_TRUNCATED)
     {
       if (GET_CODE (op1) == CONST_INT
-          && ((unsigned HOST_WIDE_INT) INTVAL (op1) >=
-	      (unsigned HOST_WIDE_INT) GET_MODE_BITSIZE (mode)))
-        op1 = GEN_INT ((unsigned HOST_WIDE_INT) INTVAL (op1)
+          && ((HOST_WIDE_UINT) INTVAL (op1) >=
+	      (HOST_WIDE_UINT) GET_MODE_BITSIZE (mode)))
+        op1 = GEN_INT ((HOST_WIDE_UINT) INTVAL (op1)
 		       % GET_MODE_BITSIZE (mode));
       else if (GET_CODE (op1) == SUBREG
 	       && SUBREG_WORD (op1) == 0)
@@ -2046,13 +2046,13 @@ struct algorithm
 };
 
 static void synth_mult			(struct algorithm *,
-					       unsigned HOST_WIDE_INT,
+					       HOST_WIDE_UINT,
 					       int);
-static unsigned HOST_WIDE_INT choose_multiplier (unsigned HOST_WIDE_INT,
+static HOST_WIDE_UINT choose_multiplier (HOST_WIDE_UINT,
 						       int, int,
-						       unsigned HOST_WIDE_INT *,
+						       HOST_WIDE_UINT *,
 						       int *, int *);
-static unsigned HOST_WIDE_INT invert_mod2n	(unsigned HOST_WIDE_INT,
+static HOST_WIDE_UINT invert_mod2n	(HOST_WIDE_UINT,
 						       int);
 /* Compute and return the best algorithm for multiplying by T.
    The algorithm must cost less than cost_limit
@@ -2062,13 +2062,13 @@ static unsigned HOST_WIDE_INT invert_mod2n	(unsigned HOST_WIDE_INT,
 static void
 synth_mult (alg_out, t, cost_limit)
      struct algorithm *alg_out;
-     unsigned HOST_WIDE_INT t;
+     HOST_WIDE_UINT t;
      int cost_limit;
 {
   int m;
   struct algorithm *alg_in, *best_alg;
   int cost;
-  unsigned HOST_WIDE_INT q;
+  HOST_WIDE_UINT q;
 
   /* Indicate that no algorithm is yet found.  If no algorithm
      is found, this value will be returned and indicate failure.  */
@@ -2130,7 +2130,7 @@ synth_mult (alg_out, t, cost_limit)
   /* If we have an odd number, add or subtract one.  */
   if ((t & 1) != 0)
     {
-      unsigned HOST_WIDE_INT w;
+      HOST_WIDE_UINT w;
 
       for (w = 1; (w & t) != 0; w <<= 1)
 	;
@@ -2191,9 +2191,9 @@ synth_mult (alg_out, t, cost_limit)
 
   for (m = floor_log2 (t - 1); m >= 2; m--)
     {
-      unsigned HOST_WIDE_INT d;
+      HOST_WIDE_UINT d;
 
-      d = ((unsigned HOST_WIDE_INT) 1 << m) + 1;
+      d = ((HOST_WIDE_UINT) 1 << m) + 1;
       if (t % d == 0 && t > d)
 	{
 	  cost = MIN (shiftadd_cost[m], add_cost + shift_cost[m]);
@@ -2212,7 +2212,7 @@ synth_mult (alg_out, t, cost_limit)
 	  break;
 	}
 
-      d = ((unsigned HOST_WIDE_INT) 1 << m) - 1;
+      d = ((HOST_WIDE_UINT) 1 << m) - 1;
       if (t % d == 0 && t > d)
 	{
 	  cost = MIN (shiftsub_cost[m], add_cost + shift_cost[m]);
@@ -2514,7 +2514,7 @@ expand_mult (mode, op0, op1, target, unsignedp)
 
 int
 ceil_log2 (x)
-     unsigned HOST_WIDE_INT x;
+     HOST_WIDE_UINT x;
 {
   return floor_log2 (x - 1) + 1;
 }
@@ -2536,20 +2536,20 @@ ceil_log2 (x)
    where m is the full HOST_BITS_PER_WIDE_INT + 1 bit multiplier.  */
 
 static
-unsigned HOST_WIDE_INT
+HOST_WIDE_UINT
 choose_multiplier (d, n, precision, multiplier_ptr, post_shift_ptr, lgup_ptr)
-     unsigned HOST_WIDE_INT d;
+     HOST_WIDE_UINT d;
      int n;
      int precision;
-     unsigned HOST_WIDE_INT *multiplier_ptr;
+     HOST_WIDE_UINT *multiplier_ptr;
      int *post_shift_ptr;
      int *lgup_ptr;
 {
-  unsigned HOST_WIDE_INT mhigh_hi, mhigh_lo;
-  unsigned HOST_WIDE_INT mlow_hi, mlow_lo;
+  HOST_WIDE_UINT mhigh_hi, mhigh_lo;
+  HOST_WIDE_UINT mlow_hi, mlow_lo;
   int lgup, post_shift;
   int pow, pow2;
-  unsigned HOST_WIDE_INT nh, nl, dummy1, dummy2;
+  HOST_WIDE_UINT nh, nl, dummy1, dummy2;
 
   /* lgup = ceil(log2(divisor)); */
   lgup = ceil_log2 (d);
@@ -2570,22 +2570,22 @@ choose_multiplier (d, n, precision, multiplier_ptr, post_shift_ptr, lgup_ptr)
   /* mlow = 2^(N + lgup)/d */
  if (pow >= HOST_BITS_PER_WIDE_INT)
     {
-      nh = (unsigned HOST_WIDE_INT) 1 << (pow - HOST_BITS_PER_WIDE_INT);
+      nh = (HOST_WIDE_UINT) 1 << (pow - HOST_BITS_PER_WIDE_INT);
       nl = 0;
     }
   else
     {
       nh = 0;
-      nl = (unsigned HOST_WIDE_INT) 1 << pow;
+      nl = (HOST_WIDE_UINT) 1 << pow;
     }
   div_and_round_double (TRUNC_DIV_EXPR, 1, nl, nh, d, (HOST_WIDE_INT) 0,
 			&mlow_lo, &mlow_hi, &dummy1, &dummy2);
 
   /* mhigh = (2^(N + lgup) + 2^N + lgup - precision)/d */
   if (pow2 >= HOST_BITS_PER_WIDE_INT)
-    nh |= (unsigned HOST_WIDE_INT) 1 << (pow2 - HOST_BITS_PER_WIDE_INT);
+    nh |= (HOST_WIDE_UINT) 1 << (pow2 - HOST_BITS_PER_WIDE_INT);
   else
-    nl |= (unsigned HOST_WIDE_INT) 1 << pow2;
+    nl |= (HOST_WIDE_UINT) 1 << pow2;
   div_and_round_double (TRUNC_DIV_EXPR, 1, nl, nh, d, (HOST_WIDE_INT) 0,
 			&mhigh_lo, &mhigh_hi, &dummy1, &dummy2);
 
@@ -2603,8 +2603,8 @@ choose_multiplier (d, n, precision, multiplier_ptr, post_shift_ptr, lgup_ptr)
   /* Reduce to lowest terms */
   for (post_shift = lgup; post_shift > 0; post_shift--)
     {
-      unsigned HOST_WIDE_INT ml_lo = (mlow_hi << (HOST_BITS_PER_WIDE_INT - 1)) | (mlow_lo >> 1);
-      unsigned HOST_WIDE_INT mh_lo = (mhigh_hi << (HOST_BITS_PER_WIDE_INT - 1)) | (mhigh_lo >> 1);
+      HOST_WIDE_UINT ml_lo = (mlow_hi << (HOST_BITS_PER_WIDE_INT - 1)) | (mlow_lo >> 1);
+      HOST_WIDE_UINT mh_lo = (mhigh_hi << (HOST_BITS_PER_WIDE_INT - 1)) | (mhigh_lo >> 1);
       if (ml_lo >= mh_lo)
 	break;
 
@@ -2618,7 +2618,7 @@ choose_multiplier (d, n, precision, multiplier_ptr, post_shift_ptr, lgup_ptr)
   *lgup_ptr = lgup;
   if (n < HOST_BITS_PER_WIDE_INT)
     {
-      unsigned HOST_WIDE_INT mask = ((unsigned HOST_WIDE_INT) 1 << n) - 1;
+      HOST_WIDE_UINT mask = ((HOST_WIDE_UINT) 1 << n) - 1;
       *multiplier_ptr = mhigh_lo & mask;
       return mhigh_lo >= mask;
     }
@@ -2632,9 +2632,9 @@ choose_multiplier (d, n, precision, multiplier_ptr, post_shift_ptr, lgup_ptr)
 /* Compute the inverse of X mod 2**n, i.e., find Y such that X * Y is
    congruent to 1 (mod 2**N).  */
 
-static unsigned HOST_WIDE_INT
+static HOST_WIDE_UINT
 invert_mod2n (x, n)
-     unsigned HOST_WIDE_INT x;
+     HOST_WIDE_UINT x;
      int n;
 {
   /* Solve x*y == 1 (mod 2^n), where x is odd.  Return y.  */
@@ -2643,13 +2643,13 @@ invert_mod2n (x, n)
      x*y == 1 mod 2^3, since x is assumed odd.
      Each iteration doubles the number of bits of significance in y.  */
 
-  unsigned HOST_WIDE_INT mask;
-  unsigned HOST_WIDE_INT y = x;
+  HOST_WIDE_UINT mask;
+  HOST_WIDE_UINT y = x;
   int nbit = 3;
 
   mask = (n == HOST_BITS_PER_WIDE_INT
-	  ? ~(unsigned HOST_WIDE_INT) 0
-	  : ((unsigned HOST_WIDE_INT) 1 << n) - 1);
+	  ? ~(HOST_WIDE_UINT) 0
+	  : ((HOST_WIDE_UINT) 1 << n) - 1);
 
   while (nbit < n)
     {
@@ -2710,7 +2710,7 @@ rtx
 expand_mult_highpart (mode, op0, cnst1, target, unsignedp, max_cost)
      enum machine_mode mode;
      register rtx op0, target;
-     unsigned HOST_WIDE_INT cnst1;
+     HOST_WIDE_UINT cnst1;
      int unsignedp;
      int max_cost;
 {
@@ -3066,10 +3066,10 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 	  {
 	    if (unsignedp)
 	      {
-		unsigned HOST_WIDE_INT mh, ml;
+		HOST_WIDE_UINT mh, ml;
 		int pre_shift, post_shift;
 		int dummy;
-		unsigned HOST_WIDE_INT d = INTVAL (op1);
+		HOST_WIDE_UINT d = INTVAL (op1);
 
 		if (EXACT_POWER_OF_2_OR_ZERO_P (d))
 		  {
@@ -3090,7 +3090,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 		  }
 		else if (size <= HOST_BITS_PER_WIDE_INT)
 		  {
-		    if (d >= ((unsigned HOST_WIDE_INT) 1 << (size - 1)))
+		    if (d >= ((HOST_WIDE_UINT) 1 << (size - 1)))
 		      {
 			/* Most significant bit of divisor is set; emit an scc
 			   insn.  */
@@ -3181,10 +3181,10 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 	      }
 	    else		/* TRUNC_DIV, signed */
 	      {
-		unsigned HOST_WIDE_INT ml;
+		HOST_WIDE_UINT ml;
 		int lgup, post_shift;
 		HOST_WIDE_INT d = INTVAL (op1);
-		unsigned HOST_WIDE_INT abs_d = d >= 0 ? d : -d;
+		HOST_WIDE_UINT abs_d = d >= 0 ? d : -d;
 
 		/* n rem d = n rem -d */
 		if (rem_flag && d < 0)
@@ -3198,7 +3198,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 		else if (d == -1)
 		  quotient = expand_unop (compute_mode, neg_optab, op0,
 					  tquotient, 0);
-		else if (abs_d == (unsigned HOST_WIDE_INT) 1 << (size - 1))
+		else if (abs_d == (HOST_WIDE_UINT) 1 << (size - 1))
 		  {
 		    /* This case is not handled correctly below.  */
 		    quotient = emit_store_flag (tquotient, EQ, op0, op1,
@@ -3266,7 +3266,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 		  {
 		    choose_multiplier (abs_d, size, size - 1,
 				       &ml, &post_shift, &lgup);
-		    if (ml < (unsigned HOST_WIDE_INT) 1 << (size - 1))
+		    if (ml < (HOST_WIDE_UINT) 1 << (size - 1))
 		      {
 			rtx t1, t2, t3;
 
@@ -3292,7 +3292,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 		      {
 			rtx t1, t2, t3, t4;
 
-			ml |= (~(unsigned HOST_WIDE_INT) 0) << (size - 1);
+			ml |= (~(HOST_WIDE_UINT) 0) << (size - 1);
 			extra_cost = (shift_cost[post_shift]
 				      + shift_cost[size - 1] + 2 * add_cost);
 			t1 = expand_mult_highpart (compute_mode, op0, ml,
@@ -3337,7 +3337,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
       /* We will come here only for signed operations.  */
 	if (op1_is_constant && HOST_BITS_PER_WIDE_INT >= size)
 	  {
-	    unsigned HOST_WIDE_INT mh, ml;
+	    HOST_WIDE_UINT mh, ml;
 	    int pre_shift, lgup, post_shift;
 	    HOST_WIDE_INT d = INTVAL (op1);
 
@@ -3509,7 +3509,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 	    if (op1_is_constant && EXACT_POWER_OF_2_OR_ZERO_P (INTVAL (op1)))
 	      {
 		rtx t1, t2, t3;
-		unsigned HOST_WIDE_INT d = INTVAL (op1);
+		HOST_WIDE_UINT d = INTVAL (op1);
 		t1 = expand_shift (RSHIFT_EXPR, compute_mode, op0,
 				   build_int_2 (floor_log2 (d), 0),
 				   tquotient, 1);
@@ -3607,7 +3607,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 		   languages (Ada).  */
 
 		rtx t1, t2, t3;
-		unsigned HOST_WIDE_INT d = INTVAL (op1);
+		HOST_WIDE_UINT d = INTVAL (op1);
 		t1 = expand_shift (RSHIFT_EXPR, compute_mode, op0,
 				   build_int_2 (floor_log2 (d), 0),
 				   tquotient, 0);
@@ -3724,7 +3724,7 @@ expand_divmod (rem_flag, code, mode, op0, op1, target, unsignedp)
 	if (op1_is_constant && HOST_BITS_PER_WIDE_INT >= size)
 	  {
 	    HOST_WIDE_INT d = INTVAL (op1);
-	    unsigned HOST_WIDE_INT ml;
+	    HOST_WIDE_UINT ml;
 	    int post_shift;
 	    rtx t1;
 
@@ -4351,7 +4351,7 @@ emit_store_flag (target, code, op0, op1, mode, unsignedp, normalizep)
 
       else if (GET_MODE_BITSIZE (mode) <= HOST_BITS_PER_WIDE_INT
 	       && ((STORE_FLAG_VALUE & GET_MODE_MASK (mode))
-		   == (unsigned HOST_WIDE_INT) 1 << (GET_MODE_BITSIZE (mode) - 1)))
+		   == (HOST_WIDE_UINT) 1 << (GET_MODE_BITSIZE (mode) - 1)))
 	;
       else
 	return 0;

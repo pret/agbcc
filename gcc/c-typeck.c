@@ -2133,7 +2133,7 @@ build_binary_op (code, orig_op0, orig_op1, convert_p)
 		  if (TREE_INT_CST_LOW (op1) | TREE_INT_CST_HIGH (op1))
 		    short_shift = 1;
 		  if (TREE_INT_CST_HIGH (op1) != 0
-		      || ((unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (op1)
+		      || ((HOST_WIDE_UINT) TREE_INT_CST_LOW (op1)
 			  >= TYPE_PRECISION (type0)))
 		    warning ("right shift count >= width of type");
 		}
@@ -2161,7 +2161,7 @@ build_binary_op (code, orig_op0, orig_op1, convert_p)
 	      if (tree_int_cst_sgn (op1) < 0)
 		warning ("left shift count is negative");
 	      else if (TREE_INT_CST_HIGH (op1) != 0
-		       || ((unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (op1)
+		       || ((HOST_WIDE_UINT) TREE_INT_CST_LOW (op1)
 			   >= TYPE_PRECISION (type0)))
 		warning ("left shift count >= width of type");
 	    }
@@ -2189,7 +2189,7 @@ build_binary_op (code, orig_op0, orig_op1, convert_p)
 	      if (tree_int_cst_sgn (op1) < 0)
 		warning ("shift count is negative");
 	      else if (TREE_INT_CST_HIGH (op1) != 0
-		       || ((unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (op1)
+		       || ((HOST_WIDE_UINT) TREE_INT_CST_LOW (op1)
 			   >= TYPE_PRECISION (type0)))
 		warning ("shift count >= width of type");
 	    }

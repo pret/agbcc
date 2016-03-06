@@ -562,16 +562,16 @@ struct tree_common
 #define INT_CST_LT(A, B)  \
 (TREE_INT_CST_HIGH (A) < TREE_INT_CST_HIGH (B)			\
  || (TREE_INT_CST_HIGH (A) == TREE_INT_CST_HIGH (B)		\
-     && ((unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (A)		\
-	 < (unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (B))))
+     && ((HOST_WIDE_UINT) TREE_INT_CST_LOW (A)		\
+	 < (HOST_WIDE_UINT) TREE_INT_CST_LOW (B))))
 
 #define INT_CST_LT_UNSIGNED(A, B)  \
-(((unsigned HOST_WIDE_INT) TREE_INT_CST_HIGH (A)	\
-  < (unsigned HOST_WIDE_INT) TREE_INT_CST_HIGH (B))	\
- || (((unsigned HOST_WIDE_INT) TREE_INT_CST_HIGH (A)	\
-      == (unsigned HOST_WIDE_INT ) TREE_INT_CST_HIGH (B)) \
-     && (((unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (A)	\
-	  < (unsigned HOST_WIDE_INT) TREE_INT_CST_LOW (B)))))
+(((HOST_WIDE_UINT) TREE_INT_CST_HIGH (A)	\
+  < (HOST_WIDE_UINT) TREE_INT_CST_HIGH (B))	\
+ || (((HOST_WIDE_UINT) TREE_INT_CST_HIGH (A)	\
+      == (HOST_WIDE_UINT ) TREE_INT_CST_HIGH (B)) \
+     && (((HOST_WIDE_UINT) TREE_INT_CST_LOW (A)	\
+	  < (HOST_WIDE_UINT) TREE_INT_CST_LOW (B)))))
 
 struct tree_int_cst
 {
@@ -1370,11 +1370,11 @@ union tree_node
    defined here and in rtl.h.  */
 
 #ifndef exact_log2
-#define exact_log2(N) exact_log2_wide ((unsigned HOST_WIDE_INT) (N))
-#define floor_log2(N) floor_log2_wide ((unsigned HOST_WIDE_INT) (N))
+#define exact_log2(N) exact_log2_wide ((HOST_WIDE_UINT) (N))
+#define floor_log2(N) floor_log2_wide ((HOST_WIDE_UINT) (N))
 #endif
-extern int exact_log2_wide             (unsigned HOST_WIDE_INT);
-extern int floor_log2_wide             (unsigned HOST_WIDE_INT);
+extern int exact_log2_wide             (HOST_WIDE_UINT);
+extern int floor_log2_wide             (HOST_WIDE_UINT);
 
 extern char *oballoc			(int);
 extern char *permalloc			(int);
@@ -1565,13 +1565,13 @@ extern tree size_in_bytes		(tree);
 extern HOST_WIDE_INT int_size_in_bytes	(tree);
 extern tree size_binop			(enum tree_code, tree, tree);
 extern tree ssize_binop			(enum tree_code, tree, tree);
-extern tree size_int_wide		(unsigned HOST_WIDE_INT,
-					       unsigned HOST_WIDE_INT, int);
+extern tree size_int_wide		(HOST_WIDE_UINT,
+					       HOST_WIDE_UINT, int);
 #define size_int(L) size_int_2 ((L), 0, 0)
 #define bitsize_int(L, H) size_int_2 ((L), (H), 1)
 #define size_int_2(L, H, T)			\
-  size_int_wide ((unsigned HOST_WIDE_INT) (L),	\
-		 (unsigned HOST_WIDE_INT) (H), (T))
+  size_int_wide ((HOST_WIDE_UINT) (L),	\
+		 (HOST_WIDE_UINT) (H), (T))
 
 extern tree round_up			(tree, int);
 extern tree get_pending_sizes		(void);

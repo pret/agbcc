@@ -4946,8 +4946,8 @@ condjump_expect_p (insn)
   int retval;
   HOST_WIDE_INT exp_value;
   HOST_WIDE_INT cmp_value;
-  unsigned HOST_WIDE_INT exp_uns;
-  unsigned HOST_WIDE_INT cmp_uns;
+  HOST_WIDE_UINT exp_uns;
+  HOST_WIDE_UINT cmp_uns;
 
   if (GET_CODE (insn) != JUMP_INSN)
     return 0;

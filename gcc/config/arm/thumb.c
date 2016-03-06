@@ -57,15 +57,15 @@ int
 thumb_cmp_operand(rtx op, enum machine_mode mode)
 {
     return ((GET_CODE(op) == CONST_INT
-             && (unsigned HOST_WIDE_INT) (INTVAL(op)) < 256)
+             && (HOST_WIDE_UINT) (INTVAL(op)) < 256)
             || register_operand(op, mode));
 }
 
 int
 thumb_shiftable_const(HOST_WIDE_INT val)
 {
-    unsigned HOST_WIDE_INT x = val;
-    unsigned HOST_WIDE_INT mask = 0xff;
+    HOST_WIDE_UINT x = val;
+    HOST_WIDE_UINT mask = 0xff;
     int i;
 
     for (i = 0; i < 25; i++)

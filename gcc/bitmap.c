@@ -290,7 +290,7 @@ bitmap_find_bit (head, bit)
      unsigned int bit;
 {
   bitmap_element *element;
-  unsigned HOST_WIDE_INT indx = bit / BITMAP_ELEMENT_ALL_BITS;
+  HOST_WIDE_UINT indx = bit / BITMAP_ELEMENT_ALL_BITS;
 
   if (head->current == 0)
     return 0;
@@ -331,7 +331,7 @@ bitmap_clear_bit (head, bit)
       unsigned bit_num  = bit % (unsigned) HOST_BITS_PER_WIDE_INT;
       unsigned word_num = ((bit / (unsigned) HOST_BITS_PER_WIDE_INT)
 			   % BITMAP_ELEMENT_WORDS);
-      ptr->bits[word_num] &= ~ (((unsigned HOST_WIDE_INT) 1) << bit_num);
+      ptr->bits[word_num] &= ~ (((HOST_WIDE_UINT) 1) << bit_num);
 
       /* If we cleared the entire word, free up the element */
       if (bitmap_element_zerop (ptr))
@@ -351,7 +351,7 @@ bitmap_set_bit (head, bit)
   unsigned word_num
     = ((bit / (unsigned) HOST_BITS_PER_WIDE_INT) % BITMAP_ELEMENT_WORDS);
   unsigned bit_num  = bit % (unsigned) HOST_BITS_PER_WIDE_INT;
-  unsigned HOST_WIDE_INT bit_val = ((unsigned HOST_WIDE_INT) 1) << bit_num;
+  HOST_WIDE_UINT bit_val = ((HOST_WIDE_UINT) 1) << bit_num;
 
   if (ptr == 0)
     {
@@ -384,7 +384,7 @@ bitmap_bit_p (head, bit)
     = ((bit / (unsigned) HOST_BITS_PER_WIDE_INT) % BITMAP_ELEMENT_WORDS);
 
   return
-    (ptr->bits[word_num] & (((unsigned HOST_WIDE_INT) 1) << bit_num)) != 0;
+    (ptr->bits[word_num] & (((HOST_WIDE_UINT) 1) << bit_num)) != 0;
 }
 
 /* Store in bitmap TO the result of combining bitmap FROM1 and
@@ -401,9 +401,9 @@ bitmap_operation (to, from1, from2, operation)
   bitmap_element *from1_ptr = from1->first;
   bitmap_element *from2_ptr = from2->first;
   unsigned int indx1
-    = (from1_ptr) ? from1_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+    = (from1_ptr) ? from1_ptr->indx : ~ (HOST_WIDE_UINT) 0;
   unsigned int indx2
-    = (from2_ptr) ? from2_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+    = (from2_ptr) ? from2_ptr->indx : ~ (HOST_WIDE_UINT) 0;
   bitmap_element *to_ptr = 0;
   bitmap_element *from1_tmp;
   bitmap_element *from2_tmp;
@@ -432,9 +432,9 @@ bitmap_operation (to, from1, from2, operation)
 	  from1_tmp = from1_ptr;
 	  from2_tmp = from2_ptr;
 	  from1_ptr = from1_ptr->next;
-	  indx1 = (from1_ptr) ? from1_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+	  indx1 = (from1_ptr) ? from1_ptr->indx : ~ (HOST_WIDE_UINT) 0;
 	  from2_ptr = from2_ptr->next;
-	  indx2 = (from2_ptr) ? from2_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+	  indx2 = (from2_ptr) ? from2_ptr->indx : ~ (HOST_WIDE_UINT) 0;
 	}
       else if (indx1 < indx2)
 	{
@@ -442,7 +442,7 @@ bitmap_operation (to, from1, from2, operation)
 	  from1_tmp = from1_ptr;
 	  from2_tmp = &bitmap_zero;
 	  from1_ptr = from1_ptr->next;
-	  indx1 = (from1_ptr) ? from1_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+	  indx1 = (from1_ptr) ? from1_ptr->indx : ~ (HOST_WIDE_UINT) 0;
 	}
       else
 	{
@@ -450,7 +450,7 @@ bitmap_operation (to, from1, from2, operation)
 	  from1_tmp = &bitmap_zero;
 	  from2_tmp = from2_ptr;
 	  from2_ptr = from2_ptr->next;
-	  indx2 = (from2_ptr) ? from2_ptr->indx : ~ (unsigned HOST_WIDE_INT) 0;
+	  indx2 = (from2_ptr) ? from2_ptr->indx : ~ (HOST_WIDE_UINT) 0;
 	}
 
       if (to_ptr == 0)
@@ -569,7 +569,7 @@ bitmap_debug_file (file, head)
 
       for (i = 0; i < BITMAP_ELEMENT_WORDS; i++)
 	for (j = 0; j < HOST_BITS_PER_WIDE_INT; j++)
-	  if ((ptr->bits[i] & (((unsigned HOST_WIDE_INT) 1) << j)) != 0)
+	  if ((ptr->bits[i] & (((HOST_WIDE_UINT) 1) << j)) != 0)
 	    {
 	      if (col > 70)
 		{

@@ -547,7 +547,7 @@ cpp_parse_escape (pfile, string_ptr, result_mask)
       }
     case 'x':
       {
-	register unsigned HOST_WIDE_INT i = 0, overflow = 0;
+	register HOST_WIDE_UINT i = 0, overflow = 0;
 	register int digits_found = 0, digit;
 	for (;;)
 	  {
