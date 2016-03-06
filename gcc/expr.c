@@ -593,150 +593,6 @@ convert_move (to, from, unsignedp)
 	      return;
 	    }
 	}
- 
-#ifdef HAVE_trunchfqf2
-      if (HAVE_trunchfqf2 && from_mode == HFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunchfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctqfqf2
-      if (HAVE_trunctqfqf2 && from_mode == TQFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctqfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncsfqf2
-      if (HAVE_truncsfqf2 && from_mode == SFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncsfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncdfqf2
-      if (HAVE_truncdfqf2 && from_mode == DFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncdfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncxfqf2
-      if (HAVE_truncxfqf2 && from_mode == XFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncxfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctfqf2
-      if (HAVE_trunctfqf2 && from_mode == TFmode && to_mode == QFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctfqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-
-#ifdef HAVE_trunctqfhf2
-      if (HAVE_trunctqfhf2 && from_mode == TQFmode && to_mode == HFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctqfhf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncsfhf2
-      if (HAVE_truncsfhf2 && from_mode == SFmode && to_mode == HFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncsfhf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncdfhf2
-      if (HAVE_truncdfhf2 && from_mode == DFmode && to_mode == HFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncdfhf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncxfhf2
-      if (HAVE_truncxfhf2 && from_mode == XFmode && to_mode == HFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncxfhf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctfhf2
-      if (HAVE_trunctfhf2 && from_mode == TFmode && to_mode == HFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctfhf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-
-#ifdef HAVE_truncsftqf2
-      if (HAVE_truncsftqf2 && from_mode == SFmode && to_mode == TQFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncsftqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncdftqf2
-      if (HAVE_truncdftqf2 && from_mode == DFmode && to_mode == TQFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncdftqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncxftqf2
-      if (HAVE_truncxftqf2 && from_mode == XFmode && to_mode == TQFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncxftqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctftqf2
-      if (HAVE_trunctftqf2 && from_mode == TFmode && to_mode == TQFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctftqf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-
-#ifdef HAVE_truncdfsf2
-      if (HAVE_truncdfsf2 && from_mode == DFmode && to_mode == SFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncdfsf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncxfsf2
-      if (HAVE_truncxfsf2 && from_mode == XFmode && to_mode == SFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncxfsf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctfsf2
-      if (HAVE_trunctfsf2 && from_mode == TFmode && to_mode == SFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctfsf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_truncxfdf2
-      if (HAVE_truncxfdf2 && from_mode == XFmode && to_mode == DFmode)
-	{
-	  emit_unop_insn (CODE_FOR_truncxfdf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-#ifdef HAVE_trunctfdf2
-      if (HAVE_trunctfdf2 && from_mode == TFmode && to_mode == DFmode)
-	{
-	  emit_unop_insn (CODE_FOR_trunctfdf2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
 
       libcall = (rtx) 0;
       switch (from_mode)
@@ -747,15 +603,6 @@ convert_move (to, from, unsignedp)
 	    case DFmode:
 	      libcall = extendsfdf2_libfunc;
 	      break;
-
-	    case XFmode:
-	      libcall = extendsfxf2_libfunc;
-	      break;
-
-	    case TFmode:
-	      libcall = extendsftf2_libfunc;
-	      break;
-	      
 	    default:
 	      break;
 	    }
@@ -767,52 +614,11 @@ convert_move (to, from, unsignedp)
 	    case SFmode:
 	      libcall = truncdfsf2_libfunc;
 	      break;
-
-	    case XFmode:
-	      libcall = extenddfxf2_libfunc;
-	      break;
-
-	    case TFmode:
-	      libcall = extenddftf2_libfunc;
-	      break;
-	      
 	    default:
 	      break;
 	    }
 	  break;
 
-	case XFmode:
-	  switch (to_mode)
-	    {
-	    case SFmode:
-	      libcall = truncxfsf2_libfunc;
-	      break;
-
-	    case DFmode:
-	      libcall = truncxfdf2_libfunc;
-	      break;
-	      
-	    default:
-	      break;
-	    }
-	  break;
-
-	case TFmode:
-	  switch (to_mode)
-	    {
-	    case SFmode:
-	      libcall = trunctfsf2_libfunc;
-	      break;
-
-	    case DFmode:
-	      libcall = trunctfdf2_libfunc;
-	      break;
-	      
-	    default:
-	      break;
-	    }
-	  break;
-	  
 	default:
 	  break;
 	}

@@ -97,8 +97,6 @@ extern void ereal_to_int	(HOST_WIDE_INT *, HOST_WIDE_INT *,
 				       REAL_VALUE_TYPE);
 extern REAL_VALUE_TYPE ereal_ldexp (REAL_VALUE_TYPE, int);
 
-extern void etartdouble		(REAL_VALUE_TYPE, long *);
-extern void etarldouble		(REAL_VALUE_TYPE, long *);
 extern void etardouble		(REAL_VALUE_TYPE, long *);
 extern long etarsingle		(REAL_VALUE_TYPE);
 extern void ereal_to_decimal	(REAL_VALUE_TYPE, char *);
@@ -148,7 +146,6 @@ extern REAL_VALUE_TYPE real_value_truncate	(enum machine_mode,
   ereal_from_uint (&d, lo, hi, mode)
 
 /* IN is a REAL_VALUE_TYPE.  OUT is an array of longs. */
-#define REAL_VALUE_TO_TARGET_LONG_DOUBLE(IN, OUT) (etartdouble ((IN), (OUT)))
 #define REAL_VALUE_TO_TARGET_DOUBLE(IN, OUT) (etardouble ((IN), (OUT)))
 
 /* IN is a REAL_VALUE_TYPE.  OUT is a long. */

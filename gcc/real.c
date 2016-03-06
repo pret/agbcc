@@ -119,18 +119,8 @@ netlib.att.com: netlib/cephes.   */
 
 /* Define INFINITY for support of infinity.
    Define NANS for support of Not-a-Number's (NaN's).  */
-#if !defined(DEC) && !defined(IBM) && !defined(C4X)
 #define INFINITY
 #define NANS
-#endif
-
-/* Support of NaNs requires support of infinity.  */
-#ifdef NANS
-#ifndef INFINITY
-#define INFINITY
-#endif
-#endif
-
 
 /* Construct macros to translate between REAL_VALUE_TYPE and e type.
    In GET_REAL and PUT_REAL, r and e are pointers.
@@ -243,13 +233,7 @@ static void ediv	(uint16_t *, uint16_t *,
 static void emul	(uint16_t *, uint16_t *,
 			       uint16_t *);
 static void e53toe	(uint16_t *, uint16_t *);
-static void e64toe	(uint16_t *, uint16_t *);
-static void e113toe	(uint16_t *, uint16_t *);
 static void e24toe	(uint16_t *, uint16_t *);
-static void etoe113	(uint16_t *, uint16_t *);
-static void toe113	(uint16_t *, uint16_t *);
-static void etoe64	(uint16_t *, uint16_t *);
-static void toe64	(uint16_t *, uint16_t *);
 static void etoe53	(uint16_t *, uint16_t *);
 static void toe53	(uint16_t *, uint16_t *);
 static void etoe24	(uint16_t *, uint16_t *);
@@ -266,35 +250,12 @@ static int enormlz	(uint16_t *);
 static void etoasc	(uint16_t *, char *, int);
 static void asctoe24	(char *, uint16_t *);
 static void asctoe53	(char *, uint16_t *);
-static void asctoe64	(char *, uint16_t *);
-static void asctoe113	(char *, uint16_t *);
 static void asctoe	(char *, uint16_t *);
 static void asctoeg	(char *, uint16_t *, int);
 static void efloor	(uint16_t *, uint16_t *);
 static void eldexp	(uint16_t *, int, uint16_t *);
 static void eiremain	(uint16_t *, uint16_t *);
 static void mtherr	(char *, int);
-#ifdef DEC
-static void dectoe	(uint16_t *, uint16_t *);
-static void etodec	(uint16_t *, uint16_t *);
-static void todec	(uint16_t *, uint16_t *);
-#endif
-#ifdef IBM
-static void ibmtoe	(uint16_t *, uint16_t *,
-			       enum machine_mode);
-static void etoibm	(uint16_t *, uint16_t *,
-			       enum machine_mode);
-static void toibm	(uint16_t *, uint16_t *,
-			       enum machine_mode);
-#endif
-#ifdef C4X
-static void c4xtoe	(uint16_t *, uint16_t *,
- 			       enum machine_mode);
-static void etoc4x	(uint16_t *, uint16_t *,
- 			       enum machine_mode);
-static void toc4x	(uint16_t *, uint16_t *,
- 			       enum machine_mode);
-#endif
 static void make_nan	(uint16_t *, int, enum machine_mode);
 
 /* Copy 32-bit numbers obtained from array containing 16-bit numbers,
@@ -313,21 +274,6 @@ endian (e, x, mode)
     {
       switch (mode)
 	{
-	case TFmode:
-	  /* Swap halfwords in the fourth long.  */
-	  th = (unsigned long) e[6] & 0xffff;
-	  t = (unsigned long) e[7] & 0xffff;
-	  t |= th << 16;
-	  x[3] = (long) t;
-
-	case XFmode:
-	  /* Swap halfwords in the third long.  */
-	  th = (unsigned long) e[4] & 0xffff;
-	  t = (unsigned long) e[5] & 0xffff;
-	  t |= th << 16;
-	  x[2] = (long) t;
-	  /* fall into the double case */
-
 	case DFmode:
 	  /* Swap halfwords in the second word.  */
 	  th = (unsigned long) e[2] & 0xffff;
@@ -337,7 +283,6 @@ endian (e, x, mode)
 	  /* fall into the float case */
 
 	case SFmode:
-	case HFmode:
 	  /* Swap halfwords in the first word.  */
 	  th = (unsigned long) e[0] & 0xffff;
 	  t = (unsigned long) e[1] & 0xffff;
@@ -355,23 +300,6 @@ endian (e, x, mode)
 
       switch (mode)
 	{
-	case TFmode:
-	  /* Pack the fourth long.  */
-	  th = (unsigned long) e[7] & 0xffff;
-	  t = (unsigned long) e[6] & 0xffff;
-	  t |= th << 16;
-	  x[3] = (long) t;
-
-	case XFmode:
-	  /* Pack the third long.
-	     Each element of the input REAL_VALUE_TYPE array has 16 useful bits
-	     in it.  */
-	  th = (unsigned long) e[5] & 0xffff;
-	  t = (unsigned long) e[4] & 0xffff;
-	  t |= th << 16;
-	  x[2] = (long) t;
-	  /* fall into the double case */
-
 	case DFmode:
 	  /* Pack the second long */
 	  th = (unsigned long) e[3] & 0xffff;
@@ -381,7 +309,6 @@ endian (e, x, mode)
 	  /* fall into the float case */
 
 	case SFmode:
-	case HFmode:
 	  /* Pack the first long */
 	  th = (unsigned long) e[1] & 0xffff;
 	  t = (unsigned long) e[0] & 0xffff;
@@ -427,7 +354,6 @@ earith (value, icode, r1, r2)
 
   GET_REAL (r1, d1);
   GET_REAL (r2, d2);
-#ifdef NANS
 /*  Return NaN input back to the caller.  */
   if (eisnan (d1))
     {
@@ -439,7 +365,6 @@ earith (value, icode, r1, r2)
       PUT_REAL (d2, value);
       return;
     }
-#endif
   code = (enum tree_code) icode;
   switch (code)
     {
@@ -459,12 +384,8 @@ earith (value, icode, r1, r2)
 #ifndef REAL_INFINITY
       if (ecmp (d2, ezero) == 0)
 	{
-#ifdef NANS
 	enan (v, eisneg (d1) ^ eisneg (d2));
 	break;
-#else
-	abort ();
-#endif
 	}
 #endif
       ediv (d2, d1, v);	/* d1/d2 */
@@ -503,10 +424,8 @@ etrunci (x)
   HOST_WIDE_INT l;
 
   GET_REAL (&x, g);
-#ifdef NANS
   if (eisnan (g))
     return (x);
-#endif
   eifrac (g, &l, f);
   ltoe (&l, g);
   PUT_REAL (g, &r);
@@ -526,10 +445,8 @@ etruncui (x)
   HOST_WIDE_UINT l;
 
   GET_REAL (&x, g);
-#ifdef NANS
   if (eisnan (g))
     return (x);
-#endif
   euifrac (g, &l, f);
   ultoe (&l, g);
   PUT_REAL (g, &r);
@@ -551,16 +468,6 @@ ereal_atof (s, t)
 
   switch (t)
     {
-#ifdef C4X
-    case QFmode:
-    case HFmode:
-      asctoe53 (s, tem);
-      e53toe (tem, e);
-      break;
-#else
-    case HFmode:
-#endif
-
     case SFmode:
       asctoe24 (s, tem);
       e24toe (tem, e);
@@ -569,16 +476,6 @@ ereal_atof (s, t)
     case DFmode:
       asctoe53 (s, tem);
       e53toe (tem, e);
-      break;
-
-    case XFmode:
-      asctoe64 (s, tem);
-      e64toe (tem, e);
-      break;
-
-    case TFmode:
-      asctoe113 (s, tem);
-      e113toe (tem, e);
       break;
 
     default:
@@ -616,13 +513,11 @@ efixi (x)
   HOST_WIDE_INT l;
 
   GET_REAL (&x, f);
-#ifdef NANS
   if (eisnan (f))
     {
       warning ("conversion from NaN to int");
       return (-1);
     }
-#endif
   eifrac (f, &l, g);
   return l;
 }
@@ -639,13 +534,11 @@ efixui (x)
   HOST_WIDE_UINT l;
 
   GET_REAL (&x, f);
-#ifdef NANS
   if (eisnan (f))
     {
       warning ("conversion from NaN to unsigned int");
       return (-1);
     }
-#endif
   euifrac (f, &l, g);
   return l;
 }
@@ -700,16 +593,6 @@ ereal_from_int (d, i, j, mode)
       e53toe (df, dg);
       break;
 
-    case 96:
-      etoe64 (dg, df);
-      e64toe (df, dg);
-      break;
-
-    case 128:
-      etoe113 (dg, df);
-      e113toe (df, dg);
-      break;
-
     default:
       abort ();
   }
@@ -754,16 +637,6 @@ ereal_from_uint (d, i, j, mode)
       e53toe (df, dg);
       break;
 
-    case 96:
-      etoe64 (dg, df);
-      e64toe (df, dg);
-      break;
-
-    case 128:
-      etoe113 (dg, df);
-      e113toe (df, dg);
-      break;
-
     default:
       abort ();
   }
@@ -783,7 +656,6 @@ ereal_to_int (low, high, rr)
   int s;
 
   GET_REAL (&rr, d);
-#ifdef NANS
   if (eisnan (d))
     {
       warning ("conversion from NaN to int");
@@ -791,7 +663,6 @@ ereal_to_int (low, high, rr)
       *high = -1;
       return;
     }
-#endif
   /* convert positive value */
   s = 0;
   if (eisneg (d))
@@ -827,10 +698,8 @@ ereal_ldexp (x, n)
   REAL_VALUE_TYPE r;
 
   GET_REAL (&x, e);
-#ifdef NANS
   if (eisnan (e))
     return (x);
-#endif
   eldexp (e, n, y);
   PUT_REAL (y, &r);
   return (r);
@@ -848,12 +717,8 @@ target_isinf (x)
 {
   uint16_t e[NE];
 
-#ifdef INFINITY
   GET_REAL (&x, e);
   return (eisinf (e));
-#else
-  return 0;
-#endif
 }
 
 /* Check whether a REAL_VALUE_TYPE item is a NaN.  */
@@ -864,12 +729,8 @@ target_isnan (x)
 {
   uint16_t e[NE];
 
-#ifdef NANS
   GET_REAL (&x, e);
   return (eisnan (e));
-#else
-  return (0);
-#endif
 }
 
 
@@ -895,43 +756,21 @@ real_value_truncate (mode, arg)
   REAL_VALUE_TYPE r;
 
   GET_REAL (&arg, e);
-#ifdef NANS
   if (eisnan (e))
     return (arg);
-#endif
   eclear (t);
   switch (mode)
     {
-    case TFmode:
-      etoe113 (e, t);
-      e113toe (t, t);
-      break;
-
-    case XFmode:
-      etoe64 (e, t);
-      e64toe (t, t);
-      break;
-
     case DFmode:
       etoe53 (e, t);
       e53toe (t, t);
       break;
 
     case SFmode:
-#ifndef C4X
-    case HFmode:
-#endif
       etoe24 (e, t);
       e24toe (t, t);
       break;
 
-#ifdef C4X
-    case HFmode:
-    case QFmode:
-      etoe53 (e, t);
-      e53toe (t, t);
-      break;
-#endif
 
     case SImode:
       r = etrunci (arg);
@@ -1034,38 +873,6 @@ debug_real (r)
       fprintf (file, "%lx, %lx", L[0],  L[1]);
 
    that will work on both narrow- and wide-word host computers.  */
-
-/* Convert R to a 128-bit long double precision value.  The output array L
-   contains four 32-bit pieces of the result, in the order they would appear
-   in memory.  */
-
-void
-etartdouble (r, l)
-     REAL_VALUE_TYPE r;
-     long l[];
-{
-  uint16_t e[NE];
-
-  GET_REAL (&r, e);
-  etoe113 (e, e);
-  endian (e, l, TFmode);
-}
-
-/* Convert R to a double extended precision value.  The output array L
-   contains three 32-bit pieces of the result, in the order they would
-   appear in memory.  */
-
-void
-etarldouble (r, l)
-     REAL_VALUE_TYPE r;
-     long l[];
-{
-  uint16_t e[NE];
-
-  GET_REAL (&r, e);
-  etoe64 (e, e);
-  endian (e, l, XFmode);
-}
 
 /* Convert R to a double precision value.  The output array L contains two
    32-bit pieces of the result, in the order they would appear in memory.  */
@@ -1398,10 +1205,8 @@ eisinf (x)
      uint16_t x[];
 {
 
-#ifdef NANS
   if (eisnan (x))
     return (0);
-#endif
   if ((x[NE - 1] & 0x7fff) == 0x7fff)
     return (1);
   else
@@ -1415,7 +1220,6 @@ static int
 eisnan (x)
      uint16_t x[];
 {
-#ifdef NANS
   int i;
 
   /* NaN has maximum exponent */
@@ -1427,7 +1231,6 @@ eisnan (x)
       if (*x++ != 0)
         return (1);
     }
-#endif
 
   return (0);
 }
@@ -1441,37 +1244,9 @@ einfin (x)
 {
   register int i;
 
-#ifdef INFINITY
   for (i = 0; i < NE - 1; i++)
     *x++ = 0;
   *x |= 32767;
-#else
-  for (i = 0; i < NE - 1; i++)
-    *x++ = 0xffff;
-  *x |= 32766;
-  if (rndprc < NBITS)
-    {
-      if (rndprc == 113)
-	{
-	  *(x - 9) = 0;
-	  *(x - 8) = 0;
-	}
-      if (rndprc == 64)
-	{
-	  *(x - 5) = 0;
-	}
-      if (rndprc == 53)
-	{
-	  *(x - 4) = 0xf800;
-	}
-      else
-	{
-	  *(x - 4) = 0;
-	  *(x - 3) = 0;
-	  *(x - 2) = 0xff00;
-	}
-    }
-#endif
 }
 
 /* Output an e-type NaN.
@@ -1510,10 +1285,8 @@ emovi (a, b)
   /* get the exponent */
   *q = *p--;
   *q++ &= 0x7fff;		/* delete the sign bit */
-#ifdef INFINITY
   if ((*(q - 1) & 0x7fff) == 0x7fff)
     {
-#ifdef NANS
       if (eisnan (a))
 	{
 	  *q++ = 0;
@@ -1521,13 +1294,11 @@ emovi (a, b)
 	    *q++ = *p--;
 	  return;
 	}
-#endif
 
       for (i = 2; i < NI; i++)
 	*q++ = 0;
       return;
     }
-#endif
 
   /* clear high guard word */
   *q++ = 0;
@@ -1556,20 +1327,16 @@ emovo (a, b)
     *q-- = *p++ | 0x8000;
   else
     *q-- = *p++;
-#ifdef INFINITY
   if (*(p - 1) == 0x7fff)
     {
-#ifdef NANS
       if (eiisnan (a))
 	{
 	  enan (b, eiisneg (a));
 	  return;
 	}
-#endif
       einfin (b);
 	return;
     }
-#endif
   /* skip over guard word */
   ++p;
   /* move the significand */
@@ -1667,10 +1434,8 @@ eiisinf (x)
      uint16_t x[];
 {
 
-#ifdef NANS
   if (eiisnan (x))
     return (0);
-#endif
   if ((x[E] & 0x7fff) == 0x7fff)
     return (1);
   return (0);
@@ -2095,24 +1860,12 @@ emdnorm (s, lost, subflg, exp, rcntrl)
   j = enormlz (s);
 
   /* a blank significand could mean either zero or infinity.  */
-#ifndef INFINITY
-  if (j > NBITS)
-    {
-      ecleazs (s);
-      return;
-    }
-#endif
   exp -= j;
-#ifndef INFINITY
-  if (exp >= 32767L)
-    goto overf;
-#else
   if ((j > NBITS) && (exp < 32767))
     {
       ecleazs (s);
       return;
     }
-#endif
   if (exp < 0L)
     {
       if (exp > (int32_t) (-NBITS - 1))
@@ -2226,7 +1979,6 @@ emdnorm (s, lost, subflg, exp, rcntrl)
   s[rw] &= ~rmsk;
   if ((r & rmbit) != 0)
     {
-#ifndef C4X
       if (r == rmbit)
 	{
 	  if (lost == 0)
@@ -2240,7 +1992,6 @@ emdnorm (s, lost, subflg, exp, rcntrl)
 		goto mddone;
 	    }
 	}
-#endif
       eaddm (rbit, s);
     }
  mddone:
@@ -2259,31 +2010,11 @@ emdnorm (s, lost, subflg, exp, rcntrl)
   s[NI - 1] = 0;
   if (exp >= 32767L)
     {
-#ifndef INFINITY
-    overf:
-#endif
-#ifdef INFINITY
       s[1] = 32767;
       for (i = 2; i < NI - 1; i++)
 	s[i] = 0;
       if (extra_warnings)
 	warning ("floating point overflow");
-#else
-      s[1] = 32766;
-      s[2] = 0;
-      for (i = M + 1; i < NI - 1; i++)
-	s[i] = 0xffff;
-      s[NI - 1] = 0;
-      if ((rndprc < 64) || (rndprc == 113))
-	{
-	  s[rw] &= ~rmsk;
-	  if (rndprc == 24)
-	    {
-	      s[5] = 0;
-	      s[6] = 0;
-	    }
-	}
-#endif
       return;
     }
   if (exp < 0)
@@ -2301,7 +2032,6 @@ esub (a, b, c)
      uint16_t *a, *b, *c;
 {
 
-#ifdef NANS
   if (eisnan (a))
     {
       emov (a, c);
@@ -2321,7 +2051,6 @@ esub (a, b, c)
       enan (c, 0);
       return;
     }
-#endif
   subflg = 1;
   eadd1 (a, b, c);
 }
@@ -2333,7 +2062,6 @@ eadd (a, b, c)
      uint16_t *a, *b, *c;
 {
 
-#ifdef NANS
 /* NaN plus anything is a NaN.  */
   if (eisnan (a))
     {
@@ -2354,7 +2082,6 @@ eadd (a, b, c)
       enan (c, 0);
       return;
     }
-#endif
   subflg = 0;
   eadd1 (a, b, c);
 }
@@ -2369,7 +2096,6 @@ eadd1 (a, b, c)
   int i, lost, j, k;
   int32_t lt, lta, ltb;
 
-#ifdef INFINITY
   if (eisinf (a))
     {
       emov (a, c);
@@ -2382,7 +2108,6 @@ eadd1 (a, b, c)
       emov (b, c);
       return;
     }
-#endif
   emovi (a, ai);
   emovi (b, bi);
   if (subflg)
@@ -2484,7 +2209,6 @@ ediv (a, b, c)
    operands have opposite signs -- but flush -0 to 0 later if not IEEE.  */
   sign = eisneg(a) ^ eisneg(b);
 
-#ifdef NANS
 /* Return any NaN input.  */
   if (eisnan (a))
     {
@@ -2504,9 +2228,7 @@ ediv (a, b, c)
     enan (c, sign);
     return;
     }
-#endif
 /* Infinity over anything else is infinity.  */
-#ifdef INFINITY
   if (eisinf (b))
     {
       einfin (c);
@@ -2518,7 +2240,6 @@ ediv (a, b, c)
       eclear (c);
       goto divsign;
     }
-#endif
   emovi (a, ai);
   emovi (b, bi);
   lta = ai[E];
@@ -2585,7 +2306,6 @@ emul (a, b, c)
    operands have opposite signs -- but flush -0 to 0 later if not IEEE.  */
   sign = eisneg(a) ^ eisneg(b);
 
-#ifdef NANS
 /* NaN times anything is the same NaN.  */
   if (eisnan (a))
     {
@@ -2605,15 +2325,12 @@ emul (a, b, c)
     enan (c, sign);
     return;
     }
-#endif
 /* Infinity times anything else is infinity.  */
-#ifdef INFINITY
   if (eisinf (a) || eisinf (b))
     {
       einfin (c);
       goto mulsign;
     }
-#endif
   emovi (a, ai);
   emovi (b, bi);
   lta = ai[E];
@@ -2670,21 +2387,6 @@ static void
 e53toe (pe, y)
      uint16_t *pe, *y;
 {
-#ifdef DEC
-
-  dectoe (pe, y);
-
-#else
-#ifdef IBM
-
-  ibmtoe (pe, y, DFmode);
-
-#else
-#ifdef C4X
-
-  c4xtoe (pe, y, HFmode);
-
-#else
   register uint16_t r;
   register uint16_t *e, *p;
   uint16_t yy[NI];
@@ -2701,10 +2403,8 @@ e53toe (pe, y)
     yy[0] = 0xffff;
   yy[M] = (r & 0x0f) | 0x10;
   r &= ~0x800f;			/* strip sign and 4 significand bits */
-#ifdef INFINITY
   if (r == 0x7ff0)
     {
-#ifdef NANS
       if (! REAL_WORDS_BIG_ENDIAN)
 	{
 	  if (((pe[3] & 0xf) != 0) || (pe[2] != 0)
@@ -2723,14 +2423,12 @@ e53toe (pe, y)
 	      return;
 	    }
 	}
-#endif  /* NANS */
       eclear (y);
       einfin (y);
       if (yy[0])
 	eneg (y);
       return;
     }
-#endif  /* INFINITY */
   r >>= 4;
   /* If zero exponent, then the significand is denormalized.
      So take back the understood high significand bit.  */
@@ -2766,210 +2464,6 @@ e53toe (pe, y)
 	yy[E] -= (uint16_t) (k - 1);
     }
   emovo (yy, y);
-#endif /* not C4X */
-#endif /* not IBM */
-#endif /* not DEC */
-}
-
-/* Convert double extended precision float PE to e type Y.  */
-
-static void
-e64toe (pe, y)
-     uint16_t *pe, *y;
-{
-  uint16_t yy[NI];
-  uint16_t *e, *p, *q;
-  int i;
-
-  e = pe;
-  p = yy;
-  for (i = 0; i < NE - 5; i++)
-    *p++ = 0;
-/* This precision is not ordinarily supported on DEC or IBM.  */
-#ifdef DEC
-  for (i = 0; i < 5; i++)
-    *p++ = *e++;
-#endif
-#ifdef IBM
-  p = &yy[0] + (NE - 1);
-  *p-- = *e++;
-  ++e;
-  for (i = 0; i < 5; i++)
-    *p-- = *e++;
-#endif
-  if (! REAL_WORDS_BIG_ENDIAN)
-    {
-      for (i = 0; i < 5; i++)
-	*p++ = *e++;
-
-      /* For denormal long double Intel format, shift significand up one
-	 -- but only if the top significand bit is zero.  A top bit of 1
-	 is "pseudodenormal" when the exponent is zero.  */
-      if((yy[NE-1] & 0x7fff) == 0 && (yy[NE-2] & 0x8000) == 0)
-	{
-	  uint16_t temp[NI];
-
-	  emovi(yy, temp);
-	  eshup1(temp);
-	  emovo(temp,y);
-	  return;
-	}
-    }
-  else
-    {
-      p = &yy[0] + (NE - 1);
-#ifdef ARM_EXTENDED_IEEE_FORMAT
-      /* For ARMs, the exponent is in the lowest 15 bits of the word.  */
-      *p-- = (e[0] & 0x8000) | (e[1] & 0x7ffff);
-      e += 2;
-#else
-      *p-- = *e++;
-      ++e;
-#endif
-      for (i = 0; i < 4; i++)
-	*p-- = *e++;
-    }
-#ifdef INFINITY
-  /* Point to the exponent field and check max exponent cases.  */
-  p = &yy[NE - 1];
-  if ((*p & 0x7fff) == 0x7fff)
-    {
-#ifdef NANS
-      if (! REAL_WORDS_BIG_ENDIAN)
-	{
-	  for (i = 0; i < 4; i++)
-	    {
-	      if ((i != 3 && pe[i] != 0)
-		  /* Anything but 0x8000 here, including 0, is a NaN.  */
-		  || (i == 3 && pe[i] != 0x8000))
-		{
-		  enan (y, (*p & 0x8000) != 0);
-		  return;
-		}
-	    }
-	}
-      else
-	{
-#ifdef ARM_EXTENDED_IEEE_FORMAT
-	  for (i = 2; i <= 5; i++)
-	    {
-	      if (pe[i] != 0)
-		{
-		  enan (y, (*p & 0x8000) != 0);
-		  return;
-		}
-	    }
-#else /* not ARM */
-	  /* In Motorola extended precision format, the most significant
-	     bit of an infinity mantissa could be either 1 or 0.  It is
-	     the lower order bits that tell whether the value is a NaN.  */
-	  if ((pe[2] & 0x7fff) != 0)
-	    goto bigend_nan;
-
-	  for (i = 3; i <= 5; i++)
-	    {
-	      if (pe[i] != 0)
-		{
-bigend_nan:
-		  enan (y, (*p & 0x8000) != 0);
-		  return;
-		}
-	    }
-#endif /* not ARM */
-	}
-#endif /* NANS */
-      eclear (y);
-      einfin (y);
-      if (*p & 0x8000)
-	eneg (y);
-      return;
-    }
-#endif  /* INFINITY */
-  p = yy;
-  q = y;
-  for (i = 0; i < NE; i++)
-    *q++ = *p++;
-}
-
-/* Convert 128-bit long double precision float PE to e type Y.  */
-
-static void
-e113toe (pe, y)
-     uint16_t *pe, *y;
-{
-  register uint16_t r;
-  uint16_t *e, *p;
-  uint16_t yy[NI];
-  int denorm, i;
-
-  e = pe;
-  denorm = 0;
-  ecleaz (yy);
-  if (! REAL_WORDS_BIG_ENDIAN)
-    e += 7;
-  r = *e;
-  yy[0] = 0;
-  if (r & 0x8000)
-    yy[0] = 0xffff;
-  r &= 0x7fff;
-#ifdef INFINITY
-  if (r == 0x7fff)
-    {
-#ifdef NANS
-      if (! REAL_WORDS_BIG_ENDIAN)
-	{
-	  for (i = 0; i < 7; i++)
-	    {
-	      if (pe[i] != 0)
-		{
-		  enan (y, yy[0] != 0);
-		  return;
-		}
-	    }
-	}
-      else
-	{
-	  for (i = 1; i < 8; i++)
-	    {
-	      if (pe[i] != 0)
-		{
-		  enan (y, yy[0] != 0);
-		  return;
-		}
-	    }
-	}
-#endif /* NANS */
-      eclear (y);
-      einfin (y);
-      if (yy[0])
-	eneg (y);
-      return;
-    }
-#endif  /* INFINITY */
-  yy[E] = r;
-  p = &yy[M + 1];
-  if (! REAL_WORDS_BIG_ENDIAN)
-    {
-      for (i = 0; i < 7; i++)
-	*p++ = *(--e);
-    }
-  else
-    {
-      ++e;
-      for (i = 0; i < 7; i++)
-	*p++ = *e++;
-    }
-/* If denormal, remove the implied bit; else shift down 1.  */
-  if (r == 0)
-    {
-      yy[M] = 0;
-    }
-  else
-    {
-      yy[M] = 1;
-      eshift (yy, -1);
-    }
-  emovo (yy, y);
 }
 
 /* Convert single precision float PE to e type Y.  */
@@ -2978,17 +2472,7 @@ static void
 e24toe (pe, y)
      uint16_t *pe, *y;
 {
-#ifdef IBM
 
-  ibmtoe (pe, y, SFmode);
-
-#else
-
-#ifdef C4X
-
-  c4xtoe (pe, y, QFmode);
-
-#else
 
   register uint16_t r;
   register uint16_t *e, *p;
@@ -3000,19 +2484,14 @@ e24toe (pe, y)
   ecleaz (yy);
   if (! REAL_WORDS_BIG_ENDIAN)
     e += 1;
-#ifdef DEC
-  e += 1;
-#endif
   r = *e;
   yy[0] = 0;
   if (r & 0x8000)
     yy[0] = 0xffff;
   yy[M] = (r & 0x7f) | 0200;
   r &= ~0x807f;			/* strip sign and 7 significand bits */
-#ifdef INFINITY
   if (r == 0x7f80)
     {
-#ifdef NANS
       if (REAL_WORDS_BIG_ENDIAN)
 	{
 	  if (((pe[0] & 0x7f) != 0) || (pe[1] != 0))
@@ -3029,14 +2508,12 @@ e24toe (pe, y)
 	      return;
 	    }
 	}
-#endif  /* NANS */
       eclear (y);
       einfin (y);
       if (yy[0])
 	eneg (y);
       return;
     }
-#endif  /* INFINITY */
   r >>= 7;
   /* If zero exponent, then the significand is denormalized.
      So take back the understood high significand bit.  */
@@ -3048,9 +2525,6 @@ e24toe (pe, y)
   r += EXONE - 0177;
   yy[E] = r;
   p = &yy[M + 1];
-#ifdef DEC
-  *p++ = *(--e);
-#endif
   if (! REAL_WORDS_BIG_ENDIAN)
     *p++ = *(--e);
   else
@@ -3067,303 +2541,10 @@ e24toe (pe, y)
 	yy[E] -= (uint16_t) (k - 1);
     }
   emovo (yy, y);
-#endif /* not C4X */
-#endif /* not IBM */
-}
-
-/* Convert e-type X to IEEE 128-bit long double format E.  */
-
-static void
-etoe113 (x, e)
-     uint16_t *x, *e;
-{
-  uint16_t xi[NI];
-  int32_t exp;
-  int rndsav;
-
-#ifdef NANS
-  if (eisnan (x))
-    {
-      make_nan (e, eisneg (x), TFmode);
-      return;
-    }
-#endif
-  emovi (x, xi);
-  exp = (int32_t) xi[E];
-#ifdef INFINITY
-  if (eisinf (x))
-    goto nonorm;
-#endif
-  /* round off to nearest or even */
-  rndsav = rndprc;
-  rndprc = 113;
-  emdnorm (xi, 0, 0, exp, 64);
-  rndprc = rndsav;
- nonorm:
-  toe113 (xi, e);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   113-bit precision, to IEEE 128-bit long double format Y.  */
-
-static void
-toe113 (a, b)
-     uint16_t *a, *b;
-{
-  register uint16_t *p, *q;
-  uint16_t i;
-
-#ifdef NANS
-  if (eiisnan (a))
-    {
-      make_nan (b, eiisneg (a), TFmode);
-      return;
-    }
-#endif
-  p = a;
-  if (REAL_WORDS_BIG_ENDIAN)
-    q = b;
-  else
-    q = b + 7;			/* point to output exponent */
-
-  /* If not denormal, delete the implied bit.  */
-  if (a[E] != 0)
-    {
-      eshup1 (a);
-    }
-  /* combine sign and exponent */
-  i = *p++;
-  if (REAL_WORDS_BIG_ENDIAN)
-    {
-      if (i)
-	*q++ = *p++ | 0x8000;
-      else
-	*q++ = *p++;
-    }
-  else
-    {
-      if (i)
-	*q-- = *p++ | 0x8000;
-      else
-	*q-- = *p++;
-    }
-  /* skip over guard word */
-  ++p;
-  /* move the significand */
-  if (REAL_WORDS_BIG_ENDIAN)
-    {
-      for (i = 0; i < 7; i++)
-	*q++ = *p++;
-    }
-  else
-    {
-      for (i = 0; i < 7; i++)
-	*q-- = *p++;
-    }
-}
-
-/* Convert e-type X to IEEE double extended format E.  */
-
-static void
-etoe64 (x, e)
-     uint16_t *x, *e;
-{
-  uint16_t xi[NI];
-  int32_t exp;
-  int rndsav;
-
-#ifdef NANS
-  if (eisnan (x))
-    {
-      make_nan (e, eisneg (x), XFmode);
-      return;
-    }
-#endif
-  emovi (x, xi);
-  /* adjust exponent for offset */
-  exp = (int32_t) xi[E];
-#ifdef INFINITY
-  if (eisinf (x))
-    goto nonorm;
-#endif
-  /* round off to nearest or even */
-  rndsav = rndprc;
-  rndprc = 64;
-  emdnorm (xi, 0, 0, exp, 64);
-  rndprc = rndsav;
- nonorm:
-  toe64 (xi, e);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   64-bit precision, to IEEE double extended format Y.  */
-
-static void
-toe64 (a, b)
-     uint16_t *a, *b;
-{
-  register uint16_t *p, *q;
-  uint16_t i;
-
-#ifdef NANS
-  if (eiisnan (a))
-    {
-      make_nan (b, eiisneg (a), XFmode);
-      return;
-    }
-#endif
-  /* Shift denormal long double Intel format significand down one bit.  */
-  if ((a[E] == 0) && ! REAL_WORDS_BIG_ENDIAN)
-    eshdn1 (a);
-  p = a;
-#ifdef IBM
-  q = b;
-#endif
-#ifdef DEC
-  q = b + 4;
-#endif
-  if (REAL_WORDS_BIG_ENDIAN)
-    q = b;
-  else
-    {
-      q = b + 4;			/* point to output exponent */
-    }
-
-  /* combine sign and exponent */
-  i = *p++;
-#ifdef IBM
-  if (i)
-    *q++ = *p++ | 0x8000;
-  else
-    *q++ = *p++;
-  *q++ = 0;
-#endif
-#ifdef DEC
-  if (i)
-    *q-- = *p++ | 0x8000;
-  else
-    *q-- = *p++;
-#endif
-  if (REAL_WORDS_BIG_ENDIAN)
-    {
-#ifdef ARM_EXTENDED_IEEE_FORMAT
-      /* The exponent is in the lowest 15 bits of the first word.  */
-      *q++ = i ? 0x8000 : 0;
-      *q++ = *p++;
-#else
-      if (i)
-	*q++ = *p++ | 0x8000;
-      else
-	*q++ = *p++;
-      *q++ = 0;
-#endif
-    }
-  else
-    {
-      if (i)
-	*q-- = *p++ | 0x8000;
-      else
-	*q-- = *p++;
-    }
-  /* skip over guard word */
-  ++p;
-  /* move the significand */
-#ifdef IBM
-  for (i = 0; i < 4; i++)
-    *q++ = *p++;
-#endif
-#ifdef DEC
-  for (i = 0; i < 4; i++)
-    *q-- = *p++;
-#endif
-  if (REAL_WORDS_BIG_ENDIAN)
-    {
-      for (i = 0; i < 4; i++)
-	*q++ = *p++;
-    }
-  else
-    {
-#ifdef INFINITY
-      if (eiisinf (a))
-	{
-	  /* Intel long double infinity significand.  */
-	  *q-- = 0x8000;
-	  *q-- = 0;
-	  *q-- = 0;
-	  *q = 0;
-	  return;
-	}
-#endif
-      for (i = 0; i < 4; i++)
-	*q-- = *p++;
-    }
 }
 
 /* e type to double precision.  */
 
-#ifdef DEC
-/* Convert e-type X to DEC-format double E.  */
-
-static void
-etoe53 (x, e)
-     uint16_t *x, *e;
-{
-  etodec (x, e);		/* see etodec.c */
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   56-bit double precision, to DEC double Y.  */
-
-static void
-toe53 (x, y)
-     uint16_t *x, *y;
-{
-  todec (x, y);
-}
-
-#else
-#ifdef IBM
-/* Convert e-type X to IBM 370-format double E.  */
-
-static void
-etoe53 (x, e)
-     uint16_t *x, *e;
-{
-  etoibm (x, e, DFmode);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   56-bit precision, to IBM 370 double Y.  */
-
-static void
-toe53 (x, y)
-     uint16_t *x, *y;
-{
-  toibm (x, y, DFmode);
-}
-
-#else /* it's neither DEC nor IBM */
-#ifdef C4X
-/* Convert e-type X to C4X-format long double E.  */
-
-static void
-etoe53 (x, e)
-     uint16_t *x, *e;
-{
-  etoc4x (x, e, HFmode);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   56-bit precision, to IBM 370 double Y.  */
-
-static void
-toe53 (x, y)
-     uint16_t *x, *y;
-{
-  toc4x (x, y, HFmode);
-}
-
-#else  /* it's neither DEC nor IBM nor C4X */
 
 /* Convert e-type X to IEEE double E.  */
 
@@ -3375,20 +2556,16 @@ etoe53 (x, e)
   int32_t exp;
   int rndsav;
 
-#ifdef NANS
   if (eisnan (x))
     {
       make_nan (e, eisneg (x), DFmode);
       return;
     }
-#endif
   emovi (x, xi);
   /* adjust exponent for offsets */
   exp = (int32_t) xi[E] - (EXONE - 0x3ff);
-#ifdef INFINITY
   if (eisinf (x))
     goto nonorm;
-#endif
   /* round off to nearest or even */
   rndsav = rndprc;
   rndprc = 53;
@@ -3408,13 +2585,11 @@ toe53 (x, y)
   uint16_t i;
   uint16_t *p;
 
-#ifdef NANS
   if (eiisnan (x))
     {
       make_nan (y, eiisneg (x), DFmode);
       return;
     }
-#endif
   p = &x[0];
   if (! REAL_WORDS_BIG_ENDIAN)
     y += 3;
@@ -3426,7 +2601,6 @@ toe53 (x, y)
   if (i >= (unsigned int) 2047)
     {
       /* Saturate at largest number less than infinity.  */
-#ifdef INFINITY
       *y |= 0x7ff0;
       if (! REAL_WORDS_BIG_ENDIAN)
 	{
@@ -3441,22 +2615,6 @@ toe53 (x, y)
 	  *y++ = 0;
 	  *y++ = 0;
 	}
-#else
-      *y |= (uint16_t) 0x7fef;
-      if (! REAL_WORDS_BIG_ENDIAN)
-	{
-	  *(--y) = 0xffff;
-	  *(--y) = 0xffff;
-	  *(--y) = 0xffff;
-	}
-      else
-	{
-	  ++y;
-	  *y++ = 0xffff;
-	  *y++ = 0xffff;
-	  *y++ = 0xffff;
-	}
-#endif
       return;
     }
   if (i == 0)
@@ -3485,58 +2643,6 @@ toe53 (x, y)
     }
 }
 
-#endif /* not C4X */
-#endif /* not IBM */
-#endif /* not DEC */
-
-
-
-/* e type to single precision.  */
-
-#ifdef IBM
-/* Convert e-type X to IBM 370 float E.  */
-
-static void
-etoe24 (x, e)
-     uint16_t *x, *e;
-{
-  etoibm (x, e, SFmode);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   float precision, to IBM 370 float Y.  */
-
-static void
-toe24 (x, y)
-     uint16_t *x, *y;
-{
-  toibm (x, y, SFmode);
-}
-
-#else
-
-#ifdef C4X
-/* Convert e-type X to C4X float E.  */
-
-static void
-etoe24 (x, e)
-     uint16_t *x, *e;
-{
-  etoc4x (x, e, QFmode);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   float precision, to IBM 370 float Y.  */
-
-static void
-toe24 (x, y)
-     uint16_t *x, *y;
-{
-  toc4x (x, y, QFmode);
-}
-
-#else
-
 /* Convert e-type X to IEEE float E.  DEC float is the same as IEEE float.  */
 
 static void
@@ -3547,20 +2653,16 @@ etoe24 (x, e)
   uint16_t xi[NI];
   int rndsav;
 
-#ifdef NANS
   if (eisnan (x))
     {
       make_nan (e, eisneg (x), SFmode);
       return;
     }
-#endif
   emovi (x, xi);
   /* adjust exponent for offsets */
   exp = (int32_t) xi[E] - (EXONE - 0177);
-#ifdef INFINITY
   if (eisinf (x))
     goto nonorm;
-#endif
   /* round off to nearest or even */
   rndsav = rndprc;
   rndprc = 24;
@@ -3580,19 +2682,14 @@ toe24 (x, y)
   uint16_t i;
   uint16_t *p;
 
-#ifdef NANS
   if (eiisnan (x))
     {
       make_nan (y, eiisneg (x), SFmode);
       return;
     }
-#endif
   p = &x[0];
   if (! REAL_WORDS_BIG_ENDIAN)
     y += 1;
-#ifdef DEC
-  y += 1;
-#endif
   *y = 0;			/* output high order */
   if (*p++)
     *y = 0x8000;		/* output sign bit */
@@ -3601,11 +2698,7 @@ toe24 (x, y)
 /* Handle overflow cases.  */
   if (i >= 255)
     {
-#ifdef INFINITY
       *y |= (uint16_t) 0x7f80;
-#ifdef DEC
-      *(--y) = 0;
-#endif
       if (! REAL_WORDS_BIG_ENDIAN)
 	*(--y) = 0;
       else
@@ -3613,22 +2706,6 @@ toe24 (x, y)
 	  ++y;
 	  *y = 0;
 	}
-#else  /* no INFINITY */
-      *y |= (uint16_t) 0x7f7f;
-#ifdef DEC
-      *(--y) = 0xffff;
-#endif
-      if (! REAL_WORDS_BIG_ENDIAN)
-	*(--y) = 0xffff;
-      else
-	{
-	  ++y;
-	  *y = 0xffff;
-	}
-#ifdef ERANGE
-      errno = ERANGE;
-#endif
-#endif  /* no INFINITY */
       return;
     }
   if (i == 0)
@@ -3643,9 +2720,6 @@ toe24 (x, y)
   i |= *p++ & (uint16_t) 0x7f;	/* *p = xi[M] */
   /* High order output already has sign bit set.  */
   *y |= i;
-#ifdef DEC
-  *(--y) = *p;
-#endif
   if (! REAL_WORDS_BIG_ENDIAN)
     *(--y) = *p;
   else
@@ -3654,8 +2728,6 @@ toe24 (x, y)
       *y = *p;
     }
 }
-#endif  /* not C4X */
-#endif  /* not IBM */
 
 /* Compare two e type numbers.
    Return +1 if a > b
@@ -3672,10 +2744,8 @@ ecmp (a, b)
   register int i;
   int msign;
 
-#ifdef NANS
   if (eisnan (a)  || eisnan (b))
       return (-2);
-#endif
   emovi (a, ai);
   p = ai;
   emovi (b, bi);
@@ -3803,8 +2873,7 @@ ultoe (lp, y)
 
 /* Find signed HOST_WIDE_INT integer I and floating point fractional
    part FRAC of e-type (packed internal format) floating point input X.
-   The integer output I has the sign of the input, except that
-   positive overflow is permitted if FIXUNS_TRUNC_LIKE_FIX_TRUNC.
+   The integer output I has the sign of the input.
    The output e-type fraction FRAC is the positive fractional
    part of abs (X).  */
 
@@ -3835,15 +2904,8 @@ eifrac (x, i, frac)
 	*i = ((HOST_WIDE_UINT) 1) << (HOST_BITS_PER_WIDE_INT - 1);
       else
 	{
-#ifdef FIXUNS_TRUNC_LIKE_FIX_TRUNC
-	  /* In this case, let it overflow and convert as if unsigned.  */
-	  euifrac (x, &ll, frac);
-	  *i = (HOST_WIDE_INT) ll;
-	  return;
-#else
-	  /* In other cases, return the largest positive integer.  */
+	  /* Return the largest positive integer.  */
 	  *i = (((HOST_WIDE_UINT) 1) << (HOST_BITS_PER_WIDE_INT - 1)) - 1;
-#endif
 	}
       eshift (xi, k);
       if (extra_warnings)
@@ -4158,13 +3220,11 @@ etoasc (x, string, ndigs)
   s = wstring;
   *ss = '\0';
   *s = '\0';
-#ifdef NANS
   if (eisnan (x))
     {
       sprintf (wstring, " NaN ");
       goto bxit;
     }
-#endif
   rndprc = NBITS;		/* set to full precision */
   emov (x, y);			/* retain external format */
   if (y[NE - 1] & 0x8000)
@@ -4394,10 +3454,8 @@ etoasc (x, string, ndigs)
 	  emovo (y, t);
 	  if (ecmp (t, ezero) != 0)
 	    goto roun;		/* round to nearest */
-#ifndef C4X
 	  if ((*(s - 1) & 1) == 0)
 	    goto doexp;		/* round to even */
-#endif
 	}
       /* Round up and propagate carry-outs */
     roun:
@@ -4472,36 +3530,7 @@ asctoe53 (s, y)
      char *s;
      uint16_t *y;
 {
-#if defined(DEC) || defined(IBM)
-  asctoeg (s, y, 56);
-#else
-#if defined(C4X)
-  asctoeg (s, y, 32);
-#else
   asctoeg (s, y, 53);
-#endif
-#endif
-}
-
-
-/* Convert ASCII string S to double extended value Y.  */
-
-static void
-asctoe64 (s, y)
-     char *s;
-     uint16_t *y;
-{
-  asctoeg (s, y, 64);
-}
-
-/* Convert ASCII string S to 128-bit long double Y.  */
-
-static void
-asctoe113 (s, y)
-     char *s;
-     uint16_t *y;
-{
-  asctoeg (s, y, 113);
 }
 
 /* Convert ASCII string S to e type Y.  */
@@ -4683,12 +3712,7 @@ asctoeg (ss, y, oprec)
       goto infinite;
     default:
     error:
-#ifdef NANS
       einan (yy);
-#else
-      mtherr ("asctoe", DOMAIN);
-      eclear (yy);
-#endif
       goto aexit;
     }
  donchr:
@@ -4844,22 +3868,8 @@ read_expnt:
   /* Round and convert directly to the destination type */
   if (oprec == 53)
     lexp -= EXONE - 0x3ff;
-#ifdef C4X
-  else if (oprec == 24 || oprec == 32)
-    lexp -= (EXONE - 0x7f);
-#else
-#ifdef IBM
-  else if (oprec == 24 || oprec == 56)
-    lexp -= EXONE - (0x41 << 2);
-#else
   else if (oprec == 24)
     lexp -= EXONE - 0177;
-#endif /* IBM */
-#endif /* C4X */
-#ifdef DEC
-  else if (oprec == 56)
-    lexp -= EXONE - 0201;
-#endif
   rndprc = oprec;
   emdnorm (yy, lost, 0, lexp, 64);
 
@@ -4869,33 +3879,12 @@ read_expnt:
   yy[0] = nsign;
   switch (oprec)
     {
-#ifdef DEC
-    case 56:
-      todec (yy, y);		/* see etodec.c */
-      break;
-#endif
-#ifdef IBM
-    case 56:
-      toibm (yy, y, DFmode);
-      break;
-#endif
-#ifdef C4X
-    case 32:
-      toc4x (yy, y, HFmode);
-      break;
-#endif
 
     case 53:
       toe53 (yy, y);
       break;
     case 24:
       toe24 (yy, y);
-      break;
-    case 64:
-      toe64 (yy, y);
-      break;
-    case 113:
-      toe113 (yy, y);
       break;
     case NBITS:
       emovo (yy, y);
@@ -5101,514 +4090,17 @@ mtherr (name, code)
   merror = code + 1;
 }
 
-#ifdef DEC
-/* Convert DEC double precision D to e type E.  */
-
-static void
-dectoe (d, e)
-     uint16_t *d;
-     uint16_t *e;
-{
-  uint16_t y[NI];
-  register uint16_t r, *p;
-
-  ecleaz (y);			/* start with a zero */
-  p = y;			/* point to our number */
-  r = *d;			/* get DEC exponent word */
-  if (*d & (unsigned int) 0x8000)
-    *p = 0xffff;		/* fill in our sign */
-  ++p;				/* bump pointer to our exponent word */
-  r &= 0x7fff;			/* strip the sign bit */
-  if (r == 0)			/* answer = 0 if high order DEC word = 0 */
-    goto done;
-
-
-  r >>= 7;			/* shift exponent word down 7 bits */
-  r += EXONE - 0201;		/* subtract DEC exponent offset */
-  /* add our e type exponent offset */
-  *p++ = r;			/* to form our exponent */
-
-  r = *d++;			/* now do the high order mantissa */
-  r &= 0177;			/* strip off the DEC exponent and sign bits */
-  r |= 0200;			/* the DEC understood high order mantissa bit */
-  *p++ = r;			/* put result in our high guard word */
-
-  *p++ = *d++;			/* fill in the rest of our mantissa */
-  *p++ = *d++;
-  *p = *d;
-
-  eshdn8 (y);			/* shift our mantissa down 8 bits */
- done:
-  emovo (y, e);
-}
-
-/* Convert e type X to DEC double precision D.  */
-
-static void
-etodec (x, d)
-     uint16_t *x, *d;
-{
-  uint16_t xi[NI];
-  int32_t exp;
-  int rndsav;
-
-  emovi (x, xi);
-  /* Adjust exponent for offsets.  */
-  exp = (int32_t) xi[E] - (EXONE - 0201);
-  /* Round off to nearest or even.  */
-  rndsav = rndprc;
-  rndprc = 56;
-  emdnorm (xi, 0, 0, exp, 64);
-  rndprc = rndsav;
-  todec (xi, d);
-}
-
-/* Convert exploded e-type X, that has already been rounded to
-   56-bit precision, to DEC format double Y.  */
-
-static void
-todec (x, y)
-     uint16_t *x, *y;
-{
-  uint16_t i;
-  uint16_t *p;
-
-  p = x;
-  *y = 0;
-  if (*p++)
-    *y = 0100000;
-  i = *p++;
-  if (i == 0)
-    {
-      *y++ = 0;
-      *y++ = 0;
-      *y++ = 0;
-      *y++ = 0;
-      return;
-    }
-  if (i > 0377)
-    {
-      *y++ |= 077777;
-      *y++ = 0xffff;
-      *y++ = 0xffff;
-      *y++ = 0xffff;
-#ifdef ERANGE
-      errno = ERANGE;
-#endif
-      return;
-    }
-  i &= 0377;
-  i <<= 7;
-  eshup8 (x);
-  x[M] &= 0177;
-  i |= x[M];
-  *y++ |= i;
-  *y++ = x[M + 1];
-  *y++ = x[M + 2];
-  *y++ = x[M + 3];
-}
-#endif /* DEC */
-
-#ifdef IBM
-/* Convert IBM single/double precision to e type.  */
-
-static void
-ibmtoe (d, e, mode)
-     uint16_t *d;
-     uint16_t *e;
-     enum machine_mode mode;
-{
-  uint16_t y[NI];
-  register uint16_t r, *p;
-  int rndsav;
-
-  ecleaz (y);			/* start with a zero */
-  p = y;			/* point to our number */
-  r = *d;			/* get IBM exponent word */
-  if (*d & (unsigned int) 0x8000)
-    *p = 0xffff;		/* fill in our sign */
-  ++p;				/* bump pointer to our exponent word */
-  r &= 0x7f00;			/* strip the sign bit */
-  r >>= 6;			/* shift exponent word down 6 bits */
-				/* in fact shift by 8 right and 2 left */
-  r += EXONE - (0x41 << 2);	/* subtract IBM exponent offset */
-  				/* add our e type exponent offset */
-  *p++ = r;			/* to form our exponent */
-
-  *p++ = *d++ & 0xff;		/* now do the high order mantissa */
-				/* strip off the IBM exponent and sign bits */
-  if (mode != SFmode)		/* there are only 2 words in SFmode */
-    {
-      *p++ = *d++;		/* fill in the rest of our mantissa */
-      *p++ = *d++;
-    }
-  *p = *d;
-
-  if (y[M] == 0 && y[M+1] == 0 && y[M+2] == 0 && y[M+3] == 0)
-    y[0] = y[E] = 0;
-  else
-    y[E] -= 5 + enormlz (y);	/* now normalise the mantissa */
-			      /* handle change in RADIX */
-  emovo (y, e);
-}
 
 
 
-/* Convert e type to IBM single/double precision.  */
-
-static void
-etoibm (x, d, mode)
-     uint16_t *x, *d;
-     enum machine_mode mode;
-{
-  uint16_t xi[NI];
-  int32_t exp;
-  int rndsav;
-
-  emovi (x, xi);
-  exp = (int32_t) xi[E] - (EXONE - (0x41 << 2));	/* adjust exponent for offsets */
-							/* round off to nearest or even */
-  rndsav = rndprc;
-  rndprc = 56;
-  emdnorm (xi, 0, 0, exp, 64);
-  rndprc = rndsav;
-  toibm (xi, d, mode);
-}
-
-static void
-toibm (x, y, mode)
-     uint16_t *x, *y;
-     enum machine_mode mode;
-{
-  uint16_t i;
-  uint16_t *p;
-  int r;
-
-  p = x;
-  *y = 0;
-  if (*p++)
-    *y = 0x8000;
-  i = *p++;
-  if (i == 0)
-    {
-      *y++ = 0;
-      *y++ = 0;
-      if (mode != SFmode)
-	{
-	  *y++ = 0;
-	  *y++ = 0;
-	}
-      return;
-    }
-  r = i & 0x3;
-  i >>= 2;
-  if (i > 0x7f)
-    {
-      *y++ |= 0x7fff;
-      *y++ = 0xffff;
-      if (mode != SFmode)
-	{
-	  *y++ = 0xffff;
-	  *y++ = 0xffff;
-	}
-#ifdef ERANGE
-      errno = ERANGE;
-#endif
-      return;
-    }
-  i &= 0x7f;
-  *y |= (i << 8);
-  eshift (x, r + 5);
-  *y++ |= x[M];
-  *y++ = x[M + 1];
-  if (mode != SFmode)
-    {
-      *y++ = x[M + 2];
-      *y++ = x[M + 3];
-    }
-}
-#endif /* IBM */
-
-
-#ifdef C4X
-/* Convert C4X single/double precision to e type.  */
-
-static void
-c4xtoe (d, e, mode)
-     uint16_t *d;
-     uint16_t *e;
-     enum machine_mode mode;
-{
-  uint16_t y[NI];
-  int r;
-  int isnegative;
-  int size;
-  int i;
-  int carry;
-
-  /* Short-circuit the zero case. */
-  if ((d[0] == 0x8000)
-      && (d[1] == 0x0000)
-      && ((mode == QFmode) || ((d[2] == 0x0000) && (d[3] == 0x0000))))
-    {
-      e[0] = 0;
-      e[1] = 0;
-      e[2] = 0;
-      e[3] = 0;
-      e[4] = 0;
-      e[5] = 0;
-      return;
-    }
-
-  ecleaz (y);			/* start with a zero */
-  r = d[0];			/* get sign/exponent part */
-  if (r & (unsigned int) 0x0080)
-  {
-     y[0] = 0xffff;		/* fill in our sign */
-     isnegative = TRUE;
-  }
-  else
-  {
-     isnegative = FALSE;
-  }
-
-  r >>= 8;			/* Shift exponent word down 8 bits.  */
-  if (r & 0x80)			/* Make the exponent negative if it is. */
-  {
-     r = r | (~0 & ~0xff);
-  }
-
-  if (isnegative)
-  {
-     /* Now do the high order mantissa.  We don't "or" on the high bit
-	because it is 2 (not 1) and is handled a little differently
-	below.  */
-     y[M] = d[0] & 0x7f;
-
-     y[M+1] = d[1];
-     if (mode != QFmode)	/* There are only 2 words in QFmode.  */
-     {
-	y[M+2] = d[2];		/* Fill in the rest of our mantissa.  */
-	y[M+3] = d[3];
-	size = 4;
-     }
-     else
-     {
-	size = 2;
-     }
-     eshift(y, -8);
-
-     /* Now do the two's complement on the data.  */
-
-     carry = 1;	/* Initially add 1 for the two's complement. */
-     for (i=size + M; i > M; i--)
-     {
-	if (carry && (y[i] == 0x0000))
-	{
-	   /* We overflowed into the next word, carry is the same.  */
-	   y[i] = carry ? 0x0000 : 0xffff;
-	}
-	else
-	{
-	   /* No overflow, just invert and add carry.  */
-	   y[i] = ((~y[i]) + carry) & 0xffff;
-	   carry = 0;
-	}
-     }
-
-     if (carry)
-     {
-	eshift(y, -1);
-	y[M+1] |= 0x8000;
-	r++;
-     }
-     y[1] = r + EXONE;
-  }
-  else
-  {
-    /* Add our e type exponent offset to form our exponent.  */
-     r += EXONE;
-     y[1] = r;
-
-     /* Now do the high order mantissa strip off the exponent and sign
-	bits and add the high 1 bit.  */
-     y[M] = (d[0] & 0x7f) | 0x80;
-
-     y[M+1] = d[1];
-     if (mode != QFmode)	/* There are only 2 words in QFmode.  */
-     {
-	y[M+2] = d[2];		/* Fill in the rest of our mantissa.  */
-	y[M+3] = d[3];
-     }
-     eshift(y, -8);
-  }
-
-  emovo (y, e);
-}
-
-
-/* Convert e type to C4X single/double precision.  */
-
-static void
-etoc4x (x, d, mode)
-     uint16_t *x, *d;
-     enum machine_mode mode;
-{
-  uint16_t xi[NI];
-  int32_t exp;
-  int rndsav;
-
-  emovi (x, xi);
-
-  /* Adjust exponent for offsets. */
-  exp = (int32_t) xi[E] - (EXONE - 0x7f);
-
-  /* Round off to nearest or even. */
-  rndsav = rndprc;
-  rndprc = mode == QFmode ? 24 : 32;
-  emdnorm (xi, 0, 0, exp, 64);
-  rndprc = rndsav;
-  toc4x (xi, d, mode);
-}
-
-static void
-toc4x (x, y, mode)
-     uint16_t *x, *y;
-     enum machine_mode mode;
-{
-  int i;
-  int v;
-  int carry;
-
-  /* Short-circuit the zero case */
-  if ((x[0] == 0)	/* Zero exponent and sign */
-      && (x[1] == 0)
-      && (x[M] == 0)	/* The rest is for zero mantissa */
-      && (x[M+1] == 0)
-      /* Only check for double if necessary */
-      && ((mode == QFmode) || ((x[M+2] == 0) && (x[M+3] == 0))))
-    {
-      /* We have a zero.  Put it into the output and return. */
-      *y++ = 0x8000;
-      *y++ = 0x0000;
-      if (mode != QFmode)
-        {
-          *y++ = 0x0000;
-          *y++ = 0x0000;
-        }
-      return;
-    }
-
-  *y = 0;
-
-  /* Negative number require a two's complement conversion of the
-     mantissa. */
-  if (x[0])
-    {
-      *y = 0x0080;
-
-      i = ((int) x[1]) - 0x7f;
-
-      /* Now add 1 to the inverted data to do the two's complement. */
-      if (mode != QFmode)
-	v = 4 + M;
-      else
-	v = 2 + M;
-      carry = 1;
-      while (v > M)
-	{
-	  if (x[v] == 0x0000)
-	    {
-	      x[v] = carry ? 0x0000 : 0xffff;
-	    }
-	  else
-	    {
-	      x[v] = ((~x[v]) + carry) & 0xffff;
-	      carry = 0;
-	    }
-	  v--;
-	}
-
-      /* The following is a special case.  The C4X negative float requires
-	 a zero in the high bit (because the format is (2 - x) x 2^m), so
-	 if a one is in that bit, we have to shift left one to get rid
-	 of it.  This only occurs if the number is -1 x 2^m. */
-      if (x[M+1] & 0x8000)
-	{
-	  /* This is the case of -1 x 2^m, we have to rid ourselves of the
-	     high sign bit and shift the exponent. */
-	  eshift(x, 1);
-	  i--;
-	}
-    }
-  else
-    {
-      i = ((int) x[1]) - 0x7f;
-    }
-
-  if ((i < -128) || (i > 127))
-    {
-      y[0] |= 0xff7f;
-      y[1] = 0xffff;
-      if (mode != QFmode)
-	{
-	  y[2] = 0xffff;
-	  y[3] = 0xffff;
-	}
-#ifdef ERANGE
-      errno = ERANGE;
-#endif
-      return;
-    }
-
-  y[0] |= ((i & 0xff) << 8);
-
-  eshift (x, 8);
-
-  y[0] |= x[M] & 0x7f;
-  y[1] = x[M + 1];
-  if (mode != QFmode)
-    {
-      y[2] = x[M + 2];
-      y[3] = x[M + 3];
-    }
-}
-#endif /* C4X */
 
 /* Output a binary NaN bit pattern in the target machine's format.  */
 
-/* If special NaN bit patterns are required, define them in tm.h
-   as arrays of unsigned 16-bit shorts.  Otherwise, use the default
-   patterns here.  */
-#ifdef TFMODE_NAN
-TFMODE_NAN;
-#else
-uint16_t TFbignan[8] =
- {0x7fff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff};
-uint16_t TFlittlenan[8] = {0, 0, 0, 0, 0, 0, 0x8000, 0xffff};
-#endif
-
-#ifdef XFMODE_NAN
-XFMODE_NAN;
-#else
-uint16_t XFbignan[6] =
- {0x7fff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff};
-uint16_t XFlittlenan[6] = {0, 0, 0, 0xc000, 0xffff, 0};
-#endif
-
-#ifdef DFMODE_NAN
-DFMODE_NAN;
-#else
 uint16_t DFbignan[4] = {0x7fff, 0xffff, 0xffff, 0xffff};
 uint16_t DFlittlenan[4] = {0, 0, 0, 0xfff8};
-#endif
 
-#ifdef SFMODE_NAN
-SFMODE_NAN;
-#else
 uint16_t SFbignan[2] = {0x7fff, 0xffff};
 uint16_t SFlittlenan[2] = {0, 0xffc0};
-#endif
 
 
 static void
@@ -5622,25 +4114,6 @@ make_nan (nan, sign, mode)
 
   switch (mode)
     {
-/* Possibly the `reserved operand' patterns on a VAX can be
-   used like NaN's, but probably not in the same way as IEEE.  */
-#if !defined(DEC) && !defined(IBM) && !defined(C4X)
-    case TFmode:
-      n = 8;
-      if (REAL_WORDS_BIG_ENDIAN)
-	p = TFbignan;
-      else
-	p = TFlittlenan;
-      break;
-
-    case XFmode:
-      n = 6;
-      if (REAL_WORDS_BIG_ENDIAN)
-	p = XFbignan;
-      else
-	p = XFlittlenan;
-      break;
-
     case DFmode:
       n = 4;
       if (REAL_WORDS_BIG_ENDIAN)
@@ -5650,14 +4123,12 @@ make_nan (nan, sign, mode)
       break;
 
     case SFmode:
-    case HFmode:
       n = 2;
       if (REAL_WORDS_BIG_ENDIAN)
 	p = SFbignan;
       else
 	p = SFlittlenan;
       break;
-#endif
 
     default:
       abort ();
@@ -5837,18 +4308,9 @@ significand_size (mode)
 switch (GET_MODE_BITSIZE (mode))
   {
   case 32:
-
-
     return 24;
-
   case 64:
     return 53;
-
-  case 96:
-    return 64;
-  case 128:
-    return 113;
-
   default:
     abort ();
   }

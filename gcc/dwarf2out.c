@@ -6906,11 +6906,6 @@ add_const_value_attribute (die, rtl)
 		REAL_VALUE_TO_TARGET_DOUBLE (rv, array);
 		break;
 
-	      case XFmode:
-	      case TFmode:
-		REAL_VALUE_TO_TARGET_LONG_DOUBLE (rv, array);
-		break;
-
 	      default:
 		abort ();
 	      }

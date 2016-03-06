@@ -182,15 +182,6 @@ extern int target_flags;
   fprintf (STREAM, "\n");						\
 }
 
-#define ASM_OUTPUT_LONG_DOUBLE(STREAM,VALUE)				\
-do { char dstr[30];							\
-     long l[3];								\
-     REAL_VALUE_TO_TARGET_LONG_DOUBLE (VALUE, l);			\
-     REAL_VALUE_TO_DECIMAL (VALUE, "%.20g", dstr);			\
-     fprintf (STREAM, "\t.long 0x%lx,0x%lx,0x%lx\t%s long double %s\n", \
-	      l[0], l[1], l[2], ASM_COMMENT_START, dstr);		\
-   } while (0)
-
 #define ASM_OUTPUT_DOUBLE(STREAM, VALUE)  				\
 do { char dstr[30];							\
      long l[2];								\

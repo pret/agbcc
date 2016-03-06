@@ -1780,40 +1780,12 @@ assemble_real (d, mode)
 
   switch (mode)
     {
-#ifdef ASM_OUTPUT_BYTE_FLOAT
-    case QFmode:
-      ASM_OUTPUT_BYTE_FLOAT (asm_out_file, d);
-      break;
-#endif
-#ifdef ASM_OUTPUT_SHORT_FLOAT
-    case HFmode:
-      ASM_OUTPUT_SHORT_FLOAT (asm_out_file, d);
-      break;
-#endif
-#ifdef ASM_OUTPUT_THREE_QUARTER_FLOAT
-    case TQFmode:
-      ASM_OUTPUT_THREE_QUARTER_FLOAT (asm_out_file, d);
-      break;
-#endif
-#ifdef ASM_OUTPUT_FLOAT
     case SFmode:
       ASM_OUTPUT_FLOAT (asm_out_file, d);
       break;
-#endif
-
-#ifdef ASM_OUTPUT_DOUBLE
     case DFmode:
       ASM_OUTPUT_DOUBLE (asm_out_file, d);
       break;
-#endif
-
-#ifdef ASM_OUTPUT_LONG_DOUBLE
-    case XFmode:
-    case TFmode:
-      ASM_OUTPUT_LONG_DOUBLE (asm_out_file, d);
-      break;
-#endif
-
     default:
       abort ();
     }

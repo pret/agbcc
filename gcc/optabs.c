@@ -3002,37 +3002,7 @@ emit_float_lib_cmp (x, y, comparison)
   rtx libfunc = 0;
   rtx result;
 
-  if (mode == HFmode)
-    switch (comparison)
-      {
-      case EQ:
-	libfunc = eqhf2_libfunc;
-	break;
-
-      case NE:
-	libfunc = nehf2_libfunc;
-	break;
-
-      case GT:
-	libfunc = gthf2_libfunc;
-	break;
-
-      case GE:
-	libfunc = gehf2_libfunc;
-	break;
-
-      case LT:
-	libfunc = lthf2_libfunc;
-	break;
-
-      case LE:
-	libfunc = lehf2_libfunc;
-	break;
-
-      default:
-	break;
-      }
-  else if (mode == SFmode)
+  if (mode == SFmode)
     switch (comparison)
       {
       case EQ:
@@ -3087,66 +3057,6 @@ emit_float_lib_cmp (x, y, comparison)
 
       case LE:
 	libfunc = ledf2_libfunc;
-	break;
-
-      default:
-	break;
-      }
-  else if (mode == XFmode)
-    switch (comparison)
-      {
-      case EQ:
-	libfunc = eqxf2_libfunc;
-	break;
-
-      case NE:
-	libfunc = nexf2_libfunc;
-	break;
-
-      case GT:
-	libfunc = gtxf2_libfunc;
-	break;
-
-      case GE:
-	libfunc = gexf2_libfunc;
-	break;
-
-      case LT:
-	libfunc = ltxf2_libfunc;
-	break;
-
-      case LE:
-	libfunc = lexf2_libfunc;
-	break;
-
-      default:
-	break;
-      }
-  else if (mode == TFmode)
-    switch (comparison)
-      {
-      case EQ:
-	libfunc = eqtf2_libfunc;
-	break;
-
-      case NE:
-	libfunc = netf2_libfunc;
-	break;
-
-      case GT:
-	libfunc = gttf2_libfunc;
-	break;
-
-      case GE:
-	libfunc = getf2_libfunc;
-	break;
-
-      case LT:
-	libfunc = lttf2_libfunc;
-	break;
-
-      case LE:
-	libfunc = letf2_libfunc;
 	break;
 
       default:
@@ -3749,28 +3659,6 @@ expand_float (to, from, unsignedp)
 	  else
 	    abort ();
 	}
-      else if (GET_MODE (to) == XFmode)
-	{
-	  if (GET_MODE (from) == SImode)
-	    libfcn = floatsixf_libfunc;
-	  else if (GET_MODE (from) == DImode)
-	    libfcn = floatdixf_libfunc;
-	  else if (GET_MODE (from) == TImode)
-	    libfcn = floattixf_libfunc;
-	  else
-	    abort ();
-	}
-      else if (GET_MODE (to) == TFmode)
-	{
-	  if (GET_MODE (from) == SImode)
-	    libfcn = floatsitf_libfunc;
-	  else if (GET_MODE (from) == DImode)
-	    libfcn = floatditf_libfunc;
-	  else if (GET_MODE (from) == TImode)
-	    libfcn = floattitf_libfunc;
-	  else
-	    abort ();
-	}
       else
 	abort ();
 
@@ -3972,28 +3860,6 @@ expand_fix (to, from, unsignedp)
       else
 	abort ();
     }
-  else if (GET_MODE (from) == XFmode)
-    {
-      if (GET_MODE (to) == SImode)
-	libfcn = unsignedp ? fixunsxfsi_libfunc : fixxfsi_libfunc;
-      else if (GET_MODE (to) == DImode)
-	libfcn = unsignedp ? fixunsxfdi_libfunc : fixxfdi_libfunc;
-      else if (GET_MODE (to) == TImode)
-	libfcn = unsignedp ? fixunsxfti_libfunc : fixxfti_libfunc;
-      else
-	abort ();
-    }
-  else if (GET_MODE (from) == TFmode)
-    {
-      if (GET_MODE (to) == SImode)
-	libfcn = unsignedp ? fixunstfsi_libfunc : fixtfsi_libfunc;
-      else if (GET_MODE (to) == DImode)
-	libfcn = unsignedp ? fixunstfdi_libfunc : fixtfdi_libfunc;
-      else if (GET_MODE (to) == TImode)
-	libfcn = unsignedp ? fixunstfti_libfunc : fixtfti_libfunc;
-      else
-	abort ();
-    }
   else
     abort ();
 
@@ -4137,9 +4003,6 @@ void
 init_optabs ()
 {
   int i;
-#ifdef FIXUNS_TRUNC_LIKE_FIX_TRUNC
-  int j;
-#endif
 
   enum insn_code *p;
 
@@ -4229,14 +4092,6 @@ init_optabs ()
 
   /* Fill in the optabs with the insns we support.  */
   init_all_optabs ();
-
-#ifdef FIXUNS_TRUNC_LIKE_FIX_TRUNC
-  /* This flag says the same insns that convert to a signed fixnum
-     also convert validly to an unsigned one.  */
-  for (i = 0; i < NUM_MACHINE_MODES; i++)
-    for (j = 0; j < NUM_MACHINE_MODES; j++)
-      fixtrunctab[i][j][1] = fixtrunctab[i][j][0];
-#endif
 
 #ifdef EXTRA_CC_MODES
   init_mov_optab ();
