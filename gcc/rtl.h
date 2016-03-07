@@ -1484,7 +1484,6 @@ extern int set_dominates_use		(int, int, int, rtx, rtx);
 /* In varasm.c */
 extern void bss_section			(void);
 extern int in_data_section		(void);
-extern int supports_one_only		(void);
 
 /* In rtl.c */
 extern void init_rtl			(void);

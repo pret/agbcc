@@ -214,7 +214,6 @@ extern int arm_valid_machine_decl_attribute(tree decl, tree attributes, tree att
 #define NAME__MAIN "__gccmain"
 #define SYMBOL__MAIN __gccmain
 
-#define MAKE_DECL_ONE_ONLY(DECL) (DECL_WEAK (DECL) = 1)
 #define UNIQUE_SECTION_P(DECL) (DECL_ONE_ONLY (DECL))
 #define UNIQUE_SECTION(DECL,RELOC)				\
 do {								\

@@ -2233,8 +2233,6 @@ extern void fixup_signed_type		(tree);
 
 /* varasm.c */
 extern void make_decl_rtl		(tree, char *, int);
-extern void make_decl_one_only		(tree);
-extern int supports_one_only		(void);
 extern void variable_section		(tree, int);
 
 /* In fold-const.c */
