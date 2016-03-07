@@ -63,27 +63,13 @@ Boston, MA 02111-1307, USA.  */
    as for example on CONST_INT RTL expressions.  */
 DEF_MACHMODE (VOIDmode, "VOID", MODE_RANDOM, 0, 0, VOIDmode)
 
-DEF_MACHMODE (PQImode, "PQI", MODE_PARTIAL_INT, 1, 1, PHImode)
 DEF_MACHMODE (QImode, "QI", MODE_INT, 1, 1, HImode)		/* int types */
-DEF_MACHMODE (PHImode, "PHI", MODE_PARTIAL_INT, 2, 2, PSImode)
 DEF_MACHMODE (HImode, "HI", MODE_INT, 2, 2, SImode)
-/* Pointers on some machines use this type to distinguish them from ints.
-   Useful if a pointer is 4 bytes but has some bits that are not significant,
-   so it is really not quite as wide as an integer.  */
-DEF_MACHMODE (PSImode, "PSI", MODE_PARTIAL_INT, 4, 4, PDImode)
 DEF_MACHMODE (SImode, "SI", MODE_INT, 4, 4, DImode)
-DEF_MACHMODE (PDImode, "PDI", MODE_PARTIAL_INT, 8, 8, VOIDmode)
-DEF_MACHMODE (DImode, "DI", MODE_INT, 8, 8, TImode)
-DEF_MACHMODE (TImode, "TI", MODE_INT, 16, 16, OImode)
-DEF_MACHMODE (OImode, "OI", MODE_INT, 32, 32, VOIDmode)
+DEF_MACHMODE (DImode, "DI", MODE_INT, 8, 8, VOIDmode)
 
-DEF_MACHMODE (QFmode, "QF", MODE_FLOAT, 1, 1, HFmode)
-DEF_MACHMODE (HFmode, "HF", MODE_FLOAT, 2, 2, TQFmode)
-DEF_MACHMODE (TQFmode, "TQF", MODE_FLOAT, 3, 3, SFmode)  /* MIL-STD-1750A */
 DEF_MACHMODE (SFmode, "SF", MODE_FLOAT, 4, 4, DFmode)
-DEF_MACHMODE (DFmode, "DF", MODE_FLOAT, 8, 8, XFmode)
-DEF_MACHMODE (XFmode, "XF", MODE_FLOAT, 12, 12, TFmode)   /* IEEE extended */
-DEF_MACHMODE (TFmode, "TF", MODE_FLOAT, 16, 16, VOIDmode)
+DEF_MACHMODE (DFmode, "DF", MODE_FLOAT, 8, 8, VOIDmode)
 
 /* Complex modes.  */
 DEF_MACHMODE (QCmode, "QC", MODE_COMPLEX_FLOAT, 2, 1, HCmode)

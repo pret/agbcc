@@ -305,8 +305,7 @@ store_bit_field (str_rtx, bitsize, bitnum, fieldmode, value, align, total_size)
 	  if (GET_CODE (op0) == SUBREG)
 	    {
 	      if (GET_MODE (SUBREG_REG (op0)) == fieldmode
-		  || GET_MODE_CLASS (fieldmode) == MODE_INT
-		  || GET_MODE_CLASS (fieldmode) == MODE_PARTIAL_INT)
+		  || GET_MODE_CLASS (fieldmode) == MODE_INT)
 		op0 = SUBREG_REG (op0);
 	      else
 		/* Else we've got some float mode source being extracted into
@@ -353,8 +352,7 @@ store_bit_field (str_rtx, bitsize, bitnum, fieldmode, value, align, total_size)
 	  if (GET_CODE (op0) == SUBREG)
 	    {
 	      if (GET_MODE (SUBREG_REG (op0)) == fieldmode
-		  || GET_MODE_CLASS (fieldmode) == MODE_INT
-		  || GET_MODE_CLASS (fieldmode) == MODE_PARTIAL_INT)
+		  || GET_MODE_CLASS (fieldmode) == MODE_INT)
 		op0 = SUBREG_REG (op0);
 	      else
 		/* Else we've got some float mode source being extracted into
@@ -1072,8 +1070,7 @@ extract_bit_field (str_rtx, bitsize, bitnum, unsignedp,
 	  if (GET_CODE (op0) == SUBREG)
 	    {
 	      if (GET_MODE (SUBREG_REG (op0)) == mode1
-		  || GET_MODE_CLASS (mode1) == MODE_INT
-		  || GET_MODE_CLASS (mode1) == MODE_PARTIAL_INT)
+		  || GET_MODE_CLASS (mode1) == MODE_INT)
 		op0 = SUBREG_REG (op0);
 	      else
 		/* Else we've got some float mode source being extracted into

@@ -65,7 +65,7 @@ MAX_MACHINE_MODE };
 extern char *mode_name[];
 #define GET_MODE_NAME(MODE)		(mode_name[(int) (MODE)])
 
-enum mode_class { MODE_RANDOM, MODE_INT, MODE_FLOAT, MODE_PARTIAL_INT, MODE_CC,
+enum mode_class { MODE_RANDOM, MODE_INT, MODE_FLOAT, MODE_CC,
 		  MODE_COMPLEX_INT, MODE_COMPLEX_FLOAT, MAX_MODE_CLASS};
 
 /* Get the general kind of object that mode MODE represents
@@ -77,7 +77,6 @@ extern enum mode_class mode_class[];
 /* Nonzero if MODE is an integral mode.  */
 #define INTEGRAL_MODE_P(MODE)			\
   (GET_MODE_CLASS (MODE) == MODE_INT		\
-   || GET_MODE_CLASS (MODE) == MODE_PARTIAL_INT \
    || GET_MODE_CLASS (MODE) == MODE_COMPLEX_INT)
 
 /* Nonzero if MODE is a floating-point mode.  */

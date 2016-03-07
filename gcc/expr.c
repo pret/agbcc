@@ -755,112 +755,6 @@ convert_move (to, from, unsignedp)
       return;
     }
 
-  /* Handle pointer conversion */			/* SPEE 900220 */
-  if (to_mode == PQImode)
-    {
-      if (from_mode != QImode)
-	from = convert_to_mode (QImode, from, unsignedp);
-
-#ifdef HAVE_truncqipqi2
-      if (HAVE_truncqipqi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncqipqi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif /* HAVE_truncqipqi2 */
-      abort ();
-    }
-
-  if (from_mode == PQImode)
-    {
-      if (to_mode != QImode)
-	{
-	  from = convert_to_mode (QImode, from, unsignedp);
-	  from_mode = QImode;
-	}
-      else
-	{
-#ifdef HAVE_extendpqiqi2
-	  if (HAVE_extendpqiqi2)
-	    {
-	      emit_unop_insn (CODE_FOR_extendpqiqi2, to, from, UNKNOWN);
-	      return;
-	    }
-#endif /* HAVE_extendpqiqi2 */
-	  abort ();
-	}
-    }
-
-  if (to_mode == PSImode)
-    {
-      if (from_mode != SImode)
-	from = convert_to_mode (SImode, from, unsignedp);
-
-#ifdef HAVE_truncsipsi2
-      if (HAVE_truncsipsi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncsipsi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif /* HAVE_truncsipsi2 */
-      abort ();
-    }
-
-  if (from_mode == PSImode)
-    {
-      if (to_mode != SImode)
-	{
-	  from = convert_to_mode (SImode, from, unsignedp);
-	  from_mode = SImode;
-	}
-      else
-	{
-#ifdef HAVE_extendpsisi2
-	  if (HAVE_extendpsisi2)
-	    {
-	      emit_unop_insn (CODE_FOR_extendpsisi2, to, from, UNKNOWN);
-	      return;
-	    }
-#endif /* HAVE_extendpsisi2 */
-	  abort ();
-	}
-    }
-
-  if (to_mode == PDImode)
-    {
-      if (from_mode != DImode)
-	from = convert_to_mode (DImode, from, unsignedp);
-
-#ifdef HAVE_truncdipdi2
-      if (HAVE_truncdipdi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncdipdi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif /* HAVE_truncdipdi2 */
-      abort ();
-    }
-
-  if (from_mode == PDImode)
-    {
-      if (to_mode != DImode)
-	{
-	  from = convert_to_mode (DImode, from, unsignedp);
-	  from_mode = DImode;
-	}
-      else
-	{
-#ifdef HAVE_extendpdidi2
-	  if (HAVE_extendpdidi2)
-	    {
-	      emit_unop_insn (CODE_FOR_extendpdidi2, to, from, UNKNOWN);
-	      return;
-	    }
-#endif /* HAVE_extendpdidi2 */
-	  abort ();
-	}
-    }
-
   /* Now follow all the conversions between integers
      no more than a word long.  */
 
@@ -1002,58 +896,6 @@ convert_move (to, from, unsignedp)
       if (HAVE_trunchiqi2)
 	{
 	  emit_unop_insn (CODE_FOR_trunchiqi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-      convert_move (to, force_reg (from_mode, from), unsignedp);
-      return;
-    }
-
-  if (from_mode == TImode && to_mode == DImode)
-    {
-#ifdef HAVE_trunctidi2
-      if (HAVE_trunctidi2)
-	{
-	  emit_unop_insn (CODE_FOR_trunctidi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-      convert_move (to, force_reg (from_mode, from), unsignedp);
-      return;
-    }
-
-  if (from_mode == TImode && to_mode == SImode)
-    {
-#ifdef HAVE_trunctisi2
-      if (HAVE_trunctisi2)
-	{
-	  emit_unop_insn (CODE_FOR_trunctisi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-      convert_move (to, force_reg (from_mode, from), unsignedp);
-      return;
-    }
-
-  if (from_mode == TImode && to_mode == HImode)
-    {
-#ifdef HAVE_trunctihi2
-      if (HAVE_trunctihi2)
-	{
-	  emit_unop_insn (CODE_FOR_trunctihi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
-      convert_move (to, force_reg (from_mode, from), unsignedp);
-      return;
-    }
-
-  if (from_mode == TImode && to_mode == QImode)
-    {
-#ifdef HAVE_trunctiqi2
-      if (HAVE_trunctiqi2)
-	{
-	  emit_unop_insn (CODE_FOR_trunctiqi2, to, from, UNKNOWN);
 	  return;
 	}
 #endif
@@ -9478,7 +9320,7 @@ apply_result_size ()
 	    enum machine_mode best_mode = VOIDmode;
 
 	    for (mode = GET_CLASS_NARROWEST_MODE (MODE_INT);
-		 mode != TImode;
+		 mode != VOIDmode;
 		 mode = GET_MODE_WIDER_MODE (mode))
 	      if (HARD_REGNO_MODE_OK (regno, mode))
 		best_mode = mode;

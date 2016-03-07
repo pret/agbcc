@@ -3622,7 +3622,7 @@ expand_float (to, from, unsignedp)
 #endif
 
   /* No hardware instruction available; call a library routine to convert from
-     SImode, DImode, or TImode into SFmode, DFmode, XFmode, or TFmode.  */
+     SImode or DImode into SFmode or DFmode.  */
     {
       rtx libfcn;
       rtx insns;
@@ -3643,8 +3643,6 @@ expand_float (to, from, unsignedp)
 	    libfcn = floatsisf_libfunc;
 	  else if (GET_MODE (from) == DImode)
 	    libfcn = floatdisf_libfunc;
-	  else if (GET_MODE (from) == TImode)
-	    libfcn = floattisf_libfunc;
 	  else
 	    abort ();
 	}
@@ -3654,8 +3652,6 @@ expand_float (to, from, unsignedp)
 	    libfcn = floatsidf_libfunc;
 	  else if (GET_MODE (from) == DImode)
 	    libfcn = floatdidf_libfunc;
-	  else if (GET_MODE (from) == TImode)
-	    libfcn = floattidf_libfunc;
 	  else
 	    abort ();
 	}
@@ -3844,8 +3840,6 @@ expand_fix (to, from, unsignedp)
 	libfcn = unsignedp ? fixunssfsi_libfunc : fixsfsi_libfunc;
       else if (GET_MODE (to) == DImode)
 	libfcn = unsignedp ? fixunssfdi_libfunc : fixsfdi_libfunc;
-      else if (GET_MODE (to) == TImode)
-	libfcn = unsignedp ? fixunssfti_libfunc : fixsfti_libfunc;
       else
 	abort ();
     }
@@ -3855,8 +3849,6 @@ expand_fix (to, from, unsignedp)
 	libfcn = unsignedp ? fixunsdfsi_libfunc : fixdfsi_libfunc;
       else if (GET_MODE (to) == DImode)
 	libfcn = unsignedp ? fixunsdfdi_libfunc : fixdfdi_libfunc;
-      else if (GET_MODE (to) == TImode)
-	libfcn = unsignedp ? fixunsdfti_libfunc : fixdfti_libfunc;
       else
 	abort ();
     }
@@ -3978,7 +3970,7 @@ init_integral_libfuncs (optable, opname, suffix)
     register char *opname;
     register int suffix;
 {
-  init_libfuncs (optable, SImode, TImode, opname, suffix);
+  init_libfuncs (optable, SImode, DImode, opname, suffix);
 }
 
 /* Initialize the libfunc fields of an entire group of entries in some
@@ -3992,7 +3984,7 @@ init_floating_libfuncs (optable, opname, suffix)
     register char *opname;
     register int suffix;
 {
-  init_libfuncs (optable, SFmode, TFmode, opname, suffix);
+  init_libfuncs (optable, SFmode, DFmode, opname, suffix);
 }
 
 

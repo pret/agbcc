@@ -2903,14 +2903,6 @@ find_split_point (loc, insn)
 
 	case SIGN_EXTEND:
 	  inner = XEXP (SET_SRC (x), 0);
-
-	  /* We can't optimize if either mode is a partial integer
-	     mode as we don't know how many bits are significant
-	     in those modes.  */
-	  if (GET_MODE_CLASS (GET_MODE (inner)) == MODE_PARTIAL_INT
-	      || GET_MODE_CLASS (GET_MODE (SET_SRC (x))) == MODE_PARTIAL_INT)
-	    break;
-
 	  pos = 0;
 	  len = GET_MODE_BITSIZE (GET_MODE (inner));
 	  unsignedp = 0;
@@ -3855,12 +3847,6 @@ simplify_rtx (x, op0_mode, last, in_dest)
       break;
 
     case TRUNCATE:
-      /* We can't handle truncation to a partial integer mode here
-	 because we don't know the real bitsize of the partial
-	 integer mode.  */
-      if (GET_MODE_CLASS (mode) == MODE_PARTIAL_INT)
-	break;
-
       if (GET_MODE_BITSIZE (mode) <= HOST_BITS_PER_WIDE_INT
 	  && TRULY_NOOP_TRUNCATION (GET_MODE_BITSIZE (mode),
 				    GET_MODE_BITSIZE (GET_MODE (XEXP (x, 0)))))
@@ -10495,7 +10481,6 @@ reversible_comparison_p (x)
   switch (GET_MODE_CLASS (GET_MODE (XEXP (x, 0))))
     {
     case MODE_INT:
-    case MODE_PARTIAL_INT:
     case MODE_COMPLEX_INT:
       return 1;
 

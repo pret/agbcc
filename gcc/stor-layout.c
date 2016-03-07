@@ -185,7 +185,6 @@ int_mode_for_mode (mode)
   switch (GET_MODE_CLASS (mode))
     {
     case MODE_INT:
-    case MODE_PARTIAL_INT:
       break;
 
     case MODE_COMPLEX_INT:
