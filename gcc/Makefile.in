@@ -343,7 +343,7 @@ COMPILERS = cc1$(exeext) @all_compilers@
 
 # List of things which should already be built whenever we try to use xgcc
 # to compile anything (without linking).
-GCC_PASSES=xgcc$(exeext) cc1$(exeext)
+GCC_PASSES=xgcc$(exeext) cc1$(exeext) cpp$(exeext)
 
 # List of things which should already be built whenever we try to use xgcc
 # to link anything.
@@ -1570,7 +1570,7 @@ $(HOST_PREFIX_1):
 # Remake cpp.
 
 LIBCPP_OBJS =	cpplib.o cpphash.o cppalloc.o cpperror.o cppexp.o cppfiles.o \
-		cppulp.o prefix.o version.o \
+		prefix.o version.o \
 		mbchar.o
 
 # All the other archives built/used by this makefile are for targets.  This
@@ -1579,6 +1579,12 @@ LIBCPP_OBJS =	cpplib.o cpphash.o cppalloc.o cpperror.o cppexp.o cppfiles.o \
 libcpp.a: $(LIBCPP_OBJS)
 	$(AR) $(AR_FLAGS) libcpp.a $(LIBCPP_OBJS)
 	if $(RANLIB_TEST) ; then $(RANLIB) libcpp.a ; else true ; fi
+
+cpp$(exeext): cppmain.o libcpp.a $(LIBDEPS)
+	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o cpp$(exeext) cppmain.o \
+	libcpp.a
+
+cppmain.o: cppmain.c $(CONFIG_H) cpplib.h machmode.h system.h
 
 cpplib.o: cpplib.c $(CONFIG_H) cpplib.h machmode.h cpphash.h config.status \
 	system.h prefix.h Makefile
@@ -1591,8 +1597,6 @@ cpplib.o: cpplib.c $(CONFIG_H) cpplib.h machmode.h cpphash.h config.status \
 	  -c `echo $(srcdir)/cpplib.c | sed 's,^\./,,'`
 
 cpperror.o: cpperror.c $(CONFIG_H) cpplib.h machmode.h system.h
-
-cppulp.o: cppulp.c $(CONFIG_H) system.h output.h
 
 cppexp.o: cppexp.c $(CONFIG_H) cpplib.h machmode.h system.h
 
@@ -1667,6 +1671,8 @@ install-common: native installdirs
 	  else true; \
 	  fi; \
 	done
+	-rm -f $(libsubdir)/cpp$(exeext)
+	$(INSTALL_PROGRAM) cpp$(exeext) $(libsubdir)/cpp$(exeext)
 # Don't mess with specs if it doesn't exist yet.
 	-if [ -f specs ] ; then \
 	  rm -f $(libsubdir)/specs; \

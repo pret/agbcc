@@ -569,7 +569,6 @@ enum node_type {
  T_SIZE_TYPE,   /* `__SIZE_TYPE__' */
  T_PTRDIFF_TYPE,   /* `__PTRDIFF_TYPE__' */
  T_WCHAR_TYPE,   /* `__WCHAR_TYPE__' */
- T_USER_LABEL_PREFIX_TYPE, /* `__USER_LABEL_PREFIX__' */
  T_REGISTER_PREFIX_TYPE,   /* `__REGISTER_PREFIX__' */
  T_TIME,	/* `__TIME__' */
  T_CONST,	/* Constant value, used by `__STDC__' */

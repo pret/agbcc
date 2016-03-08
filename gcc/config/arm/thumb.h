@@ -155,7 +155,7 @@ extern int target_flags;
 
 /* Output a reference to a label.  */
 #define ASM_OUTPUT_LABELREF(STREAM,NAME)  \
-  fprintf ((STREAM), "%s%s", user_label_prefix, (NAME))
+  fprintf ((STREAM), "%s", (NAME))
 
 /* This is how to output an assembler line for a numeric constant byte.  */
 #define ASM_OUTPUT_BYTE(STREAM,VALUE)					\

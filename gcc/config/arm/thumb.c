@@ -1325,10 +1325,6 @@ thumb_print_operand(FILE *f, rtx x, int code)
             fputs(ASM_COMMENT_START, f);
             return;
 
-        case '_':
-            fputs(user_label_prefix, f);
-            return;
-
         case 'D':
             if (x)
                 fputs(thumb_condition_code(x, 1), f);

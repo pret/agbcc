@@ -171,11 +171,6 @@ static void set_spec		(char *, char *);
 static struct compiler *lookup_compiler (char *, size_t, char *);
 static char *build_search_list	(struct path_prefix *, char *, int);
 static void putenv_from_prefixes (struct path_prefix *, char *);
-/* CYGNUS LOCAL -- meissner/relative pathnames */
-static char **split_directories	(char *, int *);
-static void free_split_directories (char **);
-static char *make_relative_prefix (char *, char *, char *);
-/* END CYGNUS LOCAL -- meissner/relative pathnames */
 static char *find_a_file	(struct path_prefix *, char *, int);
 static void add_prefix		(struct path_prefix *, const char *,
 				       const char *, int, int, int *);
@@ -209,16 +204,6 @@ static void display_help 	(void);
 
 void fancy_abort		(void) ATTRIBUTE_NORETURN;
 
-#ifdef LANG_SPECIFIC_DRIVER
-/* Called before processing to change/add/remove arguments. */
-extern void lang_specific_driver (void (*)(char *, ...), int *, char ***, int *);
-
-/* Called before linking.  Returns 0 on success and -1 on failure. */
-extern int lang_specific_pre_link ();
-
-/* Number of extra output files that lang_specific_pre_link may generate. */
-extern int lang_specific_extra_outfiles;
-#endif
 
 /* Specs are strings containing lines, each of which (if not blank)
 is made up of a program name, and arguments separated by spaces.
@@ -319,7 +304,6 @@ or with constant text in a single argument.
  %c	process SIGNED_CHAR_SPEC as a spec.
  %C     process CPP_SPEC as a spec.  A capital C is actually used here.
  %1	process CC1_SPEC as a spec.
- %2	process CC1PLUS_SPEC as a spec.
  %|	output "-" if the input for the current command is coming from a pipe.
  %*	substitute the variable part of a matched option.  (See below.)
 	Note that each comma in the substituted string is replaced by
@@ -394,16 +378,10 @@ proper position among the other output files.  */
 #define CPP_SPEC ""
 #endif
 
-/* config.h can define CC1_SPEC to provide extra args to cc1 and cc1plus
+/* config.h can define CC1_SPEC to provide extra args to cc1
    or extra switch-translations.  */
 #ifndef CC1_SPEC
 #define CC1_SPEC ""
-#endif
-
-/* config.h can define CC1PLUS_SPEC to provide extra args to cc1plus
-   or extra switch-translations.  */
-#ifndef CC1PLUS_SPEC
-#define CC1PLUS_SPEC ""
 #endif
 
 /* config.h can define LINK_SPEC to provide extra args to the linker
@@ -417,16 +395,7 @@ proper position among the other output files.  */
 #define LIB_SPEC "%{!shared:%{g*:-lg} %{!p:%{!pg:-lc}}%{p:-lc_p}%{pg:-lc_p}}"
 #endif
 
-/* config.h can define LIBGCC_SPEC to override how and when libgcc.a is
-   included.  */
-#ifndef LIBGCC_SPEC
-#if defined(LINK_LIBGCC_SPECIAL) || defined(LINK_LIBGCC_SPECIAL_1)
-/* Have gcc do the search for libgcc.a.  */
-#define LIBGCC_SPEC "libgcc.a%s"
-#else
 #define LIBGCC_SPEC "-lgcc"
-#endif
-#endif
 
 /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
 #ifndef STARTFILE_SPEC
@@ -463,7 +432,6 @@ proper position among the other output files.  */
 static char *cpp_spec = CPP_SPEC;
 static char *cpp_predefines = CPP_PREDEFINES;
 static char *cc1_spec = CC1_SPEC;
-static char *cc1plus_spec = CC1PLUS_SPEC;
 static char *signed_char_spec = SIGNED_CHAR_SPEC;
 static char *asm_spec = ASM_SPEC;
 static char *asm_final_spec = ASM_FINAL_SPEC;
@@ -520,10 +488,6 @@ static struct user_specs *user_specs_head, *user_specs_tail;
   || !strcmp (STR, "imacros") || !strcmp (STR, "aux-info") \
   || !strcmp (STR, "idirafter") || !strcmp (STR, "iprefix") \
   || !strcmp (STR, "iwithprefix") || !strcmp (STR, "iwithprefixbefore") \
-  /* CYGNUS LOCAL v850/law */ \
-  || !strcmp (STR, "attr-info")         \
-  || !strcmp (STR, "offset-info")       \
-  /* END CYGNUS LOCAL */ \
   || !strcmp (STR, "isystem") || !strcmp (STR, "specs"))
 
 #ifndef WORD_SWITCH_TAKES_ARG
@@ -572,18 +536,6 @@ static int n_compilers;
 
 static struct compiler default_compilers[] =
 {
-  /* Add lists of suffixes of known languages here.  If those languages
-     were not present when we built the driver, we will hit these copies
-     and be given a more meaningful error than "file not used since
-     linking is not done".  */
-  {".m", {"#Objective-C"}},
-  {".cc", {"#C++"}}, {".cxx", {"#C++"}}, {".cpp", {"#C++"}},
-  {".c++", {"#C++"}}, {".C", {"#C++"}},
-  {".ads", {"#Ada"}}, {".adb", {"#Ada"}}, {".ada", {"#Ada"}},
-  {".f", {"#Fortran"}}, {".for", {"#Fortran"}}, {".F", {"#Fortran"}},
-  {".fpp", {"#Fortran"}},
-  {".p", {"#Pascal"}}, {".pas", {"#Pascal"}},
-  /* Next come the entries for C.  */
   {".c", {"@c"}},
   {"@c",
    {
@@ -597,11 +549,8 @@ static struct compiler default_compilers[] =
         %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
         %{traditional} %{ftraditional:-traditional}\
         %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
 	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
         %i %{E:%W{o*}}%{M:%W{o*}}%{MM:%W{o*}}\n}",
-   /* CYGNUS LOCAL v850/law & --help/nickc */
-#if 1
      "%{!E:%{!M:%{!MM:cc1 %i %1 \
                   -lang-c %{ansi:-std=c89} %{std*} %{nostdinc*} %{A*} %{I*} %I\
                   %{!Q:-quiet} -dumpbase %b.c %{d*} %{m*} %{a*}\
@@ -617,38 +566,11 @@ static struct compiler default_compilers[] =
 		  %{g*} %{O*} %{W*} %{w} %{pedantic*} %{ansi} \
 		  %{aux-info*}\
 		  %{--help:--help} \
-		  %{attr-info*}\
-		  %{offset-info*}\
 		  %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
 		  %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
                   %{!S:as %a %Y\
 		     %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
                      %{!pipe:%g.s} %A\n }}}}"
-#else
-   /* END CYGNUS LOCAL */
-      "%{!E:%{!M:%{!MM:cc1 %i %1 \
-                  %{ansi:-std=c89} %{std*} %{nostdinc*} %{A*} %{I*} %I\
-                  %{!Q:-quiet} -dumpbase %b.c %{d*} %{m*} %{a*}\
-                  %{MD:-MD %b.d} %{MMD:-MMD %b.d} %{MG}\
-                  -undef -D__GNUC__=%v1 -D__GNUC_MINOR__=%v2\
-		  %{ansi|std=*:%{!std=gnu*:-trigraphs -D__STRICT_ANSI__}}\
-		  %{!undef:%{!ansi:%{!std=*:%p}%{std=gnu*:%p}} %P} %{trigraphs}\
-                  %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
-                  %{H} %C %{D*} %{U*} %{i*} %Z\
-                  %{ftraditional:-traditional}\
-                  %{traditional-cpp:-traditional}\
-		  %{traditional} %{v:-version} %{pg:-p} %{p} %{f*}\
-		  %{aux-info*}\
-		  %{--help:--help}\
-		  %{g*} %{O*} %{W*} %{w} %{pedantic*}\
-		  %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-		  %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-                  %{!S:as %a %Y\
-		     %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-                     %{!pipe:%g.s} %A\n }}}}"
-   /* CYGNUS LOCAL v850/law */
-#endif 
-   /* END CYGNUS LOCAL */
   }},
   {"-",
    {"%{E:cpp -lang-c %{ansi:-std=c89} %{std*} %{nostdinc*}\
@@ -661,56 +583,9 @@ static struct compiler default_compilers[] =
         %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
         %{traditional} %{ftraditional:-traditional}\
         %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
 	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
         %i %W{o*}}\
     %{!E:%e-E required when input is from standard input}"}},
-  {".m", {"@objective-c"}},
-  {"@objective-c",
-   {"cpp -lang-objc %{nostdinc*} %{C} %{v} %{A*} %{I*} %{P} %I\
-	%{C:%{!E:%eGNU C does not support -C without using -E}}\
-	%{M} %{MM} %{MD:-MD %b.d} %{MMD:-MMD %b.d} %{MG}\
-        -undef -D__OBJC__ -D__GNUC__=%v1 -D__GNUC_MINOR__=%v2\
-	 %{ansi:-trigraphs -D__STRICT_ANSI__}\
-	%{!undef:%{!ansi:%p} %P} %{trigraphs}\
-        %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
-        %{traditional} %{ftraditional:-traditional}\
-        %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
-	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
-        %i %{!M:%{!MM:%{!E:%{!pipe:%g.i}}}}%{E:%W{o*}}%{M:%W{o*}}%{MM:%W{o*}} |\n",
-   /* CYGNUS LOCAL v850/law */
-#if 1
-    "%{!M:%{!MM:%{!E:cc1obj %{!pipe:%g.i} %1 \
-		   %{!Q:-quiet} -dumpbase %b.m %{d*} %{m*} %{a*}\
-		   %{g*} %{O*} %{W*} %{w} %{pedantic*} %{ansi} \
-		   %{traditional} %{v:-version} %{pg:-p} %{p} %{f*} \
-    		   -lang-objc %{gen-decls} \
-		   %{aux-info*}\
-		   %{attr-info*}\
-		   %{offset-info*}\
-		   %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-		   %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-              %{!S:as %a %Y\
-		      %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-                      %{!pipe:%g.s} %A\n }}}}"
-#else 
-   /* END CYGNUS LOCAL */
-   "%{!M:%{!MM:%{!E:cc1obj %{!pipe:%g.i} %1 \
-		   %{!Q:-quiet} -dumpbase %b.m %{d*} %{m*} %{a*}\
-		   %{g*} %{O*} %{W*} %{w} %{pedantic*} %{ansi} \
-		   %{traditional} %{v:-version} %{pg:-p} %{p} %{f*} \
-    		   -lang-objc %{gen-decls} \
-		   %{aux-info*}\
-		   %{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-		   %{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-              %{!S:as %a %Y\
-		      %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-                      %{!pipe:%g.s} %A\n }}}}"
-   /* CYGNUS LOCAL v850/law */
-#endif 
-   /* END CYGNUS LOCAL */
-  }},
   {".h", {"@c-header"}},
   {"@c-header",
    {"%{!E:%eCompilation of header file requested} \
@@ -723,38 +598,19 @@ static struct compiler default_compilers[] =
         %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
         %{traditional} %{ftraditional:-traditional}\
         %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
 	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
         %i %W{o*}"}},
   {".i", {"@cpp-output"}},
   {"@cpp-output",
-   /* CYGNUS LOCAL v850/law */
-#if 1
    "%{!M:%{!MM:%{!E:cc1 %i %1 %{!Q:-quiet} %{d*} %{m*} %{a*}\
 			%{g*} %{O*} %{W*} %{w} %{pedantic*} %{ansi}\
 			%{traditional} %{v:-version} %{pg:-p} %{p} %{f*}\
 			%{aux-info*}\
-			%{attr-info*}\
-			%{offset-info*}\
 			%{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
 			%{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
 		     %{!S:as %a %Y\
 			     %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
 			     %{!pipe:%g.s} %A\n }}}}"
-#else
-   /* END CYGNUS LOCAL */
-   {"%{!M:%{!MM:%{!E:cc1 %i %1 %{!Q:-quiet} %{d*} %{m*} %{a*}\
-			%{g*} %{O*} %{W*} %{w} %{pedantic*} %{std*}\
-			%{traditional} %{v:-version} %{pg:-p} %{p} %{f*}\
-			%{aux-info*}\
-			%{pg:%{fomit-frame-pointer:%e-pg and -fomit-frame-pointer are incompatible}}\
-			%{S:%W{o*}%{!o*:-o %b.s}}%{!S:-o %{|!pipe:%g.s}} |\n\
-		     %{!S:as %a %Y\
-			     %{c:%W{o*}%{!o*:-o %w%b%O}}%{!c:-o %d%w%u%O}\
-			     %{!pipe:%g.s} %A\n }}}}"
-   /* CYGNUS LOCAL v850/law */
-#endif 
-   /* END CYGNUS LOCAL */
   },
   {".s", {"@assembler"}},
   {"@assembler",
@@ -770,7 +626,6 @@ static struct compiler default_compilers[] =
         %c %{Os:-D__OPTIMIZE_SIZE__} %{O*:%{!O0:-D__OPTIMIZE__}}\
         %{traditional} %{ftraditional:-traditional}\
         %{traditional-cpp:-traditional}\
-	%{fleading-underscore} %{fno-leading-underscore}\
 	%{g*} %{W*} %{w} %{pedantic*} %{H} %{d*} %C %{D*} %{U*} %{i*} %Z\
         %i %{!M:%{!MM:%{!E:%{!pipe:%g.s}}}}%{E:%W{o*}}%{M:%W{o*}}%{MM:%W{o*}} |\n",
     "%{!M:%{!MM:%{!E:%{!S:as %a %Y\
@@ -793,26 +648,6 @@ static int n_default_compilers
 /* We want %{T*} after %{L*} and %D so that it can be used to specify linker
    scripts which exist in user specified directories, or in standard
    directories.  */
-#ifdef LINK_COMMAND_SPEC
-/* Provide option to override link_command_spec from machine specific
-   configuration files.  */
-static char *link_command_spec = 
-	LINK_COMMAND_SPEC;
-#else
-#ifdef LINK_LIBGCC_SPECIAL
-/* Don't generate -L options.  */
-static char *link_command_spec = "\
-%{!fsyntax-only: \
- %{!c:%{!M:%{!MM:%{!E:%{!S:%(linker) %l %X %{o*} %{A} %{d} %{e*} %{m} %{N} %{n} \
-			%{r} %{s} %{t} %{u*} %{x} %{z} %{Z}\
-			%{!A:%{!nostdlib:%{!nostartfiles:%S}}}\
-			%{static:} %{L*} %o\
-			%{!nostdlib:%{!nodefaultlibs:%G %L %G}}\
-			%{!A:%{!nostdlib:%{!nostartfiles:%E}}}\
-			%{T*}\
-			\n }}}}}}";
-#else
-/* Use -L.  */
 static char *link_command_spec = "\
 %{!fsyntax-only: \
  %{!c:%{!M:%{!MM:%{!E:%{!S:%(linker) %l %X %{o*} %{A} %{d} %{e*} %{m} %{N} %{n} \
@@ -823,8 +658,6 @@ static char *link_command_spec = "\
 			%{!A:%{!nostdlib:%{!nostartfiles:%E}}}\
 			%{T*}\
 			\n }}}}}}";
-#endif
-#endif
 
 /* A vector of options to give to the linker.
    These options are accumulated by %x,
@@ -955,61 +788,11 @@ translate_options (argcp, argvp)
   int i;
   int argc = *argcp;
   char **argv = *argvp;
-  char **newv; /* CYGNUS LOCAL default-options */
+  char **newv = (char **) xmalloc ((argc + 2) * 2 * sizeof (char *));
   int newindex = 0;
-  /* CYGNUS LOCAL default-options */
-  char *default_options = getenv ("GCC_DEFAULT_OPTIONS");
-  int default_options_count = 0;
-  char *p;
 
-  /* Make a rough estimate of the number of options.  */
-  if (default_options)
-    {
-      default_options_count = 1;
-      for (p = default_options; *p; p++)
-	if (*p == ' ')
-	  default_options_count++;
-    }
-
-  newv = (char **) xmalloc ((argc + default_options_count + 2)
-			    * 2 * sizeof (char *));
-  /* END CYGNUS LOCAL */
   i = 0;
   newv[newindex++] = argv[i++];
-
-  /* CYGNUS LOCAL default-options */
-  /* Insert default options at the beginning of the command, so that they
-     can be overriden by the user if desired.  */
-
-  if (default_options)
-    {
-      char *q;
-
-      /* Make a copy of default_options, so that we can safely modify it.
-	 If we modify it in place, then a subsequent getenv call may get
-	 the modified string.  */
-      q = xmalloc (strlen (default_options) + 1);
-      strcpy (q, default_options);
-      default_options = q;
-
-      q = default_options;
-      for (p = default_options; *p; p++)
-	if (*p == ' ')
-	  {
-	    *p = '\0';
-	    if (*q != '\0')
-	      newv[newindex++] = q;
-	    if (*++p == ' ')
-	      while (*p == ' ')
-		p++;
-	    q = p;
-	  }
-      if (*q != '\0')
-	newv[newindex++] = q;
-    }
-
-  /* Now add options from the command line.  */
-  /* END CYGNUS LOCAL */
 
   while (i < argc)
     {
@@ -1215,7 +998,6 @@ static struct spec_list static_specs[] = {
   INIT_STATIC_SPEC ("asm_final",		&asm_final_spec),
   INIT_STATIC_SPEC ("cpp",			&cpp_spec),
   INIT_STATIC_SPEC ("cc1",			&cc1_spec),
-  INIT_STATIC_SPEC ("cc1plus",			&cc1plus_spec),
   INIT_STATIC_SPEC ("endfile",			&endfile_spec),
   INIT_STATIC_SPEC ("link",			&link_spec),
   INIT_STATIC_SPEC ("lib",			&lib_spec),
@@ -1233,18 +1015,6 @@ static struct spec_list static_specs[] = {
   INIT_STATIC_SPEC ("linker",			&linker_name_spec),
 };
 
-#ifdef EXTRA_SPECS		/* additional specs needed */
-/* Structure to keep track of just the first two args of a spec_list.
-   That is all that the EXTRA_SPECS macro gives us. */
-struct spec_list_1
-{
-  char *name;
-  char *ptr;
-};
-
-static struct spec_list_1 extra_specs_1[] = { EXTRA_SPECS };
-static struct spec_list * extra_specs = (struct spec_list *)0;
-#endif
 
 /* List of dynamically allocates specs that have been defined so far.  */
 
@@ -1265,25 +1035,6 @@ init_spec ()
 
   if (verbose_flag)
     fprintf (stderr, "Using builtin specs.\n");
-
-#ifdef EXTRA_SPECS
-  extra_specs = (struct spec_list *)
-    xmalloc (sizeof(struct spec_list) *
-	     (sizeof(extra_specs_1)/sizeof(extra_specs_1[0])));
-  zero_memory (extra_specs, sizeof(struct spec_list) *
-	 (sizeof(extra_specs_1)/sizeof(extra_specs_1[0])));
-  
-  for (i = (sizeof(extra_specs_1) / sizeof(extra_specs_1[0])) - 1; i >= 0; i--)
-    {
-      sl = &extra_specs[i];
-      sl->name = extra_specs_1[i].name;
-      sl->ptr = extra_specs_1[i].ptr;
-      sl->next = next;
-      sl->name_len = strlen (sl->name);
-      sl->ptr_spec = &sl->ptr;
-      next = sl;
-    }
-#endif
 
   for (i = (sizeof (static_specs) / sizeof (static_specs[0])) - 1; i >= 0; i--)
     {
@@ -1444,17 +1195,7 @@ static char *machine_suffix = 0;
 
 static char *just_machine_suffix = 0;
 
-/* Adjusted value of GCC_EXEC_PREFIX envvar.  */
-
-static char *gcc_exec_prefix;
-
 /* Default prefixes to attach to command names.  */
-
-#ifdef CROSS_COMPILE  /* Don't use these prefixes for a cross compiler.  */
-#undef MD_EXEC_PREFIX
-#undef MD_STARTFILE_PREFIX
-#undef MD_STARTFILE_PREFIX_1
-#endif
 
 #ifndef STANDARD_EXEC_PREFIX
 #define STANDARD_EXEC_PREFIX "/usr/local/lib/gcc-lib/"
@@ -1462,20 +1203,11 @@ static char *gcc_exec_prefix;
 
 static char *standard_exec_prefix = STANDARD_EXEC_PREFIX;
 static char *standard_exec_prefix_1 = "/usr/lib/gcc/";
-#ifdef MD_EXEC_PREFIX
-static char *md_exec_prefix = MD_EXEC_PREFIX;
-#endif
 
 #ifndef STANDARD_STARTFILE_PREFIX
 #define STANDARD_STARTFILE_PREFIX "/usr/local/lib/"
 #endif /* !defined STANDARD_STARTFILE_PREFIX */
 
-#ifdef MD_STARTFILE_PREFIX
-static char *md_startfile_prefix = MD_STARTFILE_PREFIX;
-#endif
-#ifdef MD_STARTFILE_PREFIX_1
-static char *md_startfile_prefix_1 = MD_STARTFILE_PREFIX_1;
-#endif
 static char *standard_startfile_prefix = STANDARD_STARTFILE_PREFIX;
 static char *standard_startfile_prefix_1 = "/lib/";
 static char *standard_startfile_prefix_2 = "/usr/lib/";
@@ -1992,234 +1724,7 @@ putenv_from_prefixes (paths, env_var)
 {
   putenv (build_search_list (paths, env_var, 1));
 }
-
-/* CYGNUS LOCAL -- meissner/relative pathnames */
-/* Split a filename into component directories.  */
 
-static char **
-split_directories (name, ptr_num_dirs)
-     char *name;
-     int *ptr_num_dirs;
-{
-  int num_dirs = 0;
-  char **dirs;
-  char *p, *q;
-  int ch;
-
-  /* Count the number of directories.  Special case MSDOS disk names as part
-     of the initial directory.  */
-  p = name;
-  if (DIR_SEPARATOR == '\\' && name[1] == ':'
-      && (name[2] == DIR_SEPARATOR || name[2] == '/'))
-    {
-      p += 3;
-      num_dirs++;
-    }
-
-  while ((ch = *p++) != '\0')
-    {
-      if (ch == '/' || ch == DIR_SEPARATOR)
-	{
-	  num_dirs++;
-	  while ((ch = *p) == '/' || ch == DIR_SEPARATOR)
-	    p++;
-	}
-    }
-
-  dirs = (char **) xmalloc (sizeof (char *) * (num_dirs + 2));
-
-  /* Now copy the directory parts.  */
-  num_dirs = 0;
-  p = name;
-  if (DIR_SEPARATOR == '\\' && name[1] == ':'
-      && (name[2] == DIR_SEPARATOR || name[2] == '/'))
-    {
-      dirs[num_dirs++] = save_string (p, 3);
-      p += 3;
-    }
-
-  q = p;
-  while ((ch = *p++) != '\0')
-    {
-      if (ch == '/' || ch == DIR_SEPARATOR)
-	{
-	  while ((ch = *p) == '/' || ch == DIR_SEPARATOR)
-	    p++;
-
-	  dirs[num_dirs++] = save_string (q, p - q);
-	  q = p;
-	}
-    }
-
-  if (p - 1 - q > 0)
-    dirs[num_dirs++] = save_string (q, p - 1 - q);
-
-  dirs[num_dirs] = NULL;
-  if (ptr_num_dirs)
-    *ptr_num_dirs = num_dirs;
-
-  return dirs;
-}
-
-/* Release storage held by split directories.  */
-
-static void
-free_split_directories (dirs)
-     char **dirs;
-{
-  int i = 0;
-
-  while (dirs[i] != NULL)
-    free (dirs[i++]);
-
-  free ((char *)dirs);
-}
-
-/* Given three strings PROGNAME, BIN_PREFIX, PREFIX, return a string that gets
-   to PREFIX starting with the directory portion of PROGNAME and a relative
-   pathname of the difference between BIN_PREFIX and PREFIX.
-
-   For example, if BIN_PREFIX is /alpha/beta/gamma/gcc/delta, PREFIX is
-   /alpha/beta/gamma/omega/, and PROGNAME is /red/green/blue/gcc, then this
-   function will return /reg/green/blue/../omega.
-
-   If no relative prefix can be found, return NULL.  */
-
-static char *
-make_relative_prefix (progname, bin_prefix, prefix)
-     char *progname;
-     char *bin_prefix;
-     char *prefix;
-{
-  char **prog_dirs, **bin_dirs, **prefix_dirs;
-  int prog_num, bin_num, prefix_num, std_loc_p;
-  int i, n, common;
-
-  prog_dirs = split_directories (progname, &prog_num);
-  bin_dirs = split_directories (bin_prefix, &bin_num);
-
-  /* If there is no full pathname, try to find the program by checking in each
-     of the directories specified in the PATH environment variable.  */
-  if (prog_num == 1)
-    {
-      char *temp;
-
-      GET_ENV_PATH_LIST (temp, "PATH");
-      if (temp)
-	{
-	  char *startp, *endp;
-	  char *nstore = (char *) alloca (strlen (temp) + strlen (progname) + 1);
-
-	  startp = endp = temp;
-	  while (1)
-	    {
-	      if (*endp == PATH_SEPARATOR || *endp == 0)
-		{
-		  if (endp == startp)
-		    {
-		      nstore[0] = '.';
-		      nstore[1] = DIR_SEPARATOR;
-		      nstore[2] = '\0';
-		    }
-		  else
-		    {
-		      strncpy (nstore, startp, endp-startp);
-		      if (endp[-1] != '/' && endp[-1] != DIR_SEPARATOR)
-			{
-			  nstore[endp-startp] = DIR_SEPARATOR;
-			  nstore[endp-startp+1] = 0;
-			}
-		      else
-			nstore[endp-startp] = 0;
-		    }
-		  strcat (nstore, progname);
-		  if (!access (nstore, X_OK))
-		    {
-		      free_split_directories (prog_dirs);
-		      progname = nstore;
-		      prog_dirs = split_directories (progname, &prog_num);
-		      break;
-		    }
-
-		  if (*endp == 0)
-		    break;
-		  endp = startp = endp + 1;
-		}
-	      else
-		endp++;
-	    }
-	}
-    }
-
-  /* Remove the program name from comparison of directory names.  */
-  prog_num--;
-
-  /* Determine if the compiler is installed in the standard location, and if
-     so, we don't need to specify relative directories.  Also, if argv[0]
-     doesn't contain any directory specifiers, there is not much we can do.  */
-  std_loc_p = 0;
-  if (prog_num == bin_num)
-    {
-      for (i = 0; i < bin_num; i++)
-	{
-	  if (strcmp (prog_dirs[i], bin_dirs[i]) != 0)
-	    break;
-	}
-
-      if (prog_num <= 0 || i == bin_num)
-	{
-	  std_loc_p = 1;
-	  free_split_directories (prog_dirs);
-	  free_split_directories (bin_dirs);
-	  prog_dirs = bin_dirs = (char **)0;
-	  return NULL;
-	}
-    }
-
-  prefix_dirs = split_directories (prefix, &prefix_num);
-
-  /* Find how many directories are in common between bin_prefix & prefix */
-  n = (prefix_num < bin_num) ? prefix_num : bin_num;
-  for (common = 0; common < n; common++)
-    {
-      if (strcmp (bin_dirs[common], prefix_dirs[common]) != 0)
-	break;
-    }
-
-  /* If there are no common directories, there can be no relative prefix.  */
-  if (common == 0)
-    {
-      free_split_directories (prog_dirs);
-      free_split_directories (bin_dirs);
-      free_split_directories (prefix_dirs);
-      return NULL;
-    }
-
-  /* Build up the pathnames in argv[0].  */
-  for (i = 0; i < prog_num; i++)
-    obstack_grow (&obstack, prog_dirs[i], strlen (prog_dirs[i]));
-
-  /* Now build up the ..'s.  */
-  for (i = common; i < n; i++)
-    {
-      obstack_grow (&obstack, DIR_UP, sizeof (DIR_UP)-1);
-      obstack_1grow (&obstack, DIR_SEPARATOR);
-    }
-
-  /* Put in directories to move over to prefix.  */
-  for (i = common; i < prefix_num; i++)
-    obstack_grow (&obstack, prefix_dirs[i], strlen (prefix_dirs[i]));
-
-  free_split_directories (prog_dirs);
-  free_split_directories (bin_dirs);
-  free_split_directories (prefix_dirs);
-
-  obstack_1grow (&obstack, '\0');
-  return obstack_finish (&obstack);
-}
-/* END CYGNUS LOCAL -- meissner/relative pathnames */
-
-
 /* Search for NAME using the prefix list PREFIXES.  MODE is passed to
    access to check permissions.
    Return 0 if not found, otherwise return its name, allocated with malloc.  */
@@ -2497,9 +2002,6 @@ execute ()
   for (n_commands = 1, i = 0; i < argbuf_index; i++)
     if (strcmp (argbuf[i], "|") == 0)
       {				/* each command.  */
-#if defined (__MSDOS__) || defined (OS2)
-        fatal ("-pipe not supported");
-#endif
 	argbuf[i] = 0;	/* termination of command args.  */
 	commands[n_commands].prog = argbuf[i + 1];
 	commands[n_commands].argv = &argbuf[i + 1];
@@ -2836,8 +2338,6 @@ process_command (argc, argv)
   int have_o = 0;
   int lang_n_infiles = 0;
 
-  GET_ENV_PATH_LIST (gcc_exec_prefix, "GCC_EXEC_PREFIX");
-
   n_switches = 0;
   n_infiles = 0;
   added_libraries = 0;
@@ -2852,39 +2352,6 @@ process_command (argc, argv)
 	  *temp = '\0';
 	  break;
 	}
-    }
-
-  /* CYGNUS LOCAL meissner/relative pathnames */
-  /* Set up the default search paths.  If there is no GCC_EXEC_PREFIX, see if we
-     can create it from the pathname specified in argv[0].  */
-
-  if (!gcc_exec_prefix)
-    {
-      gcc_exec_prefix = make_relative_prefix (argv[0], standard_bindir_prefix,
-					      standard_exec_prefix);
-      if (gcc_exec_prefix)
-	putenv (concat ("GCC_EXEC_PREFIX=", gcc_exec_prefix, NULL));
-    }
-  /* END CYGNUS LOCAL -- meissner/relative pathnames */
-
-  if (gcc_exec_prefix)
-    {
-      int len = strlen (gcc_exec_prefix);
-      if (len > (int) sizeof ("/lib/gcc-lib/")-1
-	  && (gcc_exec_prefix[len-1] == '/'
-	      || gcc_exec_prefix[len-1] == DIR_SEPARATOR))
-	{
-	  temp = gcc_exec_prefix + len - sizeof ("/lib/gcc-lib/") + 1;
-	  if ((*temp == '/' || *temp == DIR_SEPARATOR)
-	      && strncmp (temp+1, "lib", 3) == 0
-	      && (temp[4] == '/' || temp[4] == DIR_SEPARATOR)
-	      && strncmp (temp+5, "gcc-lib", 7) == 0)
-	    len -= sizeof ("/lib/gcc-lib/") - 1;
-	}
-
-      set_std_prefix (gcc_exec_prefix, len);
-      add_prefix (&exec_prefixes, gcc_exec_prefix, "GCC", 0, 0, NULL);
-      add_prefix (&startfile_prefixes, gcc_exec_prefix, "GCC", 0, 0, NULL);
     }
 
   /* COMPILER_PATH and LIBRARY_PATH have values
@@ -2992,10 +2459,6 @@ process_command (argc, argv)
   /* Convert new-style -- options to old-style.  */
   translate_options (&argc, &argv);
 
-#ifdef LANG_SPECIFIC_DRIVER
-  /* Do language-specific adjustment/addition of flags.  */
-  lang_specific_driver (fatal, &argc, &argv, &added_libraries);
-#endif
 
   /* Scan argv twice.  Here, the first time, just count how many switches
      there will be in their vector, and how many input files in theirs.
@@ -3326,12 +2789,10 @@ process_command (argc, argv)
      (such as cpp) rather than those of the host system.  */
   /* Use 2 as fourth arg meaning try just the machine as a suffix,
      as well as trying the machine and the version.  */
-#ifndef OS2
   add_prefix (&exec_prefixes, standard_exec_prefix, "BINUTILS",
 	      0, 2, warn_std_ptr);
   add_prefix (&exec_prefixes, standard_exec_prefix_1, "BINUTILS",
 	      0, 2, warn_std_ptr);
-#endif
 
   add_prefix (&startfile_prefixes, standard_exec_prefix, "BINUTILS",
 	      0, 1, warn_std_ptr);
@@ -3342,30 +2803,10 @@ process_command (argc, argv)
 			   dir_separator_str, NULL);
 
   /* If tooldir is relative, base it on exec_prefixes.  A relative
-     tooldir lets us move the installed tree as a unit.
-
-     If GCC_EXEC_PREFIX is defined, then we want to add two relative
-     directories, so that we can search both the user specified directory
-     and the standard place.  */
+     tooldir lets us move the installed tree as a unit.  */
 
   if (*tooldir_prefix != '/' && *tooldir_prefix != DIR_SEPARATOR)
     {
-      if (gcc_exec_prefix)
-	{
-	  char *gcc_exec_tooldir_prefix
-	    = concat (gcc_exec_prefix, spec_machine, dir_separator_str,
-		      spec_version, dir_separator_str, tooldir_prefix, NULL);
-
-	  add_prefix (&exec_prefixes,
-		      concat (gcc_exec_tooldir_prefix, "bin", 
-			      dir_separator_str, NULL),
-		      NULL, 0, 0, NULL);
-	  add_prefix (&startfile_prefixes,
-		      concat (gcc_exec_tooldir_prefix, "lib", 
-			      dir_separator_str, NULL),
-		      NULL, 0, 0, NULL);
-	}
-
       tooldir_prefix = concat (standard_exec_prefix, spec_machine,
 			       dir_separator_str, spec_version, 
 			       dir_separator_str, tooldir_prefix, NULL);
@@ -3982,15 +3423,6 @@ do_spec_1 (spec, inswitch, soft_matched_part)
 	    {
 	      struct prefix_list *pl = include_prefixes.plist;
 
-	      if (gcc_exec_prefix)
-		{
-		  do_spec_1 ("-iprefix", 1, NULL);
-		  /* Make this a separate argument.  */
-		  do_spec_1 (" ", 0, NULL);
-		  do_spec_1 (gcc_exec_prefix, 1, NULL);
-		  do_spec_1 (" ", 0, NULL);
-		}
-
 	      for (; pl; pl = pl->next)
 		{
 		  do_spec_1 ("-isystem", 1, NULL);
@@ -4005,9 +3437,6 @@ do_spec_1 (spec, inswitch, soft_matched_part)
 	  case 'o':
 	    {
 	      int max = n_infiles;
-#ifdef LANG_SPECIFIC_DRIVER
-	      max += lang_specific_extra_outfiles;
-#endif
 	      for (i = 0; i < max; i++)
 		if (outfiles[i])
 		  store_arg (outfiles[i], 0, 0);
@@ -4104,12 +3533,6 @@ do_spec_1 (spec, inswitch, soft_matched_part)
 
 	  case '1':
 	    value = do_spec_1 (cc1_spec, 0, NULL);
-	    if (value != 0)
-	      return value;
-	    break;
-
-	  case '2':
-	    value = do_spec_1 (cc1plus_spec, 0, NULL);
 	    if (value != 0)
 	      return value;
 	    break;
@@ -5075,88 +4498,6 @@ main (argc, argv)
       read_specs (filename ? filename : uptr->filename, FALSE);
     }
 
-  /* If not cross-compiling, look for startfiles in the standard places.  */
-  /* The fact that these are done here, after reading the specs file,
-     means that it cannot be found in these directories.
-     But that's okay.  It should never be there anyway.  */
-  if (*cross_compile == '0')
-    {
-#ifdef MD_EXEC_PREFIX
-      add_prefix (&exec_prefixes, md_exec_prefix, "GCC", 0, 0, NULL);
-      add_prefix (&startfile_prefixes, md_exec_prefix, "GCC", 0, 0, NULL);
-#endif
-
-#ifdef MD_STARTFILE_PREFIX
-      add_prefix (&startfile_prefixes, md_startfile_prefix, "GCC",
-		  0, 0, NULL);
-#endif
-
-#ifdef MD_STARTFILE_PREFIX_1
-      add_prefix (&startfile_prefixes, md_startfile_prefix_1, "GCC",
-		  0, 0, NULL);
-#endif
-
-      /* If standard_startfile_prefix is relative, base it on
-	 standard_exec_prefix.  This lets us move the installed tree
-	 as a unit.  If GCC_EXEC_PREFIX is defined, base
-	 standard_startfile_prefix on that as well.  */
-      if (*standard_startfile_prefix == '/'
-	  || *standard_startfile_prefix == DIR_SEPARATOR
-	  || *standard_startfile_prefix == '$'
-#ifdef __MSDOS__
-	  /* Check for disk name on MS-DOS-based systems.  */
-          || (standard_startfile_prefix[1] == ':'
-	      && (standard_startfile_prefix[2] == DIR_SEPARATOR
-		  || standard_startfile_prefix[2] == '/'))
-#endif
-	  )
-	add_prefix (&startfile_prefixes, standard_startfile_prefix, "BINUTILS",
-		    0, 0, NULL);
-      else
-	{
-	  if (gcc_exec_prefix)
-	    add_prefix (&startfile_prefixes,
-			concat (gcc_exec_prefix, machine_suffix,
-				standard_startfile_prefix, NULL),
-			NULL, 0, 0, NULL);
-	  add_prefix (&startfile_prefixes,
-		      concat (standard_exec_prefix,
-			      machine_suffix,
-			      standard_startfile_prefix, NULL),
-		      NULL, 0, 0, NULL);
-	}		       
-
-      add_prefix (&startfile_prefixes, standard_startfile_prefix_1,
-		  "BINUTILS", 0, 0, NULL);
-      add_prefix (&startfile_prefixes, standard_startfile_prefix_2,
-		  "BINUTILS", 0, 0, NULL);
-#if 0 /* Can cause surprises, and one can use -B./ instead.  */
-      add_prefix (&startfile_prefixes, "./", NULL, 0, 1, NULL);
-#endif
-    }
-  else
-    {
-      if (*standard_startfile_prefix != DIR_SEPARATOR && gcc_exec_prefix)
-	add_prefix (&startfile_prefixes,
-		    concat (gcc_exec_prefix, machine_suffix,
-			    standard_startfile_prefix, NULL),
-		    "BINUTILS", 0, 0, NULL);
-    }
-
-  /* If we have a GCC_EXEC_PREFIX envvar, modify it for cpp's sake.  */
-  if (gcc_exec_prefix)
-    {
-      char * temp = (char *) xmalloc (strlen (gcc_exec_prefix)
-				      + strlen (spec_version)
-				      + strlen (spec_machine) + 3);
-      strcpy (temp, gcc_exec_prefix);
-      strcat (temp, spec_machine);
-      strcat (temp, dir_separator_str);
-      strcat (temp, spec_version);
-      strcat (temp, dir_separator_str);
-      gcc_exec_prefix = temp;
-    }
-
   /* Now we have the specs.
      Set the `valid' bits for switches that match anything in any spec.  */
 
@@ -5266,9 +4607,6 @@ main (argc, argv)
      that correspond to the input files.  */
 
   i = n_infiles;
-#ifdef LANG_SPECIFIC_DRIVER
-  i += lang_specific_extra_outfiles;
-#endif
   outfiles = (char **) xmalloc (i * sizeof (char *));
   zero_memory ((char *) outfiles, i * sizeof (char *));
 
@@ -5365,16 +4703,6 @@ main (argc, argv)
       clear_failure_queue ();
     }
 
-#ifdef LANG_SPECIFIC_DRIVER
-  if (error_count == 0)
-    {
-      /* Make sure INPUT_FILE_NUMBER points to first available open
-	 slot.  */
-      input_file_number = n_infiles;
-      if (lang_specific_pre_link ())
-	error_count++;
-    }
-#endif
 
   /* Run ld to link all the compiler output files.  */
 

@@ -95,8 +95,6 @@ do {								  \
 #undef RDATA_SECTION_ASM_OP
 #define RDATA_SECTION_ASM_OP	"\t.section .rodata"
 
-#define USER_LABEL_PREFIX ""
-
 /* If defined, a C expression whose value is a string containing the
    assembler operation to identify the following data as
    uninitialized global data.  If not defined, and neither

@@ -93,12 +93,6 @@ static char *predefs = "";
 #endif
 /* END CYGNUS LOCAL */
 
-/* The string value for __USER_LABEL_PREFIX__ */
-
-#ifndef USER_LABEL_PREFIX
-#define USER_LABEL_PREFIX ""
-#endif
-
 /* The string value for __REGISTER_PREFIX__ */
 
 #ifndef REGISTER_PREFIX
@@ -2148,10 +2142,6 @@ special_symbol (hp, pfile)
 #endif
 /* END CYGNUS LOCAL */
 
-    case T_USER_LABEL_PREFIX_TYPE:
-      buf = user_label_prefix;
-      break;
-
     case T_REGISTER_PREFIX_TYPE:
       buf = REGISTER_PREFIX;
       break;
@@ -2305,7 +2295,6 @@ initialize_builtins (pfile)
 /* CYGNUS LOCAL vmakarov */
 #endif
 /* END CYGNUS LOCAL */
-  install ((U_CHAR *)"__USER_LABEL_PREFIX__", -1, T_USER_LABEL_PREFIX_TYPE, 0, 0, -1);
   install ((U_CHAR *)"__REGISTER_PREFIX__", -1, T_REGISTER_PREFIX_TYPE, 0, 0, -1);
   install ((U_CHAR *)"__TIME__", -1, T_TIME, 0, 0, -1);
   if (!CPP_TRADITIONAL (pfile))
@@ -5339,9 +5328,6 @@ cpp_handle_option (pfile, argc, argv)
   struct cpp_options *opts = CPP_OPTIONS (pfile);
   int i = 0;
 
-  if (user_label_prefix == NULL)
-    user_label_prefix = USER_LABEL_PREFIX;
-
   if (argv[i][0] != '-') {
     if (opts->out_fname != NULL)
       {
@@ -5361,14 +5347,6 @@ cpp_handle_option (pfile, argc, argv)
     missing_dirname:
       cpp_fatal (pfile, "Directory name missing after `%s' option", argv[i]);
       return argc;
-      
-    case 'f':      
-      if (!strcmp (argv[i], "-fleading-underscore"))
- 	user_label_prefix = "_";
-      else if (!strcmp (argv[i], "-fno-leading-underscore"))
- 	user_label_prefix = "";
-
-      break;
 
     case 'I':			/* Add directory to path for includes.  */
       if (!strcmp (argv[i] + 2, "-"))

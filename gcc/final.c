@@ -2720,10 +2720,9 @@ output_addr_const (file, x)
     }
 }
 
-/* A poor man's fprintf, with the added features of %I, %R, %L, and %U.
+/* A poor man's fprintf, with the added features of %I, %R, and %L.
    %R prints the value of REGISTER_PREFIX.
    %L prints the value of LOCAL_LABEL_PREFIX.
-   %U prints the value of USER_LABEL_PREFIX.
    %I prints the value of IMMEDIATE_PREFIX.
    %O runs ASM_OUTPUT_OPCODE to transform what follows in the string.
    Also supported are %d, %x, %s, %e, %f, %g and %%.
@@ -2811,10 +2810,6 @@ asm_fprintf (FILE *file, char *p, ...)
 #ifdef LOCAL_LABEL_PREFIX
 	    fprintf (file, "%s", LOCAL_LABEL_PREFIX);
 #endif
-	    break;
-
-	  case 'U':
-	    fputs (user_label_prefix, file);
 	    break;
 
 	  default:

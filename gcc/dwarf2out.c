@@ -2667,7 +2667,6 @@ static char text_end_label[MAX_ARTIFICIAL_LABEL_BYTES];
 	dyn_string_append (STR, NAME + 1);		\
       else						\
 	{						\
-	  dyn_string_append (STR, user_label_prefix);	\
 	  dyn_string_append (STR, NAME);		\
 	}						\
   }							\

@@ -34,10 +34,6 @@ Boston, MA 02111-1307, USA.  */
    the executable file might be covered by the GNU General Public License.  */
 
 	.code	 16
-	
-#ifndef __USER_LABEL_PREFIX__
-#error  __USER_LABEL_PREFIX__ not defined
-#endif
 
 #ifdef __elf__
 #define __PLT__ (PLT)
@@ -50,15 +46,8 @@ Boston, MA 02111-1307, USA.  */
 #endif
 
 #define RET	mov	pc, lr
-	
-/* ANSI concatenation macros.  */
 
-#define CONCAT1(a, b) CONCAT2(a, b)
-#define CONCAT2(a, b) a ## b
-
-/* Use the right prefix for global labels.  */
-
-#define SYM(x) CONCAT1 (__USER_LABEL_PREFIX__, x)
+#define SYM(x) x
 
 work		.req	r4	@ XXXX is this safe ?
 
