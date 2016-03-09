@@ -1909,16 +1909,6 @@ operands_match_p (x, y)
       else
 	j = REGNO (y);
 
-      /* On a WORDS_BIG_ENDIAN machine, point to the last register of a
-	 multiple hard register group, so that for example (reg:DI 0) and
-	 (reg:SI 1) will be considered the same register.  */
-      if (WORDS_BIG_ENDIAN && GET_MODE_SIZE (GET_MODE (x)) > UNITS_PER_WORD
-	  && i < FIRST_PSEUDO_REGISTER)
-	i += (GET_MODE_SIZE (GET_MODE (x)) / UNITS_PER_WORD) - 1;
-      if (WORDS_BIG_ENDIAN && GET_MODE_SIZE (GET_MODE (y)) > UNITS_PER_WORD
-	  && j < FIRST_PSEUDO_REGISTER)
-	j += (GET_MODE_SIZE (GET_MODE (y)) / UNITS_PER_WORD) - 1;
-
       return i == j;
     }
   /* If two operands must match, because they are really a single
@@ -4231,10 +4221,6 @@ find_reloads_toplev (x, opnum, type, ind_levels, is_set_dest, insn)
 	      < GET_MODE_SIZE (GET_MODE (SUBREG_REG (x)))))
 	  {
 	    int shift = SUBREG_WORD (x) * BITS_PER_WORD;
-	    if (WORDS_BIG_ENDIAN)
-	      shift = (GET_MODE_BITSIZE (GET_MODE (SUBREG_REG (x)))
-		       - GET_MODE_BITSIZE (GET_MODE (x))
-		       - shift);
 	    /* Here we use the knowledge that CONST_INTs have a
 	       HOST_WIDE_INT field.  */
 	    if (shift >= HOST_BITS_PER_WIDE_INT)
@@ -5412,15 +5398,6 @@ find_reloads_subreg_address (x, force_replace, opnum, type,
 	    {
 	      int offset = SUBREG_WORD (x) * UNITS_PER_WORD;
 
-	      if (BYTES_BIG_ENDIAN)
-		{
-		  int size;
-
-		  size = GET_MODE_SIZE (GET_MODE (SUBREG_REG (x)));
-		  offset += MIN (size, UNITS_PER_WORD);
-		  size = GET_MODE_SIZE (GET_MODE (x));
-		  offset -= MIN (size, UNITS_PER_WORD);
-		}
 	      XEXP (tem, 0) = plus_constant (XEXP (tem, 0), offset);
 	      PUT_MODE (tem, GET_MODE (x));
 	      find_reloads_address (GET_MODE (tem), &tem, XEXP (tem, 0),

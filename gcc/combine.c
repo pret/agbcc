@@ -2821,9 +2821,6 @@ find_split_point (loc, insn)
 	  enum machine_mode mode = GET_MODE (dest);
 	  HOST_WIDE_UINT mask = ((HOST_WIDE_INT) 1 << len) - 1;
 
-	  if (BITS_BIG_ENDIAN)
-	    pos = GET_MODE_BITSIZE (mode) - len - pos;
-
 	  if ((HOST_WIDE_UINT) src == mask)
 	    SUBST (SET_SRC (x),
 		   gen_binary (IOR, mode, dest, GEN_INT (src << pos)));
@@ -2917,8 +2914,6 @@ find_split_point (loc, insn)
 	      len = INTVAL (XEXP (SET_SRC (x), 1));
 	      pos = INTVAL (XEXP (SET_SRC (x), 2));
 
-	      if (BITS_BIG_ENDIAN)
-		pos = GET_MODE_BITSIZE (GET_MODE (inner)) - len - pos;
 	      unsignedp = (code == ZERO_EXTRACT);
 	    }
 	  break;
@@ -3569,14 +3564,6 @@ simplify_rtx (x, op0_mode, last, in_dest)
 	      || mode_dependent_address_p (XEXP (inner, 0)))
 	    return gen_rtx_CLOBBER (mode, const0_rtx);
 
-	  if (BYTES_BIG_ENDIAN)
-	    {
-	      if (GET_MODE_SIZE (mode) < UNITS_PER_WORD)
-		endian_offset += UNITS_PER_WORD - GET_MODE_SIZE (mode);
-	      if (GET_MODE_SIZE (GET_MODE (inner)) < UNITS_PER_WORD)
-		endian_offset -= (UNITS_PER_WORD
-				  - GET_MODE_SIZE (GET_MODE (inner)));
-	    }
 	  /* Note if the plus_constant doesn't make a valid address
 	     then this combination won't be accepted.  */
 	  x = gen_rtx_MEM (mode,
@@ -3646,16 +3633,8 @@ simplify_rtx (x, op0_mode, last, in_dest)
 	 only if the constant's mode fits in one word.   Note that we
 	 cannot use subreg_lowpart_p since SUBREG_REG may be VOIDmode.  */
       if (CONSTANT_P (SUBREG_REG (x))
-	  && ((GET_MODE_SIZE (op0_mode) <= UNITS_PER_WORD
-	      || ! WORDS_BIG_ENDIAN)
-	      ? SUBREG_WORD (x) == 0
-	      : (SUBREG_WORD (x)
-		 == ((GET_MODE_SIZE (op0_mode)
-		      - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD))
-		     / UNITS_PER_WORD)))
-	  && GET_MODE_SIZE (mode) <= GET_MODE_SIZE (op0_mode)
-	  && (! WORDS_BIG_ENDIAN
-	      || GET_MODE_BITSIZE (op0_mode) <= BITS_PER_WORD))
+	  && (SUBREG_WORD (x) == 0)
+	  && GET_MODE_SIZE (mode) <= GET_MODE_SIZE (op0_mode))
 	return gen_lowpart_for_combine (mode, SUBREG_REG (x));
 
       /* A paradoxical SUBREG of a VOIDmode constant is the same constant,
@@ -5281,9 +5260,6 @@ expand_compound_operation (x)
       if (len + pos > GET_MODE_BITSIZE (GET_MODE (XEXP (x, 0))))
 	SUBST (XEXP (x, 0), gen_rtx_USE (GET_MODE (x), XEXP (x, 0)));
 
-      if (BITS_BIG_ENDIAN)
-	pos = GET_MODE_BITSIZE (GET_MODE (XEXP (x, 0))) - len - pos;
-
       break;
 
     default:
@@ -5446,24 +5422,6 @@ expand_field_assignment (x)
 	  if (GET_CODE (pos) == CONST_INT
 	      && INTVAL (pos) + len > GET_MODE_BITSIZE (GET_MODE (inner)))
 	    inner = gen_rtx_USE (GET_MODE (SET_DEST (x)), inner);
-
-	  if (BITS_BIG_ENDIAN)
-	    {
-	      if (GET_CODE (pos) == CONST_INT)
-		pos = GEN_INT (GET_MODE_BITSIZE (GET_MODE (inner)) - len
-			       - INTVAL (pos));
-	      else if (GET_CODE (pos) == MINUS
-		       && GET_CODE (XEXP (pos, 1)) == CONST_INT
-		       && (INTVAL (XEXP (pos, 1))
-			   == GET_MODE_BITSIZE (GET_MODE (inner)) - len))
-		/* If position is ADJUST - X, new position is X.  */
-		pos = XEXP (pos, 0);
-	      else
-		pos = gen_binary (MINUS, GET_MODE (pos),
-				  GEN_INT (GET_MODE_BITSIZE (GET_MODE (inner))
-					   - len),
-				  pos);
-	    }
 	}
 
       /* A SUBREG between two modes that occupy the same numbers of words
@@ -5652,12 +5610,7 @@ make_extraction (mode, inner, pos, pos_rtx, len,
 
       if (GET_CODE (inner) == MEM)
 	{
-	  int offset;
-	  /* POS counts from lsb, but make OFFSET count in memory order.  */
-	  if (BYTES_BIG_ENDIAN)
-	    offset = (GET_MODE_BITSIZE (is_mode) - len - pos) / BITS_PER_UNIT;
-	  else
-	    offset = pos / BITS_PER_UNIT;
+	  int offset = pos / BITS_PER_UNIT;
 
 	  new = gen_rtx_MEM (tmode, plus_constant (XEXP (inner, 0), offset));
 	  RTX_UNCHANGING_P (new) = RTX_UNCHANGING_P (inner);
@@ -5668,14 +5621,7 @@ make_extraction (mode, inner, pos, pos_rtx, len,
 	  /* We can't call gen_lowpart_for_combine here since we always want
 	     a SUBREG and it would sometimes return a new hard register.  */
 	  if (tmode != inner_mode)
-	    new = gen_rtx_SUBREG (tmode, inner,
-				  (WORDS_BIG_ENDIAN
-				   && GET_MODE_SIZE (inner_mode) > UNITS_PER_WORD
-				   ? (((GET_MODE_SIZE (inner_mode)
-					- GET_MODE_SIZE (tmode))
-				       / UNITS_PER_WORD)
-				      - pos / BITS_PER_WORD)
-				   : pos / BITS_PER_WORD));
+	    new = gen_rtx_SUBREG (tmode, inner, pos / BITS_PER_WORD);
 	  else
 	    new = inner;
 	}
@@ -5722,50 +5668,8 @@ make_extraction (mode, inner, pos, pos_rtx, len,
 
   /* Get the mode to use should INNER not be a MEM, the mode for the position,
      and the mode for the result.  */
-#ifdef HAVE_insv
-  if (in_dest)
-    {
-      wanted_inner_reg_mode
-	= (insn_operand_mode[(int) CODE_FOR_insv][0] == VOIDmode
-	   ? word_mode
-	   : insn_operand_mode[(int) CODE_FOR_insv][0]);
-      pos_mode = (insn_operand_mode[(int) CODE_FOR_insv][2] == VOIDmode
-		  ? word_mode : insn_operand_mode[(int) CODE_FOR_insv][2]);
-      extraction_mode = (insn_operand_mode[(int) CODE_FOR_insv][3] == VOIDmode
-			 ? word_mode
-			 : insn_operand_mode[(int) CODE_FOR_insv][3]);
-    }
-#endif
 
-#ifdef HAVE_extzv
-  if (! in_dest && unsignedp)
-    {
-      wanted_inner_reg_mode
-	= (insn_operand_mode[(int) CODE_FOR_extzv][1] == VOIDmode
-	   ? word_mode
-	   : insn_operand_mode[(int) CODE_FOR_extzv][1]);
-      pos_mode = (insn_operand_mode[(int) CODE_FOR_extzv][3] == VOIDmode
-		  ? word_mode : insn_operand_mode[(int) CODE_FOR_extzv][3]);
-      extraction_mode = (insn_operand_mode[(int) CODE_FOR_extzv][0] == VOIDmode
-			 ? word_mode
-			 : insn_operand_mode[(int) CODE_FOR_extzv][0]);
-    }
-#endif
 
-#ifdef HAVE_extv
-  if (! in_dest && ! unsignedp)
-    {
-      wanted_inner_reg_mode
-	= (insn_operand_mode[(int) CODE_FOR_extv][1] == VOIDmode
-	   ? word_mode
-	   : insn_operand_mode[(int) CODE_FOR_extv][1]);
-      pos_mode = (insn_operand_mode[(int) CODE_FOR_extv][3] == VOIDmode
-		  ? word_mode : insn_operand_mode[(int) CODE_FOR_extv][3]);
-      extraction_mode = (insn_operand_mode[(int) CODE_FOR_extv][0] == VOIDmode
-			 ? word_mode
-			 : insn_operand_mode[(int) CODE_FOR_extv][0]);
-    }
-#endif
 
   /* Never narrow an object, since that might not be safe.  */
 
@@ -5789,29 +5693,6 @@ make_extraction (mode, inner, pos, pos_rtx, len,
 
   orig_pos = pos;
 
-  if (BITS_BIG_ENDIAN)
-    {
-      /* POS is passed as if BITS_BIG_ENDIAN == 0, so we need to convert it to
-	 BITS_BIG_ENDIAN style.  If position is constant, compute new
-	 position.  Otherwise, build subtraction.
-	 Note that POS is relative to the mode of the original argument.
-	 If it's a MEM we need to recompute POS relative to that.
-	 However, if we're extracting from (or inserting into) a register,
-	 we want to recompute POS relative to wanted_inner_mode.  */
-      int width = (GET_CODE (inner) == MEM
-		   ? GET_MODE_BITSIZE (is_mode)
-		   : GET_MODE_BITSIZE (wanted_inner_mode));
-
-      if (pos_rtx == 0)
-	pos = width - len - pos;
-      else
-	pos_rtx
-	  = gen_rtx_combine (MINUS, GET_MODE (pos_rtx),
-			     GEN_INT (width - len), pos_rtx);
-      /* POS may be less than 0 now, but we check for that below.
-	 Note that it can only be less than 0 if GET_CODE (inner) != MEM.  */
-    }
-
   /* If INNER has a wider mode, make it smaller.  If this is a constant
      extract, try to adjust the byte to point to the byte containing
      the value.  */
@@ -5824,29 +5705,12 @@ make_extraction (mode, inner, pos, pos_rtx, len,
     {
       int offset = 0;
 
-      /* The computations below will be correct if the machine is big
-	 endian in both bits and bytes or little endian in bits and bytes.
-	 If it is mixed, we must adjust.  */
-	     
-      /* If bytes are big endian and we had a paradoxical SUBREG, we must
-	 adjust OFFSET to compensate.  */
-      if (BYTES_BIG_ENDIAN
-	  && ! spans_byte
-	  && GET_MODE_SIZE (inner_mode) < GET_MODE_SIZE (is_mode))
-	offset -= GET_MODE_SIZE (is_mode) - GET_MODE_SIZE (inner_mode);
-
       /* If this is a constant position, we can move to the desired byte.  */
       if (pos_rtx == 0)
 	{
 	  offset += pos / BITS_PER_UNIT;
 	  pos %= GET_MODE_BITSIZE (wanted_inner_mode);
 	}
-
-      if (BYTES_BIG_ENDIAN != BITS_BIG_ENDIAN
-	  && ! spans_byte
-	  && is_mode != wanted_inner_mode)
-	offset = (GET_MODE_SIZE (is_mode)
-		  - GET_MODE_SIZE (wanted_inner_mode) - offset);
 
       if (offset != 0 || inner_mode != wanted_inner_mode)
 	{
@@ -6369,8 +6233,7 @@ force_to_mode (x, mode, mask, reg, just_select)
       /* X is a (use (mem ..)) that was made from a bit-field extraction that
 	 spanned the boundary of the MEM.  If we are now masking so it is
 	 within that boundary, we don't need the USE any more.  */
-      if (! BITS_BIG_ENDIAN
-	  && (mask & ~ GET_MODE_MASK (GET_MODE (XEXP (x, 0)))) == 0)
+      if ((mask & ~ GET_MODE_MASK (GET_MODE (XEXP (x, 0)))) == 0)
 	return force_to_mode (XEXP (x, 0), mode, mask, reg, next_select);
       break;
 
@@ -8526,10 +8389,7 @@ simplify_shift_const (x, code, result_mode, varop, count)
 	      && (tmode = mode_for_size (GET_MODE_BITSIZE (mode) - count,
 					 MODE_INT, 1)) != BLKmode)
 	    {
-	      if (BYTES_BIG_ENDIAN)
-		new = gen_rtx_MEM (tmode, XEXP (varop, 0));
-	      else
-		new = gen_rtx_MEM (tmode,
+	      new = gen_rtx_MEM (tmode,
 				   plus_constant (XEXP (varop, 0),
 						  count / BITS_PER_UNIT));
 	      RTX_UNCHANGING_P (new) = RTX_UNCHANGING_P (varop);
@@ -8551,15 +8411,11 @@ simplify_shift_const (x, code, result_mode, varop, count)
 					 MODE_INT, 1)) != BLKmode
 	      && tmode == GET_MODE (XEXP (varop, 0)))
 	    {
-	      if (BITS_BIG_ENDIAN)
-		new = XEXP (varop, 0);
-	      else
-		{
+
 		  new = copy_rtx (XEXP (varop, 0));
 		  SUBST (XEXP (new, 0), 
 			 plus_constant (XEXP (new, 0),
 					count / BITS_PER_UNIT));
-		}
 
 	      varop = gen_rtx_combine (code == ASHIFTRT ? SIGN_EXTEND
 				       : ZERO_EXTEND, mode, new);
@@ -9280,16 +9136,6 @@ gen_lowpart_for_combine (mode, x)
       if (GET_MODE_SIZE (GET_MODE (x)) < GET_MODE_SIZE (mode))
 	return gen_rtx_SUBREG (mode, x, 0);
 
-      if (WORDS_BIG_ENDIAN)
-	offset = (MAX (GET_MODE_SIZE (GET_MODE (x)), UNITS_PER_WORD)
-		  - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD));
-      if (BYTES_BIG_ENDIAN)
-	{
-	  /* Adjust the address so that the address-after-the-data is
-	     unchanged.  */
-	  offset -= (MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode))
-		     - MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (x))));
-	}
       new = gen_rtx_MEM (mode, plus_constant (XEXP (x, 0), offset));
       RTX_UNCHANGING_P (new) = RTX_UNCHANGING_P (x);
       MEM_COPY_ATTRIBUTES (new, x);
@@ -9308,10 +9154,6 @@ gen_lowpart_for_combine (mode, x)
     {
       int word = 0;
 
-      if (WORDS_BIG_ENDIAN && GET_MODE_SIZE (GET_MODE (x)) > UNITS_PER_WORD)
-	word = ((GET_MODE_SIZE (GET_MODE (x))
-		 - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD))
-		/ UNITS_PER_WORD);
       return gen_rtx_SUBREG (mode, x, word);
     }
 }
@@ -9832,18 +9674,6 @@ simplify_comparison (code, pop0, pop1)
 	      && equality_comparison_p && const_op == 0
 	      && (i = exact_log2 (INTVAL (XEXP (op0, 0)))) >= 0)
 	    {
-	      if (BITS_BIG_ENDIAN)
-		{
-#ifdef HAVE_extzv
-		  mode = insn_operand_mode[(int) CODE_FOR_extzv][1];
-		  if (mode == VOIDmode)
-		    mode = word_mode;
-		  i = (GET_MODE_BITSIZE (mode) - 1 - i);
-#else
-	          i = BITS_PER_WORD - 1 - i;
-#endif
-		}
-
 	      op0 = XEXP (op0, 2);
 	      op1 = GEN_INT (i);
 	      const_op = i;

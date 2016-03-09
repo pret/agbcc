@@ -41,23 +41,13 @@ Boston, MA 02111-1307, USA.  */
 #define CPP_PREDEFINES "-Dthumb -D__thumb -Acpu(arm) -Amachine(arm)"
 #endif
 
-#ifndef CPP_SPEC
-#define CPP_SPEC "\
-%{mbig-endian:-D__ARMEB__ -D__THUMBEB__} \
-%{mbe:-D__ARMEB__ -D__THUMBEB__} \
-%{!mbe: %{!mbig-endian:-D__ARMEL__ -D__THUMBEL__}} \
-"
-#endif
-
 #ifndef ASM_SPEC
-#define ASM_SPEC "-marm7tdmi %{mthumb-interwork:-mthumb-interwork} %{mbig-endian:-EB}"
+#define ASM_SPEC "-marm7tdmi %{mthumb-interwork:-mthumb-interwork}"
 #endif
-#define LINK_SPEC "%{mbig-endian:-EB} -X"
+#define LINK_SPEC "-X"
 
 #define TARGET_VERSION  fputs (" (ARM/THUMB:generic)", stderr);
 
-/* Nonzero if we should compile with BYTES_BIG_ENDIAN set to 1.  */
-#define THUMB_FLAG_BIG_END      		0x0001
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
 #define THUMB_FLAG_CALLER_SUPER_INTERWORKING	0x80000 
 
@@ -68,7 +58,6 @@ Boston, MA 02111-1307, USA.  */
 /* Run-time compilation parameters selecting different hardware/software subsets.  */
 extern int target_flags;
 #define TARGET_DEFAULT          0 /* ARM_FLAG_THUMB */
-#define TARGET_BIG_END          (target_flags & THUMB_FLAG_BIG_END)
 #define TARGET_THUMB_INTERWORK	(target_flags & ARM_FLAG_THUMB)
 
 /* Set if calls via function pointers should assume that their
@@ -85,8 +74,6 @@ extern int target_flags;
 
 #define TARGET_SWITCHES                                 	\
 {                                                       	\
-  {"big-endian",		    THUMB_FLAG_BIG_END},	\
-  {"little-endian",	           -THUMB_FLAG_BIG_END},	\
   {"thumb-interwork",		    ARM_FLAG_THUMB},		\
   {"no-thumb-interwork",           -ARM_FLAG_THUMB},		\
   {"caller-super-interworking",	    THUMB_FLAG_CALLER_SUPER_INTERWORKING}, \
@@ -349,16 +336,6 @@ do {									\
    fprintf (STREAM, "\tb\t%sL%d\n", (LOCAL_LABEL_PREFIX), (VALUE))
 
 /* Storage Layout */
-
-/* Define this is most significant bit is lowest numbered in
-   instructions that operate on numbered bit-fields.  */
-#define BITS_BIG_ENDIAN 0
-
-/* Define this if most significant byte of a word is the lowest
-   numbered.  */
-#define BYTES_BIG_ENDIAN (TARGET_BIG_END != 0)
-
-#define WORDS_BIG_ENDIAN (BYTES_BIG_ENDIAN)
 
 #define FLOAT_WORDS_BIG_ENDIAN 1
 

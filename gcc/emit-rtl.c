@@ -620,11 +620,6 @@ gen_lowpart_common (mode, x)
 	     / UNITS_PER_WORD)))
     return 0;
 
-  if (WORDS_BIG_ENDIAN && GET_MODE_SIZE (GET_MODE (x)) > UNITS_PER_WORD)
-    word = ((GET_MODE_SIZE (GET_MODE (x))
-	     - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD))
-	    / UNITS_PER_WORD);
-
   if ((GET_CODE (x) == ZERO_EXTEND || GET_CODE (x) == SIGN_EXTEND)
       && GET_MODE_CLASS (mode) == MODE_INT)
     {
@@ -657,10 +652,6 @@ gen_lowpart_common (mode, x)
 	 pseudos are sized by the Word Size, while those against hard
 	 regs are sized by the underlying register size.  Better would be
 	 to always interpret the subreg offset parameter as bytes or bits.  */
-
-      if (WORDS_BIG_ENDIAN && REGNO (x) < FIRST_PSEUDO_REGISTER)
-	word = (HARD_REGNO_NREGS (REGNO (x), GET_MODE (x))
-		- HARD_REGNO_NREGS (REGNO (x), mode));
 
       /* If the register is not valid for MODE, return 0.  If we don't
 	 do this, there is no way to fix up the resulting REG later.  
@@ -770,7 +761,6 @@ gen_lowpart_common (mode, x)
 	   && GET_MODE (x) == VOIDmode
 	   && (sizeof (double) * HOST_BITS_PER_CHAR
 	       == 2 * HOST_BITS_PER_WIDE_INT))
-#ifdef REAL_ARITHMETIC
     {
       REAL_VALUE_TYPE r;
       HOST_WIDE_INT i[2];
@@ -783,33 +773,11 @@ gen_lowpart_common (mode, x)
 
       /* REAL_VALUE_TARGET_DOUBLE takes the addressing order of the
 	 target machine.  */
-      if (WORDS_BIG_ENDIAN)
-	i[0] = high, i[1] = low;
-      else
 	i[0] = low, i[1] = high;
 
       r = REAL_VALUE_FROM_TARGET_DOUBLE (i);
       return CONST_DOUBLE_FROM_REAL_VALUE (r, mode);
     }
-#else
-    {
-      union {HOST_WIDE_INT i[2]; double d; } u;
-      HOST_WIDE_INT low, high;
-
-      if (GET_CODE (x) == CONST_INT)
-	low = INTVAL (x), high = low >> (HOST_BITS_PER_WIDE_INT -1);
-      else
-	low = CONST_DOUBLE_LOW (x), high = CONST_DOUBLE_HIGH (x);
-
-#ifdef HOST_WORDS_BIG_ENDIAN
-      u.i[0] = high, u.i[1] = low;
-#else
-      u.i[0] = low, u.i[1] = high;
-#endif
-
-      return CONST_DOUBLE_FROM_REAL_VALUE (u.d, mode);
-    }
-#endif
 
   /* We need an extra case for machines where HOST_BITS_PER_WIDE_INT is the
      same as sizeof (double) or when sizeof (float) is larger than the
@@ -853,9 +821,9 @@ gen_lowpart_common (mode, x)
 	   && GET_MODE_BITSIZE (mode) == 2 * BITS_PER_WORD)
     {
       rtx lowpart
-	= operand_subword (x, word + WORDS_BIG_ENDIAN, 0, GET_MODE (x));
+	= operand_subword (x, word, 0, GET_MODE (x));
       rtx highpart
-	= operand_subword (x, word + ! WORDS_BIG_ENDIAN, 0, GET_MODE (x));
+	= operand_subword (x, word + 1, 0, GET_MODE (x));
 
       if (lowpart && GET_CODE (lowpart) == CONST_INT
 	  && highpart && GET_CODE (highpart) == CONST_INT)
@@ -876,8 +844,6 @@ gen_realpart (mode, x)
 {
   if (GET_CODE (x) == CONCAT && GET_MODE (XEXP (x, 0)) == mode)
     return XEXP (x, 0);
-  else if (WORDS_BIG_ENDIAN)
-    return gen_highpart (mode, x);
   else
     return gen_lowpart (mode, x);
 }
@@ -892,8 +858,6 @@ gen_imagpart (mode, x)
 {
   if (GET_CODE (x) == CONCAT && GET_MODE (XEXP (x, 0)) == mode)
     return XEXP (x, 1);
-  else if (WORDS_BIG_ENDIAN)
-    return gen_lowpart (mode, x);
   else
     return gen_highpart (mode, x);
 }
@@ -941,15 +905,6 @@ gen_lowpart (mode, x)
     {
       /* The only additional case we can do is MEM.  */
       register int offset = 0;
-      if (WORDS_BIG_ENDIAN)
-	offset = (MAX (GET_MODE_SIZE (GET_MODE (x)), UNITS_PER_WORD)
-		  - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD));
-
-      if (BYTES_BIG_ENDIAN)
-	/* Adjust the address so that the address-after-the-data
-	   is unchanged.  */
-	offset -= (MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode))
-		   - MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (x))));
 
       return change_address (x, mode, plus_constant (XEXP (x, 0), offset));
     }
@@ -987,12 +942,11 @@ gen_highpart (mode, x)
   else if (GET_CODE (x) == MEM)
     {
       register int offset = 0;
-      if (! WORDS_BIG_ENDIAN)
+
 	offset = (MAX (GET_MODE_SIZE (GET_MODE (x)), UNITS_PER_WORD)
 		  - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD));
 
-      if (! BYTES_BIG_ENDIAN
-	  && GET_MODE_SIZE (mode) < UNITS_PER_WORD)
+      if (GET_MODE_SIZE (mode) < UNITS_PER_WORD)
 	offset -= (GET_MODE_SIZE (mode)
 		   - MIN (UNITS_PER_WORD,
 			  GET_MODE_SIZE (GET_MODE (x))));
@@ -1019,9 +973,7 @@ gen_highpart (mode, x)
 	 regs are sized by the underlying register size.  Better would be
 	 to always interpret the subreg offset parameter as bytes or bits.  */
 
-      if (WORDS_BIG_ENDIAN)
-	word = 0;
-      else if (REGNO (x) < FIRST_PSEUDO_REGISTER)
+      if (REGNO (x) < FIRST_PSEUDO_REGISTER)
 	word = (HARD_REGNO_NREGS (REGNO (x), GET_MODE (x))
 		- HARD_REGNO_NREGS (REGNO (x), mode));
       else
@@ -1059,13 +1011,6 @@ subreg_lowpart_p (x)
     return 1;
   else if (GET_MODE (SUBREG_REG (x)) == VOIDmode)
     return 0;
-
-  if (WORDS_BIG_ENDIAN
-      && GET_MODE_SIZE (GET_MODE (SUBREG_REG (x))) > UNITS_PER_WORD)
-    return (SUBREG_WORD (x)
-	    == ((GET_MODE_SIZE (GET_MODE (SUBREG_REG (x)))
-		 - MAX (GET_MODE_SIZE (GET_MODE (x)), UNITS_PER_WORD))
-		/ UNITS_PER_WORD));
 
   return SUBREG_WORD (x) == 0;
 }
@@ -1185,7 +1130,7 @@ operand_subword (op, i, validate_address, mode)
      constants are easy.  Note that REAL_VALUE_TO_TARGET_{SINGLE,DOUBLE}
      are defined as returning one or two 32 bit values, respectively,
      and not values of BITS_PER_WORD bits.  */
-#ifdef REAL_ARITHMETIC
+
 /*  The output is some bits, the width of the target machine's word.
     A wider-word host can surely hold them in a CONST_INT. A narrower-word
     host can't.  */
@@ -1200,56 +1145,12 @@ operand_subword (op, i, validate_address, mode)
       REAL_VALUE_FROM_CONST_DOUBLE (rv, op);
       REAL_VALUE_TO_TARGET_DOUBLE (rv, k);
 
-      /* We handle 32-bit and >= 64-bit words here.  Note that the order in
-	 which the words are written depends on the word endianness.
-
-	 ??? This is a potential portability problem and should
-	 be fixed at some point.  */
-      if (BITS_PER_WORD == 32)
-	return GEN_INT ((HOST_WIDE_INT) k[i]);
-#if HOST_BITS_PER_WIDE_INT > 32
-      else if (BITS_PER_WORD >= 64 && i == 0)
-	return GEN_INT ((((HOST_WIDE_INT) k[! WORDS_BIG_ENDIAN]) << 32)
-			| (HOST_WIDE_INT) k[WORDS_BIG_ENDIAN]);
-#endif
-      else if (BITS_PER_WORD == 16)
-	{
-	  long value;
-	  value = k[i >> 1];
-	  if ((i & 0x1) == !WORDS_BIG_ENDIAN)
-	    value >>= 16;
-	  value &= 0xffff;
-	  return GEN_INT ((HOST_WIDE_INT) value);
-	}
-      else
-	abort ();
+      return GEN_INT ((HOST_WIDE_INT) k[i]);
     }
-#else /* no REAL_ARITHMETIC */
-  if (((HOST_FLOAT_FORMAT == TARGET_FLOAT_FORMAT
-	&& HOST_BITS_PER_WIDE_INT == BITS_PER_WORD)
-       || flag_pretend_float)
-      && GET_MODE_CLASS (mode) == MODE_FLOAT
-      && GET_MODE_SIZE (mode) == 2 * UNITS_PER_WORD
-      && GET_CODE (op) == CONST_DOUBLE)
-    {
-      /* The constant is stored in the host's word-ordering,
-	 but we want to access it in the target's word-ordering.  Some
-	 compilers don't like a conditional inside macro args, so we have two
-	 copies of the return.  */
-#ifdef HOST_WORDS_BIG_ENDIAN
-      return GEN_INT (i == WORDS_BIG_ENDIAN
-		      ? CONST_DOUBLE_HIGH (op) : CONST_DOUBLE_LOW (op));
-#else
-      return GEN_INT (i != WORDS_BIG_ENDIAN
-		      ? CONST_DOUBLE_HIGH (op) : CONST_DOUBLE_LOW (op));
-#endif
-    }
-#endif /* no REAL_ARITHMETIC */
 
   /* Single word float is a little harder, since single- and double-word
      values often do not have the same high-order bits.  We have already
      verified that we want the only defined word of the single-word value.  */
-#ifdef REAL_ARITHMETIC
   if (GET_MODE_CLASS (mode) == MODE_FLOAT
       && GET_MODE_BITSIZE (mode) == 32
       && GET_CODE (op) == CONST_DOUBLE)
@@ -1260,48 +1161,8 @@ operand_subword (op, i, validate_address, mode)
       REAL_VALUE_FROM_CONST_DOUBLE (rv, op);
       REAL_VALUE_TO_TARGET_SINGLE (rv, l);
 
-      if (BITS_PER_WORD == 16)
-	{
-	  if ((i & 0x1) == !WORDS_BIG_ENDIAN)
-	    l >>= 16;
-	  l &= 0xffff;
-	}
       return GEN_INT ((HOST_WIDE_INT) l);
     }
-#else
-  if (((HOST_FLOAT_FORMAT == TARGET_FLOAT_FORMAT
-	&& HOST_BITS_PER_WIDE_INT == BITS_PER_WORD)
-       || flag_pretend_float)
-      && sizeof (float) * 8 == HOST_BITS_PER_WIDE_INT
-      && GET_MODE_CLASS (mode) == MODE_FLOAT
-      && GET_MODE_SIZE (mode) == UNITS_PER_WORD
-      && GET_CODE (op) == CONST_DOUBLE)
-    {
-      double d;
-      union {float f; HOST_WIDE_INT i; } u;
-
-      REAL_VALUE_FROM_CONST_DOUBLE (d, op);
-
-      u.f = d;
-      return GEN_INT (u.i);
-    }
-  if (((HOST_FLOAT_FORMAT == TARGET_FLOAT_FORMAT
-	&& HOST_BITS_PER_WIDE_INT == BITS_PER_WORD)
-       || flag_pretend_float)
-      && sizeof (double) * 8 == HOST_BITS_PER_WIDE_INT
-      && GET_MODE_CLASS (mode) == MODE_FLOAT
-      && GET_MODE_SIZE (mode) == UNITS_PER_WORD
-      && GET_CODE (op) == CONST_DOUBLE)
-    {
-      double d;
-      union {double d; HOST_WIDE_INT i; } u;
-
-      REAL_VALUE_FROM_CONST_DOUBLE (d, op);
-
-      u.d = d;
-      return GEN_INT (u.i);
-    }
-#endif /* no REAL_ARITHMETIC */
       
   /* The only remaining cases that we can handle are integers.
      Convert to proper endianness now since these cases need it.
@@ -1318,9 +1179,6 @@ operand_subword (op, i, validate_address, mode)
       || (GET_CODE (op) != CONST_INT && GET_CODE (op) != CONST_DOUBLE)
       || BITS_PER_WORD > HOST_BITS_PER_WIDE_INT)
     return 0;
-
-  if (WORDS_BIG_ENDIAN)
-    i = GET_MODE_SIZE (mode) / UNITS_PER_WORD - 1 - i;
 
   /* Find out which word on the host machine this value is in and get
      it from the constant.  */

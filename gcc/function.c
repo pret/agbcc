@@ -736,11 +736,6 @@ assign_stack_local (mode, size, align)
   frame_offset = CEIL_ROUND (frame_offset, alignment);
 #endif
 
-  /* On a big-endian machine, if we are allocating more space than we will use,
-     use the least significant bytes of those that are allocated.  */
-  if (BYTES_BIG_ENDIAN && mode != BLKmode)
-    bigend_correction = size - GET_MODE_SIZE (mode);
-
 #ifdef FRAME_GROWS_DOWNWARD
   frame_offset -= size;
 #endif
@@ -806,11 +801,6 @@ assign_outer_stack_local (mode, size, align, function)
 #else
   function->frame_offset = CEIL_ROUND (function->frame_offset, alignment);
 #endif
-
-  /* On a big-endian machine, if we are allocating more space than we will use,
-     use the least significant bytes of those that are allocated.  */
-  if (BYTES_BIG_ENDIAN && mode != BLKmode)
-    bigend_correction = size - GET_MODE_SIZE (mode);
 
 #ifdef FRAME_GROWS_DOWNWARD
   function->frame_offset -= size;
@@ -2001,22 +1991,6 @@ fixup_var_refs_1 (var, promoted_mode, loc, insn, replacements)
 	      enum machine_mode is_mode = GET_MODE (tem);
 	      HOST_WIDE_INT pos = INTVAL (XEXP (x, 2));
 
-#ifdef HAVE_extzv
-	      if (GET_CODE (x) == ZERO_EXTRACT)
-		{
-		  wanted_mode = insn_operand_mode[(int) CODE_FOR_extzv][1];
-		  if (wanted_mode == VOIDmode)
-		    wanted_mode = word_mode;
-		}
-#endif
-#ifdef HAVE_extv
-	      if (GET_CODE (x) == SIGN_EXTRACT)
-		{
-		  wanted_mode = insn_operand_mode[(int) CODE_FOR_extv][1];
-		  if (wanted_mode == VOIDmode)
-		    wanted_mode = word_mode;
-		}
-#endif
 	      /* If we have a narrower mode, we can do something.  */
 	      if (wanted_mode != VOIDmode
 		  && GET_MODE_SIZE (wanted_mode) < GET_MODE_SIZE (is_mode))
@@ -2024,12 +1998,6 @@ fixup_var_refs_1 (var, promoted_mode, loc, insn, replacements)
 		  HOST_WIDE_INT offset = pos / BITS_PER_UNIT;
 		  rtx old_pos = XEXP (x, 2);
 		  rtx newmem;
-
-		  /* If the bytes and bits are counted differently, we
-		     must adjust the offset.  */
-		  if (BYTES_BIG_ENDIAN != BITS_BIG_ENDIAN)
-		    offset = (GET_MODE_SIZE (is_mode)
-			      - GET_MODE_SIZE (wanted_mode) - offset);
 
 		  pos %= GET_MODE_BITSIZE (wanted_mode);
 
@@ -2154,9 +2122,6 @@ fixup_var_refs_1 (var, promoted_mode, loc, insn, replacements)
       {
 	rtx dest = SET_DEST (x);
 	rtx src = SET_SRC (x);
-#ifdef HAVE_insv
-	rtx outerdest = dest;
-#endif
 
 	while (GET_CODE (dest) == SUBREG || GET_CODE (dest) == STRICT_LOW_PART
 	       || GET_CODE (dest) == SIGN_EXTRACT
@@ -2175,85 +2140,6 @@ fixup_var_refs_1 (var, promoted_mode, loc, insn, replacements)
 	/* We will need to rerecognize this insn.  */
 	INSN_CODE (insn) = -1;
 
-#ifdef HAVE_insv
-	if (GET_CODE (outerdest) == ZERO_EXTRACT && dest == var)
-	  {
-	    /* Since this case will return, ensure we fixup all the
-	       operands here.  */
-	    fixup_var_refs_1 (var, promoted_mode, &XEXP (outerdest, 1),
-			      insn, replacements);
-	    fixup_var_refs_1 (var, promoted_mode, &XEXP (outerdest, 2),
-			      insn, replacements);
-	    fixup_var_refs_1 (var, promoted_mode, &SET_SRC (x),
-			      insn, replacements);
-
-	    tem = XEXP (outerdest, 0);
-
-	    /* Clean up (SUBREG:SI (MEM:mode ...) 0)
-	       that may appear inside a ZERO_EXTRACT.
-	       This was legitimate when the MEM was a REG.  */
-	    if (GET_CODE (tem) == SUBREG
-		&& SUBREG_REG (tem) == var)
-	      tem = fixup_memory_subreg (tem, insn, 0);
-	    else
-	      tem = fixup_stack_1 (tem, insn);
-
-	    if (GET_CODE (XEXP (outerdest, 1)) == CONST_INT
-		&& GET_CODE (XEXP (outerdest, 2)) == CONST_INT
-		&& ! mode_dependent_address_p (XEXP (tem, 0))
-		&& ! MEM_VOLATILE_P (tem))
-	      {
-		enum machine_mode wanted_mode;
-		enum machine_mode is_mode = GET_MODE (tem);
-		HOST_WIDE_INT pos = INTVAL (XEXP (outerdest, 2));
-
-		wanted_mode = insn_operand_mode[(int) CODE_FOR_insv][0];
-		if (wanted_mode == VOIDmode)
-		  wanted_mode = word_mode;
-
-		/* If we have a narrower mode, we can do something.  */
-		if (GET_MODE_SIZE (wanted_mode) < GET_MODE_SIZE (is_mode))
-		  {
-		    HOST_WIDE_INT offset = pos / BITS_PER_UNIT;
-		    rtx old_pos = XEXP (outerdest, 2);
-		    rtx newmem;
-
-		    if (BYTES_BIG_ENDIAN != BITS_BIG_ENDIAN)
-		      offset = (GET_MODE_SIZE (is_mode)
-				- GET_MODE_SIZE (wanted_mode) - offset);
-
-		    pos %= GET_MODE_BITSIZE (wanted_mode);
-
-		    newmem = gen_rtx_MEM (wanted_mode,
-					  plus_constant (XEXP (tem, 0), offset));
-		    RTX_UNCHANGING_P (newmem) = RTX_UNCHANGING_P (tem);
-		    MEM_COPY_ATTRIBUTES (newmem, tem);
-
-		    /* Make the change and see if the insn remains valid.  */
-		    INSN_CODE (insn) = -1;
-		    XEXP (outerdest, 0) = newmem;
-		    XEXP (outerdest, 2) = GEN_INT (pos);
-		    
-		    if (recog_memoized (insn) >= 0)
-		      return;
-		    
-		    /* Otherwise, restore old position.  XEXP (x, 0) will be
-		       restored later.  */
-		    XEXP (outerdest, 2) = old_pos;
-		  }
-	      }
-
-	    /* If we get here, the bit-field store doesn't allow memory
-	       or isn't located at a constant position.  Load the value into
-	       a register, do the store, and put it back into memory.  */
-
-	    tem1 = gen_reg_rtx (GET_MODE (tem));
-	    emit_insn_before (gen_move_insn (tem1, tem), insn);
-	    emit_insn_after (gen_move_insn (tem, tem1), insn);
-	    XEXP (outerdest, 0) = tem1;
-	    return;
-	  }
-#endif
 
 	/* STRICT_LOW_PART is a no-op on memory references
 	   and it can cause combinations to be unrecognizable,
@@ -2434,9 +2320,6 @@ fixup_memory_subreg (x, insn, uncritical)
       && ! uncritical)
     abort ();
 
-  if (BYTES_BIG_ENDIAN)
-    offset += (MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (SUBREG_REG (x))))
-	       - MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode)));
   addr = plus_constant (addr, offset);
   if (!flag_force_addr && memory_address_p (mode, addr))
     /* Shortcut if no insns need be emitted.  */
@@ -2618,21 +2501,11 @@ optimize_bit_field (body, insn, equiv_mem)
 	  HOST_WIDE_INT offset = INTVAL (XEXP (bitfield, 2));
 	  rtx insns;
 
-	  /* Adjust OFFSET to count bits from low-address byte.  */
-	  if (BITS_BIG_ENDIAN != BYTES_BIG_ENDIAN)
-	    offset = (GET_MODE_BITSIZE (GET_MODE (XEXP (bitfield, 0)))
-		      - offset - INTVAL (XEXP (bitfield, 1)));
-
 	  /* Adjust OFFSET to count bytes from low-address byte.  */
 	  offset /= BITS_PER_UNIT;
 	  if (GET_CODE (XEXP (bitfield, 0)) == SUBREG)
 	    {
 	      offset += SUBREG_WORD (XEXP (bitfield, 0)) * UNITS_PER_WORD;
-	      if (BYTES_BIG_ENDIAN)
-		offset -= (MIN (UNITS_PER_WORD,
-				GET_MODE_SIZE (GET_MODE (XEXP (bitfield, 0))))
-			   - MIN (UNITS_PER_WORD,
-				  GET_MODE_SIZE (GET_MODE (memref))));
 	    }
 
 	  start_sequence ();
@@ -4240,39 +4113,6 @@ assign_parms (fndecl, second_time)
       if (entry_parm != 0
 	  && nominal_mode != BLKmode && nominal_mode != passed_mode)
 	stack_parm = 0;
-
-#if 0
-      /* Now adjust STACK_PARM to the mode and precise location
-	 where this parameter should live during execution,
-	 if we discover that it must live in the stack during execution.
-	 To make debuggers happier on big-endian machines, we store
-	 the value in the last bytes of the space available.  */
-
-      if (nominal_mode != BLKmode && nominal_mode != passed_mode
-	  && stack_parm != 0)
-	{
-	  rtx offset_rtx;
-
-	  if (BYTES_BIG_ENDIAN
-	      && GET_MODE_SIZE (nominal_mode) < UNITS_PER_WORD)
-	    stack_offset.constant += (GET_MODE_SIZE (passed_mode)
-				      - GET_MODE_SIZE (nominal_mode));
-
-	  offset_rtx = ARGS_SIZE_RTX (stack_offset);
-	  if (offset_rtx == const0_rtx)
-	    stack_parm = gen_rtx_MEM (nominal_mode, internal_arg_pointer);
-	  else
-	    stack_parm = gen_rtx_MEM (nominal_mode,
-				      gen_rtx_PLUS (Pmode,
-						    internal_arg_pointer,
-						    offset_rtx));
-
-	  /* If this is a memory ref that contains aggregate components,
-	     mark it as such for cse and loop optimize.  */
-	  MEM_SET_IN_STRUCT_P (stack_parm, aggregate);
-	}
-#endif /* 0 */
-
 
       /* ENTRY_PARM is an RTX for the parameter as it arrives,
 	 in the mode in which it arrives.

@@ -1972,10 +1972,7 @@ yylex ()
 		      value = 0;
 		    else
 		      value = (c >> (byte * width)) & bytemask;
-		    if (BYTES_BIG_ENDIAN)
-		      p[WCHAR_BYTES - byte - 1] = value;
-		    else
-		      p[byte] = value;
+		    p[byte] = value;
 		  }
 		p += WCHAR_BYTES;
 	      }

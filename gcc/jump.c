@@ -2334,9 +2334,7 @@ delete_noop_moves (f)
 		delete_insn (insn);
 	    }
 	  /* Also delete insns to store bit fields if they are no-ops.  */
-	  /* Not worth the hair to detect this in the big-endian case.  */
-	  else if (! BYTES_BIG_ENDIAN
-		   && GET_CODE (body) == SET
+	  else if (GET_CODE (body) == SET
 		   && GET_CODE (SET_DEST (body)) == ZERO_EXTRACT
 		   && XEXP (SET_DEST (body), 2) == const0_rtx
 		   && XEXP (SET_DEST (body), 0) == SET_SRC (body)

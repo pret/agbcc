@@ -523,11 +523,6 @@ validate_replace_rtx_1 (loc, from, to, object)
 	  enum machine_mode mode = GET_MODE (x);
 	  rtx new;
 
-	  if (BYTES_BIG_ENDIAN)
-	    offset += (MIN (UNITS_PER_WORD,
-			    GET_MODE_SIZE (GET_MODE (SUBREG_REG (x))))
-		       - MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode)));
-
 	  new = gen_rtx_MEM (mode, plus_constant (XEXP (to, 0), offset));
 	  RTX_UNCHANGING_P (new) = RTX_UNCHANGING_P (to);
 	  MEM_COPY_ATTRIBUTES (new, to);
@@ -553,22 +548,6 @@ validate_replace_rtx_1 (loc, from, to, object)
 	  enum machine_mode is_mode = GET_MODE (to);
 	  int pos = INTVAL (XEXP (x, 2));
 
-#ifdef HAVE_extzv
-	  if (code == ZERO_EXTRACT)
-	    {
-	      wanted_mode = insn_operand_mode[(int) CODE_FOR_extzv][1];
-	      if (wanted_mode == VOIDmode)
-		wanted_mode = word_mode;
-	    }
-#endif
-#ifdef HAVE_extv
-	  if (code == SIGN_EXTRACT)
-	    {
-	      wanted_mode = insn_operand_mode[(int) CODE_FOR_extv][1];
-	      if (wanted_mode == VOIDmode)
-		wanted_mode = word_mode;
-	    }
-#endif
 
 	  /* If we have a narrower mode, we can do something.  */
 	  if (wanted_mode != VOIDmode
@@ -576,12 +555,6 @@ validate_replace_rtx_1 (loc, from, to, object)
 	    {
 	      int offset = pos / BITS_PER_UNIT;
 	      rtx newmem;
-
-		  /* If the bytes and bits are counted differently, we
-		     must adjust the offset.  */
-	      if (BYTES_BIG_ENDIAN != BITS_BIG_ENDIAN)
-		offset = (GET_MODE_SIZE (is_mode) - GET_MODE_SIZE (wanted_mode)
-			  - offset);
 
 	      pos %= GET_MODE_BITSIZE (wanted_mode);
 
@@ -1253,10 +1226,6 @@ indirect_operand (op, mode)
     {
       register int offset = SUBREG_WORD (op) * UNITS_PER_WORD;
       rtx inner = SUBREG_REG (op);
-
-      if (BYTES_BIG_ENDIAN)
-	offset -= (MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (op)))
-		   - MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (inner))));
 
       if (mode != VOIDmode && GET_MODE (op) != mode)
 	return 0;

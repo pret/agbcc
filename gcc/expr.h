@@ -209,13 +209,7 @@ enum direction {none, upward, downward};  /* Value has this type.  */
 
 #ifndef FUNCTION_ARG_PADDING
 #define FUNCTION_ARG_PADDING(MODE, TYPE)				\
-  (! BYTES_BIG_ENDIAN							\
-   ? upward								\
-   : (((MODE) == BLKmode						\
-       ? ((TYPE) && TREE_CODE (TYPE_SIZE (TYPE)) == INTEGER_CST		\
-	  && int_size_in_bytes (TYPE) < (PARM_BOUNDARY / BITS_PER_UNIT)) \
-       : GET_MODE_BITSIZE (MODE) < PARM_BOUNDARY)			\
-      ? downward : upward))
+  (upward)
 #endif
 
 /* Supply a default definition for FUNCTION_ARG_BOUNDARY.  Normally, we let
@@ -257,7 +251,7 @@ enum direction {none, upward, downward};  /* Value has this type.  */
 		 && 0 == (int_size_in_bytes (TYPE)	\
 			  % (PARM_BOUNDARY / BITS_PER_UNIT))) \
 	   && (FUNCTION_ARG_PADDING (MODE, TYPE)	\
-	       == (BYTES_BIG_ENDIAN ? upward : downward)))))
+	       == (downward)))))
 #endif
 
 /* Nonzero if type TYPE should be returned in memory.

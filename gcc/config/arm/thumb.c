@@ -1365,13 +1365,13 @@ thumb_print_operand(FILE *f, rtx x, int code)
         case 'Q':
             if (REGNO(x) > 15)
                 abort();
-            fputs(reg_names[REGNO(x) + (WORDS_BIG_ENDIAN ? 1 : 0)], f);
+            fputs(reg_names[REGNO(x)], f);
             return;
 
         case 'R':
             if (REGNO(x) > 15)
                 abort();
-            fputs(reg_names[REGNO(x) + (WORDS_BIG_ENDIAN ? 0 : 1)], f);
+            fputs(reg_names[REGNO(x) + 1], f);
             return;
 
         case 'H':

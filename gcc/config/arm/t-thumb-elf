@@ -24,9 +24,9 @@ dp-bit.c: $(srcdir)/config/fp-bit.c
 	cat $(srcdir)/config/fp-bit.c >> dp-bit.c
 
 # Avoid building a duplicate set of libraries for the default endian-ness.
-MULTILIB_OPTIONS = mlittle-endian/mbig-endian mno-thumb-interwork/mthumb-interwork
-MULTILIB_DIRNAMES = le be normal interwork
-MULTILIB_MATCHES = mbig-endian=mbe mlittle-endian=mle
+MULTILIB_OPTIONS = mno-thumb-interwork/mthumb-interwork
+MULTILIB_DIRNAMES = normal interwork
+MULTILIB_MATCHES =
 
 LIBGCC = stmp-multilib
 INSTALL_LIBGCC = install-multilib

@@ -698,31 +698,17 @@ convert_move (to, from, unsignedp)
 	fill_value = const0_rtx;
       else
 	{
-#ifdef HAVE_slt
-	  if (HAVE_slt
-	      && insn_operand_mode[(int) CODE_FOR_slt][0] == word_mode
-	      && STORE_FLAG_VALUE == -1)
-	    {
-	      emit_cmp_insn (lowfrom, const0_rtx, NE, NULL_RTX,
-			     lowpart_mode, 0, 0);
-	      fill_value = gen_reg_rtx (word_mode);
-	      emit_insn (gen_slt (fill_value));
-	    }
-	  else
-#endif
-	    {
 	      fill_value
 		= expand_shift (RSHIFT_EXPR, lowpart_mode, lowfrom,
 				size_int (GET_MODE_BITSIZE (lowpart_mode) - 1),
 				NULL_RTX, 0);
 	      fill_value = convert_to_mode (word_mode, fill_value, 1);
-	    }
 	}
 
       /* Fill the remaining words.  */
       for (i = GET_MODE_SIZE (lowpart_mode) / UNITS_PER_WORD; i < nwords; i++)
 	{
-	  int index = (WORDS_BIG_ENDIAN ? nwords - i - 1 : i);
+	  int index = i;
 	  rtx subword = operand_subword (to, index, 1, to_mode);
 
 	  if (subword == 0)
@@ -827,78 +813,36 @@ convert_move (to, from, unsignedp)
 
   if (from_mode == DImode && to_mode == SImode)
     {
-#ifdef HAVE_truncdisi2
-      if (HAVE_truncdisi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncdisi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
 
   if (from_mode == DImode && to_mode == HImode)
     {
-#ifdef HAVE_truncdihi2
-      if (HAVE_truncdihi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncdihi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
 
   if (from_mode == DImode && to_mode == QImode)
     {
-#ifdef HAVE_truncdiqi2
-      if (HAVE_truncdiqi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncdiqi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
 
   if (from_mode == SImode && to_mode == HImode)
     {
-#ifdef HAVE_truncsihi2
-      if (HAVE_truncsihi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncsihi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
 
   if (from_mode == SImode && to_mode == QImode)
     {
-#ifdef HAVE_truncsiqi2
-      if (HAVE_truncsiqi2)
-	{
-	  emit_unop_insn (CODE_FOR_truncsiqi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
 
   if (from_mode == HImode && to_mode == QImode)
     {
-#ifdef HAVE_trunchiqi2
-      if (HAVE_trunchiqi2)
-	{
-	  emit_unop_insn (CODE_FOR_trunchiqi2, to, from, UNKNOWN);
-	  return;
-	}
-#endif
       convert_move (to, force_reg (from_mode, from), unsignedp);
       return;
     }
@@ -1497,25 +1441,6 @@ move_block_from_reg (regno, x, nregs, size)
 		      gen_rtx_REG (mode, regno));
       return;
     }
-    
-  /* Blocks smaller than a word on a BYTES_BIG_ENDIAN machine must be aligned
-     to the left before storing to memory.  Note that the previous test
-     doesn't handle all cases (e.g. SIZE == 3).  */
-  if (size < UNITS_PER_WORD && BYTES_BIG_ENDIAN)
-    {
-      rtx tem = operand_subword (x, 0, 1, BLKmode);
-      rtx shift;
-
-      if (tem == 0)
-	abort ();
-
-      shift = expand_shift (LSHIFT_EXPR, word_mode,
-			    gen_rtx_REG (word_mode, regno),
-			    build_int_2 ((UNITS_PER_WORD - size)
-					 * BITS_PER_UNIT, 0), NULL_RTX, 0);
-      emit_move_insn (tem, shift);
-      return;
-    }
 
   /* See if the machine can do this with a store multiple insn.  */
 #ifdef HAVE_store_multiple
@@ -1620,12 +1545,6 @@ emit_group_load (dst, orig_src, ssize, align)
 				       bytepos*BITS_PER_UNIT, 1, NULL_RTX,
 				       mode, mode, align, ssize);
 	}
-
-      if (BYTES_BIG_ENDIAN && shift)
-	{
-	  expand_binop (mode, ashl_optab, tmps[i], GEN_INT (shift),
-			tmps[i], 0, OPTAB_WIDEN);
-	}
     }
   emit_queue();
 
@@ -1714,12 +1633,6 @@ emit_group_store (orig_dst, src, ssize, align)
       /* Handle trailing fragments that run over the size of the struct.  */
       if (ssize >= 0 && bytepos + bytelen > ssize)
 	{
-	  if (BYTES_BIG_ENDIAN)
-	    {
-	      int shift = (bytelen - (ssize - bytepos)) * BITS_PER_UNIT;
-	      expand_binop (mode, ashr_optab, tmps[i], GEN_INT (shift),
-			    tmps[i], 0, OPTAB_WIDEN);
-	    }
 	  bytelen = ssize - bytepos;
 	}
 
@@ -1781,14 +1694,6 @@ copy_blkmode_from_reg(tgtblk,srcreg,type)
 	  && GET_MODE_SIZE (GET_MODE (srcreg)) < UNITS_PER_WORD)
 	srcreg = convert_to_mode (word_mode, srcreg,
 				  TREE_UNSIGNED (type));
-
-      /* Structures whose size is not a multiple of a word are aligned
-	 to the least significant byte (to the right).  On a BYTES_BIG_ENDIAN
-	 machine, this means we must skip the empty high order bytes when
-	 calculating the bit offset.  */
-      if (BYTES_BIG_ENDIAN && bytes % UNITS_PER_WORD)
-	big_endian_correction = (BITS_PER_WORD - ((bytes % UNITS_PER_WORD)
-						  * BITS_PER_UNIT));
 
       /* Copy the structure BITSIZE bites at a time.
 
@@ -3687,10 +3592,6 @@ store_constructor (exp, target, cleared)
 		  type = type_for_size (BITS_PER_WORD, TREE_UNSIGNED (type));
 		  value = convert (type, value);
 		}
-	      if (BYTES_BIG_ENDIAN)
-		value
-		  = fold (build (LSHIFT_EXPR, type, value,
-				 build_int_2 (BITS_PER_WORD - bitsize, 0)));
 	      bitsize = BITS_PER_WORD;
 	      mode = word_mode;
 	    }
@@ -3956,9 +3857,6 @@ store_constructor (exp, target, cleared)
 	    {
 	      if (bit_buffer[ibit])
 		{
-		  if (BYTES_BIG_ENDIAN)
-		    word |= (1 << (set_word_size - 1 - bit_pos));
-		  else
 		    word |= 1 << bit_pos;
 		}
 	      bit_pos++;  ibit++;
@@ -4174,18 +4072,6 @@ store_field (target, bitsize, bitpos, mode, exp, value_mode,
 	  && align * BITS_PER_UNIT < TYPE_ALIGN (TREE_TYPE (exp))))
     {
       rtx temp = expand_expr (exp, NULL_RTX, VOIDmode, 0);
-
-      /* If BITSIZE is narrower than the size of the type of EXP
-	 we will be narrowing TEMP.  Normally, what's wanted are the
-	 low-order bits.  However, if EXP's type is a record and this is
-	 big-endian machine, we want the upper BITSIZE bits.  */
-      if (BYTES_BIG_ENDIAN && GET_MODE_CLASS (GET_MODE (temp)) == MODE_INT
-	  && bitsize < GET_MODE_BITSIZE (GET_MODE (temp))
-	  && TREE_CODE (TREE_TYPE (exp)) == RECORD_TYPE)
-	temp = expand_shift (RSHIFT_EXPR, GET_MODE (temp), temp,
-			     size_int (GET_MODE_BITSIZE (GET_MODE (temp))
-				       - bitsize),
-			     temp, 1);
 
       /* Unless MODE is VOIDmode or BLKmode, convert TEMP to
 	 MODE.  */
@@ -6077,17 +5963,6 @@ expand_expr (exp, target, tmode, modifier)
 				     unsignedp, target, ext_mode, ext_mode,
 				     alignment,
 				     int_size_in_bytes (TREE_TYPE (tem)));
-
-	    /* If the result is a record type and BITSIZE is narrower than
-	       the mode of OP0, an integral mode, and this is a big endian
-	       machine, we must put the field into the high-order bits.  */
-	    if (TREE_CODE (type) == RECORD_TYPE && BYTES_BIG_ENDIAN
-		&& GET_MODE_CLASS (GET_MODE (op0)) == MODE_INT
-		&& bitsize < GET_MODE_BITSIZE (GET_MODE (op0)))
-	      op0 = expand_shift (LSHIFT_EXPR, GET_MODE (op0), op0,
-				  size_int (GET_MODE_BITSIZE (GET_MODE (op0))
-					    - bitsize),
-				  op0, 1);
 
 	    if (mode == BLKmode)
 	      {
@@ -10423,16 +10298,8 @@ do_jump_by_parts_greater (exp, swap, if_false_label, if_true_label)
       rtx comp;
       rtx op0_word, op1_word;
 
-      if (WORDS_BIG_ENDIAN)
-	{
-	  op0_word = operand_subword_force (op0, i, mode);
-	  op1_word = operand_subword_force (op1, i, mode);
-	}
-      else
-	{
 	  op0_word = operand_subword_force (op0, nwords - 1 - i, mode);
 	  op1_word = operand_subword_force (op1, nwords - 1 - i, mode);
-	}
 
       /* All but high-order word must be compared as unsigned.  */
       comp = compare_from_rtx (op0_word, op1_word,
@@ -10486,16 +10353,8 @@ do_jump_by_parts_greater_rtx (mode, unsignedp, op0, op1, if_false_label, if_true
       rtx comp;
       rtx op0_word, op1_word;
 
-      if (WORDS_BIG_ENDIAN)
-	{
-	  op0_word = operand_subword_force (op0, i, mode);
-	  op1_word = operand_subword_force (op1, i, mode);
-	}
-      else
-	{
 	  op0_word = operand_subword_force (op0, nwords - 1 - i, mode);
 	  op1_word = operand_subword_force (op1, nwords - 1 - i, mode);
-	}
 
       /* All but high-order word must be compared as unsigned.  */
       comp = compare_from_rtx (op0_word, op1_word,

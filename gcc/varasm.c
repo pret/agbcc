@@ -4027,39 +4027,7 @@ output_constructor (exp, size)
 		 (all part of the same byte).  */
 	      this_time = MIN (end_offset - next_offset,
 			       BITS_PER_UNIT - next_bit);
-	      if (BYTES_BIG_ENDIAN)
-		{
-		  /* On big-endian machine, take the most significant bits
-		     first (of the bits that are significant)
-		     and put them into bytes from the most significant end.  */
-		  shift = end_offset - next_offset - this_time;
-		  /* Don't try to take a bunch of bits that cross
-		     the word boundary in the INTEGER_CST.  */
-		  if (shift < HOST_BITS_PER_WIDE_INT
-		      && shift + this_time > HOST_BITS_PER_WIDE_INT)
-		    {
-		      this_time -= (HOST_BITS_PER_WIDE_INT - shift);
-		      shift = HOST_BITS_PER_WIDE_INT;
-		    }
 
-		  /* Now get the bits from the appropriate constant word.  */
-		  if (shift < HOST_BITS_PER_WIDE_INT)
-		    {
-		      value = TREE_INT_CST_LOW (val);
-		    }
-		  else if (shift < 2 * HOST_BITS_PER_WIDE_INT)
-		    {
-		      value = TREE_INT_CST_HIGH (val);
-		      shift -= HOST_BITS_PER_WIDE_INT;
-		    }
-		  else
-		    abort ();
-		  byte |= (((value >> shift)
-			    & (((HOST_WIDE_INT) 1 << this_time) - 1))
-			   << (BITS_PER_UNIT - this_time - next_bit));
-		}
-	      else
-		{
 		  /* On little-endian machines,
 		     take first the least significant bits of the value
 		     and pack them starting at the least significant
@@ -4088,7 +4056,7 @@ output_constructor (exp, size)
 		  byte |= (((value >> shift)
 			    & (((HOST_WIDE_INT) 1 << this_time) - 1))
 			   << next_bit);
-		}
+
 	      next_offset += this_time;
 	      byte_buffer_in_use = 1;
 	    }

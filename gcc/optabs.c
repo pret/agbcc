@@ -676,7 +676,7 @@ expand_binop (mode, binoptab, op0, op1, target, unsignedp, methods)
 	 WORDS_BIG_ENDIAN.  */
 
       left_shift = binoptab == ashl_optab;
-      outof_word = left_shift ^ ! WORDS_BIG_ENDIAN;
+      outof_word = left_shift ^ 1;
 
       outof_target = operand_subword (target, outof_word, 1, mode);
       into_target = operand_subword (target, 1 - outof_word, 1, mode);
@@ -794,7 +794,7 @@ expand_binop (mode, binoptab, op0, op1, target, unsignedp, methods)
 	 WORDS_BIG_ENDIAN.  */
 
       left_shift = (binoptab == rotl_optab);
-      outof_word = left_shift ^ ! WORDS_BIG_ENDIAN;
+      outof_word = left_shift ^ 1;
 
       outof_target = operand_subword (target, outof_word, 1, mode);
       into_target = operand_subword (target, 1 - outof_word, 1, mode);
@@ -924,7 +924,7 @@ expand_binop (mode, binoptab, op0, op1, target, unsignedp, methods)
       /* Do the actual arithmetic.  */
       for (i = 0; i < nwords; i++)
 	{
-	  int index = (WORDS_BIG_ENDIAN ? nwords - i - 1 : i);
+	  int index = i;
 	  rtx target_piece = operand_subword (target, index, 1, mode);
 	  rtx op0_piece = operand_subword_force (xop0, index, mode);
 	  rtx op1_piece = operand_subword_force (xop1, index, mode);
@@ -1061,8 +1061,8 @@ expand_binop (mode, binoptab, op0, op1, target, unsignedp, methods)
 	  || (smul_widen_optab->handlers[(int) mode].insn_code
 	      != CODE_FOR_nothing)))
     {
-      int low = (WORDS_BIG_ENDIAN ? 1 : 0);
-      int high = (WORDS_BIG_ENDIAN ? 0 : 1);
+      int low = 0;
+      int high = 1;
       rtx op0_high = operand_subword_force (op0, high, mode);
       rtx op0_low = operand_subword_force (op0, low, mode);
       rtx op1_high = operand_subword_force (op1, high, mode);

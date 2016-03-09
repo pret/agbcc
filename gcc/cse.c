@@ -4804,10 +4804,6 @@ simplify_ternary_operation (code, mode, op0_mode, op0, op1, op2)
 	  /* Extracting a bit-field from a constant */
 	  HOST_WIDE_INT val = INTVAL (op0);
 
-	  if (BITS_BIG_ENDIAN)
-	    val >>= (GET_MODE_BITSIZE (op0_mode)
-		     - INTVAL (op2) - INTVAL (op1));
-	  else
 	    val >>= INTVAL (op2);
 
 	  if (HOST_BITS_PER_WIDE_INT != INTVAL (op1))
@@ -5226,9 +5222,7 @@ fold_rtx (x, insn)
 					   0, const_mode)) != 0)
 	      return new;
 
-	    if (((BYTES_BIG_ENDIAN
-		  && offset == GET_MODE_SIZE (GET_MODE (constant)) - 1)
-		 || (! BYTES_BIG_ENDIAN && offset == 0))
+	    if (offset == 0
 		&& (new = gen_lowpart_if_possible (mode, constant)) != 0)
 	      return new;
 	  }
@@ -5917,14 +5911,6 @@ gen_lowpart_if_possible (mode, x)
       register int offset = 0;
       rtx new;
 
-      if (WORDS_BIG_ENDIAN)
-	offset = (MAX (GET_MODE_SIZE (GET_MODE (x)), UNITS_PER_WORD)
-		  - MAX (GET_MODE_SIZE (mode), UNITS_PER_WORD));
-      if (BYTES_BIG_ENDIAN)
-	/* Adjust the address so that the address-after-the-data is
-	   unchanged.  */
-	offset -= (MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode))
-		   - MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (x))));
       new = gen_rtx_MEM (mode, plus_constant (XEXP (x, 0), offset));
       if (! memory_address_p (mode, XEXP (new, 0)))
 	return 0;

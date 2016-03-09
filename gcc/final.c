@@ -2174,9 +2174,6 @@ alter_subreg (x)
   else if (GET_CODE (y) == MEM)
     {
       register int offset = SUBREG_WORD (x) * UNITS_PER_WORD;
-      if (BYTES_BIG_ENDIAN)
-	offset -= (MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (x)))
-		   - MIN (UNITS_PER_WORD, GET_MODE_SIZE (GET_MODE (y))));
       PUT_CODE (x, MEM);
       MEM_COPY_ATTRIBUTES (x, y);
       MEM_ALIAS_SET (x) = MEM_ALIAS_SET (y);
@@ -2849,16 +2846,9 @@ split_double (value, first, second)
 
 	  low = GEN_INT ((INTVAL (value) << rshift) >> rshift);
 	  high = GEN_INT ((INTVAL (value) << lshift) >> rshift);
-	  if (WORDS_BIG_ENDIAN)
-	    {
-	      *first = high;
-	      *second = low;
-	    }
-	  else
-	    {
+
 	      *first = low;
 	      *second = high;
-	    }
 	}
       else
 	{
@@ -2866,30 +2856,15 @@ split_double (value, first, second)
 	     is that we regard the value as signed.
 	     So sign-extend it.  */
 	  rtx high = (INTVAL (value) < 0 ? constm1_rtx : const0_rtx);
-	  if (WORDS_BIG_ENDIAN)
-	    {
-	      *first = high;
-	      *second = value;
-	    }
-	  else
-	    {
+
 	      *first = value;
 	      *second = high;
-	    }
 	}
     }
   else if (GET_CODE (value) != CONST_DOUBLE)
     {
-      if (WORDS_BIG_ENDIAN)
-	{
-	  *first = const0_rtx;
-	  *second = value;
-	}
-      else
-	{
 	  *first = value;
 	  *second = const0_rtx;
-	}
     }
   else if (GET_MODE (value) == VOIDmode
 	   /* This is the old way we did CONST_DOUBLE integers.  */
@@ -2897,16 +2872,8 @@ split_double (value, first, second)
     {
       /* In an integer, the words are defined as most and least significant.
 	 So order them by the target's convention.  */
-      if (WORDS_BIG_ENDIAN)
-	{
-	  *first = GEN_INT (CONST_DOUBLE_HIGH (value));
-	  *second = GEN_INT (CONST_DOUBLE_LOW (value));
-	}
-      else
-	{
 	  *first = GEN_INT (CONST_DOUBLE_LOW (value));
 	  *second = GEN_INT (CONST_DOUBLE_HIGH (value));
-	}
     }
   else
     {

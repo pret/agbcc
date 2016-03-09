@@ -393,16 +393,8 @@ static void dwarf2out_stack_adjust	(rtx);
 #ifndef ASM_OUTPUT_DWARF_DATA8
 #define ASM_OUTPUT_DWARF_DATA8(FILE,HIGH_VALUE,LOW_VALUE)		\
   do {									\
-    if (WORDS_BIG_ENDIAN)						\
-      {									\
-	fprintf ((FILE), "\t%s\t0x%lx\n", UNALIGNED_INT_ASM_OP, (HIGH_VALUE));\
-	fprintf ((FILE), "\t%s\t0x%lx", UNALIGNED_INT_ASM_OP, (LOW_VALUE));\
-      }									\
-    else								\
-      {									\
 	fprintf ((FILE), "\t%s\t0x%lx\n", UNALIGNED_INT_ASM_OP, (LOW_VALUE)); \
 	fprintf ((FILE), "\t%s\t0x%lx", UNALIGNED_INT_ASM_OP, (HIGH_VALUE)); \
-      }									\
   } while (0)
 #endif
 
@@ -7064,8 +7056,7 @@ add_location_or_const_value_attribute (die, decl)
 	     all* cases where (rtl == NULL_RTX) just below.  */
 	  if (declared_type == passed_type)
 	    rtl = DECL_INCOMING_RTL (decl);
-	  else if (! BYTES_BIG_ENDIAN
-		   && TREE_CODE (declared_type) == INTEGER_TYPE
+	  else if (TREE_CODE (declared_type) == INTEGER_TYPE
 		   && TYPE_SIZE (declared_type) <= TYPE_SIZE (passed_type))
 		rtl = DECL_INCOMING_RTL (decl);
 	}
@@ -7390,18 +7381,15 @@ add_bit_offset_attribute (die, decl)
   highest_order_object_bit_offset = object_offset_in_bytes * BITS_PER_UNIT;
   highest_order_field_bit_offset = bitpos_int;
 
-  if (! BYTES_BIG_ENDIAN)
-    {
+
       highest_order_field_bit_offset
 	+= (unsigned) TREE_INT_CST_LOW (DECL_SIZE (decl));
 
       highest_order_object_bit_offset += simple_type_size_in_bits (type);
-    }
+
 
   bit_offset
-    = (! BYTES_BIG_ENDIAN
-       ? highest_order_object_bit_offset - highest_order_field_bit_offset
-       : highest_order_field_bit_offset - highest_order_object_bit_offset);
+    = highest_order_object_bit_offset - highest_order_field_bit_offset;
 
   add_AT_unsigned (die, DW_AT_bit_offset, bit_offset);
 }

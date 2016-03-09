@@ -2273,12 +2273,6 @@ alter_reg (i, from_reg)
 	  /* No known place to spill from => no slot to reuse.  */
 	  x = assign_stack_local (GET_MODE (regno_reg_rtx[i]), total_size,
 				  inherent_size == total_size ? 0 : -1);
-	  if (BYTES_BIG_ENDIAN)
-	    /* Cancel the  big-endian correction done in assign_stack_local.
-	       Get the address of the beginning of the slot.
-	       This is so we can do a big-endian correction unconditionally
-	       below.  */
-	    adjust = inherent_size - total_size;
 
 	  RTX_UNCHANGING_P (x) = RTX_UNCHANGING_P (regno_reg_rtx[i]);
 	}
@@ -2307,27 +2301,9 @@ alter_reg (i, from_reg)
 	  x = assign_stack_local (mode, total_size,
 				  inherent_size == total_size ? 0 : -1);
 	  stack_slot = x;
-	  if (BYTES_BIG_ENDIAN)
-	    {
-	      /* Cancel the  big-endian correction done in assign_stack_local.
-		 Get the address of the beginning of the slot.
-		 This is so we can do a big-endian correction unconditionally
-		 below.  */
-	      adjust = GET_MODE_SIZE (mode) - total_size;
-	      if (adjust)
-		stack_slot = gen_rtx_MEM (mode_for_size (total_size
-							 * BITS_PER_UNIT,
-							 MODE_INT, 1),
-				      plus_constant (XEXP (x, 0), adjust));
-	    }
 	  spill_stack_slot[from_reg] = stack_slot;
 	  spill_stack_slot_width[from_reg] = total_size;
 	}
-
-      /* On a big endian machine, the "address" of the slot
-	 is the address of the low part that fits its inherent mode.  */
-      if (BYTES_BIG_ENDIAN && inherent_size < total_size)
-	adjust += (total_size - inherent_size);
 
       /* If we have any adjustment to make, or if the stack slot is the
 	 wrong mode, make a new stack slot.  */
@@ -2844,11 +2820,6 @@ eliminate_regs (x, mem_mode, insn)
 	    {
 	      int offset = SUBREG_WORD (x) * UNITS_PER_WORD;
 	      enum machine_mode mode = GET_MODE (x);
-
-	      if (BYTES_BIG_ENDIAN)
-		offset += (MIN (UNITS_PER_WORD,
-				GET_MODE_SIZE (GET_MODE (new)))
-			   - MIN (UNITS_PER_WORD, GET_MODE_SIZE (mode)));
 
 	      PUT_MODE (new, mode);
 	      XEXP (new, 0) = plus_constant (XEXP (new, 0), offset);
@@ -8541,14 +8512,6 @@ reload_cse_regno_equal_p (regno, val, mode)
 	&& (GET_CODE (val) != CONST_INT
 	    || mode == GET_MODE (x)
 	    || (GET_MODE_SIZE (mode) < GET_MODE_SIZE (GET_MODE (x))
-		/* On a big endian machine if the value spans more than
-		   one register then this register holds the high part of
-		   it and we can't use it.
-
-		   ??? We should also compare with the high part of the
-		   value.  */
-		&& !(WORDS_BIG_ENDIAN
-		     && HARD_REGNO_NREGS (regno, GET_MODE (x)) > 1)
 		&& TRULY_NOOP_TRUNCATION (GET_MODE_BITSIZE (mode),
 					  GET_MODE_BITSIZE (GET_MODE (x))))))
       return 1;

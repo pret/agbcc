@@ -2723,9 +2723,6 @@ optimize_bit_field_compare (code, compare_type, lhs, rhs)
 	return 0;
     }
 
-  if (BYTES_BIG_ENDIAN)
-    lbitpos = lnbitsize - lbitsize - lbitpos;
-
   /* Make the mask to be used against the extracted field.  */
   mask = build_int_2 (~0, ~0);
   TREE_TYPE (mask) = unsigned_type;
@@ -4082,12 +4079,6 @@ fold_truthop (code, truth_type, lhs, rhs)
   type = type_for_size (lnbitsize, 1);
   xll_bitpos = ll_bitpos - lnbitpos, xrl_bitpos = rl_bitpos - lnbitpos;
 
-  if (BYTES_BIG_ENDIAN)
-    {
-      xll_bitpos = lnbitsize - xll_bitpos - ll_bitsize;
-      xrl_bitpos = lnbitsize - xrl_bitpos - rl_bitsize;
-    }
-
   ll_mask = const_binop (LSHIFT_EXPR, convert (type, ll_mask),
 			 size_int (xll_bitpos), 0);
   rl_mask = const_binop (LSHIFT_EXPR, convert (type, rl_mask),
@@ -4153,12 +4144,6 @@ fold_truthop (code, truth_type, lhs, rhs)
       rnbitsize = GET_MODE_BITSIZE (rnmode);
       rnbitpos = first_bit & ~ (rnbitsize - 1);
       xlr_bitpos = lr_bitpos - rnbitpos, xrr_bitpos = rr_bitpos - rnbitpos;
-
-      if (BYTES_BIG_ENDIAN)
-	{
-	  xlr_bitpos = rnbitsize - xlr_bitpos - lr_bitsize;
-	  xrr_bitpos = rnbitsize - xrr_bitpos - rr_bitsize;
-	}
 
       lr_mask = const_binop (LSHIFT_EXPR, convert (type, lr_mask),
 			     size_int (xlr_bitpos), 0);

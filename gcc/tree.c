@@ -4991,9 +4991,6 @@ get_set_constructor_bytes (init, buffer, wd_size)
     {
       if (bit_buffer[i])
 	{
-	  if (BYTES_BIG_ENDIAN)
-	    *bytep |= (1 << (set_word_size - 1 - bit_pos));
-	  else
 	    *bytep |= 1 << bit_pos;
 	}
       bit_pos++;
