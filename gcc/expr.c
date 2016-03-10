@@ -43,22 +43,6 @@ Boston, MA 02111-1307, USA.  */
 
 #define CEIL(x,y) (((x) + (y) - 1) / (y))
 
-/* Decide whether a function's arguments should be processed
-   from first to last or from last to first.
-
-   They should if the stack and args grow in opposite directions, but
-   only if we have push insns.  */
-
-
-#ifndef STACK_PUSH_CODE
-#define STACK_PUSH_CODE PRE_DEC
-#endif
-
-/* Assume that case vectors are not pc-relative.  */
-#ifndef CASE_VECTOR_PC_RELATIVE
-#define CASE_VECTOR_PC_RELATIVE 0
-#endif
-
 /* If this is nonzero, we do not bother generating VOLATILE
    around volatile memory references, and we are willing to
    output indirect addresses.  If cse is to follow, we reject
@@ -66,11 +50,6 @@ Boston, MA 02111-1307, USA.  */
    if it is used only once, instruction combination will produce
    the same indirect address eventually.  */
 int cse_not_expected;
-
-/* Nonzero to generate code for all the subroutines within an
-   expression before generating the upper levels of the expression.
-   Nowadays this is never zero.  */
-int do_preexpand_calls = 1;
 
 /* Number of units that we should eventually pop off the stack.
    These are the arguments to function calls that have already returned.  */
@@ -195,21 +174,11 @@ static char direct_store[NUM_MACHINE_MODES];
 /* If a memory-to-memory move would take MOVE_RATIO or more simple
    move-instruction sequences, we will do a movstr or libcall instead.  */
 
-#ifndef MOVE_RATIO
-#if defined (HAVE_movstrqi) || defined (HAVE_movstrhi) || defined (HAVE_movstrsi) || defined (HAVE_movstrdi) || defined (HAVE_movstrti)
 #define MOVE_RATIO 2
-#else
-/* If we are optimizing for space (-Os), cut down the default move ratio */
-#define MOVE_RATIO (optimize_size ? 3 : 15)
-#endif
-#endif
 
 /* This macro is used to determine whether move_by_pieces should be called
    to perform a structure copy. */
-#ifndef MOVE_BY_PIECES_P
-#define MOVE_BY_PIECES_P(SIZE, ALIGN) (move_by_pieces_ninsns        \
-                                       (SIZE, ALIGN) < MOVE_RATIO)
-#endif
+#define MOVE_BY_PIECES_P(SIZE, ALIGN) (move_by_pieces_ninsns(SIZE, ALIGN) < MOVE_RATIO)
 
 /* This array records the insn_code of insns to perform block moves.  */
 enum insn_code movstr_optab[NUM_MACHINE_MODES];
@@ -217,12 +186,6 @@ enum insn_code movstr_optab[NUM_MACHINE_MODES];
 /* This array records the insn_code of insns to perform block clears.  */
 enum insn_code clrstr_optab[NUM_MACHINE_MODES];
 
-/* SLOW_UNALIGNED_ACCESS is non-zero if unaligned accesses are very slow.  */
-
-#ifndef SLOW_UNALIGNED_ACCESS
-#define SLOW_UNALIGNED_ACCESS STRICT_ALIGNMENT
-#endif
-
 /* This is run once per compilation to set up which modes can be used
    directly in memory and to initialize the block move optab.  */
 
@@ -1079,8 +1042,7 @@ move_by_pieces (to, from, len, align)
 	data.to_addr = copy_addr_to_reg (to_addr);
     }
 
-  if (! SLOW_UNALIGNED_ACCESS
-      || align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
+  if (align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
     align = MOVE_MAX;
 
   /* First move what we can in the largest integer mode, then go to
@@ -1121,8 +1083,7 @@ move_by_pieces_ninsns (l, align)
   register int n_insns = 0;
   int max_size = MOVE_MAX + 1;
 
-  if (! SLOW_UNALIGNED_ACCESS
-      || align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
+  if (align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
     align = MOVE_MAX;
 
   while (max_size > 1)
@@ -1794,8 +1755,7 @@ clear_by_pieces (to, len, align)
 	data.to_addr = copy_addr_to_reg (to_addr);
     }
 
-  if (! SLOW_UNALIGNED_ACCESS
-      || align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
+  if (align > MOVE_MAX || align >= BIGGEST_ALIGNMENT / BITS_PER_UNIT)
     align = MOVE_MAX;
 
   /* First move what we can in the largest integer mode, then go to
@@ -2058,7 +2018,7 @@ emit_move_insn_1 (x, y)
   int i;
 
   /* CYGNUS LOCAL unaligned-pointers & -fpack-struct */
-  if (SLOW_UNALIGNED_ACCESS && mode != QImode
+  if (mode != QImode
       && (flag_unaligned_pointers || maximum_field_alignment != 0 || flag_pack_struct)
       && ! reload_in_progress && ! reload_completed)
     {
@@ -2230,7 +2190,7 @@ push_block (size, extra, below)
 rtx
 gen_push_operand ()
 {
-  return gen_rtx_fmt_e (STACK_PUSH_CODE, Pmode, stack_pointer_rtx);
+  return gen_rtx_fmt_e (PRE_DEC, Pmode, stack_pointer_rtx);
 }
 
 /* Return an rtx for the address of the beginning of a as-if-it-was-pushed
@@ -2240,16 +2200,7 @@ static rtx
 get_push_address (size)
 	int size;
 {
-  register rtx temp;
-
-  if (STACK_PUSH_CODE == POST_DEC)
-    temp = gen_rtx_PLUS (Pmode, stack_pointer_rtx, GEN_INT (size));
-  else if (STACK_PUSH_CODE == POST_INC)
-    temp = gen_rtx_MINUS (Pmode, stack_pointer_rtx, GEN_INT (size));
-  else
-    temp = stack_pointer_rtx;
-
-  return copy_to_reg (temp);
+  return copy_to_reg (stack_pointer_rtx);
 }
 
 /* Generate code to push X onto the stack, assuming it has mode MODE and
@@ -2307,11 +2258,6 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
      `upward' for above, or `none' for don't pad it.
      Default is below for small data on big-endian machines; else above.  */
   enum direction where_pad = FUNCTION_ARG_PADDING (mode, type);
-
-  /* Invert direction if stack is post-update.  */
-  if (STACK_PUSH_CODE == POST_INC || STACK_PUSH_CODE == POST_DEC)
-    if (where_pad != none)
-      where_pad = (where_pad == downward ? upward : downward);
 
   xinner = x = protect_from_queue (x, 0);
 
@@ -3959,11 +3905,10 @@ store_field (target, bitsize, bitpos, mode, exp, value_mode,
       || GET_CODE (target) == SUBREG
       /* If the field isn't aligned enough to store as an ordinary memref,
 	 store it as a bit field.  */
-      || (SLOW_UNALIGNED_ACCESS
-	  && align * BITS_PER_UNIT < GET_MODE_ALIGNMENT (mode))
-      || (SLOW_UNALIGNED_ACCESS && bitpos % GET_MODE_ALIGNMENT (mode) != 0)
+      || (align * BITS_PER_UNIT < GET_MODE_ALIGNMENT (mode))
+      || (bitpos % GET_MODE_ALIGNMENT (mode) != 0)
       /* CYGNUS LOCAL unaligned-pointers */
-      || (SLOW_UNALIGNED_ACCESS && mode == BLKmode
+      || (mode == BLKmode
 	  && align * BITS_PER_UNIT < TYPE_ALIGN (TREE_TYPE (exp))))
     {
       rtx temp = expand_expr (exp, NULL_RTX, VOIDmode, 0);
@@ -5447,7 +5392,7 @@ expand_expr (exp, target, tmode, modifier)
 	RTX_UNCHANGING_P (temp) = TREE_READONLY (exp) & TREE_STATIC (exp);
 
 	/* CYGNUS LOCAL unaligned-pointers & -fpack-struct */
-	if (SLOW_UNALIGNED_ACCESS && mode != QImode
+	if (mode != QImode
 	    && (flag_unaligned_pointers || maximum_field_alignment != 0 || flag_pack_struct))
 	  MEM_UNALIGNED_P (temp) = 1;
 	/* END CYGNUS LOCAL */
@@ -5734,8 +5679,7 @@ expand_expr (exp, target, tmode, modifier)
 		     && GET_MODE_CLASS (mode) != MODE_COMPLEX_FLOAT)
 		    /* If the field isn't aligned enough to fetch as a memref,
 		       fetch it as a bit field.  */
-		    || (SLOW_UNALIGNED_ACCESS
-			&& ((TYPE_ALIGN (TREE_TYPE (tem)) < (unsigned int) GET_MODE_ALIGNMENT (mode))
+		    || (((TYPE_ALIGN (TREE_TYPE (tem)) < (unsigned int) GET_MODE_ALIGNMENT (mode))
 			    || (bitpos % GET_MODE_ALIGNMENT (mode) != 0))))))
 	  {
 	    enum machine_mode ext_mode = mode;
@@ -9232,9 +9176,6 @@ preexpand_calls (exp)
   register int nops, i;
   int type = TREE_CODE_CLASS (TREE_CODE (exp));
 
-  if (! do_preexpand_calls)
-    return;
-
   /* Only expressions and references can contain calls.  */
 
   if (type != 'e' && type != '<' && type != '1' && type != '2' && type != 'r')
@@ -10385,8 +10326,5 @@ do_tablejump (index, mode, range, table_label, default_label)
 
   emit_jump_insn (gen_tablejump (temp, table_label));
 
-  /* If the table is PC-relative, the
-     table and JUMP_INSN must be adjacent, so don't output a BARRIER.  */
-  if (! CASE_VECTOR_PC_RELATIVE)
     emit_barrier ();
 }
