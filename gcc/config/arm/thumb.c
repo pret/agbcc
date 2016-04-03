@@ -957,7 +957,8 @@ thumb_unexpanded_epilogue()
     int leaf_function = leaf_function_p();
     int had_to_push_lr;
 
-    if (return_used_this_function)
+    if (arm_naked_function_p(current_function_decl)
+        || return_used_this_function)
         return "";
 
     for (regno = 0; regno < 8; regno++)
