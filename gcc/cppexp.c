@@ -259,12 +259,6 @@ cpp_lex (pfile, skip_evaluation)
   old_written = CPP_WRITTEN (pfile);
   cpp_skip_hspace (pfile);
   c = CPP_BUF_PEEK (CPP_BUFFER (pfile));
-  if (c == '#')
-    {
-      op.op = INT;
-      op.value = cpp_read_check_assertion (pfile);
-      return op;
-    }
 
   if (c == '\n')
     {

@@ -36,16 +36,6 @@ Boston, MA 02111-1307, USA.  */
 /* ??? There is no pattern for the TST instuction.  Check for other unsupported
    instructions.  */
 
-/* Run Time Target Specifications */
-#ifndef CPP_PREDEFINES
-#define CPP_PREDEFINES "-Dthumb -D__thumb -Acpu(arm) -Amachine(arm)"
-#endif
-
-#ifndef ASM_SPEC
-#define ASM_SPEC "-marm7tdmi %{mthumb-interwork:-mthumb-interwork}"
-#endif
-#define LINK_SPEC "-X"
-
 #define TARGET_VERSION  fputs (" (ARM/THUMB:generic)", stderr);
 
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
@@ -104,11 +94,24 @@ extern int target_flags;
 /* This is how to output an assembler line
    that says to advance the location counter
    to a multiple of 2**LOG bytes.  */
-#define ASM_OUTPUT_ALIGN(STREAM,LOG)		\
-{						\
-  if ((LOG) > 0)				\
-    fprintf (STREAM, "\t.align\t%d\n", (LOG));	\
+
+#ifdef OLD_ASM
+
+#define ASM_OUTPUT_ALIGN(STREAM,LOG)               \
+{                                                  \
+    if ((LOG) > 0)                                 \
+        fprintf (STREAM, "\t.align\t%d\n", (LOG)); \
 }
+
+#else
+
+#define ASM_OUTPUT_ALIGN(STREAM,LOG)                  \
+{                                                     \
+    if ((LOG) > 0)                                    \
+        fprintf (STREAM, "\t.align\t%d, 0\n", (LOG)); \
+}
+
+#endif
 
 /* Output a common block */
 #define ASM_OUTPUT_COMMON(STREAM, NAME, SIZE, ROUNDED)  		\

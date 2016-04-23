@@ -22,8 +22,6 @@ Boston, MA 02111-1307, USA.  */
 
 #define OBJECT_FORMAT_ELF
 
-#define CPP_PREDEFINES "-Dthumb -Dthumbelf -D__thumb -Acpu(arm) -Amachine(arm)"
-
 #include "arm/thumb.h"
 #include "tree.h"
 

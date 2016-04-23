@@ -21,7 +21,6 @@ union hashval {
   int ival;
   char *cpval;
   DEFINITION *defn;
-  struct hashnode *aschain; /* for #assert */
 };
 
 struct hashnode {
