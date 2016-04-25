@@ -21,22 +21,14 @@
 #define UCHAR_MAX 255
 
 /* Minimum and maximum values a `char' can hold.  */
-#ifdef __CHAR_UNSIGNED__
 #undef CHAR_MIN
 #define CHAR_MIN 0
 #undef CHAR_MAX
 #define CHAR_MAX 255
-#else
-#undef CHAR_MIN
-#define CHAR_MIN (-128)
-#undef CHAR_MAX
-#define CHAR_MAX 127
-#endif
 
 /* Minimum and maximum values a `signed short int' can hold.  */
 #undef SHRT_MIN
-/* For the sake of 16 bit hosts, we may not use -32768 */
-#define SHRT_MIN (-32767-1)
+#define SHRT_MIN -32768
 #undef SHRT_MAX
 #define SHRT_MAX 32767
 

@@ -8666,17 +8666,6 @@ gen_compile_unit_die (main_input_filename)
 
   sprintf (producer, "%s %s", language_string, version_string);
 
-#ifdef MIPS_DEBUGGING_INFO
-  /* The MIPS/SGI compilers place the 'cc' command line options in the producer
-     string.  The SGI debugger looks for -g, -g1, -g2, or -g3; if they do
-     not appear in the producer string, the debugger reaches the conclusion
-     that the object file is stripped and has no debugging information.
-     To get the MIPS/SGI debugger to believe that there is debugging
-     information in the object file, we add a -g to the producer string.  */
-  if (debug_info_level > DINFO_LEVEL_TERSE)
-    strcat (producer, " -g");
-#endif
-
   add_AT_string (comp_unit_die, DW_AT_producer, producer);
 
   if (strcmp (language_string, "GNU C++") == 0)

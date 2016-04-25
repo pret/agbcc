@@ -187,8 +187,8 @@ extern tree convert_and_check			(tree, tree);
 extern void overflow_warning			(tree);
 extern void unsigned_conversion_warning		(tree, tree);
 /* Read the rest of the current #-directive line.  */
-extern char *get_directive_line                 (void);
-#define GET_DIRECTIVE_LINE() get_directive_line ()
+extern char *get_directive_line                 (FILE *);
+#define GET_DIRECTIVE_LINE() get_directive_line(finput)
 
 /* Subroutine of build_binary_op, used for comparison operations.
    See if the operands have both been converted from subword integer types
@@ -273,7 +273,7 @@ extern tree c_build_qualified_type              (tree, int);
   c_build_qualified_type (TYPE, 				  \
 			  ((CONST_P) ? TYPE_QUAL_CONST : 0) |	  \
 			  ((VOLATILE_P) ? TYPE_QUAL_VOLATILE : 0))
-extern int  c_decode_option                     (int, char **);
+extern void c_decode_option                     (char *);
 extern void c_mark_varargs                      (void);
 extern tree check_identifier                    (tree, tree);
 extern void clear_parm_order                    (void);
@@ -410,10 +410,6 @@ extern int current_function_returns_null;
 
 extern int skip_evaluation;
 
-/* Nonzero means `$' can be in an identifier.  */
-
-extern int dollars_in_ident;
-
 /* Nonzero means allow type mismatches in conditional expressions;
    just make their values `void'.   */
 
@@ -529,10 +525,6 @@ extern int warn_multichar;
 /* Warn about long long.  */
 
 extern int warn_long_long;
-
-/* Nonzero means we are reading code that came from a system header file.  */
-
-extern int system_header_p;
 
 /* In c-decl.c */
 extern void finish_incomplete_decl (tree);

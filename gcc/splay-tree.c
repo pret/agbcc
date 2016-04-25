@@ -23,31 +23,23 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
      Lewis, Harry R. and Denenberg, Larry.  Data Structures and Their
      Algorithms.  Harper-Collins, Inc.  1991.  */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
-#include "libiberty.h"
 #include "splay-tree.h"
 
-static void splay_tree_delete_helper    PARAMS((splay_tree, 
-						splay_tree_node));
-static void splay_tree_splay            PARAMS((splay_tree,
-						splay_tree_key));
+static void splay_tree_delete_helper    (splay_tree, splay_tree_node);
+static void splay_tree_splay            (splay_tree, splay_tree_key);
 static splay_tree_node splay_tree_splay_helper     
-                                        PARAMS((splay_tree,
+                                        (splay_tree,
 						splay_tree_key,
 						splay_tree_node*,
 						splay_tree_node*,
-						splay_tree_node*));
-static int splay_tree_foreach_helper    PARAMS((splay_tree,
+						splay_tree_node*);
+static int splay_tree_foreach_helper    (splay_tree,
 					        splay_tree_node,
 						splay_tree_foreach_fn,
-						void*));
+						void*);
 
 /* Deallocate NODE (a member of SP), and all its sub-trees.  */
 

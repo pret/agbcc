@@ -30,12 +30,6 @@ Boston, MA 02111-1307, USA.  */
 #ifndef _SPLAY_TREE_H
 #define _SPLAY_TREE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#include <ansidecl.h>
-
 /* Use typedefs for the key and data types to facilitate changing
    these types, if necessary.  These types should be sufficiently wide
    that any pointer or scalar can be cast to these types, and then
@@ -48,18 +42,18 @@ typedef struct splay_tree_node *splay_tree_node;
 
 /* The type of a function which compares two splay-tree keys.  The
    function should return values as for qsort.  */
-typedef int (*splay_tree_compare_fn) PARAMS((splay_tree_key, splay_tree_key));
+typedef int (*splay_tree_compare_fn) (splay_tree_key, splay_tree_key);
 
 /* The type of a function used to deallocate any resources associated
    with the key.  */
-typedef void (*splay_tree_delete_key_fn) PARAMS((splay_tree_key));
+typedef void (*splay_tree_delete_key_fn) (splay_tree_key);
 
 /* The type of a function used to deallocate any resources associated
    with the value.  */
-typedef void (*splay_tree_delete_value_fn) PARAMS((splay_tree_value));
+typedef void (*splay_tree_delete_value_fn) (splay_tree_value);
 
 /* The type of a function used to iterate over the tree.  */
-typedef int (*splay_tree_foreach_fn) PARAMS((splay_tree_node, void*));
+typedef int (*splay_tree_foreach_fn) (splay_tree_node, void*);
 
 /* The nodes in the splay tree.  */
 struct splay_tree_node
@@ -91,22 +85,18 @@ typedef struct splay_tree
   splay_tree_delete_value_fn delete_value;
 } *splay_tree;
 
-extern splay_tree splay_tree_new        PARAMS((splay_tree_compare_fn,
+extern splay_tree splay_tree_new        (splay_tree_compare_fn,
 					        splay_tree_delete_key_fn,
-					        splay_tree_delete_value_fn));
-extern void splay_tree_delete           PARAMS((splay_tree));
-extern void splay_tree_insert           PARAMS((splay_tree,
+					        splay_tree_delete_value_fn);
+extern void splay_tree_delete           (splay_tree);
+extern void splay_tree_insert           (splay_tree,
 					        splay_tree_key,
-					        splay_tree_value));
+					        splay_tree_value);
 extern splay_tree_node splay_tree_lookup   
-                                        PARAMS((splay_tree,
-					        splay_tree_key));
-extern int splay_tree_foreach           PARAMS((splay_tree,
+                                        (splay_tree,
+					        splay_tree_key);
+extern int splay_tree_foreach           (splay_tree,
 					        splay_tree_foreach_fn,
-					        void*));
-					       
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+					        void*);
 
 #endif /* _SPLAY_TREE_H */

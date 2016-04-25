@@ -206,10 +206,6 @@
 #include "output.h"
 #include "toplev.h"
 
-#ifdef MULTIBYTE_CHARS
-#include <locale.h>
-#endif
-
 
 /* Since parsers are distinct for each language, put the language string
    definition here.  */

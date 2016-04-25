@@ -35,9 +35,6 @@ Boston, MA 02111-1307, USA.  */
 #include "c-lex.h"
 #include "toplev.h"
 
-#include "cpplib.h"
-extern cpp_reader parse_in;
-
 /* In grokdeclarator, distinguish syntactic contexts of declarators.  */
 enum decl_context
 { NORMAL,			/* Ordinary declaration */
@@ -360,7 +357,7 @@ struct binding_level
     /* Nonzero means make a BLOCK if this level has any subblocks.  */
     char keep_if_subblocks;
 
-    /* Number of decls in `names' that have incomplete 
+    /* Number of decls in `names' that have incomplete
        structure or union types.  */
     int n_incomplete;
 
@@ -371,7 +368,7 @@ struct binding_level
   };
 
 #define NULL_BINDING_LEVEL (struct binding_level *) NULL
-  
+
 /* The binding level currently in effect.  */
 
 static struct binding_level *current_binding_level;
@@ -400,7 +397,7 @@ static int keep_next_level_flag;
    if it has subblocks.  */
 
 static int keep_next_if_subblocks;
-  
+
 /* The chain of outer levels of label scopes.
    This uses the same data structure used for binding levels,
    but it works differently: each link in the chain records
@@ -570,10 +567,6 @@ int warn_missing_braces;
 
 int warn_main;
 
-/* Warn about #pragma directives that are not recognised.  */
-
-int warn_unknown_pragmas = 0; /* Tri state variable.  */  
-
 /* Warn about comparison of signed and unsigned values.
    If -1, neither -Wsign-compare nor -Wno-sign-compare has been specified.  */
 
@@ -583,25 +576,12 @@ int warn_sign_compare = -1;
 
 int warn_multichar = 1;
 
-/* Nonzero means `$' can be in an identifier.  */
+/* Decode the string P as a language-specific option for C.  */
 
-#ifndef DOLLARS_IN_IDENTIFIERS
-#define DOLLARS_IN_IDENTIFIERS 1
-#endif
-int dollars_in_ident = DOLLARS_IN_IDENTIFIERS;
-
-/* Decode the string P as a language-specific option for C.
-   Return the number of strings consumed.  */
-   
-int
-c_decode_option (argc, argv)
-     int argc ATTRIBUTE_UNUSED;
-     char **argv;
+void
+c_decode_option (p)
+     char *p;
 {
-  int strings_processed;
-  char *p = argv[0];
-  strings_processed = cpp_handle_option (&parse_in, argc, argv);
-
   if (!strcmp (p, "-ftraditional") || !strcmp (p, "-traditional"))
     {
       flag_traditional = 1;
@@ -684,18 +664,6 @@ c_decode_option (argc, argv)
       else
 	error ("unknown C standard `%s'", argstart);
     }
-  else if (!strcmp (p, "-fdollars-in-identifiers"))
-    dollars_in_ident = 1;
-  else if (!strcmp (p, "-fno-dollars-in-identifiers"))
-    dollars_in_ident = 0;
-  else if (!strcmp (p, "-fsigned-char"))
-    flag_signed_char = 1;
-  else if (!strcmp (p, "-funsigned-char"))
-    flag_signed_char = 0;
-  else if (!strcmp (p, "-fno-signed-char"))
-    flag_signed_char = 0;
-  else if (!strcmp (p, "-fno-unsigned-char"))
-    flag_signed_char = 1;
   else if (!strcmp (p, "-fsigned-bitfields")
 	   || !strcmp (p, "-fno-unsigned-bitfields"))
     {
@@ -820,26 +788,6 @@ c_decode_option (argc, argv)
     warn_return_type = 1;
   else if (!strcmp (p, "-Wno-return-type"))
     warn_return_type = 0;
-  else if (!strcmp (p, "-Wcomment"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wno-comment"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wcomments"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wno-comments"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wtrigraphs"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wno-trigraphs"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wundef"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wno-undef"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wimport"))
-    ; /* cpp handles this one.  */
-  else if (!strcmp (p, "-Wno-import"))
-    ; /* cpp handles this one.  */
   else if (!strcmp (p, "-Wmissing-braces"))
     warn_missing_braces = 1;
   else if (!strcmp (p, "-Wno-missing-braces"))
@@ -856,12 +804,6 @@ c_decode_option (argc, argv)
     warn_multichar = 1;
   else if (!strcmp (p, "-Wno-multichar"))
     warn_multichar = 0;
-  else if (!strcmp (p, "-Wunknown-pragmas"))
-    /* Set to greater than 1, so that even unknown pragmas in system
-       headers will be warned about.  */
-    warn_unknown_pragmas = 2;
-  else if (!strcmp (p, "-Wno-unknown-pragmas"))
-    warn_unknown_pragmas = 0;
   else if (!strcmp (p, "-Wall"))
     {
       /* We save the value of warn_uninitialized, since if they put
@@ -881,13 +823,7 @@ c_decode_option (argc, argv)
       /* We set this to 2 here, but 1 in -Wmain, so -ffreestanding can turn
 	 it off only if it's not explicit.  */
       warn_main = 2;
-      /* Only warn about unknown pragmas that are not in system headers.  */
-      warn_unknown_pragmas = 1;
     }
-  else
-    return strings_processed;
-
-  return 1;
 }
 
 /* Hooks for print_node.  */
@@ -924,7 +860,7 @@ print_lang_identifier (file, node, indent)
 
 /* Hook called at end of compilation to assume 1 elt
    for a top-level array decl that wasn't complete before.  */
-   
+
 void
 finish_incomplete_decl (decl)
      tree decl;
@@ -1065,7 +1001,7 @@ clear_limbo_values (block)
   for (tem = BLOCK_SUBBLOCKS (block); tem; tem = TREE_CHAIN (tem))
     clear_limbo_values (tem);
 }
-    
+
 /* Exit a binding level.
    Pop the level off, and restore the state of the identifier-decl mappings
    that were in effect when this level was entered.
@@ -1405,7 +1341,7 @@ pop_label_level ()
 			    DECL_NAME (TREE_VALUE (link)));
 	    }
 	  else if (warn_unused && !TREE_USED (TREE_VALUE (link)))
-	    warning_with_decl (TREE_VALUE (link), 
+	    warning_with_decl (TREE_VALUE (link),
 			       "label `%s' defined but not used");
 	  IDENTIFIER_LABEL_VALUE (DECL_NAME (TREE_VALUE (link))) = 0;
 
@@ -1612,7 +1548,7 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
 	      tree trytype
 		= build_function_type (newreturntype,
 				       TYPE_ARG_TYPES (oldtype));
-	      
+
               types_match = comptypes (newtype, trytype);
 	      if (types_match)
 		oldtype = trytype;
@@ -1630,10 +1566,10 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
 		 the return type of olddecl's function type.  */
 	      tree trytype
 		= build_function_type (TREE_TYPE (oldtype),
-				       tree_cons (NULL_TREE, 
+				       tree_cons (NULL_TREE,
 						  TREE_VALUE (TYPE_ARG_TYPES (newtype)),
 						  TREE_CHAIN (TYPE_ARG_TYPES (oldtype))));
-	      
+
               types_match = comptypes (newtype, trytype);
 	      if (types_match)
 		oldtype = trytype;
@@ -1760,11 +1696,11 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
 			    : "`%s' previously declared here"));
 	}
       else if (TREE_CODE (newdecl) == TYPE_DECL
-               && (DECL_IN_SYSTEM_HEADER (olddecl) 
+               && (DECL_IN_SYSTEM_HEADER (olddecl)
                    || DECL_IN_SYSTEM_HEADER (newdecl)))
 	{
 	  warning_with_decl (newdecl, "redefinition of `%s'");
-	  warning_with_decl 
+	  warning_with_decl
 	    (olddecl,
 	     ((DECL_INITIAL (olddecl)
 	       && current_binding_level == global_binding_level)
@@ -1894,7 +1830,7 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
 	  push_obstacks_nochange ();
 	  end_temporary_allocation ();
 	}
-		       
+
       /* Merge the data types specified in the two decls.  */
       if (TREE_CODE (newdecl) != FUNCTION_DECL || !DECL_BUILT_IN (olddecl))
 	{
@@ -1996,7 +1932,7 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
     }
 
   /* Merge the storage class information.  */
-  DECL_WEAK (newdecl) |= DECL_WEAK (olddecl);	  
+  DECL_WEAK (newdecl) |= DECL_WEAK (olddecl);
   /* For functions, static overrides non-static.  */
   if (TREE_CODE (newdecl) == FUNCTION_DECL)
     {
@@ -2342,7 +2278,7 @@ pushdecl (x)
       if (b == global_binding_level)
 	{
 	  /* Install a global value.  */
-	  
+
 	  /* If the first global decl has external linkage,
 	     warn if we later see static one.  */
 	  if (IDENTIFIER_GLOBAL_VALUE (name) == 0 && TREE_PUBLIC (x))
@@ -2648,7 +2584,7 @@ redeclaration_error_message (newdecl, olddecl)
 	 is equivalent to what this code used to do before the build_type_copy
 	 call.  The variant type distinction should not matter for traditional
 	 code, because it doesn't have type qualifiers.  */
-      if (flag_traditional 
+      if (flag_traditional
 	  && TYPE_MAIN_VARIANT (TREE_TYPE (olddecl)) == TREE_TYPE (newdecl))
 	return 0;
       if (DECL_IN_SYSTEM_HEADER (olddecl) || DECL_IN_SYSTEM_HEADER (newdecl))
@@ -2772,7 +2708,7 @@ shadow_label (name)
       for (dup = named_labels; dup; dup = TREE_CHAIN (dup))
 	if (TREE_VALUE (dup) == decl)
 	  {
-	    error ("duplicate label declaration `%s'", 
+	    error ("duplicate label declaration `%s'",
 		   IDENTIFIER_POINTER (name));
 	    error_with_decl (TREE_VALUE (dup),
 			     "this is a previous declaration");
@@ -3011,13 +2947,9 @@ init_decl_processing ()
   pushdecl (build_decl (TYPE_DECL, ridpointers[(int) RID_INT],
 			integer_type_node));
 
-  /* Define `char', which is like either `signed char' or `unsigned char'
-     but not the same as either.  */
+  /* Define `char', which is like `unsigned char' but not the same.  */
 
-  char_type_node
-    = (flag_signed_char
-       ? make_signed_type (CHAR_TYPE_SIZE)
-       : make_unsigned_type (CHAR_TYPE_SIZE));
+  char_type_node = make_unsigned_type (CHAR_TYPE_SIZE);
   pushdecl (build_decl (TYPE_DECL, get_identifier ("char"),
 			char_type_node));
 
@@ -3308,14 +3240,14 @@ init_decl_processing ()
 		    BUILT_IN_CONSTANT_P, NULL);
 
   builtin_function ("__builtin_return_address",
-		    build_function_type (ptr_type_node, 
+		    build_function_type (ptr_type_node,
 					 tree_cons (NULL_TREE,
 						    unsigned_type_node,
 						    endlink)),
 		    BUILT_IN_RETURN_ADDRESS, NULL);
 
   builtin_function ("__builtin_frame_address",
-		    build_function_type (ptr_type_node, 
+		    build_function_type (ptr_type_node,
 					 tree_cons (NULL_TREE,
 						    unsigned_type_node,
 						    endlink)),
@@ -3335,7 +3267,7 @@ init_decl_processing ()
 		    build_function_type (unsigned_type_node, endlink),
 		    BUILT_IN_DWARF_FP_REGNUM, NULL);
   builtin_function ("__builtin_dwarf_reg_size", int_ftype_int,
-		    BUILT_IN_DWARF_REG_SIZE, NULL);		    
+		    BUILT_IN_DWARF_REG_SIZE, NULL);
   builtin_function ("__builtin_frob_return_addr", ptr_ftype_ptr,
 		    BUILT_IN_FROB_RETURN_ADDR, NULL);
   builtin_function ("__builtin_extract_return_addr", ptr_ftype_ptr,
@@ -3461,23 +3393,23 @@ init_decl_processing ()
 		    BUILT_IN_STRCPY, "strcpy");
   builtin_function ("__builtin_strlen", strlen_ftype,
 		    BUILT_IN_STRLEN, "strlen");
-  builtin_function ("__builtin_sqrtf", float_ftype_float, 
+  builtin_function ("__builtin_sqrtf", float_ftype_float,
 		    BUILT_IN_FSQRT, "sqrtf");
-  builtin_function ("__builtin_fsqrt", double_ftype_double, 
+  builtin_function ("__builtin_fsqrt", double_ftype_double,
 		    BUILT_IN_FSQRT, "sqrt");
-  builtin_function ("__builtin_sqrtl", ldouble_ftype_ldouble, 
+  builtin_function ("__builtin_sqrtl", ldouble_ftype_ldouble,
 		    BUILT_IN_FSQRT, "sqrtl");
-  builtin_function ("__builtin_sinf", float_ftype_float, 
+  builtin_function ("__builtin_sinf", float_ftype_float,
 		    BUILT_IN_SIN, "sinf");
-  builtin_function ("__builtin_sin", double_ftype_double, 
+  builtin_function ("__builtin_sin", double_ftype_double,
 		    BUILT_IN_SIN, "sin");
-  builtin_function ("__builtin_sinl", ldouble_ftype_ldouble, 
+  builtin_function ("__builtin_sinl", ldouble_ftype_ldouble,
 		    BUILT_IN_SIN, "sinl");
-  builtin_function ("__builtin_cosf", float_ftype_float, 
+  builtin_function ("__builtin_cosf", float_ftype_float,
 		    BUILT_IN_COS, "cosf");
-  builtin_function ("__builtin_cos", double_ftype_double, 
+  builtin_function ("__builtin_cos", double_ftype_double,
 		    BUILT_IN_COS, "cos");
-  builtin_function ("__builtin_cosl", ldouble_ftype_ldouble, 
+  builtin_function ("__builtin_cosl", ldouble_ftype_ldouble,
 		    BUILT_IN_COS, "cosl");
   builtin_function ("__builtin_setjmp",
 		    build_function_type (integer_type_node,
@@ -3762,7 +3694,7 @@ start_decl (declarator, declspecs, initialized, attributes, prefix_attributes)
   /* The corresponding pop_obstacks is in finish_decl.  */
   push_obstacks_nochange ();
 
-  if (warn_main && TREE_CODE (decl) != FUNCTION_DECL 
+  if (warn_main && TREE_CODE (decl) != FUNCTION_DECL
       && !strcmp (IDENTIFIER_POINTER (DECL_NAME (decl)), "main"))
     warning_with_decl (decl, "`%s' is usually a function");
 
@@ -4978,7 +4910,7 @@ grokdeclarator (declarator, declspecs, decl_context, initialized)
 	  /* Omit the arg types if -traditional, since the arg types
 	     and the list links might not be permanent.  */
 	  type = build_function_type (type,
-				      flag_traditional 
+				      flag_traditional
 				      ? NULL_TREE : arg_types);
 #endif
 	  /* Type qualifiers before the return type of the function
@@ -5967,7 +5899,7 @@ finish_struct (t, fieldlist, attributes)
     else
       {
 	register tree y = fieldlist;
-	  
+
 	while (1)
 	  {
 	    if (DECL_NAME (y) == DECL_NAME (TREE_CHAIN (x)))
@@ -6479,7 +6411,7 @@ start_function (declspecs, declarator, prefix_attributes, attributes, nested)
 #ifdef SET_DEFAULT_DECL_ATTRIBUTES
   SET_DEFAULT_DECL_ATTRIBUTES (decl1, attributes);
 #endif
-  
+
   /* This function exists in static storage.
      (This does not mean `static' in the C sense!)  */
   TREE_STATIC (decl1) = 1;
@@ -7159,7 +7091,7 @@ combine_parm_decls (specparms, parmlist, void_at_end)
 	  types = saveable_tree_cons (NULL_TREE, TREE_TYPE (parm), types);
 	}
   }
-  
+
   if (void_at_end)
     return saveable_tree_cons (parmdecls, nonparms,
 			       nreverse (saveable_tree_cons (NULL_TREE,

@@ -44,6 +44,67 @@ static char *gen_formal_list_for_func_def (tree, formals_style);
 static char *gen_type			(char *, tree, formals_style);
 static char *gen_decl			(tree, int, formals_style);
 
+/* Concatenate strings and return the result.
+   Each string is passed as an argument, with the last argument being NULL,
+   e.g. concat("str1", "str2", "str3", ..., "strN", NULL).  */
+
+char *
+concat(const char *first, ...)
+{
+    int length;
+    char *newstr;
+    char *end;
+    const char *arg;
+    va_list args;
+
+    /* First compute the size of the result and get sufficient memory. */
+
+    va_start(args, first);
+
+    if (first == NULL)
+    {
+        length = 0;
+    }
+    else
+    {
+        length = strlen(first);
+        while ((arg = va_arg(args, const char *)) != NULL)
+        {
+            length += strlen(arg);
+        }
+    }
+
+    newstr = (char *)xmalloc(length + 1);
+    va_end(args);
+
+    /* Now copy the individual pieces to the result string. */
+
+    va_start(args, first);
+    end = newstr;
+
+    if (first != NULL)
+    {
+        arg = first;
+        while (*arg)
+        {
+            *end++ = *arg++;
+        }
+
+        while ((arg = va_arg(args, const char *)) != NULL)
+        {
+            while (*arg)
+            {
+                *end++ = *arg++;
+            }
+        }
+    }
+
+    *end = 0;
+    va_end(args);
+
+    return newstr;
+}
+
 /* Given a string representing an entire type or an entire declaration
    which only lacks the actual "data-type" specifier (at its left end),
    affix the data-type specifier to the left end of the given type

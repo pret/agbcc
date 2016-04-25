@@ -87,14 +87,6 @@ extern int warn_inline;
 
 extern int warn_uninitialized;
 
-/* Zero if unknown pragmas are ignored
-   One if the compiler should warn about an unknown pragma not in
-   a system include file.
-   Greater than one if the compiler should warn for all unknown
-   pragmas.  */
-
-extern int warn_unknown_pragmas;
-
 /* Nonzero means warn about all declarations which shadow others.   */
 
 extern int warn_shadow;
@@ -153,10 +145,6 @@ extern int in_system_header;
 extern int flag_print_asm_name;
 
 /* Now the symbols that are set with `-f' switches.  */
-
-/* Nonzero means `char' should be signed.  */
-
-extern int flag_signed_char;
 
 /* Nonzero means give an enum type only as many bytes as it needs.  */
 
@@ -375,10 +363,6 @@ extern int flag_verbose_asm;
    to be a catchall for printing debug information in the assembler file.  */
 
 extern int flag_debug_asm;
-
-/* -fgnu-linker specifies use of the GNU linker for initializations.
-   -fno-gnu-linker says that collect will be used.  */
-extern int flag_gnu_linker;
 
 /* CYGNUS LOCAL unaligned-struct-hack */
 /* This is a hack.  Disable the effect of SLOW_BYTE_ACCESS, so that references

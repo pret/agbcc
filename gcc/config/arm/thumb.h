@@ -384,8 +384,6 @@ extern char * structure_size_string;
 
 /* Layout of Source Language Data Types  */
 
-#define DEFAULT_SIGNED_CHAR 0
-
 #define TARGET_BELL	007
 #define TARGET_BS	010
 #define TARGET_TAB	011
@@ -1101,8 +1099,6 @@ int thumb_shiftable_const ();
 
 #define FUNCTION_MODE SImode
 
-#define DOLLARS_IN_IDENTIFIERS 0
-
 #define NO_DOLLAR_IN_LABEL 1
 
 #define HAVE_ATEXIT
@@ -1111,8 +1107,8 @@ int thumb_shiftable_const ();
    limited PC addressing range: */
 #define MACHINE_DEPENDENT_REORG(INSN) thumb_reorg ((INSN))
 
-extern char * thumb_unexpanded_epilogue ();
-extern char * output_move_mem_multiple ();
-extern char * thumb_load_double_from_address ();
-extern int    far_jump_used_p();
-
+extern char *thumb_unexpanded_epilogue();
+extern char *output_move_mem_multiple();
+extern char *thumb_load_double_from_address();
+extern int   far_jump_used_p();
+extern void  thumb_override_options();

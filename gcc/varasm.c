@@ -42,7 +42,6 @@ Boston, MA 02111-1307, USA.  */
 #include "real.h"
 #include "toplev.h"
 #include "obstack.h"
-#include "c-pragma.h"
 
 
 #ifndef TRAMPOLINE_ALIGNMENT
@@ -4087,25 +4086,9 @@ declare_weak (decl)
 
 /* Emit any pending weak declarations.  */
 
-#ifdef HANDLE_PRAGMA_WEAK
-struct weak_syms * weak_decls;
-#endif
-
 void
 weak_finish ()
 {
-#ifdef HANDLE_PRAGMA_WEAK
-  if (HANDLE_PRAGMA_WEAK)
-    {
-      struct weak_syms *t;
-      for (t = weak_decls; t; t = t->next)
-	{
-	  ASM_WEAKEN_LABEL (asm_out_file, t->name);
-	  if (t->value)
-	    ASM_OUTPUT_DEF (asm_out_file, t->name, t->value);
-	}
-    }
-#endif
 }
 
 void

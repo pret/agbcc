@@ -78,7 +78,6 @@ extern int size_directive_output;
 extern tree last_assemble_variable_decl;
 
 extern void check_line_directive();
-extern void cpplib_init();
 
 extern char *init_parse (char *);
 extern void finish_parse ();
@@ -569,15 +568,6 @@ int flag_verbose_asm = 0;
 
 int flag_debug_asm = 0;
 
-/* -fgnu-linker specifies use of the GNU linker for initializations.
-   (Or, more generally, a linker that handles initializations.)
-   -fno-gnu-linker says that collect2 will be used.  */
-#ifdef USE_COLLECT2
-int flag_gnu_linker = 0;
-#else
-int flag_gnu_linker = 1;
-#endif
-
 /* CYGNUS LOCAL unaligned-struct-hack */
 /* This is a hack.  Disable the effect of SLOW_BYTE_ACCESS, so that references
    to aligned fields inside of unaligned structures can work.  That is, we
@@ -755,8 +745,6 @@ lang_independent_options f_options[] =
    "place data items into their own section" },
   {"verbose-asm", &flag_verbose_asm, 1,
    "Add extra commentry to assembler output"},
-  {"gnu-linker", &flag_gnu_linker, 1,
-   "Output GNU ld formatted global initialisers"},
   /* CYGNUS LOCAL unaligned-struct-hack */
   {"unaligned-struct-hack", &flag_unaligned_struct_hack, 1,
    "Assume structure fields may be unaligned" },
@@ -797,8 +785,8 @@ lang_independent_options f_options[] =
 
 static struct lang_opt
 {
-  char * option;
-  char * description;
+  char *option;
+  char *description;
 }
 documented_lang_options[] =
 {
@@ -815,10 +803,6 @@ documented_lang_options[] =
   { "-funsigned-bitfields","Make bitfields by unsigned by default" },
   { "-fno-signed-bitfields", "" },
   { "-fno-unsigned-bitfields","" },
-  { "-fsigned-char", "Make 'char' be signed by default"},
-  { "-funsigned-char", "Make 'char' be unsigned by default"},
-  { "-fno-signed-char", "" },
-  { "-fno-unsigned-char", "" },
 
   { "-ftraditional", "" },
   { "-traditional", "Attempt to support traditional K&R style C"},
@@ -836,8 +820,6 @@ documented_lang_options[] =
   { "-fno-freestanding", "" },
   { "-fcond-mismatch", "Allow different types as args of ? operator"},
   { "-fno-cond-mismatch", "" },
-  { "-fdollars-in-identifiers", "Allow the use of $ inside indentifiers" },
-  { "-fno-dollars-in-identifiers", "" },
   { "-fident", "" },
   { "-fno-ident", "Ignore #ident directives" },
   { "-fshort-double", "Use the same size for double as for float" },
@@ -899,42 +881,14 @@ documented_lang_options[] =
   { "-Wno-redundant-decls", "" },
   { "-Wsign-compare", "Warn about signed/unsigned comparisons" },
   { "-Wno-sign-compare", "" },
-  { "-Wunknown-pragmas", "Warn about unrecognised pragmas" },
-  { "-Wno-unknown-pragmas", "" },
   { "-Wstrict-prototypes", "Warn about non-prototyped function decls" },
   { "-Wno-strict-prototypes", "" },
   { "-Wtraditional", "Warn about constructs whose meaning change in ANSI C"},
   { "-Wno-traditional", "" },
-  { "-Wtrigraphs", "Warn when trigraphs are encountered" },
-  { "-Wno-trigraphs", "" },
   { "-Wundef", "" },
   { "-Wno-undef", "" },
   { "-Wwrite-strings", "Mark strings as 'const char *'"},
   { "-Wno-write-strings", "" },
-
-  /* These are for languages with USE_CPPLIB.  */
-  /* These options are already documented in cpplib.c */
-  { "--help", "" },
-  { "-A", "" },
-  { "-D", "" },
-  { "-I", "" },
-  { "-U", "" },
-  { "-H", "" },
-  { "-idirafter", "" },
-  { "-imacros", "" },
-  { "-include", "" },
-  { "-iprefix", "" },
-  { "-isystem", "" },
-  { "-iwithprefix", "" },
-  { "-iwithprefixbefore", "" },
-  { "-lang-c", "" },
-  { "-lang-c89", "" },
-  { "-lang-c++", "" },
-  { "-remap", "" },
-  { "-nostdinc", "" },
-  { "-nostdinc++", "" },
-  { "-trigraphs", "" },
-  { "-undef", "" }
 };
 
 /* Here is a table, controlled by the tm.h file, listing each -m switch
@@ -3679,6 +3633,8 @@ display_help ()
   unsigned long	 i;
   char * lang;
   
+  printf ("Usage: %s input [switches]\n", progname);
+  printf ("Switches:\n");
   printf ("  -ffixed-<register>      Mark <register> as being unavailable to the compiler\n");
   printf ("  -fcall-used-<register>  Mark <register> as being corrupted by function calls\n");
   printf ("  -fcall-saved-<register> Mark <register> as being preserved across functions\n");
@@ -3944,14 +3900,10 @@ main (argc, argv)
   decl_printable_name = decl_name;
   lang_expand_expr = (lang_expand_expr_t) do_abort;
 
-  /* Initialize whether `char' is signed.  */
-  flag_signed_char = DEFAULT_SIGNED_CHAR;
 #ifdef DEFAULT_SHORT_ENUMS
   /* Initialize how much space enums occupy, by default.  */
   flag_short_enums = DEFAULT_SHORT_ENUMS;
 #endif
-
-    cpplib_init();
 
   /* Scan to see what optimization level has been specified.  That will
      determine the default value of many flags.  */
@@ -4035,6 +3987,12 @@ main (argc, argv)
 
   for (i = 1; i < argc; i++)
     {
+        if (!strcmp (argv[i], "--help"))
+	    {
+	      display_help ();
+	      exit (0);
+	    }
+
       size_t j;
       
       /* If this is a language-specific option,
@@ -4045,16 +4003,7 @@ main (argc, argv)
       
       if (j != (size_t)-1)
 	{
-	  int strings_processed = c_decode_option (argc - i, argv + i);
-	  
-	  if (!strcmp (argv[i], "--help"))
-	    {
-	      display_help ();
-	      exit (0);
-	    }
-	  
-	  if (strings_processed != 0)
-	    i += strings_processed - 1;
+	  c_decode_option (argv[i]);
 	}
       else if (argv[i][0] == '-' && argv[i][1] != 0)
 	{
@@ -4571,7 +4520,9 @@ print_version (file, indent)
 {
   fprintf (file, "%s%s%s version %s", indent, *indent != 0 ? " " : "",
 	   language_string, version_string);
-  fprintf (file, " (%s)", TARGET_NAME);
+
+  char *target_name = "thumb-elf";
+  fprintf (file, " (%s)", target_name);
 #ifdef __GNUC__
 #ifndef __VERSION__
 #define __VERSION__ "[unknown]"

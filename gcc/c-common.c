@@ -27,13 +27,7 @@ Boston, MA 02111-1307, USA.  */
 #include "obstack.h"
 #include "toplev.h"
 #include "output.h"
-#include "c-pragma.h"
 #include "rtl.h"
-
-#include "cpplib.h"
-cpp_reader  parse_in;
-cpp_options parse_options;
-static enum cpp_token cpp_token;
 
 #ifndef WCHAR_TYPE_SIZE
 #ifdef INT_TYPE_SIZE
@@ -419,14 +413,6 @@ decl_attributes (node, attributes, prefix_attributes)
     }
   else if (TREE_CODE_CLASS (TREE_CODE (node)) == 't')
     type = node, is_type = 1;
-
-#ifdef PRAGMA_INSERT_ATTRIBUTES
-  /* If the code in c-pragma.c wants to insert some attributes then
-     allow it to do so.  Do this before allowing machine back ends to
-     insert attributes, so that they have the opportunity to override
-     anything done here.  */
-  PRAGMA_INSERT_ATTRIBUTES (node, & attributes, & prefix_attributes);
-#endif
   
 #ifdef INSERT_ATTRIBUTES
   INSERT_ATTRIBUTES (node, & attributes, & prefix_attributes);
@@ -2775,7 +2761,7 @@ truthvalue_conversion (expr)
 
   return build_binary_op (NE_EXPR, expr, integer_zero_node, 1);
 }
-
+
 /* Read the rest of a #-directive from input stream FINPUT.
    In normal use, the directive name and the white space after it
    have already been read, so they won't be included in the result.
@@ -2784,103 +2770,85 @@ truthvalue_conversion (expr)
    a part of the directive.
 
    The value is a string in a reusable buffer.  It remains valid
-   only until the next time this function is called.  */
-unsigned char *yy_cur, *yy_lim;
+   only until the next time this function is called.
 
-#define GETC() (yy_cur < yy_lim ? *yy_cur++ : yy_get_token ())
-#define UNGETC(c) ((c), yy_cur--)
-
-void cpplib_init()
-{
-  cpp_reader_init (&parse_in);
-  parse_in.opts = &parse_options;
-  cpp_options_init (&parse_options);
-}
-
-int
-yy_get_token ()
-{
-  for (;;)
-    {
-      parse_in.limit = parse_in.token_buffer;
-      cpp_token = cpp_get_token (&parse_in);
-      if (cpp_token == CPP_EOF)
-	return -1;
-      yy_lim = CPP_PWRITTEN (&parse_in);
-      yy_cur = parse_in.token_buffer;
-      if (yy_cur < yy_lim)
-	return *yy_cur++;
-    }
-}
+   The terminating character ('\n' or EOF) is left in FINPUT for the
+   caller to re-read.  */
 
 char *
-get_directive_line ()
+get_directive_line (finput)
+FILE *finput;
 {
-  static char *directive_buffer = NULL;
-  static unsigned buffer_length = 0;
-  register char *p;
-  register char *buffer_limit;
-  register int looking_for = 0;
-  register int char_escaped = 0;
+    static char *directive_buffer = NULL;
+    static unsigned buffer_length = 0;
+    char *buffer_limit;
+    int looking_for = 0;
+    int char_escaped = 0;
 
-  if (buffer_length == 0)
+    if (buffer_length == 0)
     {
-      directive_buffer = (char *)xmalloc (128);
-      buffer_length = 128;
+        directive_buffer = (char *)xmalloc(128);
+        buffer_length = 128;
     }
 
-  buffer_limit = &directive_buffer[buffer_length];
+    buffer_limit = &directive_buffer[buffer_length];
 
-  for (p = directive_buffer; ; )
+    char *p = directive_buffer;
+
+    for (;;)
     {
-      int c;
+        int c;
 
-      /* Make buffer bigger if it is full.  */
-      if (p >= buffer_limit)
+        /* Make buffer bigger if it is full.  */
+        if (p >= buffer_limit)
         {
-	  register unsigned bytes_used = (p - directive_buffer);
-
-	  buffer_length *= 2;
-	  directive_buffer
-	    = (char *)xrealloc (directive_buffer, buffer_length);
-	  p = &directive_buffer[bytes_used];
-	  buffer_limit = &directive_buffer[buffer_length];
+            unsigned bytes_used = (p - directive_buffer);
+            buffer_length *= 2;
+            directive_buffer = (char *)xrealloc(directive_buffer, buffer_length);
+            p = &directive_buffer[bytes_used];
+            buffer_limit = &directive_buffer[buffer_length];
         }
 
-      c = GETC ();
+        c = getc(finput);
 
-      /* Discard initial whitespace.  */
-      if ((c == ' ' || c == '\t') && p == directive_buffer)
-	continue;
+        /* Discard initial whitespace.  */
+        if ((c == ' ' || c == '\t') && p == directive_buffer)
+        {
+            do
+            {
+                c = getc(finput);
+            } while (c == ' ' || c == '\t');
+        }
 
-      /* Detect the end of the directive.  */
-      if (c == '\n' && looking_for == 0)
-	{
-          UNGETC (c);
-	  c = '\0';
-	}
+        /* Detect the end of the directive.  */
+        if (looking_for == 0 && (c == '\n' || c == EOF))
+        {
+            ungetc(c, finput);
+            c = 0;
+        }
 
-      *p++ = c;
+        *p++ = c;
 
-      if (c == 0)
-	return directive_buffer;
+        if (c == 0)
+            return directive_buffer;
 
-      /* Handle string and character constant syntax.  */
-      if (looking_for)
-	{
-	  if (looking_for == c && !char_escaped)
-	    looking_for = 0;	/* Found terminator... stop looking.  */
-	}
-      else
-        if (c == '\'' || c == '"')
-	  looking_for = c;	/* Don't stop buffering until we see another
-				   another one of these (or an EOF).  */
+        /* Handle string and character constant syntax.  */
+        if (looking_for)
+        {
+            if (looking_for == c && !char_escaped)
+                looking_for = 0; /* Found terminator... stop looking.  */
+        }
+        else
+        {
+            if (c == '\'' || c == '"')
+                looking_for = c; /* Don't stop buffering until we see another one of these (or an EOF).  */
+        }
 
-      /* Handle backslash.  */
-      char_escaped = (c == '\\' && ! char_escaped);
+        /* Handle backslash.  */
+        char_escaped = (c == '\\' && !char_escaped);
     }
 }
-
+
 /* Make a variant type in the proper way for C/C++, propagating qualifiers
    down to the element type of an array.  */
 
