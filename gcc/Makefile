@@ -22,7 +22,7 @@
 srcdir = .
 VPATH = $(srcdir)
 
-CFLAGS = -g 
+CFLAGS = -g -std=gnu11
 
 CC = gcc
 
@@ -35,7 +35,7 @@ md_file=$(srcdir)/config/arm/thumb.md
 # This tells GNU Make version 3 not to put all variables in the environment.
 .NOEXPORT:
 
-HOST_RTL = rtl.o bitmap.o
+HOST_RTL = rtl.o bitmap.o obstack.o
 HOST_RTLANAL = rtlanal.o
 HOST_PRINT = print-rtl.o
 

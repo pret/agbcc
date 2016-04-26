@@ -306,10 +306,6 @@ int quiet_flag = 0;
 
 /* -f flags.  */
 
-/* Nonzero means `char' should be signed.  */
-
-int flag_signed_char;
-
 /* Nonzero means give an enum type only as many bytes as it needs.  */
 
 int flag_short_enums;
@@ -1036,56 +1032,17 @@ int dump_time;
 /* Return time used so far, in microseconds.  */
 
 long
-get_run_time ()
+get_run_time()
 {
-  if (quiet_flag)
-    return 0;
+    if (quiet_flag)
+        return 0;
 
-#ifdef __BEOS__
-  return 0;
-#else /* not BeOS */
-#if defined (_WIN32) && !defined (__CYGWIN__)
-  if (clock() < 0)
-    return 0;
-  else
-    return (clock() * 1000);
-#else /* not _WIN32 */
-#ifdef _SC_CLK_TCK
-  {
-    static int tick;
-    struct tms tms;
-    if (tick == 0)
-      tick = 1000000 / sysconf(_SC_CLK_TCK);
-    times (&tms);
-    return (tms.tms_utime + tms.tms_stime) * tick;
-  }
-#else
-#ifdef USG
-  {
-    struct tms tms;
-#   if HAVE_SYSCONF && defined _SC_CLK_TCK
-#    define TICKS_PER_SECOND sysconf (_SC_CLK_TCK) /* POSIX 1003.1-1996 */
-#   else
-#    ifdef CLK_TCK
-#     define TICKS_PER_SECOND CLK_TCK /* POSIX 1003.1-1988; obsolescent */
-#    else
-#     define TICKS_PER_SECOND HZ /* traditional UNIX */
-#    endif
-#   endif
-    times (&tms);
-    return (tms.tms_utime + tms.tms_stime) * (1000000 / TICKS_PER_SECOND);
-  }
-#else
-  {
-    struct rusage rusage;
-    getrusage (0, &rusage);
-    return (rusage.ru_utime.tv_sec * 1000000 + rusage.ru_utime.tv_usec
-	    + rusage.ru_stime.tv_sec * 1000000 + rusage.ru_stime.tv_usec);
-  }
-#endif	/* USG */
-#endif  /* _SC_CLK_TCK */
-#endif	/* _WIN32 */
-#endif	/* __BEOS__ */
+    clock_t clk = clock();
+
+    if (clk < 0)
+        return 0;
+
+    return (clk * 1000000) / CLOCKS_PER_SEC;
 }
 
 #define TIMEVAR(VAR, BODY)    \
@@ -3669,13 +3626,7 @@ display_help ()
   printf ("  -o <file>               Place output into <file> \n");
   printf ("  -G <number>             Put global and static data smaller than <number>\n");
   printf ("                           bytes into a special section (on some targets)\n");
-  
-  for (i = NUM_ELEM (debug_args); i--;)
-    {
-      if (debug_args[i].description != NULL)
-	printf ("  -%-22s %s\n", debug_args[i].arg, debug_args[i].description);
-    }
-  
+  printf ("  -g                      Enable debug output\n");
   printf ("  -aux-info <file>        Emit declaration info into <file>.X\n");
   /* CYGNUS LOCAL v850/law */
   printf ("  -offset-info <file>     Emit structure member offsets into <file>.s\n");

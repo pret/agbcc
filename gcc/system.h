@@ -72,8 +72,6 @@ Boston, MA 02111-1307, USA.  */
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/time.h>
-#include <sys/times.h>
-#include <sys/wait.h>
 #include <fcntl.h>
 
 /* Some systems define these in, e.g., param.h.  We undefine these names
@@ -102,9 +100,11 @@ Boston, MA 02111-1307, USA.  */
 #define _(String) String
 #define N_(String) String
 
-extern void *xmalloc  (size_t);
-extern void *xrealloc (void *, size_t);
-extern void *xcalloc  (size_t, size_t);
-extern char *xstrdup  (const char *);
+extern void *xmalloc(size_t);
+extern void *xrealloc(void *, size_t);
+extern void *xcalloc(size_t, size_t);
+extern char *xstrdup(const char *);
+
+extern void *alloca(size_t);
 
 #endif /* __GCC_SYSTEM_H__ */

@@ -130,27 +130,12 @@ extern "C" {
    available, include it and use ptrdiff_t.  In traditional C, long is
    the best that we can do.  */
 
-#ifdef __PTRDIFF_TYPE__
-# define PTR_INT_TYPE __PTRDIFF_TYPE__
-#else
-# ifdef HAVE_STDDEF_H
-#  include <stddef.h>
-#  define PTR_INT_TYPE ptrdiff_t
-# else
-#  define PTR_INT_TYPE long
-# endif
-#endif
 
-#if defined _LIBC || defined HAVE_STRING_H
-# include <string.h>
-# define _obstack_memcpy(To, From, N) memcpy ((To), (From), (N))
-#else
-# ifdef memcpy
-#  define _obstack_memcpy(To, From, N) memcpy ((To), (From), (N))
-# else
-#  define _obstack_memcpy(To, From, N) bcopy ((From), (To), (N))
-# endif
-#endif
+#include <stddef.h>
+#define PTR_INT_TYPE ptrdiff_t
+
+#include <string.h>
+#define _obstack_memcpy(To, From, N) memcpy ((To), (From), (N))
 
 struct _obstack_chunk		/* Lives at front of each chunk. */
 {
