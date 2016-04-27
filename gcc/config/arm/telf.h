@@ -42,7 +42,6 @@ extern int arm_structure_size_boundary;
 
 /* Debug */
 #define DWARF2_DEBUGGING_INFO
-#define PREFERRED_DEBUGGING_TYPE DWARF2_DEBUG
 
 
 /* Note - it is important that these definitions match those in semi.h for the ARM port.  */

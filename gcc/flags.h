@@ -45,10 +45,6 @@ enum debug_info_level
 /* Specify how much debugging info to generate.  */
 extern enum debug_info_level debug_info_level;
 
-/* Nonzero means use GNU-only extensions in the generated symbolic
-   debugging information.  */
-extern int use_gnu_debug_info_extensions;
-
 /* Nonzero means do optimizations.  -opt.  */
 
 extern int optimize;

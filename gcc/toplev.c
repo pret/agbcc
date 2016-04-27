@@ -40,6 +40,7 @@
 
 #include "input.h"
 #include "tree.h"
+#include "c-tree.h"
 #include "rtl.h"
 #include "flags.h"
 #include "insn-attr.h"
@@ -54,16 +55,6 @@
 
 #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
-#endif
-
-#ifdef DWARF2_DEBUGGING_INFO
-#define PREFERRED_DEBUGGING_TYPE DWARF2_DEBUG
-#endif
-
-/* If still not defined, must have been because no debugging formats
-   are supported.  */
-#ifndef PREFERRED_DEBUGGING_TYPE
-#define PREFERRED_DEBUGGING_TYPE NO_DEBUG
 #endif
 
 extern int rtx_equal_function_value_matters;
@@ -217,9 +208,7 @@ int global_reg_dump = 0;
 int sched2_dump = 0;
 int jump2_opt_dump = 0;
 int flag_print_asm_name = 0;
-#ifdef MACHINE_DEPENDENT_REORG
 int mach_dep_reorg_dump = 0;
-#endif
 enum graph_dump_types graph_dump_format;
 
 /* Name for output file of assembly code, specified with -o.  */
@@ -615,31 +604,12 @@ int flag_strict_aliasing = 0;
 /* Instrument functions with calls at entry and exit, for profiling.  */
 int flag_instrument_function_entry_exit = 0;
 
-
-/* Table of supported debugging formats.  */
-static struct
-{
-    char * arg;
-    /* Since PREFERRED_DEBUGGING_TYPE isn't necessarily a
-       constant expression, we use NO_DEBUG in its place.  */
-    enum debug_info_type debug_type;
-    char * description;
-} *da,
-   debug_args[] =
-{
-    { "g",    NO_DEBUG, "Generate default debug format output" },
-#ifdef DWARF2_DEBUGGING_INFO
-    { "gdwarf-2", DWARF2_DEBUG, "Enable DWARF-2 debug output" },
-#endif
-    { 0, 0, 0, 0 }
-};
-
 typedef struct
 {
-    char * string;
-    int *  variable;
+    char *string;
+    int *variable;
     int on_value;
-    char * description;
+    char *description;
 }
 lang_independent_options;
 
@@ -2311,14 +2281,12 @@ char *name;
         if (graph_dump_format != no_graph)
             clean_graph_dump_file(dump_base_name, ".gcse");
     }
-#ifdef MACHINE_DEPENDENT_REORG
     if (mach_dep_reorg_dump)
     {
         clean_dump_file(".mach");
         if (graph_dump_format != no_graph)
             clean_graph_dump_file(dump_base_name, ".mach");
     }
-#endif
 
     /* Open assembler code output file.  */
 
@@ -2731,10 +2699,8 @@ finish_syntax:
             finish_graph_dump_file(dump_base_name, ".jump2");
         if (gcse_dump)
             finish_graph_dump_file(dump_base_name, ".gcse");
-#ifdef MACHINE_DEPENDENT_REORG
         if (mach_dep_reorg_dump)
             finish_graph_dump_file(dump_base_name, ".mach");
-#endif
     }
 
     /* Free up memory for the benefit of leak detectors.  */
@@ -3446,8 +3412,7 @@ tree decl;
         }
     }
 
-    /* If a machine dependent reorganization is needed, call it.  */
-#ifdef MACHINE_DEPENDENT_REORG
+    /* Do machine-dependent reorganization.  */
     MACHINE_DEPENDENT_REORG(insns);
 
     if (mach_dep_reorg_dump)
@@ -3456,7 +3421,6 @@ tree decl;
         if (graph_dump_format != no_graph)
             print_rtl_graph_with_bb(dump_base_name, ".mach", insns);
     }
-#endif
 
     /* Shorten branches.  */
     TIMEVAR(shorten_branch_time,
@@ -3496,7 +3460,7 @@ tree decl;
                 regset_release_memory();
             });
 
-    /* Write DBX symbols if requested */
+    /* Write debug symbols if requested */
 
     /* Note that for those inline functions where we don't initially
        know for certain that we will be generating an out-of-line copy,
@@ -3505,8 +3469,6 @@ tree decl;
        Later on, finish_compilation will call rest_of_compilation again
        for those inline functions that need to have out-of-line copies
        generated.  During that call, we *will* be routed past here.  */
-
-
 
 #ifdef DWARF2_DEBUGGING_INFO
     if (write_symbols == DWARF2_DEBUG)
@@ -3989,9 +3951,7 @@ char **argv;
                         gcse_dump = 1;
                         sched_dump = 1;
                         sched2_dump = 1;
-#ifdef MACHINE_DEPENDENT_REORG
                         mach_dep_reorg_dump = 1;
-#endif
                         break;
                     case 'A':
                         flag_debug_asm = 1;
@@ -4023,11 +3983,9 @@ char **argv;
                     case 'L':
                         loop_dump = 1;
                         break;
-#ifdef MACHINE_DEPENDENT_REORG
                     case 'M':
                         mach_dep_reorg_dump = 1;
                         break;
-#endif
                     case 'p':
                         flag_print_asm_name = 1;
                         break;
@@ -4206,122 +4164,25 @@ larger_than_lose:;
                 else
                     error("Invalid option `%s'", argv[i]);
             }
-            else if (!strcmp(str, "p"))
-            {
-                warning("`-p' option (function profiling) not supported");
-            }
-            else if (!strcmp(str, "a"))
-            {
-                warning("`-a' option (basic block profile) not supported");
-            }
-            else if (!strcmp(str, "ax"))
-            {
-                warning("`-ax' option (jump profiling) not supported");
-            }
             else if (str[0] == 'g')
             {
-                unsigned len;
-                unsigned level;
-                /* A lot of code assumes write_symbols == NO_DEBUG if the
-                   debugging level is 0 (thus -gstabs1 -gstabs0 would lose track
-                   of what debugging type has been selected).  This records the
-                   selected type.  It is an error to specify more than one
-                   debugging type.  */
-                static enum debug_info_type selected_debug_type = NO_DEBUG;
-                /* Non-zero if debugging format has been explicitly set.
-                   -g and -ggdb don't explicitly set the debugging format so
-                   -gdwarf -g3 is equivalent to -gdwarf3.  */
-                static int type_explicitly_set_p = 0;
-                /* Indexed by enum debug_info_type.  */
-                static char *debug_type_names[] =
+                unsigned level = 0;
+
+                if (str[1] == 0)
                 {
-                    "none", "stabs", "coff", "dwarf-1", "dwarf-2", "xcoff"
-                };
-
-                /* Look up STR in the table.  */
-                for (da = debug_args; da->arg; da++)
-                {
-                    if (!strncmp(str, da->arg, strlen(da->arg)))
-                    {
-                        enum debug_info_type type = da->debug_type;
-                        char *p, *q;
-
-                        p = str + strlen(da->arg);
-                        if (*p && (*p < '0' || *p > '9'))
-                            continue;
-                        len = p - str;
-                        q = p;
-                        while (*q && (*q >= '0' && *q <= '9'))
-                            q++;
-                        if (*p)
-                        {
-                            level = atoi(p);
-                            if (len > 1 && !strncmp(str, "gdwarf", len))
-                            {
-                                error("use -gdwarf -g%d for DWARF v1, level %d",
-                                      level, level);
-                                if (level == 2)
-                                    error("use -gdwarf-2   for DWARF v2");
-                            }
-                        }
-                        else
-                            level = 2;  /* default debugging info level */
-                        if (*q || level > 3)
-                        {
-                            warning("invalid debug level specification in option: `-%s'",
-                                    str);
-                            /* ??? This error message is incorrect in the case of
-                               -g4 -g.  */
-                            warning("no debugging information will be generated");
-                            level = 0;
-                        }
-
-                        if (type == NO_DEBUG)
-                        {
-                            type = PREFERRED_DEBUGGING_TYPE;
-                            if (len > 1 && strncmp(str, "ggdb", len) == 0)
-                            {
-#if defined (DWARF2_DEBUGGING_INFO) && !defined (LINKER_DOES_NOT_WORK_WITH_DWARF2)
-                                type = DWARF2_DEBUG;
-#else
-#endif
-                            }
-                        }
-
-                        if (type == NO_DEBUG)
-                            warning("`-%s' not supported by this configuration of GCC",
-                                    str);
-
-                        /* Does it conflict with an already selected type?  */
-                        if (type_explicitly_set_p
-                            /* -g/-ggdb don't conflict with anything */
-                            && da->debug_type != NO_DEBUG
-                            && type != selected_debug_type)
-                            warning("`-%s' ignored, conflicts with `-g%s'",
-                                    str, debug_type_names[(int) selected_debug_type]);
-                        else
-                        {
-                            /* If the format has already been set, -g/-ggdb
-                               only change the debug level.  */
-                            if (type_explicitly_set_p
-                                && da->debug_type == NO_DEBUG)
-                                ; /* don't change debugging type */
-                            else
-                            {
-                                selected_debug_type = type;
-                                type_explicitly_set_p = da->debug_type != NO_DEBUG;
-                            }
-                            write_symbols = (level == 0
-                                             ? NO_DEBUG
-                                             : selected_debug_type);
-                            debug_info_level = (enum debug_info_level) level;
-                        }
-                        break;
-                    }
+                    level = 2; /* default debugging info level */
                 }
-                if (!da->arg)
-                    warning("`-%s' not supported by this configuration of GCC",
-                            str);
+                else if (str[1] >= '0' && str[1] <= '3' && str[2] == 0)
+                {
+                    level = str[1] - '0';
+                }
+                else
+                {
+                    warning("invalid debug option `-%s'", str);
+                }
+
+                write_symbols = (level == 0) ? NO_DEBUG : DWARF2_DEBUG;
+                debug_info_level = (enum debug_info_level)level;
             }
             else if (!strcmp(str, "o"))
             {

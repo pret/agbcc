@@ -1107,8 +1107,31 @@ int thumb_shiftable_const ();
    limited PC addressing range: */
 #define MACHINE_DEPENDENT_REORG(INSN) thumb_reorg ((INSN))
 
+#include <stdio.h>
+
+enum machine_mode;
+
+struct rtx_def;
+typedef struct rtx_def *rtx;
+
+union tree_node;
+typedef union tree_node *tree;
+
+extern int thumb_cmp_operand(rtx, enum machine_mode);
+extern void thumb_reorg(rtx first);
+extern void thumb_expand_movstrqi(rtx *);
+extern void thumb_reload_out_si(rtx);
+extern void final_prescan_insn(rtx);
+extern int far_jump_used_p();
+extern void thumb_function_prologue(FILE *, int);
+extern void thumb_expand_prologue();
+extern void thumb_function_epilogue(FILE *, int);
+extern void thumb_expand_epilogue();
 extern char *thumb_unexpanded_epilogue();
-extern char *output_move_mem_multiple();
 extern char *thumb_load_double_from_address();
-extern int   far_jump_used_p();
-extern void  thumb_override_options();
+extern char *output_move_mem_multiple();
+extern void thumb_print_operand(FILE *, rtx, int);
+extern int thumb_return_in_memory(tree);
+extern void thumb_override_options();
+extern int arm_valid_machine_decl_attribute(tree, tree, tree, tree);
+extern int s_register_operand(rtx, enum machine_mode);

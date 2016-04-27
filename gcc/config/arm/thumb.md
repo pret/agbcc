@@ -95,17 +95,6 @@
   operands[1] = GEN_INT (- INTVAL (operands[1]));
 ")
 
-;;(define_expand "reload_outsi"
-;;  [(set (match_operand:SI 2 "register_operand" "=&l")
-;;	(match_operand:SI 1 "register_operand" "h"))
-;;   (set (match_operand:SI 0 "reload_memory_operand" "=o")
-;;	(match_dup 2))]
-;;  ""
-;;  "
-;;/*  thumb_reload_out_si (operands);
-;;  DONE; */
-;;")
-
 (define_expand "movhi"
   [(set (match_operand:HI 0 "general_operand" "")
 	(match_operand:HI 1 "general_operand" ""))]

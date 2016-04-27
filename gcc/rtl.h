@@ -1395,9 +1395,11 @@ extern rtx expand_mult_highpart		(enum machine_mode, rtx,
 /* In gcse.c */
 #ifdef BUFSIZ
 /* CYGNUS LOCAL gcse/law */
-extern int gcse_main			(rtx, FILE *);
+extern int gcse_main(rtx, FILE *);
 /* END CYGNUS LOCAL */
 #endif
+extern void delete_null_pointer_checks(rtx);
+extern void merge_blocks(rtx);
 
 /* In global.c */
 extern void mark_elimination		(int, int);

@@ -29,9 +29,12 @@
 #include "output.h"
 #include "insn-flags.h"
 #include "insn-attr.h"
+#include "insn-config.h"
 #include "flags.h"
 #include "tree.h"
 #include "expr.h"
+#include "toplev.h"
+#include "recog.h"
 
 int current_function_anonymous_args = 0;
 static int current_function_has_far_jump = 0;
@@ -41,16 +44,6 @@ char *structure_size_string = NULL;
 int arm_structure_size_boundary = 32;    /* Used to be 8 */
 
 /* Predicates */
-int
-reload_memory_operand(rtx op, enum machine_mode mode)
-{
-    int regno = true_regnum(op);
-
-    return (!CONSTANT_P(op)
-            && (regno == -1
-                || (GET_CODE(op) == REG
-                    && REGNO(op) >= FIRST_PSEUDO_REGISTER)));
-}
 
 /* Return nonzero if op is suitable for the RHS of a cmp instruction.  */
 int
@@ -1278,13 +1271,6 @@ output_move_mem_multiple(int n, rtx *operands)
     return "";
 }
 
-
-int
-thumb_epilogue_size()
-{
-    return 42; /* The answer to .... */
-}
-
 static char *conds[] =
 {
     "eq", "ne", "cs", "cc", "mi", "pl", "vs", "vc",
@@ -1524,7 +1510,7 @@ arm_valid_machine_decl_attribute(tree decl, tree attributes, tree attr, tree arg
    reloading.  */
 
 int
-s_register_operand(register rtx op, enum machine_mode mode)
+s_register_operand(rtx op, enum machine_mode mode)
 {
     if (GET_MODE(op) != mode && mode != VOIDmode)
         return 0;
