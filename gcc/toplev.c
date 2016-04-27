@@ -70,7 +70,6 @@ extern void init_optabs ();
 extern void init_stmt ();
 extern void init_reg_sets ();
 extern void dump_flow_info ();
-extern void dump_sched_info ();
 extern void dump_local_alloc ();
 extern void regset_release_memory ();
 
@@ -191,10 +190,8 @@ int cse2_dump = 0;
 int flow_dump = 0;
 int combine_dump = 0;
 int regmove_dump = 0;
-int sched_dump = 0;
 int local_reg_dump = 0;
 int global_reg_dump = 0;
-int sched2_dump = 0;
 int jump2_opt_dump = 0;
 int flag_print_asm_name = 0;
 int mach_dep_reorg_dump = 0;
@@ -966,10 +963,8 @@ int cse2_time;
 int flow_time;
 int combine_time;
 int regmove_time;
-int sched_time;
 int local_alloc_time;
 int global_alloc_time;
-int sched2_time;
 int shorten_branch_time;
 int stack_reg_time;
 int final_time;
@@ -1977,10 +1972,8 @@ compile_file(char *name)
     flow_time = 0;
     combine_time = 0;
     regmove_time = 0;
-    sched_time = 0;
     local_alloc_time = 0;
     global_alloc_time = 0;
-    sched2_time = 0;
     shorten_branch_time = 0;
     stack_reg_time = 0;
     final_time = 0;
@@ -2078,12 +2071,6 @@ compile_file(char *name)
         if (graph_dump_format != no_graph)
             clean_graph_dump_file(dump_base_name, ".regmove");
     }
-    if (sched_dump)
-    {
-        clean_dump_file(".sched");
-        if (graph_dump_format != no_graph)
-            clean_graph_dump_file(dump_base_name, ".sched");
-    }
     if (local_reg_dump)
     {
         clean_dump_file(".lreg");
@@ -2095,12 +2082,6 @@ compile_file(char *name)
         clean_dump_file(".greg");
         if (graph_dump_format != no_graph)
             clean_graph_dump_file(dump_base_name, ".greg");
-    }
-    if (sched2_dump)
-    {
-        clean_dump_file(".sched2");
-        if (graph_dump_format != no_graph)
-            clean_graph_dump_file(dump_base_name, ".sched2");
     }
     if (jump2_opt_dump)
     {
@@ -2520,14 +2501,10 @@ finish_syntax:
             finish_graph_dump_file(dump_base_name, ".combine");
         if (regmove_dump)
             finish_graph_dump_file(dump_base_name, ".regmove");
-        if (sched_dump)
-            finish_graph_dump_file(dump_base_name, ".sched");
         if (local_reg_dump)
             finish_graph_dump_file(dump_base_name, ".lreg");
         if (global_reg_dump)
             finish_graph_dump_file(dump_base_name, ".greg");
-        if (sched2_dump)
-            finish_graph_dump_file(dump_base_name, ".sched2");
         if (jump2_opt_dump)
             finish_graph_dump_file(dump_base_name, ".jump2");
         if (gcse_dump)
@@ -2554,10 +2531,8 @@ finish_syntax:
         print_time("flow", flow_time);
         print_time("combine", combine_time);
         print_time("regmove", regmove_time);
-        print_time("sched", sched_time);
         print_time("local-alloc", local_alloc_time);
         print_time("global-alloc", global_alloc_time);
-        print_time("sched2", sched2_time);
         print_time("shorten-branch", shorten_branch_time);
         print_time("stack-reg", stack_reg_time);
         print_time("final", final_time);
@@ -3768,8 +3743,6 @@ main(int argc, char **argv)
                         rtl_dump = 1;
                         cse_dump = 1, cse2_dump = 1;
                         gcse_dump = 1;
-                        sched_dump = 1;
-                        sched2_dump = 1;
                         mach_dep_reorg_dump = 1;
                         break;
                     case 'A':
@@ -3811,14 +3784,8 @@ main(int argc, char **argv)
                     case 'r':
                         rtl_dump = 1;
                         break;
-                    case 'R':
-                        sched2_dump = 1;
-                        break;
                     case 's':
                         cse_dump = 1;
-                        break;
-                    case 'S':
-                        sched_dump = 1;
                         break;
                     case 't':
                         cse2_dump = 1;
