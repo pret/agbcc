@@ -196,15 +196,6 @@ data_section ()
 {
   if (in_section != in_data)
     {
-      if (flag_shared_data)
-	{
-#ifdef SHARED_SECTION_ASM_OP
-	  fprintf (asm_out_file, "%s\n", SHARED_SECTION_ASM_OP);
-#else
-	  fprintf (asm_out_file, "%s\n", DATA_SECTION_ASM_OP);
-#endif
-	}
-      else
 	fprintf (asm_out_file, "%s\n", DATA_SECTION_ASM_OP);
 
       in_section = in_data;
@@ -315,11 +306,6 @@ bss_section ()
 {
   if (in_section != in_bss)
     {
-#ifdef SHARED_BSS_SECTION_ASM_OP
-      if (flag_shared_data)
-	fprintf (asm_out_file, "%s\n", SHARED_BSS_SECTION_ASM_OP);
-      else
-#endif
 	fprintf (asm_out_file, "%s\n", BSS_SECTION_ASM_OP);
 
       in_section = in_bss;
@@ -1087,30 +1073,6 @@ asm_emit_uninitialised (decl, name, size, rounded)
     destination = asm_dest_common;
 #endif
 
-  if (flag_shared_data)
-    {
-      switch (destination)
-	{
-#ifdef ASM_OUTPUT_SHARED_BSS
-	case asm_dest_bss:
-	  ASM_OUTPUT_SHARED_BSS (asm_out_file, decl, name, size, rounded);
-	  return;
-#endif
-#ifdef ASM_OUTPUT_SHARED_COMMON
-	case asm_dest_common:
-	  ASM_OUTPUT_SHARED_COMMON (asm_out_file, name, size, rounded);
-	  return;
-#endif
-#ifdef ASM_OUTPUT_SHARED_LOCAL
-	case asm_dest_local:
-	  ASM_OUTPUT_SHARED_LOCAL (asm_out_file, name, size, rounded);
-	  return;
-#endif
-	default:
-	  break;
-	}
-    }
-
   if (flag_data_sections)
     {
       switch (destination)
@@ -1351,12 +1313,6 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
 	 while we are doing our final traversal of the chain of file-scope
 	 declarations.  */
 
-#if 0 /* ??? We should either delete this or add a comment describing what
-	 it was intended to do and why we shouldn't delete it.  */
-      if (flag_shared_data)
-	data_section ();
-#endif
-
       asm_emit_uninitialised (decl, name, size, rounded);
       
       goto finish;
@@ -1589,11 +1545,6 @@ assemble_static_space (size)
   char name[12];
   char *namestring;
   rtx x;
-
-#if 0
-  if (flag_shared_data)
-    data_section ();
-#endif
 
   ASM_GENERATE_INTERNAL_LABEL (name, "LF", const_labelno);
   ++const_labelno;

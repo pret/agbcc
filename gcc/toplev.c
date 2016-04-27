@@ -472,10 +472,6 @@ int flag_gen_offset_info = 0;
 static char *offset_info_file_name;
 /* END CYGNUS LOCAL */
 
-/* Nonzero means make the text shared if supported.  */
-
-int flag_shared_data;
-
 /* Nonzero means generate extra code for exception handling and enable
    exception handling.  */
 
@@ -651,8 +647,6 @@ lang_independent_options f_options[] =
      "Emit static const variables even if they are not used" },
     {"syntax-only", &flag_syntax_only, 1,
      "Check for syntax errors, then stop" },
-    {"shared-data", &flag_shared_data, 1,
-     "Mark data as shared rather than private" },
     {"caller-saves", &flag_caller_saves, 1,
      "Enable saving registers around function calls" },
     {"pcc-struct-return", &flag_pcc_struct_return, 1,
@@ -1808,60 +1802,6 @@ strip_off_ending(char *name, int len)
             break;
         }
     }
-}
-
-/* Output a quoted string.  */
-
-void
-output_quoted_string(FILE *asm_file, char *string)
-{
-#ifdef OUTPUT_QUOTED_STRING
-    OUTPUT_QUOTED_STRING(asm_file, string);
-#else
-    char c;
-
-    putc('\"', asm_file);
-    while ((c = *string++) != 0)
-    {
-        if (c == '\"' || c == '\\')
-            putc('\\', asm_file);
-        putc(c, asm_file);
-    }
-    putc('\"', asm_file);
-#endif
-}
-
-/* Output a file name in the form wanted by System V.  */
-
-void
-output_file_directive(FILE *asm_file, char *input_name)
-{
-    int len = strlen(input_name);
-    char *na = input_name + len;
-
-    /* NA gets INPUT_NAME sans directory names.  */
-    while (na > input_name)
-    {
-        if (na[-1] == '/')
-            break;
-#ifdef DIR_SEPARATOR
-        if (na[-1] == DIR_SEPARATOR)
-            break;
-#endif
-        na--;
-    }
-
-#ifdef ASM_OUTPUT_MAIN_SOURCE_FILENAME
-    ASM_OUTPUT_MAIN_SOURCE_FILENAME(asm_file, na);
-#else
-#ifdef ASM_OUTPUT_SOURCE_FILENAME
-    ASM_OUTPUT_SOURCE_FILENAME(asm_file, na);
-#else
-    fprintf(asm_file, "\t.file\t");
-    output_quoted_string(asm_file, na);
-    fputc('\n', asm_file);
-#endif
-#endif
 }
 
 /* Routine to open a dump file.  */

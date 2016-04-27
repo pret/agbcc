@@ -277,11 +277,6 @@ extern int flag_syntax_only;
 
 extern int flag_gen_aux_info;
 
-/* Nonzero means make the text shared if supported.  */
-
-extern int flag_shared_data;
-
-
 /* flag_on_branch_count_reg means try to replace add-1,compare,branch tupple
    by a cheaper branch, on a count register. */
 extern int flag_branch_on_count_reg;

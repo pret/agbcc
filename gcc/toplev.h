@@ -76,11 +76,6 @@ extern int push_float_handler (jmp_buf, jmp_buf);
 extern void pop_float_handler (int, jmp_buf);
 #endif
 
-#ifdef BUFSIZ
-extern void output_quoted_string	(FILE *, char *);
-extern void output_file_directive	(FILE *, char *);
-#endif
-
 extern void fancy_abort			(void) ATTRIBUTE_NORETURN;
 extern void do_abort			(void) ATTRIBUTE_NORETURN;
 
