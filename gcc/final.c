@@ -72,7 +72,7 @@ Boston, MA 02111-1307, USA.  */
 extern struct obstack *rtl_obstack;
 /* END CYGNUS LOCAL */
 
-#if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+#if defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
 #endif
 
@@ -1083,10 +1083,8 @@ final_start_function (first, file, optimize)
      int optimize;
 {
   block_depth = 0;
-
   this_is_asm_operands = 0;
 
-  
   /* Initial line number is supposed to be output
      before the function's prologue and label
      so that the function's address will not appear to be
@@ -1095,22 +1093,14 @@ final_start_function (first, file, optimize)
     last_linenum = high_block_linenum = high_function_linenum
       = NOTE_LINE_NUMBER (first);
 
-#if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+#if defined (DWARF2_DEBUGGING_INFO)
   /* Output DWARF definition of the function.  */
   if (dwarf2out_do_frame ())
     dwarf2out_begin_prologue ();
 #endif
 
-      /* But only output line number for other debug info types if -g2
-	 or better.  */
       if (NOTE_LINE_NUMBER (first) != NOTE_INSN_DELETED)
 	output_source_line (file, first);
-
-
-#if defined (DWARF2_UNWIND_INFO) && defined (HAVE_prologue)
-  if (dwarf2out_do_frame ())
-    dwarf2out_frame_debug (NULL_RTX);
-#endif
 
 #ifdef FUNCTION_PROLOGUE
   /* First output the function prologue: code to set up the stack frame.  */
@@ -1142,7 +1132,7 @@ final_end_function (first, file, optimize)
 #endif
 
 
-#if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+#if defined (DWARF2_DEBUGGING_INFO)
   if (dwarf2out_do_frame ())
     dwarf2out_end_epilogue ();
 #endif
@@ -1443,12 +1433,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
       break;
 
     case BARRIER:
-#if defined (DWARF2_UNWIND_INFO) && !defined (ACCUMULATE_OUTGOING_ARGS)
-	/* If we push arguments, we need to check all insns for stack
-	   adjustments.  */
-	if (dwarf2out_do_frame ())
-	  dwarf2out_frame_debug (insn);
-#endif
       break;
 
     case CODE_LABEL:
@@ -1994,11 +1978,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 
 	debug_insn = insn;
 
-#if defined (DWARF2_UNWIND_INFO) && !defined (ACCUMULATE_OUTGOING_ARGS)
-	/* If we push arguments, we want to know where the calls are.  */
-	if (GET_CODE (insn) == CALL_INSN && dwarf2out_do_frame ())
-	  dwarf2out_frame_debug (insn);
-#endif
 
 	/* If the proper template needs to be chosen by some C code,
 	   run that code and get the real template.  */
@@ -2046,21 +2025,6 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 
 	output_asm_insn (template, recog_operand);
 
-#if defined (DWARF2_UNWIND_INFO)
-#if !defined (ACCUMULATE_OUTGOING_ARGS)
-	/* If we push arguments, we need to check all insns for stack
-	   adjustments.  */
-	if (GET_CODE (insn) == INSN && dwarf2out_do_frame ())
-	  dwarf2out_frame_debug (insn);
-#else
-#if defined (HAVE_prologue)
-	/* If this insn is part of the prologue, emit DWARF v2
-	   call frame info.  */
-	if (RTX_FRAME_RELATED_P (insn) && dwarf2out_do_frame ())
-	  dwarf2out_frame_debug (insn);
-#endif
-#endif
-#endif
 
 #if 0
 	/* It's not at all clear why we did this and doing so interferes

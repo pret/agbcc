@@ -380,11 +380,9 @@ extern void expand_fixup_region_end	(tree);
 /* Various hooks for the DWARF 2 __throw routine.  */
 
 void expand_builtin_unwind_init		(void);
-rtx expand_builtin_dwarf_fp_regnum	(void);
 #ifdef TREE_CODE
 rtx expand_builtin_frob_return_addr	(tree);
 rtx expand_builtin_extract_return_addr	(tree);
-rtx expand_builtin_dwarf_reg_size	(tree, rtx);
 void expand_builtin_eh_return		(tree, tree, tree);
 #endif
 void expand_eh_return			(void);

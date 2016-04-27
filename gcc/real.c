@@ -207,7 +207,6 @@ static void emovz	(uint16_t *, uint16_t *);
 static void einan	(uint16_t *);
 static int eiisnan	(uint16_t *);
 static int eiisneg	(uint16_t *);
-static int eiisinf	(uint16_t *);
 static int ecmpm	(uint16_t *, uint16_t *);
 static void eshdn1	(uint16_t *);
 static void eshup1	(uint16_t *);
@@ -1425,22 +1424,6 @@ eiisneg (x)
 
   return x[0] != 0;
 }
-
-
-/* Return nonzero if exploded e-type X is infinite.  */
-
-static int
-eiisinf (x)
-     uint16_t x[];
-{
-
-  if (eiisnan (x))
-    return (0);
-  if ((x[E] & 0x7fff) == 0x7fff)
-    return (1);
-  return (0);
-}
-
 
 /* Compare significands of numbers in internal exploded e-type format.
    Guard words are included in the comparison.

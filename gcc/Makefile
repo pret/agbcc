@@ -22,7 +22,7 @@
 srcdir = .
 VPATH = $(srcdir)
 
-CFLAGS = -g -std=gnu11
+CFLAGS = -g -std=gnu11 -Wunused-function
 
 CC = gcc
 

@@ -32,9 +32,6 @@ extern void dwarf2out_end_block		(unsigned);
 extern void dwarf2out_label		(rtx);			
 extern void dwarf2out_decl		(tree);	
 extern void dwarf2out_line		(char *, unsigned);			
-extern void dwarf2out_frame_init	(void);
-extern void dwarf2out_frame_debug	(rtx);
-extern void dwarf2out_frame_finish	(void);
 
 extern void debug_dwarf			(void);
 struct die_struct;

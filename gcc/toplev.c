@@ -42,7 +42,7 @@
 #include "toplev.h"
 #include "expr.h"
 
-#if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+#if defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
 #endif
 
@@ -2144,22 +2144,8 @@ compile_file(char *name)
         warning("-ffunction-sections may affect debugging on some targets.");
 #endif
 
-    /* ??? Note: There used to be a conditional here
-        to call assemble_zeros without fail if DBX_DEBUGGING_INFO is defined.
-        This was to guarantee separation between gcc_compiled. and
-        the first function, for the sake of dbx on Suns.
-        However, having the extra zero here confused the Emacs
-        code for unexec, and might confuse other programs too.
-        Therefore, I took out that change.
-        In future versions we should find another way to solve
-        that dbx problem.  -- rms, 23 May 93.  */
+    /* Initialize DWARF-2.  */
 
-    /* If dbx symbol table desired, initialize writing it
-       and output the predefined types.  */
-#ifdef DWARF2_UNWIND_INFO
-    if (dwarf2out_do_frame())
-        dwarf2out_frame_init();
-#endif
 #ifdef DWARF2_DEBUGGING_INFO
     if (write_symbols == DWARF2_DEBUG)
         TIMEVAR(symout_time, dwarf2out_init(asm_out_file, main_input_filename));
@@ -2364,10 +2350,6 @@ compile_file(char *name)
 
     weak_finish();
 
-#ifdef DWARF2_UNWIND_INFO
-    if (dwarf2out_do_frame())
-        dwarf2out_frame_finish();
-#endif
 
 #ifdef DWARF2_DEBUGGING_INFO
     if (write_symbols == DWARF2_DEBUG)
@@ -3965,11 +3947,7 @@ larger_than_lose:;
 
     if (exceptions_via_longjmp == 2)
     {
-#ifdef DWARF2_UNWIND_INFO
-        exceptions_via_longjmp = !DWARF2_UNWIND_INFO;
-#else
         exceptions_via_longjmp = 1;
-#endif
     }
 
     /* Unrolling all loops implies that standard loop unrolling must also

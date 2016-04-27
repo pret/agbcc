@@ -152,10 +152,6 @@ extern void readonly_data_section	(void);
 /* Determine if we're in the text section. */
 extern int in_text_section		(void);
 
-#ifdef EH_FRAME_SECTION_ASM_OP
-extern void eh_frame_section		(void);
-#endif
-
 #ifdef TREE_CODE
 /* Tell assembler to change to section NAME for DECL.
    If DECL is NULL, just switch to section NAME.

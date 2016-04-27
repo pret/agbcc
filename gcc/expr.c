@@ -152,7 +152,6 @@ static rtx expand_builtin       (tree, rtx, rtx,
                                  enum machine_mode, int);
 static int apply_args_size      (void);
 static int apply_result_size    (void);
-static rtx result_vector        (int, rtx);
 static rtx expand_builtin_apply_args (void);
 static rtx expand_builtin_apply (rtx, rtx, rtx);
 static void expand_builtin_return (rtx);
@@ -8397,12 +8396,6 @@ expand_builtin(tree exp, rtx target, rtx subtarget, enum machine_mode mode, int 
         return const0_rtx;
     case BUILT_IN_DWARF_CFA:
         return virtual_cfa_rtx;
-#ifdef DWARF2_UNWIND_INFO
-    case BUILT_IN_DWARF_FP_REGNUM:
-        return expand_builtin_dwarf_fp_regnum();
-    case BUILT_IN_DWARF_REG_SIZE:
-        return expand_builtin_dwarf_reg_size(TREE_VALUE(arglist), target);
-#endif
     case BUILT_IN_FROB_RETURN_ADDR:
         return expand_builtin_frob_return_addr(TREE_VALUE(arglist));
     case BUILT_IN_EXTRACT_RETURN_ADDR:
