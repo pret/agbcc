@@ -83,6 +83,5 @@ extern void output_file_directive	(FILE *, char *);
 
 extern void fancy_abort			(void) ATTRIBUTE_NORETURN;
 extern void do_abort			(void) ATTRIBUTE_NORETURN;
-extern void botch			(char *) ATTRIBUTE_NORETURN;
 
 #endif /* __GCC_TOPLEV_H */

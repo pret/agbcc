@@ -24,20 +24,9 @@
    Error messages and low-level interface to malloc also handled here.  */
 
 #include "config.h"
-#undef FLOAT /* This is for hpux. They should change hpux.  */
-#undef FFS  /* Some systems define this in param.h.  */
 #include "system.h"
 #include <signal.h>
 #include <setjmp.h>
-
-#ifdef HAVE_SYS_RESOURCE_H
-# include <sys/resource.h>
-#endif
-
-#ifdef HAVE_SYS_TIMES_H
-# include <sys/times.h>
-#endif
-
 #include "input.h"
 #include "tree.h"
 #include "c-tree.h"
@@ -214,10 +203,6 @@ enum graph_dump_types graph_dump_format;
 /* Name for output file of assembly code, specified with -o.  */
 
 char *asm_file_name;
-
-/* Value of the -G xx switch, and whether it was passed or not.  */
-int g_switch_value;
-int g_switch_set;
 
 /* Type(s) of debugging information we are producing (if any).
    See flags.h for the definitions of the different possible
@@ -804,10 +789,6 @@ documented_lang_options[] =
     { "-Wno-cast-qual", "" },
     { "-Wchar-subscripts", "Warn about subscripts whose type is 'char'"},
     { "-Wno-char-subscripts", "" },
-    { "-Wcomment", "Warn if nested comments are detected" },
-    { "-Wno-comment", "" },
-    { "-Wcomments", "Warn if nested comments are detected" },
-    { "-Wno-comments", "" },
     { "-Wconversion", "Warn about possibly confusing type conversions" },
     { "-Wno-conversion", "" },
     { "-Wformat", "Warn about printf format anomalies" },
@@ -824,8 +805,6 @@ documented_lang_options[] =
     { "-Wno-import", "" },
     { "-Wlong-long","" },
     { "-Wno-long-long", "Do not warn about using 'long long' when -pedantic" },
-    { "-Wmain", "Warn about suspicious declarations of main" },
-    { "-Wno-main", "" },
     { "-Wmissing-braces",
       "Warn about possibly missing braces around initialisers" },
     { "-Wno-missing-braces", "" },
@@ -851,8 +830,6 @@ documented_lang_options[] =
     { "-Wno-strict-prototypes", "" },
     { "-Wtraditional", "Warn about constructs whose meaning change in ANSI C"},
     { "-Wno-traditional", "" },
-    { "-Wundef", "" },
-    { "-Wno-undef", "" },
     { "-Wwrite-strings", "Mark strings as 'const char *'"},
     { "-Wno-write-strings", "" },
 };
@@ -1019,9 +996,7 @@ get_run_time()
     do { int otime = get_run_time(); BODY; VAR += get_run_time() - otime; } while (0)
 
 void
-print_time (str, total)
-char *str;
-int total;
+print_time(char *str, int total)
 {
     fprintf(stderr,
             "time in %s: %d.%06d\n",
@@ -1031,8 +1006,7 @@ int total;
 /* Count an error or warning.  Return 1 if the message should be printed.  */
 
 int
-count_error (warningp)
-int warningp;
+count_error(int warningp)
 {
     if (warningp && inhibit_warnings)
         return 0;
@@ -1058,8 +1032,7 @@ int warningp;
    Also include a system error message based on `errno'.  */
 
 void
-pfatal_with_name (name)
-char *name;
+pfatal_with_name(char *name)
 {
     fprintf(stderr, "%s: ", progname);
     perror(name);
@@ -1067,8 +1040,7 @@ char *name;
 }
 
 void
-fatal_io_error (name)
-char *name;
+fatal_io_error(char *name)
 {
     fprintf(stderr, "%s: %s: I/O error\n", progname, name);
     exit(EXIT_FAILURE);
@@ -1078,9 +1050,7 @@ char *name;
    just calling abort().  */
 
 void
-fatal_insn (message, insn)
-char *message;
-rtx insn;
+fatal_insn(char *message, rtx insn)
 {
     error(message);
     debug_rtx(insn);
@@ -1100,8 +1070,7 @@ rtx insn;
    rather than just calling abort().  */
 
 void
-fatal_insn_not_found (insn)
-rtx insn;
+fatal_insn_not_found(rtx insn)
 {
     if (INSN_CODE(insn) < 0)
         fatal_insn("internal error--unrecognizable insn:", insn);
@@ -1112,9 +1081,7 @@ rtx insn;
 /* This is the default decl_printable_name function.  */
 
 static char *
-decl_name (decl, verbosity)
-tree decl;
-int verbosity ATTRIBUTE_UNUSED;
+decl_name(tree decl, int verbosity ATTRIBUTE_UNUSED)
 {
     return IDENTIFIER_POINTER(DECL_NAME(decl));
 }
@@ -1133,8 +1100,7 @@ static int last_error_tick;
    this function prints on stderr the name of the function.  */
 
 void
-announce_function (decl)
-tree decl;
+announce_function(tree decl)
 {
     if (!quiet_flag)
     {
@@ -1152,8 +1118,7 @@ tree decl;
    an error.  */
 
 void
-default_print_error_function (file)
-char *file;
+default_print_error_function(char *file)
 {
     if (last_error_function != current_function_decl)
     {
@@ -1186,8 +1151,7 @@ void (*print_error_function) (char *) = default_print_error_function;
    that caused an error.  Called from all error and warning functions.  */
 
 void
-report_error_function (file)
-char *file;
+report_error_function(char *file)
 {
     struct file_stack *p;
 
@@ -1218,10 +1182,7 @@ char *file;
 /* Print a message.  */
 
 static void
-vmessage (prefix, s, ap)
-char *prefix;
-char *s;
-va_list ap;
+vmessage(char *prefix, char *s, va_list ap)
 {
     if (prefix)
         fprintf(stderr, "%s: ", prefix);
@@ -1232,12 +1193,7 @@ va_list ap;
 /* Print a message relevant to line LINE of file FILE.  */
 
 static void
-v_message_with_file_and_line (file, line, prefix, s, ap)
-char *file;
-int line;
-char *prefix;
-char *s;
-va_list ap;
+v_message_with_file_and_line(char *file, int line, char *prefix, char *s, va_list ap)
 {
     if (file)
         fprintf(stderr, "%s:%d: ", file, line);
@@ -1251,11 +1207,7 @@ va_list ap;
 /* Print a message relevant to the given DECL.  */
 
 static void
-v_message_with_decl (decl, prefix, s, ap)
-tree decl;
-char *prefix;
-char *s;
-va_list ap;
+v_message_with_decl(tree decl, char *prefix, char *s, va_list ap)
 {
     char *p;
 
@@ -1313,10 +1265,7 @@ va_list ap;
 /* Figure file and line of the given INSN.  */
 
 static void
-file_and_line_for_asm (insn, pfile, pline)
-rtx insn;
-char **pfile;
-int *pline;
+file_and_line_for_asm(rtx insn, char **pfile, int *pline)
 {
     rtx body = PATTERN(insn);
     rtx asmop;
@@ -1350,11 +1299,7 @@ int *pline;
 /* Report an error at line LINE of file FILE.  */
 
 static void
-v_error_with_file_and_line (file, line, s, ap)
-char *file;
-int line;
-char *s;
-va_list ap;
+v_error_with_file_and_line(char *file, int line, char *s, va_list ap)
 {
     count_error(0);
     report_error_function(file);
@@ -1378,10 +1323,7 @@ error_with_file_and_line(char *file, int line, char *s, ...)
    name; subsequent substitutions are a la printf.  */
 
 static void
-v_error_with_decl (decl, s, ap)
-tree decl;
-char *s;
-va_list ap;
+v_error_with_decl(tree decl, char *s, va_list ap)
 {
     count_error(0);
     report_error_function(DECL_SOURCE_FILE(decl));
@@ -1405,10 +1347,7 @@ error_with_decl(tree decl, char *s, ...)
    and each ASM_OPERANDS records its own source file and line.  */
 
 static void
-v_error_for_asm (insn, s, ap)
-rtx insn;
-char *s;
-va_list ap;
+v_error_for_asm(rtx insn, char *s, va_list ap)
 {
     char *file;
     int line;
@@ -1423,10 +1362,7 @@ void
 error_for_asm(rtx insn, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_error_for_asm(insn, s, ap);
     va_end(ap);
 }
@@ -1434,9 +1370,7 @@ error_for_asm(rtx insn, char *s, ...)
 /* Report an error at the current line number.  */
 
 static void
-verror (s, ap)
-char *s;
-va_list ap;
+verror(char *s, va_list ap)
 {
     v_error_with_file_and_line(input_filename, lineno, s, ap);
 }
@@ -1445,10 +1379,7 @@ void
 error(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     verror(s, ap);
     va_end(ap);
 }
@@ -1456,9 +1387,7 @@ error(char *s, ...)
 /* Report a fatal error at the current line number.  */
 
 static void
-vfatal (s, ap)
-char *s;
-va_list ap;
+vfatal(char *s, va_list ap)
 {
     verror(s, ap);
     exit(EXIT_FAILURE);
@@ -1468,10 +1397,7 @@ void
 fatal(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     vfatal(s, ap);
     va_end(ap);
 }
@@ -1479,11 +1405,7 @@ fatal(char *s, ...)
 /* Report a warning at line LINE of file FILE.  */
 
 static void
-v_warning_with_file_and_line (file, line, s, ap)
-char *file;
-int line;
-char *s;
-va_list ap;
+v_warning_with_file_and_line(char *file, int line, char *s, va_list ap)
 {
     if (count_error(1))
     {
@@ -1496,10 +1418,7 @@ void
 warning_with_file_and_line(char *file, int line, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_warning_with_file_and_line(file, line, s, ap);
     va_end(ap);
 }
@@ -1509,10 +1428,7 @@ warning_with_file_and_line(char *file, int line, char *s, ...)
    name; subsequent substitutions are a la printf.  */
 
 static void
-v_warning_with_decl (decl, s, ap)
-tree decl;
-char *s;
-va_list ap;
+v_warning_with_decl(tree decl, char *s, va_list ap)
 {
     if (count_error(1))
     {
@@ -1525,10 +1441,7 @@ void
 warning_with_decl(tree decl, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_warning_with_decl(decl, s, ap);
     va_end(ap);
 }
@@ -1538,10 +1451,7 @@ warning_with_decl(tree decl, char *s, ...)
    and each ASM_OPERANDS records its own source file and line.  */
 
 static void
-v_warning_for_asm (insn, s, ap)
-rtx insn;
-char *s;
-va_list ap;
+v_warning_for_asm(rtx insn, char *s, va_list ap)
 {
     if (count_error(1))
     {
@@ -1558,10 +1468,7 @@ void
 warning_for_asm(rtx insn, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_warning_for_asm(insn, s, ap);
     va_end(ap);
 }
@@ -1569,9 +1476,7 @@ warning_for_asm(rtx insn, char *s, ...)
 /* Report a warning at the current line number.  */
 
 static void
-vwarning (s, ap)
-char *s;
-va_list ap;
+vwarning(char *s, va_list ap)
 {
     v_warning_with_file_and_line(input_filename, lineno, s, ap);
 }
@@ -1580,10 +1485,7 @@ void
 warning(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     vwarning(s, ap);
     va_end(ap);
 }
@@ -1592,9 +1494,7 @@ warning(char *s, ...)
    -pedantic-errors.  */
 
 static void
-vpedwarn (s, ap)
-char *s;
-va_list ap;
+vpedwarn(char *s, va_list ap)
 {
     if (flag_pedantic_errors)
         verror(s, ap);
@@ -1606,19 +1506,13 @@ void
 pedwarn(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     vpedwarn(s, ap);
     va_end(ap);
 }
 
 static void
-v_pedwarn_with_decl (decl, s, ap)
-tree decl;
-char *s;
-va_list ap;
+v_pedwarn_with_decl(tree decl, char *s, va_list ap)
 {
     /* We don't want -pedantic-errors to cause the compilation to fail from
        "errors" in system header files.  Sometimes fixincludes can't fix what's
@@ -1640,20 +1534,13 @@ void
 pedwarn_with_decl(tree decl, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_pedwarn_with_decl(decl, s, ap);
     va_end(ap);
 }
 
 static void
-v_pedwarn_with_file_and_line (file, line, s, ap)
-char *file;
-int line;
-char *s;
-va_list ap;
+v_pedwarn_with_file_and_line(char *file, int line, char *s, va_list ap)
 {
     if (flag_pedantic_errors)
         v_error_with_file_and_line(file, line, s, ap);
@@ -1665,10 +1552,7 @@ void
 pedwarn_with_file_and_line(char *file, int line, char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_pedwarn_with_file_and_line(file, line, s, ap);
     va_end(ap);
 }
@@ -1676,9 +1560,7 @@ pedwarn_with_file_and_line(char *file, int line, char *s, ...)
 /* Apologize for not implementing some feature.  */
 
 static void
-vsorry (s, ap)
-char *s;
-va_list ap;
+vsorry(char *s, va_list ap)
 {
     sorrycount++;
     if (input_filename)
@@ -1693,10 +1575,7 @@ void
 sorry(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     vsorry(s, ap);
     va_end(ap);
 }
@@ -1704,9 +1583,7 @@ sorry(char *s, ...)
 /* Apologize for not implementing some feature, then quit.  */
 
 static void
-v_really_sorry (s, ap)
-char *s;
-va_list ap;
+v_really_sorry(char *s, va_list ap)
 {
     sorrycount++;
     if (input_filename)
@@ -1721,10 +1598,7 @@ void
 really_sorry(char *s, ...)
 {
     va_list ap;
-
     va_start(ap, s);
-
-
     v_really_sorry(s, ap);
     va_end(ap);
 }
@@ -1752,23 +1626,12 @@ do_abort()
     abort();
 }
 
-/* When `malloc.c' is compiled with `rcheck' defined,
-   it calls this function to report clobberage.  */
-
-void
-botch (s)
-char * s ATTRIBUTE_UNUSED;
-{
-    abort();
-}
-
 /* Same as `malloc' but report error if no memory available.  */
 
 void *
-xmalloc (size)
-size_t size;
+xmalloc(size_t size)
 {
-    register void *value;
+    void *value;
 
     if (size == 0)
         size = 1;
@@ -1782,10 +1645,9 @@ size_t size;
 /* Same as `calloc' but report error if no memory available.  */
 
 void *
-xcalloc (size1, size2)
-size_t size1, size2;
+xcalloc(size_t size1, size_t size2)
 {
-    register void *value;
+    void *value;
 
     if (size1 == 0 || size2 == 0)
         size1 = size2 = 1;
@@ -1801,16 +1663,14 @@ size_t size1, size2;
    Also handle null PTR even if the vendor realloc gets it wrong.  */
 
 void *
-xrealloc (ptr, size)
-void *ptr;
-size_t size;
+xrealloc(void *ptr, size_t size)
 {
-    register void *result;
+    void *result;
 
     if (size == 0)
         size = 1;
 
-    result = (ptr ? realloc(ptr, size) : malloc(size));
+    result = ptr ? realloc(ptr, size) : malloc(size);
 
     if (!result)
         fatal("virtual memory exhausted");
@@ -1821,10 +1681,9 @@ size_t size;
 /* Same as `strdup' but report error if no memory available.  */
 
 char *
-xstrdup (s)
-register const char *s;
+xstrdup(const char *s)
 {
-    register char *result = (char *) malloc(strlen(s) + 1);
+    char *result = (char *) malloc(strlen(s) + 1);
 
     if (!result)
         fatal("virtual memory exhausted");
@@ -1838,10 +1697,9 @@ register const char *s;
    This should be used via the `exact_log2' macro.  */
 
 int
-exact_log2_wide (x)
-register HOST_WIDE_UINT x;
+exact_log2_wide(HOST_WIDE_UINT x)
 {
-    register int log = 0;
+    int log = 0;
     /* Test for 0 or a power of 2.  */
     if (x == 0 || x != (x & -x))
         return -1;
@@ -1856,10 +1714,9 @@ register HOST_WIDE_UINT x;
    This should be used via the floor_log2 macro.  */
 
 int
-floor_log2_wide (x)
-register HOST_WIDE_UINT x;
+floor_log2_wide(HOST_WIDE_UINT x)
 {
-    register int log = -1;
+    int log = -1;
     while (x != 0)
         log++,
         x >>= 1;
@@ -1873,9 +1730,7 @@ jmp_buf float_handler;
 /* Signals actually come here.  */
 
 static void
-float_signal (signo)
-/* If this is missing, some compilers complain.  */
-int signo ATTRIBUTE_UNUSED;
+float_signal(int signo ATTRIBUTE_UNUSED)
 {
     if (float_handled == 0)
         abort();
@@ -1891,8 +1746,7 @@ int signo ATTRIBUTE_UNUSED;
    If HANDLER is 0, it means don't handle the errors any more.  */
 
 void
-set_float_handler (handler)
-jmp_buf handler;
+set_float_handler(jmp_buf handler)
 {
     float_handled = (handler != 0);
     if (handler)
@@ -1910,8 +1764,7 @@ jmp_buf handler;
    Return an indication of whether there was a previous handler in effect.  */
 
 int
-push_float_handler (handler, old_handler)
-jmp_buf handler, old_handler;
+push_float_handler(jmp_buf handler, jmp_buf old_handler)
 {
     int was_handled = float_handled;
 
@@ -1928,9 +1781,7 @@ jmp_buf handler, old_handler;
    when a floating arithmetic error happens.  */
 
 void
-pop_float_handler (handled, handler)
-int handled;
-jmp_buf handler;
+pop_float_handler(int handled, jmp_buf handler)
 {
     float_handled = handled;
     if (handled)
@@ -1940,9 +1791,7 @@ jmp_buf handler;
 /* Handler for SIGPIPE.  */
 
 static void
-pipe_closed (signo)
-/* If this is missing, some compilers complain.  */
-int signo ATTRIBUTE_UNUSED;
+pipe_closed(int signo ATTRIBUTE_UNUSED)
 {
     fatal("output pipe has been closed");
 }
@@ -1953,9 +1802,7 @@ int signo ATTRIBUTE_UNUSED;
    up to five characters.  (Java uses ".class".) */
 
 void
-strip_off_ending (name, len)
-char *name;
-int len;
+strip_off_ending(char *name, int len)
 {
     int i;
     for (i = 2; i < 6 && len > i; i++)
@@ -1971,9 +1818,7 @@ int len;
 /* Output a quoted string.  */
 
 void
-output_quoted_string (asm_file, string)
-FILE *asm_file;
-char *string;
+output_quoted_string(FILE *asm_file, char *string)
 {
 #ifdef OUTPUT_QUOTED_STRING
     OUTPUT_QUOTED_STRING(asm_file, string);
@@ -1994,9 +1839,7 @@ char *string;
 /* Output a file name in the form wanted by System V.  */
 
 void
-output_file_directive (asm_file, input_name)
-FILE *asm_file;
-char *input_name;
+output_file_directive(FILE *asm_file, char *input_name)
 {
     int len = strlen(input_name);
     char *na = input_name + len;
@@ -2028,9 +1871,7 @@ char *input_name;
 
 /* Routine to open a dump file.  */
 static void
-open_dump_file (suffix, function_name)
-char *suffix;
-char *function_name;
+open_dump_file(char *suffix, char *function_name)
 {
     char *dumpname;
 
@@ -2061,9 +1902,7 @@ char *function_name;
 
 /* Routine to close a dump file.  */
 static void
-close_dump_file (func, insns)
-void (*func) (FILE *, rtx);
-rtx insns;
+close_dump_file(void (*func) (FILE *, rtx), rtx insns)
 {
     TIMEVAR
         (dump_time,
@@ -2082,11 +1921,7 @@ rtx insns;
 
 /* Routine to dump rtl into a file.  */
 static void
-dump_rtl (suffix, decl, func, insns)
-char *suffix;
-tree decl;
-void (*func) (FILE *, rtx);
-rtx insns;
+dump_rtl(char *suffix, tree decl, void (*func) (FILE *, rtx), rtx insns)
 {
     open_dump_file(suffix, decl_printable_name(decl, 2));
     close_dump_file(func, insns);
@@ -2094,8 +1929,7 @@ rtx insns;
 
 /* Routine to empty a dump file.  */
 static void
-clean_dump_file (suffix)
-char *suffix;
+clean_dump_file(char *suffix)
 {
     char *dumpname;
 
@@ -2122,8 +1956,7 @@ char *suffix;
    Write a file of assembly output and various debugging dumps.  */
 
 static void
-compile_file (name)
-char *name;
+compile_file(char *name)
 {
     tree globals;
     int start_time;
@@ -2299,7 +2132,7 @@ char *name;
         else
         {
             int len = strlen(dump_base_name);
-            register char *dumpname = (char *) xmalloc(len + 6);
+            char *dumpname = (char *) xmalloc(len + 6);
             strcpy(dumpname, dump_base_name);
             strip_off_ending(dumpname, len);
             strcat(dumpname, ".s");
@@ -2747,11 +2580,7 @@ finish_syntax:
    if this declaration is not within a function.  */
 
 void
-rest_of_decl_compilation (decl, asmspec, top_level, at_end)
-tree decl;
-char *asmspec;
-int top_level;
-int at_end;
+rest_of_decl_compilation(tree decl, char *asmspec, int top_level, int at_end)
 {
     /* Declarations of variables, and of functions defined elsewhere.  */
 
@@ -2803,9 +2632,7 @@ int at_end;
 /* Called after finishing a record, union or enumeral type.  */
 
 void
-rest_of_type_compilation (type, toplev)
-tree type ATTRIBUTE_UNUSED;
-int toplev ATTRIBUTE_UNUSED;
+rest_of_type_compilation(tree type ATTRIBUTE_UNUSED, int toplev ATTRIBUTE_UNUSED)
 {
 }
 
@@ -2816,10 +2643,9 @@ int toplev ATTRIBUTE_UNUSED;
    After we return, the tree storage is freed.  */
 
 void
-rest_of_compilation (decl)
-tree decl;
+rest_of_compilation(tree decl)
 {
-    register rtx insns;
+    rtx insns;
     int start_time = get_run_time();
     int tem;
     /* Nonzero if we have saved the original DECL_INITIAL of the function,
@@ -3586,8 +3412,6 @@ display_help()
     printf("  -Wid-clash-<num>        Warn if 2 identifiers have the same first <num> chars\n");
     printf("  -Wlarger-than-<number>  Warn if an object is larger than <number> bytes\n");
     printf("  -o <file>               Place output into <file> \n");
-    printf("  -G <number>             Put global and static data smaller than <number>\n");
-    printf("                           bytes into a special section (on some targets)\n");
     printf("  -g                      Enable debug output\n");
     printf("  -aux-info <file>        Emit declaration info into <file>.X\n");
     /* CYGNUS LOCAL v850/law */
@@ -3712,9 +3536,7 @@ display_help()
    if 'option' is a viable prefix of 'lang_option'.  */
 
 static int
-check_lang_option (option, lang_option)
-char * option;
-char * lang_option;
+check_lang_option(char *option, char *lang_option)
 {
     lang_independent_options * indep_options;
     int len;
@@ -3782,11 +3604,9 @@ char * lang_option;
    33 if had nonfatal errors, else success.  */
 
 int
-main (argc, argv)
-int argc;
-char **argv;
+main(int argc, char **argv)
 {
-    register int i;
+    int i;
     char *filename = 0;
     int version_flag = 0;
     char *p;
@@ -3920,7 +3740,7 @@ char **argv;
         }
         else if (argv[i][0] == '-' && argv[i][1] != 0)
         {
-            register char *str = argv[i] + 1;
+            char *str = argv[i] + 1;
             if (str[0] == 'Y')
                 str++;
 
@@ -3932,7 +3752,7 @@ char **argv;
             }
             else if (str[0] == 'd')
             {
-                register char *p = &str[1];
+                char *p = &str[1];
                 while (*p)
                     switch (*p++)
                     {
@@ -4026,7 +3846,7 @@ char **argv;
             }
             else if (str[0] == 'f')
             {
-                register char *p = &str[1];
+                char *p = &str[1];
                 int found = 0;
 
                 /* Some kind of -f option.
@@ -4065,7 +3885,7 @@ char **argv;
             }
             else if (str[0] == 'O')
             {
-                register char *p = str+1;
+                char *p = str+1;
                 if (*p == 's')
                     p++;
                 else
@@ -4097,7 +3917,7 @@ char **argv;
             }
             else if (str[0] == 'W')
             {
-                register char *p = &str[1];
+                char *p = &str[1];
                 int found = 0;
 
                 /* Some kind of -W option.
@@ -4187,11 +4007,6 @@ larger_than_lose:;
             else if (!strcmp(str, "o"))
             {
                 asm_file_name = argv[++i];
-            }
-            else if (str[0] == 'G')
-            {
-                g_switch_set = TRUE;
-                g_switch_value = atoi((str[1] != '\0') ? str+1 : argv[++i]);
             }
             else if (!strncmp(str, "aux-info", 8))
             {
@@ -4288,10 +4103,9 @@ larger_than_lose:;
 /* Decode the switch -mNAME.  */
 
 static void
-set_target_switch (name)
-char *name;
+set_target_switch(char *name)
 {
-    register size_t j;
+    size_t j;
     int valid = 0;
 
     for (j = 0; j < sizeof target_switches / sizeof target_switches[0]; j++)
@@ -4326,9 +4140,7 @@ char *name;
    assembler output file).  */
 
 static void
-print_version (file, indent)
-FILE *file;
-char *indent;
+print_version(FILE *file, char *indent)
 {
     fprintf(file, "%s%s%s version %s", indent, *indent != 0 ? " " : "",
             language_string, version_string);
@@ -4350,10 +4162,7 @@ char *indent;
    other code will catch a disk full though.  */
 
 static int
-print_single_switch (file, pos, max, indent, sep, term, type, name)
-FILE *file;
-int pos, max;
-char *indent, *sep, *term, *type, *name;
+print_single_switch(FILE *file, int pos, int max, char *indent, char *sep, char *term, char *type, char *name)
 {
     /* The ultrix fprintf returns 0 on success, so compute the result we want
        here since we need it for the following test.  */
@@ -4381,10 +4190,7 @@ char *indent, *sep, *term, *type, *name;
    Each switch is separated from the next by SEP.  */
 
 static void
-print_switch_values (file, pos, max, indent, sep, term)
-FILE *file;
-int pos, max;
-char *indent, *sep, *term;
+print_switch_values(FILE *file, int pos, int max, char *indent, char *sep, char *term)
 {
     size_t j;
     char **p;
@@ -4457,8 +4263,7 @@ char *indent, *sep, *term;
 /* Record the beginning of a new source file, named FILENAME.  */
 
 void
-debug_start_source_file (filename)
-register char *filename;
+debug_start_source_file(char *filename)
 {
 #ifdef DWARF2_DEBUGGING_INFO
     if (debug_info_level == DINFO_LEVEL_VERBOSE
@@ -4471,8 +4276,7 @@ register char *filename;
    the source file we are returning to.  */
 
 void
-debug_end_source_file (lineno)
-register unsigned lineno ATTRIBUTE_UNUSED;
+debug_end_source_file(unsigned lineno ATTRIBUTE_UNUSED)
 {
 #ifdef DWARF2_DEBUGGING_INFO
     if (debug_info_level == DINFO_LEVEL_VERBOSE
@@ -4486,9 +4290,7 @@ register unsigned lineno ATTRIBUTE_UNUSED;
    initial whitespace, #, whitespace, directive-name, whitespace part.  */
 
 void
-debug_define (lineno, buffer)
-register unsigned lineno;
-register char *buffer;
+debug_define(unsigned lineno, char *buffer)
 {
 #ifdef DWARF2_DEBUGGING_INFO
     if (debug_info_level == DINFO_LEVEL_VERBOSE
@@ -4502,9 +4304,7 @@ register char *buffer;
    initial whitespace, #, whitespace, directive-name, whitespace part.  */
 
 void
-debug_undef (lineno, buffer)
-register unsigned lineno;
-register char *buffer;
+debug_undef(unsigned lineno, char *buffer)
 {
 #ifdef DWARF2_DEBUGGING_INFO
     if (debug_info_level == DINFO_LEVEL_VERBOSE

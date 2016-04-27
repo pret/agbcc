@@ -563,10 +563,6 @@ int warn_parentheses;
 
 int warn_missing_braces;
 
-/* Warn if main is suspicious.  */
-
-int warn_main;
-
 /* Warn about comparison of signed and unsigned values.
    If -1, neither -Wsign-compare nor -Wno-sign-compare has been specified.  */
 
@@ -598,9 +594,6 @@ c_decode_option (p)
     {
       flag_hosted = 0;
       flag_no_builtin = 1;
-      /* warn_main will be 2 if set by -Wall, 1 if set by -Wmain */
-      if (warn_main == 2)
-	warn_main = 0;
     }
   else if (!strcmp (p, "-fnotraditional") || !strcmp (p, "-fno-traditional"))
     {
@@ -792,10 +785,6 @@ c_decode_option (p)
     warn_missing_braces = 1;
   else if (!strcmp (p, "-Wno-missing-braces"))
     warn_missing_braces = 0;
-  else if (!strcmp (p, "-Wmain"))
-    warn_main = 1;
-  else if (!strcmp (p, "-Wno-main"))
-    warn_main = 0;
   else if (!strcmp (p, "-Wsign-compare"))
     warn_sign_compare = 1;
   else if (!strcmp (p, "-Wno-sign-compare"))
@@ -820,9 +809,6 @@ c_decode_option (p)
       warn_char_subscripts = 1;
       warn_parentheses = 1;
       warn_missing_braces = 1;
-      /* We set this to 2 here, but 1 in -Wmain, so -ffreestanding can turn
-	 it off only if it's not explicit.  */
-      warn_main = 2;
     }
 }
 
@@ -3694,10 +3680,6 @@ start_decl (declarator, declspecs, initialized, attributes, prefix_attributes)
   /* The corresponding pop_obstacks is in finish_decl.  */
   push_obstacks_nochange ();
 
-  if (warn_main && TREE_CODE (decl) != FUNCTION_DECL
-      && !strcmp (IDENTIFIER_POINTER (DECL_NAME (decl)), "main"))
-    warning_with_decl (decl, "`%s' is usually a function");
-
   if (initialized)
     /* Is it valid for this decl to have an initializer at all?
        If not, set INITIALIZED to zero, which will indirectly
@@ -6420,67 +6402,6 @@ start_function (declspecs, declarator, prefix_attributes, attributes, nested)
   if (current_function_decl != 0)
     TREE_PUBLIC (decl1) = 0;
 
-  /* Warn for unlikely, improbable, or stupid declarations of `main'. */
-  if (warn_main
-      && strcmp ("main", IDENTIFIER_POINTER (DECL_NAME (decl1))) == 0)
-    {
-      tree args;
-      int argct = 0;
-
-      if (TYPE_MAIN_VARIANT (TREE_TYPE (TREE_TYPE (decl1)))
-	   != integer_type_node)
-	pedwarn_with_decl (decl1, "return type of `%s' is not `int'");
-
-      for (args = TYPE_ARG_TYPES (TREE_TYPE (decl1)); args;
-	   args = TREE_CHAIN (args))
-	{
-	  tree type = args ? TREE_VALUE (args) : 0;
-
-	  if (type == void_type_node)
-	    break;
-
-	  ++argct;
-	  switch (argct)
-	    {
-	    case 1:
-	      if (TYPE_MAIN_VARIANT (type) != integer_type_node)
-		pedwarn_with_decl (decl1,
-				   "first argument of `%s' should be `int'");
-	      break;
-
-	    case 2:
-	      if (TREE_CODE (type) != POINTER_TYPE
-		  || TREE_CODE (TREE_TYPE (type)) != POINTER_TYPE
-		  || (TYPE_MAIN_VARIANT (TREE_TYPE (TREE_TYPE (type)))
-		      != char_type_node))
-		pedwarn_with_decl (decl1,
-			       "second argument of `%s' should be `char **'");
-	      break;
-
-	    case 3:
-	      if (TREE_CODE (type) != POINTER_TYPE
-		  || TREE_CODE (TREE_TYPE (type)) != POINTER_TYPE
-		  || (TYPE_MAIN_VARIANT (TREE_TYPE (TREE_TYPE (type)))
-		      != char_type_node))
-		pedwarn_with_decl (decl1,
-		   "third argument of `%s' should probably be `char **'");
-	      break;
-	    }
-	}
-
-      /* It is intentional that this message does not mention the third
-	 argument, which is warned for only pedantically, because it's
-	 blessed by mention in an appendix of the standard. */
-      if (argct > 0 && (argct < 2 || argct > 3))
-	pedwarn_with_decl (decl1, "`%s' takes only zero or two arguments");
-
-      if (argct == 3 && pedantic)
-	pedwarn_with_decl (decl1, "third argument of `%s' is deprecated");
-
-      if (! TREE_PUBLIC (decl1))
-	pedwarn_with_decl (decl1, "`%s' is normally a non-static function");
-    }
-
   /* Record the decl so that the function name is defined.
      If we already have a decl for this name, and it is a FUNCTION_DECL,
      use the old decl.  */
@@ -7131,29 +7052,6 @@ finish_function (nested)
     {
       setjmp_protect (DECL_INITIAL (fndecl));
       setjmp_protect_args ();
-    }
-
-  if (! strcmp (IDENTIFIER_POINTER (DECL_NAME (fndecl)), "main"))
-    {
-      if (TYPE_MAIN_VARIANT (TREE_TYPE (TREE_TYPE (fndecl)))
-	  != integer_type_node)
-	{
-	  /* You would expect the sense of this test to be the other way
-	     around, but if warn_main is set, we will already have warned,
-	     so this would be a duplicate.  This is the warning you get
-	     in some environments even if you *don't* ask for it, because
-	     these are environments where it may be more of a problem than
-	     usual.  */
-	  if (! warn_main)
-	    pedwarn_with_decl (fndecl, "return type of `%s' is not `int'");
-	}
-      else
-	{
-#ifdef DEFAULT_MAIN_RETURN
-	  /* Make it so that `main' always returns success by default.  */
-	  DEFAULT_MAIN_RETURN;
-#endif
-	}
     }
 
   /* Generate rtl for function exit.  */

@@ -447,10 +447,6 @@ extern int flag_prefix_function_name;
    corners where we can.  */
 extern int current_function_is_thunk;
 
-/* Value of the -G xx switch, and whether it was passed or not.  */
-extern int g_switch_value;
-extern int g_switch_set;
-
 /* Nonzero if we dump in VCG format, not plain text.  */
 extern int dump_for_graph;
 
