@@ -58,11 +58,6 @@ extern int optimize_size;
 
 extern int obey_regdecls;
 
-/* Don't print functions as they are compiled and don't print
-   times taken by the various passes.  -quiet.  */
-
-extern int quiet_flag;
-
 /* Don't print warning messages.  -w.  */
 
 extern int inhibit_warnings;

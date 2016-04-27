@@ -273,10 +273,10 @@ int in_system_header = 0;
 
 int obey_regdecls = 0;
 
-/* Don't print functions as they are compiled and don't print
-   times taken by the various passes.  -quiet.  */
+/* Print functions as they are compiled
+   and print times taken by the various passes.  -loud.  */
 
-int quiet_flag = 0;
+int loud_flag = 0;
 
 /* -f flags.  */
 
@@ -981,7 +981,7 @@ int dump_time;
 long
 get_run_time()
 {
-    if (quiet_flag)
+    if (!loud_flag)
         return 0;
 
     clock_t clk = clock();
@@ -1102,7 +1102,7 @@ static int last_error_tick;
 void
 announce_function(tree decl)
 {
-    if (!quiet_flag)
+    if (loud_flag)
     {
         if (rtl_dump_and_exit)
             fprintf(stderr, "%s ", IDENTIFIER_POINTER(DECL_NAME(decl)));
@@ -2541,11 +2541,10 @@ finish_syntax:
 
     /* Print the times.  */
 
-    if (!quiet_flag)
+    if (loud_flag)
     {
         fprintf(stderr,"\n");
         print_time("parse", parse_time);
-
         print_time("integration", integration_time);
         print_time("jump", jump_time);
         print_time("cse", cse_time);
@@ -3279,7 +3278,7 @@ rest_of_compilation(tree decl)
                 final(insns, asm_out_file, optimize, 0);
                 final_end_function(insns, asm_out_file, optimize);
                 assemble_end_function(decl, fnname);
-                if (!quiet_flag)
+                if (loud_flag)
                     fflush(asm_out_file);
 
                 /* Release all memory held by regsets now */
@@ -3900,8 +3899,8 @@ main(int argc, char **argv)
                 pedantic = 1;
             else if (!strcmp(str, "pedantic-errors"))
                 flag_pedantic_errors = pedantic = 1;
-            else if (!strcmp(str, "quiet"))
-                quiet_flag = 1;
+            else if (!strcmp(str, "loud"))
+                loud_flag = 1;
             else if (!strcmp(str, "version"))
                 version_flag = 1;
             else if (!strcmp(str, "w"))
@@ -4085,7 +4084,7 @@ larger_than_lose:;
     if (version_flag)
     {
         print_version(stderr, "");
-        if (!quiet_flag)
+        if (loud_flag)
             print_switch_values(stderr, 0, MAX_LINE, "", " ", "\n");
     }
 
