@@ -26,9 +26,7 @@ CFLAGS = -g -std=gnu11
 
 CC = gcc
 
-out_file=$(srcdir)/config/arm/thumb.c
-out_object_file=thumb.o
-md_file=$(srcdir)/config/arm/thumb.md
+md_file=$(srcdir)/thumb.md
 
 # End of variables for you to override.
 
@@ -40,12 +38,8 @@ HOST_RTLANAL = rtlanal.o
 HOST_PRINT = print-rtl.o
 
 # Specify the directories to be searched for header files.
-# Both . and srcdir are used, in that order,
-# so that tm.h and config.h will be found in the compilation
-# subdirectory rather than in the source directory.
-INCLUDES = -I. -I$(srcdir) -I$(srcdir)/config -I$(srcdir)/../include
+INCLUDES = -I. -I$(srcdir)
 
-# Always use -I$(srcdir)/config when compiling.
 .c.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $<
 
@@ -64,7 +58,7 @@ OBJS = toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
  insn-peep.o final.o recog.o \
  insn-opinit.o insn-recog.o insn-extract.o insn-output.o insn-emit.o \
  lcm.o \
- insn-attrtab.o $(out_object_file) getpwd.o convert.o \
+ insn-attrtab.o thumb.o getpwd.o convert.o \
  dyn-string.o splay-tree.o graph.o sbitmap.o resource.o \
  c-parse.o c-lex.o c-decl.o c-typeck.o c-convert.o c-aux-info.o c-common.o \
  c-iterate.o obstack.o
@@ -274,10 +268,9 @@ recog.o : recog.c $(CONFIG_H) system.h $(RTL_H)  \
    insn-flags.h insn-codes.h real.h toplev.h
 dyn-string.o: dyn-string.c dyn-string.h $(CONFIG_H) system.h
 
-$(out_object_file): $(out_file) $(CONFIG_H) $(TREE_H) \
+thumb.o: thumb.c $(CONFIG_H) $(TREE_H) \
    $(RTL_H) $(REGS_H) hard-reg-set.h real.h insn-config.h conditions.h \
    insn-flags.h output.h insn-attr.h insn-codes.h system.h toplev.h
-	$(CC) -c $(CFLAGS) $(INCLUDES) $(out_file)
 
 # Generate header and source files from the machine description, 
 # and compile them.

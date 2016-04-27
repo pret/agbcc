@@ -9,4 +9,4 @@
 #define HOST_BITS_PER_SHORT 16
 #define HOST_BITS_PER_INT 32
 
-#include "arm/telf.h"
+#include "telf.h"
