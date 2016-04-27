@@ -224,10 +224,6 @@ static unsigned reg_number		(rtx);
 #endif
 #endif
 
-#ifndef FRAME_SECTION
-#define FRAME_SECTION		".debug_frame"
-#endif
-
 #ifndef FUNC_BEGIN_LABEL
 #define FUNC_BEGIN_LABEL	"LFB"
 #endif
@@ -459,29 +455,6 @@ static unsigned reg_number		(rtx);
   while (0)
 #endif
 
-/* The DWARF 2 CFA column which tracks the return address.  Normally this
-   is the column for PC, or the first column after all of the hard
-   registers.  */
-#ifndef DWARF_FRAME_RETURN_COLUMN
-#ifdef PC_REGNUM
-#define DWARF_FRAME_RETURN_COLUMN 	DWARF_FRAME_REGNUM (PC_REGNUM)
-#else
-#define DWARF_FRAME_RETURN_COLUMN 	FIRST_PSEUDO_REGISTER
-#endif
-#endif
-
-/* The mapping from gcc register number to DWARF 2 CFA column number.  By
-   default, we just provide columns for all registers.  */
-#ifndef DWARF_FRAME_REGNUM
-#define DWARF_FRAME_REGNUM(REG) DBX_REGISTER_NUMBER (REG)
-#endif
-
-/* The offset from the incoming value of %sp to the top of the stack frame
-   for the current function.  */
-#ifndef INCOMING_FRAME_SP_OFFSET
-#define INCOMING_FRAME_SP_OFFSET 0
-#endif
-
 /* Return a pointer to a copy of the section string name S with all
    attributes stripped off, and an asterisk prepended (for assemble_name).  */
 
@@ -518,15 +491,6 @@ reg_number (rtl)
   regno = DBX_REGISTER_NUMBER (regno);
   return regno;
 }
-
-/* The current rule for calculating the DWARF2 canonical frame address.  */
-static unsigned long cfa_reg;
-static long cfa_offset;
-
-/* The register used for saving registers to the stack, and its offset
-   from the CFA.  */
-static unsigned cfa_store_reg;
-static long cfa_store_offset;
 
 /* The running total of the size of arguments pushed onto the stack.  */
 static long args_size;
@@ -863,11 +827,6 @@ typedef struct limbo_die_struct
   struct limbo_die_struct *next;
 }
 limbo_die_node;
-
-/* How to start an assembler comment.  */
-#ifndef ASM_COMMENT_START
-#define ASM_COMMENT_START ";#"
-#endif
 
 /* Define a macro which returns non-zero for a TYPE_DECL which was
    implicitly generated for a tagged type.

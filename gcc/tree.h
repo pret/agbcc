@@ -1884,8 +1884,6 @@ extern void (*incomplete_decl_finalize_hook)	(tree);
 
 /* In tree.c */
 extern char *perm_calloc			(int, long);
-extern tree get_file_function_name		(int);
-extern tree get_file_function_name_long 	(char *);
 extern tree get_set_constructor_bits		(tree, char *, int);
 extern tree get_set_constructor_bytes		(tree,
 						       unsigned char *, int);
@@ -2074,7 +2072,6 @@ extern void preserve_momentary		(void);
 extern void saveable_allocation		(void);
 extern void temporary_allocation	(void);
 extern void resume_temporary_allocation	(void);
-extern tree get_file_function_name	(int);
 extern void set_identifier_size		(int);
 extern int int_fits_type_p		(tree, tree);
 extern int tree_log2			(tree);
@@ -2240,11 +2237,6 @@ extern HOST_WIDE_INT all_cases_count	(tree, int *);
 extern void check_for_full_enumeration_handling (tree);
 extern void declare_nonlocal_label	(tree);
 
-
-/* If KIND=='I', return a suitable global initializer (constructor) name.
-   If KIND=='D', return a suitable global clean-up (destructor) name.  */
-extern tree get_file_function_name (int);
-
 /* Interface of the DWARF2 unwind info support.  */
 
 /* Decide whether we want to emit frame unwind information for the current

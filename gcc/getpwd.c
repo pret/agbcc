@@ -5,6 +5,10 @@
 
 #if !( defined(_WIN32) && !defined(__CYGWIN__))
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 /* Get the working directory.  Use the PWD environment variable if it's
    set correctly, since this is faster and gives more uniform answers
    to the user.  Yield the working directory if successful; otherwise,
@@ -53,6 +57,8 @@ getpwd ()
 }
 
 #else	/* _WIN32 && !__CYGWIN__ */
+
+#include <direct.h>
 
 char *
 getpwd ()

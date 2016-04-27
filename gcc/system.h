@@ -67,13 +67,6 @@ Boston, MA 02111-1307, USA.  */
 #include <time.h>
 #include <limits.h>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <fcntl.h>
-
 /* Some systems define these in, e.g., param.h.  We undefine these names
    here to avoid the warnings.  We prefer to use our definitions since we
    know they are correct.  */

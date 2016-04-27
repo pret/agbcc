@@ -265,7 +265,6 @@ int (*lang_get_alias_set) (tree);
 #define TYPE_HASH(TYPE) ((unsigned long) (TYPE) & 0777777)
 
 static void set_type_quals (tree, int);
-static void append_random_chars (char *);
 
 extern char *mode_name[];
 
@@ -4766,145 +4765,9 @@ dump_tree_statistics ()
   print_inline_obstack_statistics ();
 }
 
-#define FILE_FUNCTION_PREFIX_LEN 9
-
-#ifndef NO_DOLLAR_IN_LABEL
-#define FILE_FUNCTION_FORMAT "_GLOBAL_$%s$%s"
-#else /* NO_DOLLAR_IN_LABEL */
-#ifndef NO_DOT_IN_LABEL
-#define FILE_FUNCTION_FORMAT "_GLOBAL_.%s.%s"
-#else /* NO_DOT_IN_LABEL */
-#define FILE_FUNCTION_FORMAT "_GLOBAL__%s_%s"
-#endif	/* NO_DOT_IN_LABEL */
-#endif	/* NO_DOLLAR_IN_LABEL */
 
 extern char * first_global_object_name;
 extern char * weak_global_object_name;
-
-/* Appends 6 random characters to TEMPLATE to (hopefully) avoid name
-   clashes in cases where we can't reliably choose a unique name.
-
-   Derived from mkstemp.c in libiberty.  */
-
-static void
-append_random_chars (template)
-     char *template;
-{
-  static const char letters[]
-    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  static HOST_WIDE_UINT value;
-  HOST_WIDE_UINT v;
-
-#ifdef HAVE_GETTIMEOFDAY
-  struct timeval tv;
-#endif
-
-  template += strlen (template);
-
-#ifdef HAVE_GETTIMEOFDAY
-  /* Get some more or less random data.  */
-  gettimeofday (&tv, NULL);
-  value += ((HOST_WIDE_UINT) tv.tv_usec << 16) ^ tv.tv_sec ^ getpid ();
-#else
-  value += getpid ();
-#endif
-
-  v = value;
-
-  /* Fill in the random bits.  */
-  template[0] = letters[v % 62];
-  v /= 62;
-  template[1] = letters[v % 62];
-  v /= 62;
-  template[2] = letters[v % 62];
-  v /= 62;
-  template[3] = letters[v % 62];
-  v /= 62;
-  template[4] = letters[v % 62];
-  v /= 62;
-  template[5] = letters[v % 62];
-
-  template[6] = '\0';
-}
-
-/* Generate a name for a function unique to this translation unit.
-   TYPE is some string to identify the purpose of this function to the
-   linker or collect2.  */
-
-tree
-get_file_function_name_long (type)
-     char *type;
-{
-  char *buf;
-  register char *p;
-
-  if (first_global_object_name)
-    p = first_global_object_name;
-  else
-    {
-      /* We don't have anything that we know to be unique to this translation
-	 unit, so use what we do have and throw in some randomness.  */
-
-      char *name = weak_global_object_name;
-      char *file = main_input_filename;
-
-      if (! name)
-	name = "";
-      if (! file)
-	file = input_filename;
-
-      p = (char *) alloca (7 + strlen (name) + strlen (file));
-
-      sprintf (p, "%s%s", name, file);
-      append_random_chars (p);
-    }
-
-  buf = (char *) alloca (sizeof (FILE_FUNCTION_FORMAT) + strlen (p)
-			 + strlen (type));
-
-  /* Set up the name of the file-level functions we may need.  */
-  /* Use a global object (which is already required to be unique over
-     the program) rather than the file name (which imposes extra
-     constraints).  -- Raeburn@MIT.EDU, 10 Jan 1990.  */
-  sprintf (buf, FILE_FUNCTION_FORMAT, type, p);
-
-  /* Don't need to pull weird characters out of global names.  */
-  if (p != first_global_object_name)
-    {
-      for (p = buf+11; *p; p++)
-	if (! ((*p >= '0' && *p <= '9')
-#if 0 /* we always want labels, which are valid C++ identifiers (+ `$') */
-#ifndef ASM_IDENTIFY_GCC	/* this is required if `.' is invalid -- k. raeburn */
-	       || *p == '.'
-#endif
-#endif
-#ifndef NO_DOLLAR_IN_LABEL	/* this for `$'; unlikely, but... -- kr */
-	       || *p == '$'
-#endif
-#ifndef NO_DOT_IN_LABEL		/* this for `.'; unlikely, but...  */
-	       || *p == '.'
-#endif
-	       || (*p >= 'A' && *p <= 'Z')
-	       || (*p >= 'a' && *p <= 'z')))
-	  *p = '_';
-    }
-
-  return get_identifier (buf);
-}
-
-/* If KIND=='I', return a suitable global initializer (constructor) name.
-   If KIND=='D', return a suitable global clean-up (destructor) name.  */
-
-tree
-get_file_function_name (kind)
-     int kind;
-{
-  char p[2];
-  p[0] = kind;
-  p[1] = 0;
-
-  return get_file_function_name_long (p);
-}
 
 
 /* Expand (the constant part of) a SET_TYPE CONSTRUCTOR node.
