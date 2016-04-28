@@ -4764,12 +4764,7 @@ dump_tree_statistics ()
   print_obstack_statistics ("temp_decl_obstack", &temp_decl_obstack);
   print_inline_obstack_statistics ();
 }
-
 
-extern char * first_global_object_name;
-extern char * weak_global_object_name;
-
-
 /* Expand (the constant part of) a SET_TYPE CONSTRUCTOR node.
    The result is placed in BUFFER (which has length BIT_SIZE),
    with one bit in each char ('\000' or '\001').

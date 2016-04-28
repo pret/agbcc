@@ -78,10 +78,6 @@ Boston, MA 02111-1307, USA.  */
 
 extern FILE *asm_out_file;
 
-/* The (assembler) name of the first globally-visible object output.  */
-char *first_global_object_name;
-char *weak_global_object_name;
-
 extern struct obstack *current_obstack;
 extern struct obstack *saveable_obstack;
 extern struct obstack *rtl_obstack;
@@ -876,21 +872,6 @@ assemble_start_function (decl, fnname)
 
   if (TREE_PUBLIC (decl))
     {
-      if (! first_global_object_name)
-	{
-	  char *p;
-	  char **name;
-
-	  if (! DECL_WEAK (decl) && ! DECL_ONE_ONLY (decl))
-	    name = &first_global_object_name;
-	  else
-	    name = &weak_global_object_name;
-
-	  STRIP_NAME_ENCODING (p, fnname);
-	  *name = permalloc (strlen (p) + 1);
-	  strcpy (*name, p);
-	}
-
 #ifdef ASM_WEAKEN_LABEL
       if (DECL_WEAK (decl))
 	ASM_WEAKEN_LABEL (asm_out_file, fnname);
@@ -1209,20 +1190,6 @@ assemble_variable (decl, top_level, at_end, dont_output_data)
     }
 
   name = XSTR (XEXP (DECL_RTL (decl), 0), 0);
-
-  if (TREE_PUBLIC (decl) && DECL_NAME (decl)
-      && ! first_global_object_name
-      && ! (DECL_COMMON (decl) && (DECL_INITIAL (decl) == 0
-				   || DECL_INITIAL (decl) == error_mark_node))
-      && ! DECL_WEAK (decl)
-      && ! DECL_ONE_ONLY (decl))
-    {
-      char *p;
-
-      STRIP_NAME_ENCODING (p, name);
-      first_global_object_name = permalloc (strlen (p) + 1);
-      strcpy (first_global_object_name, p);
-    }
 
   /* Compute the alignment of this data.  */
 
