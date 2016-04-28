@@ -678,9 +678,7 @@ gen_lowpart_common (mode, x)
 	       /* We want to keep the stack, frame, and arg pointers
 		  special.  */
 	       && x != frame_pointer_rtx
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	       && x != arg_pointer_rtx
-#endif
 	       && x != stack_pointer_rtx)
 	return gen_rtx_REG (mode, REGNO (x) + word);
       else
@@ -987,9 +985,7 @@ gen_highpart (mode, x)
 	      || ! rtx_equal_function_value_matters)
 	  /* We want to keep the stack, frame, and arg pointers special.  */
 	  && x != frame_pointer_rtx
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	  && x != arg_pointer_rtx
-#endif
 	  && x != stack_pointer_rtx)
 	return gen_rtx_REG (mode, REGNO (x) + word);
       else
@@ -1078,9 +1074,7 @@ operand_subword (op, i, validate_address, mode)
 	       /* We want to keep the stack, frame, and arg pointers
 		  special.  */
 	       || op == frame_pointer_rtx
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	       || op == arg_pointer_rtx
-#endif
 	       || op == stack_pointer_rtx)
 	return gen_rtx_SUBREG (word_mode, op, i);
       else

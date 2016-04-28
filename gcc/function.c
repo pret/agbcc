@@ -89,9 +89,7 @@ Boston, MA 02111-1307, USA.  */
    FIRST_PARM_OFFSET - STARTING_FRAME_OFFSET is not a constant during rtl
    generation.  See fix_lexical_addr for details.  */
 
-#if ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
 #define NEED_SEPARATE_AP
-#endif
 
 /* Number of bytes of args popped by function being compiled on its return.
    Zero if no bytes are to be popped.
@@ -3794,16 +3792,12 @@ assign_parms (fndecl, second_time)
   current_function_stdarg = stdarg;
 
   /* If the reg that the virtual arg pointer will be translated into is
-     not a fixed reg or is the stack pointer, make a copy of the virtual
-     arg pointer, and address parms via the copy.  The frame pointer is
-     considered fixed even though it is not marked as such.
+     not a fixed reg, make a copy of the virtual arg pointer, and address parms
+     via the copy.
 
      The second time through, simply use ap to avoid generating rtx.  */
 
-  if ((ARG_POINTER_REGNUM == STACK_POINTER_REGNUM
-       || ! (fixed_regs[ARG_POINTER_REGNUM]
-	     || ARG_POINTER_REGNUM == FRAME_POINTER_REGNUM))
-      && ! second_time)
+  if (!fixed_regs[ARG_POINTER_REGNUM] && !second_time)
     internal_arg_pointer = copy_to_reg (virtual_incoming_args_rtx);
   else
     internal_arg_pointer = virtual_incoming_args_rtx;

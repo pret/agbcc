@@ -1218,22 +1218,6 @@ copy_for_inline (orig)
       }
       break;
 
-#if 0 /* This is a good idea, but here is the wrong place for it.  */
-      /* Arrange that CONST_INTs always appear as the second operand
-	 if they appear, and that `frame_pointer_rtx' or `arg_pointer_rtx'
-	 always appear as the first.  */
-    case PLUS:
-      if (GET_CODE (XEXP (x, 0)) == CONST_INT
-	  || (XEXP (x, 1) == frame_pointer_rtx
-	      || (ARG_POINTER_REGNUM != FRAME_POINTER_REGNUM
-		  && XEXP (x, 1) == arg_pointer_rtx)))
-	{
-	  rtx t = XEXP (x, 0);
-	  XEXP (x, 0) = XEXP (x, 1);
-	  XEXP (x, 1) = t;
-	}
-      break;
-#endif
     default:
       break;
     }

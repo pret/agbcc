@@ -816,9 +816,7 @@ refers_to_regno_p (regno, endregno, x, loc)
 	 clobber a virtual register.  In fact, we could be more precise,
 	 but it isn't worth it.  */
       if ((i == STACK_POINTER_REGNUM
-#if FRAME_POINTER_REGNUM != ARG_POINTER_REGNUM
 	   || i == ARG_POINTER_REGNUM
-#endif
 	   || i == FRAME_POINTER_REGNUM)
 	  && regno >= FIRST_VIRTUAL_REGISTER && regno <= LAST_VIRTUAL_REGISTER)
 	return 1;
