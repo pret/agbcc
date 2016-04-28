@@ -414,20 +414,6 @@ static unsigned reg_number		(rtx);
 
 #endif /* UNALIGNED_INT_ASM_OP */
 
-#ifdef SET_ASM_OP
-#ifndef ASM_OUTPUT_DEFINE_LABEL_DIFFERENCE_SYMBOL
-#define ASM_OUTPUT_DEFINE_LABEL_DIFFERENCE_SYMBOL(FILE, SY, HI, LO)    	\
- do {									\
-  fprintf (FILE, "\t%s\t", SET_ASM_OP);					\
-  assemble_name (FILE, SY);						\
-  fputc (',', FILE);							\
-  assemble_name (FILE, HI);						\
-  fputc ('-', FILE);							\
-  assemble_name (FILE, LO);						\
- } while (0)
-#endif
-#endif /* SET_ASM_OP */
-
 /* This is similar to the default ASM_OUTPUT_ASCII, except that no trailing
    newline is produced.  When flag_debug_asm is asserted, we add commentary
    at the end of the line, so we must avoid output of a newline here.  */
