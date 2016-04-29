@@ -39,7 +39,6 @@ Boston, MA 02111-1307, USA.  */
 #define TARGET_VERSION  fputs (" (ARM/THUMB:generic)", stderr);
 
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
-#define THUMB_FLAG_CALLER_SUPER_INTERWORKING	0x80000 
 
 /* Nonzero if all call instructions should be indirect.  */
 #define ARM_FLAG_LONG_CALLS	(0x10000) /* same as in arm.h */
@@ -49,11 +48,6 @@ Boston, MA 02111-1307, USA.  */
 extern int target_flags;
 #define TARGET_DEFAULT          0 /* ARM_FLAG_THUMB */
 #define TARGET_THUMB_INTERWORK	(target_flags & ARM_FLAG_THUMB)
-
-/* Set if calls via function pointers should assume that their
-   destination is non-Thumb aware.  */
-#define TARGET_CALLER_INTERWORKING	\
-     (target_flags & THUMB_FLAG_CALLER_SUPER_INTERWORKING)
 
 #define TARGET_LONG_CALLS		(target_flags & ARM_FLAG_LONG_CALLS)
 
@@ -66,8 +60,6 @@ extern int target_flags;
 {                                                       	\
   {"thumb-interwork",		    ARM_FLAG_THUMB},		\
   {"no-thumb-interwork",           -ARM_FLAG_THUMB},		\
-  {"caller-super-interworking",	    THUMB_FLAG_CALLER_SUPER_INTERWORKING}, \
-  {"no-caller-super-interworking", -THUMB_FLAG_CALLER_SUPER_INTERWORKING}, \
   {"long-calls",		ARM_FLAG_LONG_CALLS,		\
    "Generate all call instructions as indirect calls"},		\
   {"no-long-calls",	       -ARM_FLAG_LONG_CALLS, ""},	\
