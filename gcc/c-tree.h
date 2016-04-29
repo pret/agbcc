@@ -167,8 +167,6 @@ extern void gen_aux_info_record                 (tree, int, int, int);
 /* in c-common.c */
 extern void declare_function_name               (void);
 extern void decl_attributes                     (tree, tree, tree);
-extern void init_function_format_info		(void);
-extern void check_function_format		(tree, tree, tree);
 extern int c_get_alias_set                      (tree);
 extern void c_apply_type_quals_to_decl          (int, tree);
 /* Print an error message for invalid operands to arith operation CODE.
@@ -477,10 +475,6 @@ extern int warn_missing_noreturn;
 /* Warn about traditional constructs whose meanings changed in ANSI C.  */
 
 extern int warn_traditional;
-
-/* Warn about *printf or *scanf format/argument anomalies. */
-
-extern int warn_format;
 
 /* Warn about a subscript that has type char.  */
 

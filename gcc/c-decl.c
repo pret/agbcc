@@ -543,10 +543,6 @@ int warn_redundant_decls = 0;
 
 int warn_nested_externs = 0;
 
-/* Warn about *printf or *scanf format/argument anomalies.  */
-
-int warn_format;
-
 /* Warn about a subscript that has type char.  */
 
 int warn_char_subscripts = 0;
@@ -761,10 +757,6 @@ c_decode_option (p)
     warn_traditional = 1;
   else if (!strcmp (p, "-Wno-traditional"))
     warn_traditional = 0;
-  else if (!strcmp (p, "-Wformat"))
-    warn_format = 1;
-  else if (!strcmp (p, "-Wno-format"))
-    warn_format = 0;
   else if (!strcmp (p, "-Wchar-subscripts"))
     warn_char_subscripts = 1;
   else if (!strcmp (p, "-Wno-char-subscripts"))
@@ -805,7 +797,6 @@ c_decode_option (p)
       warn_return_type = 1;
       warn_unused = 1;
       warn_switch = 1;
-      warn_format = 1;
       warn_char_subscripts = 1;
       warn_parentheses = 1;
       warn_missing_braces = 1;
@@ -3484,9 +3475,6 @@ init_decl_processing ()
   declare_function_name ();
 
   start_identifier_warnings ();
-
-  /* Prepare to check format strings against argument lists.  */
-  init_function_format_info ();
 
   init_iterators ();
 
