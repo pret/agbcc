@@ -38,7 +38,6 @@ Boston, MA 02111-1307, USA.  */
 #include "output.h"
 #include "hard-reg-set.h"
 #include "regs.h"
-#include "defaults.h"
 #include "real.h"
 #include "toplev.h"
 #include "obstack.h"
@@ -3983,7 +3982,7 @@ declare_weak (decl)
     error_with_decl (decl, "weak declaration of `%s' must be public");
   else if (TREE_ASM_WRITTEN (decl))
     error_with_decl (decl, "weak declaration of `%s' must precede definition");
-  else if (SUPPORTS_WEAK)
+  else
     DECL_WEAK (decl) = 1;
 }
 

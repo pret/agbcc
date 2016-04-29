@@ -38,7 +38,6 @@
 #include "recog.h"
 #include "output.h"
 #include "typeclass.h"
-#include "defaults.h"
 #include "toplev.h"
 
 #define CEIL(x,y) (((x) + (y) - 1) / (y))

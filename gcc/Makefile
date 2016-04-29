@@ -164,7 +164,7 @@ fold-const.o : fold-const.c $(CONFIG_H) system.h $(TREE_H) flags.h toplev.h \
   $(RTL_H)
 
 toplev.o : toplev.c $(CONFIG_H) system.h $(TREE_H) $(RTL_H) \
-   flags.h input.h insn-attr.h defaults.h output.h \
+   flags.h input.h insn-attr.h output.h \
    insn-codes.h insn-config.h $(RECOG_H) Makefile toplev.h \
    dwarf2out.h $(EXPR_H)
 
@@ -174,7 +174,7 @@ print-rtl.o : print-rtl.c $(CONFIG_H) system.h $(RTL_H) bitmap.h
 rtlanal.o : rtlanal.c $(CONFIG_H) system.h $(RTL_H)
 
 varasm.o : varasm.c $(CONFIG_H) system.h $(TREE_H) $(RTL_H) flags.h \
-   function.h defaults.h $(EXPR_H) hard-reg-set.h $(REGS_H) \
+   function.h $(EXPR_H) hard-reg-set.h $(REGS_H) \
    output.h toplev.h except.h
 function.o : function.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h \
    function.h insn-flags.h insn-codes.h $(EXPR_H) $(REGS_H) hard-reg-set.h \
@@ -197,7 +197,7 @@ explow.o : explow.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h \
 optabs.o : optabs.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h  \
    insn-flags.h insn-config.h insn-codes.h $(EXPR_H) $(RECOG_H) reload.h
 dwarf2out.o : dwarf2out.c $(CONFIG_H) system.h $(TREE_H) $(RTL_H) dwarf2.h \
-   flags.h insn-config.h reload.h output.h defaults.h \
+   flags.h insn-config.h reload.h output.h \
    hard-reg-set.h $(REGS_H) $(EXPR_H) toplev.h dwarf2out.h dyn-string.h
 emit-rtl.o : emit-rtl.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h \
    except.h function.h $(REGS_H) insn-config.h $(RECOG_H) real.h \
@@ -261,7 +261,7 @@ regmove.o : regmove.c $(CONFIG_H) system.h $(RTL_H) insn-config.h \
    $(EXPR_H) insn-flags.h $(BASIC_BLOCK_H) toplev.h
 final.o : final.c $(CONFIG_H) system.h $(RTL_H) $(TREE_H) flags.h $(REGS_H) \
    $(RECOG_H) conditions.h insn-config.h insn-attr.h except.h real.h output.h \
-   hard-reg-set.h insn-flags.h insn-codes.h defaults.h \
+   hard-reg-set.h insn-flags.h insn-codes.h \
    toplev.h reload.h dwarf2out.h
 recog.o : recog.c $(CONFIG_H) system.h $(RTL_H)  \
    $(REGS_H) $(RECOG_H) hard-reg-set.h flags.h insn-config.h insn-attr.h \

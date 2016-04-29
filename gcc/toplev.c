@@ -36,7 +36,6 @@
 #include "insn-codes.h"
 #include "insn-config.h"
 #include "recog.h"
-#include "defaults.h"
 #include "output.h"
 #include "except.h"
 #include "toplev.h"

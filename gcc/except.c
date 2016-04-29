@@ -389,7 +389,6 @@ Boston, MA 02111-1307, USA.  */
 
 
 #include "config.h"
-#include "defaults.h"
 #include "eh-common.h"
 #include "system.h"
 #include "rtl.h"
