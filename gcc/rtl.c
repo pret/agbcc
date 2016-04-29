@@ -781,6 +781,10 @@ FILE *infile;
         break;
 
         case 'w':
+            read_name(tmp_char, infile);
+            sscanf(tmp_char, HOST_WIDE_INT_SCAN_DEC, &tmp_wide);
+            XWINT(return_rtx, i) = tmp_wide;
+            break;
         case 'i':
         case 'n':
             read_name(tmp_char, infile);

@@ -31,8 +31,7 @@ Boston, MA 02111-1307, USA.  */
 #define HOST_WIDE_INT int32_t
 #define HOST_WIDE_UINT uint32_t
 
-/* Provide defaults for the way to print a HOST_WIDE_INT
-   in various manners.  */
+/* Provide HOST_WIDE_INT format specs.  */
 
 #define HOST_WIDE_INT_PRINT_DEC "%" PRId32
 
@@ -41,6 +40,8 @@ Boston, MA 02111-1307, USA.  */
 #define HOST_WIDE_INT_PRINT_HEX "0x%" PRIx32
 
 #define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%" PRIx32 "%08" PRIx32
+
+#define HOST_WIDE_INT_SCAN_DEC "%" SCNd32
 
 /* Make an enum class that gives all the machine modes.  */
 
