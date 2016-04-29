@@ -23,7 +23,6 @@ Boston, MA 02111-1307, USA.  */
 #define OBJECT_FORMAT_ELF
 
 #include "thumb.h"
-#include "tree.h"
 
 /* Run-time Target Specification.  */
 #undef TARGET_VERSION
