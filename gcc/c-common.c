@@ -45,7 +45,7 @@ int skip_evaluation;
 
 enum attrs {A_PACKED, A_NOCOMMON, A_COMMON, A_NORETURN, A_CONST, A_T_UNION,
 	    A_NO_CHECK_MEMORY_USAGE, A_NO_INSTRUMENT_FUNCTION,
-	    A_CONSTRUCTOR, A_DESTRUCTOR, A_MODE, A_SECTION, A_ALIGNED,
+	    A_MODE, A_SECTION, A_ALIGNED,
 	    A_UNUSED, A_WEAK, A_ALIAS};
 
 static void declare_hidden_char_array	(char *, char *);
