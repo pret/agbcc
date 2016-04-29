@@ -38,14 +38,14 @@ PRINT_SRCS = print-rtl.c
 PRINT_OBJS = print-rtl.o
 
 SRCS = toplev.c version.c tree.c print-tree.c stor-layout.c fold-const.c \
- function.c stmt.c except.c expr.c calls.c expmed.c explow.c optabs.c \
- varasm.c emit-rtl.c genrtl.c real.c regmove.c dwarf2out.c alias.c integrate.c \
- jump.c cse.c loop.c unroll.c flow.c stupid.c combine.c varray.c regclass.c \
- local-alloc.c global.c reload.c reload1.c caller-save.c gcse.c insn-peep.c \
- final.c recog.c insn-opinit.c insn-recog.c insn-extract.c insn-output.c \
- insn-emit.c lcm.c insn-attrtab.c thumb.c getpwd.c convert.c dyn-string.c \
- splay-tree.c graph.c sbitmap.c resource.c c-parse.c c-lex.c c-decl.c \
- c-typeck.c c-convert.c c-aux-info.c c-common.c c-iterate.c
+function.c stmt.c except.c expr.c calls.c expmed.c explow.c optabs.c \
+varasm.c emit-rtl.c genrtl.c real.c regmove.c dwarf2out.c alias.c integrate.c \
+jump.c cse.c loop.c unroll.c flow.c stupid.c combine.c varray.c regclass.c \
+local-alloc.c global.c reload.c reload1.c caller-save.c gcse.c insn-peep.c \
+final.c recog.c insn-opinit.c insn-recog.c insn-extract.c insn-output.c \
+insn-emit.c lcm.c insn-attrtab.c thumb.c getpwd.c convert.c dyn-string.c \
+splay-tree.c graph.c sbitmap.c resource.c c-parse.c c-lex.c c-decl.c \
+c-typeck.c c-convert.c c-aux-info.c c-common.c c-iterate.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -82,7 +82,17 @@ $(DEPDIR)/%.d: ;
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
 GEN = genemit genoutput genrecog genextract genflags gencodes genconfig \
- genpeep gengenrtl gencheck genattr
+genpeep gengenrtl gencheck genattr genattrtab genopinit
+
+.PHONY: clean
+
+clean:
+	$(RM) agbcc agbcc.exe $(OBJS) $(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS)
+	$(RM) $(GENERATED)
+	$(RM) $(GEN) $(addsuffix .exe,$(GEN)) $(addsuffix .o,$(GEN))
+	$(RM) s-config s-flags s-codes s-emit s-recog s-opinit s-extract s-peep \
+s-attr s-attrtab s-output s-genrtl s-check
+	$(RM) -r $(DEPDIR)
 
 # The files that "belong" in CONFIG_H are deliberately omitted
 # because having them there would not be useful in actual practice.
@@ -99,11 +109,6 @@ BASIC_BLOCK_H = basic-block.h bitmap.h sbitmap.h
 RECOG_H = recog.h
 EXPR_H = expr.h insn-codes.h
 REGS_H = regs.h varray.h machmode.h machmode.def
-
-.PHONY: clean
-
-clean:
-	$(RM) $(GEN) $(OBJS)
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<
