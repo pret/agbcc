@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-CFLAGS = -g -std=gnu11 -Wunused-function
+CFLAGS = -g -std=gnu11 -Wunused-function -m32
 
 INCLUDES = -I. -I$(srcdir)
 
