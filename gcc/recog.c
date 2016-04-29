@@ -548,6 +548,12 @@ validate_replace_rtx_1 (loc, from, to, object)
 	  enum machine_mode is_mode = GET_MODE (to);
 	  int pos = INTVAL (XEXP (x, 2));
 
+      if (code == ZERO_EXTRACT)
+	    {
+	      wanted_mode = insn_operand_mode[(int) CODE_FOR_extzv][1];
+	      if (wanted_mode == VOIDmode)
+		wanted_mode = word_mode;
+	    }
 
 	  /* If we have a narrower mode, we can do something.  */
 	  if (wanted_mode != VOIDmode

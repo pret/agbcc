@@ -7042,6 +7042,10 @@ finish_function (nested)
       setjmp_protect_args ();
     }
 
+    if (!strcmp(IDENTIFIER_POINTER(DECL_NAME(fndecl)), "main")
+        && TYPE_MAIN_VARIANT(TREE_TYPE(TREE_TYPE(fndecl))) != integer_type_node)
+    pedwarn_with_decl(fndecl, "return type of `%s' is not `int'");
+
   /* Generate rtl for function exit.  */
   expand_function_end (input_filename, lineno, 0);
 

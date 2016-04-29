@@ -754,8 +754,12 @@ extract_bit_field (str_rtx, bitsize, bitnum, unsignedp,
   register rtx op0 = str_rtx;
   rtx spec_target = target;
   rtx spec_target_subreg = 0;
+  int extzv_bitsize;
 
-
+    if (insn_operand_mode[(int)CODE_FOR_extzv][0] == VOIDmode)
+        extzv_bitsize = GET_MODE_BITSIZE(word_mode);
+    else
+        extzv_bitsize = GET_MODE_BITSIZE(insn_operand_mode[(int)CODE_FOR_extzv][0]);
 
   /* Discount the part of the structure before the desired byte.
      We need to know how many bytes are safe to reference after it.  */
@@ -946,6 +950,130 @@ extract_bit_field (str_rtx, bitsize, bitnum, unsignedp,
          machine with word length more 32 bits. */
       enum machine_mode itmode = int_mode_for_mode (tmode);
 
+        if ((extzv_bitsize >= bitsize)
+            && !((GET_CODE(op0) == REG || GET_CODE(op0) == SUBREG)
+                 && (bitsize + bitpos > extzv_bitsize)))
+	{
+	  int xbitpos = bitpos, xoffset = offset;
+	  rtx bitsize_rtx, bitpos_rtx;
+	  rtx last = get_last_insn ();
+	  rtx xop0 = op0;
+	  rtx xtarget = target;
+	  rtx xspec_target = spec_target;
+	  rtx xspec_target_subreg = spec_target_subreg;
+	  rtx pat;
+	  enum machine_mode maxmode;
+
+	  maxmode = insn_operand_mode[(int) CODE_FOR_extzv][0];
+	  if (maxmode == VOIDmode)
+	    maxmode = word_mode;
+
+	  if (GET_CODE (xop0) == MEM)
+	    {
+	      int save_volatile_ok = volatile_ok;
+	      volatile_ok = 1;
+
+	      /* Is the memory operand acceptable?  */
+	      if (! ((*insn_operand_predicate[(int) CODE_FOR_extzv][1])
+		     (xop0, GET_MODE (xop0))))
+		{
+		  /* No, load into a reg and extract from there.  */
+		  enum machine_mode bestmode;
+
+		  /* Get the mode to use for inserting into this field.  If
+		     OP0 is BLKmode, get the smallest mode consistent with the
+		     alignment. If OP0 is a non-BLKmode object that is no
+		     wider than MAXMODE, use its mode. Otherwise, use the
+		     smallest mode containing the field.  */
+
+		  if (GET_MODE (xop0) == BLKmode
+		      || (GET_MODE_SIZE (GET_MODE (op0))
+			  > GET_MODE_SIZE (maxmode)))
+		    bestmode = get_best_mode (bitsize, bitnum,
+					      align * BITS_PER_UNIT, maxmode,
+					      MEM_VOLATILE_P (xop0));
+		  else
+		    bestmode = GET_MODE (xop0);
+
+		  if (bestmode == VOIDmode
+		      || (SLOW_UNALIGNED_ACCESS && GET_MODE_SIZE (bestmode) > align))
+		    goto extzv_loses;
+
+		  /* Compute offset as multiple of this unit,
+		     counting in bytes.  */
+		  unit = GET_MODE_BITSIZE (bestmode);
+		  xoffset = (bitnum / unit) * GET_MODE_SIZE (bestmode);
+		  xbitpos = bitnum % unit;
+		  xop0 = change_address (xop0, bestmode,
+					 plus_constant (XEXP (xop0, 0),
+							xoffset));
+		  /* Fetch it to a register in that size.  */
+		  xop0 = force_reg (bestmode, xop0);
+
+		  /* XBITPOS counts within UNIT, which is what is expected.  */
+		}
+	      else
+		/* Get ref to first byte containing part of the field.  */
+		xop0 = change_address (xop0, byte_mode,
+				       plus_constant (XEXP (xop0, 0), xoffset));
+
+	      volatile_ok = save_volatile_ok;
+	    }
+
+	  /* If op0 is a register, we need it in MAXMODE (which is usually
+	     SImode). to make it acceptable to the format of extzv.  */
+	  if (GET_CODE (xop0) == SUBREG && GET_MODE (xop0) != maxmode)
+	    goto extzv_loses;
+	  if (GET_CODE (xop0) == REG && GET_MODE (xop0) != maxmode)
+	    xop0 = gen_rtx_SUBREG (maxmode, xop0, 0);
+
+	  unit = GET_MODE_BITSIZE (maxmode);
+
+	  if (xtarget == 0
+	      || (flag_force_mem && GET_CODE (xtarget) == MEM))
+	    xtarget = xspec_target = gen_reg_rtx (itmode);
+
+	  if (GET_MODE (xtarget) != maxmode)
+	    {
+	      if (GET_CODE (xtarget) == REG)
+		{
+		  int wider = (GET_MODE_SIZE (maxmode)
+			       > GET_MODE_SIZE (GET_MODE (xtarget)));
+		  xtarget = gen_lowpart (maxmode, xtarget);
+		  if (wider)
+		    xspec_target_subreg = xtarget;
+		}
+	      else
+		xtarget = gen_reg_rtx (maxmode);
+	    }
+
+	  /* If this machine's extzv insists on a register target,
+	     make sure we have one.  */
+	  if (! ((*insn_operand_predicate[(int) CODE_FOR_extzv][0])
+		 (xtarget, maxmode)))
+	    xtarget = gen_reg_rtx (maxmode);
+
+	  bitsize_rtx = GEN_INT (bitsize);
+	  bitpos_rtx = GEN_INT (xbitpos);
+
+	  pat = gen_extzv (protect_from_queue (xtarget, 1),
+			   xop0, bitsize_rtx, bitpos_rtx);
+	  if (pat)
+	    {
+	      emit_insn (pat);
+	      target = xtarget;
+	      spec_target = xspec_target;
+	      spec_target_subreg = xspec_target_subreg;
+	    }
+	  else
+	    {
+	      delete_insns_since (last);
+	      target = extract_fixed_bit_field (itmode,	op0, offset, bitsize,
+						bitpos, target, 1, align);
+	    }
+	}
+      else
+        extzv_loses:
 	target = extract_fixed_bit_field (itmode, op0, offset, bitsize, bitpos,
 					  target, 1, align);
     }

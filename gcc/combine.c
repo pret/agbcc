@@ -5666,10 +5666,16 @@ make_extraction (mode, inner, pos, pos_rtx, len,
 	  || (pos_rtx != 0 && len != 1)))
     return 0;
 
-  /* Get the mode to use should INNER not be a MEM, the mode for the position,
-     and the mode for the result.  */
+    /* Get the mode to use should INNER not be a MEM, the mode for the position,
+       and the mode for the result.  */
+    if (!in_dest && unsignedp)
+    {
+        const enum machine_mode *extzv_mode = insn_operand_mode[(int)CODE_FOR_extzv];
 
-
+        wanted_inner_reg_mode = (extzv_mode[1] == VOIDmode) ? word_mode : extzv_mode[1];
+        pos_mode = (extzv_mode[3] == VOIDmode) ? word_mode : extzv_mode[3];
+        extraction_mode = (extzv_mode[0] == VOIDmode) ? word_mode : extzv_mode[0];
+    }
 
   /* Never narrow an object, since that might not be safe.  */
 
