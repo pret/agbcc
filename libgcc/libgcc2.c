@@ -28,11 +28,6 @@ Boston, MA 02111-1307, USA.  */
 
 #include <stddef.h>
 
-/* Don't use `fancy_abort' here even if config.h says to use it.  */
-#ifdef abort
-#undef abort
-#endif
-
 /* In the first part of this file, we are interfacing to calls generated
    by the compiler itself.  These calls pass values into these routines
    which have very specific modes (rather than very specific types), and
@@ -393,41 +388,6 @@ __udivmoddi4 (UDItype n, UDItype d, UDItype *rp)
   n0 = nn.s.low;
   n1 = nn.s.high;
 
-#if !UDIV_NEEDS_NORMALIZATION
-  if (d1 == 0)
-    {
-      if (d0 > n1)
-	{
-	  /* 0q = nn / 0D */
-
-	  udiv_qrnnd (q0, n0, n1, n0, d0);
-	  q1 = 0;
-
-	  /* Remainder in n0.  */
-	}
-      else
-	{
-	  /* qq = NN / 0d */
-
-	  if (d0 == 0)
-	    d0 = 1 / d0;	/* Divide intentionally by zero.  */
-
-	  udiv_qrnnd (q1, n1, 0, n1, d0);
-	  udiv_qrnnd (q0, n0, n1, n0, d0);
-
-	  /* Remainder in n0.  */
-	}
-
-      if (rp != 0)
-	{
-	  rr.s.low = n0;
-	  rr.s.high = 0;
-	  *rp = rr.ll;
-	}
-    }
-
-#else /* UDIV_NEEDS_NORMALIZATION */
-
   if (d1 == 0)
     {
       if (d0 > n1)
@@ -500,7 +460,6 @@ __udivmoddi4 (UDItype n, UDItype d, UDItype *rp)
 	  *rp = rr.ll;
 	}
     }
-#endif /* UDIV_NEEDS_NORMALIZATION */
 
   else
     {
@@ -822,33 +781,9 @@ __floatdidf (DItype u)
 #define HIGH_WORD_COEFF (((UDItype) 1) << WORD_SIZE)
 #define DI_SIZE (sizeof (DItype) * 8)
 
-/* Define codes for all the float formats that we know of.  Note
-   that this is copied from real.h.  */
-   
-#define UNKNOWN_FLOAT_FORMAT 0
-#define IEEE_FLOAT_FORMAT 1
-#define VAX_FLOAT_FORMAT 2
-#define IBM_FLOAT_FORMAT 3
-
-/* Default to IEEE float if not specified.  Nearly all machines use it.  */
-#ifndef HOST_FLOAT_FORMAT
-#define	HOST_FLOAT_FORMAT	IEEE_FLOAT_FORMAT
-#endif
-
-#if HOST_FLOAT_FORMAT == IEEE_FLOAT_FORMAT
+/* IEEE format */
 #define DF_SIZE 53
 #define SF_SIZE 24
-#endif
-
-#if HOST_FLOAT_FORMAT == IBM_FLOAT_FORMAT
-#define DF_SIZE 56
-#define SF_SIZE 24
-#endif
-
-#if HOST_FLOAT_FORMAT == VAX_FLOAT_FORMAT
-#define DF_SIZE 56
-#define SF_SIZE 24
-#endif
 
 SFtype
 __floatdisf (DItype u)

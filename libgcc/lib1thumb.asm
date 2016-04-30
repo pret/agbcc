@@ -35,15 +35,8 @@ Boston, MA 02111-1307, USA.  */
 
 	.code	 16
 
-#ifdef __elf__
-#define __PLT__ (PLT)
 #define TYPE(x) .type SYM(x),function
 #define SIZE(x) .size SYM(x), . - SYM(x)
-#else
-#define __PLT__
-#define TYPE(x)
-#define SIZE(x)
-#endif
 
 #define RET	mov	pc, lr
 
@@ -57,15 +50,11 @@ dividend	.req	r0
 divisor		.req	r1
 result		.req	r2
 curbit		.req	r3
-ip		.req	r12
-sp		.req	r13
-lr		.req	r14
-pc		.req	r15
 	
 	.text
 	.globl	SYM (__udivsi3)
 	TYPE 	(__udivsi3)
-	.align	0
+	.align	2, 0
 	.thumb_func
 SYM (__udivsi3):
 	cmp	divisor, #0
@@ -151,7 +140,7 @@ Lgot_result:
 
 Ldiv0:
 	push	{ lr }
-	bl	SYM (__div0) __PLT__
+	bl	SYM (__div0)
 	mov	r0, #0			@ about as wrong as it could be
 	pop	{ pc }
 
@@ -165,15 +154,11 @@ dividend	.req	r0
 divisor		.req	r1
 overdone	.req	r2
 curbit		.req	r3
-ip		.req	r12
-sp		.req	r13
-lr		.req	r14
-pc		.req	r15
 	
 	.text
 	.globl	SYM (__umodsi3)
 	TYPE	(__umodsi3)
-	.align	0
+	.align	2, 0
 	.thumb_func
 SYM (__umodsi3):
 	cmp	divisor, #0
@@ -306,7 +291,7 @@ Over10:
 
 Ldiv0:
 	push	{ lr }
-	bl	SYM (__div0) __PLT__
+	bl	SYM (__div0)
 	mov	r0, #0			@ about as wrong as it could be
 	pop	{ pc }
 
@@ -320,15 +305,11 @@ dividend	.req	r0
 divisor		.req	r1
 result		.req	r2
 curbit		.req	r3
-ip		.req	r12
-sp		.req	r13
-lr		.req	r14
-pc		.req	r15
 	
 	.text
 	.globl	SYM (__divsi3)
 	TYPE	(__divsi3)
-	.align	0
+	.align	2, 0
 	.thumb_func
 SYM (__divsi3):
 	cmp	divisor, #0
@@ -429,7 +410,7 @@ Over7:
 
 Ldiv0:
 	push	{ lr }
-	bl	SYM (__div0) __PLT__
+	bl	SYM (__div0)
 	mov	r0, #0			@ about as wrong as it could be
 	pop	{ pc }
 
@@ -443,15 +424,11 @@ dividend	.req	r0
 divisor		.req	r1
 overdone	.req	r2
 curbit		.req	r3
-ip		.req	r12
-sp		.req	r13
-lr		.req	r14
-pc		.req	r15
 	
 	.text
 	.globl	SYM (__modsi3)
 	TYPE	(__modsi3)
-	.align	0
+	.align	2, 0
 	.thumb_func
 SYM (__modsi3):
 	mov	curbit, #1
@@ -593,7 +570,7 @@ Over10:
 
 Ldiv0:
 	push    { lr }
-	bl	SYM (__div0) __PLT__
+	bl	SYM (__div0)
 	mov	r0, #0			@ about as wrong as it could be
 	pop	{ pc }
 	
@@ -605,7 +582,7 @@ Ldiv0:
 
 	.globl	SYM (__div0)
 	TYPE	(__div0)
-	.align	0
+	.align	2, 0
 	.thumb_func
 SYM (__div0):
 	RET	
@@ -624,7 +601,7 @@ SYM (__div0):
    code here switches to the correct mode before executing the function.  */
 	
 	.text
-	.align 0
+	.align 2, 0
 
 .macro call_via register
 	.globl	SYM (_call_via_\register)
