@@ -1512,6 +1512,7 @@ arm_valid_machine_decl_attribute(tree decl, tree attributes, tree attr, tree arg
 int
 s_register_operand(rtx op, enum machine_mode mode)
 {
+#ifndef OLD_COMPILER
     if (GET_MODE(op) != mode && mode != VOIDmode)
         return 0;
 
@@ -1524,4 +1525,7 @@ s_register_operand(rtx op, enum machine_mode mode)
     return (GET_CODE(op) == REG
             && (REGNO(op) >= FIRST_PSEUDO_REGISTER
                 || REGNO_REG_CLASS(REGNO(op)) != NO_REGS));
+#else
+    return register_operand(op, mode);
+#endif
 }

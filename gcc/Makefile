@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-CFLAGS = -g -std=gnu11 -Wunused-function -m32
+BASE_CFLAGS = -g -std=gnu11 -Wunused-function -m32
 
 INCLUDES = -I. -I$(srcdir)
 
@@ -55,8 +55,17 @@ GENERATED = genrtl.c genrtl.h \
  tree-check.h \
  insn-config.h insn-flags.h insn-codes.h insn-attr.h
 
-agbcc: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
+.PHONY: normal old clean
+
+# The usual compiler.
+normal: CFLAGS = $(BASE_CFLAGS)
+normal: $(OBJS)
+	$(CC) $(CFLAGS) -o agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
+
+# The old version of the compiler, used for building libgcc.
+old: CFLAGS = $(BASE_CFLAGS) -DOLD_COMPILER
+old: $(OBJS)
+	$(CC) $(CFLAGS) -o old_agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
 
 # Clear suffixes.
 .SUFFIXES:
@@ -84,10 +93,9 @@ $(DEPDIR)/%.d: ;
 GEN = genemit genoutput genrecog genextract genflags gencodes genconfig \
 genpeep gengenrtl gencheck genattr genattrtab genopinit
 
-.PHONY: clean
-
 clean:
-	$(RM) agbcc agbcc.exe $(OBJS) $(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS)
+	$(RM) agbcc agbcc.exe old_agbcc old_agbcc.exe
+	$(RM) $(OBJS) $(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS)
 	$(RM) $(GENERATED)
 	$(RM) $(GEN) $(addsuffix .exe,$(GEN)) $(addsuffix .o,$(GEN))
 	$(RM) s-config s-flags s-codes s-emit s-recog s-opinit s-extract s-peep \

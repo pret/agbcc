@@ -6133,7 +6133,9 @@ expand_function_end (filename, line, end_bindings)
       use_variable (outgoing);
     }
 
+#ifndef OLD_COMPILER
   use_return_register ();
+#endif
 
   /* If this is an implementation of __throw, do what's necessary to 
      communicate between __builtin_eh_return and the epilogue.  */

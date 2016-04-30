@@ -238,7 +238,9 @@ unroll_loop (loop_end, insn_count, loop_start, end_insert_before,
   struct inline_remap *map;
   char *local_label;
   char *local_regno;
+#ifndef OLD_COMPILER
   int max_local_regnum;
+#endif
   int maxregnum;
   int new_maxregnum;
   rtx exit_label = 0;
@@ -756,8 +758,10 @@ unroll_loop (loop_end, insn_count, loop_start, end_insert_before,
   /* The preconditioning code may allocate two new pseudo registers.  */
   maxregnum = max_reg_num ();
 
+#ifndef OLD_COMPILER
   /* local_regno is only valid for regnos < max_local_regnum.  */
   max_local_regnum = maxregnum;
+#endif
 
   /* Allocate and zero out the splittable_regs and addr_combined_regs
      arrays.  These must be zeroed here because they will be used if
@@ -1058,7 +1062,11 @@ unroll_loop (loop_end, insn_count, loop_start, end_insert_before,
 		if (local_label[j])
 		  set_label_in_map (map, j, gen_label_rtx ());
 
+#ifndef OLD_COMPILER
 	      for (j = FIRST_PSEUDO_REGISTER; j < max_local_regnum; j++)
+#else
+	      for (j = FIRST_PSEUDO_REGISTER; j < maxregnum; j++)
+#endif
 		if (local_regno[j])
 		  {
 		    map->reg_map[j] = gen_reg_rtx (GET_MODE (regno_reg_rtx[j]));
@@ -1214,7 +1222,11 @@ unroll_loop (loop_end, insn_count, loop_start, end_insert_before,
 	if (local_label[j])
 	  set_label_in_map (map, j, gen_label_rtx ());
 
+#ifndef OLD_COMPILER
       for (j = FIRST_PSEUDO_REGISTER; j < max_local_regnum; j++)
+#else
+      for (j = FIRST_PSEUDO_REGISTER; j < maxregnum; j++)
+#endif
 	if (local_regno[j])
 	  {
 	    map->reg_map[j] = gen_reg_rtx (GET_MODE (regno_reg_rtx[j]));

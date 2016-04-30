@@ -1,4 +1,4 @@
-CC1 = ../gcc/agbcc
+CC1 = ../gcc/old_agbcc
 CPP = cpp
 AS = $(DEVKITARM)/bin/arm-none-eabi-as
 AR = ar
@@ -24,6 +24,7 @@ libgcc1.a: lib1thumb.asm
 	do \
 	  echo $${name}; \
 	  $(CPP) -DL$${name} -x assembler-with-cpp -o $${name}.s lib1thumb.asm; \
+	  echo -e ".text\n\t.align\t2, 0\n" >> $${name}.s ; \
 	  $(AS) -mcpu=arm7tdmi -o $${name}.o $${name}.s; \
 	  rm -f $${name}.s; \
 	  $(AR) -rc tmplibgcc1.a $${name}.o; \
@@ -42,6 +43,7 @@ libgcc2.a: libgcc2.c longlong.h
 	  $(CPP) -I ../ginclude -nostdinc -DL$${name} -o $${name}.i libgcc2.c; \
 	  $(CC1) -O2 $${name}.i; \
 	  rm -f $${name}.i; \
+	  echo -e ".text\n\t.align\t2, 0\n" >> $${name}.s ; \
 	  $(AS) -mcpu=arm7tdmi -o $${name}.o $${name}.s; \
 	  rm -f $${name}.s; \
 	  $(AR) -rc tmplibgcc2.a $${name}.o; \
@@ -53,6 +55,7 @@ fp-bit.o: fp-bit.c
 	$(CPP) -I ../ginclude -nostdinc -o fp-bit.i fp-bit.c
 	$(CC1) -O2 fp-bit.i
 	rm -f fp-bit.i
+	echo -e ".text\n\t.align\t2, 0\n" >> fp-bit.s
 	$(AS) -mcpu=arm7tdmi -o fp-bit.o fp-bit.s
 	rm -f fp-bit.s
 
@@ -60,6 +63,7 @@ dp-bit.o: dp-bit.c
 	$(CPP) -I ../ginclude -nostdinc -o dp-bit.i dp-bit.c
 	$(CC1) -O2 dp-bit.i
 	rm -f dp-bit.i
+	echo -e ".text\n\t.align\t2, 0\n" >> dp-bit.s
 	$(AS) -mcpu=arm7tdmi -o dp-bit.o dp-bit.s
 	rm -f dp-bit.s
 
