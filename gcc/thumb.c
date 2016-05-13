@@ -37,7 +37,10 @@
 #include "recog.h"
 
 int current_function_anonymous_args = 0;
+
+#ifndef OLD_COMPILER
 static int current_function_has_far_jump = 0;
+#endif
 
 /* Used to parse -mstructure_size_boundary command line option.  */
 char *structure_size_string = NULL;
@@ -713,8 +716,10 @@ far_jump_used_p()
 {
     rtx insn;
 
+#ifndef OLD_COMPILER
     if (current_function_has_far_jump)
         return 1;
+#endif
 
     for (insn = get_insns(); insn; insn = NEXT_INSN(insn))
     {
@@ -724,7 +729,9 @@ far_jump_used_p()
             && GET_CODE(PATTERN(insn)) != ADDR_DIFF_VEC
             && get_attr_far_jump(insn) == FAR_JUMP_YES)
         {
+#ifndef OLD_COMPILER
             current_function_has_far_jump = 1;
+#endif
             return 1;
         }
     }
@@ -934,7 +941,11 @@ thumb_function_epilogue(FILE *f, int frame_size)
        function will be emitted as assembly immediately after we generate
        RTL for it.  This does not happen for inline functions.  */
     return_used_this_function = 0;
+
+#ifndef OLD_COMPILER
     current_function_has_far_jump = 0;
+#endif
+
 #if 0 /* TODO : comment not really needed */
     fprintf(f, "%s THUMB Epilogue\n", ASM_COMMENT_START);
 #endif
