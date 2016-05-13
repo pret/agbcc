@@ -1,4 +1,4 @@
-CC1 = ../gcc/old_agbcc
+CC1 = ../old_agbcc
 CPP = cpp
 AS = $(DEVKITARM)/bin/arm-none-eabi-as
 AR = ar
