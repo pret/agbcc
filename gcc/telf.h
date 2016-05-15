@@ -365,3 +365,6 @@ do {								\
   while (0)
 
 #endif /* TYPE_ASM_OP */
+
+// Allow alignment up to 16 bytes.
+#define MAX_OFILE_ALIGNMENT (16 * 8)
