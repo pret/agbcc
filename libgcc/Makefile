@@ -55,7 +55,7 @@ fp-bit.o: fp-bit.c
 	$(CPP) -undef -I ../ginclude -nostdinc -o fp-bit.i fp-bit.c
 	$(CC1) -O2 fp-bit.i
 	rm -f fp-bit.i
-	echo -e ".text\n\t.align\t2, 0\n" >> fp-bit.s
+	bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> fp-bit.s
 	$(AS) -mcpu=arm7tdmi -o fp-bit.o fp-bit.s
 	rm -f fp-bit.s
 
@@ -63,7 +63,7 @@ dp-bit.o: dp-bit.c
 	$(CPP) -undef -I ../ginclude -nostdinc -o dp-bit.i dp-bit.c
 	$(CC1) -O2 dp-bit.i
 	rm -f dp-bit.i
-	echo -e ".text\n\t.align\t2, 0\n" >> dp-bit.s
+	bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> dp-bit.s
 	$(AS) -mcpu=arm7tdmi -o dp-bit.o dp-bit.s
 	rm -f dp-bit.s
 
