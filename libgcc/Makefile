@@ -24,7 +24,7 @@ libgcc1.a: lib1thumb.asm
 	do \
 	  echo $${name}; \
 	  $(CPP) -undef -nostdinc -DL$${name} -x assembler-with-cpp -o $${name}.s lib1thumb.asm; \
-	  echo -e ".text\n\t.align\t2, 0\n" >> $${name}.s ; \
+	  bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> $${name}.s ; \
 	  $(AS) -mcpu=arm7tdmi -o $${name}.o $${name}.s; \
 	  rm -f $${name}.s; \
 	  $(AR) -rc tmplibgcc1.a $${name}.o; \
@@ -43,7 +43,7 @@ libgcc2.a: libgcc2.c longlong.h
 	  $(CPP) -undef -I ../ginclude -nostdinc -DL$${name} -o $${name}.i libgcc2.c; \
 	  $(CC1) -O2 $${name}.i; \
 	  rm -f $${name}.i; \
-	  echo -e ".text\n\t.align\t2, 0\n" >> $${name}.s ; \
+	  bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> $${name}.s ; \
 	  $(AS) -mcpu=arm7tdmi -o $${name}.o $${name}.s; \
 	  rm -f $${name}.s; \
 	  $(AR) -rc tmplibgcc2.a $${name}.o; \
