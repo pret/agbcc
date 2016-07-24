@@ -338,6 +338,12 @@ static rtx *uid_align;
 static int *uid_shuid;
 static struct label_alignment *label_align;
 
+static void
+print_wint(FILE *file, HOST_WIDE_INT value)
+{
+    fprintf(file, flag_hex_asm ? HOST_WIDE_INT_PRINT_HEX : HOST_WIDE_INT_PRINT_DEC, value);
+}
+
 /* Indicate that branch shortening hasn't yet been done.  */
 
 void
@@ -439,34 +445,34 @@ get_attr_length (insn)
 
    Call a sequence of instructions beginning with alignment point X
    and continuing until the next alignment point `block X'.  When `X'
-   is used in an expression, it means the alignment value of the 
+   is used in an expression, it means the alignment value of the
    alignment point.
-   
+
    Call the distance between the start of the first insn of block X, and
    the end of the last insn of block X `IX', for the `inner size of X'.
    This is clearly the sum of the instruction lengths.
-   
+
    Likewise with the next alignment-delimited block following X, which we
    shall call block Y.
-   
+
    Call the distance between the start of the first insn of block X, and
    the start of the first insn of block Y `OX', for the `outer size of X'.
-   
+
    The estimated padding is then OX - IX.
-   
+
    OX can be safely estimated as
-   
+
            if (X >= Y)
                    OX = round_up(IX, Y)
            else
                    OX = round_up(IX, X) + Y - X
-   
+
    Clearly est(IX) >= real(IX), because that only depends on the
    instruction lengths, and those being overestimated is a given.
-   
+
    Clearly round_up(foo, Z) >= round_up(bar, Z) if foo >= bar, so
    we needn't worry about that when thinking about OX.
-   
+
    When X >= Y, the alignment provided by Y adds no uncertainty factor
    for branch ranges starting before X, so we can just round what we have.
    But when X < Y, we don't know anything about the, so to speak,
@@ -712,7 +718,7 @@ shorten_branches (first)
   /* We use max_log here to keep track of the maximum alignment we want to
      impose on the next CODE_LABEL (or the current one if we are processing
      the CODE_LABEL itself).  */
-     
+
   max_log = 0;
   max_skip = 0;
 
@@ -883,7 +889,7 @@ shorten_branches (first)
 	}
 
       insn_addresses[uid] = insn_current_address;
-      
+
       if (GET_CODE (insn) == NOTE || GET_CODE (insn) == BARRIER
 	  || GET_CODE (insn) == CODE_LABEL)
 	continue;
@@ -924,7 +930,7 @@ shorten_branches (first)
 				* insn_default_length (inner_insn));
 	      else
 		inner_length = insn_default_length (inner_insn);
-	      
+
 	      insn_lengths[inner_uid] = inner_length;
 	      varying_length[inner_uid] = 0;
 	      insn_lengths[uid] += inner_length;
@@ -989,7 +995,7 @@ shorten_branches (first)
 	  if (GET_CODE (insn) == INSN && GET_CODE (PATTERN (insn)) == SEQUENCE)
 	    {
 	      int i;
-	      
+
 	      body = PATTERN (insn);
 	      new_length = 0;
 	      for (i = 0; i < XVECLEN (body, 0); i++)
@@ -1200,7 +1206,7 @@ final (first, file, optimize, prescan)
     }
 
   /* Initialize insn_eh_region table if eh is being used. */
-  
+
   init_insn_eh_region (first, max_uid);
 
   init_recog ();
@@ -1858,7 +1864,7 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    && set != 0)
 	  {
 	    rtx cond_rtx, then_rtx, else_rtx;
-	    
+
 	    if (GET_CODE (insn) != JUMP_INSN
 		&& GET_CODE (SET_SRC (set)) == IF_THEN_ELSE)
 	      {
@@ -1872,7 +1878,7 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 		then_rtx = const_true_rtx;
 		else_rtx = const0_rtx;
 	      }
-	    
+
 	    switch (GET_CODE (cond_rtx))
 	      {
 	      case GTU:
@@ -2006,7 +2012,7 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 	    /* If we didn't split the insn, go away.  */
 	    if (new == insn && PATTERN (new) == body)
 	      fatal_insn ("Could not split insn", insn);
-	      
+
 #ifdef HAVE_ATTR_length
 	    /* This instruction should have been split in shorten_branches,
 	       to ensure that we would have valid length info for the
@@ -2016,7 +2022,7 @@ final_scan_insn (insn, file, optimize, prescan, nopeepholes)
 
 	    return new;
 	  }
-	
+
 	if (prescan > 0)
 	  break;
 
@@ -2166,7 +2172,7 @@ walk_alter_subreg (x)
 
     case SUBREG:
       return alter_subreg (x);
-      
+
     default:
       break;
     }
@@ -2227,7 +2233,7 @@ alter_cond (cond)
 	PUT_CODE (cond, NE);
 	value = 2;
 	break;
-	
+
       default:
 	break;
       }
@@ -2256,7 +2262,7 @@ alter_cond (cond)
 	PUT_CODE (cond, NE);
 	value = 2;
 	break;
-	
+
       default:
 	break;
       }
@@ -2281,7 +2287,7 @@ alter_cond (cond)
       case LTU:
 	/* Jump becomes no-op.  */
 	return -1;
-	
+
       default:
 	break;
       }
@@ -2377,7 +2383,7 @@ output_asm_name ()
       if (debug_insn)
 	{
 	  register int num = INSN_CODE (debug_insn);
-	  fprintf (asm_out_file, "\t%s %d\t%s", 
+	  fprintf (asm_out_file, "\t%s %d\t%s",
 		   ASM_COMMENT_START, INSN_UID (debug_insn), insn_name[num]);
 	  if (insn_n_alternatives[num] > 1)
 	    fprintf (asm_out_file, "/%d", which_alternative + 1);
@@ -2472,8 +2478,9 @@ output_asm_insn (template, operands)
 	    else if (letter == 'n')
 	      {
 		if (GET_CODE (operands[c]) == CONST_INT)
-		  fprintf (asm_out_file, HOST_WIDE_INT_PRINT_DEC,
-			   - INTVAL (operands[c]));
+		  {
+		    print_wint(asm_out_file, -INTVAL(operands[c]));
+		  }
 		else
 		  {
 		    putc ('-', asm_out_file);
@@ -2482,7 +2489,7 @@ output_asm_insn (template, operands)
 	      }
 	    else
 	      output_operand (operands[c], letter);
-	    
+
 	    while ((c = *p) >= '0' && c <= '9') p++;
 	  }
 	/* % followed by a digit outputs an operand the default way.  */
@@ -2561,15 +2568,41 @@ output_operand (x, code)
 }
 
 /* Print a memory reference operand for address X
-   using machine-dependent assembler syntax.
-   The macro PRINT_OPERAND_ADDRESS exists just to control this function.  */
+   using machine-dependent assembler syntax.  */
 
 void
 output_address (x)
      rtx x;
 {
-  walk_alter_subreg (x);
-  PRINT_OPERAND_ADDRESS (asm_out_file, x);
+    walk_alter_subreg (x);
+
+    if (GET_CODE(x) == REG)
+    {
+        fprintf(asm_out_file, "[%s]", reg_names[REGNO(x)]);
+    }
+    else if (GET_CODE(x) == POST_INC)
+    {
+        fprintf(asm_out_file, "%s!", reg_names[REGNO(XEXP(x, 0))]);
+    }
+    else if (GET_CODE(x) == PLUS)
+    {
+        if (GET_CODE(XEXP(x, 1)) == CONST_INT)
+        {
+            fprintf(asm_out_file, "[%s, #", reg_names[REGNO(XEXP(x, 0))]);
+            print_wint(asm_out_file, INTVAL(XEXP(x, 1)));
+            fprintf(asm_out_file, "]");
+        }
+        else
+        {
+            fprintf(asm_out_file, "[%s, %s]",
+                reg_names[REGNO(XEXP(x, 0))],
+                reg_names[REGNO(XEXP(x, 1))]);
+        }
+    }
+    else
+    {
+        output_addr_const(asm_out_file, x);
+    }
 }
 
 /* Print an integer constant expression in assembler syntax.
@@ -2605,7 +2638,7 @@ output_addr_const (file, x)
       break;
 
     case CONST_INT:
-      fprintf (file, HOST_WIDE_INT_PRINT_DEC, INTVAL (x));
+      print_wint(file, INTVAL(x));
       break;
 
     case CONST:
@@ -2624,7 +2657,7 @@ output_addr_const (file, x)
 	  else if  (CONST_DOUBLE_LOW (x) < 0)
 	    fprintf (file, HOST_WIDE_INT_PRINT_HEX, CONST_DOUBLE_LOW (x));
 	  else
-	    fprintf (file, HOST_WIDE_INT_PRINT_DEC, CONST_DOUBLE_LOW (x));
+	    print_wint(file, CONST_DOUBLE_LOW(x));
 	}
       else
 	/* We can't handle floating point constants;

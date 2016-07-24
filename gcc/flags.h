@@ -394,7 +394,7 @@ extern int flag_regmove;
 
 /* Instrument functions with calls at entry and exit, for profiling.  */
 extern int flag_instrument_function_entry_exit;
-
+
 /* Other basic status info about current function.  */
 
 /* Nonzero means current function must be given a frame pointer.
@@ -447,3 +447,6 @@ enum graph_dump_types
   vcg
 };
 extern enum graph_dump_types graph_dump_format;
+
+/* Nonzero if ASM output should use hex instead of decimal.  */
+extern int flag_hex_asm;
