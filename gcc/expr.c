@@ -1380,12 +1380,10 @@ emit_group_load(rtx dst, rtx orig_src, int ssize, int align)
         enum machine_mode mode = GET_MODE(XEXP(XVECEXP(dst, 0, i), 0));
         int bytepos = INTVAL(XEXP(XVECEXP(dst, 0, i), 1));
         int bytelen = GET_MODE_SIZE(mode);
-        int shift = 0;
 
         /* Handle trailing fragments that run over the size of the struct.  */
         if (ssize >= 0 && bytepos + bytelen > ssize)
         {
-            shift = (bytelen - (ssize - bytepos)) * BITS_PER_UNIT;
             bytelen = ssize - bytepos;
             if (bytelen <= 0)
                 abort();
@@ -3247,7 +3245,6 @@ store_constructor(tree exp, rtx target, int cleared)
             register enum machine_mode mode;
             int bitsize;
             int bitpos = 0;
-            int unsignedp;
             tree pos, constant = 0, offset = 0;
             rtx to_rtx = target;
 
@@ -3261,7 +3258,6 @@ store_constructor(tree exp, rtx target, int cleared)
                 continue;
 
             bitsize = TREE_INT_CST_LOW(DECL_SIZE(field));
-            unsignedp = TREE_UNSIGNED(field);
             mode = DECL_MODE(field);
             if (DECL_BIT_FIELD(field))
                 mode = VOIDmode;
@@ -3427,7 +3423,7 @@ store_constructor(tree exp, rtx target, int cleared)
             {
                 tree lo_index = TREE_OPERAND(index, 0);
                 tree hi_index = TREE_OPERAND(index, 1);
-                rtx index_r, pos_rtx, addr, hi_r, loop_top, loop_end;
+                rtx index_r, pos_rtx, addr, loop_end;
                 struct nesting *loop;
                 HOST_WIDE_INT lo, hi, count;
                 tree position;
@@ -3454,8 +3450,6 @@ store_constructor(tree exp, rtx target, int cleared)
                 }
                 else
                 {
-                    hi_r = expand_expr(hi_index, NULL_RTX, VOIDmode, 0);
-                    loop_top = gen_label_rtx();
                     loop_end = gen_label_rtx();
 
                     unsignedp = TREE_UNSIGNED(domain);
@@ -5097,7 +5091,6 @@ expand_expr(register tree exp, rtx target, enum machine_mode tmode, enum expand_
     case BIND_EXPR:
     {
         tree vars = TREE_OPERAND(exp, 0);
-        int vars_need_expansion = 0;
 
         /* Need to open a binding contour here because
            if there are any cleanups they must be contained here.  */
@@ -5113,7 +5106,6 @@ expand_expr(register tree exp, rtx target, enum machine_mode tmode, enum expand_
         {
             if (DECL_RTL(vars) == 0)
             {
-                vars_need_expansion = 1;
                 expand_decl(vars);
             }
             expand_decl_init(vars);
@@ -5650,121 +5642,6 @@ expand_expr(register tree exp, rtx target, enum machine_mode tmode, enum expand_
             convert_move(target, op0, unsignedp);
             return target;
         }
-
-    /* Intended for a reference to a buffer of a file-object in Pascal.
-       But it's not certain that a special tree code will really be
-       necessary for these.  INDIRECT_REF might work for them.  */
-    case BUFFER_REF:
-        abort();
-
-    case IN_EXPR:
-    {
-        /* Pascal set IN expression.
-
-           Algorithm:
-               rlo       = set_low - (set_low%bits_per_word);
-               the_word  = set [ (index - rlo)/bits_per_word ];
-               bit_index = index % bits_per_word;
-               bitmask   = 1 << bit_index;
-               return !!(the_word & bitmask);  */
-
-        tree set = TREE_OPERAND(exp, 0);
-        tree index = TREE_OPERAND(exp, 1);
-        int iunsignedp = TREE_UNSIGNED(TREE_TYPE(index));
-        tree set_type = TREE_TYPE(set);
-        tree set_low_bound = TYPE_MIN_VALUE(TYPE_DOMAIN(set_type));
-        tree set_high_bound = TYPE_MAX_VALUE(TYPE_DOMAIN(set_type));
-        rtx index_val = expand_expr(index, 0, VOIDmode, 0);
-        rtx lo_r = expand_expr(set_low_bound, 0, VOIDmode, 0);
-        rtx hi_r = expand_expr(set_high_bound, 0, VOIDmode, 0);
-        rtx setval = expand_expr(set, 0, VOIDmode, 0);
-        rtx setaddr = XEXP(setval, 0);
-        enum machine_mode index_mode = TYPE_MODE(TREE_TYPE(index));
-        rtx rlow;
-        rtx diff, quo, rem, addr, bit, result;
-
-        preexpand_calls(exp);
-
-        /* If domain is empty, answer is no.  Likewise if index is constant
-           and out of bounds.  */
-        if (((TREE_CODE(set_high_bound) == INTEGER_CST
-              && TREE_CODE(set_low_bound) == INTEGER_CST
-              && tree_int_cst_lt(set_high_bound, set_low_bound))
-             || (TREE_CODE(index) == INTEGER_CST
-                 && TREE_CODE(set_low_bound) == INTEGER_CST
-                 && tree_int_cst_lt(index, set_low_bound))
-             || (TREE_CODE(set_high_bound) == INTEGER_CST
-                 && TREE_CODE(index) == INTEGER_CST
-                 && tree_int_cst_lt(set_high_bound, index))))
-            return const0_rtx;
-
-        if (target == 0)
-            target = gen_reg_rtx(tmode != VOIDmode ? tmode : mode);
-
-        /* If we get here, we have to generate the code for both cases
-           (in range and out of range).  */
-
-        op0 = gen_label_rtx();
-        op1 = gen_label_rtx();
-
-        if (!(GET_CODE(index_val) == CONST_INT
-              && GET_CODE(lo_r) == CONST_INT))
-        {
-            emit_cmp_insn(index_val, lo_r, LT, NULL_RTX,
-                          GET_MODE(index_val), iunsignedp, 0);
-            emit_jump_insn(gen_blt(op1));
-        }
-
-        if (!(GET_CODE(index_val) == CONST_INT
-              && GET_CODE(hi_r) == CONST_INT))
-        {
-            emit_cmp_insn(index_val, hi_r, GT, NULL_RTX,
-                          GET_MODE(index_val), iunsignedp, 0);
-            emit_jump_insn(gen_bgt(op1));
-        }
-
-        /* Calculate the element number of bit zero in the first word
-           of the set.  */
-        if (GET_CODE(lo_r) == CONST_INT)
-            rlow = GEN_INT(INTVAL(lo_r)
-                           & ~((HOST_WIDE_INT) 1 << BITS_PER_UNIT));
-        else
-            rlow = expand_binop(index_mode, and_optab, lo_r,
-                                GEN_INT(~((HOST_WIDE_INT) 1 << BITS_PER_UNIT)),
-                                NULL_RTX, iunsignedp, OPTAB_LIB_WIDEN);
-
-        diff = expand_binop(index_mode, sub_optab, index_val, rlow,
-                            NULL_RTX, iunsignedp, OPTAB_LIB_WIDEN);
-
-        quo = expand_divmod(0, TRUNC_DIV_EXPR, index_mode, diff,
-                            GEN_INT(BITS_PER_UNIT), NULL_RTX, iunsignedp);
-        rem = expand_divmod(1, TRUNC_MOD_EXPR, index_mode, index_val,
-                            GEN_INT(BITS_PER_UNIT), NULL_RTX, iunsignedp);
-
-        addr = memory_address(byte_mode,
-                              expand_binop(index_mode, add_optab, diff,
-                                           setaddr, NULL_RTX, iunsignedp,
-                                           OPTAB_LIB_WIDEN));
-
-        /* Extract the bit we want to examine */
-        bit = expand_shift(RSHIFT_EXPR, byte_mode,
-                           gen_rtx_MEM(byte_mode, addr),
-                           make_tree(TREE_TYPE(index), rem),
-                           NULL_RTX, 1);
-        result = expand_binop(byte_mode, and_optab, bit, const1_rtx,
-                              GET_MODE(target) == byte_mode ? target : 0,
-                              1, OPTAB_LIB_WIDEN);
-
-        if (result != target)
-            convert_move(target, result, 1);
-
-        /* Output the code to handle the out-of-range case.  */
-        emit_jump(op0);
-        emit_label(op1);
-        emit_move_insn(target, const0_rtx);
-        emit_label(op0);
-        return target;
-    }
 
     case WITH_CLEANUP_EXPR:
         if (RTL_EXPR_RTL(exp) == 0)
@@ -8037,7 +7914,7 @@ expand_builtin(tree exp, rtx target, rtx subtarget, enum machine_mode mode, int 
         if (TREE_CODE(TREE_TYPE(arg1)) != INTEGER_TYPE)
         {
             error("invalid first arg to `__builtin_expect'");
-            return op0;
+            return const0_rtx;
         }
 
         if (TREE_CODE(arg1) != INTEGER_CST
@@ -8045,7 +7922,7 @@ expand_builtin(tree exp, rtx target, rtx subtarget, enum machine_mode mode, int 
             || (TREE_INT_CST_LOW(arg1) < 0 && TREE_INT_CST_HIGH(arg1) != -1))
         {
             error("invalid second arg to `__builtin_expect'");
-            return op0;
+            return const0_rtx;
         }
 
         current_function_processing_expect = TRUE;

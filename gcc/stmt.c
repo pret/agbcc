@@ -1182,8 +1182,6 @@ expand_asm_operands (string, outputs, inputs, clobbers, vol, filename, line)
   int *inout_opnum = (int *) alloca (noutputs * sizeof (int));
   enum machine_mode *inout_mode
     = (enum machine_mode *) alloca (noutputs * sizeof (enum machine_mode));
-  /* The insn we have emitted.  */
-  rtx insn;
 
   /* An ASM with no outputs needs to be treated as volatile, for now.  */
   if (noutputs == 0)
@@ -1534,12 +1532,12 @@ expand_asm_operands (string, outputs, inputs, clobbers, vol, filename, line)
   if (noutputs == 1 && nclobbers == 0)
     {
       XSTR (body, 1) = TREE_STRING_POINTER (TREE_PURPOSE (outputs));
-      insn = emit_insn (gen_rtx_SET (VOIDmode, output_rtx[0], body));
+      emit_insn (gen_rtx_SET (VOIDmode, output_rtx[0], body));
     }
   else if (noutputs == 0 && nclobbers == 0)
     {
       /* No output operands: put in a raw ASM_OPERANDS rtx.  */
-      insn = emit_insn (body);
+      emit_insn (body);
     }
   else
     {
@@ -1599,7 +1597,7 @@ expand_asm_operands (string, outputs, inputs, clobbers, vol, filename, line)
 	    = gen_rtx_CLOBBER (VOIDmode, gen_rtx_REG (QImode, j));
 	}
 
-      insn = emit_insn (body);
+      emit_insn (body);
     }
 
   free_temp_slots ();
@@ -2491,7 +2489,6 @@ expand_return (retval)
      computation of the return value.  */
   rtx last_insn = 0;
   register rtx val = 0;
-  register rtx op0;
   tree retval_rhs;
   int cleanups;
 

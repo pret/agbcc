@@ -986,14 +986,7 @@ assemble_string (p, size)
     }
 }
 
-
-#if   defined  ASM_OUTPUT_ALIGNED_DECL_LOCAL
-#define ASM_EMIT_LOCAL(decl, name, size, rounded) ASM_OUTPUT_ALIGNED_DECL_LOCAL (asm_out_file, decl, name, size, DECL_ALIGN (decl))
-#elif defined  ASM_OUTPUT_ALIGNED_LOCAL
-#define ASM_EMIT_LOCAL(decl, name, size, rounded) ASM_OUTPUT_ALIGNED_LOCAL (asm_out_file, name, size, DECL_ALIGN (decl))
-#else
-#define ASM_EMIT_LOCAL(decl, name, size, rounded) ASM_OUTPUT_LOCAL (asm_out_file, name, size, rounded)
-#endif
+#define ASM_EMIT_LOCAL(decl, name, size) ASM_OUTPUT_LOCAL(asm_out_file, name, size)
 
 #if   defined ASM_OUTPUT_ALIGNED_BSS
 #define ASM_EMIT_BSS(decl, name, size, rounded) ASM_OUTPUT_ALIGNED_BSS (asm_out_file, decl, name, size, DECL_ALIGN (decl))
@@ -1069,7 +1062,7 @@ asm_emit_uninitialised (decl, name, size, rounded)
       ASM_EMIT_COMMON (decl, name, size, rounded);
       break;
     case asm_dest_local:
-      ASM_EMIT_LOCAL (decl, name, size, rounded);
+      ASM_EMIT_LOCAL (decl, name, size);
       break;
     default:
       abort ();
@@ -1506,23 +1499,8 @@ assemble_static_space (size)
 
   x = gen_rtx_SYMBOL_REF (Pmode, namestring);
 
-#ifdef ASM_OUTPUT_ALIGNED_DECL_LOCAL
-  ASM_OUTPUT_ALIGNED_DECL_LOCAL (asm_out_file, NULL_TREE, name, size,
-				 BIGGEST_ALIGNMENT);
-#else
-#ifdef ASM_OUTPUT_ALIGNED_LOCAL
-  ASM_OUTPUT_ALIGNED_LOCAL (asm_out_file, name, size, BIGGEST_ALIGNMENT);
-#else
-  {
-    /* Round size up to multiple of BIGGEST_ALIGNMENT bits
-       so that each uninitialized object starts on such a boundary.  */
-    int rounded = ((size + (BIGGEST_ALIGNMENT / BITS_PER_UNIT) - 1)
-		   / (BIGGEST_ALIGNMENT / BITS_PER_UNIT)
-		   * (BIGGEST_ALIGNMENT / BITS_PER_UNIT));
-    ASM_OUTPUT_LOCAL (asm_out_file, name, size, rounded);
-  }
-#endif
-#endif
+  ASM_OUTPUT_LOCAL (asm_out_file, name, size);
+
   return x;
 }
 

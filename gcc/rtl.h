@@ -569,12 +569,21 @@ extern char *note_insn_name[];
    MEM_SCALAR_P (LHS) = MEM_SCALAR_P (RHS))		\
 
 /* If VAL is non-zero, set MEM_IN_STRUCT_P and clear MEM_SCALAR_P in
-   RTX.  Otherwise, vice versa.  Use this macro only when you are
-   *sure* that you know that the MEM is in a structure, or is a
-   scalar.  VAL is evaluated only once.  */
-#define MEM_SET_IN_STRUCT_P(RTX, VAL) 				\
-  ((VAL) ? (MEM_IN_STRUCT_P (RTX) = 1, MEM_SCALAR_P (RTX) = 0)	\
-   : (MEM_IN_STRUCT_P (RTX) = 0, MEM_SCALAR_P (RTX) = 1))
+   RTX.  Otherwise, vice versa.  Use this function only when you are
+   *sure* that you know that the MEM is in a structure, or is a scalar.  */
+static inline void MEM_SET_IN_STRUCT_P(rtx x, int val)
+{
+    if (val)
+    {
+        MEM_IN_STRUCT_P(x) = 1;
+        MEM_SCALAR_P(x) = 0;
+    }
+    else
+    {
+        MEM_IN_STRUCT_P(x) = 0;
+        MEM_SCALAR_P(x) = 1;
+    }
+}
 
 /* CYGNUS LOCAL unaligned-pointers */
 /* For a MEM rtx, 1 if it may be an unaligned address.  */

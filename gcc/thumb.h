@@ -130,7 +130,7 @@ extern int target_flags;
 
 /* This says how to define a local common symbol (ie, not visible to
    linker).  */
-#define ASM_OUTPUT_LOCAL(STREAM, NAME, SIZE, ROUNDED)			\
+#define ASM_OUTPUT_LOCAL(STREAM, NAME, SIZE)			\
   (fprintf((STREAM),"\n\t.lcomm\t"),                                    \
    assemble_name((STREAM),(NAME)),                                      \
    fprintf((STREAM),",%u\n",(SIZE)))
@@ -194,7 +194,7 @@ do { char dstr[30];							\
 /* This is how to output a string.  */
 #define ASM_OUTPUT_ASCII(STREAM, STRING, LEN)				\
 do {									\
-  register int i, c, len = (LEN), cur_pos = 17;				\
+  register int i, len = (LEN), cur_pos = 17;				\
   register unsigned char *string = (unsigned char *)(STRING);		\
   fprintf ((STREAM), "\t.ascii\t\"");					\
   for (i = 0; i < len; i++)						\

@@ -5226,7 +5226,6 @@ branch_predict_move (insn, cur_line, barrier, barrier_end)
   int barrier_p = (GET_CODE (prev_label) == BARRIER);
   rtx new_label;
   rtx tmp;
-  rtx tmp_next;
   enum rtx_code if_code;
 
   /* Search for the label in the following insns.  */

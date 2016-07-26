@@ -156,9 +156,6 @@ static unsigned fde_table_in_use;
    fde_table.  */
 #define FDE_TABLE_INCREMENT 256
 
-/* A list of call frame insns for the CIE.  */
-static dw_cfi_ref cie_cfi_head;
-
 /* The number of the current function definition for which debugging
    information is being generated.  These numbers range from 1 up to the
    maximum number of function definitions contained within the current
@@ -490,11 +487,9 @@ size_of_uleb128 (value)
      register unsigned long value;
 {
   register unsigned long size = 0;
-  register unsigned byte;
 
   do
     {
-      byte = (value & 0x7f);
       value >>= 7;
       size += 1;
     }
