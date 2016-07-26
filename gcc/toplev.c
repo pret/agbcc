@@ -73,7 +73,7 @@ extern void dump_local_alloc ();
 extern void regset_release_memory ();
 
 extern void print_rtl ();
-extern void print_rtl_with_bb ();
+extern void print_rtl_with_bb (FILE *, rtx);
 
 void rest_of_decl_compilation ();
 void error_with_file_and_line (char *file, int line, char *s, ...);
