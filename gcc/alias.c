@@ -74,7 +74,6 @@ typedef struct alias_set_entry {
 
 static rtx canon_rtx			(rtx);
 static int rtx_equal_for_memref_p	(rtx, rtx);
-static rtx find_symbolic_term		(rtx);
 static int memrefs_conflict_p		(int, rtx, int, rtx,
 					       HOST_WIDE_INT);
 static void record_set			(rtx, rtx);
@@ -704,40 +703,6 @@ rtx_equal_for_memref_p (x, y)
 	}
     }
   return 1;
-}
-
-/* Given an rtx X, find a SYMBOL_REF or LABEL_REF within
-   X and return it, or return 0 if none found.  */
-
-static rtx
-find_symbolic_term (x)
-     rtx x;
-{
-  register int i;
-  register enum rtx_code code;
-  register char *fmt;
-
-  code = GET_CODE (x);
-  if (code == SYMBOL_REF || code == LABEL_REF)
-    return x;
-  if (GET_RTX_CLASS (code) == 'o')
-    return 0;
-
-  fmt = GET_RTX_FORMAT (code);
-  for (i = GET_RTX_LENGTH (code) - 1; i >= 0; i--)
-    {
-      rtx t;
-
-      if (fmt[i] == 'e')
-	{
-	  t = find_symbolic_term (XEXP (x, i));
-	  if (t != 0)
-	    return t;
-	}
-      else if (fmt[i] == 'E')
-	break;
-    }
-  return 0;
 }
 
 static rtx

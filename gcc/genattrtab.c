@@ -406,7 +406,6 @@ static rtx test_for_current_value (struct dimension *, int);
 static rtx simplify_with_current_value (rtx, struct dimension *, int);
 static rtx simplify_with_current_value_aux (rtx);
 static void clear_struct_flag (rtx);
-static int count_sub_rtxs    (rtx, int);
 static void remove_insn_ent  (struct attr_value *, struct insn_ent *);
 static void insert_insn_ent  (struct attr_value *, struct insn_ent *);
 static rtx insert_right_side	(enum rtx_code, rtx, rtx, int, int);
@@ -3451,13 +3450,6 @@ optimize_attrs ()
 		continue;
 
 	      rtl_obstack = temp_obstack;
-#if 0 /* This was intended as a speed up, but it was slower.  */
-	      if (insn_n_alternatives[ie->insn_code] > 6
-		  && count_sub_rtxs (av->value, 200) >= 200)
-		newexp = simplify_by_alternatives (av->value, ie->insn_code,
-						   ie->insn_index);
-	      else
-#endif
 		newexp = simplify_cond (av->value, ie->insn_code,
 					ie->insn_index);
 
@@ -4009,66 +4001,6 @@ clear_struct_flag (x)
     }
 }
 
-/* Return the number of RTX objects making up the expression X.
-   But if we count more than MAX objects, stop counting.  */
-
-static int
-count_sub_rtxs (x, max)
-     rtx x;
-     int max;
-{
-  register int i;
-  register int j;
-  register enum rtx_code code;
-  register char *fmt;
-  int total = 0;
-
-  code = GET_CODE (x);
-
-  switch (code)
-    {
-    case REG:
-    case QUEUED:
-    case CONST_INT:
-    case CONST_DOUBLE:
-    case SYMBOL_REF:
-    case CODE_LABEL:
-    case PC:
-    case CC0:
-    case EQ_ATTR:
-    case ATTR_FLAG:
-      return 1;
-      
-    default:
-      break;
-    }
-
-  /* Compare the elements.  If any pair of corresponding elements
-     fail to match, return 0 for the whole things.  */
-
-  fmt = GET_RTX_FORMAT (code);
-  for (i = GET_RTX_LENGTH (code) - 1; i >= 0; i--)
-    {
-      if (total >= max)
-	return total;
-
-      switch (fmt[i])
-	{
-	case 'V':
-	case 'E':
-	  for (j = 0; j < XVECLEN (x, i); j++)
-	    total += count_sub_rtxs (XVECEXP (x, i, j), max);
-	  break;
-
-	case 'e':
-	  total += count_sub_rtxs (XEXP (x, i), max);
-	  break;
-	}
-    }
-  return total;
-
-}
-
 /* Create table entries for DEFINE_ATTR.  */
 
 static void

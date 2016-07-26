@@ -667,7 +667,6 @@ static int loop_depth;
 
 static int loop_cost;
 
-static int n_occurrences	(int, char *);
 static rtx scan_one_insn	(rtx, int);
 static void record_reg_classes	(int, int, rtx *, enum machine_mode *,
 				       char **, rtx);
@@ -716,18 +715,6 @@ regclass_init ()
   /* This prevents dump_flow_info from losing if called
      before regclass is run.  */
   prefclass = 0;
-}
-
-/* Return the number of times character C occurs in string S.  */
-static int
-n_occurrences (c, s)
-     int c;
-     char *s;
-{
-  int n = 0;
-  while (*s)
-    n += (*s++ == c);
-  return n;
 }
 
 /* Subroutine of regclass, processes one insn INSN.  Scan it and record each
