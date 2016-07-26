@@ -124,15 +124,7 @@ extern "C" {
 # define __INT_TO_PTR(P) ((P) + (char *) 0)
 #endif
 
-/* We need the type of the resulting object.  If __PTRDIFF_TYPE__ is
-   defined, as with GNU C, use that; that way we don't pollute the
-   namespace with <stddef.h>'s symbols.  Otherwise, if <stddef.h> is
-   available, include it and use ptrdiff_t.  In traditional C, long is
-   the best that we can do.  */
-
-
 #include <stddef.h>
-#define PTR_INT_TYPE ptrdiff_t
 
 #include <string.h>
 #define _obstack_memcpy(To, From, N) memcpy ((To), (From), (N))
@@ -151,7 +143,7 @@ struct obstack		/* control current object in current chunk */
   char	*object_base;		/* address of object we are building */
   char	*next_free;		/* where to add next char to current object */
   char	*chunk_limit;		/* address of char after current chunk */
-  PTR_INT_TYPE temp;		/* Temporary for some macros.  */
+  ptrdiff_t temp;		/* Temporary for some macros.  */
   int   alignment_mask;		/* Mask of alignment for each object. */
 #if defined __STDC__ && __STDC__
   /* These prototypes vary based on `use_extra_arg', and we use
@@ -554,21 +546,12 @@ __extension__								\
   (h)->object_base = (h)->next_free,					\
   __INT_TO_PTR ((h)->temp))
 
-# if defined __STDC__ && __STDC__
-#  define obstack_free(h,obj)						\
-( (h)->temp = (char *) (obj) - (char *) (h)->chunk,			\
-  (((h)->temp > 0 && (h)->temp < (h)->chunk_limit - (char *) (h)->chunk)\
-   ? (int) ((h)->next_free = (h)->object_base				\
-	    = (h)->temp + (char *) (h)->chunk)				\
-   : (((obstack_free) ((h), (h)->temp + (char *) (h)->chunk), 0), 0)))
-# else
-#  define obstack_free(h,obj)						\
-( (h)->temp = (char *) (obj) - (char *) (h)->chunk,			\
-  (((h)->temp > 0 && (h)->temp < (h)->chunk_limit - (char *) (h)->chunk)\
-   ? (int) ((h)->next_free = (h)->object_base				\
-	    = (h)->temp + (char *) (h)->chunk)				\
-   : (_obstack_free ((h), (h)->temp + (char *) (h)->chunk), 0)))
-# endif
+# define obstack_free(h, obj)                                                 \
+  ((h)->temp = (ptrdiff_t)(obj),                                              \
+   (((h)->temp > (ptrdiff_t)(h)->chunk                                        \
+     && (h)->temp < (ptrdiff_t)(h)->chunk_limit)                              \
+    ? (void)((h)->next_free = (h)->object_base = (char *)(h)->temp)           \
+    : _obstack_free((h), (h)->temp)))
 
 #endif /* not __GNUC__ or not __STDC__ */
 

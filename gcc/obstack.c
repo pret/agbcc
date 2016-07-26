@@ -30,7 +30,7 @@
 /* Determine default alignment.  */
 struct fooalign {char x; double d;};
 #define DEFAULT_ALIGNMENT  \
-  ((PTR_INT_TYPE) ((char *) &((struct fooalign *) 0)->d - (char *) 0))
+  ((ptrdiff_t) ((char *) &((struct fooalign *) 0)->d - (char *) 0))
 /* If malloc were really smart, it would round addresses to DEFAULT_ALIGNMENT.
    But in fact it might be less smart and round addresses to as much as
    DEFAULT_ROUNDING.  So we prepare for it to do that.  */

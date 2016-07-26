@@ -30,12 +30,14 @@ Boston, MA 02111-1307, USA.  */
 #ifndef _SPLAY_TREE_H
 #define _SPLAY_TREE_H
 
+#include <stdint.h>
+
 /* Use typedefs for the key and data types to facilitate changing
    these types, if necessary.  These types should be sufficiently wide
    that any pointer or scalar can be cast to these types, and then
    cast back, without loss of precision.  */
-typedef unsigned long int splay_tree_key;
-typedef unsigned long int splay_tree_value;
+typedef uintptr_t splay_tree_key;
+typedef uintptr_t splay_tree_value;
 
 /* Forward declaration for a node in the tree.  */
 typedef struct splay_tree_node *splay_tree_node;
