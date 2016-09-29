@@ -98,6 +98,4 @@ extern void *xrealloc(void *, size_t);
 extern void *xcalloc(size_t, size_t);
 extern char *xstrdup(const char *);
 
-extern void *alloca(size_t);
-
 #endif /* __GCC_SYSTEM_H__ */
