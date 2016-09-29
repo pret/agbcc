@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -g -std=gnu11
+BASE_CFLAGS = -g -std=gnu11 -m32
 
 INCLUDES = -I. -I$(srcdir)
 
