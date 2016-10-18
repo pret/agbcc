@@ -2670,14 +2670,14 @@ output_addr_const (file, x)
       if (GET_CODE (XEXP (x, 0)) == CONST_INT)
 	{
 	  output_addr_const (file, XEXP (x, 1));
-	  if (INTVAL (XEXP (x, 0)) >= 0)
+	  if (INTVAL (XEXP (x, 0)) >= 0 || flag_hex_asm)
 	    fprintf (file, "+");
 	  output_addr_const (file, XEXP (x, 0));
 	}
       else
 	{
 	  output_addr_const (file, XEXP (x, 0));
-	  if (INTVAL (XEXP (x, 1)) >= 0)
+	  if (INTVAL (XEXP (x, 1)) >= 0 || flag_hex_asm)
 	    fprintf (file, "+");
 	  output_addr_const (file, XEXP (x, 1));
 	}
