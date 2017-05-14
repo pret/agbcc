@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 make -C gcc clean
 make -C gcc old
 mv gcc/old_agbcc .
