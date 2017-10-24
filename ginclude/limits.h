@@ -51,7 +51,11 @@
 #undef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)
 #undef LONG_MAX
+#if __LP64__
+#define LONG_MAX 9223372036854775807LL
+#else
 #define LONG_MAX 2147483647L
+#endif
 
 /* Maximum value an `unsigned long int' can hold.  (Minimum is 0).  */
 #undef ULONG_MAX

@@ -27,9 +27,15 @@ Boston, MA 02111-1307, USA.  */
 #include <stdint.h>
 #include <inttypes.h>
 
+#if __LP64__
+#define HOST_BITS_PER_WIDE_INT 64
+#define HOST_WIDE_INT int64_t
+#define HOST_WIDE_UINT uint64_t
+#else
 #define HOST_BITS_PER_WIDE_INT 32
 #define HOST_WIDE_INT int32_t
 #define HOST_WIDE_UINT uint32_t
+#endif
 
 /* Provide HOST_WIDE_INT format specs.  */
 
