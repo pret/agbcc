@@ -1085,8 +1085,10 @@
     {
     case MODE_FLOAT:
     {
+      int i;
       union real_extract u;
-      memcpy((char *)&u, (char *)&CONST_DOUBLE_LOW(operands[0]), sizeof u);
+      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++)
+        u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;
     }
@@ -1107,8 +1109,10 @@
     {
     case MODE_FLOAT:
     {
+      int i;
       union real_extract u;
-      memcpy((char *)&u, (char *)&CONST_DOUBLE_LOW(operands[0]), sizeof u);
+      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++)
+        u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;
     }
