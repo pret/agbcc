@@ -7,6 +7,7 @@ if [ "$1" != "" ]; then
     cp agbcc $1/tools/agbcc/bin/
     cp old_agbcc $1/tools/agbcc/bin/
     cp ginclude/* $1/tools/agbcc/include/
+    cp libc/include/* $1/tools/agbcc/include/
     cp libgcc.a $1/tools/agbcc/lib/
     cp libc.a $1/tools/agbcc/lib/
 else
