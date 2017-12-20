@@ -8,6 +8,7 @@ if [ "$1" != "" ]; then
     cp old_agbcc $1/tools/agbcc/bin/
     cp ginclude/* $1/tools/agbcc/include/
     cp libgcc.a $1/tools/agbcc/lib/
+	cp libc.a $1/tools/agbcc/lib/
 else
     echo "Usage: install.sh PATH"
 fi

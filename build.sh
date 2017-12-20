@@ -8,3 +8,6 @@ mv gcc/agbcc .
 make -C libgcc clean
 make -C libgcc
 mv libgcc/libgcc.a .
+make -C libc clean
+make -C libc
+mv libc/libc.a .

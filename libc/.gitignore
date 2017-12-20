@@ -1,0 +1,5 @@
+tools/
+libc.a
+*.o
+*.i
+*.s
