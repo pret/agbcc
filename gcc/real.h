@@ -351,10 +351,13 @@ union tree_node;
 REAL_VALUE_TYPE real_value_from_int_cst	(union tree_node *,
 						union tree_node *);
 
-#define REAL_VALUE_FROM_CONST_DOUBLE(to, from)		\
-do { union real_extract u;				\
-     memcpy((char *)&u, (char *)&CONST_DOUBLE_LOW(from), sizeof u); \
-     to = u.d; } while (0)
+#define REAL_VALUE_FROM_CONST_DOUBLE(to, from) \
+do { \
+    union real_extract u; \
+    for (int i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++) \
+        u.i[i] = XWINT((from), 2 + i); \
+    to = u.d; \
+} while (0)
 
 /* Return a CONST_DOUBLE with value R and mode M.  */
 
