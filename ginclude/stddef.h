@@ -18,6 +18,8 @@ typedef int wchar_t;
 
 /* A null pointer constant.  */
 
+/* in case <stdio.h> has defined it. */
+#undef NULL
 #define NULL ((void *)0)
 
 /* Offset of member MEMBER in a struct of type TYPE.  */
