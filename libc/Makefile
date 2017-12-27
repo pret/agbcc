@@ -29,7 +29,7 @@ stdlib/cfreer.o stdlib/malignr.o stdlib/vallocr.o stdlib/pvallocr.o \
 stdlib/mallinfor.o stdlib/mallstatsr.o stdlib/msizer.o stdlib/malloptr.o \
 stdio/vfiprintf.o
 
-S_SRCS := arm/setjmp.s arm/trap.s
+S_SRCS := arm/setjmp.S arm/trap.S
 S_OBJS := $(S_SRCS:%.S=%.o)
 
 OBJS := $(C_OBJS) $(S_OBJS)
