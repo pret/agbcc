@@ -1,4 +1,4 @@
-SHELL := /bin/bash -o pipefail
+SHELL := /bin/sh -o pipefail
 
 AS      := $(DEVKITARM)/bin/arm-none-eabi-as
 ASFLAGS := -mcpu=arm7tdmi
@@ -9,7 +9,7 @@ CFLAGS := -O2 -fno-builtin
 CPP      := $(DEVKITARM)/bin/arm-none-eabi-cpp
 CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \
--D__STDC__ -D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
+-D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
 
 AR := ar
 
@@ -21,7 +21,7 @@ AR := ar
 
 .PHONY: all clean
 
-C_SRCS := $(shell find -iname "*.c" -a ! -iname "mallocr.c")
+C_SRCS := $(shell find . -iname "*.c" -a ! -iname "mallocr.c")
 C_INTRS := $(C_SRCS:%.c=%.i)
 C_OBJS := $(C_SRCS:%.c=%.o) \
 stdlib/mallocr.o stdlib/freer.o stdlib/reallocr.o stdlib/callocr.o \
