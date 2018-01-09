@@ -1,7 +1,7 @@
 CC1 = ../old_agbcc
-CPP = cpp
+CPP = gcc -E
 AS = $(DEVKITARM)/bin/arm-none-eabi-as
-AR = ar
+AR = $(DEVKITARM)/bin/arm-none-eabi-ar
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
 	$(AR) -x libgcc1.a
