@@ -341,7 +341,17 @@ static struct label_alignment *label_align;
 static void
 print_wint(FILE *file, HOST_WIDE_INT value)
 {
-    fprintf(file, flag_hex_asm ? HOST_WIDE_INT_PRINT_HEX : HOST_WIDE_INT_PRINT_DEC, value);
+  const char *fmt = HOST_WIDE_INT_PRINT_DEC;
+  if (flag_hex_asm)
+    {
+      fmt = HOST_WIDE_INT_PRINT_HEX;
+      if (value < 0)
+        {
+          fputc('-', file);
+          value = -value;
+        }
+    }
+  fprintf(file, fmt, value);
 }
 
 /* Indicate that branch shortening hasn't yet been done.  */
