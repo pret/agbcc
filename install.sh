@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 if [ "$1" != "" ]; then
     mkdir -p $1/tools/agbcc
     mkdir -p $1/tools/agbcc/bin
