@@ -11,7 +11,7 @@ CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \
 -D__STDC__ -D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
 
-AR := ar
+AR := $(DEVKITARM)/bin/arm-none-eabi-ar
 
 # Clear the default suffixes.
 .SUFFIXES:
@@ -21,7 +21,7 @@ AR := ar
 
 .PHONY: all clean
 
-C_SRCS := $(shell find -iname "*.c" -a ! -iname "mallocr.c")
+C_SRCS := $(shell find . -iname "*.c" -a ! -iname "mallocr.c")
 C_INTRS := $(C_SRCS:%.c=%.i)
 C_OBJS := $(C_SRCS:%.c=%.o) \
 stdlib/mallocr.o stdlib/freer.o stdlib/reallocr.o stdlib/callocr.o \
