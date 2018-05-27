@@ -1,7 +1,5 @@
+include $(DEVKITARM)/base_tools
 CC1 = ../old_agbcc
-CPP = $(DEVKITARM)/bin/arm-none-eabi-cpp
-AS = $(DEVKITARM)/bin/arm-none-eabi-as
-AR = $(DEVKITARM)/bin/arm-none-eabi-ar
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
 	$(AR) -x libgcc1.a
