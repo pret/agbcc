@@ -1,17 +1,16 @@
+include $(DEVKITARM)/base_tools
+
 SHELL := /bin/bash -o pipefail
 
-AS      := $(DEVKITARM)/bin/arm-none-eabi-as
 ASFLAGS := -mcpu=arm7tdmi
 
 CC1    := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
 
-CPP      := $(DEVKITARM)/bin/arm-none-eabi-cpp
 CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \
 -D__STDC__ -D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
 
-AR := $(DEVKITARM)/bin/arm-none-eabi-ar
 
 # Clear the default suffixes.
 .SUFFIXES:
