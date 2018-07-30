@@ -1,9 +1,9 @@
-#! /bin/sh
+#!/data/data/com.termux/files/usr/bin/sh
 # ylwrap - wrapper for lex/yacc invocations.
 
-scriptversion=2013-01-12.17; # UTC
+scriptversion=2018-03-07.03; # UTC
 
-# Copyright (C) 1996-2014 Free Software Foundation, Inc.
+# Copyright (C) 1996-2018 Free Software Foundation, Inc.
 #
 # Written by Tom Tromey <tromey@cygnus.com>.
 #
@@ -18,7 +18,7 @@ scriptversion=2013-01-12.17; # UTC
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -111,6 +111,14 @@ case $input in
 esac
 input_rx=`get_dirname "$input" | quote_for_sed`
 
+# Since DOS filename conventions don't allow two dots,
+# the DOS version of Bison writes out y_tab.c instead of y.tab.c
+# and y_tab.h instead of y.tab.h. Test to see if this is the case.
+y_tab_nodot=false
+if test -f y_tab.c || test -f y_tab.h; then
+  y_tab_nodot=true
+fi
+
 # The parser itself, the first file, is the destination of the .y.c
 # rule in the Makefile.
 parser=$1
@@ -130,6 +138,13 @@ while test $# -ne 0; do
     break
   fi
   from=$1
+  # Handle y_tab.c and y_tab.h output by DOS
+  if $y_tab_nodot; then
+    case $from in
+      "y.tab.c") from=y_tab.c;;
+      "y.tab.h") from=y_tab.h;;
+    esac
+  fi
   shift
   to=$1
   shift
@@ -224,9 +239,9 @@ exit $ret
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 2
-# eval: (add-hook 'write-file-hooks 'time-stamp)
+# eval: (add-hook 'before-save-hook 'time-stamp)
 # time-stamp-start: "scriptversion="
 # time-stamp-format: "%:y-%02m-%02d.%02H"
-# time-stamp-time-zone: "UTC"
+# time-stamp-time-zone: "UTC0"
 # time-stamp-end: "; # UTC"
 # End:
