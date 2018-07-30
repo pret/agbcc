@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -O2 -g -std=gnu11
+BASE_CFLAGS = -O2 -w -std=gnu11
 
 INCLUDES = -I. -I$(srcdir)
 
@@ -55,7 +55,7 @@ GENERATED = genrtl.c genrtl.h \
  tree-check.h \
  insn-config.h insn-flags.h insn-codes.h insn-attr.h
 
-.PHONY: normal old clean
+.PHONY: normal old clean tidy
 
 # The usual compiler.
 normal: CFLAGS = $(BASE_CFLAGS)
@@ -73,25 +73,18 @@ old: $(OBJS)
 # Parallel make breaks this build.
 .NOTPARALLEL: normal old
 
-DEPDIR := .d
-$(shell mkdir -p $(DEPDIR) >/dev/null)
-DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+# Clean any files that differ between new and old.
+tidy:
+	$(RM) function.o loop.o thumb.o unroll.o agbcc old_agbcc
 
-COMPILE = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c
-POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
+COMPILE = $(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c
 
-$(OBJS): %.o: %.c $(DEPDIR)/%.d | $(GENERATED)
+$(OBJS): %.o: %.c $(GENERATED)
 	$(COMPILE) $<
-	$(POSTCOMPILE)
 
-$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c $(DEPDIR)/%.d
+$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c
 	$(COMPILE) $<
-	$(POSTCOMPILE)
 
-$(DEPDIR)/%.d: ;
-.PRECIOUS: $(DEPDIR)/%.d
-
--include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
 GEN = genemit genoutput genrecog genextract genflags gencodes genconfig \
 genpeep gengenrtl gencheck genattr genattrtab genopinit
@@ -104,7 +97,6 @@ clean:
 	$(RM) $(GEN) $(addsuffix .exe,$(GEN)) $(addsuffix .o,$(GEN))
 	$(RM) s-config s-flags s-codes s-emit s-recog s-opinit s-extract s-peep \
 s-attr s-attrtab s-output s-genrtl s-check
-	$(RM) -r $(DEPDIR)
 
 # The files that "belong" in CONFIG_H are deliberately omitted
 # because having them there would not be useful in actual practice.
