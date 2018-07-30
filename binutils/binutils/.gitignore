@@ -20,19 +20,6 @@
 /windmc
 /windres
 
-/arlex.c
-/arparse.c
-/arparse.h
-/deflex.c
-/defparse.c
-/defparse.h
-/mcparse.c
-/mcparse.h
-/rcparse.c
-/rcparse.h
-/sysinfo.c
-/sysinfo.h
-/syslex.c
 /sysroff.c
 /sysroff.h
 
