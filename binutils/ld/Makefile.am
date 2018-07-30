@@ -133,10 +133,10 @@ CXXFLAGS_FOR_TARGET = `echo $(CXXFLAGS) | sed -e 's/-fsanitize=address//g' -e 's
 
 transform = s/^ld-new$$/$(installed_linker)/;@program_transform_name@
 bin_PROGRAMS = ld-new
-info_TEXINFOS = ld.texi
+info_TEXINFOS =
 ld_TEXINFOS = configdoc.texi
 noinst_TEXINFOS = ldint.texi
-man_MANS = ld.1
+man_MANS =
 
 AM_MAKEINFOFLAGS = -I $(srcdir) -I $(BFDDIR)/doc -I ../bfd/doc \
 		   -I $(top_srcdir)/../libiberty
@@ -1935,7 +1935,7 @@ ld.1: $(srcdir)/ld.texi configdoc.texi
 		(rm -f $@.T$$$$ && exit 1)
 	rm -f ld.pod
 
-MAINTAINERCLEANFILES = configdoc.texi ld.1
+MAINTAINERCLEANFILES = configdoc.texi
 
 # We want to reconfigure if configure.host or configure.tgt changes.
 # development.sh is used to determine -Werror default.
@@ -1985,10 +1985,8 @@ diststuff: info $(EXTRA_DIST)
 # Both info (ld.info) and ld.1 depend on configdoc.texi.
 # But info isn't a direct target. Make info-recursive to depend on
 # ld.1 to support parallel build.
-info-recursive: ld.1
+info-recursive:
 
 DISTCLEANFILES = tdirs site.exp site.bak stringify.sed
 distclean-local:
 	rm -rf ldscripts
-
-MAINTAINERCLEANFILES += ld.info
