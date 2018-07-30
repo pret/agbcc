@@ -1,14 +1,12 @@
 #!/bin/sh
+# for legacy purposes.
 set -e
-make -C gcc clean
-make -C gcc old
-mv gcc/old_agbcc .
-make -C gcc clean
-make -C gcc
-mv gcc/agbcc .
-make -C libgcc clean
-make -C libgcc
-mv libgcc/libgcc.a .
-make -C libc clean
-make -C libc
-mv libc/libc.a .
+
+if command -v nproc >/dev/null 2>/dev/null; then
+    JOBS="${JOBS:$(nproc)}"
+else
+    JOBS="${JOBS:2}"
+fi
+
+make clean
+make -j $JOBS

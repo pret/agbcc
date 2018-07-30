@@ -1,11 +1,11 @@
-include $(DEVKITARM)/base_tools
-
 SHELL := /bin/bash -o pipefail
 
 ASFLAGS := -mcpu=arm7tdmi
 
 CC1    := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
+AR     := ../binutils/binutils/ar
+AS     := ../binutils/gas/as-new
 
 CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \

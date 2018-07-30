@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -g -std=gnu11
+BASE_CFLAGS = -O2 -g -std=gnu11
 
 INCLUDES = -I. -I$(srcdir)
 
@@ -70,6 +70,9 @@ old: $(OBJS)
 # Clear suffixes.
 .SUFFIXES:
 
+# Parallel make breaks this build.
+.NOTPARALLEL: normal old
+
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
@@ -92,6 +95,7 @@ $(DEPDIR)/%.d: ;
 
 GEN = genemit genoutput genrecog genextract genflags gencodes genconfig \
 genpeep gengenrtl gencheck genattr genattrtab genopinit
+
 
 clean:
 	$(RM) agbcc agbcc.exe old_agbcc old_agbcc.exe
@@ -291,3 +295,4 @@ gengenrtl : gengenrtl.o
 	$(CC) $(CFLAGS) -o $@ gengenrtl.o
 
 gengenrtl.o : gengenrtl.c $(RTL_BASE_H) config.h system.h
+

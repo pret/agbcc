@@ -1,5 +1,7 @@
-include $(DEVKITARM)/base_tools
 CC1 = ../old_agbcc
+AR = ../binutils/binutils/ar
+AS = ../binutils/gas/as-new
+
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
 	$(AR) -x libgcc1.a
