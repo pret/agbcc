@@ -57,7 +57,7 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && ./configure -q --target=arm-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && ./configure --without-libintl --target=arm-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
 
 binutils/built: binutils/Makefile
 	@$(MAKE) -C binutils
