@@ -1,3 +1,7 @@
 *.exe
 *.o
 *.a
+agbcc
+old_agbcc
+*.lo
+
