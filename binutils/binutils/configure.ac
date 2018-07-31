@@ -85,9 +85,6 @@ if test -z "$host" ; then
     AC_MSG_ERROR(Unrecognized host system type; please check config.sub.)
 fi
 
-AC_PROG_YACC
-AM_PROG_LEX
-
 ALL_LINGUAS="bg ca da es fi fr hr id it ja pt ro ru rw sk sr sv tr uk vi zh_CN zh_TW"
 ZW_GNU_GETTEXT_SISTER_DIR
 AM_PO_SUBDIRS

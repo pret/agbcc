@@ -27,11 +27,6 @@ YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bis
 YFLAGS = -d
 LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
 
-# Automake 1.10+ disables lex and yacc output file regeneration if
-# maintainer mode is disabled.  Avoid this.
-am__skiplex =
-am__skipyacc =
-
 ELF_CLFAGS=-DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
@@ -1860,11 +1855,11 @@ emmo.c: $(srcdir)/emulparams/mmo.sh $(srcdir)/emultempl/mmix-elfnmmo.em \
 
 
 # We need this for automake to use YLWRAP.
-EXTRA_ld_new_SOURCES = deffilep.y ldlex.l
+EXTRA_ld_new_SOURCES = deffilep.c ldlex.c
 # Allow dependency tracking to work for these files, too.
 EXTRA_ld_new_SOURCES += pep-dll.c pe-dll.c
 
-ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmain.c \
+ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmain.c \
 	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
 	ldbuildid.c
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
