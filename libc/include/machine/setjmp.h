@@ -11,7 +11,7 @@
  * onsstack,sigmask,sp,pc,npc,psr,g1,o0,wbcnt (sigcontext).
  * All else recovered by under/over(flow) handling.
  */
-#define	_JBLEN	13
+#define _JBLEN 13
 #endif
 
 /* necv70 was 9 as well. */
@@ -22,7 +22,7 @@
  * fp2-fp7	for 68881.
  * All else recovered by under/over(flow) handling.
  */
-#define	_JBLEN	34
+#define _JBLEN 34
 #endif
 
 #if defined(__Z8001__) || defined(__Z8002__)
@@ -35,12 +35,12 @@
  * onsstack,sigmask,sp,pc,npc,psr,g1,o0,wbcnt (sigcontext).
  * All else recovered by under/over(flow) handling.
  */
-#define	_JBLEN	9
+#define _JBLEN 9
 #endif
 
 #ifdef __i386__
 #ifdef __unix__
-# define _JBLEN	36
+#define _JBLEN 36
 #elif defined(_WIN32)
 #define _JBLEN (13 * 4)
 #else
@@ -87,11 +87,11 @@ typedef int jmp_buf[_JBLEN];
 #define _JBLEN 4
 #endif
 
-#ifdef  __sh__
+#ifdef __sh__
 #define _JBLEN 20
 #endif
 
-#ifdef  __v800
+#ifdef __v800
 #define _JBLEN 28
 #endif
 
@@ -124,7 +124,7 @@ typedef int jmp_buf[_JBLEN];
 #endif
 
 #ifdef __D30V__
-#define _JBLEN ((64 /* GPR */ + (2*2) /* ACs */ + 18 /* CRs */) / 2)
+#define _JBLEN ((64 /* GPR */ + (2 * 2) /* ACs */ + 18 /* CRs */) / 2)
 #define _JBTYPE double
 #endif
 
@@ -134,27 +134,27 @@ typedef int jmp_buf[_JBLEN];
 
 #ifdef _JBLEN
 #ifdef _JBTYPE
-typedef	_JBTYPE jmp_buf[_JBLEN];
+typedef _JBTYPE jmp_buf[_JBLEN];
 #else
-typedef	int jmp_buf[_JBLEN];
+typedef int jmp_buf[_JBLEN];
 #endif
 
 #ifdef __CYGWIN32__
 #include <signal.h>
 
 /* POSIX sigsetjmp/siglongjmp macros */
-typedef int sigjmp_buf[_JBLEN+2];
+typedef int sigjmp_buf[_JBLEN + 2];
 
-#define _SAVEMASK	_JBLEN
-#define _SIGMASK	(_JBLEN+1)
+#define _SAVEMASK _JBLEN
+#define _SIGMASK (_JBLEN + 1)
 
-#define sigsetjmp(env, savemask) (env[_SAVEMASK] = savemask,\
-               sigprocmask (SIG_SETMASK, 0, (sigset_t *) &env[_SIGMASK]),\
-               setjmp (env))
+#define sigsetjmp(env, savemask)                                                                   \
+    (env[_SAVEMASK] = savemask, sigprocmask(SIG_SETMASK, 0, (sigset_t *)&env[_SIGMASK]),           \
+        setjmp(env))
 
-#define siglongjmp(env, val) (((env[_SAVEMASK])?\
-               sigprocmask (SIG_SETMASK, (sigset_t *) &env[_SIGMASK], 0):0),\
-               longjmp (env, val))
+#define siglongjmp(env, val)                                                                       \
+    (((env[_SAVEMASK]) ? sigprocmask(SIG_SETMASK, (sigset_t *)&env[_SIGMASK], 0) : 0),             \
+        longjmp(env, val))
 
 #endif /* __CYGWIN32__*/
 #endif

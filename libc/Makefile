@@ -6,10 +6,11 @@ CC1    := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
 AR     := ../binutils/binutils/ar
 AS     := ../binutils/gas/as-new
+CPP    := cpp
 
-CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
+CPPFLAGS := -Wold-style-declaration -Wold-style-definition -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \
--D__STDC__ -D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
+-D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
 
 
 # Clear the default suffixes.
@@ -21,9 +22,9 @@ CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 .PHONY: all clean
 
 C_SRCS := $(shell find . -iname "*.c" -a ! -iname "mallocr.c")
-C_INTRS := $(C_SRCS:%.c=%.i)
-C_OBJS := $(C_SRCS:%.c=%.o) \
-stdlib/mallocr.o stdlib/freer.o stdlib/reallocr.o stdlib/callocr.o \
+C_OBJS := $(C_SRCS:%.c=%.o)
+
+MALLOC_OBJS := stdlib/mallocr.o stdlib/freer.o stdlib/reallocr.o stdlib/callocr.o \
 stdlib/cfreer.o stdlib/malignr.o stdlib/vallocr.o stdlib/pvallocr.o \
 stdlib/mallinfor.o stdlib/mallstatsr.o stdlib/msizer.o stdlib/malloptr.o \
 stdio/vfiprintf.o
@@ -31,71 +32,43 @@ stdio/vfiprintf.o
 S_SRCS := arm/setjmp.s arm/trap.s
 S_OBJS := $(S_SRCS:%.s=%.o)
 
-OBJS := $(C_OBJS) $(S_OBJS)
+OBJS := $(C_OBJS) $(S_OBJS) $(MALLOC_OBJS)
 
 all: libc.a
 	@:
 
 clean:
 	rm -f $(OBJS)
-	rm -f $(C_OBJS:%.o=%.i)
 	rm -f $(C_OBJS:%.o=%.s)
 	rm -f $(S_OBJS:%.o=%.i)
 	rm -f libc.a
 
 PREPROCESS := $(CPP) $(CPPFLAGS)
 
-stdlib/mallocr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MALLOC $< -o $@
-
-stdlib/freer.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_FREE $< -o $@
-
-stdlib/reallocr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_REALLOC $< -o $@
-
-stdlib/callocr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_CALLOC $< -o $@
-
-stdlib/cfreer.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_CFREE $< -o $@
-
-stdlib/malignr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MEMALIGN $< -o $@
-
-stdlib/vallocr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_VALLOC $< -o $@
-
-stdlib/pvallocr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_PVALLOC $< -o $@
-
-stdlib/mallinfor.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MALLINFO $< -o $@
-
-stdlib/mallstatsr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MALLOC_STATS $< -o $@
-
-stdlib/msizer.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MALLOC_USABLE_SIZE $< -o $@
-
-stdlib/malloptr.i: stdlib/mallocr.c
-	$(PREPROCESS) -DDEFINE_MALLOPT $< -o $@
-
-stdio/vfiprintf.i: stdio/vfprintf.c
-	$(PREPROCESS) -DINTEGER_ONLY $< -o $@
-
-$(C_INTRS): %.i : %.c
-	$(PREPROCESS) $< -o $@
+stdlib/mallocr.o: PREPROCESS += -DDEFINE_MALLOC
+stdlib/freer.o: PREPROCESS += -DDEFINE_FREE
+stdlib/reallocr.o: PREPROCESS += -DDEFINE_REALLOC
+stdlib/callocr.i: PREPROCESS += -DDEFINE_CALLOC
+stdlib/cfreer.o:  PREPROCESS += -DDEFINE_CFREE
+stdlib/malignr.o: PREPROCESS += -DDEFINE_MEMALIGN
+stdlib/vallocr.o: PREPROCESS += -DDEFINE_VALLOC
+stdlib/pvallocr.o: PREPROCESS += -DDEFINE_PVALLOC
+stdlib/mallinfor.o: PREPROCESS += -DDEFINE_MALLINFO
+stdlib/mallstatsr.o: PREPROCESS += -DDEFINE_MALLOC_STATS
+stdlib/msizer.o: PREPROCESS += -DDEFINE_MALLOC_USABLE_SIZE
+stdlib/malloptr.o: PREPROCESS += -DDEFINE_MALLOPT
+stdio/vfiprintf.o: PREPROCESS += -DINTEGER_ONLY
 
 stdlib/mbtowc_r.o: CFLAGS := $(CFLAGS) -fshort-enums
 
-$(C_OBJS): %.o : %.i
-	@$(CC1) $(CFLAGS) $< -o $*.s
-	@printf ".text\n\t.align\t2, 0\n" >> $*.s
-	$(AS) $(ASFLAGS) -o $@ $*.s
+$(MALLOC_OBJS): stdlib/mallocr.c
+	$(PREPROCESS) $< | $(CC1) $(CFLAGS) | $(AS) $(ASFLAGS) -o $@
+
+$(C_OBJS): %.o : %.c
+	$(PREPROCESS) $< | $(CC1) $(CFLAGS) | $(AS) $(ASFLAGS) -o $@
 
 $(S_OBJS): %.o: %.s
-	@$(CPP) $(CPPFLAGS) $< -o $*.i
+	@$(CPP) $(CPPFLAGS) -x c -P $< -o $*.i
 	@printf ".text\n\t.align\t2, 0\n" >> $*.i
 	$(AS) $(ASFLAGS) -o $@ $*.i
 

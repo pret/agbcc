@@ -3,26 +3,26 @@ FUNCTION
    <<strtol>>---string to long
 
 INDEX
-	strtol
+    strtol
 INDEX
-	_strtol_r
+    _strtol_r
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
+    #include <stdlib.h>
         long strtol(const char *<[s]>, char **<[ptr]>,int <[base]>);
 
-        long _strtol_r(void *<[reent]>, 
+        long _strtol_r(void *<[reent]>,
                        const char *<[s]>, char **<[ptr]>,int <[base]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	long strtol (<[s]>, <[ptr]>, <[base]>)
+    #include <stdlib.h>
+    long strtol (<[s]>, <[ptr]>, <[base]>)
         char *<[s]>;
         char **<[ptr]>;
         int <[base]>;
 
-	long _strtol_r (<[reent]>, <[s]>, <[ptr]>, <[base]>)
-	char *<[reent]>;
+    long _strtol_r (<[reent]>, <[s]>, <[ptr]>, <[base]>)
+    char *<[reent]>;
         char *<[s]>;
         char **<[ptr]>;
         int <[base]>;
@@ -117,7 +117,6 @@ No supporting OS subroutines are required.
  */
 
 
-#include <_ansi.h>
 #include <limits.h>
 #include <ctype.h>
 #include <errno.h>
@@ -130,97 +129,95 @@ No supporting OS subroutines are required.
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-long
-_DEFUN (_strtol_r, (rptr, nptr, endptr, base),
-	struct _reent *rptr _AND
-	_CONST char *nptr _AND
-	char **endptr _AND
-	int base)
+long _strtol_r(struct _reent *rptr, const char *nptr, char **endptr, int base)
 {
-	register const char *s = nptr;
-	register unsigned long acc;
-	register int c;
-	register unsigned long cutoff;
-	register int neg = 0, any, cutlim;
+    register const char *s = nptr;
+    register unsigned long acc;
+    register int c;
+    register unsigned long cutoff;
+    register int neg = 0, any, cutlim;
 
-	/*
-	 * Skip white space and pick up leading +/- sign if any.
-	 * If base is 0, allow 0x for hex and 0 for octal, else
-	 * assume decimal; if base is already 16, allow 0x.
-	 */
-	do {
-		c = *s++;
-	} while (isspace(c));
-	if (c == '-') {
-		neg = 1;
-		c = *s++;
-	} else if (c == '+')
-		c = *s++;
-	if ((base == 0 || base == 16) &&
-	    c == '0' && (*s == 'x' || *s == 'X')) {
-		c = s[1];
-		s += 2;
-		base = 16;
-	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+    /*
+     * Skip white space and pick up leading +/- sign if any.
+     * If base is 0, allow 0x for hex and 0 for octal, else
+     * assume decimal; if base is already 16, allow 0x.
+     */
+    do
+    {
+        c = *s++;
+    } while (isspace(c));
+    if (c == '-')
+    {
+        neg = 1;
+        c = *s++;
+    }
+    else if (c == '+')
+        c = *s++;
+    if ((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X'))
+    {
+        c = s[1];
+        s += 2;
+        base = 16;
+    }
+    if (base == 0)
+        base = c == '0' ? 8 : 10;
 
-	/*
-	 * Compute the cutoff value between legal numbers and illegal
-	 * numbers.  That is the largest legal value, divided by the
-	 * base.  An input number that is greater than this value, if
-	 * followed by a legal input character, is too big.  One that
-	 * is equal to this value may be valid or not; the limit
-	 * between valid and invalid numbers is then based on the last
-	 * digit.  For instance, if the range for longs is
-	 * [-2147483648..2147483647] and the input base is 10,
-	 * cutoff will be set to 214748364 and cutlim to either
-	 * 7 (neg==0) or 8 (neg==1), meaning that if we have accumulated
-	 * a value > 214748364, or equal but the next digit is > 7 (or 8),
-	 * the number is too big, and we will return a range error.
-	 *
-	 * Set any if any `digits' consumed; make it negative to indicate
-	 * overflow.
-	 */
-	cutoff = neg ? -(unsigned long)LONG_MIN : LONG_MAX;
-	cutlim = cutoff % (unsigned long)base;
-	cutoff /= (unsigned long)base;
-	for (acc = 0, any = 0;; c = *s++) {
-		if (isdigit(c))
-			c -= '0';
-		else if (isalpha(c))
-			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0 || acc > cutoff || acc == cutoff && c > cutlim)
-			any = -1;
-		else {
-			any = 1;
-			acc *= base;
-			acc += c;
-		}
-	}
-	if (any < 0) {
-		acc = neg ? LONG_MIN : LONG_MAX;
-		rptr->_errno = ERANGE;
-	} else if (neg)
-		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+    /*
+     * Compute the cutoff value between legal numbers and illegal
+     * numbers.  That is the largest legal value, divided by the
+     * base.  An input number that is greater than this value, if
+     * followed by a legal input character, is too big.  One that
+     * is equal to this value may be valid or not; the limit
+     * between valid and invalid numbers is then based on the last
+     * digit.  For instance, if the range for longs is
+     * [-2147483648..2147483647] and the input base is 10,
+     * cutoff will be set to 214748364 and cutlim to either
+     * 7 (neg==0) or 8 (neg==1), meaning that if we have accumulated
+     * a value > 214748364, or equal but the next digit is > 7 (or 8),
+     * the number is too big, and we will return a range error.
+     *
+     * Set any if any `digits' consumed; make it negative to indicate
+     * overflow.
+     */
+    cutoff = neg ? -(unsigned long)LONG_MIN : LONG_MAX;
+    cutlim = cutoff % (unsigned long)base;
+    cutoff /= (unsigned long)base;
+    for (acc = 0, any = 0;; c = *s++)
+    {
+        if (isdigit(c))
+            c -= '0';
+        else if (isalpha(c))
+            c -= isupper(c) ? 'A' - 10 : 'a' - 10;
+        else
+            break;
+        if (c >= base)
+            break;
+        if (any < 0 || acc > cutoff || acc == cutoff && c > cutlim)
+            any = -1;
+        else
+        {
+            any = 1;
+            acc *= base;
+            acc += c;
+        }
+    }
+    if (any < 0)
+    {
+        acc = neg ? LONG_MIN : LONG_MAX;
+        rptr->_errno = ERANGE;
+    }
+    else if (neg)
+        acc = -acc;
+    if (endptr != 0)
+        *endptr = (char *)(any ? s - 1 : nptr);
+    return (acc);
 }
 
 #ifndef _REENT_ONLY
 
-long
-_DEFUN (strtol, (s, ptr, base),
-	_CONST char *s _AND
-	char **ptr _AND
-	int base)
+long strtol(const char *s, char **ptr, int base)
 {
-	return _strtol_r (_REENT, s, ptr, base);
+    return _strtol_r(_REENT, s, ptr, base);
 }
 
 #endif

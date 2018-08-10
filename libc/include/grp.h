@@ -41,19 +41,20 @@
  */
 
 #ifndef _GRP_H_
-#define	_GRP_H_
+#define _GRP_H_
 
 #include <sys/types.h>
 
 #if !defined(_POSIX_SOURCE) && !defined(_XOPEN_SOURCE)
-#define	_PATH_GROUP		"/etc/group"
+#define _PATH_GROUP "/etc/group"
 #endif
 
-struct group {
-	char	*gr_name;		/* group name */
-	char	*gr_passwd;		/* group password */
-	int	gr_gid;			/* group id */
-	char	**gr_mem;		/* group members */
+struct group
+{
+    char *gr_name;   /* group name */
+    char *gr_passwd; /* group password */
+    int gr_gid;      /* group id */
+    char **gr_mem;   /* group members */
 };
 
 
@@ -61,16 +62,16 @@ struct group {
 extern "C" {
 #endif
 
-struct group	*getgrgid (gid_t);
-struct group	*getgrnam (const char *);
+struct group *getgrgid(gid_t);
+struct group *getgrnam(const char *);
 #ifndef _POSIX_SOURCE
-struct group	*getgrent (void);
-void		 setgrent (void);
-void		 endgrent (void);
-void		 setgrfile (const char *);
+struct group *getgrent(void);
+void setgrent(void);
+void endgrent(void);
+void setgrfile(const char *);
 #ifndef _XOPEN_SOURCE
-char		*group_from_gid (gid_t, int);
-int		 setgroupent (int);
+char *group_from_gid(gid_t, int);
+int setgroupent(int);
 #endif /* !_XOPEN_SOURCE */
 #endif /* !_POSIX_SOURCE */
 

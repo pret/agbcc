@@ -1,21 +1,22 @@
 /*
 FUNCTION
-	<<toascii>>---force integers to ASCII range
+    <<toascii>>---force integers to ASCII range
 
 INDEX
-	toascii
+    toascii
 
 ANSI_SYNOPSIS
-	#include <ctype.h>
-	int toascii(int <[c]>);
+    #include <ctype.h>
+    int toascii(int <[c]>);
 
 TRAD_SYNOPSIS
-	#include <ctype.h>
-	int toascii(<[c]>);
-	int (<[c]>);
+    #include <ctype.h>
+    int toascii(<[c]>);
+    int (<[c]>);
 
 DESCRIPTION
-<<toascii>> is a macro which coerces integers to the ASCII range (0--127) by zeroing any higher-order bits.
+<<toascii>> is a macro which coerces integers to the ASCII range (0--127) by zeroing any
+higher-order bits.
 
 You can use a compiled subroutine instead of the macro definition by
 undefining this macro using `<<#undef toascii>>'.
@@ -29,13 +30,10 @@ PORTABILITY
 No supporting OS subroutines are required.
 */
 
-#include <_ansi.h>
 #include <ctype.h>
 #undef toascii
 
-int
-_DEFUN(toascii,(c),int c)
+int toascii(int c)
 {
-  return (c)&0177;
+    return (c)&0177;
 }
-

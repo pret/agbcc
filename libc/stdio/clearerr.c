@@ -20,16 +20,16 @@ FUNCTION
 <<clearerr>>---clear file or stream error indicator
 
 INDEX
-	clearerr
+    clearerr
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	void clearerr(FILE *<[fp]>);
+    #include <stdio.h>
+    void clearerr(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	void clearerr(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    void clearerr(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 The <<stdio>> functions maintain an error indicator with each file
@@ -53,11 +53,9 @@ No supporting OS subroutines are required.
 */
 
 #include <stdio.h>
-#undef	clearerr
+#undef clearerr
 
-_VOID
-_DEFUN (clearerr, (fp),
-	FILE * fp)
+void clearerr(FILE *fp)
 {
-  __sclearerr (fp);
+    __sclearerr(fp);
 }

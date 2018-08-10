@@ -31,51 +31,48 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * or if c=='\n' and the file is line buffered.
  */
 
-int
-__swbuf (c, fp)
-     register int c;
-     register FILE *fp;
+int __swbuf(register int c, register FILE *fp)
 {
-  register int n;
+    register int n;
 
-  /* Ensure stdio has been initialized.  */
+    /* Ensure stdio has been initialized.  */
 
-  CHECK_INIT (fp);
+    CHECK_INIT(fp);
 
-  /*
-   * In case we cannot write, or longjmp takes us out early,
-   * make sure _w is 0 (if fully- or un-buffered) or -_bf._size
-   * (if line buffered) so that we will get called again.
-   * If we did not do this, a sufficient number of putc()
-   * calls might wrap _w from negative to positive.
-   */
+    /*
+     * In case we cannot write, or longjmp takes us out early,
+     * make sure _w is 0 (if fully- or un-buffered) or -_bf._size
+     * (if line buffered) so that we will get called again.
+     * If we did not do this, a sufficient number of putc()
+     * calls might wrap _w from negative to positive.
+     */
 
-  fp->_w = fp->_lbfsize;
-  if (cantwrite (fp))
-    return EOF;
-  c = (unsigned char) c;
+    fp->_w = fp->_lbfsize;
+    if (cantwrite(fp))
+        return EOF;
+    c = (unsigned char)c;
 
-  /*
-   * If it is completely full, flush it out.  Then, in any case,
-   * stuff c into the buffer.  If this causes the buffer to fill
-   * completely, or if c is '\n' and the file is line buffered,
-   * flush it (perhaps a second time).  The second flush will always
-   * happen on unbuffered streams, where _bf._size==1; fflush()
-   * guarantees that putc() will always call wbuf() by setting _w
-   * to 0, so we need not do anything else.
-   */
+    /*
+     * If it is completely full, flush it out.  Then, in any case,
+     * stuff c into the buffer.  If this causes the buffer to fill
+     * completely, or if c is '\n' and the file is line buffered,
+     * flush it (perhaps a second time).  The second flush will always
+     * happen on unbuffered streams, where _bf._size==1; fflush()
+     * guarantees that putc() will always call wbuf() by setting _w
+     * to 0, so we need not do anything else.
+     */
 
-  n = fp->_p - fp->_bf._base;
-  if (n >= fp->_bf._size)
+    n = fp->_p - fp->_bf._base;
+    if (n >= fp->_bf._size)
     {
-      if (fflush (fp))
-	return EOF;
-      n = 0;
+        if (fflush(fp))
+            return EOF;
+        n = 0;
     }
-  fp->_w--;
-  *fp->_p++ = c;
-  if (++n == fp->_bf._size || (fp->_flags & __SLBF && c == '\n'))
-    if (fflush (fp))
-      return EOF;
-  return c;
+    fp->_w--;
+    *fp->_p++ = c;
+    if (++n == fp->_bf._size || (fp->_flags & __SLBF && c == '\n'))
+        if (fflush(fp))
+            return EOF;
+    return c;
 }

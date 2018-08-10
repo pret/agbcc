@@ -5,13 +5,13 @@
  */
 
 #ifndef _STRING_H_
-#define	_STRING_H_
+#define _STRING_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "_ansi.h"
+#include <sys/config.h>
 
 #define __need_size_t
 #include <stddef.h>
@@ -20,52 +20,52 @@ extern "C" {
 #define NULL 0L
 #endif
 
-_PTR 	 _EXFUN(memchr,(const _PTR, int, size_t));
-int 	 _EXFUN(memcmp,(const _PTR, const _PTR, size_t));
-_PTR 	 _EXFUN(memcpy,(_PTR, const _PTR, size_t));
-_PTR	 _EXFUN(memmove,(_PTR, const _PTR, size_t));
-_PTR	 _EXFUN(memset,(_PTR, int, size_t));
-char 	*_EXFUN(strcat,(char *, const char *));
-char 	*_EXFUN(strchr,(const char *, int));
-int	 _EXFUN(strcmp,(const char *, const char *));
-int	 _EXFUN(strcoll,(const char *, const char *));
-char 	*_EXFUN(strcpy,(char *, const char *));
-size_t	 _EXFUN(strcspn,(const char *, const char *));
-char 	*_EXFUN(strerror,(int));
-size_t	 _EXFUN(strlen,(const char *));
-char 	*_EXFUN(strncat,(char *, const char *, size_t));
-int	 _EXFUN(strncmp,(const char *, const char *, size_t));
-char 	*_EXFUN(strncpy,(char *, const char *, size_t));
-char 	*_EXFUN(strpbrk,(const char *, const char *));
-char 	*_EXFUN(strrchr,(const char *, int));
-size_t	 _EXFUN(strspn,(const char *, const char *));
-char 	*_EXFUN(strstr,(const char *, const char *));
+void *memchr(const void *, int, size_t);
+int memcmp(const void *, const void *, size_t);
+void *memcpy(void *, const void *, size_t);
+void *memmove(void *, const void *, size_t);
+void *memset(void *, int, size_t);
+char *strcat(char *, const char *);
+char *strchr(const char *, int);
+int strcmp(const char *, const char *);
+int strcoll(const char *, const char *);
+char *strcpy(char *, const char *);
+size_t strcspn(const char *, const char *);
+char *strerror(int);
+size_t strlen(const char *);
+char *strncat(char *, const char *, size_t);
+int strncmp(const char *, const char *, size_t);
+char *strncpy(char *, const char *, size_t);
+char *strpbrk(const char *, const char *);
+char *strrchr(const char *, int);
+size_t strspn(const char *, const char *);
+char *strstr(const char *, const char *);
 
 #ifndef _REENT_ONLY
-char 	*_EXFUN(strtok,(char *, const char *));
+char *strtok(char *, const char *);
 #endif
 
-size_t	 _EXFUN(strxfrm,(char *, const char *, size_t));
+size_t strxfrm(char *, const char *, size_t);
 
 #ifndef __STRICT_ANSI__
-char 	*_EXFUN(strtok_r,(char *, const char *, char **));
+char *strtok_r(char *, const char *, char **);
 
-int	 _EXFUN(bcmp,(const char *, const char *, size_t));
-void	 _EXFUN(bcopy,(const char *, char *, size_t));
-void	 _EXFUN(bzero,(char *, size_t));
-int	 _EXFUN(ffs,(int));
-char 	*_EXFUN(index,(const char *, int));
-_PTR	 _EXFUN(memccpy,(_PTR, const _PTR, int, size_t));
-char 	*_EXFUN(rindex,(const char *, int));
-int	 _EXFUN(strcasecmp,(const char *, const char *));
-char 	*_EXFUN(strdup,(const char *));
-int	 _EXFUN(strncasecmp,(const char *, const char *, size_t));
-char 	*_EXFUN(strsep,(char **, const char *));
-char	*_EXFUN(strlwr,(char *));
-char	*_EXFUN(strupr,(char *));
+int bcmp(const char *, const char *, size_t);
+void bcopy(const char *, char *, size_t);
+void bzero(char *, size_t);
+int ffs(int);
+char *index(const char *, int);
+void *memccpy(void *, const void *, int, size_t);
+char *rindex(const char *, int);
+int strcasecmp(const char *, const char *);
+char *strdup(const char *);
+int strncasecmp(const char *, const char *, size_t);
+char *strsep(char **, const char *);
+char *strlwr(char *);
+char *strupr(char *);
 #ifdef __CYGWIN32__
-char    *_EXFUN(strsignal, (int __signo));
-int     _EXFUN(strtosigno, (const char *__name));
+char *strsignal(int __signo);
+int strtosigno(const char *__name);
 #endif
 
 /* These function names are used on Windows and perhaps other systems.  */

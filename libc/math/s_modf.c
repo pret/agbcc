@@ -73,23 +73,14 @@ QUICKREF
 
 #ifndef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
 static const double one = 1.0;
-#else
-static double one = 1.0;
-#endif
 
-#ifdef __STDC__
-	double modf(double x, double *iptr)
-#else
-	double modf(x, iptr)
-	double x,*iptr;
-#endif
+double modf(double x, double *iptr)
 {
 	__int32_t i0,i1,j0;
 	__uint32_t i;
 	EXTRACT_WORDS(i0,i1,x);
-	j0 = ((i0>>20)&0x7ff)-0x3ff;	/* exponent of x */
+	j0 = ((i0>>20) & 0x7ff)-0x3ff;	/* exponent of x */
 	if(j0<20) {			/* integer part in high x */
 	    if(j0<0) {			/* |x|<1 */
 	        INSERT_WORDS(*iptr,i0&0x80000000,0);	/* *iptr = +-0 */

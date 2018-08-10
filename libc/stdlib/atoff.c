@@ -1,9 +1,6 @@
 #include <stdlib.h>
-#include <_ansi.h>
 
-float
-_DEFUN (atoff, (s),
-	_CONST char *s)
+float atoff(const char *s)
 {
-  return strtodf (s, NULL);
+    return strtodf(s, NULL);
 }

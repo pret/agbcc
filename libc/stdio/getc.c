@@ -20,16 +20,16 @@ FUNCTION
 <<getc>>---read a character (macro)
 
 INDEX
-	getc
+    getc
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int getc(FILE *<[fp]>);
+    #include <stdio.h>
+    int getc(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int getc(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int getc(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<getc>> is a macro, defined in <<stdio.h>>.  You can use <<getc>>
@@ -70,11 +70,9 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #undef getc
 
-int
-getc (fp)
-     register FILE *fp;
+int getc(register FILE *fp)
 {
-  /* CHECK_INIT is called (eventually) by __srefill.  */
+    /* CHECK_INIT is called (eventually) by __srefill.  */
 
-  return __sgetc (fp);
+    return __sgetc(fp);
 }

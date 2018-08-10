@@ -3,26 +3,26 @@ FUNCTION
 <<fdopen>>---turn open file into a stream
 
 INDEX
-	fdopen
+    fdopen
 INDEX
-	_fdopen_r
+    _fdopen_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	FILE *fdopen(int <[fd]>, const char *<[mode]>);
-	FILE *_fdopen_r(void *<[reent]>,
+    #include <stdio.h>
+    FILE *fdopen(int <[fd]>, const char *<[mode]>);
+    FILE *_fdopen_r(void *<[reent]>,
                      int <[fd]>, const char *<[mode]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	FILE *fdopen(<[fd]>, <[mode]>)
-	int <[fd]>;
-	char *<[mode]>;
+    #include <stdio.h>
+    FILE *fdopen(<[fd]>, <[mode]>)
+    int <[fd]>;
+    char *<[mode]>;
 
-	FILE *_fdopen_r(<[reent]>, <[fd]>, <[mode]>)
-	char *<[reent]>;
+    FILE *_fdopen_r(<[reent]>, <[fd]>, <[mode]>)
+    char *<[reent]>;
         int <[fd]>;
-	char *<[mode]>);
+    char *<[mode]>);
 
 DESCRIPTION
 <<fdopen>> produces a file descriptor of type <<FILE *>>, from a
@@ -45,72 +45,65 @@ PORTABILITY
 #include "local.h"
 #include <_syslist.h>
 
-extern int __sflags ();
+extern int __sflags();
 
-FILE *
-_DEFUN (_fdopen_r, (ptr, fd, mode),
-	struct _reent *ptr _AND
-	int fd _AND
-	_CONST char *mode)
+FILE *_fdopen_r(struct _reent *ptr, int fd, const char *mode)
 {
-  register FILE *fp;
-  int flags, oflags;
+    register FILE *fp;
+    int flags, oflags;
 #ifdef F_GETFL
-  int fdflags, fdmode;
+    int fdflags, fdmode;
 #endif
 
-  if ((flags = __sflags (ptr, mode, &oflags)) == 0)
-    return 0;
+    if ((flags = __sflags(ptr, mode, &oflags)) == 0)
+        return 0;
 
-  /* make sure the mode the user wants is a subset of the actual mode */
+        /* make sure the mode the user wants is a subset of the actual mode */
 #ifdef F_GETFL
-  if ((fdflags = _fcntl (fd, F_GETFL, 0)) < 0)
-    return 0;
-  fdmode = fdflags & O_ACCMODE;
-  if (fdmode != O_RDWR && (fdmode != (oflags & O_ACCMODE)))
+    if ((fdflags = _fcntl(fd, F_GETFL, 0)) < 0)
+        return 0;
+    fdmode = fdflags & O_ACCMODE;
+    if (fdmode != O_RDWR && (fdmode != (oflags & O_ACCMODE)))
     {
-      ptr->_errno = EBADF;
-      return 0;
+        ptr->_errno = EBADF;
+        return 0;
     }
 #endif
 
-  if ((fp = __sfp (ptr)) == 0)
-    return 0;
-  fp->_flags = flags;
-  /*
-   * If opened for appending, but underlying descriptor
-   * does not have O_APPEND bit set, assert __SAPP so that
-   * __swrite() will lseek to end before each write.
-   */
-  if ((oflags & O_APPEND)
+    if ((fp = __sfp(ptr)) == 0)
+        return 0;
+    fp->_flags = flags;
+    /*
+     * If opened for appending, but underlying descriptor
+     * does not have O_APPEND bit set, assert __SAPP so that
+     * __swrite() will lseek to end before each write.
+     */
+    if ((oflags & O_APPEND)
 #ifdef F_GETFL
-       && !(fdflags & O_APPEND)
+        && !(fdflags & O_APPEND)
 #endif
-      )
-    fp->_flags |= __SAPP;
-  fp->_file = fd;
-  fp->_cookie = (_PTR) fp;
+    )
+        fp->_flags |= __SAPP;
+    fp->_file = fd;
+    fp->_cookie = (void *)fp;
 
 #undef _read
 #undef _write
 #undef _seek
 #undef _close
 
-  fp->_read = __sread;
-  fp->_write = __swrite;
-  fp->_seek = __sseek;
-  fp->_close = __sclose;
-  return fp;
+    fp->_read = __sread;
+    fp->_write = __swrite;
+    fp->_seek = __sseek;
+    fp->_close = __sclose;
+    return fp;
 }
 
 #ifndef _REENT_ONLY
 
-FILE *
-_DEFUN (fdopen, (fd, mode),
-	int fd _AND
-	_CONST char *mode)
+FILE *fdopen(int fd, const char *mode)
 {
-  return _fdopen_r (_REENT, fd, mode);
+    return _fdopen_r(_REENT, fd, mode);
 }
 
 #endif

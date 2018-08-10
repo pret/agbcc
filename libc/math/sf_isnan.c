@@ -20,12 +20,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	int isnanf(float x)
-#else
-	int isnanf(x)
-	float x;
-#endif
+int isnanf(float x)
 {
 	__int32_t ix;
 	GET_FLOAT_WORD(ix,x);
@@ -36,12 +31,7 @@
 
 #ifdef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	int isnan(double x)
-#else
-	int isnan(x)
-	double x;
-#endif
+int isnan(double x)
 {
 	return isnanf((float) x);
 }

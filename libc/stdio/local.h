@@ -22,69 +22,69 @@
  * in particular, macros and private variables.
  */
 
-#include <_ansi.h>
+#include <sys/config.h>
 #include <stdarg.h>
 #include <reent.h>
 #include <unistd.h>
 
-extern int    _EXFUN(__svfscanf,(FILE *, _CONST char *,va_list));
-extern FILE  *_EXFUN(__sfp,(struct _reent *));
-extern int    _EXFUN(__sflags,(struct _reent *,_CONST char*, int*));
-extern int    _EXFUN(__srefill,(FILE *));
-extern int    _EXFUN(__sread,(void *, char *, int));
-extern int    _EXFUN(__swrite,(void *, char const *, int));
-extern fpos_t _EXFUN(__sseek,(void *, fpos_t, int));
-extern int    _EXFUN(__sclose,(void *));
-extern void   _EXFUN(__sinit,(struct _reent *));
-extern void   _EXFUN(_cleanup_r,(struct _reent *));
-extern void   _EXFUN(__smakebuf,(FILE *));
-extern int    _EXFUN(_fwalk,(struct _reent *, int (*)(FILE *)));
-struct _glue * _EXFUN(__sfmoreglue,(struct _reent *,int n));
-extern int   _EXFUN(__srefill,(FILE *fp));
+extern int __svfscanf(FILE *, const char *, va_list);
+extern FILE *__sfp(struct _reent *);
+extern int __sflags(struct _reent *, const char *, int *);
+extern int __srefill(FILE *);
+extern int __sread(void *, char *, int);
+extern int __swrite(void *, char const *, int);
+extern fpos_t __sseek(void *, fpos_t, int);
+extern int __sclose(void *);
+extern void __sinit(struct _reent *);
+extern void _cleanup_r(struct _reent *);
+extern void __smakebuf(FILE *);
+extern int _fwalk(struct _reent *, int (*)(FILE *));
+struct _glue *__sfmoreglue(struct _reent *, int n);
+extern int __srefill(FILE *fp);
 
 /* Called by the main entry point fns to ensure stdio has been initialized.  */
 
-#define CHECK_INIT(fp) \
-  do					\
-    {					\
-      if ((fp)->_data == 0)		\
-	(fp)->_data = _REENT;		\
-      if (!(fp)->_data->__sdidinit)	\
-	__sinit ((fp)->_data);		\
-    }					\
-  while (0)
+#define CHECK_INIT(fp)                                                                             \
+    do                                                                                             \
+    {                                                                                              \
+        if ((fp)->_data == 0)                                                                      \
+            (fp)->_data = _REENT;                                                                  \
+        if (!(fp)->_data->__sdidinit)                                                              \
+            __sinit((fp)->_data);                                                                  \
+    } while (0)
 
 /* Return true iff the given FILE cannot be written now.  */
 
-#define	cantwrite(fp) \
-  ((((fp)->_flags & __SWR) == 0 || (fp)->_bf._base == NULL) && \
-   __swsetup(fp))
+#define cantwrite(fp) ((((fp)->_flags & __SWR) == 0 || (fp)->_bf._base == NULL) && __swsetup(fp))
 
 /* Test whether the given stdio file has an active ungetc buffer;
    release such a buffer, without restoring ordinary unread data.  */
 
-#define	HASUB(fp) ((fp)->_ub._base != NULL)
-#define	FREEUB(fp) { \
-	if ((fp)->_ub._base != (fp)->_ubuf) \
-		_free_r(fp->_data, (char *)(fp)->_ub._base); \
-	(fp)->_ub._base = NULL; \
-}
+#define HASUB(fp) ((fp)->_ub._base != NULL)
+#define FREEUB(fp)                                                                                 \
+    {                                                                                              \
+        if ((fp)->_ub._base != (fp)->_ubuf)                                                        \
+            _free_r(fp->_data, (char *)(fp)->_ub._base);                                           \
+        (fp)->_ub._base = NULL;                                                                    \
+    }
 
 /* Test for an fgetline() buffer.  */
 
-#define	HASLB(fp) ((fp)->_lb._base != NULL)
-#define	FREELB(fp) { _free_r(fp->_data,(char *)(fp)->_lb._base); (fp)->_lb._base = NULL; }
+#define HASLB(fp) ((fp)->_lb._base != NULL)
+#define FREELB(fp)                                                                                 \
+    {                                                                                              \
+        _free_r(fp->_data, (char *)(fp)->_lb._base);                                               \
+        (fp)->_lb._base = NULL;                                                                    \
+    }
 
 /* WARNING: _dcvt is defined in the stdlib directory, not here!  */
 
-char *_EXFUN(_dcvt,(struct _reent *, char *, double, int, int, char, int));
-char *_EXFUN(_sicvt,(char *, short, char));
-char *_EXFUN(_icvt,(char *, int, char));
-char *_EXFUN(_licvt,(char *, long, char));
-#ifdef __GNUC__
-char *_EXFUN(_llicvt,(char *, long long, char));
-#endif
+char *_dcvt(struct _reent *, char *, double, int, int, char, int);
+char *_sicvt(char *, short, char);
+char *_icvt(char *, int, char);
+char *_licvt(char *, long, char);
+char *_llicvt(char *, long long, char);
 
 #define CVT_BUF_SIZE 128
 
-#define	NDYNAMIC 4	/* add four more whenever necessary */
+#define NDYNAMIC 4 /* add four more whenever necessary */

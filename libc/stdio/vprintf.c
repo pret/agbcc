@@ -17,19 +17,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <_ansi.h>
+
 #include <stdio.h>
-
-#ifdef _HAVE_STDC
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
-int
-vprintf (fmt, ap)
-     char _CONST *fmt;
-     va_list ap;
+int vprintf(char const *fmt, va_list ap)
 {
-  return vfprintf (stdout, fmt, ap);
+    return vfprintf(stdout, fmt, ap);
 }

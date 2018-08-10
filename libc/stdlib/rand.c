@@ -3,27 +3,27 @@ FUNCTION
 <<rand>>, <<srand>>---pseudo-random numbers
 
 INDEX
-	rand
+    rand
 INDEX
-	srand
+    srand
 INDEX
-	rand_r
+    rand_r
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	int rand(void);
-	void srand(unsigned int <[seed]>);
-	int rand_r(unsigned int *<[seed]>);
+    #include <stdlib.h>
+    int rand(void);
+    void srand(unsigned int <[seed]>);
+    int rand_r(unsigned int *<[seed]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	int rand();
+    #include <stdlib.h>
+    int rand();
 
-	void srand(<[seed]>)
-	unsigned int <[seed]>;
+    void srand(<[seed]>)
+    unsigned int <[seed]>;
 
-	void rand_r(<[seed]>)
-	unsigned int *<[seed]>;
+    void rand_r(<[seed]>)
+    unsigned int *<[seed]>;
 
 
 DESCRIPTION
@@ -69,18 +69,15 @@ on two different systems.
 #include <stdlib.h>
 #include <reent.h>
 
-void
-_DEFUN (srand, (seed), unsigned int seed)
+void srand(unsigned int seed)
 {
-        _REENT->_new._reent._rand_next = seed;
+    _REENT->_new._reent._rand_next = seed;
 }
 
-int
-_DEFUN_VOID (rand)
+int rand(void)
 {
-        return ((_REENT->_new._reent._rand_next = 
-                 _REENT->_new._reent._rand_next * 1103515245 + 12345 )
-                & RAND_MAX );
+    return ((_REENT->_new._reent._rand_next = _REENT->_new._reent._rand_next * 1103515245 + 12345)
+        & RAND_MAX);
 }
 
 #endif /* _REENT_ONLY */

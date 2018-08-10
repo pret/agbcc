@@ -20,24 +20,24 @@ FUNCTION
 <<putchar>>---write a character (macro)
 
 INDEX
-	putchar
+    putchar
 INDEX
-	_putchar_r
+    _putchar_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int putchar(int <[ch]>);
+    #include <stdio.h>
+    int putchar(int <[ch]>);
 
-	int _putchar_r(void *<[reent]>, int <[ch]>);
+    int _putchar_r(void *<[reent]>, int <[ch]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int putchar(<[ch]>)
-	int <[ch]>;
+    #include <stdio.h>
+    int putchar(<[ch]>)
+    int <[ch]>;
 
-	int _putchar_r(<[reent]>, <[ch]>)
-	char *<[reent]>;
-	int <[ch]>;
+    int _putchar_r(<[reent]>, <[ch]>)
+    char *<[reent]>;
+    int <[ch]>;
 
 DESCRIPTION
 <<putchar>> is a macro, defined in <<stdio.h>>.  <<putchar>>
@@ -72,23 +72,18 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #undef putchar
 
-int
-_putchar_r (ptr, c)
-     struct _reent *ptr;
-     int c;
+int _putchar_r(struct _reent *ptr, int c)
 {
-  return __sputc (c, _stdout_r (ptr));
+    return __sputc(c, _stdout_r(ptr));
 }
 
 #ifndef _REENT_ONLY
 
-int
-putchar (c)
-     int c;
+int putchar(int c)
 {
-  /* CHECK_INIT is (eventually) called by __swbuf.  */
+    /* CHECK_INIT is (eventually) called by __swbuf.  */
 
-  _putchar_r (_REENT, c);
+    _putchar_r(_REENT, c);
 }
 
 #endif

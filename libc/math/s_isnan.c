@@ -104,12 +104,7 @@ QUICKREF
 
 #ifndef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	int isnan(double x)
-#else
-	int isnan(x)
-	double x;
-#endif
+int isnan(double x)
 {
 	__int32_t hx,lx;
 	EXTRACT_WORDS(hx,lx,x);

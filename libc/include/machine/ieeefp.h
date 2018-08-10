@@ -24,7 +24,7 @@
 #define __IEEE_BIG_ENDIAN
 #endif
 
-#if defined (__H8300__) || defined (__H8300H__) || defined (__H8300S__)
+#if defined(__H8300__) || defined(__H8300H__) || defined(__H8300S__)
 #define __IEEE_BIG_ENDIAN
 #define __SMALL_BITFIELDS
 #define _DOUBLE_IS_32BITS
@@ -115,7 +115,8 @@
 #if (defined(_BIG_ENDIAN) && _BIG_ENDIAN) || (defined(_AIX) && _AIX)
 #define __IEEE_BIG_ENDIAN
 #else
-#if (defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN) || (defined(__sun__) && __sun__) || (defined(_WIN32) && _WIN32)
+#if (defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN) || (defined(__sun__) && __sun__)                   \
+    || (defined(_WIN32) && _WIN32)
 #define __IEEE_LITTLE_ENDIAN
 #endif
 #endif
@@ -141,4 +142,3 @@
 
 #endif /* not __IEEE_LITTLE_ENDIAN */
 #endif /* not __IEEE_BIG_ENDIAN */
-

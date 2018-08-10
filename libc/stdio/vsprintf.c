@@ -21,30 +21,21 @@
 static char sccsid[] = "%W% (Berkeley) %G%";
 #endif /* LIBC_SCCS and not lint */
 
-#include <_ansi.h>
 #include <reent.h>
 #include <stdio.h>
 #include <limits.h>
-#ifdef _HAVE_STDC
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
-int
-vsprintf (str, fmt, ap)
-     char *str;
-     char _CONST *fmt;
-     va_list ap;
+int vsprintf(char *str, char const *fmt, va_list ap)
 {
-  int ret;
-  FILE f;
+    int ret;
+    FILE f;
 
-  f._flags = __SWR | __SSTR;
-  f._bf._base = f._p = (unsigned char *) str;
-  f._bf._size = f._w = INT_MAX;
-  f._data = _REENT;
-  ret = vfprintf (&f, fmt, ap);
-  *f._p = 0;
-  return ret;
+    f._flags = __SWR | __SSTR;
+    f._bf._base = f._p = (unsigned char *)str;
+    f._bf._size = f._w = INT_MAX;
+    f._data = _REENT;
+    ret = vfprintf(&f, fmt, ap);
+    *f._p = 0;
+    return ret;
 }

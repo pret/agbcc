@@ -31,13 +31,10 @@ PORTABILITY
 
 No supporting OS subroutines are required.
 */
-#include <_ansi.h>
 #include <ctype.h>
 
 #undef islower
-int
-_DEFUN(islower,(c),int c)
+int islower(int c)
 {
-	return((_ctype_ + 1)[c] & _L);
+    return ((_ctype_ + 1)[c] & _L);
 }
-

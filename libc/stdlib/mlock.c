@@ -3,21 +3,21 @@ FUNCTION
 <<__malloc_lock>>, <<__malloc_unlock>>--lock malloc pool
 
 INDEX
-	__malloc_lock
+    __malloc_lock
 INDEX
-	__malloc_unlock
+    __malloc_unlock
 
 ANSI_SYNOPSIS
-	#include <malloc.h>
-	void __malloc_lock (void *<[reent]>);
-	void __malloc_unlock (void *<[reent]>);
+    #include <malloc.h>
+    void __malloc_lock (void *<[reent]>);
+    void __malloc_unlock (void *<[reent]>);
 
 TRAD_SYNOPSIS
-	void __malloc_lock(<[reent]>)
-	char *<[reent]>;
+    void __malloc_lock(<[reent]>)
+    char *<[reent]>;
 
-	void __malloc_unlock(<[reent]>)
-	char *<[reent]>;
+    void __malloc_unlock(<[reent]>)
+    char *<[reent]>;
 
 DESCRIPTION
 The <<malloc>> family of routines call these functions when they need
@@ -37,14 +37,6 @@ that it already holds.
 
 #include <malloc.h>
 
-void
-__malloc_lock (ptr)
-     struct _reent *ptr;
-{
-}
+void __malloc_lock(struct _reent *ptr) {}
 
-void
-__malloc_unlock (ptr)
-     struct _reent *ptr;
-{
-}
+void __malloc_unlock(struct _reent *ptr) {}

@@ -20,17 +20,17 @@ FUNCTION
 <<putc>>---write a character (macro)
 
 INDEX
-	putc
+    putc
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int putc(int <[ch]>, FILE *<[fp]>);
+    #include <stdio.h>
+    int putc(int <[ch]>, FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int putc(<[ch]>, <[fp]>)
-	int <[ch]>;
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int putc(<[ch]>, <[fp]>)
+    int <[ch]>;
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<putc>> is a macro, defined in <<stdio.h>>.  <<putc>>
@@ -73,12 +73,9 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #undef putc
 
-int
-putc (c, fp)
-     int c;
-     register FILE *fp;
+int putc(int c, register FILE *fp)
 {
-  /* CHECK_INIT is (eventually) called by __swbuf.  */
+    /* CHECK_INIT is (eventually) called by __swbuf.  */
 
-  return __sputc (c, fp);
+    return __sputc(c, fp);
 }

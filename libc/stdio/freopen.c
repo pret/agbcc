@@ -20,19 +20,19 @@ FUNCTION
 <<freopen>>---open a file using an existing file descriptor
 
 INDEX
-	freopen
+    freopen
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	FILE *freopen(const char *<[file]>, const char *<[mode]>,
-		      FILE *<[fp]>);
+    #include <stdio.h>
+    FILE *freopen(const char *<[file]>, const char *<[mode]>,
+              FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	FILE *freopen(<[file]>, <[mode]>, <[fp]>)
-	char *<[file]>;
-	char *<[mode]>;
-	FILE *<[fp]>;
+    #include <stdio.h>
+    FILE *freopen(<[file]>, <[mode]>, <[fp]>)
+    char *<[file]>;
+    char *<[mode]>;
+    FILE *<[fp]>;
 
 DESCRIPTION
 Use this variant of <<fopen>> if you wish to specify a particular file
@@ -66,86 +66,82 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
  * Re-direct an existing, open (probably) file to some other file.
  */
 
-FILE *
-_DEFUN (freopen, (file, mode, fp),
-	_CONST char *file _AND
-	_CONST char *mode _AND
-	register FILE *fp)
+FILE *freopen(const char *file, const char *mode, register FILE *fp)
 {
-  register int f;
-  int flags, oflags, e;
-  struct _reent *ptr;
+    register int f;
+    int flags, oflags, e;
+    struct _reent *ptr;
 
-  CHECK_INIT (fp);
-  ptr = fp->_data;
+    CHECK_INIT(fp);
+    ptr = fp->_data;
 
-  if ((flags = __sflags (ptr, mode, &oflags)) == 0)
+    if ((flags = __sflags(ptr, mode, &oflags)) == 0)
     {
-      (void) fclose (fp);
-      return NULL;
+        (void)fclose(fp);
+        return NULL;
     }
 
-  /*
-   * Remember whether the stream was open to begin with, and
-   * which file descriptor (if any) was associated with it.
-   * If it was attached to a descriptor, defer closing it,
-   * so that, e.g., freopen("/dev/stdin", "r", stdin) works.
-   * This is unnecessary if it was not a Unix file.
-   */
+    /*
+     * Remember whether the stream was open to begin with, and
+     * which file descriptor (if any) was associated with it.
+     * If it was attached to a descriptor, defer closing it,
+     * so that, e.g., freopen("/dev/stdin", "r", stdin) works.
+     * This is unnecessary if it was not a Unix file.
+     */
 
-  if (fp->_flags == 0)
-    fp->_flags = __SEOF;	/* hold on to it */
-  else
+    if (fp->_flags == 0)
+        fp->_flags = __SEOF; /* hold on to it */
+    else
     {
-      if (fp->_flags & __SWR)
-	(void) fflush (fp);
-      /* if close is NULL, closing is a no-op, hence pointless */
-      if (fp->_close != NULL)
-	(void) (*fp->_close) (fp->_cookie);
+        if (fp->_flags & __SWR)
+            (void)fflush(fp);
+        /* if close is NULL, closing is a no-op, hence pointless */
+        if (fp->_close != NULL)
+            (void)(*fp->_close)(fp->_cookie);
     }
 
-  /*
-   * Now get a new descriptor to refer to the new file.
-   */
+    /*
+     * Now get a new descriptor to refer to the new file.
+     */
 
-  f = _open_r (ptr, (char *) file, oflags, 0666);
-  e = ptr->_errno;
+    f = _open_r(ptr, (char *)file, oflags, 0666);
+    e = ptr->_errno;
 
-  /*
-   * Finish closing fp.  Even if the open succeeded above,
-   * we cannot keep fp->_base: it may be the wrong size.
-   * This loses the effect of any setbuffer calls,
-   * but stdio has always done this before.
-   */
+    /*
+     * Finish closing fp.  Even if the open succeeded above,
+     * we cannot keep fp->_base: it may be the wrong size.
+     * This loses the effect of any setbuffer calls,
+     * but stdio has always done this before.
+     */
 
-  if (fp->_flags & __SMBF)
-    _free_r (ptr, (char *) fp->_bf._base);
-  fp->_w = 0;
-  fp->_r = 0;
-  fp->_p = NULL;
-  fp->_bf._base = NULL;
-  fp->_bf._size = 0;
-  fp->_lbfsize = 0;
-  if (HASUB (fp))
-    FREEUB (fp);
-  fp->_ub._size = 0;
-  if (HASLB (fp))
-    FREELB (fp);
-  fp->_lb._size = 0;
+    if (fp->_flags & __SMBF)
+        _free_r(ptr, (char *)fp->_bf._base);
+    fp->_w = 0;
+    fp->_r = 0;
+    fp->_p = NULL;
+    fp->_bf._base = NULL;
+    fp->_bf._size = 0;
+    fp->_lbfsize = 0;
+    if (HASUB(fp))
+        FREEUB(fp);
+    fp->_ub._size = 0;
+    if (HASLB(fp))
+        FREELB(fp);
+    fp->_lb._size = 0;
 
-  if (f < 0)
-    {				/* did not get it after all */
-      fp->_flags = 0;		/* set it free */
-      ptr->_errno = e;		/* restore in case _close clobbered */
-      return NULL;
+    if (f < 0)
+    {                    /* did not get it after all */
+        fp->_flags = 0;  /* set it free */
+        ptr->_errno = e; /* restore in case _close clobbered */
+        return NULL;
     }
 
-  fp->_flags = flags;
-  fp->_file = f;
-  fp->_cookie = (_PTR) fp;
-  fp->_read = __sread;
-  fp->_write = __swrite;
-  fp->_seek = __sseek;
-  fp->_close = __sclose;
-  return fp;
+    fp->_flags = flags;
+    fp->_file = f;
+    fp->_cookie = (void *)fp;
+    fp->_read = __sread;
+    fp->_write = __swrite;
+    fp->_seek = __sseek;
+    fp->_close = __sclose;
+    return fp;
 }

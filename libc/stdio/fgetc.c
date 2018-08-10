@@ -3,16 +3,16 @@ FUNCTION
 <<fgetc>>---get a character from a file or stream
 
 INDEX
-	fgetc
+    fgetc
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int fgetc(FILE *<[fp]>);
+    #include <stdio.h>
+    int fgetc(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int fgetc(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int fgetc(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 Use <<fgetc>> to get the next single character from the file or stream
@@ -38,9 +38,7 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 
 #include <stdio.h>
 
-int
-_DEFUN (fgetc, (fp),
-	FILE * fp)
+int fgetc(FILE *fp)
 {
-  return __sgetc (fp);
+    return __sgetc(fp);
 }

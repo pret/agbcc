@@ -18,21 +18,21 @@ FUNCTION
 <<bsearch>>---binary search
 
 INDEX
-	bsearch
+    bsearch
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	void *bsearch(const void *<[key]>, const void *<[base]>,
-		size_t <[nmemb]>, size_t <[size]>,
-		int (*<[compar]>)(const void *, const void *));
+    #include <stdlib.h>
+    void *bsearch(const void *<[key]>, const void *<[base]>,
+        size_t <[nmemb]>, size_t <[size]>,
+        int (*<[compar]>)(const void *, const void *));
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	char *bsearch(<[key]>, <[base]>, <[nmemb]>, <[size]>, <[compar]>)
-	char *<[key]>;
-	char *<[base]>;
-	size_t <[nmemb]>, <[size]>;
-	int (*<[compar]>)();
+    #include <stdlib.h>
+    char *bsearch(<[key]>, <[base]>, <[nmemb]>, <[size]>, <[compar]>)
+    char *<[key]>;
+    char *<[base]>;
+    size_t <[nmemb]>, <[size]>;
+    int (*<[compar]>)();
 
 DESCRIPTION
 <<bsearch>> searches an array beginning at <[base]> for any element
@@ -63,38 +63,35 @@ No supporting OS subroutines are required.
 
 #include <stdlib.h>
 
-_PTR
-_DEFUN (bsearch, (key, base, nmemb, size, compar),
-	_CONST _PTR key _AND
-	_CONST _PTR base _AND
-	size_t nmemb _AND
-	size_t size _AND
-	int _EXFUN ((*compar), (const _PTR, const _PTR)))
+void *bsearch(const void *key,
+    const void *base,
+    size_t nmemb,
+    size_t size,
+    int (*compar)(const void *, const void *))
 {
-  _PTR current;
-  size_t lower = 0;
-  size_t upper = nmemb;
-  size_t index;
-  int result;
+    void *current;
+    size_t lower = 0;
+    size_t upper = nmemb;
+    size_t index;
+    int result;
 
-  if (nmemb == 0 || size == 0)
-    return NULL;
+    if (nmemb == 0 || size == 0)
+        return NULL;
 
-  while (lower < upper)
+    while (lower < upper)
     {
-      index = (lower + upper) / 2;
-      current = (_PTR) (((char *) base) + (index * size));
+        index = (lower + upper) / 2;
+        current = (void *)(((char *)base) + (index * size));
 
-      result = compar (key, current);
+        result = compar(key, current);
 
-      if (result < 0)
-        upper = index;
-      else if (result > 0)
-        lower = index + 1;
-      else
-	return current;
+        if (result < 0)
+            upper = index;
+        else if (result > 0)
+            lower = index + 1;
+        else
+            return current;
     }
 
-  return NULL;
+    return NULL;
 }
-

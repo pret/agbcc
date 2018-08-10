@@ -9,10 +9,10 @@
 extern "C" {
 #endif
 
-struct utimbuf 
+struct utimbuf
 {
-  time_t actime;
-  time_t modtime; 
+    time_t actime;
+    time_t modtime;
 };
 
 #ifdef __cplusplus

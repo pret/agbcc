@@ -12,7 +12,7 @@
 #ifndef	_ANSIDECL_H_
 #define	_ANSIDECL_H_
 
-#include <sys/config.h>
+/*#include <sys/config.h>*/
 
 /* First try to figure out whether we really are in an ANSI C environment.  */
 /* FIXME: This probably needs some work.  Perhaps sys/config.h can be

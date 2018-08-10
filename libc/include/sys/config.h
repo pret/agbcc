@@ -3,7 +3,8 @@
 
 /* exceptions first */
 /* ??? Why is much of this stuff duplicated with machine/ieeefp.h?  */
-#if defined(__H8300__) || defined(__H8500__) || defined (__H8300H__) ||  defined(__W65__) || defined (__H8300S__)
+#if defined(__H8300__) || defined(__H8500__) || defined(__H8300H__) || defined(__W65__)            \
+    || defined(__H8300S__)
 #define _FLOAT_ARG float
 #define __SMALL_BITFIELDS
 #define _DOUBLE_IS_32BITS
@@ -25,7 +26,8 @@
 #endif
 
 /* 16 bit integer machines */
-#if defined(__Z8001__) || defined(__Z8002__) || defined(__H8300__) || defined(__H8500__) || defined(__W65__) || defined (__H8300H__) || defined (__H8300S__) || defined (__mn10200__)
+#if defined(__Z8001__) || defined(__Z8002__) || defined(__H8300__) || defined(__H8500__)           \
+    || defined(__W65__) || defined(__H8300H__) || defined(__H8300S__) || defined(__mn10200__)
 
 #undef INT_MAX
 #undef UINT_MAX

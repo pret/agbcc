@@ -20,22 +20,22 @@ FUNCTION
 <<getchar>>---read a character (macro)
 
 INDEX
-	getchar
+    getchar
 INDEX
-	_getchar_r
+    _getchar_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int getchar(void);
+    #include <stdio.h>
+    int getchar(void);
 
-	int _getchar_r(void *<[reent]>);
+    int _getchar_r(void *<[reent]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int getchar();
+    #include <stdio.h>
+    int getchar();
 
-	int _getchar_r(<[reent]>)
-	char * <[reent]>;
+    int _getchar_r(<[reent]>)
+    char * <[reent]>;
 
 DESCRIPTION
 <<getchar>> is a macro, defined in <<stdio.h>>.  You can use <<getchar>>
@@ -76,21 +76,18 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #undef getchar
 
-int
-_getchar_r (f)
-     struct _reent *f;
+int _getchar_r(struct _reent *f)
 {
-  return getc (_stdin_r (f));
+    return getc(_stdin_r(f));
 }
 
 #ifndef _REENT_ONLY
 
-int
-getchar ()
+int getchar(void)
 {
-  /* CHECK_INIT is called (eventually) by __srefill.  */
+    /* CHECK_INIT is called (eventually) by __srefill.  */
 
-  return _getchar_r (_REENT);
+    return _getchar_r(_REENT);
 }
 
 #endif

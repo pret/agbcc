@@ -18,12 +18,12 @@
  ***************************************************************/
 
 /* Please send bug reports to
-	David M. Gay
-	AT&T Bell Laboratories, Room 2C-463
-	600 Mountain Avenue
-	Murray Hill, NJ 07974-2070
-	U.S.A.
-	dmg@research.att.com or research!dmg
+    David M. Gay
+    AT&T Bell Laboratories, Room 2C-463
+    600 Mountain Avenue
+    Murray Hill, NJ 07974-2070
+    U.S.A.
+    dmg@research.att.com or research!dmg
  */
 
 #include <ieeefp.h>
@@ -46,27 +46,33 @@
 
 #ifdef DEBUG
 #include "stdio.h"
-#define Bug(x) {fprintf(stderr, "%s\n", x); exit(1);}
+#define Bug(x)                                                                                     \
+    {                                                                                              \
+        fprintf(stderr, "%s\n", x);                                                                \
+        exit(1);                                                                                   \
+    }
 #endif
 
 #ifdef Unsigned_Shifts
-#define Sign_Extend(a,b) if (b < 0) a |= (__uint32_t)0xffff0000;
+#define Sign_Extend(a, b)                                                                          \
+    if (b < 0)                                                                                     \
+        a |= (__uint32_t)0xffff0000;
 #else
-#define Sign_Extend(a,b) /*no-op*/
+#define Sign_Extend(a, b) /*no-op*/
 #endif
 
 #if defined(IEEE_8087) + defined(IEEE_MC68k) + defined(VAX) + defined(IBM) != 1
-Exactly one of IEEE_8087, IEEE_MC68k, VAX, or IBM should be defined.
+Exactly one of IEEE_8087, IEEE_MC68k, VAX,
+    or IBM should be defined.
 #endif
 
-/* If we are going to examine or modify specific bits in a double using
-   the word0 and/or word1 macros, then we must wrap the double inside
-   a union.  This is necessary to avoid undefined behavior according to
-   the ANSI C spec.  */
-union double_union
-{
-  double d;
-  __uint32_t i[2];
+       /* If we are going to examine or modify specific bits in a double using
+          the word0 and/or word1 macros, then we must wrap the double inside
+          a union.  This is necessary to avoid undefined behavior according to
+          the ANSI C spec.  */
+       union double_union {
+    double d;
+    __uint32_t i[2];
 };
 
 #ifdef IEEE_8087
@@ -82,11 +88,13 @@ union double_union
  * #define Storeinc(a,b,c) (*a++ = b << 16 | c & 0xffff)
  */
 #if defined(IEEE_8087) + defined(VAX)
-#define Storeinc(a,b,c) (((unsigned short *)a)[1] = (unsigned short)b, \
-((unsigned short *)a)[0] = (unsigned short)c, a++)
+#define Storeinc(a, b, c)                                                                          \
+    (((unsigned short *)a)[1] = (unsigned short)b, ((unsigned short *)a)[0] = (unsigned short)c,   \
+        a++)
 #else
-#define Storeinc(a,b,c) (((unsigned short *)a)[0] = (unsigned short)b, \
-((unsigned short *)a)[1] = (unsigned short)c, a++)
+#define Storeinc(a, b, c)                                                                          \
+    (((unsigned short *)a)[0] = (unsigned short)b, ((unsigned short *)a)[1] = (unsigned short)c,   \
+        a++)
 #endif
 
 /* #define P DBL_MANT_DIG */
@@ -96,36 +104,36 @@ union double_union
 /* Int_max = floor(P*log(FLT_RADIX)/log(10) - 1) */
 
 #if defined(IEEE_8087) + defined(IEEE_MC68k)
-#if defined (_DOUBLE_IS_32BITS) 
-#define Exp_shift   23
-#define Exp_shift1  23
-#define Exp_msk1    ((__uint32_t)0x00800000L)
-#define Exp_msk11   ((__uint32_t)0x00800000L)
-#define Exp_mask    ((__uint32_t)0x7f800000L)
-#define P    	    24
-#define Bias 	    127
+#if defined(_DOUBLE_IS_32BITS)
+#define Exp_shift 23
+#define Exp_shift1 23
+#define Exp_msk1 ((__uint32_t)0x00800000L)
+#define Exp_msk11 ((__uint32_t)0x00800000L)
+#define Exp_mask ((__uint32_t)0x7f800000L)
+#define P 24
+#define Bias 127
 #if 0
-#define IEEE_Arith  /* it is, but the code doesn't handle IEEE singles yet */
+#define IEEE_Arith /* it is, but the code doesn't handle IEEE singles yet */
 #endif
-#define Emin        (-126)
-#define Exp_1       ((__uint32_t)0x3f800000L)
-#define Exp_11      ((__uint32_t)0x3f800000L)
-#define Ebits 	    8
-#define Frac_mask   ((__uint32_t)0x007fffffL)
-#define Frac_mask1  ((__uint32_t)0x007fffffL)
-#define Ten_pmax    10
-#define Sign_bit    ((__uint32_t)0x80000000L)
-#define Ten_pmax    10
-#define Bletch	    2
-#define Bndry_mask  ((__uint32_t)0x007fffffL)
+#define Emin (-126)
+#define Exp_1 ((__uint32_t)0x3f800000L)
+#define Exp_11 ((__uint32_t)0x3f800000L)
+#define Ebits 8
+#define Frac_mask ((__uint32_t)0x007fffffL)
+#define Frac_mask1 ((__uint32_t)0x007fffffL)
+#define Ten_pmax 10
+#define Sign_bit ((__uint32_t)0x80000000L)
+#define Ten_pmax 10
+#define Bletch 2
+#define Bndry_mask ((__uint32_t)0x007fffffL)
 #define Bndry_mask1 ((__uint32_t)0x007fffffL)
 #define LSB 1
-#define Sign_bit    ((__uint32_t)0x80000000L)
-#define Log2P 	    1
-#define Tiny0 	    0
-#define Tiny1 	    1
-#define Quick_max   5
-#define Int_max     6
+#define Sign_bit ((__uint32_t)0x80000000L)
+#define Log2P 1
+#define Tiny0 0
+#define Tiny1 1
+#define Quick_max 5
+#define Int_max 6
 #define Infinite(x) (word0(x) == ((__uint32_t)0x7f800000L))
 #undef word0
 #undef word1
@@ -134,23 +142,23 @@ union double_union
 #define word1(x) 0
 #else
 
-#define Exp_shift  20
+#define Exp_shift 20
 #define Exp_shift1 20
-#define Exp_msk1    ((__uint32_t)0x100000L)
-#define Exp_msk11   ((__uint32_t)0x100000L)
-#define Exp_mask  ((__uint32_t)0x7ff00000L)
+#define Exp_msk1 ((__uint32_t)0x100000L)
+#define Exp_msk11 ((__uint32_t)0x100000L)
+#define Exp_mask ((__uint32_t)0x7ff00000L)
 #define P 53
 #define Bias 1023
 #define IEEE_Arith
 #define Emin (-1022)
-#define Exp_1  ((__uint32_t)0x3ff00000L)
+#define Exp_1 ((__uint32_t)0x3ff00000L)
 #define Exp_11 ((__uint32_t)0x3ff00000L)
 #define Ebits 11
-#define Frac_mask  ((__uint32_t)0xfffffL)
+#define Frac_mask ((__uint32_t)0xfffffL)
 #define Frac_mask1 ((__uint32_t)0xfffffL)
 #define Ten_pmax 22
 #define Bletch 0x10
-#define Bndry_mask  ((__uint32_t)0xfffffL)
+#define Bndry_mask ((__uint32_t)0xfffffL)
 #define Bndry_mask1 ((__uint32_t)0xfffffL)
 #define LSB 1
 #define Sign_bit ((__uint32_t)0x80000000L)
@@ -163,48 +171,23 @@ union double_union
 #endif
 
 #else
-#undef  Sudden_Underflow
+#undef Sudden_Underflow
 #define Sudden_Underflow
-#ifdef IBM
-#define Exp_shift  24
-#define Exp_shift1 24
-#define Exp_msk1   ((__uint32_t)0x1000000L)
-#define Exp_msk11  ((__uint32_t)0x1000000L)
-#define Exp_mask  ((__uint32_t)0x7f000000L)
-#define P 14
-#define Bias 65
-#define Exp_1  ((__uint32_t)0x41000000L)
-#define Exp_11 ((__uint32_t)0x41000000L)
-#define Ebits 8	/* exponent has 7 bits, but 8 is the right value in b2d */
-#define Frac_mask  ((__uint32_t)0xffffffL)
-#define Frac_mask1 ((__uint32_t)0xffffffL)
-#define Bletch 4
-#define Ten_pmax 22
-#define Bndry_mask  ((__uint32_t)0xefffffL)
-#define Bndry_mask1 ((__uint32_t)0xffffffL)
-#define LSB 1
-#define Sign_bit ((__uint32_t)0x80000000L)
-#define Log2P 4
-#define Tiny0 ((__uint32_t)0x100000L)
-#define Tiny1 0
-#define Quick_max 14
-#define Int_max 15
-#else /* VAX */
-#define Exp_shift  23
+#define Exp_shift 23
 #define Exp_shift1 7
-#define Exp_msk1    0x80
-#define Exp_msk11   ((__uint32_t)0x800000L)
-#define Exp_mask  ((__uint32_t)0x7f80L)
+#define Exp_msk1 0x80
+#define Exp_msk11 ((__uint32_t)0x800000L)
+#define Exp_mask ((__uint32_t)0x7f80L)
 #define P 56
 #define Bias 129
-#define Exp_1  ((__uint32_t)0x40800000L)
+#define Exp_1 ((__uint32_t)0x40800000L)
 #define Exp_11 ((__uint32_t)0x4080L)
 #define Ebits 8
-#define Frac_mask  ((__uint32_t)0x7fffffL)
+#define Frac_mask ((__uint32_t)0x7fffffL)
 #define Frac_mask1 ((__uint32_t)0xffff007fL)
 #define Ten_pmax 24
 #define Bletch 2
-#define Bndry_mask  ((__uint32_t)0xffff007fL)
+#define Bndry_mask ((__uint32_t)0xffff007fL)
 #define Bndry_mask1 ((__uint32_t)0xffff007fL)
 #define LSB ((__uint32_t)0x10000L)
 #define Sign_bit ((__uint32_t)0x8000L)
@@ -214,26 +197,25 @@ union double_union
 #define Quick_max 15
 #define Int_max 15
 #endif
-#endif
 
 #ifndef IEEE_Arith
 #define ROUND_BIASED
 #endif
 
 #ifdef RND_PRODQUOT
-#define rounded_product(a,b) a = rnd_prod(a, b)
-#define rounded_quotient(a,b) a = rnd_quot(a, b)
+#define rounded_product(a, b) a = rnd_prod(a, b)
+#define rounded_quotient(a, b) a = rnd_quot(a, b)
 #ifdef KR_headers
 extern double rnd_prod(), rnd_quot();
 #else
 extern double rnd_prod(double, double), rnd_quot(double, double);
 #endif
 #else
-#define rounded_product(a,b) a *= b
-#define rounded_quotient(a,b) a /= b
+#define rounded_product(a, b) a *= b
+#define rounded_quotient(a, b) a /= b
 #endif
 
-#define Big0 (Frac_mask1 | Exp_msk1*(DBL_MAX_EXP+Bias-1))
+#define Big0 (Frac_mask1 | Exp_msk1 * (DBL_MAX_EXP + Bias - 1))
 #define Big1 ((__uint32_t)0xffffffffL)
 
 #ifndef Just_16
@@ -251,53 +233,53 @@ extern double rnd_prod(double, double), rnd_quot(double, double);
 
 #ifdef __cplusplus
 extern "C" double strtod(const char *s00, char **se);
-extern "C" char *dtoa(double d, int mode, int ndigits,
-			int *decpt, int *sign, char **rve);
+extern "C" char *dtoa(double d, int mode, int ndigits, int *decpt, int *sign, char **rve);
 #endif
 
 
 typedef struct _Bigint _Bigint;
 
-#define Balloc	_Balloc
-#define Bfree	_Bfree
+#define Balloc _Balloc
+#define Bfree _Bfree
 #define multadd _multadd
-#define s2b	_s2b
+#define s2b _s2b
 #define lo0bits _lo0bits
 #define hi0bits _hi0bits
-#define i2b	_i2b
-#define mult	_multiply
-#define pow5mult	_pow5mult
-#define lshift	_lshift
-#define cmp	__mcmp
-#define diff	__mdiff
-#define ulp 	_ulp
-#define b2d	_b2d
-#define d2b	_d2b
-#define ratio	_ratio
+#define i2b _i2b
+#define mult _multiply
+#define pow5mult _pow5mult
+#define lshift _lshift
+#define cmp __mcmp
+#define diff __mdiff
+#define ulp _ulp
+#define b2d _b2d
+#define d2b _d2b
+#define ratio _ratio
 
 #define tens __mprec_tens
 #define bigtens __mprec_bigtens
 #define tinytens __mprec_tinytens
 
-struct _reent ;
-double 		_EXFUN(ulp,(double x));
-double		_EXFUN(b2d,(_Bigint *a , int *e));
-_Bigint *	_EXFUN(Balloc,(struct _reent *p, int k));
-void 		_EXFUN(Bfree,(struct _reent *p, _Bigint *v));
-_Bigint *	_EXFUN(multadd,(struct _reent *p, _Bigint *, int, int));
-_Bigint *	_EXFUN(s2b,(struct _reent *, const char*, int, int, ULong));
-_Bigint	*	_EXFUN(i2b,(struct _reent *,int));
-_Bigint *	_EXFUN(mult, (struct _reent *, _Bigint *, _Bigint *));
-_Bigint *	_EXFUN(pow5mult, (struct _reent *, _Bigint *, int k));
-int 		_EXFUN(hi0bits,(ULong));
-int 		_EXFUN(lo0bits,(ULong *));
-_Bigint *        _EXFUN(d2b,(struct _reent *p, double d, int *e, int *bits));
-_Bigint *        _EXFUN(lshift,(struct _reent *p, _Bigint *b, int k));
-_Bigint *        _EXFUN(diff,(struct _reent *p, _Bigint *a, _Bigint *b));
-int             _EXFUN(cmp,(_Bigint *a, _Bigint *b));
+struct _reent;
+double ulp(double x);
+double b2d(_Bigint *a, int *e);
+_Bigint *Balloc(struct _reent *p, int k);
+void Bfree(struct _reent * p, _Bigint *v);
+_Bigint *multadd(struct _reent *p, _Bigint *, int, int);
+_Bigint *s2b(struct _reent *, const char *, int, int, ULong);
+_Bigint *i2b(struct _reent *, int);
+_Bigint *mult(struct _reent *, _Bigint *, _Bigint *);
+_Bigint *pow5mult(struct _reent *, _Bigint *, int k);
+int hi0bits(ULong);
+int lo0bits(ULong *);
+_Bigint *d2b(struct _reent *p, double d, int *e, int *bits);
+_Bigint *lshift(struct _reent *p, _Bigint *b, int k);
+_Bigint *diff(struct _reent *p, _Bigint *a, _Bigint *b);
+int cmp(_Bigint *a, _Bigint *b);
 
-double		_EXFUN(ratio,(_Bigint *a, _Bigint *b));
-#define Bcopy(x,y) memcpy((char *)&x->_sign, (char *)&y->_sign, y->_wds*sizeof(Long) + 2*sizeof(int))
+double ratio(_Bigint *a, _Bigint *b);
+#define Bcopy(x, y)                                                                                \
+    memcpy((char *)&x->_sign, (char *)&y->_sign, y->_wds * sizeof(Long) + 2 * sizeof(int))
 
 #if defined(_DOUBLE_IS_32BITS) && defined(__v800)
 #define n_bigtens 2
@@ -305,9 +287,9 @@ double		_EXFUN(ratio,(_Bigint *a, _Bigint *b));
 #define n_bigtens 5
 #endif
 
-extern _CONST double tinytens[];
-extern _CONST double bigtens[];
-extern _CONST double tens[];
+extern const double tinytens[];
+extern const double bigtens[];
+extern const double tens[];
 
 
-double _EXFUN(_mprec_log10,(int));
+double _mprec_log10(int);

@@ -26,77 +26,70 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_link_r>>---Reentrant version of link
-	
+    <<_link_r>>---Reentrant version of link
+
 INDEX
-	_link_r
+    _link_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _link_r(struct _reent *<[ptr]>,
-		    const char *<[old]>, const char *<[new]>);
+    #include <reent.h>
+    int _link_r(struct _reent *<[ptr]>,
+            const char *<[old]>, const char *<[new]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _link_r(<[ptr]>, <[old]>, <[new]>)
-	struct _reent *<[ptr]>;
-	char *<[old]>;
-	char *<[new]>;
+    #include <reent.h>
+    int _link_r(<[ptr]>, <[old]>, <[new]>)
+    struct _reent *<[ptr]>;
+    char *<[old]>;
+    char *<[new]>;
 
 DESCRIPTION
-	This is a reentrant version of <<link>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<link>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_link_r (ptr, old, new)
-     struct _reent *ptr;
-     _CONST char *old;
-     _CONST char *new;
+int _link_r(struct _reent *ptr, const char *old, const char *new)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _link (old, new)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _link(old, new)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 /*
 FUNCTION
-	<<_unlink_r>>---Reentrant version of unlink
-	
+    <<_unlink_r>>---Reentrant version of unlink
+
 INDEX
-	_unlink_r
+    _unlink_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _unlink_r(struct _reent *<[ptr]>, const char *<[file]>);
+    #include <reent.h>
+    int _unlink_r(struct _reent *<[ptr]>, const char *<[file]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _unlink_r(<[ptr]>, <[file]>)
-	struct _reent *<[ptr]>;
-	char *<[file]>;
+    #include <reent.h>
+    int _unlink_r(<[ptr]>, <[file]>)
+    struct _reent *<[ptr]>;
+    char *<[file]>;
 
 DESCRIPTION
-	This is a reentrant version of <<unlink>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<unlink>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_unlink_r (ptr, file)
-     struct _reent *ptr;
-     _CONST char *file;
+int _unlink_r(struct _reent *ptr, const char *file)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _unlink (file)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _unlink(file)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

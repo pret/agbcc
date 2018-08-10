@@ -20,20 +20,20 @@ FUNCTION
 <<fwrite>>---write array elements
 
 INDEX
-	fwrite
+    fwrite
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	size_t fwrite(const void *<[buf]>, size_t <[size]>,
-		      size_t <[count]>, FILE *<[fp]>);
+    #include <stdio.h>
+    size_t fwrite(const void *<[buf]>, size_t <[size]>,
+              size_t <[count]>, FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	size_t fwrite(<[buf]>, <[size]>, <[count]>, <[fp]>)
-	char *<[buf]>;
-	size_t <[size]>;
-	size_t <[count]>;
-	FILE *<[fp]>;
+    #include <stdio.h>
+    size_t fwrite(<[buf]>, <[size]>, <[count]>, <[fp]>)
+    char *<[buf]>;
+    size_t <[size]>;
+    size_t <[count]>;
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<fwrite>> attempts to copy, starting from the memory location
@@ -76,29 +76,24 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * Return the number of whole objects written.
  */
 
-size_t
-_DEFUN (fwrite, (buf, size, count, fp),
-	_CONST _PTR buf _AND
-	size_t size _AND
-	size_t count _AND
-	FILE * fp)
+size_t fwrite(const void *buf, size_t size, size_t count, FILE *fp)
 {
-  size_t n;
-  struct __suio uio;
-  struct __siov iov;
+    size_t n;
+    struct __suio uio;
+    struct __siov iov;
 
-  iov.iov_base = buf;
-  uio.uio_resid = iov.iov_len = n = count * size;
-  uio.uio_iov = &iov;
-  uio.uio_iovcnt = 1;
+    iov.iov_base = buf;
+    uio.uio_resid = iov.iov_len = n = count * size;
+    uio.uio_iov = &iov;
+    uio.uio_iovcnt = 1;
 
-  /*
-   * The usual case is success (__sfvwrite returns 0);
-   * skip the divide if this happens, since divides are
-   * generally slow and since this occurs whenever size==0.
-   */
+    /*
+     * The usual case is success (__sfvwrite returns 0);
+     * skip the divide if this happens, since divides are
+     * generally slow and since this occurs whenever size==0.
+     */
 
-  if (__sfvwrite (fp, &uio) == 0)
-    return count;
-  return (n - uio.uio_resid) / size;
+    if (__sfvwrite(fp, &uio) == 0)
+        return count;
+    return (n - uio.uio_resid) / size;
 }

@@ -20,20 +20,20 @@ FUNCTION
 <<fread>>---read array elements from a file
 
 INDEX
-	fread
+    fread
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	size_t fread(void *<[buf]>, size_t <[size]>, size_t <[count]>,
-		     FILE *<[fp]>);
+    #include <stdio.h>
+    size_t fread(void *<[buf]>, size_t <[size]>, size_t <[count]>,
+             FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	size_t fread(<[buf]>, <[size]>, <[count]>, <[fp]>)
-	char *<[buf]>;
-	size_t <[size]>;
-	size_t <[count]>;
-	FILE *<[fp]>;
+    #include <stdio.h>
+    size_t fread(<[buf]>, <[size]>, <[count]>, <[fp]>)
+    char *<[buf]>;
+    size_t <[size]>;
+    size_t <[count]>;
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<fread>> attempts to copy, from the file or stream identified by
@@ -59,39 +59,34 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 #include <string.h>
 #include "local.h"
 
-size_t
-_DEFUN (fread, (buf, size, count, fp),
-	_PTR buf _AND
-	size_t size _AND
-	size_t count _AND
-	FILE * fp)
+size_t fread(void *buf, size_t size, size_t count, FILE *fp)
 {
-  register size_t resid;
-  register char *p;
-  register int r;
-  size_t total;
+    register size_t resid;
+    register char *p;
+    register int r;
+    size_t total;
 
-  if ((resid = count * size) == 0)
-    return 0;
-  if (fp->_r < 0)
-    fp->_r = 0;
-  total = resid;
-  p = buf;
-  while (resid > (r = fp->_r))
+    if ((resid = count * size) == 0)
+        return 0;
+    if (fp->_r < 0)
+        fp->_r = 0;
+    total = resid;
+    p = buf;
+    while (resid > (r = fp->_r))
     {
-      (void) memcpy ((void *) p, (void *) fp->_p, (size_t) r);
-      fp->_p += r;
-      /* fp->_r = 0 ... done in __srefill */
-      p += r;
-      resid -= r;
-      if (__srefill (fp))
-	{
-	  /* no more input: return partial result */
-	  return (total - resid) / size;
-	}
+        (void)memcpy((void *)p, (void *)fp->_p, (size_t)r);
+        fp->_p += r;
+        /* fp->_r = 0 ... done in __srefill */
+        p += r;
+        resid -= r;
+        if (__srefill(fp))
+        {
+            /* no more input: return partial result */
+            return (total - resid) / size;
+        }
     }
-  (void) memcpy ((void *) p, (void *) fp->_p, resid);
-  fp->_r -= resid;
-  fp->_p += resid;
-  return count;
+    (void)memcpy((void *)p, (void *)fp->_p, resid);
+    fp->_r -= resid;
+    fp->_p += resid;
+    return count;
 }

@@ -3,16 +3,16 @@ FUNCTION
 <<fclose>>---close a file
 
 INDEX
-	fclose
+    fclose
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int fclose(FILE *<[fp]>);
+    #include <stdio.h>
+    int fclose(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int fclose(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int fclose(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 If the file or stream identified by <[fp]> is open, <<fclose>> closes
@@ -55,28 +55,26 @@ Required OS subroutines: <<close>>, <<fstat>>, <<isatty>>, <<lseek>>,
  * Close a file.
  */
 
-int
-_DEFUN (fclose, (fp),
-	register FILE * fp)
+int fclose(register FILE *fp)
 {
-  int r;
+    int r;
 
-  if (fp == NULL)
-    return (0);			/* on NULL */
+    if (fp == NULL)
+        return (0); /* on NULL */
 
-  CHECK_INIT (fp);
+    CHECK_INIT(fp);
 
-  if (fp->_flags == 0)		/* not open! */
-    return (0);
-  r = fp->_flags & __SWR ? fflush (fp) : 0;
-  if (fp->_close != NULL && (*fp->_close) (fp->_cookie) < 0)
-    r = EOF;
-  if (fp->_flags & __SMBF)
-    _free_r (fp->_data, (char *) fp->_bf._base);
-  if (HASUB (fp))
-    FREEUB (fp);
-  if (HASLB (fp))
-    FREELB (fp);
-  fp->_flags = 0;		/* release this FILE for reuse */
-  return (r);
+    if (fp->_flags == 0) /* not open! */
+        return (0);
+    r = fp->_flags & __SWR ? fflush(fp) : 0;
+    if (fp->_close != NULL && (*fp->_close)(fp->_cookie) < 0)
+        r = EOF;
+    if (fp->_flags & __SMBF)
+        _free_r(fp->_data, (char *)fp->_bf._base);
+    if (HASUB(fp))
+        FREEUB(fp);
+    if (HASLB(fp))
+        FREELB(fp);
+    fp->_flags = 0; /* release this FILE for reuse */
+    return (r);
 }

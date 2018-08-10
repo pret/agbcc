@@ -7,19 +7,19 @@
 
 /*
 FUNCTION
-	<<strerror>>---convert error number to string
+    <<strerror>>---convert error number to string
 
 INDEX
-	strerror
+    strerror
 
 ANSI_SYNOPSIS
-	#include <string.h>
-	char *strerror(int <[errnum]>);
+    #include <string.h>
+    char *strerror(int <[errnum]>);
 
 TRAD_SYNOPSIS
-	#include <string.h>
-	char *strerror(<[errnum]>)
-	int <[errnum]>;
+    #include <string.h>
+    char *strerror(<[errnum]>)
+    int <[errnum]>;
 
 DESCRIPTION
 <<strerror>> converts the error number <[errnum]> into a
@@ -238,378 +238,376 @@ returns <[NULL]> for all input values.
 <<strerror>> requires no supporting OS subroutines.
 
 QUICKREF
-	strerror ansi pure
+    strerror ansi pure
 */
 
 #include <errno.h>
 #include <string.h>
 
-char *
-_DEFUN (strerror, (errnum),
-	int errnum)
+char *strerror(int errnum)
 {
-  char *error;
-  extern char *_user_strerror _PARAMS ((int));
+    char *error;
+    extern char *_user_strerror(int);
 
-  switch (errnum)
+    switch (errnum)
     {
 /* go32 defines EPERM as EACCES */
-#if defined (EPERM) && (!defined (EACCES) || (EPERM != EACCES))
+#if defined(EPERM) && (!defined(EACCES) || (EPERM != EACCES))
     case EPERM:
-      error = "Not owner";
-      break;
+        error = "Not owner";
+        break;
 #endif
 #ifdef ENOENT
     case ENOENT:
-      error = "No such file or directory";
-      break;
+        error = "No such file or directory";
+        break;
 #endif
 #ifdef ESRCH
     case ESRCH:
-      error = "No such process";
-      break;
+        error = "No such process";
+        break;
 #endif
 #ifdef EINTR
     case EINTR:
-      error = "Interrupted system call";
-      break;
+        error = "Interrupted system call";
+        break;
 #endif
 #ifdef EIO
     case EIO:
-      error = "I/O error";
-      break;
+        error = "I/O error";
+        break;
 #endif
 /* go32 defines ENXIO as ENODEV */
-#if defined (ENXIO) && (!defined (ENODEV) || (ENXIO != ENODEV))
+#if defined(ENXIO) && (!defined(ENODEV) || (ENXIO != ENODEV))
     case ENXIO:
-      error = "No such device or address";
-      break;
+        error = "No such device or address";
+        break;
 #endif
 #ifdef E2BIG
     case E2BIG:
-      error = "Arg list too long";
-      break;
+        error = "Arg list too long";
+        break;
 #endif
 #ifdef ENOEXEC
     case ENOEXEC:
-      error = "Exec format error";
-      break;
+        error = "Exec format error";
+        break;
 #endif
 #ifdef EBADF
     case EBADF:
-      error = "Bad file number";
-      break;
+        error = "Bad file number";
+        break;
 #endif
 #ifdef ECHILD
     case ECHILD:
-      error = "No children";
-      break;
+        error = "No children";
+        break;
 #endif
 #ifdef EAGAIN
     case EAGAIN:
-      error = "No more processes";
-      break;
+        error = "No more processes";
+        break;
 #endif
 #ifdef ENOMEM
     case ENOMEM:
-      error = "Not enough space";
-      break;
+        error = "Not enough space";
+        break;
 #endif
 #ifdef EACCES
     case EACCES:
-      error = "Permission denied";
-      break;
+        error = "Permission denied";
+        break;
 #endif
 #ifdef EFAULT
     case EFAULT:
-      error = "Bad address";
-      break;
+        error = "Bad address";
+        break;
 #endif
 #ifdef ENOTBLK
     case ENOTBLK:
-      error = "Block device required";
-      break;
+        error = "Block device required";
+        break;
 #endif
 #ifdef EBUSY
     case EBUSY:
-      error = "Device or resource busy";
-      break;
+        error = "Device or resource busy";
+        break;
 #endif
 #ifdef EEXIST
     case EEXIST:
-      error = "File exists";
-      break;
+        error = "File exists";
+        break;
 #endif
 #ifdef EXDEV
     case EXDEV:
-      error = "Cross-device link";
-      break;
+        error = "Cross-device link";
+        break;
 #endif
 #ifdef ENODEV
     case ENODEV:
-      error = "No such device";
-      break;
+        error = "No such device";
+        break;
 #endif
 #ifdef ENOTDIR
     case ENOTDIR:
-      error = "Not a directory";
-      break;
+        error = "Not a directory";
+        break;
 #endif
 #ifdef EISDIR
     case EISDIR:
-      error = "Is a directory";
-      break;
+        error = "Is a directory";
+        break;
 #endif
 #ifdef EINVAL
     case EINVAL:
-      error = "Invalid argument";
-      break;
+        error = "Invalid argument";
+        break;
 #endif
 #ifdef ENFILE
     case ENFILE:
-      error = "Too many open files in system";
-      break;
+        error = "Too many open files in system";
+        break;
 #endif
 #ifdef EMFILE
     case EMFILE:
-      error = "Too many open files";
-      break;
+        error = "Too many open files";
+        break;
 #endif
 #ifdef ENOTTY
     case ENOTTY:
-      error = "Not a character device";
-      break;
+        error = "Not a character device";
+        break;
 #endif
 #ifdef ETXTBSY
     case ETXTBSY:
-      error = "Text file busy";
-      break;
+        error = "Text file busy";
+        break;
 #endif
 #ifdef EFBIG
     case EFBIG:
-      error = "File too large";
-      break;
+        error = "File too large";
+        break;
 #endif
 #ifdef ENOSPC
     case ENOSPC:
-      error = "No space left on device";
-      break;
+        error = "No space left on device";
+        break;
 #endif
 #ifdef ESPIPE
     case ESPIPE:
-      error = "Illegal seek";
-      break;
+        error = "Illegal seek";
+        break;
 #endif
 #ifdef EROFS
     case EROFS:
-      error = "Read-only file system";
-      break;
+        error = "Read-only file system";
+        break;
 #endif
 #ifdef EMLINK
     case EMLINK:
-      error = "Too many links";
-      break;
+        error = "Too many links";
+        break;
 #endif
 #ifdef EPIPE
     case EPIPE:
-      error = "Broken pipe";
-      break;
+        error = "Broken pipe";
+        break;
 #endif
 #ifdef EDOM
     case EDOM:
-      error = "Math argument";
-      break;
+        error = "Math argument";
+        break;
 #endif
 #ifdef ERANGE
     case ERANGE:
-      error = "Result too large";
-      break;
+        error = "Result too large";
+        break;
 #endif
 #ifdef ENOMSG
     case ENOMSG:
-      error = "No message of desired type";
-      break;
+        error = "No message of desired type";
+        break;
 #endif
 #ifdef EIDRM
     case EIDRM:
-      error = "Identifier removed";
-      break;
+        error = "Identifier removed";
+        break;
 #endif
 #ifdef EDEADLK
     case EDEADLK:
-      error = "Deadlock";
-      break;
+        error = "Deadlock";
+        break;
 #endif
 #ifdef ENOLCK
     case ENOLCK:
-      error = "No lock";
-      break;
+        error = "No lock";
+        break;
 #endif
 #ifdef ENOSTR
     case ENOSTR:
-      error = "Not a stream";
-      break;
+        error = "Not a stream";
+        break;
 #endif
 #ifdef ETIME
     case ETIME:
-      error = "Stream ioctl timeout";
-      break;
+        error = "Stream ioctl timeout";
+        break;
 #endif
 #ifdef ENOSR
     case ENOSR:
-      error = "No stream resources";
-      break;
+        error = "No stream resources";
+        break;
 #endif
 #ifdef ENONET
     case ENONET:
-      error = "Machine is not on the network";
-      break;
+        error = "Machine is not on the network";
+        break;
 #endif
 #ifdef ENOPKG
     case ENOPKG:
-      error = "No package";
-      break;
+        error = "No package";
+        break;
 #endif
 #ifdef EREMOTE
     case EREMOTE:
-      error = "Resource is remote";
-      break;
+        error = "Resource is remote";
+        break;
 #endif
 #ifdef ENOLINK
     case ENOLINK:
-      error = "Virtual circuit is gone";
-      break;
+        error = "Virtual circuit is gone";
+        break;
 #endif
 #ifdef EADV
     case EADV:
-      error = "Advertise error";
-      break;
+        error = "Advertise error";
+        break;
 #endif
 #ifdef ESRMNT
     case ESRMNT:
-      error = "Srmount error";
-      break;
+        error = "Srmount error";
+        break;
 #endif
 #ifdef ECOMM
     case ECOMM:
-      error = "Communication error";
-      break;
+        error = "Communication error";
+        break;
 #endif
 #ifdef EPROTO
     case EPROTO:
-      error = "Protocol error";
-      break;
+        error = "Protocol error";
+        break;
 #endif
 #ifdef EMULTIHOP
     case EMULTIHOP:
-      error = "Multihop attempted";
-      break;
+        error = "Multihop attempted";
+        break;
 #endif
 #ifdef EBADMSG
     case EBADMSG:
-      error = "Bad message";
-      break;
+        error = "Bad message";
+        break;
 #endif
 #ifdef ELIBACC
     case ELIBACC:
-      error = "Cannot access a needed shared library";
-      break;
+        error = "Cannot access a needed shared library";
+        break;
 #endif
 #ifdef ELIBBAD
     case ELIBBAD:
-      error = "Accessing a corrupted shared library";
-      break;
+        error = "Accessing a corrupted shared library";
+        break;
 #endif
 #ifdef ELIBSCN
     case ELIBSCN:
-      error = ".lib section in a.out corrupted";
-      break;
+        error = ".lib section in a.out corrupted";
+        break;
 #endif
 #ifdef ELIBMAX
     case ELIBMAX:
-      error = "Attempting to link in more shared libraries than system limit";
-      break;
+        error = "Attempting to link in more shared libraries than system limit";
+        break;
 #endif
 #ifdef ELIBEXEC
     case ELIBEXEC:
-      error = "Cannot exec a shared library directly";
-      break;
+        error = "Cannot exec a shared library directly";
+        break;
 #endif
 #ifdef ENOSYS
     case ENOSYS:
-      error = "Function not implemented";
-      break;
+        error = "Function not implemented";
+        break;
 #endif
 #ifdef ENMFILE
     case ENMFILE:
-      error = "No more files";
-      break;
+        error = "No more files";
+        break;
 #endif
 #ifdef ENOTEMPTY
     case ENOTEMPTY:
-      error = "Directory not empty";
-      break;
+        error = "Directory not empty";
+        break;
 #endif
 #ifdef ENAMETOOLONG
     case ENAMETOOLONG:
-      error = "File or path name too long";
-      break;
+        error = "File or path name too long";
+        break;
 #endif
 #ifdef ELOOP
     case ELOOP:
-      error = "Too many symbolic links";
-      break;
+        error = "Too many symbolic links";
+        break;
 #endif
 #ifdef ENOBUFS
     case ENOBUFS:
-      error = "No buffer space available";
-      break;
+        error = "No buffer space available";
+        break;
 #endif
 #ifdef EAFNOSUPPORT
     case EAFNOSUPPORT:
-      error = "Address family not supported by protocol family";
-      break;
+        error = "Address family not supported by protocol family";
+        break;
 #endif
 #ifdef EPROTOTYPE
     case EPROTOTYPE:
-      error = "Protocol wrong type for socket";
-      break;
+        error = "Protocol wrong type for socket";
+        break;
 #endif
 #ifdef ENOTSOCK
     case ENOTSOCK:
-      error = "Socket operation on non-socket";
-      break;
+        error = "Socket operation on non-socket";
+        break;
 #endif
 #ifdef ENOPROTOOPT
     case ENOPROTOOPT:
-      error = "Protocol not available";
-      break;
+        error = "Protocol not available";
+        break;
 #endif
 #ifdef ESHUTDOWN
     case ESHUTDOWN:
-      error = "Can't send after socket shutdown";
-      break;
+        error = "Can't send after socket shutdown";
+        break;
 #endif
 #ifdef ECONNREFUSED
     case ECONNREFUSED:
-      error = "Connection refused";
-      break;
+        error = "Connection refused";
+        break;
 #endif
 #ifdef EADDRINUSE
     case EADDRINUSE:
-      error = "Address already in use";
-      break;
+        error = "Address already in use";
+        break;
 #endif
 #ifdef ECONNABORTED
     case ECONNABORTED:
-      error = "Software caused connection abort";
-      break;
+        error = "Software caused connection abort";
+        break;
 #endif
     default:
-      if ((error = _user_strerror (errnum)) == 0)
-	error = "";
-      break;
+        if ((error = _user_strerror(errnum)) == 0)
+            error = "";
+        break;
     }
 
-  return error;
+    return error;
 }

@@ -8,20 +8,20 @@ FUNCTION
 <<ctime>>---convert time to local and format as string
 
 INDEX
-	ctime
+    ctime
 
 ANSI_SYNOPSIS
-	#include <time.h>
-	char *ctime(time_t <[clock]>);
-	char *ctime_r(time_t <[clock]>, char *<[buf]>);
+    #include <time.h>
+    char *ctime(time_t <[clock]>);
+    char *ctime_r(time_t <[clock]>, char *<[buf]>);
 
 TRAD_SYNOPSIS
-	#include <time.h>
-	char *ctime(<[clock]>)
-	time_t <[clock]>;
-	char *ctime_r(<[clock]>, <[buf]>)
-	time_t <[clock]>;
-	char *<[buf]>;
+    #include <time.h>
+    char *ctime(<[clock]>)
+    time_t <[clock]>;
+    char *ctime_r(<[clock]>, <[buf]>)
+    time_t <[clock]>;
+    char *<[buf]>;
 
 DESCRIPTION
 Convert the time value at <[clock]> to local time (like <<localtime>>)
@@ -42,11 +42,9 @@ ANSI C requires <<ctime>>.
 
 #ifndef _REENT_ONLY
 
-char *
-_DEFUN (ctime, (tim_p),
-	_CONST time_t * tim_p)
+char *ctime(const time_t *tim_p)
 {
-  return asctime (localtime (tim_p));
+    return asctime(localtime(tim_p));
 }
 
 #endif

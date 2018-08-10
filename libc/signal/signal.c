@@ -3,42 +3,42 @@ FUNCTION
 <<signal>>---specify handler subroutine for a signal
 
 INDEX
-	signal
+    signal
 INDEX
-	_signal_r
+    _signal_r
 INDEX
-	raise
+    raise
 INDEX
-	_raise_r
+    _raise_r
 
 ANSI_SYNOPSIS
-	#include <signal.h>
-	void ( * signal(int <[sig]>, void(*<[func]>)(int)) )(int);
+    #include <signal.h>
+    void ( * signal(int <[sig]>, void(*<[func]>)(int)) )(int);
 
-	void ( * _signal_r(void *<[reent]>, 
+    void ( * _signal_r(void *<[reent]>,
                            int <[sig]>, void(*<[func]>)(int)) )(int);
 
-	int raise (int <[sig]>);
+    int raise (int <[sig]>);
 
-	int _raise_r (void *<[reent]>, int <[sig]>);
+    int _raise_r (void *<[reent]>, int <[sig]>);
 
 TRAD_SYNOPSIS
-	#include <signal.h>
-	char ( * signal(<[sig]>, <[func]>) )()
-	int <[sig]>;
-	char ( * <[func]> )();
+    #include <signal.h>
+    char ( * signal(<[sig]>, <[func]>) )()
+    int <[sig]>;
+    char ( * <[func]> )();
 
-	char ( * _signal_r(<[reent]>, <[sig]>, <[func]>) )()
-	char *<[reent]>;
-	int <[sig]>;
-	char ( * <[func]> )();
+    char ( * _signal_r(<[reent]>, <[sig]>, <[func]>) )()
+    char *<[reent]>;
+    int <[sig]>;
+    char ( * <[func]> )();
 
-	int raise (<[sig]>)()
-	int <[sig]>;
+    int raise (<[sig]>)()
+    int <[sig]>;
 
-	int _raise_r (<[reent]>, <[sig]>)()
-	char *<[reent]>;
-	int <[sig]>;
+    int _raise_r (<[reent]>, <[sig]>)()
+    char *<[reent]>;
+    int <[sig]>;
 
 DESCRIPTION
 <<signal, raise>> provide a simple signal/raise implementation for embedded
@@ -119,149 +119,132 @@ int _dummy_simulated_signal;
 #include <reent.h>
 #include <_syslist.h>
 
-int
-_DEFUN (_init_signal_r, (ptr),
-	struct _reent *ptr)
+int _init_signal_r(struct _reent *ptr)
 {
-  int i;
+    int i;
 
-  if (ptr->_sig_func == NULL)
+    if (ptr->_sig_func == NULL)
     {
-      ptr->_sig_func = (_sig_func_ptr *)_malloc_r (ptr, sizeof (_sig_func_ptr) * NSIG);
-      if (ptr->_sig_func == NULL)
-	return -1;
+        ptr->_sig_func = (_sig_func_ptr *)_malloc_r(ptr, sizeof(_sig_func_ptr) * NSIG);
+        if (ptr->_sig_func == NULL)
+            return -1;
 
-      for (i = 0; i < NSIG; i++)
-	ptr->_sig_func[i] = SIG_DFL;
+        for (i = 0; i < NSIG; i++)
+            ptr->_sig_func[i] = SIG_DFL;
     }
 
-  return 0;
+    return 0;
 }
 
-_sig_func_ptr
-_DEFUN (_signal_r, (ptr, sig, func),
-	struct _reent *ptr _AND
-	int sig _AND
-	_sig_func_ptr func)
+_sig_func_ptr _signal_r(struct _reent *ptr, int sig, _sig_func_ptr func)
 {
-  _sig_func_ptr old_func, *temp;
+    _sig_func_ptr old_func, *temp;
 
-  if (sig < 0 || sig >= NSIG)
+    if (sig < 0 || sig >= NSIG)
     {
-      ptr->_errno = EINVAL;
-      return SIG_ERR;
+        ptr->_errno = EINVAL;
+        return SIG_ERR;
     }
 
-  if (ptr->_sig_func == NULL && _init_signal_r (ptr) != 0)
-    return SIG_ERR;
-  
-  old_func = ptr->_sig_func[sig];
-  ptr->_sig_func[sig] = func;
+    if (ptr->_sig_func == NULL && _init_signal_r(ptr) != 0)
+        return SIG_ERR;
 
-  return old_func;
+    old_func = ptr->_sig_func[sig];
+    ptr->_sig_func[sig] = func;
+
+    return old_func;
 }
 
-int 
-_raise_r (ptr, sig)
-     struct _reent *ptr;
-     int sig;
+int _raise_r(ptr, sig) struct _reent *ptr;
+int sig;
 {
-  _sig_func_ptr func;
-  int result = 0;
+    _sig_func_ptr func;
+    int result = 0;
 
-  if (sig < 0 || sig >= NSIG)
+    if (sig < 0 || sig >= NSIG)
     {
-      ptr->_errno = EINVAL;
-      return -1;
+        ptr->_errno = EINVAL;
+        return -1;
     }
 
-  if (ptr->_sig_func == NULL && _init_signal_r (ptr) != 0)
-    return -1;
-  
-  switch ((_POINTER_INT) ptr->_sig_func[sig])
+    if (ptr->_sig_func == NULL && _init_signal_r(ptr) != 0)
+        return -1;
+
+    switch ((_POINTER_INT)ptr->_sig_func[sig])
     {
     case SIG_DFL:
-      return _kill_r (ptr, _getpid_r (ptr), sig);
+        return _kill_r(ptr, _getpid_r(ptr), sig);
 
     case SIG_IGN:
-      break;
+        break;
 
     case SIG_ERR:
-      ptr->_errno = EINVAL;
-      result = 1;
-      break;
+        ptr->_errno = EINVAL;
+        result = 1;
+        break;
 
     default:
-      func = ptr->_sig_func[sig];
-      ptr->_sig_func[sig] = SIG_DFL;
-      func (sig);
-      break;
+        func = ptr->_sig_func[sig];
+        ptr->_sig_func[sig] = SIG_DFL;
+        func(sig);
+        break;
     }
 
-  return result;
+    return result;
 }
 
-int
-__sigtramp_r (ptr, sig)
-     struct _reent *ptr;
-     int sig;
+int __sigtramp_r(ptr, sig) struct _reent *ptr;
+int sig;
 {
-  _sig_func_ptr func;
+    _sig_func_ptr func;
 
-  if (sig < 0 || sig >= NSIG)
+    if (sig < 0 || sig >= NSIG)
     {
-      return -1;
+        return -1;
     }
 
-  if (ptr->_sig_func == NULL && _init_signal_r (ptr) != 0)
-    return -1;
-  
-  switch ((_POINTER_INT) ptr->_sig_func[sig])
+    if (ptr->_sig_func == NULL && _init_signal_r(ptr) != 0)
+        return -1;
+
+    switch ((_POINTER_INT)ptr->_sig_func[sig])
     {
     case SIG_DFL:
-      return 1;
+        return 1;
 
     case SIG_ERR:
-      return 2;
+        return 2;
 
     case SIG_IGN:
-      return 3;
+        return 3;
 
     default:
-      func = ptr->_sig_func[sig];
-      ptr->_sig_func[sig] = SIG_DFL;
-      func (sig);
-      return 0;
+        func = ptr->_sig_func[sig];
+        ptr->_sig_func[sig] = SIG_DFL;
+        func(sig);
+        return 0;
     }
 }
 
 #ifndef _REENT_ONLY
 
-int 
-raise (sig)
-     int sig;
+int raise(sig) int sig;
 {
-  return _raise_r (_REENT, sig);
+    return _raise_r(_REENT, sig);
 }
 
-_sig_func_ptr
-_DEFUN (signal, (sig, func),
-	int sig _AND
-	_sig_func_ptr func)
+_sig_func_ptr signal(int sig, _sig_func_ptr func)
 {
-  return _signal_r (_REENT, sig, func);
+    return _signal_r(_REENT, sig, func);
 }
 
-int 
-_init_signal ()
+int _init_signal()
 {
-  return _init_signal_r (_REENT);
+    return _init_signal_r(_REENT);
 }
 
-int
-__sigtramp (int sig)
+int __sigtramp(int sig)
 {
-  return __sigtramp_r (_REENT, sig);
+    return __sigtramp_r(_REENT, sig);
 }
 
 #endif

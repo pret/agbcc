@@ -22,22 +22,13 @@
 #define OVERFLOW_INT 30000
 #endif
 
-#ifdef __STDC__
 static const float
-#else
-static float
-#endif
 two25   =  3.355443200e+07,	/* 0x4c000000 */
 twom25  =  2.9802322388e-08,	/* 0x33000000 */
 huge   = 1.0e+30,
 tiny   = 1.0e-30;
 
-#ifdef __STDC__
-	float scalbnf (float x, int n)
-#else
-	float scalbnf (x,n)
-	float x; int n;
-#endif
+float scalbnf (float x, int n)
 {
 	__int32_t  k,ix;
 	GET_FLOAT_WORD(ix,x);
@@ -65,13 +56,7 @@ tiny   = 1.0e-30;
 
 #ifdef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	double scalbn(double x, int n)
-#else
-	double scalbn(x,n)
-	double x;
-	int n;
-#endif
+double scalbn(double x, int n)
 {
 	return (double) scalbnf((float) x, n);
 }

@@ -1,17 +1,17 @@
 /*
-FUNCTION 
-	<<isalnum>>---alphanumeric character predicate
+FUNCTION
+    <<isalnum>>---alphanumeric character predicate
 
 INDEX
-	isalnum
+    isalnum
 
 ANSI_SYNOPSIS
-	#include <ctype.h>
-	int isalnum(int <[c]>);
+    #include <ctype.h>
+    int isalnum(int <[c]>);
 
 TRAD_SYNOPSIS
-	#include <ctype.h>
-	int isalnum(<[c]>);
+    #include <ctype.h>
+    int isalnum(<[c]>);
 
 
 DESCRIPTION
@@ -33,14 +33,11 @@ PORTABILITY
 No OS subroutines are required.
 */
 
-#include <_ansi.h>
 #include <ctype.h>
 
 #undef isalnum
 
-int
-_DEFUN(isalnum,(c),int c)
+int isalnum(int c)
 {
-	return((_ctype_ + 1)[c] & (_U|_L|_N));
+    return ((_ctype_ + 1)[c] & (_U | _L | _N));
 }
-

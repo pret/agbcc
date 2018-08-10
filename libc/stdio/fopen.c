@@ -20,27 +20,27 @@ FUNCTION
 <<fopen>>---open a file
 
 INDEX
-	fopen
+    fopen
 INDEX
-	_fopen_r
+    _fopen_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	FILE *fopen(const char *<[file]>, const char *<[mode]>);
+    #include <stdio.h>
+    FILE *fopen(const char *<[file]>, const char *<[mode]>);
 
-	FILE *_fopen_r(void *<[reent]>, 
+    FILE *_fopen_r(void *<[reent]>,
                        const char *<[file]>, const char *<[mode]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	FILE *fopen(<[file]>, <[mode]>)
-	char *<[file]>;
-	char *<[mode]>;
+    #include <stdio.h>
+    FILE *fopen(<[file]>, <[mode]>)
+    char *<[file]>;
+    char *<[mode]>;
 
-	FILE *_fopen_r(<[reent]>, <[file]>, <[mode]>)
-	char *<[reent]>;
-	char *<[file]>;
-	char *<[mode]>;
+    FILE *_fopen_r(<[reent]>, <[file]>, <[mode]>)
+    char *<[reent]>;
+    char *<[file]>;
+    char *<[mode]>;
 
 DESCRIPTION
 <<fopen>> initializes the data structures needed to read or write a
@@ -117,49 +117,42 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #include <errno.h>
 #include "local.h"
 
-FILE *
-_DEFUN (_fopen_r, (ptr, file, mode),
-	struct _reent *ptr _AND
-	_CONST char *file _AND
-	_CONST char *mode)
+FILE *_fopen_r(struct _reent *ptr, const char *file, const char *mode)
 {
-  register FILE *fp;
-  register int f;
-  int flags, oflags;
+    register FILE *fp;
+    register int f;
+    int flags, oflags;
 
-  if ((flags = __sflags (ptr, mode, &oflags)) == 0)
-    return NULL;
-  if ((fp = __sfp (ptr)) == NULL)
-    return NULL;
+    if ((flags = __sflags(ptr, mode, &oflags)) == 0)
+        return NULL;
+    if ((fp = __sfp(ptr)) == NULL)
+        return NULL;
 
-  if ((f = _open_r (fp->_data, file, oflags, 0666)) < 0)
+    if ((f = _open_r(fp->_data, file, oflags, 0666)) < 0)
     {
-      fp->_flags = 0;		/* release */
-      return NULL;
+        fp->_flags = 0; /* release */
+        return NULL;
     }
 
-  fp->_file = f;
-  fp->_flags = flags;
-  fp->_cookie = (_PTR) fp;
-  fp->_read = __sread;
-  fp->_write = __swrite;
-  fp->_seek = __sseek;
-  fp->_close = __sclose;
+    fp->_file = f;
+    fp->_flags = flags;
+    fp->_cookie = (void *)fp;
+    fp->_read = __sread;
+    fp->_write = __swrite;
+    fp->_seek = __sseek;
+    fp->_close = __sclose;
 
-  if (fp->_flags & __SAPP)
-    fseek (fp, 0, SEEK_END);
+    if (fp->_flags & __SAPP)
+        fseek(fp, 0, SEEK_END);
 
-  return fp;
+    return fp;
 }
 
 #ifndef _REENT_ONLY
 
-FILE *
-_DEFUN (fopen, (file, mode),
-	_CONST char *file _AND
-	_CONST char *mode)
+FILE *fopen(const char *file, const char *mode)
 {
-  return _fopen_r (_REENT, file, mode);
+    return _fopen_r(_REENT, file, mode);
 }
 
 #endif

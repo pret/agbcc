@@ -12,20 +12,20 @@ int execle(const char *path, const char *argv0, ... /*, char * const *envp */);
 int execlp(const char *path, const char *argv0, ...);
 int execlpe(const char *path, const char *argv0, ... /*, char * const *envp */);
 
-int execv(const char *path, char * const *argv);
-int execve(const char *path, char * const *argv, char * const *envp);
-int execvp(const char *path, char * const *argv);
-int execvpe(const char *path, char * const *argv, char * const *envp);
+int execv(const char *path, char *const *argv);
+int execve(const char *path, char *const *argv, char *const *envp);
+int execvp(const char *path, char *const *argv);
+int execvpe(const char *path, char *const *argv, char *const *envp);
 
 int spawnl(int mode, const char *path, const char *argv0, ...);
 int spawnle(int mode, const char *path, const char *argv0, ... /*, char * const *envp */);
 int spawnlp(int mode, const char *path, const char *argv0, ...);
 int spawnlpe(int mode, const char *path, const char *argv0, ... /*, char * const *envp */);
 
-int spawnv(int mode, const char *path, const char * const *argv);
-int spawnve(int mode, const char *path, char * const *argv, const char * const *envp);
-int spawnvp(int mode, const char *path, const char * const *argv);
-int spawnvpe(int mode, const char *path, const char * const *argv, const char * const *envp);
+int spawnv(int mode, const char *path, const char *const *argv);
+int spawnve(int mode, const char *path, char *const *argv, const char *const *envp);
+int spawnvp(int mode, const char *path, const char *const *argv);
+int spawnvpe(int mode, const char *path, const char *const *argv, const char *const *envp);
 
 #ifdef __CYGWIN32__
 /* Secure exec() functions family */
@@ -37,19 +37,19 @@ pid_t sexecle(void *, const char *path, const char *argv0, ... /*, char * const 
 pid_t sexeclp(void *, const char *path, const char *argv0, ...);
 pid_t sexeclpe(void *, const char *path, const char *argv0, ... /*, char * const *envp */);
 
-pid_t sexecv(void *, const char *path, const char * const *argv);
-pid_t sexecve(void *, const char *path, const char * const *argv, const char * const *envp);
-pid_t sexecvp(void *, const char *path, const char * const *argv);
-pid_t sexecvpe(void *, const char *path, const char * const *argv, const char * const *envp);
+pid_t sexecv(void *, const char *path, const char *const *argv);
+pid_t sexecve(void *, const char *path, const char *const *argv, const char *const *envp);
+pid_t sexecvp(void *, const char *path, const char *const *argv);
+pid_t sexecvpe(void *, const char *path, const char *const *argv, const char *const *envp);
 #endif
 
 int cwait(int *, int, int);
 
-#define _P_WAIT		1
-#define _P_NOWAIT	2	/* always generates error */
-#define _P_OVERLAY	3
-#define _P_NOWAITO	4
-#define _P_DETACH	5
+#define _P_WAIT 1
+#define _P_NOWAIT 2 /* always generates error */
+#define _P_OVERLAY 3
+#define _P_NOWAITO 4
+#define _P_DETACH 5
 
 #define WAIT_CHILD 1
 

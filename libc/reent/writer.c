@@ -21,43 +21,38 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_write_r>>---Reentrant version of write
-	
+    <<_write_r>>---Reentrant version of write
+
 INDEX
-	_write_r
+    _write_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	long _write_r(struct _reent *<[ptr]>,
-		      int <[fd]>, const void *<[buf]>, size_t <[cnt]>);
+    #include <reent.h>
+    long _write_r(struct _reent *<[ptr]>,
+              int <[fd]>, const void *<[buf]>, size_t <[cnt]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	long _write_r(<[ptr]>, <[fd]>, <[buf]>, <[cnt]>)
-	struct _reent *<[ptr]>;
-	int <[fd]>;
-	char *<[buf]>;
-	size_t <[cnt]>;
+    #include <reent.h>
+    long _write_r(<[ptr]>, <[fd]>, <[buf]>, <[cnt]>)
+    struct _reent *<[ptr]>;
+    int <[fd]>;
+    char *<[buf]>;
+    size_t <[cnt]>;
 
 DESCRIPTION
-	This is a reentrant version of <<write>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<write>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-long
-_write_r (ptr, fd, buf, cnt)
-     struct _reent *ptr;
-     int fd;
-     _CONST _PTR buf;
-     size_t cnt;
+long _write_r(struct _reent *ptr, int fd, const void *buf, size_t cnt)
 {
-  long ret;
+    long ret;
 
-  errno = 0;
-  if ((ret = _write (fd, buf, cnt)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _write(fd, buf, cnt)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

@@ -3,16 +3,16 @@ FUNCTION
 <<feof>>---test for end of file
 
 INDEX
-	feof
+    feof
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int feof(FILE *<[fp]>);
+    #include <stdio.h>
+    int feof(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int feof(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int feof(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<feof>> tests whether or not the end of the file identified by <[fp]>
@@ -32,9 +32,7 @@ No supporting OS subroutines are required.
 
 #undef feof
 
-int 
-_DEFUN (feof, (fp),
-	FILE * fp)
+int feof(FILE *fp)
 {
-  return __sfeof (fp);
+    return __sfeof(fp);
 }

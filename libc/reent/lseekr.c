@@ -21,43 +21,38 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_lseek_r>>---Reentrant version of lseek
-	
+    <<_lseek_r>>---Reentrant version of lseek
+
 INDEX
-	_lseek_r
+    _lseek_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	off_t _lseek_r(struct _reent *<[ptr]>,
-		       int <[fd]>, off_t <[pos]>, int <[whence]>);
+    #include <reent.h>
+    off_t _lseek_r(struct _reent *<[ptr]>,
+               int <[fd]>, off_t <[pos]>, int <[whence]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	off_t _lseek_r(<[ptr]>, <[fd]>, <[pos]>, <[whence]>)
-	struct _reent *<[ptr]>;
-	int <[fd]>;
-	off_t <[pos]>;
-	int <[whence]>;
+    #include <reent.h>
+    off_t _lseek_r(<[ptr]>, <[fd]>, <[pos]>, <[whence]>)
+    struct _reent *<[ptr]>;
+    int <[fd]>;
+    off_t <[pos]>;
+    int <[whence]>;
 
 DESCRIPTION
-	This is a reentrant version of <<lseek>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<lseek>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-off_t
-_lseek_r (ptr, fd, pos, whence)
-     struct _reent *ptr;
-     int fd;
-     off_t pos;
-     int whence;
+off_t _lseek_r(struct _reent *ptr, int fd, off_t pos, int whence)
 {
-  off_t ret;
+    off_t ret;
 
-  errno = 0;
-  if ((ret = _lseek (fd, pos, whence)) == (off_t) -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _lseek(fd, pos, whence)) == (off_t)-1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

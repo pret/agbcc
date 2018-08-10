@@ -16,7 +16,7 @@
 
 /* If MALLOC_PROVIDED is defined, we don't need this function.  */
 
-#if defined (REENTRANT_SYSCALLS_PROVIDED) || defined (MALLOC_PROVIDED)
+#if defined(REENTRANT_SYSCALLS_PROVIDED) || defined(MALLOC_PROVIDED)
 
 int _dummy_sbrk_syscalls = 1;
 
@@ -28,39 +28,36 @@ int errno;
 
 /*
 FUNCTION
-	<<_sbrk_r>>---Reentrant version of sbrk
-	
+    <<_sbrk_r>>---Reentrant version of sbrk
+
 INDEX
-	_sbrk_r
+    _sbrk_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	void *_sbrk_r(struct _reent *<[ptr]>, size_t <[incr]>);
+    #include <reent.h>
+    void *_sbrk_r(struct _reent *<[ptr]>, size_t <[incr]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	void *_sbrk_r(<[ptr]>, <[incr]>)
-	struct _reent *<[ptr]>;
-	size_t <[incr]>;
+    #include <reent.h>
+    void *_sbrk_r(<[ptr]>, <[incr]>)
+    struct _reent *<[ptr]>;
+    size_t <[incr]>;
 
 DESCRIPTION
-	This is a reentrant version of <<sbrk>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<sbrk>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-void *
-_sbrk_r (ptr, incr)
-     struct _reent *ptr;
-     size_t incr;
+void *_sbrk_r(struct _reent *ptr, size_t incr)
 {
-  char *ret;
-  void *_sbrk(size_t);
+    char *ret;
+    void *_sbrk(size_t);
 
-  errno = 0;
-  if ((ret = (char *)(_sbrk (incr))) == (void *) -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = (char *)(_sbrk(incr))) == (void *)-1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

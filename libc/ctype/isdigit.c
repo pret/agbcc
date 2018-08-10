@@ -31,13 +31,11 @@ PORTABILITY
 No supporting OS subroutines are required.
 */
 
-#include <_ansi.h>
 #include <ctype.h>
 
 
 #undef isdigit
-int
-_DEFUN(isdigit,(c),int c)
+int isdigit(int c)
 {
-	return((_ctype_ + 1)[c] & _N);
+    return ((_ctype_ + 1)[c] & _N);
 }

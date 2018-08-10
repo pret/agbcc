@@ -1,17 +1,17 @@
 /*
 FUNCTION
-	<<isalpha>>---alphabetic character predicate
+    <<isalpha>>---alphabetic character predicate
 
 INDEX
-	isalpha
+    isalpha
 
 ANSI_SYNOPSIS
-	#include <ctype.h>
-	int isalpha(int <[c]>);
+    #include <ctype.h>
+    int isalpha(int <[c]>);
 
 TRAD_SYNOPSIS
-	#include <ctype.h>
-	int isalpha(<[c]>);
+    #include <ctype.h>
+    int isalpha(<[c]>);
 
 DESCRIPTION
 <<isalpha>> is a macro which classifies ASCII integer values by table
@@ -24,7 +24,7 @@ undefining the macro using `<<#undef isalpha>>'.
 
 RETURNS
 <<isalpha>> returns non-zero if <[c]> is a letter (<<A>>--<<Z>> or
-<<a>>--<<z>>). 
+<<a>>--<<z>>).
 
 PORTABILITY
 <<isalpha>> is ANSI C.
@@ -32,13 +32,10 @@ PORTABILITY
 No supporting OS subroutines are required.
 */
 
-#include <_ansi.h>
 #include <ctype.h>
 
 #undef isalpha
-int
-_DEFUN(isalpha,(c),int c)
+int isalpha(int c)
 {
-	return((_ctype_ + 1)[c] & (_U|_L));
+    return ((_ctype_ + 1)[c] & (_U | _L));
 }
-

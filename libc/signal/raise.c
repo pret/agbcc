@@ -8,24 +8,24 @@ FUNCTION
 <<raise>>---send a signal
 
 INDEX
-	raise
+    raise
 INDEX
-	_raise_r
+    _raise_r
 
 ANSI_SYNOPSIS
-	#include <signal.h>
-	int raise(int <[sig]>);
+    #include <signal.h>
+    int raise(int <[sig]>);
 
-	int _raise_r(void *<[reent]>, int <[sig]>);
+    int _raise_r(void *<[reent]>, int <[sig]>);
 
 TRAD_SYNOPSIS
-	#include <signal.h>
-	int raise(<[sig]>)
-	int <[sig]>;
+    #include <signal.h>
+    int raise(<[sig]>)
+    int <[sig]>;
 
-	int _raise_r(<[reent]>, <[sig]>)
-	char *<[reent]>;
-	int <[sig]>;
+    int _raise_r(<[reent]>, <[sig]>)
+    char *<[reent]>;
+    int <[sig]>;
 
 DESCRIPTION
 Send the signal <[sig]> (one of the macros from `<<sys/signal.h>>').
@@ -60,21 +60,16 @@ int _dummy_raise;
 
 #ifndef _REENT_ONLY
 
-int
-_DEFUN (raise, (sig),
-	int sig)
+int raise(int sig)
 {
-  return _raise_r (_REENT, sig);
+    return _raise_r(_REENT, sig);
 }
 
 #endif
 
-int
-_DEFUN (_raise_r, (reent, sig),
-	struct _reent *reent _AND
-	int sig)
+int _raise_r(struct _reent *reent, int sig)
 {
-  return _kill_r (reent, _getpid_r (reent), sig);
+    return _kill_r(reent, _getpid_r(reent), sig);
 }
 
 #endif /* SIGNAL_PROVIDED */

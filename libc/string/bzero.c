@@ -3,17 +3,17 @@ FUNCTION
 <<bzero>>---initialize memory to zero
 
 INDEX
-	bzero
+    bzero
 
 ANSI_SYNOPSIS
-	#include <string.h>
-	void bzero(char *<[b]>, size_t <[length]>);
+    #include <string.h>
+    void bzero(char *<[b]>, size_t <[length]>);
 
 TRAD_SYNOPSIS
-	#include <string.h>
-	void bzero(<[b]>, <[length]>)
-	char *<[b]>;
-	size_t <[length]>;
+    #include <string.h>
+    void bzero(<[b]>, <[length]>)
+    char *<[b]>;
+    size_t <[length]>;
 
 DESCRIPTION
 <<bzero>> initializes <[length]> bytes of memory, starting at address
@@ -32,11 +32,8 @@ Neither ANSI C nor the System V Interface Definition (Issue 2) require
 
 #include <string.h>
 
-_VOID
-_DEFUN (bzero, (b, length),
-	char *b _AND
-	size_t length)
+void bzero(char *b, size_t length)
 {
-  while (length--)
-    *b++ = 0;
+    while (length--)
+        *b++ = 0;
 }

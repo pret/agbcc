@@ -25,22 +25,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-int
-_DEFUN (putenv, (str),
-	_CONST char *str)
+int putenv(const char *str)
 {
-  register char *p, *equal;
-  int rval;
+    register char *p, *equal;
+    int rval;
 
-  if (!(p = strdup (str)))
-    return 1;
-  if (!(equal = index (p, '=')))
+    if (!(p = strdup(str)))
+        return 1;
+    if (!(equal = index(p, '=')))
     {
-      (void) free (p);
-      return 1;
+        (void)free(p);
+        return 1;
     }
-  *equal = '\0';
-  rval = setenv (p, equal + 1, 1);
-  (void) free (p);
-  return rval;
+    *equal = '\0';
+    rval = setenv(p, equal + 1, 1);
+    (void)free(p);
+    return rval;
 }

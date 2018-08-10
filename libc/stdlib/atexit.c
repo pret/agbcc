@@ -10,16 +10,16 @@ FUNCTION
 <<atexit>>---request execution of functions at program exit
 
 INDEX
-	atexit
+    atexit
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	int atexit(void (*<[function]>)(void);
+    #include <stdlib.h>
+    int atexit(void (*<[function]>)(void);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	int atexit((<[function]>)
-	void (*<[function]>)();
+    #include <stdlib.h>
+    int atexit((<[function]>)
+    void (*<[function]>)();
 
 DESCRIPTION
 You can use <<atexit>> to enroll functions in a list of functions that
@@ -58,23 +58,20 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
  * Register a function to be performed at exit.
  */
 
-int
-_DEFUN (atexit,
-	(fn),
-	_VOID _EXFUN ((*fn), (_VOID)))
+int atexit(void (*fn)(void))
 {
-  register struct _atexit *p;
+    register struct _atexit *p;
 
-  if ((p = _REENT->_atexit) == NULL)
-    _REENT->_atexit = p = &_REENT->_atexit0;
-  if (p->_ind >= _ATEXIT_SIZE)
+    if ((p = _REENT->_atexit) == NULL)
+        _REENT->_atexit = p = &_REENT->_atexit0;
+    if (p->_ind >= _ATEXIT_SIZE)
     {
-      if ((p = (struct _atexit *) malloc (sizeof *p)) == NULL)
-	return -1;
-      p->_ind = 0;
-      p->_next = _REENT->_atexit;
-      _REENT->_atexit = p;
+        if ((p = (struct _atexit *)malloc(sizeof *p)) == NULL)
+            return -1;
+        p->_ind = 0;
+        p->_next = _REENT->_atexit;
+        _REENT->_atexit = p;
     }
-  p->_fns[p->_ind++] = fn;
-  return 0;
+    p->_fns[p->_ind++] = fn;
+    return 0;
 }

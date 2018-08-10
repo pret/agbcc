@@ -1,17 +1,17 @@
 /*
 FUNCTION
-	<<isascii>>---ASCII character predicate
+    <<isascii>>---ASCII character predicate
 
 INDEX
-	isascii
+    isascii
 
 ANSI_SYNOPSIS
-	#include <ctype.h>
-	int isascii(int <[c]>);
+    #include <ctype.h>
+    int isascii(int <[c]>);
 
 TRAD_SYNOPSIS
-	#include <ctype.h>
-	int isascii(<[c]>);
+    #include <ctype.h>
+    int isascii(<[c]>);
 
 DESCRIPTION
 <<isascii>> is a macro which returns non-zero when <[c]> is an ASCII
@@ -29,15 +29,12 @@ PORTABILITY
 
 No supporting OS subroutines are required.
 */
-#include <_ansi.h>
 #include <ctype.h>
-
 
 
 #undef isascii
 
-int 
-_DEFUN(isascii,(c),int c)
+int isascii(int c)
 {
-	return c >= 0 && c< 128;
+    return c >= 0 && c < 128;
 }

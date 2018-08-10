@@ -13,15 +13,15 @@ FUNCTION
 <<abort>>---abnormal termination of a program
 
 INDEX
-	abort
+    abort
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	void abort(void);
+    #include <stdlib.h>
+    void abort(void);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	void abort();
+    #include <stdlib.h>
+    void abort();
 
 DESCRIPTION
 Use <<abort>> to signal that your program has detected a condition it
@@ -49,17 +49,16 @@ Supporting OS subroutines required: <<getpid>>, <<kill>>.
 #include <stdlib.h>
 #include <signal.h>
 
-_VOID
-_DEFUN_VOID (abort)
+void abort(void)
 {
 #ifdef ABORT_MESSAGE
-  write (2, "Abort called\n", sizeof ("Abort called\n")-1);
+    write(2, "Abort called\n", sizeof("Abort called\n") - 1);
 #endif
 
-  while (1)
+    while (1)
     {
-      raise (SIGABRT);
-      _exit (1);
+        raise(SIGABRT);
+        _exit(1);
     }
 }
 

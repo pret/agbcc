@@ -21,43 +21,38 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_read_r>>---Reentrant version of read
-	
+    <<_read_r>>---Reentrant version of read
+
 INDEX
-	_read_r
+    _read_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	long _read_r(struct _reent *<[ptr]>,
-		     int <[fd]>, void *<[buf]>, size_t <[cnt]>);
+    #include <reent.h>
+    long _read_r(struct _reent *<[ptr]>,
+             int <[fd]>, void *<[buf]>, size_t <[cnt]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	long _read_r(<[ptr]>, <[fd]>, <[buf]>, <[cnt]>)
-	struct _reent *<[ptr]>;
-	int <[fd]>;
-	char *<[buf]>;
-	size_t <[cnt]>;
+    #include <reent.h>
+    long _read_r(<[ptr]>, <[fd]>, <[buf]>, <[cnt]>)
+    struct _reent *<[ptr]>;
+    int <[fd]>;
+    char *<[buf]>;
+    size_t <[cnt]>;
 
 DESCRIPTION
-	This is a reentrant version of <<read>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<read>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-long
-_read_r (ptr, fd, buf, cnt)
-     struct _reent *ptr;
-     int fd;
-     _PTR buf;
-     size_t cnt;
+long _read_r(struct _reent *ptr, int fd, void *buf, size_t cnt)
 {
-  long ret;
+    long ret;
 
-  errno = 0;
-  if ((ret = _read (fd, buf, cnt)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _read(fd, buf, cnt)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

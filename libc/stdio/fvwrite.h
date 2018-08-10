@@ -16,23 +16,23 @@
  */
 
 /* %W% (Berkeley) %G% */
-#include <_ansi.h>
+
 
 /*
  * I/O descriptors for __sfvwrite().
  */
-struct __siov {
-	_CONST _PTR     iov_base;
-	size_t	iov_len;
+struct __siov
+{
+    const void *iov_base;
+    size_t iov_len;
 };
-struct __suio {
-	struct	__siov *uio_iov;
-	int	uio_iovcnt;
-	int	uio_resid;
+struct __suio
+{
+    struct __siov *uio_iov;
+    int uio_iovcnt;
+    int uio_resid;
 };
 
 
-extern int _EXFUN(__sfvwrite,(FILE *, struct __suio *));
-extern int _EXFUN(__swsetup,(FILE *));
-
-
+extern int __sfvwrite(FILE *, struct __suio *);
+extern int __swsetup(FILE *);

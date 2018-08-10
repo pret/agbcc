@@ -15,22 +15,22 @@ FUNCTION
 <<asctime>>---format time as string
 
 INDEX
-	asctime
+    asctime
 INDEX
-	_asctime_r
+    _asctime_r
 
 ANSI_SYNOPSIS
-	#include <time.h>
-	char *asctime(const struct tm *<[clock]>);
-	char *asctime_r(const struct tm *<[clock]>, char *<[buf]>);
+    #include <time.h>
+    char *asctime(const struct tm *<[clock]>);
+    char *asctime_r(const struct tm *<[clock]>, char *<[buf]>);
 
 TRAD_SYNOPSIS
-	#include <time.h>
-	char *asctime(<[clock]>)
-	struct tm *<[clock]>;
-	char *asctime_r(<[clock]>)
-	struct tm *<[clock]>;
-	char *<[buf]>;
+    #include <time.h>
+    char *asctime(<[clock]>)
+    struct tm *<[clock]>;
+    char *asctime_r(<[clock]>)
+    struct tm *<[clock]>;
+    char *<[buf]>;
 
 DESCRIPTION
 Format the time value at <[clock]> into a string of the form
@@ -48,17 +48,14 @@ ANSI C requires <<asctime>>.
 */
 
 #include <time.h>
-#include <_ansi.h>
 #include <reent.h>
 
 #ifndef _REENT_ONLY
 
-char *
-_DEFUN (asctime, (tim_p),
-	_CONST struct tm *tim_p)
+char *asctime(const struct tm *tim_p)
 {
-  char *buf = _REENT->_new._reent._asctime_buf;
-  return asctime_r (tim_p, buf);
+    char *buf = _REENT->_new._reent._asctime_buf;
+    return asctime_r(tim_p, buf);
 }
 
 #endif

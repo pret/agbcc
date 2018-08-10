@@ -3,27 +3,27 @@ FUNCTION
 <<rename>>---rename a file
 
 INDEX
-	rename
+    rename
 INDEX
-	_rename_r
+    _rename_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int rename(const char *<[old]>, const char *<[new]>);
+    #include <stdio.h>
+    int rename(const char *<[old]>, const char *<[new]>);
 
-	int _rename_r(void *<[reent]>, 
+    int _rename_r(void *<[reent]>,
                       const char *<[old]>, const char *<[new]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int rename(<[old]>, <[new]>)
-	char *<[old]>;
-	char *<[new]>;
+    #include <stdio.h>
+    int rename(<[old]>, <[new]>)
+    char *<[old]>;
+    char *<[new]>;
 
-	int _rename_r(<[reent]>, <[old]>, <[new]>)
-	char *<[reent]>;
-	char *<[old]>;
-	char *<[new]>;
+    int _rename_r(<[reent]>, <[old]>, <[new]>)
+    char *<[reent]>;
+    char *<[old]>;
+    char *<[new]>;
 
 DESCRIPTION
 Use <<rename>> to establish a new name (the string at <[new]>) for a
@@ -52,35 +52,28 @@ Supporting OS subroutines required: <<link>>, <<unlink>>, or <<rename>>.
 #include <sys/unistd.h>
 #include <reent.h>
 
-int
-_rename_r (ptr, old, new)
-     struct _reent *ptr;
-     _CONST char *old;
-     _CONST char *new;
+int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
 #ifdef HAVE_RENAME
-  return _rename (old,new);
+    return _rename(old, new);
 #else
-  if (_link_r (ptr, old, new) == -1)
-    return -1;
+    if (_link_r(ptr, old, new) == -1)
+        return -1;
 
-  if (_unlink_r (ptr, old) == -1)
+    if (_unlink_r(ptr, old) == -1)
     {
-      /* ??? Should we unlink new? (rhetorical question) */
-      return -1;
+        /* ??? Should we unlink new? (rhetorical question) */
+        return -1;
     }
 #endif
-  return 0;
+    return 0;
 }
 
 #ifndef _REENT_ONLY
 
-int
-rename (old, new)
-     _CONST char *old;
-     _CONST char *new;
+int rename(const char *old, const char *new)
 {
-  return _rename_r (_REENT, old, new);
+    return _rename_r(_REENT, old, new);
 }
 
 #endif

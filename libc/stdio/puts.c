@@ -20,24 +20,24 @@ FUNCTION
 <<puts>>---write a character string
 
 INDEX
-	puts
+    puts
 INDEX
-	_puts_r
+    _puts_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int puts(const char *<[s]>);
+    #include <stdio.h>
+    int puts(const char *<[s]>);
 
-	int _puts_r(void *<[reent]>, const char *<[s]>);
+    int _puts_r(void *<[reent]>, const char *<[s]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int puts(<[s]>)
-	char *<[s]>;
+    #include <stdio.h>
+    int puts(<[s]>)
+    char *<[s]>;
 
-	int _puts_r(<[reent]>, <[s]>)
-	char *<[reent]>;
-	char *<[s]>;
+    int _puts_r(<[reent]>, <[s]>)
+    char *<[reent]>;
+    char *<[s]>;
 
 DESCRIPTION
 <<puts>> writes the string at <[s]> (followed by a newline, instead of
@@ -69,33 +69,28 @@ static char sccsid[] = "%W% (Berkeley) %G%";
  * Write the given string to stdout, appending a newline.
  */
 
-int
-_DEFUN (_puts_r, (ptr, s),
-	struct _reent *ptr _AND
-	_CONST char * s)
+int _puts_r(struct _reent *ptr, const char *s)
 {
-  size_t c = strlen (s);
-  struct __suio uio;
-  struct __siov iov[2];
+    size_t c = strlen(s);
+    struct __suio uio;
+    struct __siov iov[2];
 
-  iov[0].iov_base = s;
-  iov[0].iov_len = c;
-  iov[1].iov_base = "\n";
-  iov[1].iov_len = 1;
-  uio.uio_resid = c + 1;
-  uio.uio_iov = &iov[0];
-  uio.uio_iovcnt = 2;
+    iov[0].iov_base = s;
+    iov[0].iov_len = c;
+    iov[1].iov_base = "\n";
+    iov[1].iov_len = 1;
+    uio.uio_resid = c + 1;
+    uio.uio_iov = &iov[0];
+    uio.uio_iovcnt = 2;
 
-  return (__sfvwrite (_stdout_r (ptr), &uio) ? EOF : '\n');
+    return (__sfvwrite(_stdout_r(ptr), &uio) ? EOF : '\n');
 }
 
 #ifndef _REENT_ONLY
 
-int
-_DEFUN (puts, (s),
-	char _CONST * s)
+int puts(char const *s)
 {
-  return _puts_r (_REENT, s);
+    return _puts_r(_REENT, s);
 }
 
 #endif

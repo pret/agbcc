@@ -13,20 +13,20 @@ FUNCTION
 <<gmtime>>---convert time to UTC traditional form
 
 INDEX
-	gmtime
+    gmtime
 
 ANSI_SYNOPSIS
-	#include <time.h>
-	struct tm *gmtime(const time_t *<[clock]>);
-	struct tm *gmtime_r(const time_t *<[clock]>, struct tm *<[res]>);
+    #include <time.h>
+    struct tm *gmtime(const time_t *<[clock]>);
+    struct tm *gmtime_r(const time_t *<[clock]>, struct tm *<[res]>);
 
 TRAD_SYNOPSIS
-	#include <time.h>
-	struct tm *gmtime(<[clock]>)
-	const time_t *<[clock]>;
-	struct tm *gmtime_r(<[clock]>, <[res]>)
-	const time_t *<[clock]>;
-	struct tm *<[res]>;
+    #include <time.h>
+    struct tm *gmtime(<[clock]>)
+    const time_t *<[clock]>;
+    struct tm *gmtime_r(<[clock]>, <[res]>)
+    const time_t *<[clock]>;
+    struct tm *<[res]>;
 
 DESCRIPTION
 <<gmtime>> assumes the time at <[clock]> represents a local time.
@@ -55,13 +55,11 @@ ANSI C requires <<gmtime>>.
 
 #ifndef _REENT_ONLY
 
-struct tm *
-_DEFUN (gmtime, (tim_p),
-	_CONST time_t * tim_p)
+struct tm *gmtime(const time_t *tim_p)
 {
-  time_t tim = *tim_p + _GMT_OFFSET;
+    time_t tim = *tim_p + _GMT_OFFSET;
 
-  return (localtime (&tim));
+    return (localtime(&tim));
 }
 
 #endif

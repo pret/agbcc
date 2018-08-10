@@ -17,28 +17,19 @@ libgcc.a: $(LIB1ASMOBJS) $(LIB2OBJS) fp-bit.o dp-bit.o
 	$(AR) -rc $@ $?
 
 $(LIB1ASMOBJS): lib1thumb.asm
-	$(CPP) -P $(CPPFLAGS) -DL$(basename $@) -x assembler-with-cpp -o $(basename $@).s lib1thumb.asm
-	@printf ".text\n\t.align\t2, 0\n" >> $(basename $@).s
-	$(AS) -mcpu=arm7tdmi -o $@ $(basename $@).s
+	$(CPP) -P $(CPPFLAGS) -DL$(basename $@) -x assembler-with-cpp lib1thumb.asm | $(AS) -mcpu=arm7tdmi -o $@
 
 $(LIB2OBJS): libgcc2.c longlong.h
-	$(CPP) $(CPPFLAGS) -I ../ginclude -DL$(basename $@) libgcc2.c | $(CC1) -O2 -o $(basename $@).s
-	@printf ".text\n\t.align\t2, 0\n" >> $(basename $@).s
-	$(AS) -mcpu=arm7tdmi -o $@ $(basename $@).s
+	$(CPP) $(CPPFLAGS) -I ../ginclude -DL$(basename $@) libgcc2.c | $(CC1) -O2 | $(AS) -mcpu=arm7tdmi -o $@
 
 fp-bit.o: CPPFLAGS += -DFLOAT -DFLOAT_BIT_ORDER_MISMATCH
 dp-bit.o: CPPFLAGS += -DFLOAT_BIT_ORDER_MISMATCH -DFLOAT_WORD_ORDER_MISMATCH
 
 fp-bit.o: %.o: fp-bit-base.c
-	$(CPP) -P $(CPPFLAGS) -I ../ginclude $< | $(CC1) -O2 -o $*.s
-	@printf ".text\n\t.align\t2, 0\n" >> $*.s
-	@printf ".text\n\t.align\t2, 0\n" >> $*.s
-	$(AS) -mcpu=arm7tdmi -o $@ $*.s
+	$(CPP) -P $(CPPFLAGS) -I ../ginclude $< | $(CC1) -O2 | $(AS) -mcpu=arm7tdmi -o $@
 
 dp-bit.o: %.o: fp-bit-base.c
-	$(CPP) -P $(CPPFLAGS) -I ../ginclude $< | $(CC1) -O2 -o $*.s
-	@printf ".text\n\t.align\t2, 0\n" >> $*.s
-	$(AS) -mcpu=arm7tdmi -o $@ $*.s
+	$(CPP) -P $(CPPFLAGS) -I ../ginclude $< | $(CC1) -O2 | $(AS) -mcpu=arm7tdmi -o $@
 
 .PHONY: clean
 

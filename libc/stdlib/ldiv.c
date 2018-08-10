@@ -3,16 +3,16 @@ FUNCTION
 <<ldiv>>---divide two long integers
 
 INDEX
-	ldiv
+    ldiv
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	ldiv_t ldiv(long <[n]>, long <[d]>);
+    #include <stdlib.h>
+    ldiv_t ldiv(long <[n]>, long <[d]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	ldiv_t ldiv(<[n]>, <[d]>)
-	long <[n]>, <[d]>;
+    #include <stdlib.h>
+    ldiv_t ldiv(<[n]>, <[d]>)
+    long <[n]>, <[d]>;
 
 DESCRIPTION
 Divide
@@ -83,27 +83,26 @@ No supporting OS subroutines are required.
  * SUCH DAMAGE.
  */
 
-#include <_ansi.h>
-#include <stdlib.h>		/* ldiv_t */
 
-ldiv_t
-_DEFUN (ldiv, (num, denom),
-        long num _AND
-        long denom)
+#include <stdlib.h> /* ldiv_t */
+
+ldiv_t ldiv(long num, long denom)
 {
-	ldiv_t r;
+    ldiv_t r;
 
-	/* see div.c for comments */
+    /* see div.c for comments */
 
-	r.quot = num / denom;
-	r.rem = num % denom;
-	if (num >= 0 && r.rem < 0) {
-		++r.quot;
-		r.rem -= denom;
-	}
-	else if (num < 0 && r.rem > 0) {
-		--r.quot;
-		r.rem += denom;
-	}
-	return (r);
+    r.quot = num / denom;
+    r.rem = num % denom;
+    if (num >= 0 && r.rem < 0)
+    {
+        ++r.quot;
+        r.rem -= denom;
+    }
+    else if (num < 0 && r.rem > 0)
+    {
+        --r.quot;
+        r.rem += denom;
+    }
+    return (r);
 }

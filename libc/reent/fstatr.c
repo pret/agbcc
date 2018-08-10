@@ -26,41 +26,37 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_fstat_r>>---Reentrant version of fstat
-	
+    <<_fstat_r>>---Reentrant version of fstat
+
 INDEX
-	_fstat_r
+    _fstat_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _fstat_r(struct _reent *<[ptr]>,
-		     int <[fd]>, struct stat *<[pstat]>);
+    #include <reent.h>
+    int _fstat_r(struct _reent *<[ptr]>,
+             int <[fd]>, struct stat *<[pstat]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _fstat_r(<[ptr]>, <[fd]>, <[pstat]>)
-	struct _reent *<[ptr]>;
-	int <[fd]>;
-	struct stat *<[pstat]>;
+    #include <reent.h>
+    int _fstat_r(<[ptr]>, <[fd]>, <[pstat]>)
+    struct _reent *<[ptr]>;
+    int <[fd]>;
+    struct stat *<[pstat]>;
 
 DESCRIPTION
-	This is a reentrant version of <<fstat>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<fstat>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_fstat_r (ptr, fd, pstat)
-     struct _reent *ptr;
-     int fd;
-     struct stat *pstat;
+int _fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _fstat (fd, pstat)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _fstat(fd, pstat)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

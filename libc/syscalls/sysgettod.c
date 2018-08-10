@@ -7,14 +7,11 @@
 struct timeval;
 struct timezone;
 
-int
-gettimeofday (ptimeval, ptimezone)
-     struct timeval *ptimeval;
-     struct timezone *ptimezone;
+int gettimeofday(struct timeval *ptimeval, struct timezone *ptimezone)
 {
 #ifdef REENTRANT_SYSCALLS_PROVIDED
-  return _gettimeofday_r (_REENT, ptimeval, ptimezone);
+    return _gettimeofday_r(_REENT, ptimeval, ptimezone);
 #else
-  return _gettimeofday (ptimeval, ptimezone);
+    return _gettimeofday(ptimeval, ptimezone);
 #endif
 }

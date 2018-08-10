@@ -21,12 +21,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	float copysignf(float x, float y)
-#else
-	float copysignf(x,y)
-	float x,y;
-#endif
+float copysignf(float x, float y)
 {
 	__uint32_t ix,iy;
 	GET_FLOAT_WORD(ix,x);
@@ -37,12 +32,7 @@
 
 #ifdef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	double copysign(double x, double y)
-#else
-	double copysign(x,y)
-	double x,y;
-#endif
+double copysign(double x, double y)
 {
 	return (double) copysignf((float) x, (float) y);
 }

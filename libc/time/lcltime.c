@@ -7,20 +7,20 @@ FUNCTION
 <<localtime>>---convert time to local representation
 
 INDEX
-	localtime
+    localtime
 
 ANSI_SYNOPSIS
-	#include <time.h>
-	struct tm *localtime(time_t *<[clock]>);
-	struct tm *localtime_r(time_t *<[clock]>, struct tm *<[res]>);
+    #include <time.h>
+    struct tm *localtime(time_t *<[clock]>);
+    struct tm *localtime_r(time_t *<[clock]>, struct tm *<[res]>);
 
 TRAD_SYNOPSIS
-	#include <time.h>
-	struct tm *localtime(<[clock]>)
-	time_t *<[clock]>;
-	struct tm *localtime(<[clock]>, <[res]>)
-	time_t *<[clock]>;
-	struct tm *<[res]>;
+    #include <time.h>
+    struct tm *localtime(<[clock]>)
+    time_t *<[clock]>;
+    struct tm *localtime(<[clock]>, <[res]>)
+    time_t *<[clock]>;
+    struct tm *<[res]>;
 
 DESCRIPTION
 <<localtime>> converts the time at <[clock]> into local time, then
@@ -47,11 +47,9 @@ ANSI C requires <<localtime>>.
 
 #ifndef _REENT_ONLY
 
-struct tm *
-_DEFUN (localtime, (tim_p),
-	_CONST time_t * tim_p)
+struct tm *localtime(const time_t *tim_p)
 {
-  return localtime_r (tim_p, &(_REENT->_new._reent._localtime_buf));
+    return localtime_r(tim_p, &(_REENT->_new._reent._localtime_buf));
 }
 
 #endif

@@ -3,13 +3,11 @@
 #include <reent.h>
 #include <sys/times.h>
 
-clock_t
-times (buf)
-     struct tms *buf;
+clock_t times(struct tms *buf)
 {
 #ifdef REENTRANT_SYSCALLS_PROVIDED
-  return _times_r (_REENT, buf);
+    return _times_r(_REENT, buf);
 #else
-  return _times (buf);
+    return _times(buf);
 #endif
 }

@@ -20,16 +20,16 @@ FUNCTION
 <<fflush>>---flush buffered file output
 
 INDEX
-	fflush
+    fflush
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int fflush(FILE *<[fp]>);
+    #include <stdio.h>
+    int fflush(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int fflush(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int fflush(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 The <<stdio>> output functions can buffer output before delivering it
@@ -56,44 +56,40 @@ No supporting OS subroutines are required.
 
 /* Flush a single file, or (if fp is NULL) all files.  */
 
-int
-_DEFUN (fflush, (fp),
-	register FILE * fp)
+int fflush(register FILE *fp)
 {
-  register unsigned char *p;
-  register int n, t;
+    register unsigned char *p;
+    register int n, t;
 
 
+    if (fp == NULL)
+        return _fwalk(_REENT, fflush);
 
+    CHECK_INIT(fp);
 
-  if (fp == NULL)
-    return _fwalk (_REENT, fflush);
+    t = fp->_flags;
+    if ((t & __SWR) == 0 || (p = fp->_bf._base) == NULL)
+        return 0;
+    n = fp->_p - p; /* write this much */
 
-  CHECK_INIT (fp);
+    /*
+     * Set these immediately to avoid problems with longjmp
+     * and to allow exchange buffering (via setvbuf) in user
+     * write function.
+     */
+    fp->_p = p;
+    fp->_w = t & (__SLBF | __SNBF) ? 0 : fp->_bf._size;
 
-  t = fp->_flags;
-  if ((t & __SWR) == 0 || (p = fp->_bf._base) == NULL)
-    return 0;
-  n = fp->_p - p;		/* write this much */
-
-  /*
-   * Set these immediately to avoid problems with longjmp
-   * and to allow exchange buffering (via setvbuf) in user
-   * write function.
-   */
-  fp->_p = p;
-  fp->_w = t & (__SLBF | __SNBF) ? 0 : fp->_bf._size;
-
-  while (n > 0)
+    while (n > 0)
     {
-      t = (*fp->_write) (fp->_cookie, (char *) p, n);
-      if (t <= 0)
-	{
-	  fp->_flags |= __SERR;
-	  return EOF;
-	}
-      p += t;
-      n -= t;
+        t = (*fp->_write)(fp->_cookie, (char *)p, n);
+        if (t <= 0)
+        {
+            fp->_flags |= __SERR;
+            return EOF;
+        }
+        p += t;
+        n -= t;
     }
-  return 0;
+    return 0;
 }

@@ -28,41 +28,41 @@ FUNCTION
 <<mktemp>>, <<mkstemp>>---generate unused file name
 
 INDEX
-	mktemp
+    mktemp
 INDEX
-	mkstemp
+    mkstemp
 INDEX
-	_mktemp_r
+    _mktemp_r
 INDEX
-	_mkstemp_r
+    _mkstemp_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	char *mktemp(char *<[path]>);
-	int mkstemp(char *<[path]>);
+    #include <stdio.h>
+    char *mktemp(char *<[path]>);
+    int mkstemp(char *<[path]>);
 
-	char *_mktemp_r(void *<[reent]>, char *<[path]>);
-	int *_mkstemp_r(void *<[reent]>, char *<[path]>);
+    char *_mktemp_r(void *<[reent]>, char *<[path]>);
+    int *_mkstemp_r(void *<[reent]>, char *<[path]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	char *mktemp(<[path]>)
-	char *<[path]>;
+    #include <stdio.h>
+    char *mktemp(<[path]>)
+    char *<[path]>;
 
-	int mkstemp(<[path]>)
-	char *<[path]>;
+    int mkstemp(<[path]>)
+    char *<[path]>;
 
-	char *_mktemp_r(<[reent]>, <[path]>)
-	char *<[reent]>;
-	char *<[path]>;
+    char *_mktemp_r(<[reent]>, <[path]>)
+    char *<[reent]>;
+    char *<[path]>;
 
-	int _mkstemp_r(<[reent]>, <[path]>)
-	char *<[reent]>;
-	char *<[path]>;
+    int _mkstemp_r(<[reent]>, <[path]>)
+    char *<[reent]>;
+    char *<[path]>;
 
 DESCRIPTION
 <<mktemp>> and <<mkstemp>> attempt to generate a file name that is not
-yet in use for any existing file.  <<mkstemp>> creates the file and 
+yet in use for any existing file.  <<mkstemp>> creates the file and
 opens it for reading and writing; <<mktemp>> simply generates the file name.
 
 You supply a simple pattern for the generated file name, as the string
@@ -102,114 +102,101 @@ Supporting OS subroutines required: <<getpid>>, <<open>>, <<stat>>.
 #include <ctype.h>
 #include <reent.h>
 
-static
-_DEFUN (_gettemp, (ptr, path, doopen),
-	struct _reent *ptr _AND
-	char *path _AND
-	register int *doopen)
+static _gettemp(struct _reent *ptr, char *path, register int *doopen)
 {
-  register char *start, *trv;
-  struct stat sbuf;
-  unsigned int pid;
+    register char *start, *trv;
+    struct stat sbuf;
+    unsigned int pid;
 
-  pid = _getpid_r (ptr);
-  for (trv = path; *trv; ++trv)		/* extra X's get set to 0's */
-    continue;
-  while (*--trv == 'X')
+    pid = _getpid_r(ptr);
+    for (trv = path; *trv; ++trv) /* extra X's get set to 0's */
+        continue;
+    while (*--trv == 'X')
     {
-      *trv = (pid % 10) + '0';
-      pid /= 10;
+        *trv = (pid % 10) + '0';
+        pid /= 10;
     }
 
-  /*
-   * Check the target directory; if you have six X's and it
-   * doesn't exist this runs for a *very* long time.
-   */
+    /*
+     * Check the target directory; if you have six X's and it
+     * doesn't exist this runs for a *very* long time.
+     */
 
-  for (start = trv + 1;; --trv)
+    for (start = trv + 1;; --trv)
     {
-      if (trv <= path)
-	break;
-      if (*trv == '/')
-	{
-	  *trv = '\0';
-	  if (_stat_r (ptr, path, &sbuf))
-	    return (0);
-	  if (!(sbuf.st_mode & S_IFDIR))
-	    {
-	      ptr->_errno = ENOTDIR;
-	      return (0);
-	    }
-	  *trv = '/';
-	  break;
-	}
+        if (trv <= path)
+            break;
+        if (*trv == '/')
+        {
+            *trv = '\0';
+            if (_stat_r(ptr, path, &sbuf))
+                return (0);
+            if (!(sbuf.st_mode & S_IFDIR))
+            {
+                ptr->_errno = ENOTDIR;
+                return (0);
+            }
+            *trv = '/';
+            break;
+        }
     }
 
-  for (;;)
+    for (;;)
     {
-      if (doopen)
-	{
-	  if ((*doopen = _open_r (ptr, path, O_CREAT | O_EXCL | O_RDWR, 0600))
-	      >= 0)
-	    return 1;
-	  if (ptr->_errno != EEXIST)
-	    return 0;
-	}
-      else if (_stat_r (ptr, path, &sbuf))
-	return (ptr->_errno == ENOENT ? 1 : 0);
+        if (doopen)
+        {
+            if ((*doopen = _open_r(ptr, path, O_CREAT | O_EXCL | O_RDWR, 0600)) >= 0)
+                return 1;
+            if (ptr->_errno != EEXIST)
+                return 0;
+        }
+        else if (_stat_r(ptr, path, &sbuf))
+            return (ptr->_errno == ENOENT ? 1 : 0);
 
-      /* tricky little algorithm for backward compatibility */
-      for (trv = start;;)
-	{
-	  if (!*trv)
-	    return 0;
-	  if (*trv == 'z')
-	    *trv++ = 'a';
-	  else
-	    {
-	      if (isdigit (*trv))
-		*trv = 'a';
-	      else
-		++ * trv;
-	      break;
-	    }
-	}
+        /* tricky little algorithm for backward compatibility */
+        for (trv = start;;)
+        {
+            if (!*trv)
+                return 0;
+            if (*trv == 'z')
+                *trv++ = 'a';
+            else
+            {
+                if (isdigit(*trv))
+                    *trv = 'a';
+                else
+                    ++*trv;
+                break;
+            }
+        }
     }
-  /*NOTREACHED*/
+    /*NOTREACHED*/
 }
 
-_DEFUN (_mkstemp_r, (ptr, path),
-	struct _reent *ptr _AND
-	char *path)
+_mkstemp_r(struct _reent *ptr, char *path)
 {
-  int fd;
+    int fd;
 
-  return (_gettemp (ptr, path, &fd) ? fd : -1);
+    return (_gettemp(ptr, path, &fd) ? fd : -1);
 }
 
-char *
-_DEFUN (_mktemp_r, (ptr, path),
-	struct _reent *ptr _AND
-	char *path)
+char *_mktemp_r(struct _reent *ptr, char *path)
 {
-  return (_gettemp (ptr, path, (int *) NULL) ? path : (char *) NULL);
+    return (_gettemp(ptr, path, (int *)NULL) ? path : (char *)NULL);
 }
 
 #ifndef _REENT_ONLY
 
-_DEFUN (mkstemp, (path),
-	char *path)
+mkstemp(char *path)
 {
-  int fd;
+    int fd;
 
-  return (_gettemp (_REENT, path, &fd) ? fd : -1);
+    return (_gettemp(_REENT, path, &fd) ? fd : -1);
 }
 
-char *
-_DEFUN (mktemp, (path),
-	char *path)
+char *mktemp(char *path)
 {
-  return (_gettemp (_REENT, path, (int *) NULL) ? path : (char *) NULL);
+    return (_gettemp(_REENT, path, (int *)NULL) ? path : (char *)NULL);
 }
 
 #endif /* ! defined (_REENT_ONLY) */

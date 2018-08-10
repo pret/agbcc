@@ -37,33 +37,34 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define	_PWD_H_
+#define _PWD_H_
 
 #include <sys/types.h>
 
 #ifndef _POSIX_SOURCE
-#define	_PATH_PASSWD		"/etc/passwd"
+#define _PATH_PASSWD "/etc/passwd"
 
-#define	_PASSWORD_LEN		128	/* max length, not counting NULL */
+#define _PASSWORD_LEN 128 /* max length, not counting NULL */
 #endif
 
-struct passwd {
-	char	*pw_name;		/* user name */
-	char	*pw_passwd;		/* encrypted password */
-	int	pw_uid;			/* user uid */
-	int	pw_gid;			/* user gid */
-	char	*pw_comment;		/* comment */
-	char	*pw_gecos;		/* Honeywell login info */
-	char	*pw_dir;		/* home directory */
-	char	*pw_shell;		/* default shell */
+struct passwd
+{
+    char *pw_name;    /* user name */
+    char *pw_passwd;  /* encrypted password */
+    int pw_uid;       /* user uid */
+    int pw_gid;       /* user gid */
+    char *pw_comment; /* comment */
+    char *pw_gecos;   /* Honeywell login info */
+    char *pw_dir;     /* home directory */
+    char *pw_shell;   /* default shell */
 };
 
-struct passwd	*getpwuid (uid_t);
-struct passwd	*getpwnam (const char *);
+struct passwd *getpwuid(uid_t);
+struct passwd *getpwnam(const char *);
 #ifndef _POSIX_SOURCE
-struct passwd	*getpwent (void);
-void		 setpwent (void);
-void		 endpwent (void);
+struct passwd *getpwent(void);
+void setpwent(void);
+void endpwent(void);
 #endif
 
 #ifdef __cplusplus

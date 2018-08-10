@@ -1,6 +1,6 @@
 /*
-	setjmp.h
-	stubs for future use.
+    setjmp.h
+    stubs for future use.
 */
 
 #ifndef _SETJMP_H_
@@ -9,14 +9,13 @@ extern "C" {
 #endif
 #define _SETJMP_H_
 
-#include "_ansi.h"
+#include <sys/config.h>
 #include <machine/setjmp.h>
 
-void	_EXFUN(longjmp,(jmp_buf __jmpb, int __retval));
-int	_EXFUN(setjmp,(jmp_buf __jmpb));
+void longjmp(jmp_buf __jmpb, int __retval);
+int setjmp(jmp_buf __jmpb);
 
 #ifdef __cplusplus
 }
 #endif
 #endif /* _SETJMP_H_ */
-

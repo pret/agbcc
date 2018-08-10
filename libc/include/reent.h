@@ -60,26 +60,26 @@ struct timezone;
 
 /* Reentrant versions of system calls.  */
 
-extern int _close_r _PARAMS ((struct _reent *, int));
-extern int _execve_r _PARAMS ((struct _reent *, char *, char **, char **));
-extern int _fcntl_r _PARAMS ((struct _reent *, int, int, int));
-extern int _fork_r _PARAMS ((struct _reent *));
-extern int _fstat_r _PARAMS ((struct _reent *, int, struct stat *));
-extern int _getpid_r _PARAMS ((struct _reent *));
-extern int _kill_r _PARAMS ((struct _reent *, int, int));
-extern int _link_r _PARAMS ((struct _reent *, const char *, const char *));
-extern _off_t _lseek_r _PARAMS ((struct _reent *, int, _off_t, int));
-extern int _open_r _PARAMS ((struct _reent *, const char *, int, int));
-extern _ssize_t _read_r _PARAMS ((struct _reent *, int, void *, size_t));
-extern void *_sbrk_r _PARAMS ((struct _reent *, size_t));
-extern int _stat_r _PARAMS ((struct _reent *, const char *, struct stat *));
-extern _CLOCK_T_ _times_r _PARAMS ((struct _reent *, struct tms *));
-extern int _unlink_r _PARAMS ((struct _reent *, const char *));
-extern int _wait_r _PARAMS ((struct _reent *, int *));
-extern _ssize_t _write_r _PARAMS ((struct _reent *, int, const void *, size_t));
+extern int _close_r(struct _reent *, int);
+extern int _execve_r(struct _reent *, char *, char **, char **);
+extern int _fcntl_r(struct _reent *, int, int, int);
+extern int _fork_r(struct _reent *);
+extern int _fstat_r(struct _reent *, int, struct stat *);
+extern int _getpid_r(struct _reent *);
+extern int _kill_r(struct _reent *, int, int);
+extern int _link_r(struct _reent *, const char *, const char *);
+extern _off_t _lseek_r(struct _reent *, int, _off_t, int);
+extern int _open_r(struct _reent *, const char *, int, int);
+extern _ssize_t _read_r(struct _reent *, int, void *, size_t);
+extern void *_sbrk_r(struct _reent *, size_t);
+extern int _stat_r(struct _reent *, const char *, struct stat *);
+extern _CLOCK_T_ _times_r(struct _reent *, struct tms *);
+extern int _unlink_r(struct _reent *, const char *);
+extern int _wait_r(struct _reent *, int *);
+extern _ssize_t _write_r(struct _reent *, int, const void *, size_t);
 
 /* This one is not guaranteed to be available on all targets.  */
-extern int _gettimeofday_r _PARAMS ((struct _reent *, struct timeval *tp, struct timezone *tzp));
+extern int _gettimeofday_r(struct _reent *, struct timeval *tp, struct timezone *tzp);
 
 #ifdef __cplusplus
 }

@@ -20,16 +20,16 @@ FUNCTION
 <<rewind>>---reinitialize a file or stream
 
 INDEX
-	rewind
+    rewind
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	void rewind(FILE *<[fp]>);
+    #include <stdio.h>
+    void rewind(FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	void rewind(<[fp]>)
-	FILE *<[fp]>;
+    #include <stdio.h>
+    void rewind(<[fp]>)
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<rewind>> returns the file position indicator (if any) for the file
@@ -51,10 +51,8 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 
 #include <stdio.h>
 
-void
-_DEFUN (rewind, (fp),
-	register FILE * fp)
+void rewind(register FILE *fp)
 {
-	(void) fseek(fp, 0L, SEEK_SET);
-	clearerr(fp);
+    (void)fseek(fp, 0L, SEEK_SET);
+    clearerr(fp);
 }

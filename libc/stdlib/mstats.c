@@ -13,48 +13,48 @@ FUNCTION
 <<mallinfo>>, <<malloc_stats>>, <<mallopt>>--malloc support
 
 INDEX
-	mallinfo
+    mallinfo
 INDEX
-	malloc_stats
+    malloc_stats
 INDEX
-	mallopt
+    mallopt
 INDEX
-	_mallinfo_r
+    _mallinfo_r
 INDEX
-	_malloc_stats_r
+    _malloc_stats_r
 INDEX
-	_mallopt_r
+    _mallopt_r
 
 ANSI_SYNOPSIS
-	#include <malloc.h>
-	struct mallinfo mallinfo(void);
-	void malloc_stats(void);
-	int mallopt(int <[parameter]>, <[value]>);
+    #include <malloc.h>
+    struct mallinfo mallinfo(void);
+    void malloc_stats(void);
+    int mallopt(int <[parameter]>, <[value]>);
 
-	struct mallinfo _mallinfo_r(void *<[reent]>);
-	void _malloc_stats_r(void *<[reent]>);
-	int _mallopt_r(void *<[reent]>, int <[parameter]>, <[value]>);
+    struct mallinfo _mallinfo_r(void *<[reent]>);
+    void _malloc_stats_r(void *<[reent]>);
+    int _mallopt_r(void *<[reent]>, int <[parameter]>, <[value]>);
 
 TRAD_SYNOPSIS
-	#include <malloc.h>
-	struct mallinfo mallinfo();
+    #include <malloc.h>
+    struct mallinfo mallinfo();
 
-	void malloc_stats();
+    void malloc_stats();
 
-	int mallopt(<[parameter]>, <[value]>)
-	int <[parameter]>;
-	int <[value]>;
+    int mallopt(<[parameter]>, <[value]>)
+    int <[parameter]>;
+    int <[value]>;
 
-	struct mallinfo _mallinfo_r(<[reent]>);
-	char *<[reent]>;
+    struct mallinfo _mallinfo_r(<[reent]>);
+    char *<[reent]>;
 
-	void _malloc_stats_r(<[reent]>);
-	char *<[reent]>;
+    void _malloc_stats_r(<[reent]>);
+    char *<[reent]>;
 
-	int _mallopt_r(<[reent]>, <[parameter]>, <[value]>)
-	char *<[reent]>;
-	int <[parameter]>;
-	int <[value]>;
+    int _mallopt_r(<[reent]>, <[parameter]>, <[value]>)
+    char *<[reent]>;
+    int <[parameter]>;
+    int <[value]>;
 
 DESCRIPTION
 <<mallinfo>> returns a structure describing the current state of
@@ -96,7 +96,7 @@ not portable.
 
 */
 
-#include <_ansi.h>
+
 #include <reent.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -104,24 +104,19 @@ not portable.
 
 #ifndef _REENT_ONLY
 
-struct mallinfo
-_DEFUN_VOID (mallinfo)
+struct mallinfo mallinfo(void)
 {
-  return _mallinfo_r (_REENT);
+    return _mallinfo_r(_REENT);
 }
 
-void
-_DEFUN_VOID (malloc_stats)
+void malloc_stats(void)
 {
-  _malloc_stats_r (_REENT);
+    _malloc_stats_r(_REENT);
 }
 
-int
-_DEFUN (mallopt, (p, v),
-	int p _AND
-	int v)
+int mallopt(int p, int v)
 {
-  return _mallopt_r (_REENT, p, v);
+    return _mallopt_r(_REENT, p, v);
 }
 
 #endif
@@ -130,21 +125,16 @@ _DEFUN (mallopt, (p, v),
    previous version of the malloc routines.  It now just calls
    malloc_stats.  */
 
-void
-_DEFUN (_mstats_r, (ptr, s),
-	struct _reent *ptr _AND
-	char *s)
+void _mstats_r(struct _reent *ptr, char *s)
 {
-  fiprintf (_stderr_r (ptr), "Memory allocation statistics %s\n", s);
-  _malloc_stats_r (ptr);
+    fiprintf(_stderr_r(ptr), "Memory allocation statistics %s\n", s);
+    _malloc_stats_r(ptr);
 }
 
 #ifndef _REENT_ONLY
-void
-_DEFUN (mstats, (s),
-	char *s)
+void mstats(char *s)
 {
-  _mstats_r (_REENT, s);
+    _mstats_r(_REENT, s);
 }
 
 #endif

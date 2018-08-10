@@ -3,23 +3,23 @@ FUNCTION
 <<wctomb>>---minimal wide char to multibyte converter
 
 INDEX
-	wctomb
+    wctomb
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	int wctomb(char *<[s]>, wchar_t <[wchar]>);
+    #include <stdlib.h>
+    int wctomb(char *<[s]>, wchar_t <[wchar]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	int wctomb(<[s]>, <[wchar]>)
-	char *<[s]>;
-	wchar_t <[wchar]>;
+    #include <stdlib.h>
+    int wctomb(<[s]>, <[wchar]>)
+    char *<[s]>;
+    wchar_t <[wchar]>;
 
 DESCRIPTION
-When MB_CAPABLE is not defined, this is a minimal ANSI-conforming 
+When MB_CAPABLE is not defined, this is a minimal ANSI-conforming
 implementation of <<wctomb>>.  The
 only ``wide characters'' recognized are single bytes,
-and they are ``converted'' to themselves.  
+and they are ``converted'' to themselves.
 
 When MB_CAPABLE is defined, this routine calls <<_wctomb_r>> to perform
 the conversion, passing a state variable to allow state dependent
@@ -45,20 +45,17 @@ effects vary with the locale.
 */
 
 #include <stdlib.h>
-int
-_DEFUN (wctomb, (s, wchar),
-        char *s _AND
-        wchar_t wchar)
+int wctomb(char *s, wchar_t wchar)
 {
 #ifdef MB_CAPABLE
-        static int state;
+    static int state;
 
-        return _wctomb_r (_REENT, s, wchar, &state);
-#else /* not MB_CAPABLE */
-        if (s == NULL)
-                return 0;
+    return _wctomb_r(_REENT, s, wchar, &state);
+#else  /* not MB_CAPABLE */
+    if (s == NULL)
+        return 0;
 
-        *s = (char) wchar;
-        return 1;
+    *s = (char)wchar;
+    return 1;
 #endif /* not MB_CAPABLE */
 }

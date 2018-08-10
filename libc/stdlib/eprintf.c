@@ -13,14 +13,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void
-__eprintf (format, file, line, expression)
-     const char *format;
-     const char *file;
-     unsigned int line;
-     const char *expression;
+void __eprintf(const char *format, const char *file, unsigned int line, const char *expression)
 {
-  (void) fiprintf (stderr, format, file, line, expression);
-  abort ();
-  /*NOTREACHED*/
+    (void)fiprintf(stderr, format, file, line, expression);
+    abort();
+    /*NOTREACHED*/
 }

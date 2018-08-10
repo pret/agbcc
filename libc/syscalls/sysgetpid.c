@@ -2,12 +2,11 @@
 
 #include <reent.h>
 
-int
-getpid ()
+int getpid(void)
 {
 #ifdef REENTRANT_SYSCALLS_PROVIDED
-  return _getpid_r (_REENT);
+    return _getpid_r(_REENT);
 #else
-  return _getpid ();
+    return _getpid();
 #endif
 }

@@ -1,15 +1,15 @@
 /*
 FUNCTION
-	<<ffs>>---find first bit set in a word
+    <<ffs>>---find first bit set in a word
 
 INDEX
-	ffs
+    ffs
 
 ANSI_SYNOPSIS
-	int ffs(int <[word]>);
+    int ffs(int <[word]>);
 
 TRAD_SYNOPSIS
-	int ffs(<[word]>);
+    int ffs(<[word]>);
 
 DESCRIPTION
 
@@ -24,19 +24,17 @@ PORTABILITY
 
 No supporting OS subroutines are required.  */
 
-int
-ffs (word)
-     int word;
+int ffs(int word)
 {
-  int i;
+    int i;
 
-  if (!word)
-    return 0;
+    if (!word)
+        return 0;
 
-  i = 0;
-  for (;;)
+    i = 0;
+    for (;;)
     {
-      if (((1 << i++) & word) != 0)
-	return i;
+        if (((1 << i++) & word) != 0)
+            return i;
     }
 }

@@ -3,10 +3,8 @@
  */
 
 #include <stdlib.h>
-#include <_ansi.h>
 
-long
-_DEFUN (atol, (s), _CONST char *s)
+long atol(const char *s)
 {
-  return strtol (s, NULL, 10);
+    return strtol(s, NULL, 10);
 }

@@ -3,16 +3,16 @@ FUNCTION
 <<abs>>---integer absolute value (magnitude)
 
 INDEX
-	abs
+    abs
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	int abs(int <[i]>);
+    #include <stdlib.h>
+    int abs(int <[i]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	int abs(<[i]>)
-	int <[i]>;
+    #include <stdlib.h>
+    int abs(<[i]>)
+    int <[i]>;
 
 DESCRIPTION
 <<abs>> returns
@@ -36,8 +36,7 @@ No supporting OS subroutines are required.
 
 #include <stdlib.h>
 
-int
-_DEFUN (abs, (i), int i)
+int abs(int i)
 {
-  return (i < 0) ? -i : i;
+    return (i < 0) ? -i : i;
 }

@@ -3,17 +3,17 @@ FUNCTION
 <<fputc>>---write a character on a stream or file
 
 INDEX
-	fputc
+    fputc
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	int fputc(int <[ch]>, FILE *<[fp]>);
+    #include <stdio.h>
+    int fputc(int <[ch]>, FILE *<[fp]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	int fputc(<[ch]>, <[fp]>)
-	int <[ch]>;
-	FILE *<[fp]>;
+    #include <stdio.h>
+    int fputc(<[ch]>, <[fp]>)
+    int <[ch]>;
+    FILE *<[fp]>;
 
 DESCRIPTION
 <<fputc>> converts the argument <[ch]> from an <<int>> to an
@@ -42,10 +42,7 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
 
 #include <stdio.h>
 
-int
-_DEFUN (fputc, (ch, file),
-	int ch _AND
-	FILE * file)
+int fputc(int ch, FILE *file)
 {
-  return putc (ch, file);
+    return putc(ch, file);
 }

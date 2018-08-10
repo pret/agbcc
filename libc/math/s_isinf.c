@@ -8,12 +8,7 @@
 
 #ifndef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	int isinf(double x)
-#else
-	int isinf(x)
-	double x;
-#endif
+int isinf(double x)
 {
 	__int32_t hx,lx;
 	EXTRACT_WORDS(hx,lx,x);

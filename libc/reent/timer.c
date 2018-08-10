@@ -30,83 +30,76 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_times_r>>---Reentrant version of times
-	
+    <<_times_r>>---Reentrant version of times
+
 INDEX
-	_times_r
+    _times_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	#include <sys/times.h>
-	clock_t _times_r(struct _reent *<[ptr]>, struct tms *<[ptms]>);
+    #include <reent.h>
+    #include <sys/times.h>
+    clock_t _times_r(struct _reent *<[ptr]>, struct tms *<[ptms]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	#include <sys/times.h>
-	clock_t _times_r(<[ptr]>, <[ptms]>)
-	struct _reent *<[ptr]>;
-	struct tms *<[ptms]>;
+    #include <reent.h>
+    #include <sys/times.h>
+    clock_t _times_r(<[ptr]>, <[ptms]>)
+    struct _reent *<[ptr]>;
+    struct tms *<[ptms]>;
 
 DESCRIPTION
-	This is a reentrant version of <<times>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<times>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-clock_t
-_times_r (ptr, ptms)
-     struct _reent *ptr;
-     struct tms *ptms;
+clock_t _times_r(struct _reent *ptr, struct tms *ptms)
 {
-  clock_t ret;
+    clock_t ret;
 
-  ret = _times (ptms);
-  return ret;
+    ret = _times(ptms);
+    return ret;
 }
 
 /*
 FUNCTION
-	<<_gettimeofday_r>>---Reentrant version of gettimeofday
-	
+    <<_gettimeofday_r>>---Reentrant version of gettimeofday
+
 INDEX
-	_gettimeofday_r
+    _gettimeofday_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	#include <time.h>
-	int _gettimeofday_r(struct _reent *<[ptr]>,
-		struct timeval *<[ptimeval]>,
-		struct timezone *<[ptimezone]>);
+    #include <reent.h>
+    #include <time.h>
+    int _gettimeofday_r(struct _reent *<[ptr]>,
+        struct timeval *<[ptimeval]>,
+        struct timezone *<[ptimezone]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	#include <time.h>
-	int _gettimeofday_r(<[ptr]>, <[ptimeval]>, <[ptimezone]>)
-	struct _reent *<[ptr]>;
-	struct timeval *<[ptimeval]>;
-	struct timezone *<[ptimezone]>;
+    #include <reent.h>
+    #include <time.h>
+    int _gettimeofday_r(<[ptr]>, <[ptimeval]>, <[ptimezone]>)
+    struct _reent *<[ptr]>;
+    struct timeval *<[ptimeval]>;
+    struct timezone *<[ptimezone]>;
 
 DESCRIPTION
-	This is a reentrant version of <<gettimeofday>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<gettimeofday>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 
-	This function is only available for a few targets.
-	Check libc.a to see if its available on yours.
+    This function is only available for a few targets.
+    Check libc.a to see if its available on yours.
 */
 
-int
-_gettimeofday_r (ptr, ptimeval, ptimezone)
-     struct _reent *ptr;
-     struct timeval *ptimeval;
-     struct timezone *ptimezone;
+int _gettimeofday_r(struct _reent *ptr, struct timeval *ptimeval, struct timezone *ptimezone)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _gettimeofday (ptimeval, ptimezone)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _gettimeofday(ptimeval, ptimezone)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

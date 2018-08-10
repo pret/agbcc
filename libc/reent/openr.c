@@ -21,43 +21,38 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_open_r>>---Reentrant version of open
-	
+    <<_open_r>>---Reentrant version of open
+
 INDEX
-	_open_r
+    _open_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _open_r(struct _reent *<[ptr]>,
-		    const char *<[file]>, int <[flags]>, int <[mode]>);
+    #include <reent.h>
+    int _open_r(struct _reent *<[ptr]>,
+            const char *<[file]>, int <[flags]>, int <[mode]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _open_r(<[ptr]>, <[file]>, <[flags]>, <[mode]>)
-	struct _reent *<[ptr]>;
-	char *<[file]>;
-	int <[flags]>;
-	int <[mode]>;
+    #include <reent.h>
+    int _open_r(<[ptr]>, <[file]>, <[flags]>, <[mode]>)
+    struct _reent *<[ptr]>;
+    char *<[file]>;
+    int <[flags]>;
+    int <[mode]>;
 
 DESCRIPTION
-	This is a reentrant version of <<open>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<open>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_open_r (ptr, file, flags, mode)
-     struct _reent *ptr;
-     _CONST char *file;
-     int flags;
-     int mode;
+int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _open (file, flags, mode)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _open(file, flags, mode)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 

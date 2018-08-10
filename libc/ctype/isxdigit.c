@@ -32,14 +32,11 @@ PORTABILITY
 
 No supporting OS subroutines are required.
 */
-#include <_ansi.h>
 #include <ctype.h>
 
 
 #undef isxdigit
-int
-_DEFUN(isxdigit,(c),int c)
+int isxdigit(int c)
 {
-	return((_ctype_ + 1)[c] & ((_X)|(_N)));
+    return ((_ctype_ + 1)[c] & ((_X) | (_N)));
 }
-

@@ -1,9 +1,7 @@
-#include <_ansi.h>
 #include <ctype.h>
 
 #undef _tolower
-int
-_DEFUN(_tolower,(c),int c)
+int _tolower(int c)
 {
-	return isupper(c) ? (c) - 'A' + 'a' : c;
+    return isupper(c) ? (c) - 'A' + 'a' : c;
 }

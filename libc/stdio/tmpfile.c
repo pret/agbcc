@@ -3,22 +3,22 @@ FUNCTION
 <<tmpfile>>---create a temporary file
 
 INDEX
-	tmpfile
+    tmpfile
 INDEX
-	_tmpfile_r
+    _tmpfile_r
 
 ANSI_SYNOPSIS
-	#include <stdio.h>
-	FILE *tmpfile(void);
+    #include <stdio.h>
+    FILE *tmpfile(void);
 
-	FILE *_tmpfile_r(void *<[reent]>);
+    FILE *_tmpfile_r(void *<[reent]>);
 
 TRAD_SYNOPSIS
-	#include <stdio.h>
-	FILE *tmpfile();
+    #include <stdio.h>
+    FILE *tmpfile();
 
-	FILE *_tmpfile_r(<[reent]>)
-	char *<[reent]>;
+    FILE *_tmpfile_r(<[reent]>)
+    char *<[reent]>;
 
 DESCRIPTION
 Create a temporary file (a file which will be deleted automatically),
@@ -48,30 +48,27 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<getpid>>,
 #include <stdio.h>
 #include <errno.h>
 
-FILE *
-_DEFUN (_tmpfile_r, (ptr),
-	struct _reent *ptr)
+FILE *_tmpfile_r(struct _reent *ptr)
 {
-  FILE *fp;
-  int e;
-  char *f;
-  char buf[L_tmpnam];
+    FILE *fp;
+    int e;
+    char *f;
+    char buf[L_tmpnam];
 
-  if ((f = _tmpnam_r (ptr, buf)) == NULL)
-    return NULL;
-  fp = fopen (f, "wb+");
-  e = ptr->_errno;
-  _CAST_VOID remove (f);
-  ptr->_errno = e;
-  return fp;
+    if ((f = _tmpnam_r(ptr, buf)) == NULL)
+        return NULL;
+    fp = fopen(f, "wb+");
+    e = ptr->_errno;
+    (void)remove(f);
+    ptr->_errno = e;
+    return fp;
 }
 
 #ifndef _REENT_ONLY
 
-FILE *
-_DEFUN_VOID (tmpfile)
+FILE *tmpfile(void)
 {
-  return _tmpfile_r (_REENT);
+    return _tmpfile_r(_REENT);
 }
 
 #endif

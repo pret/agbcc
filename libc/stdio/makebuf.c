@@ -33,64 +33,62 @@
  * optimization) right after the _fstat() that finds the buffer size.
  */
 
-void
-__smakebuf (fp)
-     register FILE *fp;
+void __smakebuf(register FILE *fp)
 {
-  register size_t size, couldbetty;
-  register _PTR p;
-  struct stat st;
+    register size_t size, couldbetty;
+    register void *p;
+    struct stat st;
 
-  if (fp->_flags & __SNBF)
+    if (fp->_flags & __SNBF)
     {
-      fp->_bf._base = fp->_p = fp->_nbuf;
-      fp->_bf._size = 1;
-      return;
+        fp->_bf._base = fp->_p = fp->_nbuf;
+        fp->_bf._size = 1;
+        return;
     }
-  if (fp->_file < 0 || _fstat_r (fp->_data, fp->_file, &st) < 0)
+    if (fp->_file < 0 || _fstat_r(fp->_data, fp->_file, &st) < 0)
     {
-      couldbetty = 0;
-      size = BUFSIZ;
-      /* do not try to optimise fseek() */
-      fp->_flags |= __SNPT;
+        couldbetty = 0;
+        size = BUFSIZ;
+        /* do not try to optimise fseek() */
+        fp->_flags |= __SNPT;
     }
-  else
+    else
     {
-      couldbetty = (st.st_mode & S_IFMT) == S_IFCHR;
+        couldbetty = (st.st_mode & S_IFMT) == S_IFCHR;
 #ifdef HAVE_BLKSIZE
-      size = st.st_blksize <= 0 ? BUFSIZ : st.st_blksize;
+        size = st.st_blksize <= 0 ? BUFSIZ : st.st_blksize;
 #else
-      size = BUFSIZ;
+        size = BUFSIZ;
 #endif
-      /*
-       * Optimize fseek() only if it is a regular file.
-       * (The test for __sseek is mainly paranoia.)
-       */
-      if ((st.st_mode & S_IFMT) == S_IFREG && fp->_seek == __sseek)
-	{
-	  fp->_flags |= __SOPT;
+        /*
+         * Optimize fseek() only if it is a regular file.
+         * (The test for __sseek is mainly paranoia.)
+         */
+        if ((st.st_mode & S_IFMT) == S_IFREG && fp->_seek == __sseek)
+        {
+            fp->_flags |= __SOPT;
 #ifdef HAVE_BLKSIZE
-	  fp->_blksize = st.st_blksize;
+            fp->_blksize = st.st_blksize;
 #else
-	  fp->_blksize = 1024;
+            fp->_blksize = 1024;
 #endif
-	}
-      else
-	fp->_flags |= __SNPT;
+        }
+        else
+            fp->_flags |= __SNPT;
     }
-  if ((p = _malloc_r (fp->_data, size)) == NULL)
+    if ((p = _malloc_r(fp->_data, size)) == NULL)
     {
-      fp->_flags |= __SNBF;
-      fp->_bf._base = fp->_p = fp->_nbuf;
-      fp->_bf._size = 1;
+        fp->_flags |= __SNBF;
+        fp->_bf._base = fp->_p = fp->_nbuf;
+        fp->_bf._size = 1;
     }
-  else
+    else
     {
-      fp->_data->__cleanup = _cleanup_r;
-      fp->_flags |= __SMBF;
-      fp->_bf._base = fp->_p = (unsigned char *) p;
-      fp->_bf._size = size;
-      if (couldbetty && isatty (fp->_file))
-	fp->_flags |= __SLBF;
+        fp->_data->__cleanup = _cleanup_r;
+        fp->_flags |= __SMBF;
+        fp->_bf._base = fp->_p = (unsigned char *)p;
+        fp->_bf._size = size;
+        if (couldbetty && isatty(fp->_file))
+            fp->_flags |= __SLBF;
     }
 }

@@ -1,21 +1,21 @@
 /*
 FUNCTION
-	<<tolower>>---translate characters to lower case
+    <<tolower>>---translate characters to lower case
 
 INDEX
-	tolower
+    tolower
 INDEX
-	_tolower
+    _tolower
 
 ANSI_SYNOPSIS
-	#include <ctype.h>
-	int tolower(int <[c]>);
-	int _tolower(int <[c]>);
+    #include <ctype.h>
+    int tolower(int <[c]>);
+    int _tolower(int <[c]>);
 
 TRAD_SYNOPSIS
-	#include <ctype.h>
-	int tolower(<[c]>);
-	int _tolower(<[c]>);
+    #include <ctype.h>
+    int tolower(<[c]>);
+    int _tolower(<[c]>);
 
 
 DESCRIPTION
@@ -42,14 +42,12 @@ PORTABILITY
 programs.
 
 No supporting OS subroutines are required.
-*/ 
+*/
 
-#include <_ansi.h>
 #include <ctype.h>
 
 #undef tolower
-int
-_DEFUN(tolower,(c),int c)
+int tolower(int c)
 {
-	return isupper(c) ? (c) - 'A' + 'a' : c;
+    return isupper(c) ? (c) - 'A' + 'a' : c;
 }

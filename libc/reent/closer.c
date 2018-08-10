@@ -21,38 +21,35 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_close_r>>---Reentrant version of close
-	
+    <<_close_r>>---Reentrant version of close
+
 INDEX
-	_close_r
+    _close_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _close_r(struct _reent *<[ptr]>, int <[fd]>);
+    #include <reent.h>
+    int _close_r(struct _reent *<[ptr]>, int <[fd]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _close_r(<[ptr]>, <[fd]>)
-	struct _reent *<[ptr]>;
-	int <[fd]>;
+    #include <reent.h>
+    int _close_r(<[ptr]>, <[fd]>)
+    struct _reent *<[ptr]>;
+    int <[fd]>;
 
 DESCRIPTION
-	This is a reentrant version of <<close>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<close>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_close_r (ptr, fd)
-     struct _reent *ptr;
-     int fd;
+int _close_r(struct _reent *ptr, int fd)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _close (fd)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _close(fd)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

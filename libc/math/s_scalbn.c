@@ -59,22 +59,13 @@ Interface Definition (Issue 2).
 
 #ifndef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 two54   =  1.80143985094819840000e+16, /* 0x43500000, 0x00000000 */
 twom54  =  5.55111512312578270212e-17, /* 0x3C900000, 0x00000000 */
 huge   = 1.0e+300,
 tiny   = 1.0e-300;
 
-#ifdef __STDC__
-	double scalbn (double x, int n)
-#else
-	double scalbn (x,n)
-	double x; int n;
-#endif
+double scalbn (double x, int n)
 {
 	__int32_t  k,hx,lx;
 	EXTRACT_WORDS(hx,lx,x);

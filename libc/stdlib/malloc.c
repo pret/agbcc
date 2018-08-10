@@ -19,86 +19,86 @@ FUNCTION
 <<malloc>>, <<realloc>>, <<free>>---manage memory
 
 INDEX
-	malloc
+    malloc
 INDEX
-	realloc
+    realloc
 INDEX
-	free
+    free
 INDEX
-	memalign
+    memalign
 INDEX
-	malloc_usable_size
+    malloc_usable_size
 INDEX
-	_malloc_r
+    _malloc_r
 INDEX
-	_realloc_r
+    _realloc_r
 INDEX
-	_free_r
+    _free_r
 INDEX
-	_memalign_r
+    _memalign_r
 INDEX
-	_malloc_usable_size_r
+    _malloc_usable_size_r
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	void *malloc(size_t <[nbytes]>);
-	void *realloc(void *<[aptr]>, size_t <[nbytes]>);
-	void free(void *<[aptr]>);
+    #include <stdlib.h>
+    void *malloc(size_t <[nbytes]>);
+    void *realloc(void *<[aptr]>, size_t <[nbytes]>);
+    void free(void *<[aptr]>);
 
-	void *memalign(size_t <[align]>, size_t <[nbytes]>);
+    void *memalign(size_t <[align]>, size_t <[nbytes]>);
 
-	size_t malloc_usable_size(void *<[aptr]>);
+    size_t malloc_usable_size(void *<[aptr]>);
 
-	void *_malloc_r(void *<[reent]>, size_t <[nbytes]>);
-	void *_realloc_r(void *<[reent]>, 
+    void *_malloc_r(void *<[reent]>, size_t <[nbytes]>);
+    void *_realloc_r(void *<[reent]>,
                          void *<[aptr]>, size_t <[nbytes]>);
-	void _free_r(void *<[reent]>, void *<[aptr]>);
+    void _free_r(void *<[reent]>, void *<[aptr]>);
 
-	void *_memalign_r(void *<[reent]>,
-			  size_t <[align]>, size_t <[nbytes]>);
+    void *_memalign_r(void *<[reent]>,
+              size_t <[align]>, size_t <[nbytes]>);
 
-	size_t _malloc_usable_size_r(void *<[reent]>, void *<[aptr]>);
+    size_t _malloc_usable_size_r(void *<[reent]>, void *<[aptr]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	char *malloc(<[nbytes]>)
-	size_t <[nbytes]>;
+    #include <stdlib.h>
+    char *malloc(<[nbytes]>)
+    size_t <[nbytes]>;
 
-	char *realloc(<[aptr]>, <[nbytes]>)
-	char *<[aptr]>;
-	size_t <[nbytes]>;
+    char *realloc(<[aptr]>, <[nbytes]>)
+    char *<[aptr]>;
+    size_t <[nbytes]>;
 
-	void free(<[aptr]>)
-	char *<[aptr]>;
+    void free(<[aptr]>)
+    char *<[aptr]>;
 
-	char *memalign(<[align]>, <[nbytes]>)
-	size_t <[align]>;
-	size_t <[nbytes]>;
+    char *memalign(<[align]>, <[nbytes]>)
+    size_t <[align]>;
+    size_t <[nbytes]>;
 
-	size_t malloc_usable_size(<[aptr]>)
-	char *<[aptr]>;
+    size_t malloc_usable_size(<[aptr]>)
+    char *<[aptr]>;
 
-	char *_malloc_r(<[reent]>,<[nbytes]>)
-	char *<[reent]>;
-	size_t <[nbytes]>;
+    char *_malloc_r(<[reent]>,<[nbytes]>)
+    char *<[reent]>;
+    size_t <[nbytes]>;
 
-	char *_realloc_r(<[reent]>, <[aptr]>, <[nbytes]>)
-	char *<[reent]>;
-	char *<[aptr]>;
-	size_t <[nbytes]>;
+    char *_realloc_r(<[reent]>, <[aptr]>, <[nbytes]>)
+    char *<[reent]>;
+    char *<[aptr]>;
+    size_t <[nbytes]>;
 
-	void _free_r(<[reent]>, <[aptr]>)
-	char *<[reent]>;
-	char *<[aptr]>;
+    void _free_r(<[reent]>, <[aptr]>)
+    char *<[reent]>;
+    char *<[aptr]>;
 
-	char *_memalign_r(<[reent]>, <[align]>, <[nbytes]>)
-	char *<[reent]>;
-	size_t <[align]>;
-	size_t <[nbytes]>;
+    char *_memalign_r(<[reent]>, <[align]>, <[nbytes]>)
+    char *<[reent]>;
+    size_t <[align]>;
+    size_t <[nbytes]>;
 
-	size_t malloc_usable_size(<[reent]>, <[aptr]>)
-	char *<[reent]>;
-	char *<[aptr]>;
+    size_t malloc_usable_size(<[reent]>, <[aptr]>)
+    char *<[reent]>;
+    char *<[aptr]>;
 
 DESCRIPTION
 These functions manage a pool of system memory.
@@ -180,25 +180,21 @@ behave differently when <[nbytes]> is zero.
 
 Supporting OS subroutines required: <<sbrk>>.  */
 
-#include <_ansi.h>
+
 #include <reent.h>
 #include <stdlib.h>
 #include <malloc.h>
 
 #ifndef _REENT_ONLY
 
-_PTR
-_DEFUN (malloc, (nbytes),
-	size_t nbytes)		/* get a block */
+void *malloc(size_t nbytes) /* get a block */
 {
-  return _malloc_r (_REENT, nbytes);
+    return _malloc_r(_REENT, nbytes);
 }
 
-void
-_DEFUN (free, (aptr),
-	_PTR aptr)
+void free(void *aptr)
 {
-  _free_r (_REENT, aptr);
+    _free_r(_REENT, aptr);
 }
 
 #endif

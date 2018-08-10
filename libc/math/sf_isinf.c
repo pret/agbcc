@@ -6,12 +6,7 @@
 
 #include "fdlibm.h"
 
-#ifdef __STDC__
-	int isinff(float x)
-#else
-	int isinff(x)
-	float x;
-#endif
+int isinff(float x)
 {
 	__int32_t ix;
 	GET_FLOAT_WORD(ix,x);
@@ -22,12 +17,7 @@
 
 #ifdef _DOUBLE_IS_32BITS
 
-#ifdef __STDC__
-	int isinf(double x)
-#else
-	int isinf(x)
-	double x;
-#endif
+int isinf(double x)
 {
 	return isinff((float) x);
 }

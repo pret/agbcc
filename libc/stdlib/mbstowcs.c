@@ -3,21 +3,21 @@ FUNCTION
 <<mbstowcs>>---minimal multibyte string to wide char converter
 
 INDEX
-	mbstowcs
+    mbstowcs
 
 ANSI_SYNOPSIS
-	#include <stdlib.h>
-	int mbstowcs(wchar_t *<[pwc]>, const char *<[s]>, size_t <[n]>);
+    #include <stdlib.h>
+    int mbstowcs(wchar_t *<[pwc]>, const char *<[s]>, size_t <[n]>);
 
 TRAD_SYNOPSIS
-	#include <stdlib.h>
-	int mbstowcs(<[pwc]>, <[s]>, <[n]>)
-	wchar_t *<[pwc]>;
-	const char *<[s]>;
-	size_t <[n]>;
+    #include <stdlib.h>
+    int mbstowcs(<[pwc]>, <[s]>, <[n]>)
+    wchar_t *<[pwc]>;
+    const char *<[s]>;
+    size_t <[n]>;
 
 DESCRIPTION
-When MB_CAPABLE is not defined, this is a minimal ANSI-conforming 
+When MB_CAPABLE is not defined, this is a minimal ANSI-conforming
 implementation of <<mbstowcs>>.  In this case, the
 only ``multi-byte character sequences'' recognized are single bytes,
 and they are ``converted'' to wide-char versions simply by byte
@@ -30,7 +30,7 @@ be restricted to a defined set of locales.
 
 RETURNS
 This implementation of <<mbstowcs>> returns <<0>> if
-<[s]> is <<NULL>> or is the empty string; 
+<[s]> is <<NULL>> or is the empty string;
 it returns <<-1>> if MB_CAPABLE and one of the
 multi-byte characters is invalid or incomplete;
 otherwise it returns the minimum of: <<n>> or the
@@ -49,28 +49,26 @@ effects vary with the locale.
 
 #include <stdlib.h>
 
-size_t
-_DEFUN (mbstowcs, (pwcs, s, n),
-        wchar_t *pwcs _AND
-        const char *s _AND
-        size_t n)
+size_t mbstowcs(wchar_t *pwcs, const char *s, size_t n)
 {
 #ifdef MB_CAPABLE
-        int state = 0;
+    int state = 0;
 
-        return _mbstowcs_r (_REENT, pwcs, s, n, &state);
-#else /* not MB_CAPABLE */
+    return _mbstowcs_r(_REENT, pwcs, s, n, &state);
+#else  /* not MB_CAPABLE */
 
-        int count = 0;
+    int count = 0;
 
-        if (n != 0) {
-                do {
-                        if ((*pwcs++ = (wchar_t) *s++) == 0)
-                                break;
-                        count++;
-                } while (--n != 0);
-        }
+    if (n != 0)
+    {
+        do
+        {
+            if ((*pwcs++ = (wchar_t)*s++) == 0)
+                break;
+            count++;
+        } while (--n != 0);
+    }
 
-        return count;
+    return count;
 #endif /* not MB_CAPABLE */
 }

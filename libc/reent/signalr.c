@@ -25,74 +25,68 @@ extern int errno;
 
 /*
 FUNCTION
-	<<_kill_r>>---Reentrant version of kill
-	
+    <<_kill_r>>---Reentrant version of kill
+
 INDEX
-	_kill_r
+    _kill_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _kill_r(struct _reent *<[ptr]>, int <[pid]>, int <[sig]>);
+    #include <reent.h>
+    int _kill_r(struct _reent *<[ptr]>, int <[pid]>, int <[sig]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _kill_r(<[ptr]>, <[pid]>, <[sig]>)
-	struct _reent *<[ptr]>;
-	int <[pid]>;
-	int <[sig]>;
+    #include <reent.h>
+    int _kill_r(<[ptr]>, <[pid]>, <[sig]>)
+    struct _reent *<[ptr]>;
+    int <[pid]>;
+    int <[sig]>;
 
 DESCRIPTION
-	This is a reentrant version of <<kill>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<kill>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 */
 
-int
-_kill_r (ptr, pid, sig)
-     struct _reent *ptr;
-     int pid;
-     int sig;
+int _kill_r(struct _reent *ptr, int pid, int sig)
 {
-  int ret;
+    int ret;
 
-  errno = 0;
-  if ((ret = _kill (pid, sig)) == -1 && errno != 0)
-    ptr->_errno = errno;
-  return ret;
+    errno = 0;
+    if ((ret = _kill(pid, sig)) == -1 && errno != 0)
+        ptr->_errno = errno;
+    return ret;
 }
 
 /*
 FUNCTION
-	<<_getpid_r>>---Reentrant version of getpid
-	
+    <<_getpid_r>>---Reentrant version of getpid
+
 INDEX
-	_getpid_r
+    _getpid_r
 
 ANSI_SYNOPSIS
-	#include <reent.h>
-	int _getpid_r(struct _reent *<[ptr]>);
+    #include <reent.h>
+    int _getpid_r(struct _reent *<[ptr]>);
 
 TRAD_SYNOPSIS
-	#include <reent.h>
-	int _getpid_r(<[ptr]>)
-	struct _reent *<[ptr]>;
+    #include <reent.h>
+    int _getpid_r(<[ptr]>)
+    struct _reent *<[ptr]>;
 
 DESCRIPTION
-	This is a reentrant version of <<getpid>>.  It
-	takes a pointer to the global data block, which holds
-	<<errno>>.
+    This is a reentrant version of <<getpid>>.  It
+    takes a pointer to the global data block, which holds
+    <<errno>>.
 
-	We never need <<errno>>, of course, but for consistency we
-	still must have the reentrant pointer argument.
+    We never need <<errno>>, of course, but for consistency we
+    still must have the reentrant pointer argument.
 */
 
-int
-_getpid_r (ptr)
-     struct _reent *ptr;
+int _getpid_r(struct _reent *ptr)
 {
-  int ret;
-  ret = _getpid ();
-  return ret;
+    int ret;
+    ret = _getpid();
+    return ret;
 }
 
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
