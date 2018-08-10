@@ -973,7 +973,7 @@ static void print_error_line(const char *filename, ssize_t line)
     if (line == 0 || !filename || *filename == '\0' || !strcmp(filename, "stdin"))
         return;
 
-    buf = (char *)malloc(33 * sizeof(char));
+    buf = (char *)malloc(33);
 
     file = fopen(filename, "r");
     if (!file)
