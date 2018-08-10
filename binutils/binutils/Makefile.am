@@ -31,12 +31,7 @@ EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
 YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bison/; else echo @YACC@; fi`
 YFLAGS = -d
 LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
-LEXLIB = @LEXLIB@
-
-# Automake 1.10+ disables lex and yacc output file regeneration if
-# maintainer mode is disabled.  Avoid this.
-am__skiplex =
-am__skipyacc =
+LEXLIB =
 
 # This is where we get zlib from.  zlibdir is -L../zlib and zlibinc is
 # -I../zlib, unless we were configured with --with-system-zlib, in which
@@ -61,8 +56,6 @@ STRIP_PROG=strip-new
 
 STRINGS_PROG=strings
 
-READELF_PROG=readelf
-
 ELFEDIT_PROG=elfedit
 
 # These should all be the same program too.
@@ -77,7 +70,7 @@ DLLWRAP_PROG=dllwrap
 
 SRCONV_PROG=srconv$(EXEEXT) sysdump$(EXEEXT) coffdump$(EXEEXT)
 
-bin_PROGRAMS = $(SIZE_PROG) $(OBJDUMP_PROG) $(AR_PROG) $(STRINGS_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG) @BUILD_SRCONV@ @BUILD_DLLTOOL@ @BUILD_WINDRES@ @BUILD_WINDMC@ $(READELF_PROG) $(ELFEDIT_PROG) @BUILD_DLLWRAP@
+bin_PROGRAMS = $(SIZE_PROG) $(OBJDUMP_PROG) $(AR_PROG) $(STRINGS_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG) @BUILD_SRCONV@ @BUILD_DLLTOOL@ @BUILD_WINDRES@ @BUILD_WINDMC@ $(ADDR2LINE_PROG) $(ELFEDIT_PROG) @BUILD_DLLWRAP@
 
 bin_SCRIPTS = @BUILD_INSTALL_MISC@
 EXTRA_SCRIPTS = embedspu
@@ -96,7 +89,7 @@ noinst_PROGRAMS = $(RENAMED_PROGS) $(TEST_PROGS) @BUILD_MISC@
 EXTRA_PROGRAMS = srconv sysdump coffdump $(DLLTOOL_PROG) $(WINDRES_PROG) $(WINDMC_PROG) $(DLLWRAP_PROG)
 
 # Stuff that goes in tooldir/ if appropriate.
-TOOL_PROGS = strip-new ar ranlib dlltool objdump objcopy readelf
+TOOL_PROGS = nm-new strip-new ar ranlib dlltool objdump objcopy
 
 BASEDIR = $(srcdir)/..
 BFDDIR = $(BASEDIR)/bfd
@@ -126,7 +119,7 @@ CFILES = \
 	not-ranlib.c not-strip.c \
 	objcopy.c objdump.c prdbg.c \
 	od-xcoff.c od-macho.c \
-	rclex.c rdcoff.c rddbg.c readelf.c rename.c \
+	rclex.c rdcoff.c rddbg.c rename.c \
 	resbin.c rescoff.c resrc.c resres.c \
 	size.c srconv.c stabs.c strings.c sysdump.c \
 	syslex_wrap.c unwind-ia64.c elfedit.c version.c \
@@ -211,7 +204,7 @@ coffdump_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 dlltool_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 windres_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 windmc_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-readelf_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
+addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 elfedit_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
 dllwrap_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
 bfdtest1_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
@@ -225,8 +218,6 @@ objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
 strings_SOURCES = strings.c $(BULIBS)
 
-readelf_SOURCES = readelf.c version.c unwind-ia64.c dwarf.c $(ELFLIBS)
-readelf_LDADD   = $(LIBINTL) $(LIBIBERTY) $(ZLIB)
 
 elfedit_SOURCES = elfedit.c version.c $(ELFLIBS)
 elfedit_LDADD = $(LIBINTL) $(LIBIBERTY)
@@ -251,12 +242,12 @@ endif
 
 
 
-ar_SOURCES = arparse.y arlex.l ar.c not-ranlib.c arsup.c rename.c binemul.c \
+ar_SOURCES = arparse.c arlex.c ar.c not-ranlib.c arsup.c rename.c binemul.c \
 	emul_$(EMULATION).c $(BULIBS)
 EXTRA_ar_SOURCES = $(CFILES)
 ar_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
 
-ranlib_SOURCES = ar.c is-ranlib.c arparse.y arlex.l arsup.c rename.c \
+ranlib_SOURCES = ar.c is-ranlib.c arparse.c arlex.c arsup.c rename.c \
 	binemul.c emul_$(EMULATION).c $(BULIBS)
 ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
 
@@ -423,7 +414,7 @@ endif
 srconv_SOURCES = srconv.c coffgrok.c $(BULIBS)
 srconv.@OBJEXT@: sysroff.c
 
-dlltool_SOURCES = dlltool.c defparse.y deflex.l $(BULIBS)
+dlltool_SOURCES = dlltool.c defparse.c deflex.c $(BULIBS)
 dlltool_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
 
 dlltool.@OBJEXT@:
@@ -455,11 +446,11 @@ coffdump_SOURCES = coffdump.c coffgrok.c $(BULIBS)
 sysdump_SOURCES = sysdump.c $(BULIBS)
 sysdump.@OBJEXT@: sysroff.c
 
-windres_SOURCES = windres.c resrc.c rescoff.c resbin.c rcparse.y rclex.c \
+windres_SOURCES = windres.c resrc.c rescoff.c resbin.c rcparse.c rclex.c \
 	winduni.c resres.c $(BULIBS)
 windres_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) $(LIBICONV)
 
-windmc_SOURCES = windmc.c mcparse.y mclex.c \
+windmc_SOURCES = windmc.c mcparse.c mclex.c \
 	winduni.c $(BULIBS)
 windmc_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) $(LIBICONV)
 

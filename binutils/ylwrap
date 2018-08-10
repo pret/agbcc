@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/sh
+#!/bin/sh
 # ylwrap - wrapper for lex/yacc invocations.
 
 scriptversion=2018-03-07.03; # UTC

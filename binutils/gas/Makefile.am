@@ -30,11 +30,6 @@ ZLIBINC = @zlibinc@
 YACC = `if [ -f ../bison/bison ] ; then echo ../bison/bison -y -L../bison/bison ; else echo @YACC@ ; fi`
 LEX = `if [ -f ../flex/flex ] ; then echo ../flex/flex ; else echo @LEX@ ; fi`
 
-# Automake 1.10+ disables lex and yacc output file regeneration if
-# maintainer mode is disabled.  Avoid this.
-am__skiplex =
-am__skipyacc =
-
 WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
 NO_WERROR = @NO_WERROR@
 AM_CFLAGS = $(WARN_CFLAGS) $(ZLIBINC)
@@ -53,7 +48,7 @@ ATOF_TARG_O = config/atof-@atof@.@OBJEXT@
 # use @target_cpu_type@ for refering to configured target name
 IT_HDRS=itbl-parse.h $(srcdir)/itbl-ops.h
 IT_SRCS=itbl-parse.c itbl-lex-wrapper.c $(srcdir)/itbl-ops.c
-IT_DEPS=$(srcdir)/itbl-parse.y $(srcdir)/itbl-lex.l $(srcdir)/config/itbl-@target_cpu_type@.h
+IT_DEPS=$(srcdir)/itbl-parse.c $(srcdir)/itbl-lex.c $(srcdir)/config/itbl-@target_cpu_type@.h
 IT_OBJS=itbl-parse.@OBJEXT@ itbl-lex.@OBJEXT@ itbl-ops.@OBJEXT@
 
 
@@ -426,7 +421,7 @@ check-DEJAGNU: site.exp
 
 # The m68k operand parser.
 
-EXTRA_as_new_SOURCES += config/m68k-parse.y
+EXTRA_as_new_SOURCES += config/m68k-parse.c
 
 # If m68k-parse.y is in a different directory, then ylwrap will use an
 # absolute path when it invokes yacc, which will cause yacc to put the
@@ -468,15 +463,10 @@ endif
 m68k-parse.h: ; @true
 $(srcdir)/config/m68k-parse.h: ; @true
 
-EXTRA_as_new_SOURCES += config/bfin-parse.y
-bfin-parse.c: $(srcdir)/config/bfin-parse.y
-	$(SHELL) $(YLWRAP) $(srcdir)/config/bfin-parse.y y.tab.c bfin-parse.c y.tab.h bfin-parse.h -- $(YACCCOMPILE) -d ;
 bfin-parse.h: bfin-parse.c
 bfin-parse.h: ; @true
 $(srcdir)/config/bfin-parse.h: ; @true
 
-bfin-lex.c: $(srcdir)/config/bfin-lex.l
-	$(SHELL) $(YLWRAP) $(srcdir)/config/bfin-lex.l lex.yy.c bfin-lex.c -- $(LEXCOMPILE)
 bfin-lex-wrapper.@OBJEXT@: $(srcdir)/config/bfin-lex-wrapper.c bfin-lex.c bfin-parse.h $(srcdir)/config/bfin-defs.h
 if am__fastdepCC
 	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
@@ -489,16 +479,12 @@ endif
 	$(COMPILE) -c $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
 endif
 
-EXTRA_as_new_SOURCES += config/rl78-parse.y
-rl78-parse.c: $(srcdir)/config/rl78-parse.y
-	$(SHELL) $(YLWRAP) $(srcdir)/config/rl78-parse.y y.tab.c rl78-parse.c y.tab.h rl78-parse.h -- $(YACCCOMPILE) -d ;
+EXTRA_as_new_SOURCES += config/rl78-parse.c
 rl78-parse.h: rl78-parse.c
 rl78-defs.h: ; @true
 $(srcdir)/config/rl78-defs.h: ; @true
 
 EXTRA_as_new_SOURCES += config/rx-parse.y
-rx-parse.c: $(srcdir)/config/rx-parse.y
-	$(SHELL) $(YLWRAP) $(srcdir)/config/rx-parse.y y.tab.c rx-parse.c y.tab.h rx-parse.h -- $(YACCCOMPILE) -d ;
 rx-parse.h: rx-parse.c
 rx-defs.h: ; @true
 $(srcdir)/config/rx-defs.h: ; @true
@@ -533,9 +519,6 @@ endif
 	$(COMPILE) -c `test -f itbl-parse.c || echo $(srcdir)/`itbl-parse.c $(NO_WERROR)
 endif
 
-itbl-parse.c: $(srcdir)/itbl-parse.y
-	$(SHELL) $(YLWRAP) $(srcdir)/itbl-parse.y y.tab.c itbl-parse.c y.tab.h itbl-parse.h -- $(YACCCOMPILE) -d
-
 itbl-parse.h: itbl-parse.c ; @true
 
 itbl-ops.@OBJEXT@: itbl-parse.h
@@ -543,7 +526,7 @@ itbl-ops.@OBJEXT@: itbl-parse.h
 # stand-alone itbl assembler & disassembler
 
 EXTRA_PROGRAMS = itbl-test
-itbl_test_SOURCES = itbl-parse.y itbl-lex.l
+itbl_test_SOURCES = itbl-parse.c itbl-lex.c
 itbl_test_LDADD = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ $(GASLIBS) @LEXLIB@
 
 itbl-tops.@OBJEXT@: itbl-ops.c itbl-parse.h
