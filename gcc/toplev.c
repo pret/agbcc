@@ -965,13 +965,15 @@ void print_time(char *str, int total)
 static void print_error_line(const char *filename, ssize_t line)
 {
     FILE *file;
-    char *buf = (char *)malloc(32 * sizeof(char));
+    char *buf;
     ssize_t count, curline = 0;
     size_t size = 32;
 
     /* Return on empty file or stdin file (not supported yet) */
     if (line == 0 || !filename || *filename == '\0' || !strcmp(filename, "stdin"))
         return;
+
+    buf = (char *)malloc(33 * sizeof(char));
 
     file = fopen(filename, "r");
     if (!file)
