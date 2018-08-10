@@ -22,8 +22,8 @@ Boston, MA 02111-1307, USA.  */
    It should be straightforward to convert so for now we keep things simple
    while more important issues are dealt with.  */
 
-#define SBITMAP_ELT_BITS HOST_BITS_PER_WIDE_INT
-#define SBITMAP_ELT_TYPE HOST_WIDE_UINT
+#define SBITMAP_ELT_BITS 32
+#define SBITMAP_ELT_TYPE uint32_t
 
 typedef struct simple_bitmap_def {
   /* Number of bits.  */

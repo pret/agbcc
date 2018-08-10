@@ -562,24 +562,24 @@ struct tree_common
 #define INT_CST_LT(A, B)  \
 (TREE_INT_CST_HIGH (A) < TREE_INT_CST_HIGH (B)			\
  || (TREE_INT_CST_HIGH (A) == TREE_INT_CST_HIGH (B)		\
-     && ((HOST_WIDE_UINT) TREE_INT_CST_LOW (A)		\
-	 < (HOST_WIDE_UINT) TREE_INT_CST_LOW (B))))
+     && ((uint32_t) TREE_INT_CST_LOW (A)		\
+	 < (uint32_t) TREE_INT_CST_LOW (B))))
 
 #define INT_CST_LT_UNSIGNED(A, B)  \
-(((HOST_WIDE_UINT) TREE_INT_CST_HIGH (A)	\
-  < (HOST_WIDE_UINT) TREE_INT_CST_HIGH (B))	\
- || (((HOST_WIDE_UINT) TREE_INT_CST_HIGH (A)	\
-      == (HOST_WIDE_UINT ) TREE_INT_CST_HIGH (B)) \
-     && (((HOST_WIDE_UINT) TREE_INT_CST_LOW (A)	\
-	  < (HOST_WIDE_UINT) TREE_INT_CST_LOW (B)))))
+(((uint32_t) TREE_INT_CST_HIGH (A)	\
+  < (uint32_t) TREE_INT_CST_HIGH (B))	\
+ || (((uint32_t) TREE_INT_CST_HIGH (A)	\
+      == (uint32_t ) TREE_INT_CST_HIGH (B)) \
+     && (((uint32_t) TREE_INT_CST_LOW (A)	\
+	  < (uint32_t) TREE_INT_CST_LOW (B)))))
 
 struct tree_int_cst
 {
   char common[sizeof (struct tree_common)];
   struct rtx_def *rtl;	/* acts as link to register transfer language
 			   (rtl) info */
-  HOST_WIDE_INT int_cst_low;
-  HOST_WIDE_INT int_cst_high;
+  int32_t int_cst_low;
+  int32_t int_cst_high;
 };
 
 /* In REAL_CST, STRING_CST, COMPLEX_CST nodes, and CONSTRUCTOR nodes,
@@ -1329,7 +1329,7 @@ struct tree_decl
      on the permanent obstack.  For FIELD_DECL, this is DECL_FIELD_SIZE.  */
   union {
     struct rtx_def *r;
-    HOST_WIDE_INT i;
+    int32_t i;
   } saved_insns;
   union tree_node *vindex;
   int pointer_alias_set;
@@ -1364,11 +1364,11 @@ union tree_node
    defined here and in rtl.h.  */
 
 #ifndef exact_log2
-#define exact_log2(N) exact_log2_wide ((HOST_WIDE_UINT) (N))
-#define floor_log2(N) floor_log2_wide ((HOST_WIDE_UINT) (N))
+#define exact_log2(N) exact_log2_wide ((uint32_t) (N))
+#define floor_log2(N) floor_log2_wide ((uint32_t) (N))
 #endif
-extern int exact_log2_wide             (HOST_WIDE_UINT);
-extern int floor_log2_wide             (HOST_WIDE_UINT);
+extern int exact_log2_wide             (uint32_t);
+extern int floor_log2_wide             (uint32_t);
 
 extern char *oballoc			(int);
 extern char *permalloc			(int);
@@ -1409,13 +1409,13 @@ extern tree maybe_get_identifier	(char *);
 /* Construct various types of nodes.  */
 
 #define build_int_2(LO,HI)  \
-  build_int_2_wide ((HOST_WIDE_INT) (LO), (HOST_WIDE_INT) (HI))
+  build_int_2_wide ((int32_t) (LO), (int32_t) (HI))
 
 extern tree build			(enum tree_code, tree, ...);
 extern tree build_nt			(enum tree_code, ...);
 extern tree build_parse_node		(enum tree_code, ...);
 
-extern tree build_int_2_wide		(HOST_WIDE_INT, HOST_WIDE_INT);
+extern tree build_int_2_wide		(int32_t, int32_t);
 extern tree build_real			(tree, REAL_VALUE_TYPE);
 extern tree build_real_from_int_cst 	(tree, tree);
 extern tree build_complex		(tree, tree, tree);
@@ -1556,16 +1556,16 @@ extern tree pedantic_non_lvalue		(tree);
 
 extern tree convert			(tree, tree);
 extern tree size_in_bytes		(tree);
-extern HOST_WIDE_INT int_size_in_bytes	(tree);
+extern int32_t int_size_in_bytes	(tree);
 extern tree size_binop			(enum tree_code, tree, tree);
 extern tree ssize_binop			(enum tree_code, tree, tree);
-extern tree size_int_wide		(HOST_WIDE_UINT,
-					       HOST_WIDE_UINT, int);
+extern tree size_int_wide		(uint32_t,
+					       uint32_t, int);
 #define size_int(L) size_int_2 ((L), 0, 0)
 #define bitsize_int(L, H) size_int_2 ((L), (H), 1)
 #define size_int_2(L, H, T)			\
-  size_int_wide ((HOST_WIDE_UINT) (L),	\
-		 (HOST_WIDE_UINT) (H), (T))
+  size_int_wide ((uint32_t) (L),	\
+		 (uint32_t) (H), (T))
 
 extern tree round_up			(tree, int);
 extern tree get_pending_sizes		(void);
@@ -1948,26 +1948,26 @@ extern int stmt_loop_nest_empty			(void);
 extern tree fold		(tree);
 
 extern int force_fit_type	(tree, int);
-extern int add_double		(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT *, HOST_WIDE_INT *);
-extern int neg_double		(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT *, HOST_WIDE_INT *);
-extern int mul_double		(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT *, HOST_WIDE_INT *);
-extern void lshift_double	(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, int, HOST_WIDE_INT *,
-				       HOST_WIDE_INT *, int);
-extern void rshift_double	(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, int,
-				       HOST_WIDE_INT *, HOST_WIDE_INT *, int);
-extern void lrotate_double	(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, int, HOST_WIDE_INT *,
-				       HOST_WIDE_INT *);
-extern void rrotate_double	(HOST_WIDE_INT, HOST_WIDE_INT,
-				       HOST_WIDE_INT, int, HOST_WIDE_INT *,
-				       HOST_WIDE_INT *);
+extern int add_double		(int32_t, int32_t,
+				       int32_t, int32_t,
+				       int32_t *, int32_t *);
+extern int neg_double		(int32_t, int32_t,
+				       int32_t *, int32_t *);
+extern int mul_double		(int32_t, int32_t,
+				       int32_t, int32_t,
+				       int32_t *, int32_t *);
+extern void lshift_double	(int32_t, int32_t,
+				       int32_t, int, int32_t *,
+				       int32_t *, int);
+extern void rshift_double	(int32_t, int32_t,
+				       int32_t, int,
+				       int32_t *, int32_t *, int);
+extern void lrotate_double	(int32_t, int32_t,
+				       int32_t, int, int32_t *,
+				       int32_t *);
+extern void rrotate_double	(int32_t, int32_t,
+				       int32_t, int, int32_t *,
+				       int32_t *);
 extern int operand_equal_p	(tree, tree, int);
 extern tree invert_truthvalue	(tree);
 
@@ -2199,12 +2199,12 @@ extern void variable_section		(tree, int);
 
 /* In fold-const.c */
 extern int div_and_round_double		(enum tree_code, int,
-						HOST_WIDE_INT, HOST_WIDE_INT,
-						HOST_WIDE_INT, HOST_WIDE_INT,
-						HOST_WIDE_INT *,
-						HOST_WIDE_INT *,
-						HOST_WIDE_INT *,
-						HOST_WIDE_INT *);
+						int32_t, int32_t,
+						int32_t, int32_t,
+						int32_t *,
+						int32_t *,
+						int32_t *,
+						int32_t *);
 
 /* In stmt.c */
 extern void emit_nop			(void);
@@ -2227,7 +2227,7 @@ extern void move_cleanups_up		(void);
 extern void expand_start_case_dummy	(void);
 extern void expand_end_case_dummy	(void);
 extern tree case_index_expr_type	(void);
-extern HOST_WIDE_INT all_cases_count	(tree, int *);
+extern int32_t all_cases_count	(tree, int *);
 extern void check_for_full_enumeration_handling (tree);
 extern void declare_nonlocal_label	(tree);
 

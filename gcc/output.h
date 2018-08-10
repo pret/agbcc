@@ -20,36 +20,36 @@ the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
 /* Initialize data in final at the beginning of a compilation.  */
-extern void init_final		(char *);
+extern void init_final();
 
 /* Called at end of source file,
    to output the block-profiling table for this entire compilation.  */
-extern void end_final		(char *);
+extern void end_final();
 
 /* Enable APP processing of subsequent output.
    Used before the output from an `asm' statement.  */
-extern void app_enable		(void);
+extern void app_enable();
 
 /* Disable APP processing of subsequent output.
    Called from varasm.c before most kinds of output.  */
-extern void app_disable		(void);
+extern void app_disable();
 
 /* Return the number of slots filled in the current 
    delayed branch sequence (we don't count the insn needing the
    delay slot).   Zero if not in a delayed branch sequence.  */
-extern int dbr_sequence_length	(void);
+extern int dbr_sequence_length();
 
 /* Indicate that branch shortening hasn't yet been done.  */
-extern void init_insn_lengths	(void);
+extern void init_insn_lengths();
 
 #ifdef RTX_CODE
 /* Obtain the current length of an insn.  If branch shortening has been done,
    get its actual length.  Otherwise, get its maximum length.  */
-extern int get_attr_length	(rtx);
+extern int get_attr_length();
 
 /* Make a pass over all insns and compute their actual lengths by shortening
    any branches of variable length if possible.  */
-extern void shorten_branches	(rtx);
+extern void shorten_branches();
 
 /* Output assembler code for the start of a function,
    and initialize some of the variables in this file
@@ -73,31 +73,31 @@ extern rtx final_scan_insn	(rtx, FILE *, int, int, int);
 
 /* Replace a SUBREG with a REG or a MEM, based on the thing it is a
    subreg of.  */
-extern rtx alter_subreg (rtx);
+extern rtx alter_subreg();
 
 /* Report inconsistency between the assembler template and the operands.
    In an `asm', it's the user's fault; otherwise, the compiler's fault.  */
-extern void output_operand_lossage  (char *);
+extern void output_operand_lossage();
 
 /* Output a string of assembler code, substituting insn operands.
    Defined in final.c.  */
-extern void output_asm_insn	(char *, rtx *);
+extern void output_asm_insn();
 
 /* Compute a worst-case reference address of a branch so that it
    can be safely used in the presence of aligned labels.
    Defined in final.c.  */
-extern int insn_current_reference_address	(rtx);
+extern int insn_current_reference_address();
 
 /* Find the alignment associated with a CODE_LABEL.
    Defined in final.c.  */
-extern int label_to_alignment	(rtx);
+extern int label_to_alignment();
 
 /* Output a LABEL_REF, or a bare CODE_LABEL, as an assembler symbol.  */
-extern void output_asm_label	(rtx);
+extern void output_asm_label();
 
 /* Print a memory reference operand for address X
    using machine-dependent assembler syntax.  */
-extern void output_address	(rtx);
+extern void output_address();
 
 /* Print an integer constant expression in assembler syntax.
    Addition and subtraction are the only arithmetic
@@ -110,72 +110,72 @@ extern void asm_fprintf		(FILE *file, char *p, ...);
 
 /* Split up a CONST_DOUBLE or integer constant rtx into two rtx's for single
    words.  */
-extern void split_double	(rtx, rtx *, rtx *);
+extern void split_double();
 
 /* Return nonzero if this function has no function calls.  */
-extern int leaf_function_p	(void);
+extern int leaf_function_p();
 
 /* Return 1 if this function uses only the registers that can be
    safely renumbered.  */
-extern int only_leaf_regs_used	(void);
+extern int only_leaf_regs_used();
 
 /* Scan IN_RTX and its subexpressions, and renumber all regs into those
    available in leaf functions.  */
-extern void leaf_renumber_regs_insn (rtx);
+extern void leaf_renumber_regs_insn();
 
 /* Functions in flow.c */
-extern void allocate_for_life_analysis	(void);
-extern int regno_uninitialized		(int);
-extern int regno_clobbered_at_setjmp	(int);
+extern void allocate_for_life_analysis();
+extern int regno_uninitialized();
+extern int regno_clobbered_at_setjmp();
 extern void dump_flow_info		(FILE *);
 extern void find_basic_blocks         (rtx, int, FILE *);
-extern void free_basic_block_vars     (int);
-extern void set_block_num             (rtx, int);
+extern void free_basic_block_vars();
+extern void set_block_num();
 extern void life_analysis             (rtx, int, FILE *);
 #endif
 
 /* Functions in varasm.c.  */
 
 /* Tell assembler to switch to text section.  */
-extern void text_section		(void);
+extern void text_section();
 
 /* Tell assembler to switch to data section.  */
-extern void data_section		(void);
+extern void data_section();
 
 /* Tell assembler to make sure its in the data section.  */
-extern void force_data_section		(void);
+extern void force_data_section();
 
 /* Tell assembler to switch to read-only data section.  This is normally
    the text section.  */
-extern void readonly_data_section	(void);
+extern void readonly_data_section();
 
 /* Determine if we're in the text section. */
-extern int in_text_section		(void);
+extern int in_text_section();
 
 #ifdef TREE_CODE
 /* Tell assembler to change to section NAME for DECL.
    If DECL is NULL, just switch to section NAME.
    If NAME is NULL, get the name from DECL.
    If RELOC is 1, the initializer for DECL contains relocs.  */
-extern void named_section		(tree, char *, int);
+extern void named_section();
 
 /* Tell assembler to switch to the section for function DECL.  */
-extern void function_section		(tree);
+extern void function_section();
 
 /* Tell assembler to switch to the section for the exception table.  */
-extern void exception_section		(void);
+extern void exception_section();
 
 /* Create the rtl to represent a function, for a function definition.
    DECL is a FUNCTION_DECL node which describes which function.
    The rtl is stored into DECL.  */
-extern void make_function_rtl		(tree);
+extern void make_function_rtl();
 
 /* Declare DECL to be a weak symbol.  */
-extern void declare_weak		(tree);
+extern void declare_weak();
 #endif /* TREE_CODE */
 
 /* Emit any pending weak declarations.  */
-extern void weak_finish			(void);
+extern void weak_finish();
 
 /* Decode an `asm' spec for a declaration as a register name.
    Return the register number, or -1 if nothing specified,
@@ -184,7 +184,7 @@ extern void weak_finish			(void);
    or -4 if ASMSPEC is `memory' and is not recognized.
    Accept an exact spelling or a decimal number.
    Prefixes such as % are optional.  */
-extern int decode_reg_name		(char *);
+extern int decode_reg_name();
 
 #ifdef TREE_CODE
 /* Create the DECL_RTL for a declaration for a static or external variable
@@ -194,39 +194,39 @@ extern int decode_reg_name		(char *);
    TOP_LEVEL is nonzero if this is a file-scope variable.
 
    This is never called for PARM_DECL nodes.  */
-extern void make_decl_rtl		(tree, char *, int);
+extern void make_decl_rtl();
 
 /* Make the rtl for variable VAR be volatile.
    Use this only for static variables.  */
-extern void make_var_volatile		(tree);
+extern void make_var_volatile();
 
 /* Output alignment directive to align for constant expression EXP.  */
-extern void assemble_constant_align	(tree);
+extern void assemble_constant_align();
 
-extern void assemble_alias		(tree, tree);
+extern void assemble_alias();
 
 /* Output a string of literal assembler code
    for an `asm' keyword used between functions.  */
-extern void assemble_asm		(tree);
+extern void assemble_asm();
 
 /* Output assembler code for the constant pool of a function and associated
    with defining the name of the function.  DECL describes the function.
    NAME is the function's name.  For the constant pool, we use the current
    constant pool data.  */
-extern void assemble_start_function	(tree, char *);
+extern void assemble_start_function();
 
 /* Output assembler code associated with defining the size of the
    function.  DECL describes the function.  NAME is the function's name.  */
-extern void assemble_end_function	(tree, char *);
+extern void assemble_end_function();
 
 /* Assemble code to leave SIZE bytes of zeros.  */
-extern void assemble_zeros		(int);
+extern void assemble_zeros();
 
 /* Assemble an alignment pseudo op for an ALIGN-bit boundary.  */
-extern void assemble_align		(int);
+extern void assemble_align();
 
 /* Assemble a string constant with the specified C string as contents.  */
-extern void assemble_string		(char *, int);
+extern void assemble_string();
 /* Assemble everything that is needed for a variable or function declaration.
    Not used for automatic variables, and not used for function definitions.
    Should not be called for variables of incomplete structure type.
@@ -236,24 +236,24 @@ extern void assemble_string		(char *, int);
    to define things that have had only tentative definitions.
    DONT_OUTPUT_DATA if nonzero means don't actually output the
    initial value (that will be done by the caller).  */
-extern void assemble_variable		(tree, int, int, int);
+extern void assemble_variable();
 
 /* Output something to declare an external symbol to the assembler.
    (Most assemblers don't need this, so we normally output nothing.)
    Do nothing if DECL is not external.  */
-extern void assemble_external		(tree);
+extern void assemble_external();
 #endif /* TREE_CODE */
 
 #ifdef RTX_CODE
 /* Similar, for calling a library function FUN.  */
-extern void assemble_external_libcall	(rtx);
+extern void assemble_external_libcall();
 #endif
 
 /* Declare the label NAME global.  */
-extern void assemble_global		(char *);
+extern void assemble_global();
 
 /* Assemble a label named NAME.  */
-extern void assemble_label		(char *);
+extern void assemble_label();
 
 /* Output to FILE a reference to the assembler name of a C-level name NAME.
    If NAME starts with a *, the rest of NAME is output verbatim.
@@ -268,36 +268,35 @@ extern void assemble_name		(FILE *, char *);
 
    Return 1 if we were able to output the constant, otherwise 0.  If FORCE is
    non-zero, abort if we can't output the constant.  */
-extern int assemble_integer		(rtx, int, int);
+extern int assemble_integer();
 
 #ifdef EMUSHORT
 /* Assemble the floating-point constant D into an object of size MODE.  */
-extern void assemble_real		(REAL_VALUE_TYPE,
-					       enum machine_mode);
+extern void assemble_real();
 #endif
 #endif
 
 /* At the end of a function, forget the memory-constants
    previously made for CONST_DOUBLEs.  Mark them as not on real_constant_chain.
    Also clear out real_constant_chain and clear out all the chain-pointers.  */
-extern void clear_const_double_mem	(void);
+extern void clear_const_double_mem();
 
 /* Start deferring output of subconstants.  */
-extern void defer_addressed_constants	(void);
+extern void defer_addressed_constants();
 
 /* Stop deferring output of subconstants,
    and output now all those that have been deferred.  */
-extern void output_deferred_addressed_constants (void);
+extern void output_deferred_addressed_constants();
 
 /* Initialize constant pool hashing for next function.  */
-extern void init_const_rtx_hash_table	(void);
+extern void init_const_rtx_hash_table();
 
 /* Return the size of the constant pool.  */
-extern int get_pool_size		(void);
+extern int get_pool_size();
 
 #ifdef TREE_CODE
 /* Write all the constants in the constant pool.  */
-extern void output_constant_pool	(char *, tree);
+extern void output_constant_pool();
 
 /* Output assembler code for constant EXP to FILE, with no label.
    This includes the pseudo-op such as ".int" or ".byte", and a newline.
@@ -305,7 +304,7 @@ extern void output_constant_pool	(char *, tree);
 
    Generate exactly SIZE bytes of assembler data, padding at the end
    with zeros if necessary.  SIZE must always be specified.  */
-extern void output_constant		(tree, int);
+extern void output_constant();
 #endif
 
 /* When outputting assembler code, indicates which alternative

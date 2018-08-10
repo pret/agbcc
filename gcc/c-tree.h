@@ -212,7 +212,7 @@ extern tree double_ftype_double;
 extern tree double_ftype_double_double;
 extern tree double_type_node;
 extern tree float_type_node;
-#if HOST_BITS_PER_WIDE_INT >= 64
+#if 32 >= 64
 extern tree intTI_type_node;
 #endif
 extern tree intDI_type_node;
@@ -244,7 +244,7 @@ extern tree signed_wchar_type_node;
 extern tree string_ftype_ptr_ptr;
 extern tree string_type_node;
 extern tree unsigned_char_type_node;
-#if HOST_BITS_PER_WIDE_INT >= 64
+#if 32 >= 64
 extern tree unsigned_intTI_type_node;
 #endif
 extern tree unsigned_intDI_type_node;

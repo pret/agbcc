@@ -98,7 +98,7 @@ struct function
   rtx save_expr_regs;
   rtx stack_slot_list;
   rtx parm_birth_insn;
-  HOST_WIDE_INT frame_offset;
+  int32_t frame_offset;
   rtx tail_recursion_label;
   rtx tail_recursion_reentry;
   rtx internal_arg_pointer;
@@ -238,7 +238,7 @@ extern tree *identify_blocks (tree, rtx);
 /* Return size needed for stack frame based on slots so far allocated.
    This size counts from zero.  It is not rounded to STACK_BOUNDARY;
    the caller may have to do that.  */
-extern HOST_WIDE_INT get_frame_size (void);
+extern int32_t get_frame_size (void);
 
 /* These variables hold pointers to functions to
    save and restore machine-specific data,

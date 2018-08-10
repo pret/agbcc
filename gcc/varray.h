@@ -22,7 +22,7 @@
 #ifndef _VARRAY_H_
 #define _VARRAY_H_
 
-#ifndef HOST_WIDE_INT
+#ifndef int32_t
 #include "machmode.h"
 #endif
 
@@ -40,8 +40,8 @@ typedef union varray_data_tag {
   unsigned int		 u[1];
   long			 l[1];
   unsigned long		 ul[1];
-  HOST_WIDE_INT		 hint[1];
-  HOST_WIDE_UINT uhint[1];
+  int32_t		 hint[1];
+  uint32_t uhint[1];
   void *		 generic[1];
   char			 *cptr[1];
   struct rtx_def	 *rtx[1];
@@ -89,10 +89,10 @@ extern varray_type varray_init	(size_t, size_t, const char *);
   va = varray_init (num, sizeof (unsigned long), name)
 
 #define VARRAY_WIDE_INT_INIT(va, num, name) \
-  va = varray_init (num, sizeof (HOST_WIDE_INT), name)
+  va = varray_init (num, sizeof (int32_t), name)
 
 #define VARRAY_UWIDE_INT_INIT(va, num, name) \
-  va = varray_init (num, sizeof (HOST_WIDE_UINT), name)
+  va = varray_init (num, sizeof (uint32_t), name)
 
 #define VARRAY_GENERIC_PTR_INIT(va, num, name) \
   va = varray_init (num, sizeof (void *), name)

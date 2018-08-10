@@ -200,7 +200,7 @@ rdata_section ()							\
 /* A C expression whose value is nonzero if IDENTIFIER with arguments ARGS
    is a valid machine specific attribute for DECL.
    The attributes in ATTRIBUTES have previously been assigned to DECL.  */
-extern int arm_valid_machine_decl_attribute(tree decl, tree attributes, tree attr, tree args);
+extern int arm_valid_machine_decl_attribute();
 #define VALID_MACHINE_DECL_ATTRIBUTE(DECL, ATTRIBUTES, IDENTIFIER, ARGS) \
   arm_valid_machine_decl_attribute(DECL, ATTRIBUTES, IDENTIFIER, ARGS)
 
@@ -309,7 +309,7 @@ do {								\
 	  fprintf (FILE, "\t%s\t ", SIZE_ASM_OP);		\
 	  assemble_name (FILE, NAME);				\
 	  putc (',', FILE);					\
-	  fprintf (FILE, HOST_WIDE_INT_PRINT_DEC,		\
+	  fprintf (FILE, int32_t_PRINT_DEC,		\
 		   int_size_in_bytes (TREE_TYPE (DECL)));	\
 	  fputc ('\n', FILE);					\
         }							\
@@ -335,7 +335,7 @@ do {								\
 	  fprintf (FILE, "\t%s\t ", SIZE_ASM_OP);			\
 	  assemble_name (FILE, name);					\
 	  putc (',', FILE);						\
-	  fprintf (FILE, HOST_WIDE_INT_PRINT_DEC,			\
+	  fprintf (FILE, int32_t_PRINT_DEC,			\
 		  int_size_in_bytes (TREE_TYPE (DECL)));		\
 	 fputc ('\n', FILE);						\
         }								\

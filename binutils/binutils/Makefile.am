@@ -67,14 +67,8 @@ ELFEDIT_PROG=elfedit
 
 # These should all be the same program too.
 SIZE_PROG=size
-NM_PROG=nm-new
 OBJDUMP_PROG=objdump
 
-# This is the demangler, as a standalone program.
-# Note: This one is used as the installed name too, unlike the above.
-DEMANGLER_PROG=cxxfilt
-
-ADDR2LINE_PROG=addr2line
 
 DLLTOOL_PROG=dlltool
 WINDRES_PROG=windres
@@ -83,7 +77,7 @@ DLLWRAP_PROG=dllwrap
 
 SRCONV_PROG=srconv$(EXEEXT) sysdump$(EXEEXT) coffdump$(EXEEXT)
 
-bin_PROGRAMS = $(SIZE_PROG) $(OBJDUMP_PROG) $(AR_PROG) $(STRINGS_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG) @BUILD_SRCONV@ @BUILD_DLLTOOL@ @BUILD_WINDRES@ @BUILD_WINDMC@ $(ADDR2LINE_PROG) $(READELF_PROG) $(ELFEDIT_PROG) @BUILD_DLLWRAP@
+bin_PROGRAMS = $(SIZE_PROG) $(OBJDUMP_PROG) $(AR_PROG) $(STRINGS_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG) @BUILD_SRCONV@ @BUILD_DLLTOOL@ @BUILD_WINDRES@ @BUILD_WINDMC@ $(READELF_PROG) $(ELFEDIT_PROG) @BUILD_DLLWRAP@
 
 bin_SCRIPTS = @BUILD_INSTALL_MISC@
 EXTRA_SCRIPTS = embedspu
@@ -96,13 +90,13 @@ TEST_PROGS = $(BFDTEST1_PROG) $(BFDTEST2_PROG)
 
 ## We need a special rule to install the programs which are built with
 ## -new, and to rename cxxfilt to c++filt.
-RENAMED_PROGS = $(NM_PROG) $(STRIP_PROG) $(DEMANGLER_PROG)
+RENAMED_PROGS = $(STRIP_PROG)
 noinst_PROGRAMS = $(RENAMED_PROGS) $(TEST_PROGS) @BUILD_MISC@
 
 EXTRA_PROGRAMS = srconv sysdump coffdump $(DLLTOOL_PROG) $(WINDRES_PROG) $(WINDMC_PROG) $(DLLWRAP_PROG)
 
 # Stuff that goes in tooldir/ if appropriate.
-TOOL_PROGS = nm-new strip-new ar ranlib dlltool objdump objcopy readelf
+TOOL_PROGS = strip-new ar ranlib dlltool objdump objcopy readelf
 
 BASEDIR = $(srcdir)/..
 BFDDIR = $(BASEDIR)/bfd
@@ -124,12 +118,12 @@ GENERATED_HFILES = arparse.h sysroff.h sysinfo.h defparse.h rcparse.h mcparse.h
 BUILT_SOURCES = $(GENERATED_HFILES)
 
 CFILES = \
-	addr2line.c ar.c arsup.c bin2c.c binemul.c bucomm.c \
-	coffdump.c coffgrok.c cxxfilt.c \
+	ar.c arsup.c bin2c.c binemul.c bucomm.c \
+	coffdump.c coffgrok.c  \
 	dwarf.c debug.c dlltool.c dllwrap.c \
 	elfcomm.c emul_aix.c emul_vanilla.c filemode.c \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
-	nm.c not-ranlib.c not-strip.c \
+	not-ranlib.c not-strip.c \
 	objcopy.c objdump.c prdbg.c \
 	od-xcoff.c od-macho.c \
 	rclex.c rdcoff.c rddbg.c readelf.c rename.c \
@@ -206,12 +200,10 @@ installcheck-local:
 # non-empty until configure time.  Ugh!
 size_DEPENDENCIES =      $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
-nm_new_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ar_DEPENDENCIES =        $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 strings_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-cxxfilt_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 srconv_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 sysdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
@@ -219,7 +211,6 @@ coffdump_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 dlltool_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 windres_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 windmc_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 readelf_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
 elfedit_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
 dllwrap_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
@@ -242,8 +233,6 @@ elfedit_LDADD = $(LIBINTL) $(LIBIBERTY)
 
 strip_new_SOURCES = objcopy.c is-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
-nm_new_SOURCES = nm.c $(BULIBS)
-
 objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
 objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
@@ -260,7 +249,7 @@ endif
 	$(COMPILE) -c $(OBJDUMP_DEFS) $(srcdir)/objdump.c
 endif
 
-cxxfilt_SOURCES = cxxfilt.c $(BULIBS)
+
 
 ar_SOURCES = arparse.y arlex.l ar.c not-ranlib.c arsup.c rename.c binemul.c \
 	emul_$(EMULATION).c $(BULIBS)
@@ -271,7 +260,6 @@ ranlib_SOURCES = ar.c is-ranlib.c arparse.y arlex.l arsup.c rename.c \
 	binemul.c emul_$(EMULATION).c $(BULIBS)
 ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
 
-addr2line_SOURCES = addr2line.c $(BULIBS)
 
 # The following is commented out for the conversion to automake.
 # This rule creates a single binary that switches between ar and ranlib
@@ -501,8 +489,8 @@ mostlyclean-local:
 install-exec-local: install-binPROGRAMS $(bin_PROGRAMS) $(noinst_PROGRAMS)
 	@list='$(RENAMED_PROGS)'; for p in $$list; do \
 	  if test -f $$p$(EXEEXT); then \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' -e 's/cxxfilt/$(DEMANGLER_NAME)/'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//' -e 's/cxxfilt/$(DEMANGLER_NAME)/'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 	$(mkinstalldirs) $(DESTDIR)$(tooldir)/bin

@@ -145,18 +145,12 @@ struct obstack		/* control current object in current chunk */
   char	*chunk_limit;		/* address of char after current chunk */
   ptrdiff_t temp;		/* Temporary for some macros.  */
   int   alignment_mask;		/* Mask of alignment for each object. */
-#if defined __STDC__ && __STDC__
   /* These prototypes vary based on `use_extra_arg', and we use
      casts to the prototypeless function type in all assignments,
      but having prototypes here quiets -Wstrict-prototypes.  */
   struct _obstack_chunk *(*chunkfun) (void *, long);
   void (*freefun) (void *, struct _obstack_chunk *);
   void *extra_arg;		/* first arg for chunk alloc/dealloc funcs */
-#else
-  struct _obstack_chunk *(*chunkfun) (); /* User's fcn to allocate a chunk.  */
-  void (*freefun) ();		/* User's function to free a chunk.  */
-  char *extra_arg;		/* first arg for chunk alloc/dealloc funcs */
-#endif
   unsigned use_extra_arg:1;	/* chunk alloc/dealloc funcs take extra arg */
   unsigned maybe_empty_object:1;/* There is a possibility that the current
 				   chunk contains a zero-length object.  This
@@ -169,7 +163,6 @@ struct obstack		/* control current object in current chunk */
 
 /* Declare the external functions we use; they are in obstack.c.  */
 
-#if defined __STDC__ && __STDC__
 extern void _obstack_newchunk (struct obstack *, int);
 extern void _obstack_free (struct obstack *, void *);
 extern int _obstack_begin (struct obstack *, int, int,
@@ -178,15 +171,6 @@ extern int _obstack_begin_1 (struct obstack *, int, int,
 			     void *(*) (void *, long),
 			     void (*) (void *, void *), void *);
 extern int _obstack_memory_used (struct obstack *);
-#else
-extern void _obstack_newchunk ();
-extern void _obstack_free ();
-extern int _obstack_begin ();
-extern int _obstack_begin_1 ();
-extern int _obstack_memory_used ();
-#endif
-
-#if defined __STDC__ && __STDC__
 
 /* Do the function-declarations after the structs
    but before defining the macros.  */
@@ -226,7 +210,6 @@ int obstack_alignment_mask (struct obstack *obstack);
 int obstack_chunk_size (struct obstack *obstack);
 int obstack_memory_used (struct obstack *obstack);
 
-#endif /* __STDC__ */
 
 /* Non-ANSI C cannot really support alternative functions for these macros,
    so we do not declare them.  */
@@ -234,11 +217,7 @@ int obstack_memory_used (struct obstack *obstack);
 /* Error handler called when `obstack_chunk_alloc' failed to allocate
    more memory.  This can be set to a user defined function.  The
    default action is to print a message and abort.  */
-#if defined __STDC__ && __STDC__
 extern void (*obstack_alloc_failed_handler) (void);
-#else
-extern void (*obstack_alloc_failed_handler) ();
-#endif
 
 /* Exit value used when `print_and_abort' is used.  */
 extern int obstack_exit_failure;
@@ -263,7 +242,6 @@ extern int obstack_exit_failure;
 
 /* To prevent prototype warnings provide complete argument list in
    standard C version.  */
-#if defined __STDC__ && __STDC__
 
 # define obstack_init(h) \
   _obstack_begin ((h), 0, 0, \
@@ -287,32 +265,6 @@ extern int obstack_exit_failure;
 
 # define obstack_freefun(h, newfreefun) \
   ((h) -> freefun = (void (*)(void *, struct _obstack_chunk *)) (newfreefun))
-
-#else
-
-# define obstack_init(h) \
-  _obstack_begin ((h), 0, 0, \
-		  (void *(*) ()) obstack_chunk_alloc, (void (*) ()) obstack_chunk_free)
-
-# define obstack_begin(h, size) \
-  _obstack_begin ((h), (size), 0, \
-		  (void *(*) ()) obstack_chunk_alloc, (void (*) ()) obstack_chunk_free)
-
-# define obstack_specify_allocation(h, size, alignment, chunkfun, freefun) \
-  _obstack_begin ((h), (size), (alignment), \
-		    (void *(*) ()) (chunkfun), (void (*) ()) (freefun))
-
-# define obstack_specify_allocation_with_arg(h, size, alignment, chunkfun, freefun, arg) \
-  _obstack_begin_1 ((h), (size), (alignment), \
-		    (void *(*) ()) (chunkfun), (void (*) ()) (freefun), (arg))
-
-# define obstack_chunkfun(h, newchunkfun) \
-  ((h) -> chunkfun = (struct _obstack_chunk *(*)()) (newchunkfun))
-
-# define obstack_freefun(h, newfreefun) \
-  ((h) -> freefun = (void (*)()) (newfreefun))
-
-#endif
 
 #define obstack_1grow_fast(h,achar) (*((h)->next_free)++ = achar)
 

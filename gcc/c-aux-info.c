@@ -27,29 +27,29 @@ Boston, MA 02111-1307, USA.  */
 #include "tree.h"
 #include "c-tree.h"
 
-enum formals_style_enum {
-  ansi,
-  k_and_r_names,
-  k_and_r_decls
+enum formals_style_enum
+{
+    ansi,
+    k_and_r_names,
+    k_and_r_decls
 };
 typedef enum formals_style_enum formals_style;
 
 
 static char *data_type;
 
-static char *affix_data_type		(char *);
-static char *gen_formal_list_for_type	(tree, formals_style);
-static int   deserves_ellipsis		(tree);
-static char *gen_formal_list_for_func_def (tree, formals_style);
-static char *gen_type			(char *, tree, formals_style);
-static char *gen_decl			(tree, int, formals_style);
+static char *affix_data_type(char *);
+static char *gen_formal_list_for_type(tree, formals_style);
+static int deserves_ellipsis(tree);
+static char *gen_formal_list_for_func_def(tree, formals_style);
+static char *gen_type(char *, tree, formals_style);
+static char *gen_decl(tree, int, formals_style);
 
 /* Concatenate strings and return the result.
    Each string is passed as an argument, with the last argument being NULL,
    e.g. concat("str1", "str2", "str3", ..., "strN", NULL).  */
 
-char *
-concat(const char *first, ...)
+char *concat(const char *first, ...)
 {
     int length;
     char *newstr;
@@ -119,42 +119,40 @@ concat(const char *first, ...)
    `const char *foo;' and *not* `char const *foo;' so we try to create types
    that look as expected.  */
 
-static char *
-affix_data_type (type_or_decl)
-     char *type_or_decl;
+static char *affix_data_type(char *type_or_decl)
 {
-  char *p = type_or_decl;
-  char *qualifiers_then_data_type;
-  char saved;
+    char *p = type_or_decl;
+    char *qualifiers_then_data_type;
+    char saved;
 
-  /* Skip as many leading const's or volatile's as there are.  */
+    /* Skip as many leading const's or volatile's as there are.  */
 
-  for (;;)
+    for (;;)
     {
-      if (!strncmp (p, "volatile ", 9))
+        if (!strncmp(p, "volatile ", 9))
         {
-          p += 9;
-          continue;
+            p += 9;
+            continue;
         }
-      if (!strncmp (p, "const ", 6))
+        if (!strncmp(p, "const ", 6))
         {
-          p += 6;
-          continue;
+            p += 6;
+            continue;
         }
-      break;
+        break;
     }
 
-  /* p now points to the place where we can insert the data type.  We have to
-     add a blank after the data-type of course.  */
+    /* p now points to the place where we can insert the data type.  We have to
+       add a blank after the data-type of course.  */
 
-  if (p == type_or_decl)
-    return concat (data_type, " ", type_or_decl, NULL);
+    if (p == type_or_decl)
+        return concat(data_type, " ", type_or_decl, NULL);
 
-  saved = *p;
-  *p = '\0';
-  qualifiers_then_data_type = concat (type_or_decl, data_type, NULL);
-  *p = saved;
-  return concat (qualifiers_then_data_type, " ", p, NULL);
+    saved = *p;
+    *p = '\0';
+    qualifiers_then_data_type = concat(type_or_decl, data_type, NULL);
+    *p = saved;
+    return concat(qualifiers_then_data_type, " ", p, NULL);
 }
 
 /* Given a tree node which represents some "function type", generate the
@@ -164,82 +162,77 @@ affix_data_type (type_or_decl)
    we are currently aiming for is non-ansi, then we just return a pair
    of empty parens here.  */
 
-static char *
-gen_formal_list_for_type (fntype, style)
-     tree fntype;
-     formals_style style;
+static char *gen_formal_list_for_type(tree fntype, formals_style style)
 {
-  char *formal_list = "";
-  tree formal_type;
+    char *formal_list = "";
+    tree formal_type;
 
-  if (style != ansi)
-    return "()";
+    if (style != ansi)
+        return "()";
 
-  formal_type = TYPE_ARG_TYPES (fntype);
-  while (formal_type && TREE_VALUE (formal_type) != void_type_node)
+    formal_type = TYPE_ARG_TYPES(fntype);
+    while (formal_type && TREE_VALUE(formal_type) != void_type_node)
     {
-      char *this_type;
+        char *this_type;
 
-      if (*formal_list)
-        formal_list = concat (formal_list, ", ", NULL);
+        if (*formal_list)
+            formal_list = concat(formal_list, ", ", NULL);
 
-      this_type = gen_type ("", TREE_VALUE (formal_type), ansi);
-      formal_list
-	= ((strlen (this_type))
-	   ? concat (formal_list, affix_data_type (this_type), NULL)
-	   : concat (formal_list, data_type, NULL));
+        this_type = gen_type("", TREE_VALUE(formal_type), ansi);
+        formal_list = ((strlen(this_type)) ? concat(formal_list, affix_data_type(this_type), NULL)
+                                           : concat(formal_list, data_type, NULL));
 
-      formal_type = TREE_CHAIN (formal_type);
+        formal_type = TREE_CHAIN(formal_type);
     }
 
-  /* If we got to here, then we are trying to generate an ANSI style formal
-     parameters list.
+    /* If we got to here, then we are trying to generate an ANSI style formal
+       parameters list.
 
-     New style prototyped ANSI formal parameter lists should in theory always
-     contain some stuff between the opening and closing parens, even if it is
-     only "void".
+       New style prototyped ANSI formal parameter lists should in theory always
+       contain some stuff between the opening and closing parens, even if it is
+       only "void".
 
-     The brutal truth though is that there is lots of old K&R code out there
-     which contains declarations of "pointer-to-function" parameters and
-     these almost never have fully specified formal parameter lists associated
-     with them.  That is, the pointer-to-function parameters are declared
-     with just empty parameter lists.
+       The brutal truth though is that there is lots of old K&R code out there
+       which contains declarations of "pointer-to-function" parameters and
+       these almost never have fully specified formal parameter lists associated
+       with them.  That is, the pointer-to-function parameters are declared
+       with just empty parameter lists.
 
-     In cases such as these, protoize should really insert *something* into
-     the vacant parameter lists, but what?  It has no basis on which to insert
-     anything in particular.
+       In cases such as these, protoize should really insert *something* into
+       the vacant parameter lists, but what?  It has no basis on which to insert
+       anything in particular.
 
-     Here, we make life easy for protoize by trying to distinguish between
-     K&R empty parameter lists and new-style prototyped parameter lists
-     that actually contain "void".  In the latter case we (obviously) want
-     to output the "void" verbatim, and that what we do.  In the former case,
-     we do our best to give protoize something nice to insert.
+       Here, we make life easy for protoize by trying to distinguish between
+       K&R empty parameter lists and new-style prototyped parameter lists
+       that actually contain "void".  In the latter case we (obviously) want
+       to output the "void" verbatim, and that what we do.  In the former case,
+       we do our best to give protoize something nice to insert.
 
-     This "something nice" should be something that is still valid (when
-     re-compiled) but something that can clearly indicate to the user that
-     more typing information (for the parameter list) should be added (by
-     hand) at some convenient moment.
+       This "something nice" should be something that is still valid (when
+       re-compiled) but something that can clearly indicate to the user that
+       more typing information (for the parameter list) should be added (by
+       hand) at some convenient moment.
 
-     The string chosen here is a comment with question marks in it.  */
+       The string chosen here is a comment with question marks in it.  */
 
-  if (!*formal_list)
+    if (!*formal_list)
     {
-      if (TYPE_ARG_TYPES (fntype))
-        /* assert (TREE_VALUE (TYPE_ARG_TYPES (fntype)) == void_type_node);  */
-        formal_list = "void";
-      else
-        formal_list = "/* ??? */";
+        if (TYPE_ARG_TYPES(fntype))
+            /* assert (TREE_VALUE (TYPE_ARG_TYPES (fntype)) == void_type_node);  */
+            formal_list = "void";
+        else
+            formal_list = "/* ??? */";
     }
-  else
+    else
     {
-      /* If there were at least some parameters, and if the formals-types-list
-         petered out to a NULL (i.e. without being terminated by a
-         void_type_node) then we need to tack on an ellipsis.  */
-      if (!formal_type)
-        formal_list = concat (formal_list, ", ...", NULL);
+        /* If there were at least some parameters, and if the formals-types-list
+           petered out to a NULL (i.e. without being terminated by a
+           void_type_node) then we need to tack on an ellipsis.  */
+        if (!formal_type)
+            formal_list = concat(formal_list, ", ...", NULL);
     }
 
-  return concat (" (", formal_list, ")", NULL);
+    return concat(" (", formal_list, ")", NULL);
 }
 
 /* For the generation of an ANSI prototype for a function definition, we have
@@ -248,21 +241,19 @@ gen_formal_list_for_type (fntype, style)
    ellipsis.  Given a tree node, the following function will return non-zero
    if the "function type" parameter list should end with an ellipsis.  */
 
-static int
-deserves_ellipsis (fntype)
-     tree fntype;
+static int deserves_ellipsis(tree fntype)
 {
-  tree formal_type;
+    tree formal_type;
 
-  formal_type = TYPE_ARG_TYPES (fntype);
-  while (formal_type && TREE_VALUE (formal_type) != void_type_node)
-    formal_type = TREE_CHAIN (formal_type);
+    formal_type = TYPE_ARG_TYPES(fntype);
+    while (formal_type && TREE_VALUE(formal_type) != void_type_node)
+        formal_type = TREE_CHAIN(formal_type);
 
-  /* If there were at least some parameters, and if the formals-types-list
-     petered out to a NULL (i.e. without being terminated by a void_type_node)
-     then we need to tack on an ellipsis.  */
+    /* If there were at least some parameters, and if the formals-types-list
+       petered out to a NULL (i.e. without being terminated by a void_type_node)
+       then we need to tack on an ellipsis.  */
 
-  return (!formal_type && TYPE_ARG_TYPES (fntype));
+    return (!formal_type && TYPE_ARG_TYPES(fntype));
 }
 
 /* Generate a parameter list for a function definition (in some given style).
@@ -284,38 +275,35 @@ deserves_ellipsis (fntype)
    This routine returns a string which is the source form for the entire
    function formal parameter list.  */
 
-static char *
-gen_formal_list_for_func_def (fndecl, style)
-     tree fndecl;
-     formals_style style;
+static char *gen_formal_list_for_func_def(tree fndecl, formals_style style)
 {
-  char *formal_list = "";
-  tree formal_decl;
+    char *formal_list = "";
+    tree formal_decl;
 
-  formal_decl = DECL_ARGUMENTS (fndecl);
-  while (formal_decl)
+    formal_decl = DECL_ARGUMENTS(fndecl);
+    while (formal_decl)
     {
-      char *this_formal;
+        char *this_formal;
 
-      if (*formal_list && ((style == ansi) || (style == k_and_r_names)))
-        formal_list = concat (formal_list, ", ", NULL);
-      this_formal = gen_decl (formal_decl, 0, style);
-      if (style == k_and_r_decls)
-        formal_list = concat (formal_list, this_formal, "; ", NULL);
-      else
-        formal_list = concat (formal_list, this_formal, NULL);
-      formal_decl = TREE_CHAIN (formal_decl);
+        if (*formal_list && ((style == ansi) || (style == k_and_r_names)))
+            formal_list = concat(formal_list, ", ", NULL);
+        this_formal = gen_decl(formal_decl, 0, style);
+        if (style == k_and_r_decls)
+            formal_list = concat(formal_list, this_formal, "; ", NULL);
+        else
+            formal_list = concat(formal_list, this_formal, NULL);
+        formal_decl = TREE_CHAIN(formal_decl);
     }
-  if (style == ansi)
+    if (style == ansi)
     {
-      if (!DECL_ARGUMENTS (fndecl))
-        formal_list = concat (formal_list, "void", NULL);
-      if (deserves_ellipsis (TREE_TYPE (fndecl)))
-        formal_list = concat (formal_list, ", ...", NULL);
+        if (!DECL_ARGUMENTS(fndecl))
+            formal_list = concat(formal_list, "void", NULL);
+        if (deserves_ellipsis(TREE_TYPE(fndecl)))
+            formal_list = concat(formal_list, ", ...", NULL);
     }
-  if ((style == ansi) || (style == k_and_r_names))
-    formal_list = concat (" (", formal_list, ")", NULL);
-  return formal_list;
+    if ((style == ansi) || (style == k_and_r_names))
+        formal_list = concat(" (", formal_list, ")", NULL);
+    return formal_list;
 }
 
 /* Generate a string which is the source code form for a given type (t).  This
@@ -359,168 +347,156 @@ gen_formal_list_for_func_def (fndecl, style)
    to do at this point is for the initial caller to prepend the "data_type"
    string onto the returned "seed".  */
 
-static char *
-gen_type (ret_val, t, style)
-     char *ret_val;
-     tree t;
-     formals_style style;
+static char *gen_type(char *ret_val, tree t, formals_style style)
 {
-  tree chain_p;
+    tree chain_p;
 
-  /* If there is a typedef name for this type, use it.  */
-  if (TYPE_NAME (t) && TREE_CODE (TYPE_NAME (t)) == TYPE_DECL)
-    data_type = IDENTIFIER_POINTER (DECL_NAME (TYPE_NAME (t)));
-  else
+    /* If there is a typedef name for this type, use it.  */
+    if (TYPE_NAME(t) && TREE_CODE(TYPE_NAME(t)) == TYPE_DECL)
+        data_type = IDENTIFIER_POINTER(DECL_NAME(TYPE_NAME(t)));
+    else
     {
-      switch (TREE_CODE (t))
+        switch (TREE_CODE(t))
         {
         case POINTER_TYPE:
-          if (TYPE_READONLY (t))
-            ret_val = concat ("const ", ret_val, NULL);
-          if (TYPE_VOLATILE (t))
-            ret_val = concat ("volatile ", ret_val, NULL);
+            if (TYPE_READONLY(t))
+                ret_val = concat("const ", ret_val, NULL);
+            if (TYPE_VOLATILE(t))
+                ret_val = concat("volatile ", ret_val, NULL);
 
-          ret_val = concat ("*", ret_val, NULL);
+            ret_val = concat("*", ret_val, NULL);
 
-	  if (TREE_CODE (TREE_TYPE (t)) == ARRAY_TYPE || TREE_CODE (TREE_TYPE (t)) == FUNCTION_TYPE)
-	    ret_val = concat ("(", ret_val, ")", NULL);
+            if (TREE_CODE(TREE_TYPE(t)) == ARRAY_TYPE || TREE_CODE(TREE_TYPE(t)) == FUNCTION_TYPE)
+                ret_val = concat("(", ret_val, ")", NULL);
 
-          ret_val = gen_type (ret_val, TREE_TYPE (t), style);
+            ret_val = gen_type(ret_val, TREE_TYPE(t), style);
 
-          return ret_val;
+            return ret_val;
 
         case ARRAY_TYPE:
-	  if (TYPE_SIZE (t) == 0 || TREE_CODE (TYPE_SIZE (t)) != INTEGER_CST)
-	    ret_val = gen_type (concat (ret_val, "[]", NULL),
-				TREE_TYPE (t), style);
-	  else if (int_size_in_bytes (t) == 0)
-	    ret_val = gen_type (concat (ret_val, "[0]", NULL),
-				TREE_TYPE (t), style);
-	  else
-	    {
-	      int size = (int_size_in_bytes (t) / int_size_in_bytes (TREE_TYPE (t)));
-	      char buff[10];
-	      sprintf (buff, "[%d]", size);
-	      ret_val = gen_type (concat (ret_val, buff, NULL),
-				  TREE_TYPE (t), style);
-	    }
-          break;
+            if (TYPE_SIZE(t) == 0 || TREE_CODE(TYPE_SIZE(t)) != INTEGER_CST)
+                ret_val = gen_type(concat(ret_val, "[]", NULL), TREE_TYPE(t), style);
+            else if (int_size_in_bytes(t) == 0)
+                ret_val = gen_type(concat(ret_val, "[0]", NULL), TREE_TYPE(t), style);
+            else
+            {
+                int size = (int_size_in_bytes(t) / int_size_in_bytes(TREE_TYPE(t)));
+                char buff[10];
+                sprintf(buff, "[%d]", size);
+                ret_val = gen_type(concat(ret_val, buff, NULL), TREE_TYPE(t), style);
+            }
+            break;
 
         case FUNCTION_TYPE:
-          ret_val = gen_type (concat (ret_val,
-				      gen_formal_list_for_type (t, style),
-				      NULL),
-			      TREE_TYPE (t), style);
-          break;
+            ret_val = gen_type(
+                concat(ret_val, gen_formal_list_for_type(t, style), NULL), TREE_TYPE(t), style);
+            break;
 
         case IDENTIFIER_NODE:
-          data_type = IDENTIFIER_POINTER (t);
-          break;
+            data_type = IDENTIFIER_POINTER(t);
+            break;
 
-	/* The following three cases are complicated by the fact that a
-           user may do something really stupid, like creating a brand new
-           "anonymous" type specification in a formal argument list (or as
-           part of a function return type specification).  For example:
+            /* The following three cases are complicated by the fact that a
+                   user may do something really stupid, like creating a brand new
+                   "anonymous" type specification in a formal argument list (or as
+                   part of a function return type specification).  For example:
 
-		int f (enum { red, green, blue } color);
+                int f (enum { red, green, blue } color);
 
-	   In such cases, we have no name that we can put into the prototype
-	   to represent the (anonymous) type.  Thus, we have to generate the
-	   whole darn type specification.  Yuck!  */
+               In such cases, we have no name that we can put into the prototype
+               to represent the (anonymous) type.  Thus, we have to generate the
+               whole darn type specification.  Yuck!  */
 
         case RECORD_TYPE:
-	  if (TYPE_NAME (t))
-	    data_type = IDENTIFIER_POINTER (TYPE_NAME (t));
-	  else
-	    {
-	      data_type = "";
-	      chain_p = TYPE_FIELDS (t);
-	      while (chain_p)
-		{
-		  data_type = concat (data_type, gen_decl (chain_p, 0, ansi),
-				      NULL);
-		  chain_p = TREE_CHAIN (chain_p);
-		  data_type = concat (data_type, "; ", NULL);
-		}
-	      data_type = concat ("{ ", data_type, "}", NULL);
-	    }
-	  data_type = concat ("struct ", data_type, NULL);
-	  break;
+            if (TYPE_NAME(t))
+                data_type = IDENTIFIER_POINTER(TYPE_NAME(t));
+            else
+            {
+                data_type = "";
+                chain_p = TYPE_FIELDS(t);
+                while (chain_p)
+                {
+                    data_type = concat(data_type, gen_decl(chain_p, 0, ansi), NULL);
+                    chain_p = TREE_CHAIN(chain_p);
+                    data_type = concat(data_type, "; ", NULL);
+                }
+                data_type = concat("{ ", data_type, "}", NULL);
+            }
+            data_type = concat("struct ", data_type, NULL);
+            break;
 
         case UNION_TYPE:
-	  if (TYPE_NAME (t))
-	    data_type = IDENTIFIER_POINTER (TYPE_NAME (t));
-	  else
-	    {
-	      data_type = "";
-	      chain_p = TYPE_FIELDS (t);
-	      while (chain_p)
-		{
-		  data_type = concat (data_type, gen_decl (chain_p, 0, ansi),
-				      NULL);
-		  chain_p = TREE_CHAIN (chain_p);
-		  data_type = concat (data_type, "; ", NULL);
-		}
-	      data_type = concat ("{ ", data_type, "}", NULL);
-	    }
-	  data_type = concat ("union ", data_type, NULL);
-	  break;
+            if (TYPE_NAME(t))
+                data_type = IDENTIFIER_POINTER(TYPE_NAME(t));
+            else
+            {
+                data_type = "";
+                chain_p = TYPE_FIELDS(t);
+                while (chain_p)
+                {
+                    data_type = concat(data_type, gen_decl(chain_p, 0, ansi), NULL);
+                    chain_p = TREE_CHAIN(chain_p);
+                    data_type = concat(data_type, "; ", NULL);
+                }
+                data_type = concat("{ ", data_type, "}", NULL);
+            }
+            data_type = concat("union ", data_type, NULL);
+            break;
 
         case ENUMERAL_TYPE:
-	  if (TYPE_NAME (t))
-	    data_type = IDENTIFIER_POINTER (TYPE_NAME (t));
-	  else
-	    {
-	      data_type = "";
-	      chain_p = TYPE_VALUES (t);
-	      while (chain_p)
-		{
-		  data_type = concat (data_type,
-			IDENTIFIER_POINTER (TREE_PURPOSE (chain_p)), NULL);
-		  chain_p = TREE_CHAIN (chain_p);
-		  if (chain_p)
-		    data_type = concat (data_type, ", ", NULL);
-		}
-	      data_type = concat ("{ ", data_type, " }", NULL);
-	    }
-	  data_type = concat ("enum ", data_type, NULL);
-	  break;
+            if (TYPE_NAME(t))
+                data_type = IDENTIFIER_POINTER(TYPE_NAME(t));
+            else
+            {
+                data_type = "";
+                chain_p = TYPE_VALUES(t);
+                while (chain_p)
+                {
+                    data_type = concat(data_type, IDENTIFIER_POINTER(TREE_PURPOSE(chain_p)), NULL);
+                    chain_p = TREE_CHAIN(chain_p);
+                    if (chain_p)
+                        data_type = concat(data_type, ", ", NULL);
+                }
+                data_type = concat("{ ", data_type, " }", NULL);
+            }
+            data_type = concat("enum ", data_type, NULL);
+            break;
 
         case TYPE_DECL:
-          data_type = IDENTIFIER_POINTER (DECL_NAME (t));
-          break;
- 
+            data_type = IDENTIFIER_POINTER(DECL_NAME(t));
+            break;
+
         case INTEGER_TYPE:
-          data_type = IDENTIFIER_POINTER (DECL_NAME (TYPE_NAME (t)));
-          /* Normally, `unsigned' is part of the deal.  Not so if it comes
-    	     with a type qualifier.  */
-          if (TREE_UNSIGNED (t) && TYPE_QUALS (t))
-    	    data_type = concat ("unsigned ", data_type, NULL);
-	  break;
+            data_type = IDENTIFIER_POINTER(DECL_NAME(TYPE_NAME(t)));
+            /* Normally, `unsigned' is part of the deal.  Not so if it comes
+               with a type qualifier.  */
+            if (TREE_UNSIGNED(t) && TYPE_QUALS(t))
+                data_type = concat("unsigned ", data_type, NULL);
+            break;
 
         case REAL_TYPE:
-          data_type = IDENTIFIER_POINTER (DECL_NAME (TYPE_NAME (t)));
-          break;
+            data_type = IDENTIFIER_POINTER(DECL_NAME(TYPE_NAME(t)));
+            break;
 
         case VOID_TYPE:
-          data_type = "void";
-          break;
+            data_type = "void";
+            break;
 
-	case ERROR_MARK:
-	  data_type = "[ERROR]";
-	  break;
+        case ERROR_MARK:
+            data_type = "[ERROR]";
+            break;
 
         default:
-          abort ();
+            abort();
         }
     }
-  if (TYPE_READONLY (t))
-    ret_val = concat ("const ", ret_val, NULL);
-  if (TYPE_VOLATILE (t))
-    ret_val = concat ("volatile ", ret_val, NULL);
-  if (TYPE_RESTRICT (t))
-    ret_val = concat ("restrict ", ret_val, NULL);
-  return ret_val;
+    if (TYPE_READONLY(t))
+        ret_val = concat("const ", ret_val, NULL);
+    if (TYPE_VOLATILE(t))
+        ret_val = concat("volatile ", ret_val, NULL);
+    if (TYPE_RESTRICT(t))
+        ret_val = concat("restrict ", ret_val, NULL);
+    return ret_val;
 }
 
 /* Generate a string (source) representation of an entire entity declaration
@@ -533,79 +509,74 @@ gen_type (ret_val, t, style)
    associated with a function definition.  In this case, we can assume that
    an attached list of DECL nodes for function formal arguments is present.  */
 
-static char *
-gen_decl (decl, is_func_definition, style)
-     tree decl;
-     int is_func_definition;
-     formals_style style;
+static char *gen_decl(tree decl, int is_func_definition, formals_style style)
 {
-  char *ret_val;
+    char *ret_val;
 
-  if (DECL_NAME (decl))
-    ret_val = IDENTIFIER_POINTER (DECL_NAME (decl));
-  else
-    ret_val = "";
+    if (DECL_NAME(decl))
+        ret_val = IDENTIFIER_POINTER(DECL_NAME(decl));
+    else
+        ret_val = "";
 
-  /* If we are just generating a list of names of formal parameters, we can
-     simply return the formal parameter name (with no typing information
-     attached to it) now.  */
+    /* If we are just generating a list of names of formal parameters, we can
+       simply return the formal parameter name (with no typing information
+       attached to it) now.  */
 
-  if (style == k_and_r_names)
-    return ret_val;
+    if (style == k_and_r_names)
+        return ret_val;
 
-  /* Note that for the declaration of some entity (either a function or a
-     data object, like for instance a parameter) if the entity itself was
-     declared as either const or volatile, then const and volatile properties
-     are associated with just the declaration of the entity, and *not* with
-     the `type' of the entity.  Thus, for such declared entities, we have to
-     generate the qualifiers here.  */
+    /* Note that for the declaration of some entity (either a function or a
+       data object, like for instance a parameter) if the entity itself was
+       declared as either const or volatile, then const and volatile properties
+       are associated with just the declaration of the entity, and *not* with
+       the `type' of the entity.  Thus, for such declared entities, we have to
+       generate the qualifiers here.  */
 
-  if (TREE_THIS_VOLATILE (decl))
-    ret_val = concat ("volatile ", ret_val, NULL);
-  if (TREE_READONLY (decl))
-    ret_val = concat ("const ", ret_val, NULL);
+    if (TREE_THIS_VOLATILE(decl))
+        ret_val = concat("volatile ", ret_val, NULL);
+    if (TREE_READONLY(decl))
+        ret_val = concat("const ", ret_val, NULL);
 
-  data_type = "";
+    data_type = "";
 
-  /* For FUNCTION_DECL nodes, there are two possible cases here.  First, if
-     this FUNCTION_DECL node was generated from a function "definition", then
-     we will have a list of DECL_NODE's, one for each of the function's formal
-     parameters.  In this case, we can print out not only the types of each
-     formal, but also each formal's name.  In the second case, this
-     FUNCTION_DECL node came from an actual function declaration (and *not*
-     a definition).  In this case, we do nothing here because the formal
-     argument type-list will be output later, when the "type" of the function
-     is added to the string we are building.  Note that the ANSI-style formal
-     parameter list is considered to be a (suffix) part of the "type" of the
-     function.  */
+    /* For FUNCTION_DECL nodes, there are two possible cases here.  First, if
+       this FUNCTION_DECL node was generated from a function "definition", then
+       we will have a list of DECL_NODE's, one for each of the function's formal
+       parameters.  In this case, we can print out not only the types of each
+       formal, but also each formal's name.  In the second case, this
+       FUNCTION_DECL node came from an actual function declaration (and *not*
+       a definition).  In this case, we do nothing here because the formal
+       argument type-list will be output later, when the "type" of the function
+       is added to the string we are building.  Note that the ANSI-style formal
+       parameter list is considered to be a (suffix) part of the "type" of the
+       function.  */
 
-  if (TREE_CODE (decl) == FUNCTION_DECL && is_func_definition)
+    if (TREE_CODE(decl) == FUNCTION_DECL && is_func_definition)
     {
-      ret_val = concat (ret_val, gen_formal_list_for_func_def (decl, ansi),
-			NULL);
+        ret_val = concat(ret_val, gen_formal_list_for_func_def(decl, ansi), NULL);
 
-      /* Since we have already added in the formals list stuff, here we don't
-         add the whole "type" of the function we are considering (which
-         would include its parameter-list info), rather, we only add in
-         the "type" of the "type" of the function, which is really just
-         the return-type of the function (and does not include the parameter
-         list info).  */
+        /* Since we have already added in the formals list stuff, here we don't
+           add the whole "type" of the function we are considering (which
+           would include its parameter-list info), rather, we only add in
+           the "type" of the "type" of the function, which is really just
+           the return-type of the function (and does not include the parameter
+           list info).  */
 
-      ret_val = gen_type (ret_val, TREE_TYPE (TREE_TYPE (decl)), style);
+        ret_val = gen_type(ret_val, TREE_TYPE(TREE_TYPE(decl)), style);
     }
-  else
-    ret_val = gen_type (ret_val, TREE_TYPE (decl), style);
+    else
+        ret_val = gen_type(ret_val, TREE_TYPE(decl), style);
 
-  ret_val = affix_data_type (ret_val);
+    ret_val = affix_data_type(ret_val);
 
-  if (TREE_CODE (decl) != FUNCTION_DECL && DECL_REGISTER (decl))
-    ret_val = concat ("register ", ret_val, NULL);
-  if (TREE_PUBLIC (decl))
-    ret_val = concat ("extern ", ret_val, NULL);
-  if (TREE_CODE (decl) == FUNCTION_DECL && !TREE_PUBLIC (decl))
-    ret_val = concat ("static ", ret_val, NULL);
+    if (TREE_CODE(decl) != FUNCTION_DECL && DECL_REGISTER(decl))
+        ret_val = concat("register ", ret_val, NULL);
+    if (TREE_PUBLIC(decl))
+        ret_val = concat("extern ", ret_val, NULL);
+    if (TREE_CODE(decl) == FUNCTION_DECL && !TREE_PUBLIC(decl))
+        ret_val = concat("static ", ret_val, NULL);
 
-  return ret_val;
+    return ret_val;
 }
 
 extern FILE *aux_info_file;
@@ -614,48 +585,40 @@ extern FILE *aux_info_file;
    routine is called once for each function declaration, and once for each
    function definition (even the implicit ones).  */
 
-void
-gen_aux_info_record (fndecl, is_definition, is_implicit, is_prototyped)
-     tree fndecl;
-     int is_definition;
-     int is_implicit;
-     int is_prototyped;
+void gen_aux_info_record(tree fndecl, int is_definition, int is_implicit, int is_prototyped)
 {
-  if (flag_gen_aux_info)
+    if (flag_gen_aux_info)
     {
-      static int compiled_from_record = 0;
+        static int compiled_from_record = 0;
 
-      /* Each output .X file must have a header line.  Write one now if we
-	 have not yet done so.  */
+        /* Each output .X file must have a header line.  Write one now if we
+       have not yet done so.  */
 
-      if (! compiled_from_record++)
-	{
-	  /* The first line tells which directory file names are relative to.
-	     Currently, -aux-info works only for files in the working
-	     directory, so just use a `.' as a placeholder for now.  */
-	  fprintf (aux_info_file, "/* compiled from: . */\n");
-	}
+        if (!compiled_from_record++)
+        {
+            /* The first line tells which directory file names are relative to.
+               Currently, -aux-info works only for files in the working
+               directory, so just use a `.' as a placeholder for now.  */
+            fprintf(aux_info_file, "/* compiled from: . */\n");
+        }
 
-      /* Write the actual line of auxiliary info.  */
+        /* Write the actual line of auxiliary info.  */
 
-      fprintf (aux_info_file, "/* %s:%d:%c%c */ %s;",
-	       DECL_SOURCE_FILE (fndecl),
-	       DECL_SOURCE_LINE (fndecl),
-	       (is_implicit) ? 'I' : (is_prototyped) ? 'N' : 'O',
-	       (is_definition) ? 'F' : 'C',
-	       gen_decl (fndecl, is_definition, ansi));
+        fprintf(aux_info_file, "/* %s:%d:%c%c */ %s;", DECL_SOURCE_FILE(fndecl),
+            DECL_SOURCE_LINE(fndecl), (is_implicit) ? 'I' : (is_prototyped) ? 'N' : 'O',
+            (is_definition) ? 'F' : 'C', gen_decl(fndecl, is_definition, ansi));
 
-      /* If this is an explicit function declaration, we need to also write
-	 out an old-style (i.e. K&R) function header, just in case the user
-	 wants to run unprotoize.  */
+        /* If this is an explicit function declaration, we need to also write
+       out an old-style (i.e. K&R) function header, just in case the user
+       wants to run unprotoize.  */
 
-      if (is_definition)
-	{
-	  fprintf (aux_info_file, " /*%s %s*/",
-		   gen_formal_list_for_func_def (fndecl, k_and_r_names),
-		   gen_formal_list_for_func_def (fndecl, k_and_r_decls));
-	}
+        if (is_definition)
+        {
+            fprintf(aux_info_file, " /*%s %s*/",
+                gen_formal_list_for_func_def(fndecl, k_and_r_names),
+                gen_formal_list_for_func_def(fndecl, k_and_r_decls));
+        }
 
-      fprintf (aux_info_file, "\n");
+        fprintf(aux_info_file, "\n");
     }
 }

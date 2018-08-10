@@ -26,8 +26,13 @@
 #include "bitmap.h"
 
 #include "obstack.h"
-#define obstack_chunk_alloc     xmalloc
-#define obstack_chunk_free      free
+#define obstack_chunk_alloc xmalloc
+#define obstack_chunk_free free
+
+#ifdef getc
+#undef getc
+#endif
+#define getc(f) getc_unlocked(f)
 
 /* Obstack used for allocating RTL objects.
    Between functions, this is the permanent_obstack.
@@ -45,10 +50,10 @@ int rtx_length[NUM_RTX_CODE + 1];
 
 /* Indexed by rtx code, gives the name of that kind of rtx, as a C string.  */
 
-#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS)   NAME,
+#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) NAME,
 
 char *rtx_name[] = {
-#include "rtl.def"              /* rtl expressions are documented here */
+#include "rtl.def" /* rtl expressions are documented here */
 };
 
 #undef DEF_RTL_EXPR
@@ -56,9 +61,9 @@ char *rtx_name[] = {
 /* Indexed by machine mode, gives the name of that machine mode.
    This name does not include the letters "mode".  */
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  NAME,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) NAME,
 
-char *mode_name[(int) MAX_MACHINE_MODE + 1] = {
+char *mode_name[(int)MAX_MACHINE_MODE + 1] = {
 #include "machmode.def"
 
 #ifdef EXTRA_CC_MODES
@@ -74,9 +79,9 @@ char *mode_name[(int) MAX_MACHINE_MODE + 1] = {
 /* Indexed by machine mode, gives the length of the mode, in bytes.
    GET_MODE_CLASS uses this.  */
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  CLASS,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) CLASS,
 
-enum mode_class mode_class[(int) MAX_MACHINE_MODE] = {
+enum mode_class mode_class[(int)MAX_MACHINE_MODE] = {
 #include "machmode.def"
 };
 
@@ -85,9 +90,9 @@ enum mode_class mode_class[(int) MAX_MACHINE_MODE] = {
 /* Indexed by machine mode, gives the length of the mode, in bytes.
    GET_MODE_SIZE uses this.  */
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  SIZE,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) SIZE,
 
-int mode_size[(int) MAX_MACHINE_MODE] = {
+int mode_size[(int)MAX_MACHINE_MODE] = {
 #include "machmode.def"
 };
 
@@ -96,10 +101,10 @@ int mode_size[(int) MAX_MACHINE_MODE] = {
 /* Indexed by machine mode, gives the length of the mode's subunit.
    GET_MODE_UNIT_SIZE uses this.  */
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  UNIT,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) UNIT,
 
-int mode_unit_size[(int) MAX_MACHINE_MODE] = {
-#include "machmode.def"         /* machine modes are documented here */
+int mode_unit_size[(int)MAX_MACHINE_MODE] = {
+#include "machmode.def" /* machine modes are documented here */
 };
 
 #undef DEF_MACHMODE
@@ -108,59 +113,64 @@ int mode_unit_size[(int) MAX_MACHINE_MODE] = {
    (QI -> HI -> SI -> DI, etc.)  Widening multiply instructions
    use this.  */
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  \
-    (unsigned char) WIDER,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) (unsigned char)WIDER,
 
-unsigned char mode_wider_mode[(int) MAX_MACHINE_MODE] = {
-#include "machmode.def"         /* machine modes are documented here */
+unsigned char mode_wider_mode[(int)MAX_MACHINE_MODE] = {
+#include "machmode.def" /* machine modes are documented here */
 };
 
 #undef DEF_MACHMODE
 
-#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)  \
-    ((SIZE) *BITS_PER_UNIT >= HOST_BITS_PER_WIDE_INT) ? ~(HOST_WIDE_UINT)0 : ((HOST_WIDE_UINT) 1 << (SIZE) *BITS_PER_UNIT) - 1,
+#define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)                                          \
+    /* Shut up, clang */                                                                           \
+    _Pragma("clang diagnostic push")                                                               \
+            _Pragma("clang diagnostic ignored \"-Wshift-count-overflow\"")(                        \
+                (SIZE)*BITS_PER_UNIT >= 32)                                    \
+        ? ~(uint32_t)0                                                                       \
+        : ((uint32_t)1 << (SIZE)*BITS_PER_UNIT) - 1,                                         \
+        _Pragma("clang diagnostic pop")
 
 /* Indexed by machine mode, gives mask of significant bits in mode.  */
 
-HOST_WIDE_UINT mode_mask_array[(int) MAX_MACHINE_MODE] = {
+uint32_t mode_mask_array[(int)MAX_MACHINE_MODE] = {
 #include "machmode.def"
 };
 
 /* Indexed by mode class, gives the narrowest mode for each class.  */
 
-enum machine_mode class_narrowest_mode[(int) MAX_MODE_CLASS];
+enum machine_mode class_narrowest_mode[(int)MAX_MODE_CLASS];
 
 /* Indexed by rtx code, gives a sequence of operand-types for
    rtx's of that code.  The sequence is a C string in which
    each character describes one operand.  */
 
 char *rtx_format[] = {
-    /* "*" undefined.
-           can cause a warning message
-       "0" field is unused (or used in a phase-dependent manner)
-           prints nothing
-       "i" an integer
-           prints the integer
-       "n" like "i", but prints entries from `note_insn_name'
-       "w" an integer of width HOST_BITS_PER_WIDE_INT
-           prints the integer
-       "s" a pointer to a string
-           prints the string
-       "S" like "s", but optional:
-           the containing rtx may end before this operand
-       "e" a pointer to an rtl expression
-           prints the expression
-       "E" a pointer to a vector that points to a number of rtl expressions
-           prints a list of the rtl expressions
-       "V" like "E", but optional:
-           the containing rtx may end before this operand
-       "u" a pointer to another insn
-           prints the uid of the insn.
-       "b" is a pointer to a bitmap header.
-       "t" is a tree pointer. */
+/* "*" undefined.
+       can cause a warning message
+   "0" field is unused (or used in a phase-dependent manner)
+       prints nothing
+   "i" an integer
+       prints the integer
+   "n" like "i", but prints entries from `note_insn_name'
+   "w" an integer of width 32
+       prints the integer
+   "s" a pointer to a string
+       prints the string
+   "S" like "s", but optional:
+       the containing rtx may end before this operand
+   "e" a pointer to an rtl expression
+       prints the expression
+   "E" a pointer to a vector that points to a number of rtl expressions
+       prints a list of the rtl expressions
+   "V" like "E", but optional:
+       the containing rtx may end before this operand
+   "u" a pointer to another insn
+       prints the uid of the insn.
+   "b" is a pointer to a bitmap header.
+   "t" is a tree pointer. */
 
-#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS)   FORMAT,
-#include "rtl.def"              /* rtl expressions are defined here */
+#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) FORMAT,
+#include "rtl.def" /* rtl expressions are defined here */
 #undef DEF_RTL_EXPR
 };
 
@@ -168,50 +178,37 @@ char *rtx_format[] = {
    that rtx code.  See rtl.def for documentation on the defined classes.  */
 
 char rtx_class[] = {
-#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS)   CLASS,
-#include "rtl.def"              /* rtl expressions are defined here */
+#define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) CLASS,
+#include "rtl.def" /* rtl expressions are defined here */
 #undef DEF_RTL_EXPR
 };
 
 /* Names for kinds of NOTEs and REG_NOTEs.  */
 
-char *note_insn_name[] = { 0, "NOTE_INSN_DELETED",
-                           "NOTE_INSN_BLOCK_BEG", "NOTE_INSN_BLOCK_END",
-                           "NOTE_INSN_LOOP_BEG", "NOTE_INSN_LOOP_END",
-                           "NOTE_INSN_FUNCTION_END", "NOTE_INSN_SETJMP",
-                           "NOTE_INSN_LOOP_CONT", "NOTE_INSN_LOOP_VTOP",
-                           "NOTE_INSN_PROLOGUE_END", "NOTE_INSN_EPILOGUE_BEG",
-                           "NOTE_INSN_DELETED_LABEL", "NOTE_INSN_FUNCTION_BEG",
-                           "NOTE_INSN_EH_REGION_BEG", "NOTE_INSN_EH_REGION_END",
-                           "NOTE_REPEATED_LINE_NUMBER", "NOTE_INSN_RANGE_START",
-                           "NOTE_INSN_RANGE_END", "NOTE_INSN_LIVE" };
+char *note_insn_name[] = { 0, "NOTE_INSN_DELETED", "NOTE_INSN_BLOCK_BEG", "NOTE_INSN_BLOCK_END",
+    "NOTE_INSN_LOOP_BEG", "NOTE_INSN_LOOP_END", "NOTE_INSN_FUNCTION_END", "NOTE_INSN_SETJMP",
+    "NOTE_INSN_LOOP_CONT", "NOTE_INSN_LOOP_VTOP", "NOTE_INSN_PROLOGUE_END",
+    "NOTE_INSN_EPILOGUE_BEG", "NOTE_INSN_DELETED_LABEL", "NOTE_INSN_FUNCTION_BEG",
+    "NOTE_INSN_EH_REGION_BEG", "NOTE_INSN_EH_REGION_END", "NOTE_REPEATED_LINE_NUMBER",
+    "NOTE_INSN_RANGE_START", "NOTE_INSN_RANGE_END", "NOTE_INSN_LIVE" };
 
-char *reg_note_name[] = { "", "REG_DEAD", "REG_INC", "REG_EQUIV", "REG_WAS_0",
-                          "REG_EQUAL", "REG_RETVAL", "REG_LIBCALL",
-                          "REG_NONNEG", "REG_NO_CONFLICT", "REG_UNUSED",
-                          "REG_CC_SETTER", "REG_CC_USER", "REG_LABEL",
-                          "REG_DEP_ANTI", "REG_DEP_OUTPUT",
-                          "REG_NOALIAS", "REG_SAVE_AREA",
-                          "REG_BR_PRED", "REG_EH_CONTEXT",
-                          "REG_FRAME_RELATED_EXPR", "REG_EH_REGION",
-                          "REG_EH_RETHROW" };
+char *reg_note_name[] = { "", "REG_DEAD", "REG_INC", "REG_EQUIV", "REG_WAS_0", "REG_EQUAL",
+    "REG_RETVAL", "REG_LIBCALL", "REG_NONNEG", "REG_NO_CONFLICT", "REG_UNUSED", "REG_CC_SETTER",
+    "REG_CC_USER", "REG_LABEL", "REG_DEP_ANTI", "REG_DEP_OUTPUT", "REG_NOALIAS", "REG_SAVE_AREA",
+    "REG_BR_PRED", "REG_EH_CONTEXT", "REG_FRAME_RELATED_EXPR", "REG_EH_REGION", "REG_EH_RETHROW" };
 
-static void dump_and_abort      (int, int, FILE *) ATTRIBUTE_NORETURN;
-static void read_name           (char *, FILE *);
+static void dump_and_abort(int, int, FILE *) ATTRIBUTE_NORETURN;
+static void read_name(char *, FILE *);
 
 /* Allocate an rtx vector of N elements.
    Store the length, and initialize all elements to zero.  */
 
-rtvec
-rtvec_alloc (n)
-int n;
+rtvec rtvec_alloc(int n)
 {
     rtvec rt;
     int i;
 
-    rt = (rtvec) obstack_alloc(rtl_obstack,
-                               sizeof (struct rtvec_def)
-                               + ((n - 1) * sizeof (rtunion)));
+    rt = (rtvec)obstack_alloc(rtl_obstack, sizeof(struct rtvec_def) + ((n - 1) * sizeof(rtunion)));
 
     /* clear out the vector */
     PUT_NUM_ELEM(rt, n);
@@ -225,15 +222,12 @@ int n;
 /* Allocate an rtx of code CODE.  The CODE is stored in the rtx;
    all the rest is initialized to zero.  */
 
-rtx
-rtx_alloc (code)
-RTX_CODE code;
+rtx rtx_alloc(RTX_CODE code)
 {
     rtx rt;
     register struct obstack *ob = rtl_obstack;
     register int nelts = GET_RTX_LENGTH(code);
-    register int length = sizeof (struct rtx_def)
-                          + (nelts - 1) * sizeof (rtunion);
+    register int length = sizeof(struct rtx_def) + (nelts - 1) * sizeof(rtunion);
 
     /* This function is called more than any other in GCC,
        so we manipulate the obstack directly.
@@ -254,7 +248,7 @@ RTX_CODE code;
        one int, but we don't want to assume that and it isn't very portable
        anyway; this is.  */
 
-    memset(rt, 0, sizeof (struct rtx_def) - sizeof (rtunion));
+    memset(rt, 0, sizeof(struct rtx_def) - sizeof(rtunion));
 
     PUT_CODE(rt, code);
 
@@ -263,9 +257,7 @@ RTX_CODE code;
 
 /* Free the rtx X and all RTL allocated since X.  */
 
-void
-rtx_free (x)
-rtx x;
+void rtx_free(rtx x)
 {
     obstack_free(rtl_obstack, x);
 }
@@ -274,9 +266,7 @@ rtx x;
    Recursively copies the operands of the rtx,
    except for those few rtx codes that are sharable.  */
 
-rtx
-copy_rtx (orig)
-register rtx orig;
+rtx copy_rtx(register rtx orig)
 {
     register rtx copy;
     register int i, j;
@@ -303,16 +293,15 @@ register rtx orig;
     case CONST:
         /* CONST can be shared if it contains a SYMBOL_REF.  If it contains
            a LABEL_REF, it isn't sharable.  */
-        if (GET_CODE(XEXP(orig, 0)) == PLUS
-            && GET_CODE(XEXP(XEXP(orig, 0), 0)) == SYMBOL_REF
+        if (GET_CODE(XEXP(orig, 0)) == PLUS && GET_CODE(XEXP(XEXP(orig, 0), 0)) == SYMBOL_REF
             && GET_CODE(XEXP(XEXP(orig, 0), 1)) == CONST_INT)
             return orig;
         break;
 
-    /* A MEM with a constant address is not sharable.  The problem is that
-       the constant address may need to be reloaded.  If the mem is shared,
-       then reloading one copy of this mem will cause all copies to appear
-       to have been reloaded.  */
+        /* A MEM with a constant address is not sharable.  The problem is that
+           the constant address may need to be reloaded.  If the mem is shared,
+           then reloading one copy of this mem will cause all copies to appear
+           to have been reloaded.  */
 
     default:
         break;
@@ -388,10 +377,7 @@ register rtx orig;
 /* Similar to `copy_rtx' except that if MAY_SHARE is present, it is
    placed in the result directly, rather than being copied.  */
 
-rtx
-copy_most_rtx (orig, may_share)
-register rtx orig;
-register rtx may_share;
+rtx copy_most_rtx(register rtx orig, register rtx may_share)
 {
     register rtx copy;
     register int i, j;
@@ -449,8 +435,7 @@ register rtx may_share;
             {
                 XVEC(copy, i) = rtvec_alloc(XVECLEN(orig, i));
                 for (j = 0; j < XVECLEN(copy, i); j++)
-                    XVECEXP(copy, i, j)
-                        = copy_most_rtx(XVECEXP(orig, i, j), may_share);
+                    XVECEXP(copy, i, j) = copy_most_rtx(XVECEXP(orig, i, j), may_share);
             }
             break;
 
@@ -480,23 +465,19 @@ register rtx may_share;
 /* Dump code after printing a message.  Used when read_rtx finds
    invalid data.  */
 
-static void
-dump_and_abort (expected_c, actual_c, infile)
-int expected_c, actual_c;
-FILE *infile;
+static void dump_and_abort(int expected_c, int actual_c, FILE *infile)
 {
     int c, i;
 
     if (expected_c >= 0)
-        fprintf(stderr,
-                "Expected character %c.  Found character %c.",
-                expected_c, actual_c);
+        fprintf(stderr, "Expected character %c.  Found character %c.", expected_c, actual_c);
     fprintf(stderr, "  At file position: %ld\n", ftell(infile));
     fprintf(stderr, "Following characters are:\n\t");
     for (i = 0; i < 200; i++)
     {
         c = getc(infile);
-        if (EOF == c) break;
+        if (EOF == c)
+            break;
         putc(c, stderr);
     }
     fprintf(stderr, "Aborting.\n");
@@ -508,9 +489,7 @@ FILE *infile;
    are treated as whitespace.
    Tools such as genflags use this function.  */
 
-int
-read_skip_spaces (infile)
-FILE *infile;
+int read_skip_spaces(FILE *infile)
 {
     register int c;
     while ((c = getc(infile)))
@@ -537,7 +516,8 @@ FILE *infile;
                 prevc = c;
             }
         }
-        else break;
+        else
+            break;
     }
     return c;
 }
@@ -545,10 +525,7 @@ FILE *infile;
 /* Read an rtx code name into the buffer STR[].
    It is terminated by any of the punctuation chars of rtx printed syntax.  */
 
-static void
-read_name (str, infile)
-char *str;
-FILE *infile;
+static void read_name(char *str, FILE *infile)
 {
     register char *p;
     register int c;
@@ -560,8 +537,7 @@ FILE *infile;
     {
         if (c == ' ' || c == '\n' || c == '\t' || c == '\f')
             break;
-        if (c == ':' || c == ')' || c == ']' || c == '"' || c == '/'
-            || c == '(' || c == '[')
+        if (c == ':' || c == ')' || c == ']' || c == '"' || c == '/' || c == '(' || c == '[')
         {
             ungetc(c, infile);
             break;
@@ -583,9 +559,7 @@ FILE *infile;
    read_rtx is not used in the compiler proper, but rather in
    the utilities gen*.c that construct C code from machine descriptions.  */
 
-rtx
-read_rtx (infile)
-FILE *infile;
+rtx read_rtx(FILE *infile)
 {
     register int i, j, list_counter;
     RTX_CODE tmp_code;
@@ -597,13 +571,13 @@ FILE *infile;
     rtx return_rtx;
     register int c;
     int tmp_int;
-    HOST_WIDE_INT tmp_wide;
+    int32_t tmp_wide;
 
     /* Linked list structure for making RTXs: */
     struct rtx_list
     {
         struct rtx_list *next;
-        rtx value;              /* Value of this node...		*/
+        rtx value; /* Value of this node...		*/
     };
 
     c = read_skip_spaces(infile); /* Should be open paren.  */
@@ -614,25 +588,24 @@ FILE *infile;
 
     tmp_code = UNKNOWN;
 
-    for (i=0; i < NUM_RTX_CODE; i++) /* @@ might speed this search up */
+    for (i = 0; i < NUM_RTX_CODE; i++) /* @@ might speed this search up */
     {
         if (!(strcmp(tmp_char, GET_RTX_NAME(i))))
         {
-            tmp_code = (RTX_CODE) i;    /* get value for name */
+            tmp_code = (RTX_CODE)i; /* get value for name */
             break;
         }
     }
     if (tmp_code == UNKNOWN)
     {
-        fprintf(stderr,
-                "Unknown rtx read in rtl.read_rtx(). Code name was %s .",
-                tmp_char);
+        fprintf(stderr, "Unknown rtx read in rtl.read_rtx(). Code name was %s .", tmp_char);
     }
     /* (NIL) stands for an expression that isn't there.  */
     if (tmp_code == NIL)
     {
         /* Discard the closeparen.  */
-        while ((c = getc(infile)) && c != ')') ;
+        while ((c = getc(infile)) && c != ')')
+            ;
         return 0;
     }
 
@@ -652,7 +625,7 @@ FILE *infile;
             if (!strcmp(GET_MODE_NAME(k), tmp_char))
                 break;
 
-        PUT_MODE(return_rtx, (enum machine_mode) k );
+        PUT_MODE(return_rtx, (enum machine_mode)k);
     }
     else
         ungetc(i, infile);
@@ -680,7 +653,7 @@ FILE *infile;
                 XVEC(return_rtx, i) = 0;
                 break;
             }
-        /* Now process the vector.  */
+            /* Now process the vector.  */
 
         case 'E':
         {
@@ -698,8 +671,7 @@ FILE *infile;
             {
                 ungetc(c, infile);
                 list_counter++;
-                rtx_list_link = (struct rtx_list *)
-                                alloca(sizeof (struct rtx_list));
+                rtx_list_link = (struct rtx_list *)alloca(sizeof(struct rtx_list));
                 rtx_list_link->value = read_rtx(infile);
                 if (next_rtx == 0)
                     list_rtx = rtx_list_link;
@@ -709,13 +681,11 @@ FILE *infile;
                 rtx_list_link->next = 0;
             }
             /* get vector length and allocate it */
-            XVEC(return_rtx, i) = (list_counter
-                                   ? rtvec_alloc(list_counter) : NULL_RTVEC);
+            XVEC(return_rtx, i) = (list_counter ? rtvec_alloc(list_counter) : NULL_RTVEC);
             if (list_counter > 0)
             {
                 next_rtx = list_rtx;
-                for (j = 0; j < list_counter; j++,
-                     next_rtx = next_rtx->next)
+                for (j = 0; j < list_counter; j++, next_rtx = next_rtx->next)
                     XVECEXP(return_rtx, i, j) = next_rtx->value;
             }
             /* close bracket gotten */
@@ -752,7 +722,7 @@ FILE *infile;
                 c = getc(infile); /* Read the string  */
                 if (c == '\\')
                 {
-                    c = getc(infile);   /* Read the string  */
+                    c = getc(infile); /* Read the string  */
                     /* \; makes stuff for a C string constant containing
                        newline and tab.  */
                     if (c == ';')
@@ -768,7 +738,7 @@ FILE *infile;
             }
 
             obstack_1grow(rtl_obstack, 0);
-            stringbuf = (char *) obstack_finish(rtl_obstack);
+            stringbuf = (char *)obstack_finish(rtl_obstack);
 
             if (saw_paren)
             {
@@ -782,7 +752,7 @@ FILE *infile;
 
         case 'w':
             read_name(tmp_char, infile);
-            sscanf(tmp_char, HOST_WIDE_INT_SCAN_DEC, &tmp_wide);
+            sscanf(tmp_char, int32_t_SCAN_DEC, &tmp_wide);
             XWINT(return_rtx, i) = tmp_wide;
             break;
         case 'i':
@@ -793,9 +763,8 @@ FILE *infile;
             break;
 
         default:
-            fprintf(stderr,
-                    "switch format wrong in rtl.read_rtx(). format was: %c.\n",
-                    format_ptr[-1]);
+            fprintf(
+                stderr, "switch format wrong in rtl.read_rtx(). format was: %c.\n", format_ptr[-1]);
             fprintf(stderr, "\tfile position: %ld\n", ftell(infile));
             abort();
         }
@@ -811,46 +780,45 @@ FILE *infile;
    It initializes the vector `rtx_length', the extra CC modes, if any,
    and computes certain commonly-used modes.  */
 
-void
-init_rtl()
+void init_rtl(void)
 {
-    int min_class_size[(int) MAX_MODE_CLASS];
+    int min_class_size[(int)MAX_MODE_CLASS];
     enum machine_mode mode;
     int i;
 
     for (i = 0; i < NUM_RTX_CODE; i++)
         rtx_length[i] = strlen(rtx_format[i]);
 
-    /* Make CONST_DOUBLE bigger, if real values are bigger than
-       it normally expects to have room for.
-       Note that REAL_VALUE_TYPE is not defined by default,
-       since tree.h is not included.  But the default dfn as `double'
-       would do no harm.  */
+        /* Make CONST_DOUBLE bigger, if real values are bigger than
+           it normally expects to have room for.
+           Note that REAL_VALUE_TYPE is not defined by default,
+           since tree.h is not included.  But the default dfn as `double'
+           would do no harm.  */
 #ifdef REAL_VALUE_TYPE
-    i = sizeof (REAL_VALUE_TYPE) / sizeof (rtunion) + 2;
-    if (rtx_length[(int) CONST_DOUBLE] < i)
+    i = sizeof(REAL_VALUE_TYPE) / sizeof(rtunion) + 2;
+    if (rtx_length[(int)CONST_DOUBLE] < i)
     {
-        char *s = (char *) xmalloc(i + 1);
-        rtx_length[(int) CONST_DOUBLE] = i;
-        rtx_format[(int) CONST_DOUBLE] = s;
+        char *s = (char *)xmalloc(i + 1);
+        rtx_length[(int)CONST_DOUBLE] = i;
+        rtx_format[(int)CONST_DOUBLE] = s;
         *s++ = 'e';
         *s++ = '0';
         /* Set the GET_RTX_FORMAT of CONST_DOUBLE to a string
            of as many `w's as we now have elements.  Subtract two from
            the size to account for the 'e' and the '0'.  */
-        for (i = 2; i < rtx_length[(int) CONST_DOUBLE]; i++)
+        for (i = 2; i < rtx_length[(int)CONST_DOUBLE]; i++)
             *s++ = 'w';
         *s++ = 0;
     }
 #endif
 
 #ifdef EXTRA_CC_MODES
-    for (i = (int) CCmode + 1; i < (int) MAX_MACHINE_MODE; i++)
+    for (i = (int)CCmode + 1; i < (int)MAX_MACHINE_MODE; i++)
     {
         mode_class[i] = MODE_CC;
-        mode_mask_array[i] = mode_mask_array[(int) CCmode];
-        mode_size[i] = mode_size[(int) CCmode];
-        mode_unit_size[i] = mode_unit_size[(int) CCmode];
+        mode_mask_array[i] = mode_mask_array[(int)CCmode];
+        mode_size[i] = mode_size[(int)CCmode];
+        mode_unit_size[i] = mode_unit_size[(int)CCmode];
         mode_wider_mode[i - 1] = i;
         mode_wider_mode[i] = (unsigned char)VOIDmode;
     }
@@ -858,16 +826,16 @@ init_rtl()
 
     /* Find the narrowest mode for each class.  */
 
-    for (i = 0; i < (int) MAX_MODE_CLASS; i++)
+    for (i = 0; i < (int)MAX_MODE_CLASS; i++)
         min_class_size[i] = 1000;
 
-    for (mode = VOIDmode; (int) mode < (int) MAX_MACHINE_MODE;
-         mode = (enum machine_mode) ((int) mode + 1))
+    for (mode = VOIDmode; (int)mode < (int)MAX_MACHINE_MODE;
+         mode = (enum machine_mode)((int)mode + 1))
     {
-        if (GET_MODE_SIZE(mode) < min_class_size[(int) GET_MODE_CLASS(mode)])
+        if (GET_MODE_SIZE(mode) < min_class_size[(int)GET_MODE_CLASS(mode)])
         {
-            class_narrowest_mode[(int) GET_MODE_CLASS(mode)] = mode;
-            min_class_size[(int) GET_MODE_CLASS(mode)] = GET_MODE_SIZE(mode);
+            class_narrowest_mode[(int)GET_MODE_CLASS(mode)] = mode;
+            min_class_size[(int)GET_MODE_CLASS(mode)] = GET_MODE_SIZE(mode);
         }
     }
 }

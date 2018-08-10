@@ -26,49 +26,46 @@ Boston, MA 02111-1307, USA.  */
 #include "rtl.h"
 
 
-struct rtx_definition 
+struct rtx_definition
 {
-  const char *enumname, *name, *format;
+    const char *enumname, *name, *format;
 };
 
 #define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) { STRINGIFY(ENUM), NAME, FORMAT },
 
-struct rtx_definition defs[] = 
-{  
-#include "rtl.def"		/* rtl expressions are documented here */
+struct rtx_definition defs[] = {
+#include "rtl.def" /* rtl expressions are documented here */
 };
 
 const char *formats[NUM_RTX_CODE];
 
-static const char *type_from_format (int);
-static const char *accessor_from_format (int);
-static int special_format (const char *);
-static int special_rtx (int);
-static void find_formats (void);
-static void gendecl (FILE *, const char *);
-static void genmacro (FILE *, int);
-static void gendef (FILE *, const char *);
-static void genlegend (FILE *);
-static void genheader (FILE *);
-static void gencode (FILE *);
+static const char *type_from_format(int);
+static const char *accessor_from_format(int);
+static int special_format(const char *);
+static int special_rtx(int);
+static void find_formats(void);
+static void gendecl(FILE *, const char *);
+static void genmacro(FILE *, int);
+static void gendef(FILE *, const char *);
+static void genlegend(FILE *);
+static void genheader(FILE *);
+static void gencode(FILE *);
 
-static const char *
-type_from_format (c)
-     int c;
+static const char *type_from_format(int c)
 {
-  switch (c)
+    switch (c)
     {
     case 'i':
-      return "int";
+        return "int";
     case 'w':
-      return "HOST_WIDE_INT";
+        return "int32_t";
     case 's':
-      return "char *";
+        return "char *";
     case 'e':
     case 'u':
-      return "rtx";
+        return "rtx";
     case 'E':
-      return "rtvec";
+        return "rtvec";
     /* ?!? These should be bitmap and tree respectively, but those types
        are not available in many of the files which include the output
        of gengenrtl.
@@ -76,253 +73,214 @@ type_from_format (c)
        These are only used in prototypes, so I think we can assume that
        void * is useable.  */
     case 'b':
-      return "void *";
+        return "void *";
     case 't':
-      return "void *";
+        return "void *";
     default:
-      abort ();
+        abort();
     }
 }
 
-static const char *
-accessor_from_format (c)
-     int c;
+static const char *accessor_from_format(int c)
 {
-  switch (c)
+    switch (c)
     {
     case 'i':
-      return "XINT";
+        return "XINT";
     case 'w':
-      return "XWINT";
+        return "XWINT";
     case 's':
-      return "XSTR";
+        return "XSTR";
     case 'e':
     case 'u':
-      return "XEXP";
+        return "XEXP";
     case 'E':
-      return "XVEC";
+        return "XVEC";
     case 'b':
-      return "XBITMAP";
+        return "XBITMAP";
     case 't':
-      return "XTREE";
+        return "XTREE";
     default:
-      abort ();
+        abort();
     }
 }
 
-static int
-special_format (fmt)
-     const char *fmt;
+static int special_format(const char *fmt)
 {
-  return (strchr (fmt, '*') != 0
-	  || strchr (fmt, 'V') != 0
-	  || strchr (fmt, 'S') != 0
-	  || strchr (fmt, 'n') != 0);
+    return (strchr(fmt, '*') != 0 || strchr(fmt, 'V') != 0 || strchr(fmt, 'S') != 0
+        || strchr(fmt, 'n') != 0);
 }
 
-static int
-special_rtx (idx)
-     int idx;
+static int special_rtx(int idx)
 {
-  return (strcmp (defs[idx].enumname, "CONST_INT") == 0
-	  || strcmp (defs[idx].enumname, "REG") == 0
-	  || strcmp (defs[idx].enumname, "MEM") == 0);
+    return (strcmp(defs[idx].enumname, "CONST_INT") == 0 || strcmp(defs[idx].enumname, "REG") == 0
+        || strcmp(defs[idx].enumname, "MEM") == 0);
 }
 
-static void
-find_formats ()
+static void find_formats(void)
 {
-  int i;
+    int i;
 
-  for (i = 0; i < NUM_RTX_CODE; ++i)
+    for (i = 0; i < NUM_RTX_CODE; ++i)
     {
-      const char **f;
+        const char **f;
 
-      if (special_format (defs[i].format))
-	continue;
+        if (special_format(defs[i].format))
+            continue;
 
-      for (f = formats; *f ; ++f)
-	if (!strcmp(*f, defs[i].format))
-	  break;
+        for (f = formats; *f; ++f)
+            if (!strcmp(*f, defs[i].format))
+                break;
 
-      if (!*f)
-	*f = defs[i].format;
+        if (!*f)
+            *f = defs[i].format;
     }
 }
 
-static void
-gendecl (f, format)
-     FILE *f;
-     const char *format;
+static void gendecl(FILE *f, const char *format)
 {
-  const char *p;
-  int i;
-  
-  fprintf (f, "extern rtx gen_rtx_fmt_%s (RTX_CODE, enum machine_mode mode",
-	   format);
-  for (p = format, i = 0; *p ; ++p)
-    if (*p != '0')
-      fprintf (f, ", %s arg%d", type_from_format (*p), i++);
-  fprintf (f, ");\n");
+    const char *p;
+    int i;
+
+    fprintf(f, "extern rtx gen_rtx_fmt_%s (RTX_CODE, enum machine_mode mode", format);
+    for (p = format, i = 0; *p; ++p)
+        if (*p != '0')
+            fprintf(f, ", %s arg%d", type_from_format(*p), i++);
+    fprintf(f, ");\n");
 }
 
-static void 
-genmacro (f, idx)
-     FILE *f;
-     int idx;
+static void genmacro(FILE *f, int idx)
 {
-  const char *p;
-  int i;
+    const char *p;
+    int i;
 
-  fprintf (f, "#define gen_rtx_%s%s(mode",
-	   (special_rtx (idx) ? "raw_" : ""), defs[idx].enumname);
+    fprintf(f, "#define gen_rtx_%s%s(mode", (special_rtx(idx) ? "raw_" : ""), defs[idx].enumname);
 
-  for (p = defs[idx].format, i = 0; *p ; ++p)
-    if (*p != '0')
-      fprintf (f, ", arg%d", i++);
-  fprintf (f, ")   ");
+    for (p = defs[idx].format, i = 0; *p; ++p)
+        if (*p != '0')
+            fprintf(f, ", arg%d", i++);
+    fprintf(f, ")   ");
 
-  fprintf (f, "gen_rtx_fmt_%s(%s,(mode)", defs[idx].format, defs[idx].enumname);
-  for (p = defs[idx].format, i = 0; *p ; ++p)
-    if (*p != '0')
-      fprintf (f, ",(arg%d)", i++);
-  fprintf (f, ")\n");
+    fprintf(f, "gen_rtx_fmt_%s(%s,(enum machine_mode)(mode)", defs[idx].format, defs[idx].enumname);
+    for (p = defs[idx].format, i = 0; *p; ++p)
+        if (*p != '0')
+            fprintf(f, ",(arg%d)", i++);
+    fprintf(f, ")\n");
 }
 
-static void
-gendef (f, format)
-     FILE *f;
-     const char *format;
+static void gendef(FILE *f, const char *format)
 {
-  const char *p;
-  int i, j;
-  
-  fprintf (f, "rtx\ngen_rtx_fmt_%s (code, mode", format);
-  for (p = format, i = 0; *p ; ++p)
-    if (*p != '0')
-      fprintf (f, ", arg%d", i++);
+    const char *p;
+    int i, j;
 
-  fprintf (f, ")\n     RTX_CODE code;\n     enum machine_mode mode;\n");
-  for (p = format, i = 0; *p ; ++p)
-    if (*p != '0')
-      fprintf (f, "     %s arg%d;\n", type_from_format (*p), i++);
+    fprintf(f, "rtx gen_rtx_fmt_%s (RTX_CODE code, enum machine_mode mode", format);
+    for (p = format, i = 0; *p; ++p)
+        if (*p != '0')
+            fprintf(f, ", %s arg%d",  type_from_format(*p), i++);
 
-  /* See rtx_alloc in rtl.c for comments.  */
-  fprintf (f, "{\n");
-  fprintf (f, "  rtx rt = obstack_alloc_rtx (sizeof (struct rtx_def) + %d * sizeof (rtunion));\n",
-	   (int) strlen (format) - 1);
+    /* See rtx_alloc in rtl.c for comments.  */
+    fprintf(f, ")\n{\n");
+    fprintf(f, "  rtx rt = obstack_alloc_rtx(sizeof (struct rtx_def) + %d * sizeof (rtunion));\n",
+        (int)strlen(format) - 1);
 
-  fprintf (f, "  PUT_CODE (rt, code);\n");
-  fprintf (f, "  PUT_MODE (rt, mode);\n");
+    fprintf(f, "  PUT_CODE (rt, code);\n");
+    fprintf(f, "  PUT_MODE (rt, mode);\n");
 
-  for (p = format, i = j = 0; *p ; ++p, ++i)
-    if (*p != '0')
-      {
-	fprintf (f, "  %s (rt, %d) = arg%d;\n",
-		 accessor_from_format (*p), i, j++);
-      }
+    for (p = format, i = j = 0; *p; ++p, ++i)
+        if (*p != '0')
+        {
+            fprintf(f, "  %s (rt, %d) = arg%d;\n", accessor_from_format(*p), i, j++);
+        }
 
-  fprintf (f, "\n  return rt;\n}\n\n");
+    fprintf(f, "\n  return rt;\n}\n\n");
 }
 
-static void
-genlegend (f)
-     FILE *f;
+static void genlegend(FILE *f)
 {
-  fprintf (f, "/* Generated automaticaly by the program `gengenrtl'\n");
-  fprintf (f, "   from the RTL description file `rtl.def' */\n\n");
+    fprintf(f, "/* Generated automaticaly by the program `gengenrtl'\n");
+    fprintf(f, "   from the RTL description file `rtl.def' */\n\n");
 }
 
-static void
-genheader (f)
-     FILE *f;
+static void genheader(FILE *f)
 {
-  int i;
-  const char **fmt;
+    int i;
+    const char **fmt;
 
-  for (fmt = formats; *fmt; ++fmt)
-    gendecl (f, *fmt);
+    for (fmt = formats; *fmt; ++fmt)
+        gendecl(f, *fmt);
 
-  fprintf(f, "\n");
+    fprintf(f, "\n");
 
-  for (i = 0; i < NUM_RTX_CODE; i++)
+    for (i = 0; i < NUM_RTX_CODE; i++)
     {
-      if (special_format (defs[i].format))
-	continue;
-      genmacro (f, i);
+        if (special_format(defs[i].format))
+            continue;
+        genmacro(f, i);
     }
 }
 
-static void
-gencode (f)
-     FILE *f;
+static void gencode(FILE *f)
 {
-  const char **fmt;
+    const char **fmt;
 
-  fputs ("#include \"config.h\"\n", f);
-  fputs ("#include \"system.h\"\n", f);
-  fputs ("#include \"obstack.h\"\n", f);
-  fputs ("#include \"rtl.h\"\n\n", f);
-  fputs ("extern struct obstack *rtl_obstack;\n\n", f);
-  fputs ("static rtx obstack_alloc_rtx(int length)\n", f);
-  fputs ("{\n", f);
-  fputs ("  rtx rt = (rtx) obstack_alloc (rtl_obstack, length);\n\n", f);
-  fputs ("  zero_memory((char *) rt, sizeof(struct rtx_def) - sizeof(rtunion));\n\n", f);
-  fputs ("  return rt;\n}\n\n", f);
+    fputs("#include \"config.h\"\n", f);
+    fputs("#include \"system.h\"\n", f);
+    fputs("#include \"obstack.h\"\n", f);
+    fputs("#include \"rtl.h\"\n\n", f);
+    fputs("extern struct obstack *rtl_obstack;\n\n", f);
+    fputs("static rtx obstack_alloc_rtx(int length)\n", f);
+    fputs("{\n", f);
+    fputs("  rtx rt = (rtx) obstack_alloc (rtl_obstack, length);\n\n", f);
+    fputs("  zero_memory((char *) rt, sizeof(struct rtx_def) - sizeof(rtunion));\n\n", f);
+    fputs("  return rt;\n}\n\n", f);
 
-  for (fmt = formats; *fmt; ++fmt)
-    gendef (f, *fmt);
+    for (fmt = formats; *fmt; ++fmt)
+        gendef(f, *fmt);
 }
 
 #if defined(USE_C_ALLOCA)
-void *
-xmalloc (nbytes)
-  size_t nbytes;
+void *xmalloc(nbytes) size_t nbytes;
 {
-  register void *tmp = malloc (nbytes);
+    register void *tmp = malloc(nbytes);
 
-  if (!tmp)
+    if (!tmp)
     {
-      fprintf (stderr, "can't allocate %d bytes (out of virtual memory)\n",
-	       nbytes);
-      exit (EXIT_FAILURE);
+        fprintf(stderr, "can't allocate %d bytes (out of virtual memory)\n", nbytes);
+        exit(EXIT_FAILURE);
     }
 
-  return tmp;
+    return tmp;
 }
 #endif /* USE_C_ALLOCA */
 
-int
-main(argc, argv)
-     int argc;
-     char **argv;
+int main(int argc, char **argv)
 {
-  FILE *f;
+    FILE *f;
 
-  if (argc != 3)
-    exit (1);
+    if (argc != 3)
+        exit(1);
 
-  find_formats ();
+    find_formats();
 
-  f = fopen (argv[1], "w");
-  if (f == NULL)
+    f = fopen(argv[1], "w");
+    if (f == NULL)
     {
-      perror(argv[1]);
-      exit (1);
+        perror(argv[1]);
+        exit(1);
     }
-  genlegend (f);
-  genheader (f);
-  fclose(f);
+    genlegend(f);
+    genheader(f);
+    fclose(f);
 
-  f = fopen (argv[2], "w");
-  if (f == NULL)
+    f = fopen(argv[2], "w");
+    if (f == NULL)
     {
-      perror(argv[2]);
-      exit (1);
+        perror(argv[2]);
+        exit(1);
     }
-  genlegend (f);
-  gencode (f);
-  fclose(f);
+    genlegend(f);
+    gencode(f);
+    fclose(f);
 
-  exit (0);
+    exit(0);
 }

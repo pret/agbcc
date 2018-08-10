@@ -33,140 +33,126 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-static void fatal (const char *, ...)
-  ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-void fancy_abort (void) ATTRIBUTE_NORETURN;
+static void fatal(const char *, ...) ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
+void fancy_abort(void) ATTRIBUTE_NORETURN;
 
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
 
 static int insn_code_number;
 
-static void gen_insn (rtx);
+static void gen_insn(rtx);
 
-static void
-gen_insn (insn)
-     rtx insn;
+static void gen_insn(rtx insn)
 {
-  /* Don't mention instructions whose names are the null string
-     or begin with '*'.  They are in the machine description just
-     to be recognized.  */
-  if (XSTR (insn, 0)[0] != 0 && XSTR (insn, 0)[0] != '*')
-    printf ("  CODE_FOR_%s = %d,\n", XSTR (insn, 0),
-	    insn_code_number);
+    /* Don't mention instructions whose names are the null string
+       or begin with '*'.  They are in the machine description just
+       to be recognized.  */
+    if (XSTR(insn, 0)[0] != 0 && XSTR(insn, 0)[0] != '*')
+        printf("  CODE_FOR_%s = %d,\n", XSTR(insn, 0), insn_code_number);
 }
 
-void *
-xmalloc (size)
-  size_t size;
+void *xmalloc(size) size_t size;
 {
-  register void *val = malloc (size);
+    register void *val = malloc(size);
 
-  if (val == 0)
-    fatal ("virtual memory exhausted");
-  return val;
+    if (val == 0)
+        fatal("virtual memory exhausted");
+    return val;
 }
 
-void *
-xrealloc (old, size)
-  void *old;
-  size_t size;
+void *xrealloc(old, size) void *old;
+size_t size;
 {
-  register void *ptr;
-  if (old)
-    ptr = realloc (old, size);
-  else
-    ptr = malloc (size);
-  if (!ptr)
-    fatal ("virtual memory exhausted");
-  return ptr;
+    register void *ptr;
+    if (old)
+        ptr = realloc(old, size);
+    else
+        ptr = malloc(size);
+    if (!ptr)
+        fatal("virtual memory exhausted");
+    return ptr;
 }
 
-static void
-fatal (const char *format, ...)
+static void fatal(const char *format, ...)
 {
-  va_list ap;
+    va_list ap;
 
-  va_start (ap, format);
+    va_start(ap, format);
 
 
-  fprintf (stderr, "gencodes: ");
-  vfprintf (stderr, format, ap);
-  va_end (ap);
-  fprintf (stderr, "\n");
-  exit (EXIT_FAILURE);
+    fprintf(stderr, "gencodes: ");
+    vfprintf(stderr, format, ap);
+    va_end(ap);
+    fprintf(stderr, "\n");
+    exit(EXIT_FAILURE);
 }
 
 /* More 'friendly' abort that prints the line and file.
    config.h can #define abort fancy_abort if you like that sort of thing.  */
 
-void
-fancy_abort ()
+void fancy_abort(void)
 {
-  fatal ("Internal gcc abort.");
+    fatal("Internal gcc abort.");
 }
-
-int
-main (argc, argv)
-     int argc;
-     char **argv;
+
+int main(int argc, char **argv)
 {
-  rtx desc;
-  FILE *infile;
-  register int c;
+    rtx desc;
+    FILE *infile;
+    register int c;
 
-  obstack_init (rtl_obstack);
+    obstack_init(rtl_obstack);
 
-  if (argc <= 1)
-    fatal ("No input file name.");
+    if (argc <= 1)
+        fatal("No input file name.");
 
-  infile = fopen (argv[1], "r");
-  if (infile == 0)
+    infile = fopen(argv[1], "r");
+    if (infile == 0)
     {
-      perror (argv[1]);
-      exit (EXIT_FAILURE);
+        perror(argv[1]);
+        exit(EXIT_FAILURE);
     }
 
-  init_rtl ();
+    init_rtl();
 
-  printf ("/* Generated automatically by the program `gencodes'\n\
+    printf("/* Generated automatically by the program `gencodes'\n\
 from the machine description file `md'.  */\n\n");
 
-  printf ("#ifndef MAX_INSN_CODE\n\n");
+    printf("#ifndef MAX_INSN_CODE\n\n");
 
-  /* Read the machine description.  */
+    /* Read the machine description.  */
 
-  insn_code_number = 0;
-  printf ("enum insn_code {\n");
+    insn_code_number = 0;
+    printf("enum insn_code {\n");
 
-  while (1)
+    while (1)
     {
-      c = read_skip_spaces (infile);
-      if (c == EOF)
-	break;
-      ungetc (c, infile);
+        c = read_skip_spaces(infile);
+        if (c == EOF)
+            break;
+        ungetc(c, infile);
 
-      desc = read_rtx (infile);
-      if (GET_CODE (desc) == DEFINE_INSN || GET_CODE (desc) == DEFINE_EXPAND)
-	{
-	  gen_insn (desc);
-	  insn_code_number++;
-	}
-      if (GET_CODE (desc) == DEFINE_PEEPHOLE
-	  || GET_CODE (desc) == DEFINE_SPLIT)
-	{
-	  insn_code_number++;
-	}
+        desc = read_rtx(infile);
+        if (GET_CODE(desc) == DEFINE_INSN || GET_CODE(desc) == DEFINE_EXPAND)
+        {
+            gen_insn(desc);
+            insn_code_number++;
+        }
+        if (GET_CODE(desc) == DEFINE_PEEPHOLE || GET_CODE(desc) == DEFINE_SPLIT)
+        {
+            insn_code_number++;
+        }
     }
 
-  printf ("  CODE_FOR_nothing };\n");
+    printf("  CODE_FOR_nothing };\n");
 
-  printf ("\n#define MAX_INSN_CODE ((int) CODE_FOR_nothing)\n");
+    printf("\n#define MAX_INSN_CODE ((int) CODE_FOR_nothing)\n");
 
-  printf ("#endif /* MAX_INSN_CODE */\n");
+    printf("#endif /* MAX_INSN_CODE */\n");
 
-  fflush (stdout);
-  exit (ferror (stdout) != 0 ? EXIT_FAILURE : EXIT_SUCCESS);
-  /* NOTREACHED */
-  return 0;
+    fflush(stdout);
+    exit(ferror(stdout) != 0 ? EXIT_FAILURE : EXIT_SUCCESS);
+    /* NOTREACHED */
+    return 0;
 }

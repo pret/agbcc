@@ -11,10 +11,8 @@ struct resword { char *name; short token; enum rid rid; };
 /* maximum key range = 134, duplicates = 0 */
 
 
-static inline unsigned int
-hash (str, len)
-     register char *str;
-     register unsigned int len;
+static inline unsigned int 
+hash (register char *str, register unsigned int len)
 {
   static unsigned char asso_values[] =
     {
@@ -172,9 +170,7 @@ static struct resword wordlist[] =
 
 
 static inline struct resword *
-is_reserved_word (str, len)
-     register char *str;
-     register unsigned int len;
+is_reserved_word (register char *str, register unsigned int len)
 {
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {

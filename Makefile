@@ -17,6 +17,7 @@ endif
 all: binutils old_gcc gcc libc libgcc
 
 install: binutils old_gcc gcc libc libgcc
+	$(CHECK_PREFIX)
 	@mkdir -p $(PREFIX)/tools/agbcc
 	@mkdir -p $(PREFIX)/tools/agbcc/bin
 	@mkdir -p $(PREFIX)/tools/agbcc/include
@@ -30,7 +31,7 @@ install: binutils old_gcc gcc libc libgcc
 	cp ginclude/* $(PREFIX)/tools/agbcc/include/
 	cp libgcc.a $(PREFIX)/tools/agbcc/lib/
 	cp libc.a $(PREFIX)/tools/agbcc/lib/
-	@$(MAKE) -C binutils install prefix="$(PREFIX)/tools/binutils"
+	@$(MAKE) -C binutils install-strip prefix="$(PREFIX)/tools/binutils"
 
 
 

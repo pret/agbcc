@@ -22,22 +22,19 @@ Boston, MA 02111-1307, USA.  */
 
 #define DEFTREECODE(SYM, NAME, TYPE, LEN) #SYM,
 
-const char *tree_codes[] =
-{
+const char *tree_codes[] = {
 #include "tree.def"
-(char*)0
+    (char *)0
 };
 
-int main()
+int main(void)
 {
-    printf ("/* This file is generated using gencheck. Do not edit. */\n");
+    printf("/* This file is generated using gencheck. Do not edit. */\n");
 
     for (int i = 0; tree_codes[i]; i++)
     {
-        printf("#define %s_CHECK(t)\tTREE_CHECK (t, %s)\n",
-               tree_codes[i], tree_codes[i]);
-        printf("#define %s_CHECK1(t)\tTREE_CHECK1 (t, %s)\n",
-               tree_codes[i], tree_codes[i]);
+        printf("#define %s_CHECK(t)\tTREE_CHECK (t, %s)\n", tree_codes[i], tree_codes[i]);
+        printf("#define %s_CHECK1(t)\tTREE_CHECK1 (t, %s)\n", tree_codes[i], tree_codes[i]);
     }
 
     return 0;

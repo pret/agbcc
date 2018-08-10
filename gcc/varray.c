@@ -26,45 +26,41 @@
 #include "bitmap.h"
 #include "varray.h"
 
-#define VARRAY_HDR_SIZE (sizeof (struct varray_head_tag) - sizeof (varray_data))
+#define VARRAY_HDR_SIZE (sizeof(struct varray_head_tag) - sizeof(varray_data))
 
 /* Allocate a virtual array with NUM_ELEMENT elements, each of which is
    ELEMENT_SIZE bytes long, named NAME.  Array elements are zeroed.  */
-varray_type
-varray_init (num_elements, element_size, name)
-     size_t num_elements;
-     size_t element_size;
-     const char *name;
+varray_type varray_init(num_elements, element_size, name) size_t num_elements;
+size_t element_size;
+const char *name;
 {
-  size_t data_size = num_elements * element_size;
-  varray_type ptr = (varray_type) xcalloc (VARRAY_HDR_SIZE + data_size, 1);
+    size_t data_size = num_elements * element_size;
+    varray_type ptr = (varray_type)xcalloc(VARRAY_HDR_SIZE + data_size, 1);
 
-  ptr->num_elements = num_elements;
-  ptr->element_size = element_size;
-  ptr->name	    = name;
-  return ptr;
+    ptr->num_elements = num_elements;
+    ptr->element_size = element_size;
+    ptr->name = name;
+    return ptr;
 }
 
 /* Grow/shrink the virtual array VA to N elements.  Zero any new elements
    allocated.  */
-varray_type
-varray_grow (va, n)
-     varray_type va;
-     size_t n;
+varray_type varray_grow(va, n) varray_type va;
+size_t n;
 {
-  size_t old_elements = va->num_elements;
+    size_t old_elements = va->num_elements;
 
-  if (n != old_elements)
+    if (n != old_elements)
     {
-      size_t element_size = va->element_size;
-      size_t old_data_size = old_elements * element_size;
-      size_t data_size = n * element_size;
+        size_t element_size = va->element_size;
+        size_t old_data_size = old_elements * element_size;
+        size_t data_size = n * element_size;
 
-      va = (varray_type) xrealloc ((char *)va, VARRAY_HDR_SIZE + data_size);
-      va->num_elements = n;
-      if (n > old_elements)
-	zero_memory (&va->data.c[old_data_size], data_size - old_data_size);
+        va = (varray_type)xrealloc((char *)va, VARRAY_HDR_SIZE + data_size);
+        va->num_elements = n;
+        if (n > old_elements)
+            zero_memory(&va->data.c[old_data_size], data_size - old_data_size);
     }
 
-  return va;
+    return va;
 }

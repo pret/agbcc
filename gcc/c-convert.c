@@ -45,53 +45,49 @@ Boston, MA 02111-1307, USA.  */
      In expr.c: expand_expr, for operands of a MULT_EXPR.
      In fold-const.c: fold.
      In tree.c: get_narrower and get_unwidened.  */
-
+
 /* Subroutines of `convert'.  */
 
 
-
 /* Create an expression whose value is that of EXPR,
    converted to type TYPE.  The TREE_TYPE of the value
    is always TYPE.  This function implements all reasonable
    conversions; callers should filter out those that are
    not permitted by the language being compiled.  */
 
-tree
-convert (type, expr)
-     tree type, expr;
+tree convert(tree type, tree expr)
 {
-  register tree e = expr;
-  register enum tree_code code = TREE_CODE (type);
+    register tree e = expr;
+    register enum tree_code code = TREE_CODE(type);
 
-  if (type == TREE_TYPE (expr)
-      || TREE_CODE (expr) == ERROR_MARK)
-    return expr;
-  if (TYPE_MAIN_VARIANT (type) == TYPE_MAIN_VARIANT (TREE_TYPE (expr)))
-    return fold (build1 (NOP_EXPR, type, expr));
-  if (TREE_CODE (TREE_TYPE (expr)) == ERROR_MARK)
-    return error_mark_node;
-  if (TREE_CODE (TREE_TYPE (expr)) == VOID_TYPE)
+    if (type == TREE_TYPE(expr) || TREE_CODE(expr) == ERROR_MARK)
+        return expr;
+    if (TYPE_MAIN_VARIANT(type) == TYPE_MAIN_VARIANT(TREE_TYPE(expr)))
+        return fold(build1(NOP_EXPR, type, expr));
+    if (TREE_CODE(TREE_TYPE(expr)) == ERROR_MARK)
+        return error_mark_node;
+    if (TREE_CODE(TREE_TYPE(expr)) == VOID_TYPE)
     {
-      error ("void value not ignored as it ought to be");
-      return error_mark_node;
+        error("void value not ignored as it ought to be");
+        return error_mark_node;
     }
-  if (code == VOID_TYPE)
-    return build1 (CONVERT_EXPR, type, e);
+    if (code == VOID_TYPE)
+        return build1(CONVERT_EXPR, type, e);
 #if 0
   /* This is incorrect.  A truncation can't be stripped this way.
      Extensions will be stripped by the use of get_unwidened.  */
   if (TREE_CODE (expr) == NOP_EXPR)
     return convert (type, TREE_OPERAND (expr, 0));
 #endif
-  if (code == INTEGER_TYPE || code == ENUMERAL_TYPE)
-    return fold (convert_to_integer (type, e));
-  if (code == POINTER_TYPE)
-    return fold (convert_to_pointer (type, e));
-  if (code == REAL_TYPE)
-    return fold (convert_to_real (type, e));
-  if (code == COMPLEX_TYPE)
-    return fold (convert_to_complex (type, e));
+    if (code == INTEGER_TYPE || code == ENUMERAL_TYPE)
+        return fold(convert_to_integer(type, e));
+    if (code == POINTER_TYPE)
+        return fold(convert_to_pointer(type, e));
+    if (code == REAL_TYPE)
+        return fold(convert_to_real(type, e));
+    if (code == COMPLEX_TYPE)
+        return fold(convert_to_complex(type, e));
 
-  error ("conversion to non-scalar type requested");
-  return error_mark_node;
+    error("conversion to non-scalar type requested");
+    return error_mark_node;
 }

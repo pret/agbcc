@@ -29,7 +29,7 @@ Boston, MA 02111-1307, USA.  */
    bits is unsigned, assuming it is a power of 2.  */
 
 #define BITMAP_ELEMENT_ALL_BITS \
-  ((unsigned) (BITMAP_ELEMENT_WORDS * HOST_BITS_PER_WIDE_INT))
+  ((unsigned) (BITMAP_ELEMENT_WORDS * 32))
 
 /* Bitmap set element.  We use a linked list to hold only the bits that
    are set.  This allows for use to grow the bitset dynamically without
@@ -41,7 +41,7 @@ typedef struct bitmap_element_def
   struct bitmap_element_def *next;		/* Next element. */
   struct bitmap_element_def *prev;		/* Previous element. */
   unsigned int indx;			/* regno/BITMAP_ELEMENT_ALL_BITS. */
-  HOST_WIDE_UINT bits[BITMAP_ELEMENT_WORDS]; /* Bits that are set. */
+  uint32_t bits[BITMAP_ELEMENT_WORDS]; /* Bits that are set. */
 } bitmap_element;
 
 /* Head of bitmap linked list.  */
@@ -127,8 +127,8 @@ do {				\
 do {									\
   bitmap_element *ptr_ = (BITMAP)->first;				\
   unsigned int indx_ = (MIN) / BITMAP_ELEMENT_ALL_BITS;			\
-  unsigned bit_num_ = (MIN) % ((unsigned) HOST_BITS_PER_WIDE_INT);	\
-  unsigned word_num_ = (((MIN) / ((unsigned) HOST_BITS_PER_WIDE_INT))	\
+  unsigned bit_num_ = (MIN) % ((unsigned) 32);	\
+  unsigned word_num_ = (((MIN) / ((unsigned) 32))	\
 			% BITMAP_ELEMENT_WORDS);			\
 									\
 									\
@@ -146,20 +146,20 @@ do {									\
     {									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  HOST_WIDE_UINT word_ = ptr_->bits[word_num_];		\
+	  uint32_t word_ = ptr_->bits[word_num_];		\
 									\
 	  if (word_ != 0)						\
 	    {								\
-	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
+	      for (; bit_num_ < 32; bit_num_++)	\
 		{							\
-		  HOST_WIDE_UINT mask_				\
-		    = ((HOST_WIDE_UINT) 1) << bit_num_;		\
+		  uint32_t mask_				\
+		    = ((uint32_t) 1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\
 		      word_ &= ~ mask_;					\
 		      (BITNUM) = (ptr_->indx * BITMAP_ELEMENT_ALL_BITS  \
-				  + word_num_ * HOST_BITS_PER_WIDE_INT  \
+				  + word_num_ * 32  \
 				  + bit_num_);				\
 		      CODE;						\
 									\
@@ -185,8 +185,8 @@ do {									\
   bitmap_element *ptr1_ = (BITMAP1)->first;				\
   bitmap_element *ptr2_ = (BITMAP2)->first;				\
   unsigned int indx_ = (MIN) / BITMAP_ELEMENT_ALL_BITS;			\
-  unsigned bit_num_ = (MIN) % ((unsigned) HOST_BITS_PER_WIDE_INT);	\
-  unsigned word_num_ = (((MIN) / ((unsigned) HOST_BITS_PER_WIDE_INT))	\
+  unsigned bit_num_ = (MIN) % ((unsigned) 32);	\
+  unsigned word_num_ = (((MIN) / ((unsigned) 32))	\
 			% BITMAP_ELEMENT_WORDS);			\
 									\
   /* Find the block the minimum bit is in in the first bitmap.  */	\
@@ -213,20 +213,20 @@ do {									\
 									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  HOST_WIDE_UINT word_ = (ptr1_->bits[word_num_]	\
+	  uint32_t word_ = (ptr1_->bits[word_num_]	\
 					  & ~ tmp2_->bits[word_num_]);	\
 	  if (word_ != 0)						\
 	    {								\
-	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
+	      for (; bit_num_ < 32; bit_num_++)	\
 		{							\
-		  HOST_WIDE_UINT mask_				\
-		    = ((HOST_WIDE_UINT)1) << bit_num_;		\
+		  uint32_t mask_				\
+		    = ((uint32_t)1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\
 		      word_ &= ~ mask_;					\
 		      (BITNUM) = (ptr1_->indx * BITMAP_ELEMENT_ALL_BITS \
-				  + word_num_ * HOST_BITS_PER_WIDE_INT  \
+				  + word_num_ * 32  \
 				  + bit_num_);				\
 									\
 		      CODE;						\
@@ -252,8 +252,8 @@ do {									\
   bitmap_element *ptr1_ = (BITMAP1)->first;				\
   bitmap_element *ptr2_ = (BITMAP2)->first;				\
   unsigned int indx_ = (MIN) / BITMAP_ELEMENT_ALL_BITS;			\
-  unsigned bit_num_ = (MIN) % ((unsigned) HOST_BITS_PER_WIDE_INT);	\
-  unsigned word_num_ = (((MIN) / ((unsigned) HOST_BITS_PER_WIDE_INT))	\
+  unsigned bit_num_ = (MIN) % ((unsigned) 32);	\
+  unsigned word_num_ = (((MIN) / ((unsigned) 32))	\
 			% BITMAP_ELEMENT_WORDS);			\
 									\
   /* Find the block the minimum bit is in in the first bitmap.  */	\
@@ -286,20 +286,20 @@ do {									\
 									\
       for (; word_num_ < BITMAP_ELEMENT_WORDS; word_num_++)		\
 	{								\
-	  HOST_WIDE_UINT word_ = (ptr1_->bits[word_num_]	\
+	  uint32_t word_ = (ptr1_->bits[word_num_]	\
 					  & ptr2_->bits[word_num_]);	\
 	  if (word_ != 0)						\
 	    {								\
-	      for (; bit_num_ < HOST_BITS_PER_WIDE_INT; bit_num_++)	\
+	      for (; bit_num_ < 32; bit_num_++)	\
 		{							\
-		  HOST_WIDE_UINT mask_				\
-		    = ((HOST_WIDE_UINT)1) << bit_num_;		\
+		  uint32_t mask_				\
+		    = ((uint32_t)1) << bit_num_;		\
 									\
 		  if ((word_ & mask_) != 0)				\
 		    {							\
 		      word_ &= ~ mask_;					\
 		      (BITNUM) = (ptr1_->indx * BITMAP_ELEMENT_ALL_BITS \
-				  + word_num_ * HOST_BITS_PER_WIDE_INT  \
+				  + word_num_ * 32  \
 				  + bit_num_);				\
 									\
 		      CODE;						\

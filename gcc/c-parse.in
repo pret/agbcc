@@ -679,8 +679,6 @@ end ifobjc
 
 				  if (! undeclared_variable_notice)
 				    {
-				      error ("(Each undeclared identifier is reported only once");
-				      error ("for each function it appears in.)");
 				      undeclared_variable_notice = 1;
 				    }
 				}

@@ -21,16 +21,18 @@ Boston, MA 02111-1307, USA.  */
 #ifndef __GCC_TOPLEV_H__
 #define __GCC_TOPLEV_H__
 
+#include <setjmp.h>
+
 union tree_node;
 struct rtx_def;
 
-extern int count_error			(int);
-extern void strip_off_ending		(char *, int);
-extern void print_time			(char *, int);
-extern void debug_start_source_file	(char *);
-extern void debug_end_source_file	(unsigned);
-extern void debug_define		(unsigned, char *);
-extern void debug_undef			(unsigned, char *);
+extern int count_error();
+extern void strip_off_ending();
+extern void print_time();
+extern void debug_start_source_file();
+extern void debug_end_source_file();
+extern void debug_define();
+extern void debug_undef();
 extern void fatal			(char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
 extern void fatal_io_error		(char *) ATTRIBUTE_NORETURN;
@@ -45,11 +47,15 @@ extern void error			(char *, ...)
 						ATTRIBUTE_PRINTF_1;
 extern void pedwarn			(char *, ...)
 						ATTRIBUTE_PRINTF_1;
+extern void note			(char *, ...)
+						ATTRIBUTE_PRINTF_1;
 extern void pedwarn_with_file_and_line	(char *, int, char *, ...)
 						ATTRIBUTE_PRINTF_3;
 extern void warning_with_file_and_line	(char *, int, char *, ...)
 						ATTRIBUTE_PRINTF_3;
 extern void error_with_file_and_line	(char *, int, char *, ...)
+						ATTRIBUTE_PRINTF_3;
+extern void note_with_file_and_line		(char *, int, char *, ...)
 						ATTRIBUTE_PRINTF_3;
 extern void sorry			(char *s, ...)
 						ATTRIBUTE_PRINTF_1;
@@ -70,11 +76,9 @@ extern void error_for_asm		(struct rtx_def *, char *, ...)
 						ATTRIBUTE_PRINTF_2;
 extern void warning_for_asm		(struct rtx_def *, char *, ...)
 						ATTRIBUTE_PRINTF_2;
-#if defined (_JBLEN) || defined (setjmp)
 extern void set_float_handler (jmp_buf);
 extern int push_float_handler (jmp_buf, jmp_buf);
 extern void pop_float_handler (int, jmp_buf);
-#endif
 
 extern void fancy_abort			(void) ATTRIBUTE_NORETURN;
 extern void do_abort			(void) ATTRIBUTE_NORETURN;

@@ -29,12 +29,12 @@ Boston, MA 02111-1307, USA.  */
 
    Note that lots of code assumes that the first part of a regset is
    the same format as a HARD_REG_SET.  To help make sure this is true,
-   we only try the widest integer mode (HOST_WIDE_INT) instead of all the
+   we only try the widest integer mode (int32_t) instead of all the
    smaller types.  This approach loses only if there are a very few
    registers and then only in the few cases where we have an array of
    HARD_REG_SETs, so it needn't be as complex as it used to be.  */
 
-typedef HOST_WIDE_UINT HARD_REG_ELT_TYPE;
+typedef uint32_t HARD_REG_ELT_TYPE;
 
 #define HARD_REG_SET HARD_REG_ELT_TYPE
 

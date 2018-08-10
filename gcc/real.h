@@ -66,7 +66,7 @@ Boston, MA 02111-1307, USA.  */
 
 #define REAL_VALUE_TYPE double
 
-extern int significand_size	(enum machine_mode);
+extern int significand_size();
 
 /* If emulation has been enabled by defining REAL_ARITHMETIC or by
    setting LONG_DOUBLE_TYPE_SIZE to 96 or 128, then define macros so that
@@ -78,34 +78,27 @@ extern int significand_size	(enum machine_mode);
   earith (&(value), (code), &(d1), &(d2))
 
 /* Declare functions in real.c. */
-extern void earith		(REAL_VALUE_TYPE *, int,
-				       REAL_VALUE_TYPE *, REAL_VALUE_TYPE *);
-extern REAL_VALUE_TYPE etrunci	(REAL_VALUE_TYPE);
-extern REAL_VALUE_TYPE etruncui	(REAL_VALUE_TYPE);
-extern REAL_VALUE_TYPE ereal_atof (char *, enum machine_mode);
-extern REAL_VALUE_TYPE ereal_negate (REAL_VALUE_TYPE);
-extern HOST_WIDE_INT efixi	(REAL_VALUE_TYPE);
-extern HOST_WIDE_UINT efixui (REAL_VALUE_TYPE);
-extern void ereal_from_int	(REAL_VALUE_TYPE *,
-				       HOST_WIDE_INT, HOST_WIDE_INT,
-				       enum machine_mode);
-extern void ereal_from_uint	(REAL_VALUE_TYPE *,
-				       HOST_WIDE_UINT,
-				       HOST_WIDE_UINT,
-				       enum machine_mode);
-extern void ereal_to_int	(HOST_WIDE_INT *, HOST_WIDE_INT *,
-				       REAL_VALUE_TYPE);
-extern REAL_VALUE_TYPE ereal_ldexp (REAL_VALUE_TYPE, int);
+extern void earith();
+extern REAL_VALUE_TYPE etrunci();
+extern REAL_VALUE_TYPE etruncui();
+extern REAL_VALUE_TYPE ereal_atof();
+extern REAL_VALUE_TYPE ereal_negate();
+extern int32_t efixi();
+extern uint32_t efixui();
+extern void ereal_from_int();
+extern void ereal_from_uint();
+extern void ereal_to_int();
+extern REAL_VALUE_TYPE ereal_ldexp();
 
-extern void etardouble		(REAL_VALUE_TYPE, long *);
-extern long etarsingle		(REAL_VALUE_TYPE);
-extern void ereal_to_decimal	(REAL_VALUE_TYPE, char *);
-extern int ereal_cmp		(REAL_VALUE_TYPE, REAL_VALUE_TYPE);
-extern int ereal_isneg		(REAL_VALUE_TYPE);
-extern REAL_VALUE_TYPE ereal_unto_float (long);
-extern REAL_VALUE_TYPE ereal_unto_double (long *);
-extern REAL_VALUE_TYPE ereal_from_float (HOST_WIDE_INT);
-extern REAL_VALUE_TYPE ereal_from_double (HOST_WIDE_INT *);
+extern void etardouble();
+extern long etarsingle();
+extern void ereal_to_decimal();
+extern int ereal_cmp();
+extern int ereal_isneg();
+extern REAL_VALUE_TYPE ereal_unto_float();
+extern REAL_VALUE_TYPE ereal_unto_double();
+extern REAL_VALUE_TYPE ereal_from_float();
+extern REAL_VALUE_TYPE ereal_from_double();
 
 #define REAL_VALUES_EQUAL(x, y) (ereal_cmp ((x), (y)) == 0)
 /* true if x < y : */
@@ -115,11 +108,10 @@ extern REAL_VALUE_TYPE ereal_from_double (HOST_WIDE_INT *);
 /* These return REAL_VALUE_TYPE: */
 #define REAL_VALUE_RNDZINT(x) (etrunci (x))
 #define REAL_VALUE_UNSIGNED_RNDZINT(x) (etruncui (x))
-extern REAL_VALUE_TYPE real_value_truncate	(enum machine_mode,
-							REAL_VALUE_TYPE);
+extern REAL_VALUE_TYPE real_value_truncate();
 #define REAL_VALUE_TRUNCATE(mode, x)  real_value_truncate (mode, x)
 
-/* These return HOST_WIDE_INT: */
+/* These return int32_t: */
 /* Convert a floating-point value to integer, rounding toward zero.  */
 #define REAL_VALUE_FIX(x) (efixi (x))
 /* Convert a floating-point value to unsigned integer, rounding
@@ -138,9 +130,9 @@ extern REAL_VALUE_TYPE real_value_truncate	(enum machine_mode,
 
 #define REAL_VALUE_TO_INT ereal_to_int
 
-/* Here the cast to HOST_WIDE_INT sign-extends arguments such as ~0.  */
+/* Here the cast to int32_t sign-extends arguments such as ~0.  */
 #define REAL_VALUE_FROM_INT(d, lo, hi, mode) \
-  ereal_from_int (&d, (HOST_WIDE_INT) (lo), (HOST_WIDE_INT) (hi), mode)
+  ereal_from_int (&d, (int32_t) (lo), (int32_t) (hi), mode)
 
 #define REAL_VALUE_FROM_UNSIGNED_INT(d, lo, hi, mode) \
   ereal_from_uint (&d, lo, hi, mode)
@@ -157,11 +149,11 @@ extern REAL_VALUE_TYPE real_value_truncate	(enum machine_mode,
 /* Inverse of REAL_VALUE_TO_TARGET_SINGLE. */
 #define REAL_VALUE_UNTO_TARGET_SINGLE(f)  (ereal_unto_float (f))
 
-/* d is an array of HOST_WIDE_INT that holds a double precision
+/* d is an array of int32_t that holds a double precision
    value in the target computer's floating point format. */
 #define REAL_VALUE_FROM_TARGET_DOUBLE(d)  (ereal_from_double (d))
 
-/* f is a HOST_WIDE_INT containing a single precision target float value. */
+/* f is a int32_t containing a single precision target float value. */
 #define REAL_VALUE_FROM_TARGET_SINGLE(f)  (ereal_from_float (f))
 
 /* Conversions to decimal ASCII string.  */
@@ -177,9 +169,9 @@ extern REAL_VALUE_TYPE real_value_truncate	(enum machine_mode,
 do {							\
   union {						\
     float f;						\
-    HOST_WIDE_INT l;					\
+    int32_t l;					\
   } u;							\
-  if (sizeof(HOST_WIDE_INT) < sizeof(float))		\
+  if (sizeof(int32_t) < sizeof(float))		\
     abort();						\
   u.l = 0;						\
   u.f = (IN);						\
@@ -195,9 +187,9 @@ do {							\
 do {									\
   union {								\
     REAL_VALUE_TYPE f;							\
-    HOST_WIDE_INT l[2];							\
+    int32_t l[2];							\
   } u;									\
-  if (sizeof(HOST_WIDE_INT) * 2 < sizeof(REAL_VALUE_TYPE))		\
+  if (sizeof(int32_t) * 2 < sizeof(REAL_VALUE_TYPE))		\
     abort();								\
   u.l[0] = u.l[1] = 0;							\
   u.f = (IN);								\
@@ -249,13 +241,13 @@ do {									\
 /* Scale X by Y powers of 2.  */
 #ifndef REAL_VALUE_LDEXP
 #define REAL_VALUE_LDEXP(x, y) ldexp (x, y)
-extern double ldexp ();
+extern double ldexp();
 #endif
 
 /* Convert the string X to a floating-point value.  */
 #ifndef REAL_VALUE_ATOF
 /* Use real.c to convert decimal numbers to binary, ... */
-REAL_VALUE_TYPE ereal_atof ();
+REAL_VALUE_TYPE ereal_atof();
 #define REAL_VALUE_ATOF(x, s) ereal_atof (x, s)
 /* Could use ereal_atof here for hexadecimal floats too, but real_hex_to_f
    is OK and it uses faster native fp arithmetic.  */
@@ -265,7 +257,7 @@ REAL_VALUE_TYPE ereal_atof ();
 /* Hexadecimal floating constant input for use with host computer's
    fp arithmetic.  */
 #ifndef REAL_VALUE_HTOF
-extern REAL_VALUE_TYPE real_hex_to_f (char *, enum machine_mode);
+extern REAL_VALUE_TYPE real_hex_to_f();
 #define REAL_VALUE_HTOF(s,m) real_hex_to_f(s,m)
 #endif
 
@@ -279,7 +271,7 @@ extern REAL_VALUE_TYPE real_hex_to_f (char *, enum machine_mode);
    size and where `float' is SFmode.  */
 
 /* Don't use REAL_VALUE_TRUNCATE directly--always call real_value_truncate.  */
-extern REAL_VALUE_TYPE real_value_truncate (enum machine_mode, REAL_VALUE_TYPE);
+extern REAL_VALUE_TYPE real_value_truncate();
 
 #ifndef REAL_VALUE_TRUNCATE
 #define REAL_VALUE_TRUNCATE(mode, x) \
@@ -302,9 +294,9 @@ extern REAL_VALUE_TYPE real_value_truncate (enum machine_mode, REAL_VALUE_TYPE);
 #define REAL_VALUE_NEGATIVE(x) (target_negative (x))
 #endif
 
-extern int target_isnan			(REAL_VALUE_TYPE);
-extern int target_isinf			(REAL_VALUE_TYPE);
-extern int target_negative		(REAL_VALUE_TYPE);
+extern int target_isnan();
+extern int target_isinf();
+extern int target_negative();
 
 /* Determine whether a floating-point value X is minus 0. */
 #ifndef REAL_VALUE_MINUS_ZERO
@@ -324,7 +316,7 @@ extern REAL_VALUE_TYPE dconstm1;
 union real_extract 
 {
   REAL_VALUE_TYPE d;
-  HOST_WIDE_INT i[sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT)];
+  int32_t i[sizeof (REAL_VALUE_TYPE) / sizeof (int32_t)];
 };
 
 /* For a CONST_DOUBLE:
@@ -348,13 +340,12 @@ union real_extract
 /* Function to return a real value (not a tree node)
    from a given integer constant.  */
 union tree_node;
-REAL_VALUE_TYPE real_value_from_int_cst	(union tree_node *,
-						union tree_node *);
+REAL_VALUE_TYPE real_value_from_int_cst();
 
 #define REAL_VALUE_FROM_CONST_DOUBLE(to, from) \
 do { \
     union real_extract u; \
-    for (int i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++) \
+    for (int i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (int32_t); i++) \
         u.i[i] = XWINT((from), 2 + i); \
     to = u.d; \
 } while (0)
@@ -362,8 +353,7 @@ do { \
 /* Return a CONST_DOUBLE with value R and mode M.  */
 
 #define CONST_DOUBLE_FROM_REAL_VALUE(r, m) immed_real_const_1 (r,  m)
-extern struct rtx_def *immed_real_const_1	(REAL_VALUE_TYPE,
-						       enum machine_mode);
+extern struct rtx_def *immed_real_const_1();
 
 
 /* Convert a floating point value `r', that can be interpreted
@@ -374,11 +364,10 @@ extern struct rtx_def *immed_real_const_1	(REAL_VALUE_TYPE,
 #endif
 
 /* Replace R by 1/R in the given machine mode, if the result is exact.  */
-extern int exact_real_inverse (enum machine_mode, REAL_VALUE_TYPE *);
+extern int exact_real_inverse();
 
-extern void debug_real			(REAL_VALUE_TYPE);
+extern void debug_real();
 
 /* In varasm.c */
-extern void assemble_real		(REAL_VALUE_TYPE,
-						enum machine_mode);
+extern void assemble_real();
 #endif /* Not REAL_H_INCLUDED */

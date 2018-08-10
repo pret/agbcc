@@ -3,7 +3,7 @@
 #include "config.h"
 #include "system.h"
 
-#if !( defined(_WIN32) && !defined(__CYGWIN__))
+#if !(defined(_WIN32) && !defined(__CYGWIN__))
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,60 +14,56 @@
    to the user.  Yield the working directory if successful; otherwise,
    yield 0 and set errno.  */
 
-char *
-getpwd ()
+char *getpwd(void)
 {
-  static char *pwd;
-  static int failure_errno;
+    static char *pwd;
+    static int failure_errno;
 
-  char *p = pwd;
-  size_t guessed_len;
-  struct stat dotstat, pwdstat;
+    char *p = pwd;
+    size_t guessed_len;
+    struct stat dotstat, pwdstat;
 
-  if (!p && !(errno = failure_errno))
+    if (!p && !(errno = failure_errno))
     {
-      int env_ok = ((p = getenv ("PWD")) != 0
-	     && *p == '/'
-	     && stat (p, &pwdstat) == 0
-	     && stat (".", &dotstat) == 0
-	     && dotstat.st_ino == pwdstat.st_ino
-	     && dotstat.st_dev == pwdstat.st_dev);
+        int env_ok = ((p = getenv("PWD")) != 0 && *p == '/' && stat(p, &pwdstat) == 0
+            && stat(".", &dotstat) == 0 && dotstat.st_ino == pwdstat.st_ino
+            && dotstat.st_dev == pwdstat.st_dev);
 
-	if (!env_ok)
-    {
-        /* The shortcut didn't work.  Try the slow, ``sure'' way.  */
-	for (guessed_len = 256; !getcwd(p = xmalloc (guessed_len), guessed_len); guessed_len *= 2)
-	  {
-	    int e = errno;
-	    free (p);
-	    if (e != ERANGE)
-	      {
-		errno = failure_errno = e;
-		p = 0;
-		break;
-	      }
-	  }
-    }
+        if (!env_ok)
+        {
+            /* The shortcut didn't work.  Try the slow, ``sure'' way.  */
+            for (guessed_len = 256; !getcwd(p = xmalloc(guessed_len), guessed_len);
+                 guessed_len *= 2)
+            {
+                int e = errno;
+                free(p);
+                if (e != ERANGE)
+                {
+                    errno = failure_errno = e;
+                    p = 0;
+                    break;
+                }
+            }
+        }
 
-      /* Cache the result.  This assumes that the program does
-	 not invoke chdir between calls to getpwd.  */
-      pwd = p;
+        /* Cache the result.  This assumes that the program does
+       not invoke chdir between calls to getpwd.  */
+        pwd = p;
     }
-  return p;
+    return p;
 }
 
-#else	/* _WIN32 && !__CYGWIN__ */
+#else /* _WIN32 && !__CYGWIN__ */
 
 #include <direct.h>
 
-char *
-getpwd ()
+char *getpwd(void)
 {
-  static char *pwd = 0;
+    static char *pwd = 0;
 
-  if (!pwd)
-    pwd = _getcwd(NULL, 0);
-  return pwd;
+    if (!pwd)
+        pwd = _getcwd(NULL, 0);
+    return pwd;
 }
 
-#endif	/* _WIN32 && !__CYGWIN__ */
+#endif /* _WIN32 && !__CYGWIN__ */

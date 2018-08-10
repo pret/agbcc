@@ -112,7 +112,7 @@ extern int target_flags;
    fprintf((STREAM), ", %d\t%s %d\n", (ROUNDED), (ASM_COMMENT_START), (SIZE)))
 
 #define ASM_GENERATE_INTERNAL_LABEL(STRING,PREFIX,NUM)        \
-  sprintf ((STRING), "*%s%s%d", (LOCAL_LABEL_PREFIX), (PREFIX), (NUM))
+  sprintf ((STRING), "*%s%s%d", (LOCAL_LABEL_PREFIX), (PREFIX), (int)(NUM))
 
 /* This is how to output an internal numbered label where
    PREFIX is the class of label and NUM is the number within the class.  */
@@ -452,14 +452,14 @@ enum reg_class
 }
 
 #define REG_CLASS_CONTENTS	\
-{				\
-  0x00000,			\
-  0x000f0,			\
-  0x000ff,			\
-  0x02000,			\
-  0x020ff,			\
-  0x0ff00,			\
-  0x1ffff,			\
+{ 				\
+  { 0x00000 },			\
+  { 0x000f0 },			\
+  { 0x000ff },			\
+  { 0x02000 },			\
+  { 0x020ff },			\
+  { 0x0ff00 },			\
+  { 0x1ffff },			\
 }
 
 #define REGNO_REG_CLASS(REGNO)			\
@@ -529,7 +529,7 @@ enum reg_class
   ((CONSTANT_P ((X)) && GET_CODE ((X)) != CONST_INT		\
     && ! CONSTANT_POOL_ADDRESS_P((X))) ? NO_REGS		\
    : (GET_CODE ((X)) == CONST_INT				\
-      && (HOST_WIDE_UINT) INTVAL ((X)) > 255) ? NO_REGS	\
+      && (uint32_t) INTVAL ((X)) > 255) ? NO_REGS	\
    : LO_REGS) */
 
 /* Must leave BASE_REGS and NONARG_LO_REGS reloads alone, see comment
@@ -543,16 +543,16 @@ enum reg_class
 
 #define CLASS_MAX_NREGS(CLASS,MODE) HARD_REGNO_NREGS(0,(MODE))
 
-int thumb_shiftable_const ();
+int thumb_shiftable_const();
 
 #define CONST_OK_FOR_LETTER_P(VAL,C)				\
-  ((C) == 'I' ? (HOST_WIDE_UINT) (VAL) < 256		\
+  ((C) == 'I' ? (uint32_t) (VAL) < 256		\
    : (C) == 'J' ? (VAL) > -256 && (VAL) <= 0			\
    : (C) == 'K' ? thumb_shiftable_const (VAL)			\
    : (C) == 'L' ? (VAL) > -8 && (VAL) < 8			\
-   : (C) == 'M' ? ((HOST_WIDE_UINT) (VAL) < 1024	\
+   : (C) == 'M' ? ((uint32_t) (VAL) < 1024	\
 		   && ((VAL) & 3) == 0)				\
-   : (C) == 'N' ? ((HOST_WIDE_UINT) (VAL) < 32)		\
+   : (C) == 'N' ? ((uint32_t) (VAL) < 32)		\
    : (C) == 'O' ? ((VAL) >= -508 && (VAL) <= 508)		\
    : 0)
 
@@ -784,8 +784,8 @@ int thumb_shiftable_const ();
 #define REG_OK_FOR_INDEXED_BASE_P(X) REG_OK_FOR_INDEX_P(X)
 
 #define LEGITIMATE_OFFSET(MODE,VAL)				\
-(GET_MODE_SIZE (MODE) == 1 ? ((HOST_WIDE_UINT) (VAL) < 32)	\
- : GET_MODE_SIZE (MODE) == 2 ? ((HOST_WIDE_UINT) (VAL) < 64	\
+(GET_MODE_SIZE (MODE) == 1 ? ((uint32_t) (VAL) < 32)	\
+ : GET_MODE_SIZE (MODE) == 2 ? ((uint32_t) (VAL) < 64	\
 				&& ((VAL) & 1) == 0)			\
  : ((VAL) >= 0 && ((VAL) + GET_MODE_SIZE (MODE)) <= 128			\
     && ((VAL) & 3) == 0))
@@ -889,7 +889,7 @@ int thumb_shiftable_const ();
 	       && REGNO (XEXP (X, 0)) == STACK_POINTER_REGNUM		\
 	       && GET_MODE_SIZE (MODE) >= 4				\
 	       && GET_CODE (XEXP (X, 1)) == CONST_INT			\
-	       && (HOST_WIDE_UINT) INTVAL (XEXP (X, 1)) < 1024	\
+	       && (uint32_t) INTVAL (XEXP (X, 1)) < 1024	\
 	       && (INTVAL (XEXP (X, 1)) & 3) == 0)			\
 	goto WIN;							\
     }									\
@@ -964,7 +964,7 @@ int thumb_shiftable_const ();
    if (GET_CODE (XEXP (X, 1)) == CONST_INT)			\
      {								\
        int cycles = 0;						\
-       HOST_WIDE_UINT i = INTVAL (XEXP (X, 1));		\
+       uint32_t i = INTVAL (XEXP (X, 1));		\
        while (i)						\
 	 {							\
 	   i >>= 2;						\
@@ -985,7 +985,7 @@ int thumb_shiftable_const ();
  case CONST_INT:						\
    if ((OUTER) == SET)						\
      {								\
-       if ((HOST_WIDE_UINT) INTVAL (X) < 256)		\
+       if ((uint32_t) INTVAL (X) < 256)		\
 	 return 0;						\
        if (thumb_shiftable_const (INTVAL (X)))			\
 	 return COSTS_N_INSNS (2);				\
@@ -995,7 +995,7 @@ int thumb_shiftable_const ();
 	    && INTVAL (X) < 256 && INTVAL (X) > -256)		\
      return 0;							\
    else if (OUTER == COMPARE					\
-	    && (HOST_WIDE_UINT) INTVAL (X) < 256)	\
+	    && (uint32_t) INTVAL (X) < 256)	\
      return 0;							\
    else if (OUTER == ASHIFT || OUTER == ASHIFTRT		\
 	    || OUTER == LSHIFTRT)				\
@@ -1085,11 +1085,11 @@ typedef struct rtx_def *rtx;
 union tree_node;
 typedef union tree_node *tree;
 
-extern int thumb_cmp_operand(rtx, enum machine_mode);
-extern void thumb_reorg(rtx first);
-extern void thumb_expand_movstrqi(rtx *);
-extern void thumb_reload_out_si(rtx);
-extern void final_prescan_insn(rtx);
+extern int thumb_cmp_operand();
+extern void thumb_reorg();
+extern void thumb_expand_movstrqi();
+extern void thumb_reload_out_si();
+extern void final_prescan_insn();
 extern int far_jump_used_p();
 extern void thumb_function_prologue(FILE *, int);
 extern void thumb_expand_prologue();
@@ -1099,7 +1099,7 @@ extern char *thumb_unexpanded_epilogue();
 extern char *thumb_load_double_from_address();
 extern char *output_move_mem_multiple();
 extern void thumb_print_operand(FILE *, rtx, int);
-extern int thumb_return_in_memory(tree);
+extern int thumb_return_in_memory();
 extern void thumb_override_options();
-extern int arm_valid_machine_decl_attribute(tree, tree, tree, tree);
-extern int s_register_operand(rtx, enum machine_mode);
+extern int arm_valid_machine_decl_attribute();
+extern int s_register_operand();

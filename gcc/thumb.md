@@ -71,8 +71,8 @@
    (set (match_dup 0) (ashift:SI (match_dup 0) (match_dup 2)))]
   "
 {
-  HOST_WIDE_UINT val = INTVAL (operands[1]);
-  HOST_WIDE_UINT mask = 0xff;
+  uint32_t val = INTVAL (operands[1]);
+  uint32_t mask = 0xff;
   int i;
   for (i = 0; i < 25; i++)
     if ((val & (mask << i)) == val)
@@ -518,8 +518,8 @@
   ""
   "
 {
-  HOST_WIDE_INT lshift = 32 - INTVAL (operands[2]) - INTVAL (operands[3]);
-  HOST_WIDE_INT rshift = 32 - INTVAL (operands[2]);
+  int32_t lshift = 32 - INTVAL (operands[2]) - INTVAL (operands[3]);
+  int32_t rshift = 32 - INTVAL (operands[2]);
   operands[3] = GEN_INT (rshift);
   if (lshift == 0)
     {
@@ -622,7 +622,7 @@
    (set (match_dup 0)
 	(plus:SI (match_dup 0) (match_operand:SI 2 "register_operand" "k")))]
   "REGNO (operands[2]) == STACK_POINTER_REGNUM 
-   && (HOST_WIDE_UINT) (INTVAL (operands[1])) < 1024
+   && (uint32_t) (INTVAL (operands[1])) < 1024
    && (INTVAL (operands[1]) & 3) == 0"
   "add\\t%0, %2, %1")
 
@@ -682,7 +682,7 @@
   else
     {
       int i;
-      if (((HOST_WIDE_UINT) ~ INTVAL (operands[2])) < 256)
+      if (((uint32_t) ~ INTVAL (operands[2])) < 256)
 	{
 	  operands[2] = force_reg (SImode, GEN_INT (~INTVAL (operands[2])));
 	  emit_insn (gen_bicsi3 (operands[0], operands[2], operands[1]));
@@ -690,13 +690,13 @@
 	}
 
       for (i = 9; i <= 31; i++)
-	if ((((HOST_WIDE_INT) 1) << i) - 1 == INTVAL (operands[2]))
+	if ((((int32_t) 1) << i) - 1 == INTVAL (operands[2]))
 	  {
 	    emit_insn (gen_extzv (operands[0], operands[1], GEN_INT (i),
 				  const0_rtx));
 	    DONE;
 	  }
-	else if ((((HOST_WIDE_INT) 1) << i) - 1 == ~ INTVAL (operands[2]))
+	else if ((((int32_t) 1) << i) - 1 == ~ INTVAL (operands[2]))
 	  {
 	    rtx shift = GEN_INT (i);
 	    rtx reg = gen_reg_rtx (SImode);
@@ -789,7 +789,7 @@
   if (GET_CODE (operands[1]) != REG && GET_CODE (operands[1]) != SUBREG)
     {
       if (GET_CODE (operands[1]) != CONST_INT
-	  || (HOST_WIDE_UINT) (INTVAL (operands[1])) >= 256)
+	  || (uint32_t) (INTVAL (operands[1])) >= 256)
 	{
 	  if (GET_CODE (operands[1]) != CONST_INT
 	      || INTVAL (operands[1]) < -255
@@ -1087,7 +1087,7 @@
     {
       int i;
       union real_extract u;
-      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++)
+      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (int32_t); i++)
         u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;
@@ -1111,7 +1111,7 @@
     {
       int i;
       union real_extract u;
-      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (HOST_WIDE_INT); i++)
+      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (int32_t); i++)
         u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;

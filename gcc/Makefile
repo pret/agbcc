@@ -18,14 +18,15 @@
 #the Free Software Foundation, 59 Temple Place - Suite 330,
 #Boston MA 02111-1307, USA.
 
+VERSION = 1
+
 # Directory where sources are, from where we are.
 srcdir = .
 VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -O2 -w -std=gnu11
-
+BASE_CFLAGS = -O3 -std=gnu11 -w
 INCLUDES = -I. -I$(srcdir)
 
 md_file=$(srcdir)/thumb.md
@@ -58,20 +59,17 @@ GENERATED = genrtl.c genrtl.h \
 .PHONY: normal old clean tidy
 
 # The usual compiler.
-normal: CFLAGS = $(BASE_CFLAGS)
+normal: CFLAGS = $(BASE_CFLAGS) -DAGBCC_VERSION=$(VERSION)
 normal: $(OBJS)
-	$(CC) $(CFLAGS) -o agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
+	$(CC) $(CFLAGS)  -o agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
 
 # The old version of the compiler, used for building libgcc.
-old: CFLAGS = $(BASE_CFLAGS) -DOLD_COMPILER
+old: CFLAGS = $(BASE_CFLAGS) -DOLD_COMPILER -DAGBCC_VERSION=$(VERSION)
 old: $(OBJS)
 	$(CC) $(CFLAGS) -o old_agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
 
 # Clear suffixes.
 .SUFFIXES:
-
-# Parallel make breaks this build.
-.NOTPARALLEL: normal old
 
 # Clean any files that differ between new and old.
 tidy:
@@ -82,7 +80,7 @@ COMPILE = $(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c
 $(OBJS): %.o: %.c $(GENERATED)
 	$(COMPILE) $<
 
-$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c
+$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c | genrtl.h rtl.h tree-check.h
 	$(COMPILE) $<
 
 

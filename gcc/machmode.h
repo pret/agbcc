@@ -25,23 +25,18 @@ Boston, MA 02111-1307, USA.  */
    but this file is included by every GCC file. */
 
 #include <stdint.h>
-#include <inttypes.h>
 
-#define HOST_BITS_PER_WIDE_INT 32
-#define HOST_WIDE_INT int32_t
-#define HOST_WIDE_UINT uint32_t
+/* Provide int32_t format specs.  */
 
-/* Provide HOST_WIDE_INT format specs.  */
+#define int32_t_PRINT_DEC "%d"
 
-#define HOST_WIDE_INT_PRINT_DEC "%" PRId32
+#define int32_t_PRINT_UNSIGNED "%u"
 
-#define HOST_WIDE_INT_PRINT_UNSIGNED "%" PRIu32
+#define int32_t_PRINT_HEX "0x%x"
 
-#define HOST_WIDE_INT_PRINT_HEX "0x%" PRIx32
+#define int32_t_PRINT_DOUBLE_HEX "0x%x%08x"
 
-#define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%" PRIx32 "%08" PRIx32
-
-#define HOST_WIDE_INT_SCAN_DEC "%" SCNd32
+#define int32_t_SCAN_DEC "%d"
 
 /* Make an enum class that gives all the machine modes.  */
 
@@ -113,7 +108,7 @@ extern int mode_unit_size[];
 /* Get a bitmask containing 1 for all bits in a word
    that fit within mode MODE.  */
 
-extern HOST_WIDE_UINT mode_mask_array[];
+extern uint32_t mode_mask_array[];
 
 #define GET_MODE_MASK(MODE) mode_mask_array[(int) (MODE)]
 
@@ -126,16 +121,16 @@ extern unsigned char mode_wider_mode[];
    If LIMIT is nonzero, then don't use modes bigger than MAX_FIXED_MODE_SIZE.
    The value is BLKmode if no other mode is found.  */
 
-extern enum machine_mode mode_for_size (unsigned int, enum mode_class, int);
+extern enum machine_mode mode_for_size();
 
 /* Return an integer mode of the exact same size as the input mode,
    or BLKmode on failure.  */
 
-extern enum machine_mode int_mode_for_mode (enum machine_mode);
+extern enum machine_mode int_mode_for_mode();
 
 /* Find the best mode to use to access a bit field.  */
 
-extern enum machine_mode get_best_mode (int, int, int, enum machine_mode, int);
+extern enum machine_mode get_best_mode();
 
 /* Determine alignment, 1<=result<=BIGGEST_ALIGNMENT.  */
 
