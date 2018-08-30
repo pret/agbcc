@@ -1426,25 +1426,10 @@ char *
 mri_comment_field (char *stopcp)
 {
   char *s;
-#ifdef TC_M68K
-  int inquote = 0;
-
-  know (flag_m68k_mri);
-
-  for (s = input_line_pointer;
-       ((!is_end_of_line[(unsigned char) *s] && *s != ' ' && *s != '\t')
-	|| inquote);
-       s++)
-    {
-      if (*s == '\'')
-	inquote = !inquote;
-    }
-#else
   for (s = input_line_pointer;
        !is_end_of_line[(unsigned char) *s];
        s++)
     ;
-#endif
   *stopcp = *s;
   *s = '\0';
 
@@ -2455,21 +2440,6 @@ bss_alloc (symbolS *symbolP, addressT size, unsigned int align)
   subsegT current_subseg = now_subseg;
   segT bss_seg = bss_section;
 
-#if defined (TC_MIPS) || defined (TC_ALPHA)
-  if (OUTPUT_FLAVOR == bfd_target_ecoff_flavour
-      || OUTPUT_FLAVOR == bfd_target_elf_flavour)
-    {
-      /* For MIPS and Alpha ECOFF or ELF, small objects are put in .sbss.  */
-      if (size <= bfd_get_gp_size (stdoutput))
-	{
-	  bss_seg = subseg_new (".sbss", 1);
-	  seg_info (bss_seg)->bss = 1;
-	  if (!bfd_set_section_flags (stdoutput, bss_seg, SEC_ALLOC))
-	    as_warn (_("error setting flags for \".sbss\": %s"),
-		     bfd_errmsg (bfd_get_error ()));
-	}
-    }
-#endif
   subseg_set (bss_seg, 1);
 
   if (align > OCTETS_PER_BYTE_POWER)
@@ -2770,17 +2740,11 @@ s_mri (int ignore ATTRIBUTE_UNUSED)
   if (on != 0)
     {
       flag_mri = 1;
-#ifdef TC_M68K
-      flag_m68k_mri = 1;
-#endif
       macro_mri_mode (1);
     }
   else
     {
       flag_mri = 0;
-#ifdef TC_M68K
-      flag_m68k_mri = 0;
-#endif
       macro_mri_mode (0);
     }
 
@@ -2896,87 +2860,10 @@ s_org (int ignore ATTRIBUTE_UNUSED)
 void
 s_mri_sect (char *type ATTRIBUTE_UNUSED)
 {
-#ifdef TC_M68K
-
-  char *name;
-  char c;
-  segT seg;
-
-  SKIP_WHITESPACE ();
-
-  name = input_line_pointer;
-  if (!ISDIGIT (*name))
-    c = get_symbol_name (& name);
-  else
-    {
-      do
-	{
-	  ++input_line_pointer;
-	}
-      while (ISDIGIT (*input_line_pointer));
-
-      c = *input_line_pointer;
-      *input_line_pointer = '\0';
-    }
-
-  name = xstrdup (name);
-
-  c = restore_line_pointer (c);
-
-  seg = subseg_new (name, 0);
-
-  if (c == ',')
-    {
-      unsigned int align;
-
-      ++input_line_pointer;
-      align = get_absolute_expression ();
-      record_alignment (seg, align);
-    }
-
-  *type = 'C';
-  if (*input_line_pointer == ',')
-    {
-      c = *++input_line_pointer;
-      c = TOUPPER (c);
-      if (c == 'C' || c == 'D' || c == 'M' || c == 'R')
-	*type = c;
-      else
-	as_bad (_("unrecognized section type"));
-      ++input_line_pointer;
-
-      {
-	flagword flags;
-
-	flags = SEC_NO_FLAGS;
-	if (*type == 'C')
-	  flags = SEC_ALLOC | SEC_LOAD | SEC_READONLY | SEC_CODE;
-	else if (*type == 'D' || *type == 'M')
-	  flags = SEC_ALLOC | SEC_LOAD | SEC_DATA;
-	else if (*type == 'R')
-	  flags = SEC_ALLOC | SEC_LOAD | SEC_DATA | SEC_READONLY | SEC_ROM;
-	if (flags != SEC_NO_FLAGS)
-	  {
-	    if (!bfd_set_section_flags (stdoutput, seg, flags))
-	      as_warn (_("error setting flags for \"%s\": %s"),
-		       bfd_section_name (stdoutput, seg),
-		       bfd_errmsg (bfd_get_error ()));
-	  }
-      }
-    }
-
-  /* Ignore the HP type.  */
-  if (*input_line_pointer == ',')
-    input_line_pointer += 2;
-
-  demand_empty_rest_of_line ();
-
-#else /* ! TC_M68K */
   /* The MRI assembler seems to use different forms of .sect for
      different targets.  */
   as_bad ("MRI mode not supported for this target");
   ignore_rest_of_line ();
-#endif /* ! TC_M68K */
 }
 
 /* Handle the .print pseudo-op.  */
@@ -3911,11 +3798,6 @@ pseudo_set (symbolS *symbolP)
    are defined, which is the normal case, then only simple expressions
    are permitted.  */
 
-#ifdef TC_M68K
-static void
-parse_mri_cons (expressionS *exp, unsigned int nbytes);
-#endif
-
 #ifndef TC_PARSE_CONS_EXPRESSION
 #ifdef REPEAT_CONS_EXPRESSIONS
 #define TC_PARSE_CONS_EXPRESSION(EXP, NBYTES) \
@@ -3986,20 +3868,7 @@ cons_worker (int nbytes,	/* 1=.byte, 2=.word, 4=.long.  */
 	cur_fix = &(*cur_fix)->fx_next;
 #endif
 
-#ifdef TC_M68K
-      if (flag_m68k_mri)
-	parse_mri_cons (&exp, (unsigned int) nbytes);
-      else
-#endif
 	{
-#if 0
-	  if (*input_line_pointer == '"')
-	    {
-	      as_bad (_("unexpected `\"' in expression"));
-	      ignore_rest_of_line ();
-	      return;
-	    }
-#endif
 	  ret = TC_PARSE_CONS_EXPRESSION (&exp, (unsigned int) nbytes);
 	}
 
@@ -4579,73 +4448,6 @@ emit_expr_fix (expressionS *exp, unsigned int nbytes, fragS *frag, char *p,
 	       exp, 0, r);
 #endif
 }
-
-/* Handle an MRI style string expression.  */
-
-#ifdef TC_M68K
-static void
-parse_mri_cons (expressionS *exp, unsigned int nbytes)
-{
-  if (*input_line_pointer != '\''
-      && (input_line_pointer[1] != '\''
-	  || (*input_line_pointer != 'A'
-	      && *input_line_pointer != 'E')))
-    (void) TC_PARSE_CONS_EXPRESSION (exp, nbytes);
-  else
-    {
-      unsigned int scan;
-      unsigned int result = 0;
-
-      /* An MRI style string.  Cut into as many bytes as will fit into
-	 a nbyte chunk, left justify if necessary, and separate with
-	 commas so we can try again later.  */
-      if (*input_line_pointer == 'A')
-	++input_line_pointer;
-      else if (*input_line_pointer == 'E')
-	{
-	  as_bad (_("EBCDIC constants are not supported"));
-	  ++input_line_pointer;
-	}
-
-      input_line_pointer++;
-      for (scan = 0; scan < nbytes; scan++)
-	{
-	  if (*input_line_pointer == '\'')
-	    {
-	      if (input_line_pointer[1] == '\'')
-		{
-		  input_line_pointer++;
-		}
-	      else
-		break;
-	    }
-	  result = (result << 8) | (*input_line_pointer++);
-	}
-
-      /* Left justify.  */
-      while (scan < nbytes)
-	{
-	  result <<= 8;
-	  scan++;
-	}
-
-      /* Create correct expression.  */
-      exp->X_op = O_constant;
-      exp->X_add_number = result;
-
-      /* Fake it so that we can read the next char too.  */
-      if (input_line_pointer[0] != '\'' ||
-	  (input_line_pointer[0] == '\'' && input_line_pointer[1] == '\''))
-	{
-	  input_line_pointer -= 2;
-	  input_line_pointer[0] = ',';
-	  input_line_pointer[1] = '\'';
-	}
-      else
-	input_line_pointer++;
-    }
-}
-#endif /* TC_M68K */
 
 #ifdef REPEAT_CONS_EXPRESSIONS
 

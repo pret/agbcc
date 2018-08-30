@@ -4766,11 +4766,7 @@ ecoff_build_debug (HDRR *hdr,
 
   /* FIXME: This value should be determined from the .verstamp directive,
      with reasonable defaults in config files.  */
-#ifdef TC_ALPHA
-  hdr->vstamp = 0x030b;
-#else
   hdr->vstamp = 0x020b;
-#endif
 
   *bufp = buf;
   return offset;

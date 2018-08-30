@@ -260,12 +260,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
   LITTLENUM_TYPE *words_end;
 
   words_end = words + precision;
-#ifdef TC_M68K
-  if (precision == X_PRECISION)
-    /* On the m68k the extended precision format has a gap of 16 bits
-       between the exponent and the mantissa.  */
-    words_end++;
-#endif
 
   if (generic_floating_point_number.low > generic_floating_point_number.leader)
     {
@@ -291,24 +285,7 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	}
       else if (precision == X_PRECISION)
 	{
-#ifdef TC_M68K
-	  words[0] = 0x7fff;
-	  words[1] = 0;
-	  words[2] = 0xffff;
-	  words[3] = 0xffff;
-	  words[4] = 0xffff;
-	  words[5] = 0xffff;
-#else /* ! TC_M68K  */
-#ifdef TC_I386
-	  words[0] = 0xffff;
-	  words[1] = 0xc000;
-	  words[2] = 0;
-	  words[3] = 0;
-	  words[4] = 0;
-#else /* ! TC_I386  */
 	  abort ();
-#endif /* ! TC_I386  */
-#endif /* ! TC_M68K  */
 	}
       else
 	{
@@ -332,24 +309,7 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	}
       else if (precision == X_PRECISION)
 	{
-#ifdef TC_M68K
-	  words[0] = 0x7fff;
-	  words[1] = 0;
-	  words[2] = 0;
-	  words[3] = 0;
-	  words[4] = 0;
-	  words[5] = 0;
-#else /* ! TC_M68K  */
-#ifdef TC_I386
-	  words[0] = 0x7fff;
-	  words[1] = 0x8000;
-	  words[2] = 0;
-	  words[3] = 0;
-	  words[4] = 0;
-#else /* ! TC_I386  */
 	  abort ();
-#endif /* ! TC_I386  */
-#endif /* ! TC_M68K  */
 	}
       else
 	{
@@ -373,24 +333,7 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	}
       else if (precision == X_PRECISION)
 	{
-#ifdef TC_M68K
-	  words[0] = 0xffff;
-	  words[1] = 0;
-	  words[2] = 0;
-	  words[3] = 0;
-	  words[4] = 0;
-	  words[5] = 0;
-#else /* ! TC_M68K  */
-#ifdef TC_I386
-	  words[0] = 0xffff;
-	  words[1] = 0x8000;
-	  words[2] = 0;
-	  words[3] = 0;
-	  words[4] = 0;
-#else /* ! TC_I386  */
 	  abort ();
-#endif /* ! TC_I386  */
-#endif /* ! TC_M68K  */
 	}
       else
 	{
@@ -451,16 +394,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
       num_bits = -exponent_4;
       prec_bits =
 	LITTLENUM_NUMBER_OF_BITS * precision - (exponent_bits + 1 + num_bits);
-#ifdef TC_I386
-      if (precision == X_PRECISION && exponent_bits == 15)
-	{
-	  /* On the i386 a denormalized extended precision float is
-	     shifted down by one, effectively decreasing the exponent
-	     bias by one.  */
-	  prec_bits -= 1;
-	  num_bits += 1;
-	}
-#endif
 
       if (num_bits >= LITTLENUM_NUMBER_OF_BITS - exponent_bits)
 	{
@@ -474,10 +407,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	      make_invalid_floating_point_number (words);
 	      return return_value;
 	    }
-#ifdef TC_M68K
-	  if (precision == X_PRECISION && exponent_bits == 15)
-	    *lp++ = 0;
-#endif
 	  while (num_bits >= LITTLENUM_NUMBER_OF_BITS)
 	    {
 	      num_bits -= LITTLENUM_NUMBER_OF_BITS;
@@ -491,9 +420,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	  if (precision == X_PRECISION && exponent_bits == 15)
 	    {
 	      *lp++ = word1;
-#ifdef TC_M68K
-	      *lp++ = 0;
-#endif
 	      *lp++ = next_bits (LITTLENUM_NUMBER_OF_BITS - num_bits);
 	    }
 	  else
@@ -528,14 +454,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 		  || (lp[n] & mask[tmp_bits]) != mask[tmp_bits]
 		  || (prec_bits != (precision * LITTLENUM_NUMBER_OF_BITS
 				    - exponent_bits - 1)
-#ifdef TC_I386
-		      /* An extended precision float with only the integer
-			 bit set would be invalid.  That must be converted
-			 to the smallest normalized number.  */
-		      && !(precision == X_PRECISION
-			   && prec_bits == (precision * LITTLENUM_NUMBER_OF_BITS
-					    - exponent_bits - 2))
-#endif
 		      ))
 		{
 		  unsigned long carry;
@@ -560,13 +478,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 			    << ((LITTLENUM_NUMBER_OF_BITS - 1)
 				- exponent_bits));
 		  *lp++ = word1;
-#ifdef TC_I386
-		  /* Set the integer bit in the extended precision format.
-		     This cannot happen on the m68k where the mantissa
-		     just overflows into the integer bit above.  */
-		  if (precision == X_PRECISION)
-		    *lp++ = 1 << (LITTLENUM_NUMBER_OF_BITS - 1);
-#endif
 		  while (lp < words_end)
 		    *lp++ = 0;
 		}
@@ -601,9 +512,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
      middle.  Either way, it is then followed by a 1 bit.  */
   if (exponent_bits == 15 && precision == X_PRECISION)
     {
-#ifdef TC_M68K
-      *lp++ = 0;
-#endif
       *lp++ = (1 << (LITTLENUM_NUMBER_OF_BITS - 1)
 	       | next_bits (LITTLENUM_NUMBER_OF_BITS - 1));
     }
@@ -643,13 +551,6 @@ gen_to_words (LITTLENUM_TYPE *words, int precision, long exponent_bits)
 	     that we may have to restore.  */
 	  if (lp == words)
 	    {
-#ifdef TC_M68K
-	      /* On the m68k there is a gap of 16 bits.  We must
-		 explicitly propagate the carry into the exponent.  */
-	      words[0] += words[1];
-	      words[1] = 0;
-	      lp++;
-#endif
 	      /* Put back the integer bit.  */
 	      lp[1] |= 1 << (LITTLENUM_NUMBER_OF_BITS - 1);
 	    }
@@ -747,14 +648,7 @@ ieee_md_atof (int type,
 	case 'X':
 	case 'p':
 	case 'P':
-#ifdef TC_M68K
-	  /* Note: on the m68k there is a gap of 16 bits (one littlenum)
-	     between the exponent and mantissa.  Hence the precision is
-	     6 and not 5.  */
-	  prec = P_PRECISION + 1;
-#else
 	  prec = P_PRECISION;
-#endif
 	  break;
 
 	default:

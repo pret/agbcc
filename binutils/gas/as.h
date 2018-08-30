@@ -574,13 +574,7 @@ int generic_force_reloc (struct fix *);
 extern int enable_h_tick_hex;
 #endif
 
-#ifdef TC_M68K
-/* True if we are assembling in m68k MRI mode.  */
-COMMON int flag_m68k_mri;
-#define DOLLAR_AMBIGU flag_m68k_mri
-#else
 #define flag_m68k_mri 0
-#endif
 
 #ifdef WARN_COMMENTS
 COMMON int           warn_comment;

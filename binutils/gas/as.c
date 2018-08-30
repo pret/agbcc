@@ -858,9 +858,6 @@ This program has absolutely no warranty.\n"));
 
 	case 'M':
 	  flag_mri = 1;
-#ifdef TC_M68K
-	  flag_m68k_mri = 1;
-#endif
 	  break;
 
 	case 'R':

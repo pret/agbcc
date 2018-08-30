@@ -978,17 +978,6 @@ operand (expressionS *expressionP, enum expr_mode mode)
       /* Here with input_line_pointer -> char after "(...)".  */
       return segment;
 
-#ifdef TC_M68K
-    case 'E':
-      if (! flag_m68k_mri || *input_line_pointer != '\'')
-	goto de_fault;
-      as_bad (_("EBCDIC constants are not supported"));
-      /* Fall through.  */
-    case 'A':
-      if (! flag_m68k_mri || *input_line_pointer != '\'')
-	goto de_fault;
-      ++input_line_pointer;
-#endif
       /* Fall through.  */
     case '\'':
       if (! flag_m68k_mri)
@@ -1005,12 +994,6 @@ operand (expressionS *expressionP, enum expr_mode mode)
       mri_char_constant (expressionP);
       break;
 
-#ifdef TC_M68K
-    case '"':
-      /* Double quote is the bitwise not operator in MRI mode.  */
-      if (! flag_m68k_mri)
-	goto de_fault;
-#endif
       /* Fall through.  */
     case '~':
       /* '~' is permitted to start a label on the Delta.  */
@@ -1207,38 +1190,6 @@ operand (expressionS *expressionP, enum expr_mode mode)
       expressionP->X_op = O_absent;
       input_line_pointer--;
       break;
-
-#ifdef TC_M68K
-    case '%':
-      if (! flag_m68k_mri)
-	goto de_fault;
-      integer_constant (2, expressionP);
-      break;
-
-    case '@':
-      if (! flag_m68k_mri)
-	goto de_fault;
-      integer_constant (8, expressionP);
-      break;
-
-    case ':':
-      if (! flag_m68k_mri)
-	goto de_fault;
-
-      /* In MRI mode, this is a floating point constant represented
-	 using hexadecimal digits.  */
-
-      ++input_line_pointer;
-      integer_constant (16, expressionP);
-      break;
-
-    case '*':
-      if (! flag_m68k_mri || is_part_of_name (*input_line_pointer))
-	goto de_fault;
-
-      current_location (expressionP);
-      break;
-#endif
 
     default:
 #if defined(md_need_index_operator) || defined(TC_M68K)

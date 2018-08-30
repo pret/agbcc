@@ -38,17 +38,6 @@
 
 #include "targ-cpu.h"
 
-#ifdef TC_ALPHA
-#define ECOFF_DEBUGGING (alpha_flag_mdebug > 0)
-extern int alpha_flag_mdebug;
-#endif
-
-/* For now, always set ECOFF_DEBUGGING for a MIPS target.  */
-#ifdef TC_MIPS
-#define ECOFF_DEBUGGING mips_flag_mdebug
-extern int mips_flag_mdebug;
-#endif /* TC_MIPS */
-
 #ifdef OBJ_MAYBE_ECOFF
 #ifndef ECOFF_DEBUGGING
 #define ECOFF_DEBUGGING 1

@@ -1863,11 +1863,7 @@ fb_label_name (long n,	/* We just saw "n:", "nf" or "nb" : n a number.  */
   char symbol_name_temporary[20];	/* Build up a number, BACKWARDS.  */
 
   know (n >= 0);
-#ifdef TC_MMIX
-  know ((unsigned long) augend <= 2 /* See mmix_fb_label.  */);
-#else
   know ((unsigned long) augend <= 1);
-#endif
   p = symbol_name_build;
 #ifdef LOCAL_LABEL_PREFIX
   *p++ = LOCAL_LABEL_PREFIX;
