@@ -25,9 +25,7 @@ Boston, MA 02110-1301, USA.  */
 #include "config.h"
 #include "libiberty.h"
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 /* We only permit a single pexecute chain to execute at a time.  This
    was always true anyhow, though it wasn't documented.  */

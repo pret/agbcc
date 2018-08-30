@@ -52,10 +52,8 @@ struct objalloc
 
 struct objalloc_align { char x; double d; };
 
-#if defined (__STDC__) && __STDC__
 #ifndef offsetof
 #include <stddef.h>
-#endif
 #endif
 #ifndef offsetof
 #define offsetof(TYPE, MEMBER) ((unsigned long) &((TYPE *)0)->MEMBER)

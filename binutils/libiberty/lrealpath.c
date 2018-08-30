@@ -37,18 +37,12 @@ components will be simplified.  The returned value will be allocated using
 #include "ansidecl.h"
 #include "libiberty.h"
 
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 
 /* On GNU libc systems the declaration is only visible with _GNU_SOURCE.  */
 #if defined(HAVE_CANONICALIZE_FILE_NAME) \

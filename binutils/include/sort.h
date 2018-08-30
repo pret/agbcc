@@ -23,9 +23,7 @@ Boston, MA 02110-1301, USA.  */
 #define SORT_H
 
 #include <sys/types.h> /* For size_t */
-#ifdef __STDC__
 #include <stddef.h>
-#endif	/* __STDC__ */
 
 #ifdef __cplusplus
 extern "C" {

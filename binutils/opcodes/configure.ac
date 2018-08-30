@@ -19,6 +19,7 @@ dnl
 
 m4_include([../bfd/version.m4])
 AC_INIT([opcodes], BFD_VERSION)
+m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 AC_ISC_POSIX
@@ -79,7 +80,6 @@ BFD_CC_FOR_BUILD
 AC_SUBST(HDEFINES)
 AC_PROG_INSTALL
 
-AC_CHECK_HEADERS(string.h strings.h stdlib.h limits.h)
 ACX_HEADER_STRING
 
 AC_CHECK_DECLS([basename, stpcpy])

@@ -33,13 +33,7 @@ Boston, MA 02110-1301, USA.  */
 /* Get a definition for size_t.  */
 #include <stddef.h>
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#else
-/* For systems with larger pointers than ints, this must be declared.  */
-extern PTR malloc (size_t);
-extern void free (PTR);
-#endif
 
 #endif
 

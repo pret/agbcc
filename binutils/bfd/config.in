@@ -28,10 +28,6 @@
 /* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
 #undef HAVE_DECL_FFS
 
-/* Define to 1 if you have the declaration of `free', and to 0 if you don't.
-   */
-#undef HAVE_DECL_FREE
-
 /* Define to 1 if you have the declaration of `fseeko', and to 0 if you don't.
    */
 #undef HAVE_DECL_FSEEKO
@@ -52,29 +48,9 @@
    */
 #undef HAVE_DECL_GETENV
 
-/* Define to 1 if you have the declaration of `malloc', and to 0 if you don't.
-   */
-#undef HAVE_DECL_MALLOC
-
-/* Define to 1 if you have the declaration of `realloc', and to 0 if you
-   don't. */
-#undef HAVE_DECL_REALLOC
-
-/* Define to 1 if you have the declaration of `snprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_SNPRINTF
-
 /* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
    */
 #undef HAVE_DECL_STPCPY
-
-/* Define to 1 if you have the declaration of `strnlen', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRNLEN
-
-/* Define to 1 if you have the declaration of `strstr', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STRSTR
 
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
@@ -163,7 +139,7 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have a working `mmap' system call. */
+/* Define to 1 if you have the `mmap' function. */
 #undef HAVE_MMAP
 
 /* Define to 1 if you have the `mprotect' function. */
@@ -220,9 +196,6 @@
 /* Define to 1 if you have the `setitimer' function. */
 #undef HAVE_SETITIMER
 
-/* Define to 1 if you have the <stddef.h> header file. */
-#undef HAVE_STDDEF_H
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -254,9 +227,6 @@
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
 #undef HAVE_SYS_NDIR_H
-
-/* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/procfs.h> header file. */
 #undef HAVE_SYS_PROCFS_H

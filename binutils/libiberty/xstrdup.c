@@ -17,13 +17,7 @@ obtain memory.
 #include "config.h"
 #endif
 #include <sys/types.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-# ifdef HAVE_STRINGS_H
-#  include <strings.h>
-# endif
-#endif
 #include "ansidecl.h"
 #include "libiberty.h"
 

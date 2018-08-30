@@ -37,24 +37,16 @@ Boston, MA 02110-1301, USA.  */
 
 #include <sys/types.h>
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 #ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
-#ifdef HAVE_STDINT_H
 #include <stdint.h>
-#endif
 
 #include <stdio.h>
 
@@ -89,39 +81,6 @@ htab_eq htab_eq_pointer = eq_pointer;
 
    For the record, here's the function that computed the table; it's a 
    vastly simplified version of the function of the same name from gcc.  */
-
-#if 0
-unsigned int
-ceil_log2 (unsigned int x)
-{
-  int i;
-  for (i = 31; i >= 0 ; --i)
-    if (x > (1u << i))
-      return i+1;
-  abort ();
-}
-
-unsigned int
-choose_multiplier (unsigned int d, unsigned int *mlp, unsigned char *shiftp)
-{
-  unsigned long long mhigh;
-  double nx;
-  int lgup, post_shift;
-  int pow, pow2;
-  int n = 32, precision = 32;
-
-  lgup = ceil_log2 (d);
-  pow = n + lgup;
-  pow2 = n + lgup - precision;
-
-  nx = ldexp (1.0, pow) + ldexp (1.0, pow2);
-  mhigh = nx / d;
-
-  *shiftp = lgup - 1;
-  *mlp = mhigh;
-  return mhigh >> 32;
-}
-#endif
 
 struct prime_ent
 {

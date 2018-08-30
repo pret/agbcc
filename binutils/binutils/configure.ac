@@ -19,6 +19,8 @@ dnl
 
 m4_include([../bfd/version.m4])
 AC_INIT([binutils], BFD_VERSION)
+m4_include([../config/lean.m4])
+
 AC_CONFIG_SRCDIR(ar.c)
 
 AC_CANONICAL_TARGET
@@ -123,11 +125,11 @@ AC_SUBST(DEMANGLER_NAME)
 AC_CHECK_SIZEOF([long])
 AC_CHECK_TYPES([long long], [AC_CHECK_SIZEOF(long long)])
 
-AC_CHECK_HEADERS(string.h strings.h stdlib.h unistd.h fcntl.h sys/file.h limits.h locale.h sys/param.h wchar.h)
+AC_CHECK_HEADERS(strings.h unistd.h fcntl.h sys/file.h  locale.h sys/param.h wchar.h)
 AC_HEADER_SYS_WAIT
 ACX_HEADER_STRING
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS(sbrk utimes setmode getc_unlocked strcoll setlocale)
+AC_CHECK_FUNCS(utimes setmode getc_unlocked strcoll setlocale)
 AC_CHECK_FUNC([mkstemp],
 	      AC_DEFINE([HAVE_MKSTEMP], 1,
 	      [Define to 1 if you have the `mkstemp' function.]))
@@ -194,8 +196,8 @@ if test $bu_cv_header_utime_h = yes; then
   AC_DEFINE(HAVE_GOOD_UTIME_H, 1, [Does <utime.h> define struct utimbuf?])
 fi
 
-AC_CHECK_DECLS([asprintf, environ, fprintf, getc_unlocked, getenv,
-		sbrk, snprintf, stpcpy, strnlen, strstr, vsnprintf])
+AC_CHECK_DECLS([asprintf, environ, getc_unlocked, getenv,
+		stpcpy, vsnprintf])
 
 # Link in zlib if we can.  This allows us to read compressed debug
 # sections.  This is used only by readelf.c (objdump uses bfd for

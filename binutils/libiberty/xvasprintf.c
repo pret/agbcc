@@ -27,9 +27,7 @@ Floor, Boston, MA 02110-1301, USA.  */
 # define va_copy(d,s)  __va_copy((d),(s))
 #endif
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 #include "libiberty.h"
 #include "vprintf-support.h"
 

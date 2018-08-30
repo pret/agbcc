@@ -656,18 +656,9 @@ extern int vasprintf (char **, const char *, va_list) ATTRIBUTE_PRINTF(2,0);
 
 extern char *xvasprintf (const char *, va_list) ATTRIBUTE_MALLOC ATTRIBUTE_PRINTF(1,0);
 
-#if defined(HAVE_DECL_SNPRINTF) && !HAVE_DECL_SNPRINTF
-/* Like sprintf but prints at most N characters.  */
-extern int snprintf (char *, size_t, const char *, ...) ATTRIBUTE_PRINTF_3;
-#endif
-
 #if defined(HAVE_DECL_VSNPRINTF) && !HAVE_DECL_VSNPRINTF
 /* Like vsprintf but prints at most N characters.  */
 extern int vsnprintf (char *, size_t, const char *, va_list) ATTRIBUTE_PRINTF(3,0);
-#endif
-
-#if defined (HAVE_DECL_STRNLEN) && !HAVE_DECL_STRNLEN
-extern size_t strnlen (const char *, size_t);
 #endif
 
 #if defined(HAVE_DECL_STRVERSCMP) && !HAVE_DECL_STRVERSCMP

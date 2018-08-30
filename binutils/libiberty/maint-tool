@@ -211,13 +211,7 @@ sub locals_first {
 
 sub deps {
 
-    $crule  = "\tif [ x\"\$(PICFLAG)\" != x ]; then \\\n";
-    $crule .= "\t  \$(COMPILE.c) \$(PICFLAG) \$< -o pic/\$@; \\\n";
-    $crule .= "\telse true; fi\n";
-    $crule .= "\tif [ x\"\$(NOASANFLAG)\" != x ]; then \\\n";
-    $crule .= "\t  \$(COMPILE.c) \$(PICFLAG) \$(NOASANFLAG) \$< -o noasan/\$@; \\\n";
-    $crule .= "\telse true; fi\n";
-    $crule .= "\t\$(COMPILE.c) \$< \$(OUTPUT_OPTION)\n";
+    $crule  = "\t\$(COMPILE.c) \$< \$(OUTPUT_OPTION)\n";
     $crule .= "\n";
 
     $incdir = shift @ARGV;

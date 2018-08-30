@@ -22,12 +22,8 @@ Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #include <stdio.h>
 #include <stdarg.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 #undef _doprnt
 

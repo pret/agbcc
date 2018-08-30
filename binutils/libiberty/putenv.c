@@ -41,12 +41,8 @@ name is unset/removed.
 
 #define putenv libiberty_putenv
 
-#if HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
-#if HAVE_STRING_H
-# include <string.h>
-#endif
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>

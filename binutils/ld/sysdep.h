@@ -36,21 +36,9 @@
 #include <string.h>
 #include <strings.h>
 #else
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#else
-extern char *strchr ();
-extern char *strrchr ();
 #endif
-#endif
-#endif
-
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -105,14 +93,6 @@ extern char *strrchr ();
 #endif
 #ifndef SEEK_END
 #define SEEK_END 2
-#endif
-
-#if !HAVE_DECL_STRSTR
-extern char *strstr ();
-#endif
-
-#if !HAVE_DECL_FREE
-extern void free ();
 #endif
 
 #if !HAVE_DECL_GETENV

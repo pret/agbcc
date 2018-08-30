@@ -22,12 +22,8 @@ Boston, MA 02110-1301, USA.  */
 
 #include <windows.h>
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif

@@ -33,9 +33,7 @@ Termination is handled via the system's normal @code{exit} call.
 #include "config.h"
 #endif
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include "libiberty.h"
 
 

@@ -23,6 +23,7 @@ dnl v2.5 needed for --bindir et al
 m4_include([../bfd/version.m4])
 AC_INIT([gas], BFD_VERSION)
 AC_CONFIG_SRCDIR(as.h)
+m4_include([../config/lean.m4])
 
 dnl Autoconf 2.57 will find the aux dir without this.  However, unless
 dnl we specify this explicitly, automake-1.7 will assume that ylwrap is in
@@ -802,7 +803,7 @@ AM_MAINTAINER_MODE
 AM_CONDITIONAL(GENINSRC_NEVER, false)
 AC_EXEEXT
 
-AC_CHECK_HEADERS(string.h stdlib.h memory.h strings.h unistd.h errno.h sys/types.h limits.h locale.h time.h sys/stat.h)
+AC_CHECK_HEADERS(memory.h strings.h unistd.h errno.h sys/types.h locale.h time.h sys/stat.h)
 ACX_HEADER_STRING
 
 # Put this here so that autoconf's "cross-compiling" message doesn't confuse
@@ -823,7 +824,7 @@ AC_C_INLINE
 
 # VMS doesn't have unlink.
 AC_CHECK_FUNCS(unlink remove, break)
-AC_CHECK_FUNCS(sbrk setlocale)
+AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(strsignal)
 
 AM_LC_MESSAGES
@@ -848,16 +849,9 @@ gas_test_headers="
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
 #endif
-#endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -883,12 +877,9 @@ fi
 
 GAS_CHECK_DECL_NEEDED(environ, f, char **f, $gas_test_headers)
 GAS_CHECK_DECL_NEEDED(ffs, f, int (*f)(int), $gas_test_headers)
-GAS_CHECK_DECL_NEEDED(free, f, void (*f)(), $gas_test_headers)
-GAS_CHECK_DECL_NEEDED(malloc, f, char *(*f)(), $gas_test_headers)
-GAS_CHECK_DECL_NEEDED(sbrk, f, char *(*f)(), $gas_test_headers)
 GAS_CHECK_DECL_NEEDED(strstr, f, char *(*f)(), $gas_test_headers)
 
-AC_CHECK_DECLS([free, getenv, malloc, mempcpy, realloc, stpcpy, strstr, vsnprintf, asprintf])
+AC_CHECK_DECLS([getenv, mempcpy, stpcpy, strstr, vsnprintf, asprintf])
 
 BFD_BINARY_FOPEN
 

@@ -146,7 +146,6 @@ char *realloc ();
    This is used in most programs--a few other programs avoid this
    by defining INHIBIT_STRING_HEADER.  */
 #  ifndef INHIBIT_STRING_HEADER
-#   if defined HAVE_STRING_H || defined STDC_HEADERS || defined _LIBC
 #    include <string.h>
 #    ifndef bzero
 #     ifndef _LIBC
@@ -155,15 +154,6 @@ char *realloc ();
 #      define bzero(s, n)	__bzero (s, n)
 #     endif
 #    endif
-#   else
-#    include <strings.h>
-#    ifndef memcmp
-#     define memcmp(s1, s2, n)	bcmp (s1, s2, n)
-#    endif
-#    ifndef memcpy
-#     define memcpy(d, s, n)	(bcopy (s, d, n), (d))
-#    endif
-#   endif
 #  endif
 
 /* Define the syntax stuff for \<, \>, etc.  */
@@ -182,9 +172,7 @@ char *realloc ();
 
 # endif /* not emacs */
 
-# if defined _LIBC || HAVE_LIMITS_H
-#  include <limits.h>
-# endif
+#include <limits.h>
 
 # ifndef MB_LEN_MAX
 #  define MB_LEN_MAX 1
@@ -253,12 +241,7 @@ char *realloc ();
    machines, compilers, `char' and `unsigned char' argument types.
    (Per Bothner suggested the basic approach.)  */
 # undef SIGN_EXTEND_CHAR
-# if __STDC__
 #  define SIGN_EXTEND_CHAR(c) ((signed char) (c))
-# else  /* not __STDC__ */
-/* As in Harbison and Steele.  */
-#  define SIGN_EXTEND_CHAR(c) ((((unsigned char) (c)) ^ 128) - 128)
-# endif
 
 # ifndef emacs
 /* How many characters in the character set.  */

@@ -22,18 +22,9 @@ Boston, MA 02110-1301, USA.  */
 #include "simple-object.h"
 
 #include <stddef.h>
-
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-
-#ifdef HAVE_STDINT_H
 #include <stdint.h>
-#endif
-
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>

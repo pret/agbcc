@@ -34,15 +34,6 @@ Boston, MA 02110-1301, USA.  */
 #define _GNU_SOURCE
 #endif
 
-/* This code to undef const added in libiberty.  */
-#ifndef __STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
-#endif
-
 #include <errno.h>
 #include <fnmatch.h>
 #include <safe-ctype.h>

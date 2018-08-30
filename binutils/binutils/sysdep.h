@@ -48,21 +48,10 @@ extern int errno;
 #include <string.h>
 #include <strings.h>
 #else
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#else
-extern char *strchr ();
-extern char *strrchr ();
-#endif
-#endif
 #endif
 
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -82,16 +71,6 @@ extern char *strrchr ();
 extern char *stpcpy (char *, const char *);
 #endif
 
-#if !HAVE_DECL_STRSTR
-extern char *strstr ();
-#endif
-
-#ifdef HAVE_SBRK
-#if !HAVE_DECL_SBRK
-extern char *sbrk ();
-#endif
-#endif
-
 #if !HAVE_DECL_GETENV
 extern char *getenv ();
 #endif
@@ -100,20 +79,8 @@ extern char *getenv ();
 extern char **environ;
 #endif
 
-#if !HAVE_DECL_FPRINTF
-extern int fprintf (FILE *, const char *, ...);
-#endif
-
-#if !HAVE_DECL_SNPRINTF
-extern int snprintf(char *, size_t, const char *, ...);
-#endif
-
 #if !HAVE_DECL_VSNPRINTF
 extern int vsnprintf(char *, size_t, const char *, va_list);
-#endif
-
-#if !HAVE_DECL_STRNLEN
-size_t strnlen (const char *, size_t);
 #endif
 
 #ifndef O_RDONLY
@@ -175,10 +142,7 @@ size_t strnlen (const char *, size_t);
 #define BUFSIZE 8192
 
 /* For PATH_MAX.  */
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
-
 #ifndef PATH_MAX
 /* For MAXPATHLEN.  */
 # ifdef HAVE_SYS_PARAM_H

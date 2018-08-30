@@ -24,18 +24,12 @@ Boston, MA 02110-1301, USA.  */
 #endif
 #include "libiberty.h"
 #include "sort.h"
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 
 #ifndef UCHAR_MAX
 #define UCHAR_MAX ((unsigned char)(-1))

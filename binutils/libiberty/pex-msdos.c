@@ -25,12 +25,8 @@ Boston, MA 02110-1301, USA.  */
 #ifdef NEED_DECLARATION_ERRNO
 extern int errno;
 #endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 #include "safe-ctype.h"
 #include <process.h>

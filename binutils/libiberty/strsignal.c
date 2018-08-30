@@ -22,18 +22,8 @@
 #include <signal.h>
 
 /*  Routines imported from standard C runtime libraries. */
-
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#else
-extern PTR malloc ();
-#endif
-
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-extern PTR memset ();
-#endif
 
 /* Undefine the macro we used to hide the definition of sys_siglist
    found in the system header files.  */

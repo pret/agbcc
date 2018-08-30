@@ -3,10 +3,6 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define to one of _getb67, GETB67, getb67 for Cray-2 and Cray-YMP systems.
-   This function is required for alloca.c support on those systems. */
-#undef CRAY_STACKSEG_END
-
 /* Define to 1 if you have the <alloca.h> header file. */
 #undef HAVE_ALLOCA_H
 
@@ -31,9 +27,6 @@
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
 
-/* Define to 1 if you have the `calloc' function. */
-#undef HAVE_CALLOC
-
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
@@ -48,10 +41,6 @@
    you don't. */
 #undef HAVE_DECL_BASENAME
 
-/* Define to 1 if you have the declaration of `calloc', and to 0 if you don't.
-   */
-#undef HAVE_DECL_CALLOC
-
 /* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
 #undef HAVE_DECL_FFS
 
@@ -62,26 +51,6 @@
 /* Define to 1 if you have the declaration of `getopt', and to 0 if you don't.
    */
 #undef HAVE_DECL_GETOPT
-
-/* Define to 1 if you have the declaration of `malloc', and to 0 if you don't.
-   */
-#undef HAVE_DECL_MALLOC
-
-/* Define to 1 if you have the declaration of `realloc', and to 0 if you
-   don't. */
-#undef HAVE_DECL_REALLOC
-
-/* Define to 1 if you have the declaration of `sbrk', and to 0 if you don't.
-   */
-#undef HAVE_DECL_SBRK
-
-/* Define to 1 if you have the declaration of `snprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_SNPRINTF
-
-/* Define to 1 if you have the declaration of `strnlen', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRNLEN
 
 /* Define to 1 if you have the declaration of `strtol', and to 0 if you don't.
    */
@@ -153,9 +122,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
 /* Define if you have the `long long' type. */
 #undef HAVE_LONG_LONG
 
@@ -165,32 +131,11 @@
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
-/* Define to 1 if you have the `memchr' function. */
-#undef HAVE_MEMCHR
-
-/* Define to 1 if you have the `memcmp' function. */
-#undef HAVE_MEMCMP
-
-/* Define to 1 if you have the `memcpy' function. */
-#undef HAVE_MEMCPY
-
-/* Define to 1 if you have the `memmem' function. */
-#undef HAVE_MEMMEM
-
-/* Define to 1 if you have the `memmove' function. */
-#undef HAVE_MEMMOVE
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the `memset' function. */
-#undef HAVE_MEMSET
-
 /* Define to 1 if you have the `mkstemps' function. */
 #undef HAVE_MKSTEMPS
-
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
 
 /* Define to 1 if you have the `on_exit' function. */
 #undef HAVE_ON_EXIT
@@ -222,9 +167,6 @@
 /* Define to 1 if you have the `rindex' function. */
 #undef HAVE_RINDEX
 
-/* Define to 1 if you have the `sbrk' function. */
-#undef HAVE_SBRK
-
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
 
@@ -236,9 +178,6 @@
 
 /* Define to 1 if you have the `sigsetmask' function. */
 #undef HAVE_SIGSETMASK
-
-/* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
 
 /* Define to 1 if you have the `spawnve' function. */
 #undef HAVE_SPAWNVE
@@ -261,17 +200,8 @@
 /* Define to 1 if you have the `stpncpy' function. */
 #undef HAVE_STPNCPY
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strchr' function. */
-#undef HAVE_STRCHR
-
 /* Define to 1 if you have the `strdup' function. */
 #undef HAVE_STRDUP
-
-/* Define to 1 if you have the `strerror' function. */
-#undef HAVE_STRERROR
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -279,23 +209,11 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strncasecmp' function. */
-#undef HAVE_STRNCASECMP
-
 /* Define to 1 if you have the `strndup' function. */
 #undef HAVE_STRNDUP
 
-/* Define to 1 if you have the `strnlen' function. */
-#undef HAVE_STRNLEN
-
-/* Define to 1 if you have the `strrchr' function. */
-#undef HAVE_STRRCHR
-
 /* Define to 1 if you have the `strsignal' function. */
 #undef HAVE_STRSIGNAL
-
-/* Define to 1 if you have the `strstr' function. */
-#undef HAVE_STRSTR
 
 /* Define to 1 if you have the `strtod' function. */
 #undef HAVE_STRTOD
@@ -476,12 +394,6 @@
 
 /* The size of `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
-
-/* Define if you know the direction of stack growth for your system; otherwise
-   it will be automatically deduced at run-time. STACK_DIRECTION > 0 => grows
-   toward higher addresses STACK_DIRECTION < 0 => grows toward lower addresses
-   STACK_DIRECTION = 0 => direction of growth unknown */
-#undef STACK_DIRECTION
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

@@ -42,17 +42,9 @@ Concatenate zero or more of strings and return the result in freshly
 
 #include <stdarg.h>
 
-# if HAVE_STRING_H
-#  include <string.h>
-# else
-#  if HAVE_STRINGS_H
-#   include <strings.h>
-#  endif
-# endif
+#include <string.h>
 
-#if HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 
 static inline unsigned long vconcat_length (const char *, va_list);
 static inline unsigned long

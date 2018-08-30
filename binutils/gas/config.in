@@ -71,10 +71,6 @@
    don't. */
 #undef HAVE_DECL_ASPRINTF
 
-/* Define to 1 if you have the declaration of `free', and to 0 if you don't.
-   */
-#undef HAVE_DECL_FREE
-
 /* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
    */
 #undef HAVE_DECL_GETENV
@@ -82,17 +78,9 @@
 /* Is the prototype for getopt in <unistd.h> in the expected format? */
 #undef HAVE_DECL_GETOPT
 
-/* Define to 1 if you have the declaration of `malloc', and to 0 if you don't.
-   */
-#undef HAVE_DECL_MALLOC
-
 /* Define to 1 if you have the declaration of `mempcpy', and to 0 if you
    don't. */
 #undef HAVE_DECL_MEMPCPY
-
-/* Define to 1 if you have the declaration of `realloc', and to 0 if you
-   don't. */
-#undef HAVE_DECL_REALLOC
 
 /* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
    */
@@ -118,9 +106,6 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #undef HAVE_LC_MESSAGES
 
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
@@ -129,9 +114,6 @@
 
 /* Define to 1 if you have the `remove' function. */
 #undef HAVE_REMOVE
-
-/* Define to 1 if you have the `sbrk' function. */
-#undef HAVE_SBRK
 
 /* Define to 1 if you have the `setlocale' function. */
 #undef HAVE_SETLOCALE
@@ -219,15 +201,6 @@
 
 /* Define if ffs is not declared in system header files. */
 #undef NEED_DECLARATION_FFS
-
-/* Define if free is not declared in system header files. */
-#undef NEED_DECLARATION_FREE
-
-/* Define if malloc is not declared in system header files. */
-#undef NEED_DECLARATION_MALLOC
-
-/* Define if sbrk is not declared in system header files. */
-#undef NEED_DECLARATION_SBRK
 
 /* Define if strstr is not declared in system header files. */
 #undef NEED_DECLARATION_STRSTR

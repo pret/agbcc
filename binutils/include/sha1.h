@@ -21,9 +21,7 @@
 
 #include <stdio.h>
 
-#if defined HAVE_LIMITS_H || _LIBC
-# include <limits.h>
-#endif
+#include <limits.h>
 
 #include "ansidecl.h"
 
@@ -38,7 +36,7 @@
 # include <sys/types.h>
 typedef u_int32_t sha1_uint32;
 typedef uintptr_t sha1_uintptr;
-#elif defined (HAVE_SYS_TYPES_H) && defined (HAVE_STDINT_H)
+#elif defined (HAVE_SYS_TYPES_H)
 #include <stdint.h>
 #include <sys/types.h>
 typedef uint32_t sha1_uint32;

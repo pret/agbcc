@@ -22,15 +22,9 @@ Boston, MA 02110-1301, USA.  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
 #include "libiberty.h"
 #include "fibheap.h"
 

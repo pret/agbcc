@@ -20,6 +20,7 @@ dnl
 m4_include([version.m4])
 AC_INIT([bfd], BFD_VERSION)
 AC_CONFIG_SRCDIR([libbfd.c])
+m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 AC_ISC_POSIX
@@ -218,7 +219,7 @@ AC_SUBST(BFD_HOSTPTR_T)
 
 BFD_CC_FOR_BUILD
 
-AC_CHECK_HEADERS(alloca.h stddef.h string.h strings.h stdlib.h time.h unistd.h wchar.h wctype.h)
+AC_CHECK_HEADERS(alloca.h strings.h time.h unistd.h wchar.h wctype.h)
 AC_CHECK_HEADERS(fcntl.h sys/file.h sys/time.h sys/stat.h sys/resource.h)
 GCC_HEADER_STDINT(bfd_stdint.h)
 AC_HEADER_TIME
@@ -237,17 +238,11 @@ AC_CHECK_DECLS(fseeko64)
 BFD_BINARY_FOPEN
 
 AC_CHECK_DECLS(ffs)
-AC_CHECK_DECLS(free)
 AC_CHECK_DECLS(getenv)
-AC_CHECK_DECLS(malloc)
-AC_CHECK_DECLS(realloc)
 AC_CHECK_DECLS(stpcpy)
-AC_CHECK_DECLS(strstr)
 AC_CHECK_DECLS(asprintf)
 AC_CHECK_DECLS(vasprintf)
-AC_CHECK_DECLS(snprintf)
 AC_CHECK_DECLS(vsnprintf)
-AC_CHECK_DECLS(strnlen)
 
 # Link in zlib if we can.  This allows us to read compressed debug sections.
 # This is used only by compress.c.
@@ -700,11 +695,11 @@ AC_SUBST(bfd_file_ptr)
 AC_SUBST(bfd_ufile_ptr)
 
 dnl AC_CHECK_HEADERS(sys/mman.h)
-AC_FUNC_MMAP
-AC_CHECK_FUNCS(madvise mprotect)
-case ${want_mmap}+${ac_cv_func_mmap_fixed_mapped} in
-  true+yes )  AC_DEFINE(USE_MMAP, 1, [Use mmap if it's available?]) ;;
-esac
+
+AC_CHECK_FUNCS(madvise mprotect mmap)
+if test x"$ac_cv_func_mmap" = xyes; then
+  AC_DEFINE(USE_MMAP, 1, [Use mmap if it's available?])
+fi
 
 rm -f doc/config.status
 AC_CONFIG_FILES([Makefile bfd-in3.h:bfd-in2.h])

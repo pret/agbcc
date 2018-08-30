@@ -1,7 +1,9 @@
 dnl Process this file with autoconf to produce a configure script
 
+
 AC_INIT
 AC_CONFIG_SRCDIR([xmalloc.c])
+m4_include([../config/lean.m4])
 
 # This works around the fact that libtool configuration may change LD
 # for this particular configuration, but some shells, instead of
@@ -158,8 +160,7 @@ AC_GNU_SOURCE
 AC_SYS_LARGEFILE
 AC_PROG_CPP_WERROR
 
-ACX_PROG_CC_WARNING_OPTS([-W -Wall -Wwrite-strings -Wc++-compat \
-			  -Wstrict-prototypes], [ac_libiberty_warn_cflags])
+ACX_PROG_CC_WARNING_OPTS([-W -Wall], [ac_libiberty_warn_cflags])
 ACX_PROG_CC_WARNING_ALMOST_PEDANTIC([], [ac_libiberty_warn_cflags])
 
 AC_PROG_CC_C_O
@@ -266,7 +267,7 @@ AC_SUBST_FILE(host_makefile_frag)
 # It's OK to check for header files.  Although the compiler may not be
 # able to link anything, it had better be able to at least compile
 # something.
-AC_CHECK_HEADERS(sys/file.h sys/param.h limits.h stdlib.h malloc.h string.h unistd.h strings.h sys/time.h time.h sys/resource.h sys/stat.h sys/mman.h fcntl.h alloca.h sys/pstat.h sys/sysmp.h sys/sysinfo.h machine/hal_sysinfo.h sys/table.h sys/sysctl.h sys/systemcfg.h stdint.h stdio_ext.h process.h sys/prctl.h)
+AC_CHECK_HEADERS(sys/file.h sys/param.h malloc.h unistd.h strings.h sys/time.h time.h sys/resource.h sys/stat.h sys/mman.h fcntl.h alloca.h sys/pstat.h sys/sysmp.h sys/sysinfo.h machine/hal_sysinfo.h sys/table.h sys/sysctl.h sys/systemcfg.h stdio_ext.h process.h sys/prctl.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 
@@ -336,7 +337,6 @@ funcs="$funcs bcmp"
 funcs="$funcs bcopy"
 funcs="$funcs bsearch"
 funcs="$funcs bzero"
-funcs="$funcs calloc"
 funcs="$funcs clock"
 funcs="$funcs ffs"
 funcs="$funcs getcwd"
@@ -344,31 +344,17 @@ funcs="$funcs getpagesize"
 funcs="$funcs gettimeofday"
 funcs="$funcs index"
 funcs="$funcs insque"
-funcs="$funcs memchr"
-funcs="$funcs memcmp"
-funcs="$funcs memcpy"
-funcs="$funcs memmem"
-funcs="$funcs memmove"
-funcs="$funcs mempcpy"
-funcs="$funcs memset"
 funcs="$funcs mkstemps"
 funcs="$funcs putenv"
 funcs="$funcs random"
 funcs="$funcs rename"
 funcs="$funcs rindex"
 funcs="$funcs setenv"
-funcs="$funcs snprintf"
 funcs="$funcs sigsetmask"
 funcs="$funcs stpcpy"
 funcs="$funcs stpncpy"
-funcs="$funcs strcasecmp"
-funcs="$funcs strchr"
 funcs="$funcs strdup"
-funcs="$funcs strncasecmp"
 funcs="$funcs strndup"
-funcs="$funcs strnlen"
-funcs="$funcs strrchr"
-funcs="$funcs strstr"
 funcs="$funcs strtod"
 funcs="$funcs strtol"
 funcs="$funcs strtoul"
@@ -390,7 +376,7 @@ vars="sys_errlist sys_nerr sys_siglist"
 
 checkfuncs="__fsetlocking canonicalize_file_name dup3 getrlimit getrusage \
  getsysinfo gettimeofday on_exit psignal pstat_getdynamic pstat_getstatic \
- realpath setrlimit sbrk spawnve spawnvpe strerror strsignal sysconf sysctl \
+ realpath setrlimit spawnve spawnvpe strsignal sysconf sysctl \
  sysmp table times wait3 wait4"
 
 # These are neither executed nor required, but they help keep
@@ -398,23 +384,23 @@ checkfuncs="__fsetlocking canonicalize_file_name dup3 getrlimit getrusage \
 if test "x" = "y"; then
   AC_CHECK_FUNCS(asprintf atexit \
     basename bcmp bcopy bsearch bzero \
-    calloc canonicalize_file_name clock \
+    canonicalize_file_name clock \
     dup3 \
     ffs __fsetlocking \
     getcwd getpagesize getrlimit getrusage getsysinfo gettimeofday \
     index insque \
-    memchr memcmp memcpy memmem memmove memset mkstemps \
+     mkstemps \
     on_exit \
     psignal pstat_getdynamic pstat_getstatic putenv \
     random realpath rename rindex \
-    sbrk setenv setproctitle setrlimit sigsetmask snprintf spawnve spawnvpe \
-     stpcpy stpncpy strcasecmp strchr strdup \
-     strerror strncasecmp strndup strnlen strrchr strsignal strstr strtod \
+    setenv setproctitle setrlimit sigsetmask spawnve spawnvpe \
+     stpcpy stpncpy strdup \
+       strndup strsignal strtod \
      strtol strtoul strtoll strtoull strverscmp sysconf sysctl sysmp \
     table times tmpnam \
     vasprintf vfprintf vprintf vsprintf \
     wait3 wait4 waitpid)
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, snprintf, vsnprintf, strtol, strtoul, strtoll, strtoull, strnlen])
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, vsnprintf, strtol, strtoul, strtoll, strtoull])
   AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Define if you have the sys_errlist variable.])
   AC_DEFINE(HAVE_SYS_NERR,    1, [Define if you have the sys_nerr variable.])
   AC_DEFINE(HAVE_SYS_SIGLIST, 1, [Define if you have the sys_siglist variable.])
@@ -458,9 +444,6 @@ if test -n "${with_target_subdir}"; then
     # newlib doesnt provide any of the variables in $vars, so we
     # dont have to check them here.
 
-    # Of the functions in $checkfuncs, newlib only has strerror.
-    AC_DEFINE(HAVE_STRERROR)
-
     setobjs=yes
 
   fi
@@ -480,7 +463,6 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([getpagesize])
     AC_LIBOBJ([index])
     AC_LIBOBJ([insque])
-    AC_LIBOBJ([mempcpy])
     AC_LIBOBJ([mkstemps])
     AC_LIBOBJ([random])
     AC_LIBOBJ([rindex])
@@ -488,14 +470,13 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([stpcpy])
     AC_LIBOBJ([stpncpy])
     AC_LIBOBJ([strndup])
-    AC_LIBOBJ([strnlen])
     AC_LIBOBJ([strverscmp])
     AC_LIBOBJ([vasprintf])
     AC_LIBOBJ([waitpid])
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bcmp | bcopy | bzero | clock | ffs | getpagesize | index | insque | mempcpy | mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strnlen | strverscmp | vasprintf | waitpid)
+	asprintf | basename | bcmp | bcopy | bzero | clock | ffs | getpagesize | index | insque |  mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strverscmp | vasprintf | waitpid)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -507,23 +488,19 @@ if test -n "${with_target_subdir}"; then
     # Mingw doesnt provide any of the variables in $vars, so we
     # dont have to check them here.
 
-    # Of the functions in $checkfuncs, Mingw only has strerror.
-    AC_DEFINE(HAVE_STRERROR)
-
     setobjs=yes
     ;;
 
   *-*-msdosdjgpp)
     AC_LIBOBJ([vasprintf])
     AC_LIBOBJ([vsnprintf])
-    AC_LIBOBJ([snprintf])
     AC_LIBOBJ([asprintf])
 
-    for f in atexit basename bcmp bcopy bsearch bzero calloc clock ffs \
+    for f in atexit basename bcmp bcopy bsearch bzero clock ffs \
              getcwd getpagesize getrusage gettimeofday \
-             index insque memchr memcmp memcpy memmove memset psignal \
-             putenv random rename rindex sbrk setenv stpcpy strcasecmp \
-             strchr strdup strerror strncasecmp strrchr strstr strtod \
+             index insque psignal \
+             putenv random rename rindex setenv stpcpy \
+             strdup strtod \
              strtol strtoul sysconf times tmpnam vfprintf vprintf \
              vsprintf waitpid
     do
@@ -565,17 +542,15 @@ if test -z "${setobjs}"; then
     AC_LIBOBJ([getpagesize])
     AC_LIBOBJ([insque])
     AC_LIBOBJ([random])
-    AC_LIBOBJ([strcasecmp])
-    AC_LIBOBJ([strncasecmp])
     AC_LIBOBJ([strdup])
     AC_LIBOBJ([vfork])
     AC_LIBOBJ([waitpid])
     AC_LIBOBJ([vasprintf])
     for f in $funcs; do
       case "$f" in
-	basename | getpagesize | insque | random | strcasecmp)
+	basename | getpagesize | insque | random)
 	  ;;
-	strncasecmp | strdup | vfork | waitpid | vasprintf)
+	strdup | vfork | waitpid | vasprintf)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -586,9 +561,6 @@ if test -z "${setobjs}"; then
 
     # VxWorks doesn't provide any of the variables in $vars, so we
     # don't have to check them here.
-
-    # Of the functions in $checkfuncs, VxWorks only has strerror.
-    AC_DEFINE(HAVE_STRERROR)
 
     setobjs=yes
     ;;
@@ -643,7 +615,6 @@ if test -z "${setobjs}"; then
   # tests.  This will only work if the compiler works.
   AC_ISC_POSIX
   AC_REPLACE_FUNCS($funcs)
-  libiberty_AC_FUNC_C_ALLOCA
   AC_FUNC_FORK
   if test $ac_cv_func_vfork_works = no; then
     AC_LIBOBJ([vfork])
@@ -683,11 +654,10 @@ if test -z "${setobjs}"; then
     [AC_MSG_RESULT([no])])
 
   AC_CHECK_FUNCS($checkfuncs)
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, snprintf, vsnprintf])
-  AC_CHECK_DECLS([calloc, getenv, getopt, malloc, realloc, sbrk])
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, vsnprintf])
+  AC_CHECK_DECLS([getenv, getopt])
   AC_CHECK_DECLS([strtol, strtoul, strtoll, strtoull])
   AC_CHECK_DECLS([strverscmp])
-  AC_CHECK_DECLS([strnlen])
   libiberty_NEED_DECLARATION(canonicalize_file_name)
 fi
 
@@ -699,8 +669,6 @@ case "${host}" in
      *)				pexecute=pex-unix   ;;
 esac
 AC_SUBST(pexecute)
-
-libiberty_AC_FUNC_STRNCMP
 
 # Install a library built with a cross compiler in $(tooldir) rather
 # than $(libdir).

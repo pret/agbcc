@@ -55,31 +55,14 @@ control over the state of the random number generator.
 
 #include <errno.h>
 
-#if 0
-
-#include <ansidecl.h>
-#include <limits.h>
-#include <stddef.h>
-#include <stdlib.h>
-
-#else
-
 #define	ULONG_MAX  ((unsigned long)(~0L))     /* 0xFFFFFFFF for 32-bits */
 #define	LONG_MAX   ((long)(ULONG_MAX >> 1))   /* 0x7FFFFFFF for 32-bits*/
 
-#ifdef __STDC__
 #  define PTR void *
 #  ifndef NULL
 #    define NULL (void *) 0
 #  endif
-#else
-#  define PTR char *
-#  ifndef NULL
-#    define NULL (void *) 0
-#  endif
-#endif
 
-#endif
 
 long int random (void);
 

@@ -45,18 +45,9 @@
 #include <string.h>
 #include <strings.h>
 #else
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
 #endif
-#endif
-#endif
-
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -106,16 +97,6 @@ extern int errno;
 #endif
 #ifdef NEED_DECLARATION_FFS
 extern int ffs (int);
-#endif
-#ifdef NEED_DECLARATION_FREE
-extern void free ();
-#endif
-#ifdef NEED_DECLARATION_MALLOC
-extern void *malloc ();
-extern void *realloc ();
-#endif
-#ifdef NEED_DECLARATION_STRSTR
-extern char *strstr ();
 #endif
 
 #if !HAVE_DECL_MEMPCPY

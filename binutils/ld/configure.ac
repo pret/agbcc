@@ -20,6 +20,7 @@ dnl
 m4_include([../bfd/version.m4])
 AC_INIT([ld], BFD_VERSION)
 AC_CONFIG_SRCDIR(ldmain.c)
+m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 AC_CANONICAL_BUILD
@@ -247,15 +248,15 @@ ACX_PROG_CMP_IGNORE_INITIAL
 AC_SUBST(HDEFINES)
 AC_SUBST(NATIVE_LIB_DIRS)
 
-AC_CHECK_HEADERS(string.h strings.h stdlib.h unistd.h elf-hints.h limits.h locale.h sys/param.h)
+AC_CHECK_HEADERS(strings.h unistd.h elf-hints.h locale.h sys/param.h)
 AC_CHECK_HEADERS(fcntl.h sys/file.h sys/time.h sys/stat.h)
 ACX_HEADER_STRING
-AC_CHECK_FUNCS(glob mkstemp realpath sbrk setlocale waitpid)
+AC_CHECK_FUNCS(glob mkstemp realpath setlocale waitpid)
 AC_CHECK_FUNCS(open lseek close)
 AC_HEADER_DIRENT
 
 dnl AC_CHECK_HEADERS(sys/mman.h)
-AC_FUNC_MMAP
+AC_CHECK_FUNC(mmap)
 
 AC_SEARCH_LIBS([dlopen], [dl])
 AM_CONDITIONAL([ENABLE_PLUGINS], [test x$plugins = xyes])
@@ -284,7 +285,7 @@ fi
 
 BFD_BINARY_FOPEN
 
-AC_CHECK_DECLS([strstr, free, sbrk, getenv, environ])
+AC_CHECK_DECLS([strstr, getenv, environ])
 
 # When converting linker scripts into strings for use in emulation
 # files, use astring.sed if the compiler supports ANSI string
