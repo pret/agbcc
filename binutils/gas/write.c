@@ -980,10 +980,6 @@ fixup_segment (fixS *fixP, segT this_segment)
 	      fixP->fx_offset = add_number;
 	      fixP->fx_addsy = NULL;
 	      fixP->fx_subsy = NULL;
-#ifdef TC_M68K
-	      /* See the comment below about 68k weirdness.  */
-	      fixP->fx_pcrel = 0;
-#endif
 	    }
 	  else if (sub_symbol_segment == absolute_section
 		   && !S_FORCE_RELOC (fixP->fx_subsy, 0)
@@ -1004,15 +1000,7 @@ fixup_segment (fixS *fixP, segT this_segment)
 	      /* Make it pc-relative.  If the back-end code has not
 		 selected a pc-relative reloc, cancel the adjustment
 		 we do later on all pc-relative relocs.  */
-	      if (0
-#ifdef TC_M68K
-		  /* Do this for m68k even if it's already described
-		     as pc-relative.  On the m68k, an operand of
-		     "pc@(foo-.-2)" should address "foo" in a
-		     pc-relative mode.  */
-		  || 1
-#endif
-		  || !fixP->fx_pcrel)
+	      if (0 || !fixP->fx_pcrel)
 		add_number += MD_PCREL_FROM_SECTION (fixP, this_segment);
 	      fixP->fx_subsy = NULL;
 	      fixP->fx_pcrel = 1;

@@ -631,3 +631,5 @@ SYM (_call_via_\register):
 	call_via lr
 
 #endif /* L_call_via_rX */
+.text
+	.align	2, 0

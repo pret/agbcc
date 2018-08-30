@@ -36,28 +36,13 @@
 int enable_h_tick_hex = 0;
 #endif
 
-#ifdef TC_M68K
-/* Whether we are scrubbing in m68k MRI mode.  This is different from
-   flag_m68k_mri, because the two flags will be affected by the .mri
-   pseudo-op at different times.  */
-static int scrub_m68k_mri;
-
-/* The pseudo-op which switches in and out of MRI mode.  See the
-   comment in do_scrub_chars.  */
-static const char mri_pseudo[] = ".mri 0";
-#else
 #define scrub_m68k_mri 0
-#endif
 
-#if defined TC_ARM && defined OBJ_ELF
 /* The pseudo-op for which we need to special-case `@' characters.
    See the comment in do_scrub_chars.  */
 static const char   symver_pseudo[] = ".symver";
 static const char * symver_state;
-#endif
-#ifdef TC_ARM
 static char last_char;
-#endif
 
 static char lex[256];
 static const char symbol_chars[] =
@@ -112,17 +97,10 @@ do_scrub_begin (int m68k_mri ATTRIBUTE_UNUSED)
   lex['\n'] = LEX_IS_NEWLINE;
   lex[':'] = LEX_IS_COLON;
 
-#ifdef TC_M68K
-  scrub_m68k_mri = m68k_mri;
-
-  if (! m68k_mri)
-#endif
     {
       lex['"'] = LEX_IS_STRINGQUOTE;
 
-#if ! defined (TC_HPPA)
       lex['\''] = LEX_IS_ONECHAR_QUOTE;
-#endif
 
 #ifdef SINGLE_QUOTE_STRINGS
       lex['\''] = LEX_IS_STRINGQUOTE;
@@ -178,27 +156,8 @@ do_scrub_begin (int m68k_mri ATTRIBUTE_UNUSED)
   if (lex['/'] == 0)
     lex['/'] = LEX_IS_TWOCHAR_COMMENT_1ST;
 
-#ifdef TC_M68K
-  if (m68k_mri)
-    {
-      lex['\''] = LEX_IS_STRINGQUOTE;
-      lex[';'] = LEX_IS_COMMENT_START;
-      lex['*'] = LEX_IS_LINE_COMMENT_START;
-      /* The MRI documentation says '!' is LEX_IS_COMMENT_START, but
-	 then it can't be used in an expression.  */
-      lex['!'] = LEX_IS_LINE_COMMENT_START;
-    }
-#endif
-
-#ifdef TC_V850
-  lex['-'] = LEX_IS_DOUBLEDASH_1ST;
-#endif
 #ifdef DOUBLEBAR_PARALLEL
   lex['|'] = LEX_IS_DOUBLEBAR_1ST;
-#endif
-#ifdef TC_D30V
-  /* Must do this is we want VLIW instruction with "->" or "<-".  */
-  lex['-'] = LEX_IS_SYMBOL_COMPONENT;
 #endif
 
 #ifdef H_TICK_HEX
@@ -236,17 +195,10 @@ struct app_save
   int          add_newlines;
   char *       saved_input;
   size_t       saved_input_len;
-#ifdef TC_M68K
-  int          scrub_m68k_mri;
-#endif
   const char * mri_state;
   char         mri_last_ch;
-#if defined TC_ARM && defined OBJ_ELF
   const char * symver_state;
-#endif
-#ifdef TC_ARM
   char last_char;
-#endif
 };
 
 char *
@@ -268,17 +220,10 @@ app_push (void)
       memcpy (saved->saved_input, saved_input, saved_input_len);
       saved->saved_input_len = saved_input_len;
     }
-#ifdef TC_M68K
-  saved->scrub_m68k_mri = scrub_m68k_mri;
-#endif
   saved->mri_state = mri_state;
   saved->mri_last_ch = mri_last_ch;
-#if defined TC_ARM && defined OBJ_ELF
   saved->symver_state = symver_state;
-#endif
-#ifdef TC_ARM
   saved->last_char = last_char;
-#endif
 
   /* do_scrub_begin() is not useful, just wastes time.  */
 
@@ -310,17 +255,10 @@ app_pop (char *arg)
       saved_input_len = saved->saved_input_len;
       free (saved->saved_input);
     }
-#ifdef TC_M68K
-  scrub_m68k_mri = saved->scrub_m68k_mri;
-#endif
   mri_state = saved->mri_state;
   mri_last_ch = saved->mri_last_ch;
-#if defined TC_ARM && defined OBJ_ELF
   symver_state = saved->symver_state;
-#endif
-#ifdef TC_ARM
   last_char = saved->last_char;
-#endif
 
   free (arg);
 }
@@ -680,44 +618,7 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	     line from just after the first white space.  */
 	  state = 1;
 	  PUT ('|');
-#ifdef TC_TIC6X
-	  /* "||^" is used for SPMASKed instructions.  */
-	  ch = GET ();
-	  if (ch == EOF)
-	    goto fromeof;
-	  else if (ch == '^')
-	    PUT ('^');
-	  else
-	    UNGET (ch);
-#endif
 	  continue;
-#endif
-#ifdef TC_Z80
-	case 16:
-	  /* We have seen an 'a' at the start of a symbol, look for an 'f'.  */
-	  ch = GET ();
-	  if (ch == 'f' || ch == 'F')
-	    {
-	      state = 17;
-	      PUT (ch);
-	    }
-	  else
-	    {
-	      state = 9;
-	      break;
-	    }
-	  /* Fall through.  */
-	case 17:
-	  /* We have seen "af" at the start of a symbol,
-	     a ' here is a part of that symbol.  */
-	  ch = GET ();
-	  state = 9;
-	  if (ch == '\'')
-	    /* Change to avoid warning about unclosed string.  */
-	    PUT ('`');
-	  else if (ch != EOF)
-	    UNGET (ch);
-	  break;
 #endif
 	}
 
@@ -751,7 +652,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 
     recycle:
 
-#if defined TC_ARM && defined OBJ_ELF
       /* We need to watch out for .symver directives.  See the comment later
 	 in this function.  */
       if (symver_state == NULL)
@@ -778,60 +678,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 		symver_state = NULL;
 	    }
 	}
-#endif /* TC_ARM && OBJ_ELF */
-
-#ifdef TC_M68K
-      /* We want to have pseudo-ops which control whether we are in
-	 MRI mode or not.  Unfortunately, since m68k MRI mode affects
-	 the scrubber, that means that we need a special purpose
-	 recognizer here.  */
-      if (mri_state == NULL)
-	{
-	  if ((state == 0 || state == 1)
-	      && ch == mri_pseudo[0])
-	    mri_state = mri_pseudo + 1;
-	}
-      else
-	{
-	  /* We advance to the next state if we find the right
-	     character, or if we need a space character and we get any
-	     whitespace character, or if we need a '0' and we get a
-	     '1' (this is so that we only need one state to handle
-	     ``.mri 0'' and ``.mri 1'').  */
-	  if (ch != '\0'
-	      && (*mri_state == ch
-		  || (*mri_state == ' '
-		      && lex[ch] == LEX_IS_WHITESPACE)
-		  || (*mri_state == '0'
-		      && ch == '1')))
-	    {
-	      mri_last_ch = ch;
-	      ++mri_state;
-	    }
-	  else if (*mri_state != '\0'
-		   || (lex[ch] != LEX_IS_WHITESPACE
-		       && lex[ch] != LEX_IS_NEWLINE))
-	    {
-	      /* We did not get the expected character, or we didn't
-		 get a valid terminating character after seeing the
-		 entire pseudo-op, so we must go back to the
-		 beginning.  */
-	      mri_state = NULL;
-	    }
-	  else
-	    {
-	      /* We've read the entire pseudo-op.  mips_last_ch is
-		 either '0' or '1' indicating whether to enter or
-		 leave MRI mode.  */
-	      do_scrub_begin (mri_last_ch == '1');
-	      mri_state = NULL;
-
-	      /* We continue handling the character as usual.  The
-		 main gas reader must also handle the .mri pseudo-op
-		 to control expression parsing and the like.  */
-	    }
-	}
-#endif
 
       if (ch == EOF)
 	{
@@ -1145,29 +991,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	  PUT (ch);
 	  break;
 
-#ifdef TC_V850
-	case LEX_IS_DOUBLEDASH_1ST:
-	  ch2 = GET ();
-	  if (ch2 != '-')
-	    {
-	      if (ch2 != EOF)
-		UNGET (ch2);
-	      goto de_fault;
-	    }
-	  /* Read and skip to end of line.  */
-	  do
-	    {
-	      ch = GET ();
-	    }
-	  while (ch != EOF && ch != '\n');
-
-	  if (ch == EOF)
-	    as_warn (_("end of file in comment; newline inserted"));
-
-	  state = 0;
-	  PUT ('\n');
-	  break;
-#endif
 #ifdef DOUBLEBAR_PARALLEL
 	case LEX_IS_DOUBLEBAR_1ST:
 	  ch2 = GET ();
@@ -1252,20 +1075,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	      break;
 	    }
 
-#ifdef TC_D10V
-	  /* All insns end in a char for which LEX_IS_SYMBOL_COMPONENT is true.
-	     Trap is the only short insn that has a first operand that is
-	     neither register nor label.
-	     We must prevent exef0f ||trap #1 to degenerate to exef0f ||trap#1 .
-	     We can't make '#' LEX_IS_SYMBOL_COMPONENT because it is
-	     already LEX_IS_LINE_COMMENT_START.  However, it is the
-	     only character in line_comment_chars for d10v, hence we
-	     can recognize it as such.  */
-	  /* An alternative approach would be to reset the state to 1 when
-	     we see '||', '<'- or '->', but that seems to be overkill.  */
-	  if (state == 10)
-	    PUT (' ');
-#endif
 	  /* We have a line comment character which is not at the
 	     start of a line.  If this is also a normal comment
 	     character, fall through.  Otherwise treat it as a default
@@ -1281,7 +1090,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	    goto de_fault;
 	  /* Fall through.  */
 	case LEX_IS_COMMENT_START:
-#if defined TC_ARM && defined OBJ_ELF
 	  /* On the ARM, `@' is the comment character.
 	     Unfortunately this is also a special character in ELF .symver
 	     directives (and .type, though we deal with those another way).
@@ -1289,15 +1097,12 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	     the character as default if so.  This is a hack.  */
 	  if ((symver_state != NULL) && (*symver_state == 0))
 	    goto de_fault;
-#endif
 
-#ifdef TC_ARM
 	  /* For the ARM, care is needed not to damage occurrences of \@
 	     by stripping the @ onwards.  Yuck.  */
 	  if ((to > tostart ? to[-1] : last_char) == '\\')
 	    /* Do not treat the @ as a start-of-comment.  */
 	    goto de_fault;
-#endif
 
 #ifdef WARN_COMMENTS
 	  if (!found_comment)
@@ -1346,31 +1151,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	      break;
 	    }
 
-#ifdef TC_Z80
-	  /* "af'" is a symbol containing '\''.  */
-	  if (state == 3 && (ch == 'a' || ch == 'A'))
-	    {
-	      state = 16;
-	      PUT (ch);
-	      ch = GET ();
-	      if (ch == 'f' || ch == 'F')
-		{
-		  state = 17;
-		  PUT (ch);
-		  break;
-		}
-	      else
-		{
-		  state = 9;
-		  if (ch == EOF || !IS_SYMBOL_COMPONENT (ch))
-		    {
-		      if (ch != EOF)
-			UNGET (ch);
-		      break;
-		    }
-		}
-	    }
-#endif
 	  if (state == 3)
 	    state = 9;
 
@@ -1378,9 +1158,7 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 	     following symbol component or normal characters.  */
 	  if (to + 1 < toend
 	      && mri_state == NULL
-#if defined TC_ARM && defined OBJ_ELF
 	      && symver_state == NULL
-#endif
 	      )
 	    {
 	      char *s;
@@ -1474,10 +1252,9 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
 
  fromeof:
   /* We have reached the end of the input.  */
-#ifdef TC_ARM
   if (to > tostart)
     last_char = to[-1];
-#endif
+
   return to - tostart;
 
  tofull:
@@ -1491,9 +1268,8 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
   else
     saved_input = NULL;
 
-#ifdef TC_ARM
   if (to > tostart)
     last_char = to[-1];
-#endif
+
   return to - tostart;
 }

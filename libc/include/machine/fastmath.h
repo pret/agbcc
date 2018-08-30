@@ -46,34 +46,33 @@ double EXFUN(fast_loge, (double));
 #define log2(x) fast_log2(x)
 #define loge(x) fast_loge(x)
 
-#ifdef
 /* These functions are in assembler, they really do take floats. This
    can only be used with a real ANSI compiler */
 
-float EXFUN(fast_sinf, (float));
-float EXFUN(fast_cosf, (float));
-float EXFUN(fast_tanf, (float));
+float fast_sinf(float);
+float fast_cosf(float);
+float fast_tanf(float);
 
-float EXFUN(fast_asinf, (float));
-float EXFUN(fast_acosf, (float));
-float EXFUN(fast_atanf, (float));
+float fast_asinf(float);
+float fast_acosf(float);
+float fast_atanf(float);
 
-float EXFUN(fast_sinhf, (float));
-float EXFUN(fast_coshf, (float));
-float EXFUN(fast_tanhf, (float));
+float fast_sinhf(float);
+float fast_coshf(float);
+float fast_tanhf(float);
 
-float EXFUN(fast_asinhf, (float));
-float EXFUN(fast_acoshf, (float));
-float EXFUN(fast_atanhf, (float));
+float fast_asinhf(float);
+float fast_acoshf(float);
+float fast_atanhf(float);
 
-float EXFUN(fast_absf, (float));
-float EXFUN(fast_sqrtf, (float));
-float EXFUN(fast_exp2f, (float));
-float EXFUN(fast_exp10f, (float));
-float EXFUN(fast_expef, (float));
-float EXFUN(fast_log10f, (float));
-float EXFUN(fast_log2f, (float));
-float EXFUN(fast_logef, (float));
+float fast_absf(float);
+float fast_sqrtf(float);
+float fast_exp2f(float);
+float fast_exp10f(float);
+float fast_expef(float);
+float fast_log10f(float);
+float fast_log2f(float);
+float fast_logef(float);
 #define sinf(x) fast_sinf(x)
 #define cosf(x) fast_cosf(x)
 #define tanf(x) fast_tanf(x)
@@ -94,7 +93,6 @@ float EXFUN(fast_logef, (float));
 #define log10f(x) fast_log10f(x)
 #define log2f(x) fast_log2f(x)
 #define logef(x) fast_logef(x)
-#endif
 /* Override the functions defined in math.h */
 
 

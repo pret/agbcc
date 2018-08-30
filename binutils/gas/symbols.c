@@ -61,11 +61,6 @@ symbolS dot_symbol;
 #endif
 
 struct obstack notes;
-#ifdef TE_PE
-/* The name of an external symbol which is
-   used to make weak PE symbol names unique.  */
-const char * an_external_name;
-#endif
 
 static const char *save_symbol_name (const char *);
 static void fb_label_init (void);
@@ -1216,9 +1211,6 @@ resolve_symbol_value (symbolS *symp)
 	     relocation to be against the symbol to which this symbol
 	     is equated.  */
 	  if (! S_IS_DEFINED (add_symbol)
-#if defined (OBJ_COFF) && defined (TE_PE)
-	      || S_IS_WEAK (add_symbol)
-#endif
 	      || S_IS_COMMON (add_symbol))
 	    {
 	      if (finalize_syms)
@@ -2274,11 +2266,6 @@ S_SET_EXTERNAL (symbolS *s)
 #endif
   s->bsym->flags |= BSF_GLOBAL;
   s->bsym->flags &= ~(BSF_LOCAL | BSF_WEAK);
-
-#ifdef TE_PE
-  if (! an_external_name && S_GET_NAME(s)[0] != '.')
-    an_external_name = S_GET_NAME (s);
-#endif
 }
 
 void
@@ -2693,9 +2680,6 @@ symbol_equated_reloc_p (symbolS *s)
      resolve_symbol_value to flag expression syms that have been
      equated.  */
   return (s->sy_value.X_op == O_symbol
-#if defined (OBJ_COFF) && defined (TE_PE)
-	  && ! S_IS_WEAK (s)
-#endif
 	  && ((s->sy_flags.sy_resolved && s->sy_value.X_op_symbol != NULL)
 	      || ! S_IS_DEFINED (s)
 	      || S_IS_COMMON (s)));
