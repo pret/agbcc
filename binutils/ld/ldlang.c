@@ -6407,7 +6407,6 @@ lang_one_common (struct bfd_link_hash_entry *h, void *info)
     {
       static bfd_boolean header_printed;
       int len;
-      char *name;
       char buf[50];
 
       if (!header_printed)

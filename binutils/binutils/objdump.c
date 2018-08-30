@@ -3213,7 +3213,6 @@ dump_symbols (bfd *abfd ATTRIBUTE_UNUSED, bfd_boolean dynamic)
 	       && (dump_special_syms
 		   || !bfd_is_target_special_symbol (cur_bfd, *current)))
 	{
-	  const char *name = (*current)->name;
 	    bfd_print_symbol (cur_bfd, stdout, *current,
 			      bfd_print_symbol_all);
 	  printf ("\n");

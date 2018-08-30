@@ -36,34 +36,6 @@
 #include "ecoff.h"
 #endif
 
-#ifdef TC_ALPHA
-#include "elf/alpha.h"
-#endif
-
-#ifdef TC_MIPS
-#include "elf/mips.h"
-#endif
-
-#ifdef TC_PPC
-#include "elf/ppc.h"
-#endif
-
-#ifdef TC_I386
-#include "elf/x86-64.h"
-#endif
-
-#ifdef TC_MEP
-#include "elf/mep.h"
-#endif
-
-#ifdef TC_NIOS2
-#include "elf/nios2.h"
-#endif
-
-#ifdef TC_PRU
-#include "elf/pru.h"
-#endif
-
 static void obj_elf_line (int);
 static void obj_elf_size (int);
 static void obj_elf_type (int);
@@ -627,10 +599,6 @@ obj_elf_change_section (const char *name,
 		 .section .lbss,"aw",@progbits
 
 		 "@progbits" is incorrect.  */
-#ifdef TC_I386
-	      && (bed->s->arch_size != 64
-		  || !(ssect->attr & SHF_X86_64_LARGE))
-#endif
 	      && ssect->type != SHT_INIT_ARRAY
 	      && ssect->type != SHT_FINI_ARRAY
 	      && ssect->type != SHT_PREINIT_ARRAY)
@@ -679,19 +647,6 @@ obj_elf_change_section (const char *name,
 	  else if (attr == SHF_EXECINSTR
 		   && strcmp (name, ".note.GNU-stack") == 0)
 	    override = TRUE;
-#ifdef TC_ALPHA
-	  /* A section on Alpha may have SHF_ALPHA_GPREL.  */
-	  else if ((attr & ~ssect->attr) == SHF_ALPHA_GPREL)
-	    override = TRUE;
-#endif
-#ifdef TC_RX
-	  else if (attr == (SHF_EXECINSTR | SHF_WRITE | SHF_ALLOC)
-		   && (ssect->type == SHT_INIT_ARRAY
-		       || ssect->type == SHT_FINI_ARRAY
-		       || ssect->type == SHT_PREINIT_ARRAY))
-	    /* RX init/fini arrays can and should have the "awx" attributes set.  */
-	    ;
-#endif
 	  else
 	    {
 	      if (group_name == NULL)
@@ -2337,23 +2292,6 @@ elf_frob_symbol (symbolS *symp, int *puntp)
 	as_bad (_("symbol `%s' can not be both weak and common"),
 		S_GET_NAME (symp));
     }
-
-#ifdef TC_MIPS
-  /* The Irix 5 and 6 assemblers set the type of any common symbol and
-     any undefined non-function symbol to STT_OBJECT.  We try to be
-     compatible, since newer Irix 5 and 6 linkers care.  However, we
-     only set undefined symbols to be STT_OBJECT if we are on Irix,
-     because that is the only time gcc will generate the necessary
-     .global directives to mark functions.  */
-
-  if (S_IS_COMMON (symp))
-    symbol_get_bfdsym (symp)->flags |= BSF_OBJECT;
-
-  if (strstr (TARGET_OS, "irix") != NULL
-      && ! S_IS_DEFINED (symp)
-      && (symbol_get_bfdsym (symp)->flags & BSF_FUNCTION) == 0)
-    symbol_get_bfdsym (symp)->flags |= BSF_OBJECT;
-#endif
 }
 
 struct group_list

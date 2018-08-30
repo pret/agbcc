@@ -390,7 +390,7 @@ read_uleb128 (unsigned char * data,
 /* Read AMOUNT bytes from PTR and store them in VAL as an unsigned value.
    Checks to make sure that the read will not reach or pass END
    and that VAL is big enough to hold AMOUNT bytes.  */
-#define SAFE_BYTE_GET(VAL, PTR, AMOUNT, END)	\
+#define SAFE_BYTE_GET_(VAL, PTR, AMOUNT, END)	\
   do						\
     {						\
       unsigned int amount = (AMOUNT);		\
@@ -401,8 +401,8 @@ read_uleb128 (unsigned char * data,
 			   "internal error: attempt to read %d bytes "	\
 			   "of data in to %d sized variable",		\
 			   amount),					\
-		 amount, (int) sizeof (VAL));	\
-	  amount = sizeof (VAL);		\
+		 amount, (int) sizeof (*VAL));	\
+	  amount = sizeof (*VAL);		\
 	}					\
       if (((PTR) + amount) >= (END))		\
 	{					\
@@ -412,11 +412,43 @@ read_uleb128 (unsigned char * data,
 	    amount = 0;				\
 	}					\
       if (amount == 0 || amount > 8)		\
-	VAL = 0;				\
+	*VAL = 0;				\
       else					\
-	VAL = byte_get ((PTR), amount);		\
+	*VAL = byte_get ((PTR), amount);		\
     }						\
   while (0)
+
+static void safe_byte_get_64(uint64_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+{
+    SAFE_BYTE_GET_(val, ptr, amt, end);
+}
+
+static void safe_byte_get_ulong(unsigned long *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+{
+    SAFE_BYTE_GET_(val, ptr, amt, end);
+}
+static void safe_byte_get_32(uint32_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+{
+    SAFE_BYTE_GET_(val, ptr, amt, end);
+}
+
+static void safe_byte_get_16(uint16_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+{
+    SAFE_BYTE_GET_(val, ptr, amt, end);
+}
+static void safe_byte_get_8(uint8_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+{
+    SAFE_BYTE_GET_(val, ptr, amt, end);
+}
+#define SAFE_BYTE_GET(VAL, PTR, AMOUNT, END) \
+_Generic((VAL), \
+    uint8_t: safe_byte_get_8, \
+    uint16_t: safe_byte_get_16, \
+    uint32_t: safe_byte_get_32, \
+    unsigned long: safe_byte_get_ulong, \
+    uint64_t: safe_byte_get_64 \
+)(&(VAL),(PTR),(AMOUNT),(END))
+
 
 /* Like SAFE_BYTE_GET, but also increments PTR by AMOUNT.  */
 #define SAFE_BYTE_GET_AND_INC(VAL, PTR, AMOUNT, END)	\
@@ -5312,7 +5344,7 @@ display_debug_macro (struct dwarf_section *section,
 		      int val;
 
 		      /* DW_FORM_implicit_const is not expected here.  */
-		      SAFE_BYTE_GET_AND_INC (val, desc, 1, end);
+		      SAFE_SIGNED_BYTE_GET_AND_INC (val, desc, 1, end);
 		      curr
 			= read_and_display_attr_value (0, val, 0,
 						       curr, end, 0, 0, offset_size,
@@ -5815,7 +5847,7 @@ display_loc_list_dwo (struct dwarf_section *section,
 	  break;
 	}
 
-      SAFE_BYTE_GET_AND_INC (entry_type, start, 1, section_end);
+      SAFE_SIGNED_BYTE_GET_AND_INC (entry_type, start, 1, section_end);
 
       if (vstart)
 	switch (entry_type)

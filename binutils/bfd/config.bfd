@@ -46,116 +46,6 @@ targ64_selvecs=
 targ_cflags=
 targ_underscore=no
 
-# Catch obsolete configurations.
-case $targ in
- openrisc-*-* | or32-*-*)
-    echo "*** Configuration $targ is obsolete." >&2
-    echo "*** Use or1k-*-elf or or1k-*-linux as the target instead" >&2
-    exit 1
-    ;;
- powerpc-*-lynxos* | powerpc-*-windiss* | \
- null)
-    if test "x$enable_obsolete" != xyes; then
-      echo "*** Configuration $targ is obsolete." >&2
-      echo "*** Specify --enable-obsolete to build it anyway." >&2
-      echo "*** Support will be REMOVED in the next major release of BINUTILS," >&2
-      echo "*** unless a maintainer comes forward." >&2
-      exit 1
-    fi;;
-esac
-
-case $targ in
- *-*-netbsdelf* | i[3-7]86-*-netbsd*-gnu* | i[3-7]86-*-knetbsd*-gnu | \
- mips*-*-irix5* | mips*-*-irix6*)
-    # Not obsolete
-    ;;
- *-adobe-* | \
- *-go32-rtems* | \
- *-sony-* | \
- *-tandem-* | \
- *-*-ieee* | \
- *-*-netware* | \
- *-*-rtemsaout* | \
- *-*-rtemscoff* | \
- a29k-* | \
- arm*-*-aout | \
- arm-*-coff | \
- arm-*-netbsd* | \
- arm-*-openbsd* | \
- arm-*-oabi | \
- arm-*-riscix* | \
- arm-epoc-pe* | \
- h8300*-*-coff | \
- h8500*-*-coff | \
- hppa*-*-rtems* | \
- i[3-7]86-*-unixware* | \
- i[3-7]86-*-dgux* | \
- i[3-7]86-*-chorus* | \
- i[3-7]86-*-sysv* | \
- i[3-7]86-*-isc* | \
- i[3-7]86-*-sco* | \
- i[3-7]86-*-coff | \
- i[3-7]86-*-aix* | \
- i[3-7]86-sequent-bsd* | \
- i[3-7]86-*-freebsdaout* | i[3-7]86-*-freebsd[12].* | i[3-7]86-*-freebsd[12] | \
- i[3-7]86-*-netbsdaout* | i[3-7]86-*-netbsd* | \
- i[3-7]86-*-openbsd[0-2].* | i[3-7]86-*-openbsd3.[0-3] | \
- i[3-7]86-*-linux*aout* | \
- i[3-7]86-*-mach* | i[3-7]86-*-osf1mk* | \
- i[3-7]86-*-os9k | \
- i[3-7]86-none-* | \
- i[3-7]86-*-aout* | i[3-7]86*-*-vsta* | \
- i370-* | \
- i860-*-* | \
- i960-*-* | \
- m68*-*-*bsd* | \
- m68*-*-aout* | \
- m68*-*-coff* | \
- m68*-*-hpux* | \
- m68*-*-linux*aout* | \
- m68*-*-lynxos* | \
- m68*-*-os68k* | \
- m68*-*-psos* | \
- m68*-*-sunos* | \
- m68*-*-sysv* | \
- m68*-*-vsta* | \
- m68*-*-vxworks* | \
- m68*-apollo-* | \
- m68*-apple-aux* | \
- m68*-bull-sysv* | \
- m68*-ericsson-* | \
- m68*-motorola-sysv* | \
- m68*-netx-* | \
- m88*-*-* | \
- maxq-*-coff | \
- mips*-*-bsd* | \
- mips*-*-ecoff* | \
- mips*-*-lnews* | \
- mips*-*-mach3* | \
- mips*-*-pe* | \
- mips*-*-riscos* | \
- mips*-*-sysv* | \
- mips*-big-* | \
- mips*-dec-* | \
- mips*-sgi-* | \
- mips*el-*-rtems* | \
- sh*-*-symbianelf* | sh5*-*-* | sh64*-*-* | \
- sparc*-*-*aout* | \
- sparc*-*-chorus* | \
- sparc*-*-coff* | \
- sparc-*-lynxos* | \
- sparc-*-openbsd[0-2].* | sparc-*-openbsd3.[0-1] | \
- tahoe-*-* | \
- vax-*-bsd* | vax-*-ultrix* | vax-*-vms* | \
- w65-*-* | \
- we32k-*-* | \
- null)
-    echo "*** Configuration $targ is obsolete." >&2
-    echo "*** Support has been REMOVED." >&2
-    exit 1
-    ;;
-esac
-
 targ_cpu=`echo $targ | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 case "${targ_cpu}" in
 aarch64*)	 targ_archs="bfd_aarch64_arch bfd_arm_arch";;
@@ -390,7 +280,7 @@ case "${targ}" in
   arm*-*-uclinux* | arm-*-kfreebsd*-gnu | \
   arm*-*-eabi* | arm-*-rtems* | arm*-*-uclinuxfdpiceabi)
     targ_defvec=arm_elf32_le_vec
-    targ_selvecs="arm_elf32_fdpic_le_vec arm_elf32_be_vec arm_elf32_fdpic_be_vec"
+    targ_selvecs="arm_elf32_fdpic_le_vec"
     ;;
   arm*-*-vxworks | arm*-*-windiss)
     targ_defvec=arm_elf32_vxworks_le_vec

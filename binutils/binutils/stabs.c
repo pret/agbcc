@@ -2730,7 +2730,8 @@ parse_stab_members (void *                dhandle,
 
 	  if (debug_get_type_kind (dhandle, type) == DEBUG_KIND_METHOD
 	      && debug_get_parameter_types (dhandle, type, &varargs) == NULL)
-	    ;
+	    {
+	    }
 
 	  argtypes = savestring (*pp, p - *pp);
 	  *pp = p + 1;
@@ -2843,8 +2844,6 @@ parse_stab_members (void *                dhandle,
 	      staticp = TRUE;
 	      voffset = 0;
 	      context = DEBUG_TYPE_NULL;
-	      if (strncmp (argtypes, name, strlen (name)) != 0)
-		;
 	      break;
 
 	    default:

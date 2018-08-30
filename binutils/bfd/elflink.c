@@ -28,10 +28,6 @@
 #include "safe-ctype.h"
 #include "libiberty.h"
 #include "objalloc.h"
-#if BFD_SUPPORTS_PLUGINS
-#include "plugin-api.h"
-#include "plugin.h"
-#endif
 
 /* This struct is used to pass information to routines called via
    elf_link_hash_traverse which must return failure.  */
@@ -3380,10 +3376,6 @@ elf_link_is_defined_archive_symbol (bfd * abfd, carsym * symdef)
      object file is an IR object, give linker LTO plugin a chance to
      get the correct symbol table.  */
   if (abfd->plugin_format == bfd_plugin_yes
-#if BFD_SUPPORTS_PLUGINS
-      || (abfd->plugin_format == bfd_plugin_unknown
-	  && bfd_link_plugin_object_p (abfd))
-#endif
       )
     {
       /* Use the IR symbol table if the object has been claimed by
@@ -6013,7 +6005,6 @@ compute_bucket_count (struct bfd_link_info *info ATTRIBUTE_UNUSED,
 	     and the chains.  */
 	  max = (2 + dynsymcount) * bed->s->sizeof_hash_entry;
 
-# if 1
 	  /* Variant 1: optimize for short chains.  We add the squares
 	     of all the chain lengths (which favors many small chain
 	     over a few long chains).  */
@@ -6023,18 +6014,6 @@ compute_bucket_count (struct bfd_link_info *info ATTRIBUTE_UNUSED,
 	  /* This adds penalties for the overall size of the table.  */
 	  fact = i / (BFD_TARGET_PAGESIZE / bed->s->sizeof_hash_entry) + 1;
 	  max *= fact * fact;
-# else
-	  /* Variant 2: Optimize a lot more for small table.  Here we
-	     also add squares of the size but we also add penalties for
-	     empty slots (the +1 term).  */
-	  for (j = 0; j < i; ++j)
-	    max += (1 + counts[j]) * (1 + counts[j]);
-
-	  /* The overall size of the table is considered, but not as
-	     strong as in variant 1, where it is squared.  */
-	  fact = i / (BFD_TARGET_PAGESIZE / bed->s->sizeof_hash_entry) + 1;
-	  max *= fact;
-# endif
 
 	  /* Compare with current best results.  */
 	  if (max < best_chlen)
