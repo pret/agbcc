@@ -25,7 +25,6 @@
 #include "libiberty.h"
 #include "safe-ctype.h"
 #include "filenames.h"
-#include "demangle.h"
 #include <stdarg.h>
 #include "ld.h"
 #include "ldmisc.h"
@@ -526,19 +525,6 @@ vfinfo (FILE *fp, const char *fmt, va_list ap, bfd_boolean is_warning)
 		    {
 		      fprintf (fp, _("no symbol"));
 		      break;
-		    }
-		  else if (demangling)
-		    {
-		      char *demangled;
-
-		      demangled = bfd_demangle (link_info.output_bfd, name,
-						DMGL_ANSI | DMGL_PARAMS);
-		      if (demangled != NULL)
-			{
-			  fprintf (fp, "%s", demangled);
-			  free (demangled);
-			  break;
-			}
 		    }
 		  fprintf (fp, "%s", name);
 		}

@@ -235,7 +235,6 @@
 #include "bfd.h"
 #include "libiberty.h"
 #include "getopt.h"
-#include "demangle.h"
 #include "dyn-string.h"
 #include "bucomm.h"
 #include "dlltool.h"

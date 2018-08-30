@@ -28,7 +28,6 @@
 #include "bfd.h"
 #include "bfdlink.h"
 #include "libiberty.h"
-#include "demangle.h"
 #include "objalloc.h"
 
 #include "ld.h"
@@ -328,11 +327,7 @@ cref_fill_array (struct cref_hash_entry *h, void *data)
 {
   struct cref_hash_entry ***pph = (struct cref_hash_entry ***) data;
 
-  ASSERT (h->demangled == NULL);
-  h->demangled = bfd_demangle (link_info.output_bfd, h->root.string,
-			       DMGL_ANSI | DMGL_PARAMS);
-  if (h->demangled == NULL)
-    h->demangled = h->root.string;
+  h->demangled = h->root.string;
 
   **pph = h;
 
@@ -351,10 +346,7 @@ cref_sort_array (const void *a1, const void *a2)
   const struct cref_hash_entry *const *p2
     = (const struct cref_hash_entry *const *) a2;
 
-  if (demangling)
-    return strcmp ((*p1)->demangled, (*p2)->demangled);
-  else
-    return strcmp ((*p1)->root.string, (*p2)->root.string);
+  return strcmp ((*p1)->root.string, (*p2)->root.string);
 }
 
 /* Write out the cref table.  */
@@ -432,16 +424,8 @@ output_one_cref (FILE *fp, struct cref_hash_entry *h)
 	}
     }
 
-  if (demangling)
-    {
-      fprintf (fp, "%s ", h->demangled);
-      len = strlen (h->demangled) + 1;
-    }
-  else
-    {
-      fprintf (fp, "%s ", h->root.string);
-      len = strlen (h->root.string) + 1;
-    }
+  fprintf (fp, "%s ", h->root.string);
+  len = strlen (h->root.string) + 1;
 
   for (r = h->refs; r != NULL; r = r->next)
     {

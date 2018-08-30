@@ -37,7 +37,6 @@
 #include "ldfile.h"
 #include "ldver.h"
 #include "ldemul.h"
-#include "demangle.h"
 #ifdef ENABLE_PLUGINS
 #include "plugin.h"
 #endif /* ENABLE_PLUGINS */
@@ -311,9 +310,6 @@ static const struct ld_option ld_options[] =
     '\0', NULL, N_("Output cross reference table"), TWO_DASHES },
   { {"defsym", required_argument, NULL, OPTION_DEFSYM},
     '\0', N_("SYMBOL=EXPRESSION"), N_("Define a symbol"), TWO_DASHES },
-  { {"demangle", optional_argument, NULL, OPTION_DEMANGLE},
-    '\0', N_("[=STYLE]"), N_("Demangle symbol names [using STYLE]"),
-    TWO_DASHES },
   { {"disable-multiple-abs-defs", no_argument, NULL,
      OPTION_DISABLE_MULTIPLE_DEFS_ABS},
     '\0', NULL, N_("Do not allow multiple definitions with symbols included\n"
@@ -357,8 +353,6 @@ static const struct ld_option ld_options[] =
     '\0', N_("FILE"), N_("Write a map file"), ONE_DASH },
   { {"no-define-common", no_argument, NULL, OPTION_NO_DEFINE_COMMON},
     '\0', NULL, N_("Do not define Common storage"), TWO_DASHES },
-  { {"no-demangle", no_argument, NULL, OPTION_NO_DEMANGLE },
-    '\0', NULL, N_("Do not demangle symbol names"), TWO_DASHES },
   { {"no-keep-memory", no_argument, NULL, OPTION_NO_KEEP_MEMORY},
     '\0', NULL, N_("Use less memory and more disk I/O"), TWO_DASHES },
   { {"no-undefined", no_argument, NULL, OPTION_NO_UNDEFINED},
@@ -785,20 +779,6 @@ parse_args (unsigned argc, char **argv)
 	  yyparse ();
 	  lex_string = NULL;
 	  break;
-	case OPTION_DEMANGLE:
-	  demangling = TRUE;
-	  if (optarg != NULL)
-	    {
-	      enum demangling_styles style;
-
-	      style = cplus_demangle_name_to_style (optarg);
-	      if (style == unknown_demangling)
-		einfo (_("%F%P: unknown demangling style `%s'\n"),
-		       optarg);
-
-	      cplus_demangle_set_style (style);
-	    }
-	  break;
 	case 'I':		/* Used on Solaris.  */
 	case OPTION_DYNAMIC_LINKER:
 	  command_line.interpreter = optarg;
@@ -914,9 +894,6 @@ parse_args (unsigned argc, char **argv)
 	  break;
 	case OPTION_NO_DEFINE_COMMON:
 	  link_info.inhibit_common_definition = TRUE;
-	  break;
-	case OPTION_NO_DEMANGLE:
-	  demangling = FALSE;
 	  break;
 	case OPTION_NO_GC_SECTIONS:
 	  link_info.gc_sections = FALSE;

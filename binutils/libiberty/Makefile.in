@@ -121,9 +121,9 @@ COMPILE.c = $(CC) -c @DEFS@ $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) \
 # to build the new rules.
 CFILES = alloca.c argv.c asprintf.c atexit.c				\
 	basename.c bcmp.c bcopy.c bsearch.c bzero.c			\
-	calloc.c choose-temp.c clock.c concat.c cp-demangle.c		\
-	 cp-demint.c cplus-dem.c crc32.c				\
-	d-demangle.c dwarfnames.c dyn-string.c				\
+	calloc.c choose-temp.c clock.c concat.c 		\
+	 cplus-dem.c crc32.c				\
+	dwarfnames.c dyn-string.c				\
 	fdmatch.c ffs.c fibheap.c filename_cmp.c floatformat.c		\
 	fnmatch.c fopen_unlocked.c					\
 	getcwd.c getopt.c getopt1.c getpagesize.c getpwd.c getruntime.c	\
@@ -141,7 +141,6 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
 	 pex-unix.c pex-win32.c						\
          physmem.c putenv.c						\
 	random.c regex.c rename.c rindex.c				\
-	rust-demangle.c							\
 	safe-ctype.c setenv.c setproctitle.c sha1.c sigsetmask.c        \
 	 simple-object.c simple-object-coff.c simple-object-elf.c	\
 	 simple-object-mach-o.c simple-object-xcoff.c			\
@@ -161,11 +160,11 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
 # These are always included in the library.  The first four are listed
 # first and by compile time to optimize parallel builds.
 REQUIRED_OFILES =							\
-	./regex.$(objext) ./cplus-dem.$(objext) ./cp-demangle.$(objext) \
+	./regex.$(objext) \
 	./md5.$(objext) ./sha1.$(objext) ./alloca.$(objext)		\
 	./argv.$(objext)						\
 	./choose-temp.$(objext) ./concat.$(objext)			\
-	./cp-demint.$(objext) ./crc32.$(objext) ./d-demangle.$(objext)	\
+	 ./crc32.$(objext) 	\
 	./dwarfnames.$(objext) ./dyn-string.$(objext)			\
 	./fdmatch.$(objext) ./fibheap.$(objext)				\
 	./filename_cmp.$(objext) ./floatformat.$(objext)		\
@@ -179,7 +178,6 @@ REQUIRED_OFILES =							\
 	./partition.$(objext) ./pexecute.$(objext) ./physmem.$(objext)	\
 	./pex-common.$(objext) ./pex-one.$(objext)			\
 	./@pexecute@.$(objext) ./vprintf-support.$(objext)		\
-	./rust-demangle.$(objext)					\
 	./safe-ctype.$(objext)						\
 	./simple-object.$(objext) ./simple-object-coff.$(objext)	\
 	./simple-object-elf.$(objext) ./simple-object-mach-o.$(objext)	\
@@ -228,7 +226,6 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 # These files are installed if the library has been configured to do so.
 INSTALLED_HEADERS =                                                     \
 	$(INCDIR)/ansidecl.h                                            \
-	$(INCDIR)/demangle.h                                            \
 	$(INCDIR)/dyn-string.h                                          \
 	$(INCDIR)/fibheap.h                                             \
 	$(INCDIR)/floatformat.h                                         \

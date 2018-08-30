@@ -27,7 +27,6 @@
 #include <assert.h>
 #include "bfd.h"
 #include "libiberty.h"
-#include "demangle.h"
 #include "debug.h"
 #include "budbg.h"
 
@@ -2592,31 +2591,13 @@ tg_variable (void *p, const char *name, enum debug_var_kind kind,
 	     bfd_vma val ATTRIBUTE_UNUSED)
 {
   struct pr_handle *info = (struct pr_handle *) p;
-  char *t, *dname, *from_class;
+  char *t, *from_class;
 
   t = pop_type (info);
   if (t == NULL)
     return FALSE;
 
-  dname = NULL;
-  if (info->demangler)
-    dname = info->demangler (info->abfd, name, DMGL_ANSI | DMGL_PARAMS);
-
   from_class = NULL;
-  if (dname != NULL)
-    {
-      char *sep;
-      sep = strstr (dname, "::");
-      if (sep)
-	{
-	  *sep = 0;
-	  name = sep + 2;
-	  from_class = dname;
-	}
-      else
-	/* Obscure types as vts and type_info nodes.  */
-	name = dname;
-    }
 
   fprintf (info->f, "%s\t%s\t0;\"\tkind:v\ttype:%s", name, info->filename, t);
 
@@ -2636,9 +2617,6 @@ tg_variable (void *p, const char *name, enum debug_var_kind kind,
   if (from_class)
     fprintf (info->f, "\tclass:%s", from_class);
 
-  if (dname)
-    free (dname);
-
   fprintf (info->f, "\n");
 
   free (t);
@@ -2652,42 +2630,16 @@ static bfd_boolean
 tg_start_function (void *p, const char *name, bfd_boolean global)
 {
   struct pr_handle *info = (struct pr_handle *) p;
-  char *dname;
 
   if (! global)
     info->stack->flavor = "static";
   else
     info->stack->flavor = NULL;
 
-  dname = NULL;
-  if (info->demangler)
-    dname = info->demangler (info->abfd, name, DMGL_ANSI | DMGL_PARAMS);
-
-  if (! substitute_type (info, dname ? dname : name))
+  if (! substitute_type (info,  name))
     return FALSE;
 
   info->stack->method = NULL;
-  if (dname != NULL)
-    {
-      char *sep;
-      sep = strstr (dname, "::");
-      if (sep)
-	{
-	  info->stack->method = dname;
-	  *sep = 0;
-	  name = sep + 2;
-	}
-      else
-	{
-	  info->stack->method = "";
-	  name = dname;
-	}
-      sep = strchr (name, '(');
-      if (sep)
-	*sep = 0;
-      /* Obscure functions as type_info function.  */
-    }
-
   info->stack->parents = strdup (name);
 
   if (! info->stack->method && ! append_type (info, "("))

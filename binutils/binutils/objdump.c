@@ -60,7 +60,6 @@
 #include "safe-ctype.h"
 #include "dis-asm.h"
 #include "libiberty.h"
-#include "demangle.h"
 #include "filenames.h"
 #include "debug.h"
 #include "budbg.h"
@@ -98,7 +97,6 @@ static bfd_boolean with_source_code;	/* -S */
 static int show_raw_insn;		/* --show-raw-insn */
 static int dump_dwarf_section_info;	/* --dwarf */
 static int dump_stab_section_info;	/* --stabs */
-static int do_demangle;			/* -C, --demangle */
 static bfd_boolean disassemble;		/* -d */
 static bfd_boolean disassemble_all;	/* -D */
 static int disassemble_zeroes;		/* --disassemble-zeroes */
@@ -245,10 +243,6 @@ usage (FILE *stream, int status)
   -I, --include=DIR              Add DIR to search list for source files\n\
   -l, --line-numbers             Include line numbers and filenames in output\n\
   -F, --file-offsets             Include file offsets when displaying information\n\
-  -C, --demangle[=STYLE]         Decode mangled/processed symbol names\n\
-                                  The STYLE, if specified, can be `auto', `gnu',\n\
-                                  `lucid', `arm', `hp', `edg', `gnu-v3', `java'\n\
-                                  or `gnat'\n\
   -w, --wide                     Format output for more than 80 columns\n\
   -z, --disassemble-zeroes       Do not skip blocks of zeroes when disassembling\n\
       --start-address=ADDR       Only process data whose address is >= ADDR\n\
@@ -312,7 +306,6 @@ static struct option long_options[]=
   {"archive-headers", no_argument, NULL, 'a'},
   {"debugging", no_argument, NULL, 'g'},
   {"debugging-tags", no_argument, NULL, 'e'},
-  {"demangle", optional_argument, NULL, 'C'},
   {"disassemble", no_argument, NULL, 'd'},
   {"disassemble-all", no_argument, NULL, 'D'},
   {"disassembler-options", required_argument, NULL, 'M'},
@@ -878,13 +871,6 @@ objdump_print_symname (bfd *abfd, struct disassemble_info *inf,
 
   alloc = NULL;
   name = bfd_asymbol_name (sym);
-  if (do_demangle && name[0] != '\0')
-    {
-      /* Demangle the name.  */
-      alloc = bfd_demangle (abfd, name, DMGL_ANSI | DMGL_PARAMS);
-      if (alloc != NULL)
-	name = alloc;
-    }
 
   if ((sym->flags & (BSF_SECTION_SYM | BSF_SYNTHETIC)) == 0)
     version_string = bfd_get_symbol_version_string (abfd, sym, &hidden);
@@ -3228,26 +3214,6 @@ dump_symbols (bfd *abfd ATTRIBUTE_UNUSED, bfd_boolean dynamic)
 		   || !bfd_is_target_special_symbol (cur_bfd, *current)))
 	{
 	  const char *name = (*current)->name;
-
-	  if (do_demangle && name != NULL && *name != '\0')
-	    {
-	      char *alloc;
-
-	      /* If we want to demangle the name, we demangle it
-		 here, and temporarily clobber it while calling
-		 bfd_print_symbol.  FIXME: This is a gross hack.  */
-	      alloc = bfd_demangle (cur_bfd, name, DMGL_ANSI | DMGL_PARAMS);
-	      if (alloc != NULL)
-		(*current)->name = alloc;
-	      bfd_print_symbol (cur_bfd, stdout, *current,
-				bfd_print_symbol_all);
-	      if (alloc != NULL)
-		{
-		  (*current)->name = name;
-		  free (alloc);
-		}
-	    }
-	  else
 	    bfd_print_symbol (cur_bfd, stdout, *current,
 			      bfd_print_symbol_all);
 	  printf ("\n");
@@ -3630,31 +3596,6 @@ dump_bfd (bfd *abfd)
   if (disassemble)
     disassemble_data (abfd);
 
-  if (dump_debugging)
-    {
-      void *dhandle;
-
-      dhandle = read_debugging_info (abfd, syms, symcount, TRUE);
-      if (dhandle != NULL)
-	{
-	  if (!print_debugging_info (stdout, dhandle, abfd, syms,
-				     bfd_demangle,
-				     dump_debugging_tags ? TRUE : FALSE))
-	    {
-	      non_fatal (_("%s: printing debugging information failed"),
-			 bfd_get_filename (abfd));
-	      exit_status = 1;
-	    }
-	}
-      /* PR 6483: If there was no STABS debug info in the file, try
-	 DWARF instead.  */
-      else if (! dump_dwarf_section_info)
-	{
-	  dwarf_select_sections_all ();
-	  dump_dwarf (abfd);
-	}
-    }
-
   if (syms)
     {
       free (syms);
@@ -3875,20 +3816,6 @@ main (int argc, char **argv)
 	case 'b':
 	  target = optarg;
 	  break;
-	case 'C':
-	  do_demangle = TRUE;
-	  if (optarg != NULL)
-	    {
-	      enum demangling_styles style;
-
-	      style = cplus_demangle_name_to_style (optarg);
-	      if (style == unknown_demangling)
-		fatal (_("unknown demangling style `%s'"),
-		       optarg);
-
-	      cplus_demangle_set_style (style);
-	    }
-	  break;
 	case 'w':
 	  do_wide = wide_output = TRUE;
 	  break;
@@ -4009,7 +3936,6 @@ main (int argc, char **argv)
 	case 'e':
 	  dump_debugging = 1;
 	  dump_debugging_tags = 1;
-	  do_demangle = TRUE;
 	  seenflag = TRUE;
 	  break;
 	case 'W':
