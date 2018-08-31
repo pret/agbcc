@@ -129,11 +129,11 @@ extra_host_args=
 build_libs="build-libiberty build-libcpp"
 
 # these tools are built for the build environment
-build_tools="build-texinfo build-flex build-bison build-m4 build-fixincludes"
+build_tools="build-m4"
 
 # these libraries are used by various programs built for the host environment
 #f
-host_libs="intl libiberty opcodes bfd readline tcl tk itcl libgui zlib libbacktrace libcpp libdecnumber gmp mpfr mpc isl libelf libiconv"
+host_libs="intl libiberty opcodes bfd libcpp libdecnumber libelf"
 
 # these tools are built for the host environment
 # Note, the powerpc-eabi build depends on sim occurring before gdb in order to
@@ -141,30 +141,12 @@ host_libs="intl libiberty opcodes bfd readline tcl tk itcl libgui zlib libbacktr
 # binutils, gas and ld appear in that order because it makes sense to run
 # "make check" in that particular order.
 # If --enable-gold is used, "gold" may replace "ld".
-host_tools="flex bison binutils gas ld fixincludes gcc cgen sid sim gdb etc expect dejagnu m4 utils guile fastjar gnattools libcc1 gotools"
+host_tools="binutils gas ld gcc etc m4 utils"
 
 # these libraries are built for the target environment, and are built after
 # the host libraries and the host tools (which may be a cross compiler)
 # Note that libiberty is not a target library.
-target_libraries="target-libgcc \
-		target-libbacktrace \
-		target-libgloss \
-		target-newlib \
-		target-libgomp \
-		target-liboffloadmic \
-		target-libhsail-rt \
-		target-libatomic \
-		target-libitm \
-		target-libstdc++-v3 \
-		target-libsanitizer \
-		target-libvtv \
-		target-libssp \
-		target-libquadmath \
-		target-libgfortran \
-		target-libffi \
-		target-libobjc \
-		target-libada \
-		target-libgo"
+target_libraries=""
 
 # these tools are built using the target libraries, and are intended to
 # run only in the target environment
@@ -422,48 +404,12 @@ case "${host}" in
 esac
 
 
-AC_ARG_ENABLE(libquadmath,
-AS_HELP_STRING([--disable-libquadmath],
-  [do not build libquadmath directory]),
-ENABLE_LIBQUADMATH=$enableval,
-ENABLE_LIBQUADMATH=yes)
-if test "${ENABLE_LIBQUADMATH}" = "no" ; then
-  noconfigdirs="$noconfigdirs target-libquadmath"
-fi
-
-
-AC_ARG_ENABLE(libquadmath-support,
-AS_HELP_STRING([--disable-libquadmath-support],
-  [disable libquadmath support for Fortran]),
-ENABLE_LIBQUADMATH_SUPPORT=$enableval,
-ENABLE_LIBQUADMATH_SUPPORT=yes)
-enable_libquadmath_support=
-if test "${ENABLE_LIBQUADMATH_SUPPORT}" = "no" ; then
-  enable_libquadmath_support=no
-fi
-
-
-AC_ARG_ENABLE(libada,
-[AS_HELP_STRING([--enable-libada], [build libada directory])],
-ENABLE_LIBADA=$enableval,
-ENABLE_LIBADA=yes)
-if test "${ENABLE_LIBADA}" != "yes" ; then
-  noconfigdirs="$noconfigdirs gnattools"
-fi
 
 AC_ARG_ENABLE(libssp,
 [AS_HELP_STRING([--enable-libssp], [build libssp directory])],
 ENABLE_LIBSSP=$enableval,
 ENABLE_LIBSSP=yes)
 
-AC_ARG_ENABLE(libstdcxx,
-AS_HELP_STRING([--disable-libstdcxx],
-  [do not build libstdc++-v3 directory]),
-ENABLE_LIBSTDCXX=$enableval,
-ENABLE_LIBSTDCXX=default)
-[if test "${ENABLE_LIBSTDCXX}" = "no" ; then
-  noconfigdirs="$noconfigdirs target-libstdc++-v3"
-fi]
 
 # If this is accelerator compiler and its target is intelmic we enable
 # target liboffloadmic by default.  If this is compiler with offloading
@@ -653,56 +599,6 @@ case "${target}" in
     ;;
 esac
 
-# Disable libstdc++-v3 for some systems.
-# Allow user to override this if they pass --enable-libstdc++-v3
-if test "${ENABLE_LIBSTDCXX}" = "default" ; then
-  case "${target}" in
-    *-*-vxworks*)
-      # VxWorks uses the Dinkumware C++ library.
-      noconfigdirs="$noconfigdirs target-libstdc++-v3"
-      ;;
-    arm*-wince-pe*)
-      # the C++ libraries don't build on top of CE's C libraries
-      noconfigdirs="$noconfigdirs target-libstdc++-v3"
-      ;;
-    avr-*-*)
-      noconfigdirs="$noconfigdirs target-libstdc++-v3"
-      ;;
-    ft32-*-*)
-      noconfigdirs="$noconfigdirs target-libstdc++-v3"
-      ;;
-  esac
-fi
-
-# Disable Fortran for some systems.
-case "${target}" in
-  mmix-*-*)
-    # See <http://gcc.gnu.org/ml/gcc-patches/2004-11/msg00572.html>.
-    unsupported_languages="$unsupported_languages fortran"
-    ;;
-esac
-
-# Disable the go frontend on systems where it is known to not work. Please keep
-# this in sync with contrib/config-list.mk.
-case "${target}" in
-*-*-darwin* | *-*-cygwin* | *-*-mingw*)
-    unsupported_languages="$unsupported_languages go"
-    ;;
-esac
-
-# Disable libgo for some systems where it is known to not work.
-# For testing, you can easily override this with --enable-libgo.
-if test x$enable_libgo = x; then
-    case "${target}" in
-    *-*-darwin*)
-	# PR 46986
-	noconfigdirs="$noconfigdirs target-libgo"
-	;;
-    *-*-cygwin* | *-*-mingw*)
-	noconfigdirs="$noconfigdirs target-libgo"
-	;;
-    esac
-fi
 
 # Default libgloss CPU subdirectory.
 libgloss_dir="$target_cpu"
@@ -762,9 +658,6 @@ if test "${build}" != "${host}" ; then
   AR_FOR_BUILD=${AR_FOR_BUILD-ar}
   AS_FOR_BUILD=${AS_FOR_BUILD-as}
   CC_FOR_BUILD=${CC_FOR_BUILD-gcc}
-  CXX_FOR_BUILD=${CXX_FOR_BUILD-g++}
-  GFORTRAN_FOR_BUILD=${GFORTRAN_FOR_BUILD-gfortran}
-  GOC_FOR_BUILD=${GOC_FOR_BUILD-gccgo}
   DLLTOOL_FOR_BUILD=${DLLTOOL_FOR_BUILD-dlltool}
   LD_FOR_BUILD=${LD_FOR_BUILD-ld}
   NM_FOR_BUILD=${NM_FOR_BUILD-nm}
@@ -775,9 +668,6 @@ else
   AR_FOR_BUILD="\$(AR)"
   AS_FOR_BUILD="\$(AS)"
   CC_FOR_BUILD="\$(CC)"
-  CXX_FOR_BUILD="\$(CXX)"
-  GFORTRAN_FOR_BUILD="\$(GFORTRAN)"
-  GOC_FOR_BUILD="\$(GOC)"
   DLLTOOL_FOR_BUILD="\$(DLLTOOL)"
   LD_FOR_BUILD="\$(LD)"
   NM_FOR_BUILD="\$(NM)"
@@ -787,7 +677,6 @@ else
 fi
 
 AC_PROG_CC
-AC_PROG_CXX
 
 # We must set the default linker to the linker used by gcc for the correct
 # operation of libtool.  If LD is not defined and we are using gcc, try to
@@ -873,12 +762,6 @@ case "$have_compiler:$host:$target:$enable_bootstrap" in
     AC_MSG_ERROR([invalid option for --enable-bootstrap])
     ;;
 esac
-
-# When bootstrapping with GCC, build stage 1 in C++98 mode to ensure that a
-# C++98 compiler can still start the bootstrap.
-if test "$enable_bootstrap:$GXX" = "yes:yes"; then
-  CXX="$CXX -std=gnu++98"
-fi
 
 # Used for setting $lt_cv_objdir
 _LT_CHECK_OBJDIR
@@ -1293,14 +1176,6 @@ if test -d ${srcdir}/gcc; then
   fi
   enable_languages=`echo "${enable_languages}" | sed -e 's/[[ 	,]][[ 	,]]*/,/g' -e 's/,$//'`
 
-  # 'f95' is the old name for the 'fortran' language. We issue a warning
-  # and make the substitution.
-  case ,${enable_languages}, in
-    *,f95,*)
-      echo configure.ac: warning: 'f95' as language name is deprecated, use 'fortran' instead 1>&2
-      enable_languages=`echo "${enable_languages}" | sed -e 's/f95/fortran/g'`
-      ;;
-  esac
 
   # If bootstrapping, C++ must be enabled.
   case ",$enable_languages,:$enable_bootstrap" in
@@ -1859,23 +1734,6 @@ if test "x$CFLAGS_FOR_TARGET" = x; then
   fi
 fi
 AC_SUBST(CFLAGS_FOR_TARGET)
-
-if test "x$CXXFLAGS_FOR_TARGET" = x; then
-  if test "x${is_cross_compiler}" = xyes; then
-    CXXFLAGS_FOR_TARGET="-g -O2"
-  else
-    CXXFLAGS_FOR_TARGET=$CXXFLAGS
-    case " $CXXFLAGS " in
-      *" -O2 "*) ;;
-      *) CXXFLAGS_FOR_TARGET="-O2 $CXXFLAGS_FOR_TARGET" ;;
-    esac
-    case " $CXXFLAGS " in
-      *" -g "* | *" -g3 "*) ;;
-      *) CXXFLAGS_FOR_TARGET="-g $CXXFLAGS_FOR_TARGET" ;;
-    esac
-  fi
-fi
-AC_SUBST(CXXFLAGS_FOR_TARGET)
 
 AC_SUBST(LDFLAGS_FOR_TARGET)
 
@@ -2684,7 +2542,6 @@ esac
 # our build compiler if desired.
 if test x"${build}" = x"${host}" ; then
   CFLAGS_FOR_BUILD=${CFLAGS_FOR_BUILD-${CFLAGS}}
-  CXXFLAGS_FOR_BUILD=${CXXFLAGS_FOR_BUILD-${CXXFLAGS}}
   LDFLAGS_FOR_BUILD=${LDFLAGS_FOR_BUILD-${LDFLAGS}}
 fi
 
@@ -2750,11 +2607,7 @@ AC_SUBST(AR_FOR_BUILD)
 AC_SUBST(AS_FOR_BUILD)
 AC_SUBST(CC_FOR_BUILD)
 AC_SUBST(CFLAGS_FOR_BUILD)
-AC_SUBST(CXXFLAGS_FOR_BUILD)
-AC_SUBST(CXX_FOR_BUILD)
 AC_SUBST(DLLTOOL_FOR_BUILD)
-AC_SUBST(GFORTRAN_FOR_BUILD)
-AC_SUBST(GOC_FOR_BUILD)
 AC_SUBST(LDFLAGS_FOR_BUILD)
 AC_SUBST(LD_FOR_BUILD)
 AC_SUBST(NM_FOR_BUILD)
@@ -2767,65 +2620,11 @@ AC_SUBST(WINDRES_FOR_BUILD)
 # programs in objdir.
 MISSING=`cd $ac_aux_dir && ${PWDCMD-pwd}`/missing
 
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [$MISSING bison -y])
-case " $build_configdirs " in
-  *" bison "*) YACC='$$r/$(BUILD_SUBDIR)/bison/tests/bison -y' ;;
-esac
-
-AC_CHECK_PROGS([BISON], [bison], [$MISSING bison])
-case " $build_configdirs " in
-  *" bison "*) BISON='$$r/$(BUILD_SUBDIR)/bison/tests/bison' ;;
-esac
 
 AC_CHECK_PROGS([M4], [gm4 gnum4 m4], [$MISSING m4])
 case " $build_configdirs " in
   *" m4 "*) M4='$$r/$(BUILD_SUBDIR)/m4/m4' ;;
 esac
-
-AC_CHECK_PROGS([LEX], [flex lex], [$MISSING flex])
-case " $build_configdirs " in
-  *" flex "*) LEX='$$r/$(BUILD_SUBDIR)/flex/flex' ;;
-  *" lex "*) LEX='$$r/$(BUILD_SUBDIR)/lex/lex' ;;
-esac
-
-AC_CHECK_PROGS([FLEX], [flex], [$MISSING flex])
-case " $build_configdirs " in
-  *" flex "*) FLEX='$$r/$(BUILD_SUBDIR)/flex/flex' ;;
-esac
-
-AC_CHECK_PROGS([MAKEINFO], makeinfo, [$MISSING makeinfo])
-case " $build_configdirs " in
-  *" texinfo "*) MAKEINFO='$$r/$(BUILD_SUBDIR)/texinfo/makeinfo/makeinfo' ;;
-  *)
-changequote(,)
-    # For an installed makeinfo, we require it to be from texinfo 4.7 or
-    # higher, else we use the "missing" dummy.
-    if ${MAKEINFO} --version \
-       | egrep 'texinfo[^0-9]*(4\.([7-9]|[1-9][0-9])|[5-9]|[1-9][0-9])' >/dev/null 2>&1; then
-      :
-    else
-      MAKEINFO="$MISSING makeinfo"
-    fi
-    ;;
-changequote([,])
-esac
-
-# FIXME: expect and dejagnu may become build tools?
-
-AC_CHECK_PROGS(EXPECT, expect, expect)
-case " $configdirs " in
-  *" expect "*)
-    test $host = $build && EXPECT='$$r/$(HOST_SUBDIR)/expect/expect'
-    ;;
-esac
-
-AC_CHECK_PROGS(RUNTEST, runtest, runtest)
-case " $configdirs " in
-  *" dejagnu "*)
-    test $host = $build && RUNTEST='$$s/$(HOST_SUBDIR)/dejagnu/runtest'
-    ;;
-esac
-
 
 # Host tools.
 NCN_STRICT_CHECK_TOOLS(AR, ar)
@@ -2842,9 +2641,7 @@ NCN_STRICT_CHECK_TOOLS(OBJCOPY, objcopy)
 NCN_STRICT_CHECK_TOOLS(OBJDUMP, objdump)
 NCN_STRICT_CHECK_TOOLS(READELF, readelf)
 AC_SUBST(CC)
-AC_SUBST(CXX)
 AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
 
 # Target tools.
 AC_ARG_WITH([build-time-tools], 
@@ -2860,10 +2657,7 @@ AC_ARG_WITH([build-time-tools],
   [with_build_time_tools=])
 
 NCN_STRICT_CHECK_TARGET_TOOLS(CC_FOR_TARGET, cc gcc)
-NCN_STRICT_CHECK_TARGET_TOOLS(CXX_FOR_TARGET, c++ g++ cxx gxx)
 NCN_STRICT_CHECK_TARGET_TOOLS(GCC_FOR_TARGET, gcc, ${CC_FOR_TARGET})
-NCN_STRICT_CHECK_TARGET_TOOLS(GFORTRAN_FOR_TARGET, gfortran)
-NCN_STRICT_CHECK_TARGET_TOOLS(GOC_FOR_TARGET, gccgo)
 
 ACX_CHECK_INSTALLED_TARGET_TOOL(AR_FOR_TARGET, ar)
 ACX_CHECK_INSTALLED_TARGET_TOOL(AS_FOR_TARGET, as)
@@ -2879,24 +2673,11 @@ ACX_CHECK_INSTALLED_TARGET_TOOL(STRIP_FOR_TARGET, strip)
 ACX_CHECK_INSTALLED_TARGET_TOOL(WINDRES_FOR_TARGET, windres)
 ACX_CHECK_INSTALLED_TARGET_TOOL(WINDMC_FOR_TARGET, windmc)
 
-RAW_CXX_FOR_TARGET="$CXX_FOR_TARGET"
-
 GCC_TARGET_TOOL(ar, AR_FOR_TARGET, AR, [binutils/ar])
 GCC_TARGET_TOOL(as, AS_FOR_TARGET, AS, [gas/as-new])
 GCC_TARGET_TOOL(cc, CC_FOR_TARGET, CC, [gcc/xgcc -B$$r/$(HOST_SUBDIR)/gcc/])
-dnl see comments for CXX_FOR_TARGET_FLAG_TO_PASS
-GCC_TARGET_TOOL(c++, CXX_FOR_TARGET, CXX,
-		[gcc/xg++ -B$$r/$(HOST_SUBDIR)/gcc/ -nostdinc++ `if test -f $$r/$(TARGET_SUBDIR)/libstdc++-v3/scripts/testsuite_flags; then $(SHELL) $$r/$(TARGET_SUBDIR)/libstdc++-v3/scripts/testsuite_flags --build-includes; else echo -funconfigured-libstdc++-v3 ; fi` -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/src -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/src/.libs -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/libsupc++/.libs],
-		c++)
-GCC_TARGET_TOOL(c++ for libstdc++, RAW_CXX_FOR_TARGET, CXX,
-		[gcc/xgcc -shared-libgcc -B$$r/$(HOST_SUBDIR)/gcc -nostdinc++ -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/src -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/src/.libs -L$$r/$(TARGET_SUBDIR)/libstdc++-v3/libsupc++/.libs],
-		c++)
 GCC_TARGET_TOOL(dlltool, DLLTOOL_FOR_TARGET, DLLTOOL, [binutils/dlltool])
 GCC_TARGET_TOOL(gcc, GCC_FOR_TARGET, , [gcc/xgcc -B$$r/$(HOST_SUBDIR)/gcc/])
-GCC_TARGET_TOOL(gfortran, GFORTRAN_FOR_TARGET, GFORTRAN,
-		[gcc/gfortran -B$$r/$(HOST_SUBDIR)/gcc/], fortran)
-GCC_TARGET_TOOL(gccgo, GOC_FOR_TARGET, GOC,
-		[gcc/gccgo -B$$r/$(HOST_SUBDIR)/gcc/], go)
 GCC_TARGET_TOOL(ld, LD_FOR_TARGET, LD, [ld/ld-new])
 GCC_TARGET_TOOL(lipo, LIPO_FOR_TARGET, LIPO)
 GCC_TARGET_TOOL(nm, NM_FOR_TARGET, NM, [binutils/nm-new])
@@ -2909,7 +2690,6 @@ GCC_TARGET_TOOL(windres, WINDRES_FOR_TARGET, WINDRES, [binutils/windres])
 GCC_TARGET_TOOL(windmc, WINDMC_FOR_TARGET, WINDMC, [binutils/windmc])
 
 AC_SUBST(FLAGS_FOR_TARGET)
-AC_SUBST(RAW_CXX_FOR_TARGET)
 
 # Certain tools may need extra flags.
 AR_FOR_TARGET=${AR_FOR_TARGET}${extra_arflags_for_target}

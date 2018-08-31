@@ -1020,17 +1020,7 @@ elf_merge_st_other (bfd *abfd, struct elf_link_hash_entry *h,
 }
 
 /* This function is called when we want to merge a new symbol with an
-   existing symbol.  It handles the various cases which arise when we
-   find a definition in a dynamic object, or when there is already a
-   definition in a dynamic object.  The new symbol is described by
-   NAME, SYM, PSEC, and PVALUE.  We set SYM_HASH to the hash table
-   entry.  We set POLDBFD to the old symbol's BFD.  We set POLD_WEAK
-   if the old symbol was weak.  We set POLD_ALIGNMENT to the alignment
-   of an old common symbol.  We set OVERRIDE if the old symbol is
-   overriding a new definition.  We set TYPE_CHANGE_OK if it is OK for
-   the type to change.  We set SIZE_CHANGE_OK if it is OK for the size
-   to change.  By OK to change, we mean that we shouldn't warn if the
-   type or size does change.  */
+   existing symbol.  */
 
 static bfd_boolean
 _bfd_elf_merge_symbol (bfd *abfd,
@@ -1196,12 +1186,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
   newdyn = (abfd->flags & DYNAMIC) != 0;
 
   /* ref_dynamic_nonweak and dynamic_def flags track actual undefined
-     syms and defined syms in dynamic libraries respectively.
-     ref_dynamic on the other hand can be set for a symbol defined in
-     a dynamic library, and def_dynamic may not be set;  When the
-     definition in a dynamic lib is overridden by a definition in the
-     executable use of the symbol in the dynamic lib becomes a
-     reference to the executable symbol.  */
+     syms and defined syms in dynamic libraries respectively. */
   if (newdyn)
     {
       if (bfd_is_und_section (sec))
@@ -1490,15 +1475,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
      file is treated as strong when the new symbol comes from a dynamic
      library.  Further, an old weak symbol from a dynamic library is
      treated as strong if the new symbol is from a dynamic library.
-     This reflects the way glibc's ld.so works.
-
-     Also allow a weak symbol to override a linker script symbol
-     defined by an early pass over the script.  This is done so the
-     linker knows the symbol is defined in an object file, for the
-     DEFINED script function.
-
-     Do this before setting *type_change_ok or *size_change_ok so that
-     we warn properly when dynamic library symbols are overridden.  */
+     This reflects the way glibc's ld.so works.  */
 
   if (newdef && !newdyn && (olddyn || h->root.ldscript_def))
     newweak = FALSE;
@@ -1528,26 +1505,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
 
   /* NEWDYNCOMMON and OLDDYNCOMMON indicate whether the new or old
      symbol, respectively, appears to be a common symbol in a dynamic
-     object.  If a symbol appears in an uninitialized section, and is
-     not weak, and is not a function, then it may be a common symbol
-     which was resolved when the dynamic object was created.  We want
-     to treat such symbols specially, because they raise special
-     considerations when setting the symbol size: if the symbol
-     appears as a common symbol in a regular object, and the size in
-     the regular object is larger, we must make sure that we use the
-     larger size.  This problematic case can always be avoided in C,
-     but it must be handled correctly when using Fortran shared
-     libraries.
-
-     Note that if NEWDYNCOMMON is set, NEWDEF will be set, and
-     likewise for OLDDYNCOMMON and OLDDEF.
-
-     Note that this test is just a heuristic, and that it is quite
-     possible to have an uninitialized symbol in a shared object which
-     is really a definition, rather than a common symbol.  This could
-     lead to some minor confusion when the symbol really is a common
-     symbol in some regular object.  However, I think it will be
-     harmless.  */
+     object.  */
 
   if (newdyn
       && newdef
@@ -1620,17 +1578,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
 
   /* If we are looking at a dynamic object, and we have found a
      definition, we need to see if the symbol was already defined by
-     some other object.  If so, we want to use the existing
-     definition, and we do not want to report a multiple symbol
-     definition error; we do this by clobbering *PSEC to be
-     bfd_und_section_ptr.
-
-     We treat a common symbol as a definition if the symbol in the
-     shared library is a function, since common symbols always
-     represent variables; this can cause confusion in principle, but
-     any such confusion would seem to indicate an erroneous program or
-     shared library.  We also permit a common symbol in a regular
-     object to override a weak symbol in a shared object.  */
+     some other object.  */
 
   if (newdyn
       && newdef
@@ -1700,13 +1648,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
 
   /* If the old symbol is from a dynamic object, and the new symbol is
      a definition which is not from a dynamic object, then the new
-     symbol overrides the old symbol.  Symbols from regular files
-     always take precedence over symbols from dynamic objects, even if
-     they are defined after the dynamic object in the link.
-
-     As above, we again permit a common symbol in a regular object to
-     override a definition in a shared object if the shared object
-     symbol is a function or is weak.  */
+     symbol overrides the old symbol.  */
 
   flip = NULL;
   if (!newdyn
@@ -1755,9 +1697,7 @@ _bfd_elf_merge_symbol (bfd *abfd,
 
   /* Handle the special case of a new common symbol merging with an
      old symbol that looks like it might be a common symbol defined in
-     a shared object.  Note that we have already handled the case in
-     which a new common symbol should simply override the definition
-     in the shared library.  */
+     a shared object.  */
 
   if (! newdyn
       && bfd_is_com_section (sec)
@@ -1952,19 +1892,7 @@ _bfd_elf_add_default_symbol (bfd *abfd,
 	 indirect symbol we want to add.  We were planning on making
 	 SHORTNAME an indirect symbol referring to NAME.  SHORTNAME
 	 is the name without a version.  NAME is the fully versioned
-	 name, and it is the default version.
-
-	 Overriding means that we already saw a definition for the
-	 symbol SHORTNAME in a regular object, and it is overriding
-	 the symbol defined in the dynamic object.
-
-	 When this happens, we actually want to change NAME, the
-	 symbol we just added, to refer to SHORTNAME.  This will cause
-	 references to NAME in the shared object to become references
-	 to SHORTNAME in the regular object.  This is what we expect
-	 when we override a function in a shared object: that the
-	 references in the shared object will be mapped to the
-	 definition in the regular object.  */
+	 name, and it is the default version.  */
 
       while (hi->root.type == bfd_link_hash_indirect
 	     || hi->root.type == bfd_link_hash_warning)
@@ -2328,10 +2256,7 @@ _bfd_elf_link_hide_sym_by_version (struct bfd_link_info *info,
   return FALSE;
 }
 
-/* Figure out appropriate versions for all the symbols.  We may not
-   have the version number script until we have read all of the input
-   files, so until that point we don't know which symbols should be
-   local.  This function is called via elf_link_hash_traverse.  */
+/* Figure out appropriate versions for all the symbols. */
 
 static bfd_boolean
 _bfd_elf_link_assign_sym_version (struct elf_link_hash_entry *h, void *data)
@@ -2454,14 +2379,7 @@ _bfd_elf_link_assign_sym_version (struct elf_link_hash_entry *h, void *data)
   return TRUE;
 }
 
-/* Read and swap the relocs from the section indicated by SHDR.  This
-   may be either a REL or a RELA section.  The relocations are
-   translated into RELA relocations and stored in INTERNAL_RELOCS,
-   which should have already been allocated to contain enough space.
-   The EXTERNAL_RELOCS are a buffer where the external form of the
-   relocations should be stored.
-
-   Returns FALSE if something goes wrong.  */
+/* Read and swap the relocs from the section indicated by SHDR.  */
 
 static bfd_boolean
 elf_link_read_relocs_from_section (bfd *abfd,
@@ -2546,15 +2464,7 @@ elf_link_read_relocs_from_section (bfd *abfd,
   return TRUE;
 }
 
-/* Read and swap the relocs for a section O.  They may have been
-   cached.  If the EXTERNAL_RELOCS and INTERNAL_RELOCS arguments are
-   not NULL, they are used as buffers to read into.  They are known to
-   be large enough.  If the INTERNAL_RELOCS relocs argument is NULL,
-   the return value is allocated using either malloc or bfd_alloc,
-   according to the KEEP_MEMORY argument.  If O has two relocation
-   sections (both REL and RELA relocations), then the REL_HDR
-   relocations will appear first in INTERNAL_RELOCS, followed by the
-   RELA_HDR relocations.  */
+/* Read and swap the relocs for a section O. */
 
 Elf_Internal_Rela *
 _bfd_elf_link_read_relocs (bfd *abfd,
@@ -2761,11 +2671,7 @@ _bfd_elf_link_hash_fixup_symbol (struct bfd_link_info *info,
   return TRUE;
 }
 
-/* Fix up the flags for a symbol.  This handles various cases which
-   can only be fixed after all the input files are seen.  This is
-   currently called by both adjust_dynamic_symbol and
-   assign_sym_version, which is unnecessary but perhaps more robust in
-   the face of future changes.  */
+/* Fix up the flags for a symbol.  */
 
 static bfd_boolean
 _bfd_elf_fix_symbol_flags (struct elf_link_hash_entry *h,
@@ -2774,9 +2680,7 @@ _bfd_elf_fix_symbol_flags (struct elf_link_hash_entry *h,
   const struct elf_backend_data *bed;
 
   /* If this symbol was mentioned in a non-ELF file, try to set
-     DEF_REGULAR and REF_REGULAR correctly.  This is the only way to
-     permit a non-ELF file to correctly refer to a symbol defined in
-     an ELF dynamic object.  */
+     DEF_REGULAR and REF_REGULAR correctly. */
   if (h->non_elf)
     {
       while (h->root.type == bfd_link_hash_indirect)
@@ -2817,9 +2721,7 @@ _bfd_elf_fix_symbol_flags (struct elf_link_hash_entry *h,
       /* Unfortunately, NON_ELF is only correct if the symbol
 	 was first seen in a non-ELF file.  Fortunately, if the symbol
 	 was first seen in an ELF file, we're probably OK unless the
-	 symbol was defined in a non-ELF file.  Catch that case here.
-	 FIXME: We're still in trouble if the symbol was first seen in
-	 a dynamic object, and then later in a non-ELF regular object.  */
+	 symbol was defined in a non-ELF file.  */
       if ((h->root.type == bfd_link_hash_defined
 	   || h->root.type == bfd_link_hash_defweak)
 	  && !h->def_regular
@@ -2870,12 +2772,8 @@ _bfd_elf_fix_symbol_flags (struct elf_link_hash_entry *h,
 	   && h->def_regular)
     (*bed->elf_backend_hide_symbol) (eif->info, h, TRUE);
 
-  /* If -Bsymbolic was used (which means to bind references to global
-     symbols to the definition within the shared object), and this
-     symbol was defined in a regular object, then it actually doesn't
-     need a PLT entry.  Likewise, if the symbol has non-default
-     visibility.  If the symbol has hidden or internal visibility, we
-     will force it local.  */
+  /* If -Bsymbolic was used, and this symbol was defined in a regular
+     object, then it actually doesn't need a PLT entry. */
   else if (h->needs_plt
 	   && bfd_link_pic (eif->info)
 	   && is_elf_hash_table (eif->info->hash)
@@ -2966,11 +2864,7 @@ _bfd_elf_adjust_dynamic_symbol (struct elf_link_hash_entry *h, void *data)
 
   /* If this symbol does not require a PLT entry, and it is not
      defined by a dynamic object, or is not referenced by a regular
-     object, ignore it.  We do have to handle a weak defined symbol,
-     even if no regular object refers to it, if we decided to add it
-     to the dynamic symbol table.  FIXME: Do we normally need to worry
-     about symbols which are defined by one dynamic object and
-     referenced by another one?  */
+     object, ignore it. */
   if (!h->needs_plt
       && h->type != STT_GNU_IFUNC
       && (h->def_regular
@@ -2987,39 +2881,12 @@ _bfd_elf_adjust_dynamic_symbol (struct elf_link_hash_entry *h, void *data)
   if (h->dynamic_adjusted)
     return TRUE;
 
-  /* Don't look at this symbol again.  Note that we must set this
-     after checking the above conditions, because we may look at a
-     symbol once, decide not to do anything, and then get called
-     recursively later after REF_REGULAR is set below.  */
+  /* Don't look at this symbol again.  */
   h->dynamic_adjusted = 1;
 
   /* If this is a weak definition, and we know a real definition, and
      the real symbol is not itself defined by a regular object file,
-     then get a good value for the real definition.  We handle the
-     real symbol first, for the convenience of the backend routine.
-
-     Note that there is a confusing case here.  If the real definition
-     is defined by a regular object file, we don't get the real symbol
-     from the dynamic object, but we do get the weak symbol.  If the
-     processor backend uses a COPY reloc, then if some routine in the
-     dynamic object changes the real symbol, we will not see that
-     change in the corresponding weak symbol.  This is the way other
-     ELF linkers work as well, and seems to be a result of the shared
-     library model.
-
-     I will clarify this issue.  Most SVR4 shared libraries define the
-     variable _timezone and define timezone as a weak synonym.  The
-     tzset call changes _timezone.  If you write
-       extern int timezone;
-       int _timezone = 5;
-       int main () { tzset (); printf ("%d %d\n", timezone, _timezone); }
-     you might expect that, since timezone is a synonym for _timezone,
-     the same number will print both times.  However, if the processor
-     backend uses a COPY reloc, then actually timezone will be copied
-     into your process image, and, since you define _timezone
-     yourself, _timezone will not.  Thus timezone and _timezone will
-     wind up at different memory locations.  The tzset call will set
-     _timezone, leaving timezone unchanged.  */
+     then get a good value for the real definition. */
 
   if (h->is_weakalias)
     {
@@ -3037,9 +2904,7 @@ _bfd_elf_adjust_dynamic_symbol (struct elf_link_hash_entry *h, void *data)
 
   /* If a symbol has no type and no size and does not require a PLT
      entry, then we are probably about to do the wrong thing here: we
-     are probably going to create a COPY reloc for an empty object.
-     This case can arise when a shared object is built with assembly
-     code, and the assembly code fails to set the symbol type.  */
+     are probably going to create a COPY reloc for an empty object.  */
   if (h->size == 0
       && h->type == STT_NOTYPE
       && !h->needs_plt)
@@ -3069,10 +2934,7 @@ _bfd_elf_adjust_dynamic_copy (struct bfd_link_info *info,
   asection *sec = h->root.u.def.section;
 
   /* The section alignment of the definition is the maximum alignment
-     requirement of symbols defined in the section.  Since we don't
-     know the symbol alignment requirement, we start with the
-     maximum alignment and check low bits of the symbol address
-     for the minimum alignment.  */
+     requirement of symbols defined in the section. */
   power_of_two = bfd_get_section_alignment (sec->owner, sec);
   mask = ((bfd_vma) 1 << power_of_two) - 1;
   while ((h->root.u.def.value & mask) != 0)
@@ -3202,17 +3064,7 @@ _bfd_elf_dynamic_symbol_p (struct elf_link_hash_entry *h,
 }
 
 /* Return true if the symbol referred to by H should be considered
-   to resolve local to the current module, and false otherwise.  Differs
-   from (the inverse of) _bfd_elf_dynamic_symbol_p in the treatment of
-   undefined symbols.  The two functions are virtually identical except
-   for the place where dynindx == -1 is tested.  If that test is true,
-   _bfd_elf_dynamic_symbol_p will say the symbol is local, while
-   _bfd_elf_symbol_refs_local_p will say the symbol is local only for
-   defined symbols.
-   It might seem that _bfd_elf_dynamic_symbol_p could be rewritten as
-   !_bfd_elf_symbol_refs_local_p, except that targets differ in their
-   treatment of undefined weak symbols.  For those that do not make
-   undefined weak symbols dynamic, both functions may return false.  */
+   to resolve local to the current module, and false otherwise. */
 
 bfd_boolean
 _bfd_elf_symbol_refs_local_p (struct elf_link_hash_entry *h,
@@ -3274,10 +3126,7 @@ _bfd_elf_symbol_refs_local_p (struct elf_link_hash_entry *h,
     return TRUE;
 
   /* Function pointer equality tests may require that STV_PROTECTED
-     symbols be treated as dynamic symbols.  If the address of a
-     function not defined in an executable is set to that function's
-     plt entry in the executable, then the address of the function in
-     a shared library must also be the plt entry in the executable.  */
+     symbols be treated as dynamic symbols. */
   return local_protected;
 }
 
@@ -3372,11 +3221,8 @@ elf_link_is_defined_archive_symbol (bfd * abfd, carsym * symdef)
   if (! bfd_check_format (abfd, bfd_object))
     return FALSE;
 
-  /* Select the appropriate symbol table.  If we don't know if the
-     object file is an IR object, give linker LTO plugin a chance to
-     get the correct symbol table.  */
-  if (abfd->plugin_format == bfd_plugin_yes
-      )
+  /* Select the appropriate symbol table. */
+  if (abfd->plugin_format == bfd_plugin_yes)
     {
       /* Use the IR symbol table if the object has been claimed by
 	 plugin.  */
@@ -3551,10 +3397,7 @@ on_needed_list (const char *soname,
 	&& ((elf_dyn_lib_class (look->by) & DYN_AS_NEEDED) == 0
 	    /* If needed by a library that itself is not directly
 	       needed, recursively check whether that library is
-	       indirectly needed.  Since we add DT_NEEDED entries to
-	       the end of the list, library dependencies appear after
-	       the library.  Therefore search prior to the current
-	       LOOK, preventing possible infinite recursion.  */
+	       indirectly needed. */
 	    || on_needed_list (elf_dt_name (look->by), needed, look)))
       return TRUE;
 
@@ -3781,21 +3624,7 @@ _bfd_elf_link_check_relocs (bfd *abfd, struct bfd_link_info *info)
 
   /* If this object is the same format as the output object, and it is
      not a shared library, then let the backend look through the
-     relocs.
-
-     This is required to build global offset table entries and to
-     arrange for dynamic relocs.  It is not required for the
-     particular common case of linking non PIC code, even when linking
-     against shared libraries, but unfortunately there is no way of
-     knowing whether an object file has been compiled PIC or not.
-     Looking through the relocs is not particularly time consuming.
-     The problem is that we must either (1) keep the relocs in memory,
-     which causes the linker to require additional runtime memory or
-     (2) read the relocs twice from the input file, which wastes time.
-     This would be a good case for using mmap.
-
-     I have no idea how to handle linking PIC code into a file of a
-     different format.  It probably can't be done.  */
+     relocs. */
   if ((abfd->flags & DYNAMIC) == 0
       && is_elf_hash_table (htab)
       && bed->check_relocs != NULL
@@ -3911,8 +3740,7 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
 
   /* As a GNU extension, any input sections which are named
      .gnu.warning.SYMBOL are treated as warning symbols for the given
-     symbol.  This differs from .gnu.warning sections, which generate
-     warnings when they are included in an output file.  */
+     symbol.  */
   /* PR 12761: Also generate this warning when building shared libraries.  */
   for (s = abfd->sections; s != NULL; s = s->next)
     {
@@ -3927,14 +3755,7 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
 	  name += sizeof ".gnu.warning." - 1;
 
 	  /* If this is a shared object, then look up the symbol
-	     in the hash table.  If it is there, and it is already
-	     been defined, then we will not be using the entry
-	     from this shared object, so we don't need to warn.
-	     FIXME: If we see the definition in a regular object
-	     later on, we will warn, but we shouldn't.  The only
-	     fix is to keep track of what warnings we are supposed
-	     to emit, and then handle them all at the end of the
-	     link.  */
+	     in the hash table. */
 	  if (dynamic)
 	    {
 	      struct elf_link_hash_entry *h;
@@ -3983,12 +3804,7 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
   if (! dynamic)
     {
       /* If we are creating a shared library, create all the dynamic
-	 sections immediately.  We need to attach them to something,
-	 so we attach them to this BFD, provided it is the right
-	 format and is not from ld --just-symbols.  Always create the
-	 dynamic sections for -E/--dynamic-list.  FIXME: If there
-	 are no input BFD's of the same format as the output, we can't
-	 make a shared library.  */
+	 sections immediately.  */
       if (!just_syms
 	  && (bfd_link_pic (info)
 	      || (!bfd_link_relocatable (info)
@@ -4019,11 +3835,7 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
 
       /* If this dynamic lib was specified on the command line with
 	 --as-needed in effect, then we don't want to add a DT_NEEDED
-	 tag unless the lib is actually used.  Similary for libs brought
-	 in by another lib's DT_NEEDED.  When --no-add-needed is used
-	 on a dynamic lib, we don't want to add a DT_NEEDED entry for
-	 any dynamic library in DT_NEEDED tags in the dynamic lib at
-	 all.  */
+	 tag unless the lib is actually used. */
       add_needed = (elf_dyn_lib_class (abfd)
 		    & (DYN_AS_NEEDED | DYN_DT_NEEDED
 		       | DYN_NO_NEEDED)) == 0;
@@ -4160,8 +3972,7 @@ error_free_dyn:
 	}
 
       /* If we have a PT_GNU_RELRO program header, mark as read-only
-	 all sections contained fully therein.  This makes relro
-	 shared library sections appear as they will at run-time.  */
+	 all sections contained fully therein. */
       phdr = elf_tdata (abfd)->phdr + elf_elfheader (abfd)->e_phnum;
       while (--phdr >= elf_tdata (abfd)->phdr)
 	if (phdr->p_type == PT_GNU_RELRO)
@@ -4175,19 +3986,11 @@ error_free_dyn:
 	  }
 
       /* We do not want to include any of the sections in a dynamic
-	 object in the output file.  We hack by simply clobbering the
-	 list of sections in the BFD.  This could be handled more
-	 cleanly by, say, a new section flag; the existing
-	 SEC_NEVER_LOAD flag is not the one we want, because that one
-	 still implies that the section takes up space in the output
-	 file.  */
+	 object in the output file. */
       bfd_section_list_clear (abfd);
 
       /* Find the name to use in a DT_NEEDED entry that refers to this
-	 object.  If the object has a DT_SONAME entry, we use it.
-	 Otherwise, if the generic linker stuck something in
-	 elf_dt_name, we use that.  Otherwise, we just use the file
-	 name.  */
+	 object. */
       if (soname == NULL || *soname == '\0')
 	{
 	  soname = elf_dt_name (abfd);
@@ -4204,8 +4007,7 @@ error_free_dyn:
 	goto error_return;
 
       /* If we have already included this dynamic object in the
-	 link, just ignore it.  There is no reason to include a
-	 particular dynamic object more than once.  */
+	 link, just ignore it.  */
       if (ret > 0)
 	return TRUE;
 
@@ -4214,9 +4016,7 @@ error_free_dyn:
     }
 
   /* If this is a dynamic object, we always link against the .dynsym
-     symbol table, not the .symtab symbol table.  The dynamic linker
-     will only see the .dynsym symbol table, so there is no reason to
-     look at .symtab for a dynamic object.  */
+     symbol table, not the .symtab symbol table.  */
 
   if (! dynamic || elf_dynsymtab (abfd) == 0)
     hdr = &elf_tdata (abfd)->symtab_hdr;
@@ -4226,8 +4026,7 @@ error_free_dyn:
   symcount = hdr->sh_size / bed->s->sizeof_sym;
 
   /* The sh_info field of the symtab header tells us where the
-     external symbols start.  We don't care about the local symbols at
-     this point.  */
+     external symbols start.  */
   if (elf_bad_symtab (abfd))
     {
       extsymcount = symcount;
@@ -4504,9 +4303,7 @@ error_free_dyn:
 	  goto error_free_vers;
 	}
 
-      /* Silently discard TLS symbols from --just-syms.  There's
-	 no way to combine a static TLS block with a new TLS block
-	 for this executable.  */
+      /* Silently discard TLS symbols from --just-syms.  */
       if (ELF_ST_TYPE (isym->st_info) == STT_TLS
 	  && sec->sec_info_type == SEC_INFO_TYPE_JUST_SYMS)
 	continue;
@@ -4545,10 +4342,7 @@ error_free_dyn:
 	  vernum = iver.vs_vers & VERSYM_VERSION;
 
 	  /* If this is a hidden symbol, or if it is not version
-	     1, we append the version name to the symbol name.
-	     However, we do not modify a non-hidden absolute symbol
-	     if it is not a function, because it might be the version
-	     symbol itself.  FIXME: What if it isn't?  */
+	     1, we append the version name to the symbol name. */
 	  if ((iver.vs_vers & VERSYM_HIDDEN) != 0
 	      || (vernum > 1
 		  && (!bfd_is_abs_section (sec)
@@ -4630,8 +4424,7 @@ error_free_dyn:
 	      p = newname + namelen;
 	      *p++ = ELF_VER_CHR;
 	      /* If this is a defined non-hidden version symbol,
-		 we add another @ to the name.  This indicates the
-		 default version of the symbol.  */
+		 we add another @ to the name. */
 	      if ((iver.vs_vers & VERSYM_HIDDEN) == 0
 		  && isym->st_shndx != SHN_UNDEF)
 		*p++ = ELF_VER_CHR;
@@ -4716,16 +4509,7 @@ error_free_dyn:
 	  && h->u.alias == NULL)
 	{
 	  /* Keep a list of all weak defined non function symbols from
-	     a dynamic object, using the alias field.  Later in this
-	     function we will set the alias field to the correct
-	     value.  We only put non-function symbols from dynamic
-	     objects on this list, because that happens to be the only
-	     time we need to know the normal symbol corresponding to a
-	     weak symbol, and the information is time consuming to
-	     figure out.  If the alias field is not already NULL,
-	     then this symbol was already defined by some previous
-	     dynamic object, and we will be using that previous
-	     definition anyhow.  */
+	     a dynamic object, using the alias field.  */
 
 	  h->u.alias = weaks;
 	  weaks = h;
@@ -4754,9 +4538,7 @@ error_free_dyn:
       if (is_elf_hash_table (htab))
 	{
 	  /* Set a flag in the hash table entry indicating the type of
-	     reference or definition we just found.  A dynamic symbol
-	     is one which is referenced or defined by both a regular
-	     object and a shared object.  */
+	     reference or definition we just found. */
 	  bfd_boolean dynsym = FALSE;
 
 	  /* Plugin symbols aren't normal.  Don't set def_regular or
@@ -4820,11 +4602,7 @@ error_free_dyn:
 					      sec, value, &old_bfd, &dynsym))
 	      goto error_free_vers;
 
-	  /* Check the alignment when a common symbol is involved. This
-	     can change when a common symbol is overridden by a normal
-	     definition or a common symbol is ignored due to the old
-	     normal definition. We need to make sure the maximum
-	     alignment is maintained.  */
+	  /* Check the alignment when a common symbol is involved.  */
 	  if ((old_alignment || common)
 	      && h->root.type != bfd_link_hash_common)
 	    {
@@ -4901,11 +4679,7 @@ error_free_dyn:
 	    }
 
 	  /* If this is a common symbol, then we always want H->SIZE
-	     to be the size of the common symbol.  The code just above
-	     won't fix the size if a common symbol becomes larger.  We
-	     don't warn about a size change here, because that is
-	     covered by --warn-common.  Allow changes between different
-	     function types.  */
+	     to be the size of the common symbol.  */
 	  if (h->root.type == bfd_link_hash_common)
 	    h->size = h->root.u.c.size;
 
@@ -5019,10 +4793,7 @@ error_free_dyn:
 				      h->root.root.string);
 
 	      /* A symbol from a library loaded via DT_NEEDED of some
-		 other library is referenced by a regular object.
-		 Add a DT_NEEDED entry for it.  Issue an error if
-		 --no-add-needed is used and the reference was not
-		 a weak one.  */
+		 other library is referenced by a regular object.  */
 	      if (old_bfd != NULL
 		  && (elf_dyn_lib_class (abfd) & DYN_NO_NEEDED) != 0)
 		{
@@ -5261,18 +5032,7 @@ error_free_dyn:
     }
 
   /* Now set the alias field correctly for all the weak defined
-     symbols we found.  The only way to do this is to search all the
-     symbols.  Since we only need the information for non functions in
-     dynamic objects, that's the only time we actually put anything on
-     the list WEAKS.  We need this information so that if a regular
-     object refers to a symbol defined weakly in a dynamic object, the
-     real symbol in the dynamic object is also put in the dynamic
-     symbols; we also must arrange for both symbols to point to the
-     same memory location.  We could handle the general case of symbol
-     aliasing, but a general symbol alias can only be generated in
-     assembler code, handling it correctly would be very time
-     consuming, and other ELF linkers don't handle general aliasing
-     either.  */
+     symbols we found.  */
   if (weaks != NULL)
     {
       struct elf_link_hash_entry **hpp;
@@ -5406,9 +5166,7 @@ error_free_dyn:
 
 		  /* If the real definition is in the list of dynamic
 		     symbols, make sure the weak definition is put
-		     there as well.  If we don't do this, then the
-		     dynamic loader might not merge the entries for the
-		     real definition and the weak definition.  */
+		     there as well.  */
 		  if (h->dynindx != -1 && hlook->dynindx == -1)
 		    {
 		      if (! bfd_elf_link_record_dynamic_symbol (info, hlook))
@@ -5509,9 +5267,7 @@ _bfd_elf_archive_symbol_lookup (bfd *abfd,
     return h;
 
   /* If this is a default version (the name contains @@), look up the
-     symbol again with only one `@' as well as without the version.
-     The effect is that references to the symbol with and without the
-     version will be matched by the default symbol in the archive.  */
+     symbol again with only one `@' as well as without the version.  */
 
   p = strchr (name, ELF_VER_CHR);
   if (p == NULL || p[1] != ELF_VER_CHR)
@@ -5543,16 +5299,7 @@ _bfd_elf_archive_symbol_lookup (bfd *abfd,
 
 /* Add symbols from an ELF archive file to the linker hash table.  We
    don't use _bfd_generic_link_add_archive_symbols because we need to
-   handle versioned symbols.
-
-   Fortunately, ELF archive handling is simpler than that done by
-   _bfd_generic_link_add_archive_symbols, which has to allow for a.out
-   oddities.  In ELF, if we find a symbol in the archive map, and the
-   symbol is currently undefined, we know that we must pull in that
-   object file.
-
-   Unfortunately, we do have to make multiple passes over the symbol
-   table until nothing further is resolved.  */
+   handle versioned symbols.  */
 
 static bfd_boolean
 elf_link_add_archive_symbols (bfd *abfd, struct bfd_link_info *info)
@@ -5576,8 +5323,7 @@ elf_link_add_archive_symbols (bfd *abfd, struct bfd_link_info *info)
     }
 
   /* Keep track of all symbols we know to be already defined, and all
-     files we know to be already included.  This is to speed up the
-     second and subsequent passes.  */
+     files we know to be already included.  */
   c = bfd_ardata (abfd)->symdef_count;
   if (c == 0)
     return TRUE;
@@ -5631,14 +5377,7 @@ elf_link_add_archive_symbols (bfd *abfd, struct bfd_link_info *info)
 		 a reference to this symbol, so we may want to include it.  We
 		 only want to include it however, if this archive element
 		 contains a definition of the symbol, not just another common
-		 declaration of it.
-
-		 Unfortunately some archivers (including GNU ar) will put
-		 declarations of common symbols into their archive maps, as
-		 well as real definitions, so we cannot just go by the archive
-		 map alone.  Instead we must read in the element's symbol
-		 table and check that to see what kind of symbol definition
-		 this is.  */
+		 declaration of it. */
 	      if (! elf_link_is_defined_archive_symbol (abfd, symdef))
 		continue;
 	    }
@@ -5668,11 +5407,7 @@ elf_link_add_archive_symbols (bfd *abfd, struct bfd_link_info *info)
 
 	  /* If there are any new undefined symbols, we need to make
 	     another pass through the archive in order to see whether
-	     they can be defined.  FIXME: This isn't perfect, because
-	     common symbols wind up on undefs_tail and because an
-	     undefined symbol which is defined later on in this pass
-	     does not require another pass.  This isn't a bug, but it
-	     does make the code less efficient than it could be.  */
+	     they can be defined.  */
 	  if (undefs_tail != info->hash->undefs_tail)
 	    loop = TRUE;
 
@@ -5906,10 +5641,7 @@ _bfd_elf_hash_symbol (struct elf_link_hash_entry *h)
 }
 
 /* Array used to determine the number of hash table buckets to use
-   based on the number of symbols there are.  If there are fewer than
-   3 symbols we use 1 bucket, fewer than 17 symbols we use 3 buckets,
-   fewer than 37 we use 17 buckets, and so forth.  We never use more
-   than 32771 buckets.  */
+   based on the number of symbols there are.   */
 
 static const size_t elf_buckets[] =
 {
@@ -5917,14 +5649,7 @@ static const size_t elf_buckets[] =
   16411, 32771, 0
 };
 
-/* Compute bucket count for hashing table.  We do not use a static set
-   of possible tables sizes anymore.  Instead we determine for all
-   possible reasonable sizes of the table the outcome (i.e., the
-   number of collisions etc) and choose the best solution.  The
-   weighting functions are not too simple to allow the table to grow
-   without bounds.  Instead one of the weighting factors is the size.
-   Therefore the result is always a good payoff between few collisions
-   (= short chain lengths) and table size.  */
+/* Compute bucket count for hashing table.  */
 static size_t
 compute_bucket_count (struct bfd_link_info *info ATTRIBUTE_UNUSED,
 		      unsigned long int *hashcodes ATTRIBUTE_UNUSED,
@@ -5994,9 +5719,7 @@ compute_bucket_count (struct bfd_link_info *info ATTRIBUTE_UNUSED,
 
 	  /* For the weight function we need some information about the
 	     pagesize on the target.  This is information need not be 100%
-	     accurate.  Since this information is not available (so far) we
-	     define it here to a reasonable default value.  If it is crucial
-	     to have a better value some day simply define this value.  */
+	     accurate.  */
 # ifndef BFD_TARGET_PAGESIZE
 #  define BFD_TARGET_PAGESIZE	(4096)
 # endif
@@ -6034,8 +5757,7 @@ compute_bucket_count (struct bfd_link_info *info ATTRIBUTE_UNUSED,
 #endif /* defined (BFD_HOST_U_64_BIT) */
     {
       /* This is the fallback solution if no 64bit type is available or if we
-	 are not supposed to spend much time on optimizations.  We select the
-	 bucket count using a fixed set of numbers.  */
+	 are not supposed to spend much time on optimizations. */
       for (i = 0; elf_buckets[i] != 0; i++)
 	{
 	  best_size = elf_buckets[i];
@@ -6066,9 +5788,7 @@ _bfd_elf_size_group_sections (struct bfd_link_info *info)
   return TRUE;
 }
 
-/* Set a default stack segment size.  The value in INFO wins.  If it
-   is unset, LEGACY_SYMBOL's value is used, and if that symbol is
-   undefined it is initialized.  */
+/* Set a default stack segment size.  */
 
 bfd_boolean
 bfd_elf_stack_segment_size (bfd *output_bfd,
@@ -6159,10 +5879,7 @@ elf_gc_sweep_symbol (struct elf_link_hash_entry *h, void *data)
   return TRUE;
 }
 
-/* Set up the sizes and contents of the ELF dynamic sections.  This is
-   called by the ELF linker emulation before_allocation routine.  We
-   must set the sizes of the sections before the linker sets the
-   addresses of the various sections.  */
+/* Set up the sizes and contents of the ELF dynamic sections.  */
 
 bfd_boolean
 bfd_elf_size_dynamic_sections (bfd *output_bfd,
@@ -6814,9 +6531,7 @@ bfd_elf_size_dynamic_sections (bfd *output_bfd,
       if (eif.failed)
 	return FALSE;
 
-      /* Add some entries to the .dynamic section.  We fill in some of the
-	 values later, in bfd_elf_final_link, but we must add the entries
-	 now so that we know the final size of the .dynamic section.  */
+      /* Add some entries to the .dynamic section.  */
 
       /* If there are initialization and/or finalization functions to
 	 call then add the corresponding DT_INIT/DT_FINI entries.  */
@@ -6893,9 +6608,7 @@ bfd_elf_size_dynamic_sections (bfd *output_bfd,
 
       dynstr = bfd_get_linker_section (dynobj, ".dynstr");
       /* If .dynstr is excluded from the link, we don't want any of
-	 these tags.  Strictly, we should be checking each section
-	 individually;  This quick check covers for the case where
-	 someone does a /DISCARD/ : { *(*) }.  */
+	 these tags.  */
       if (dynstr != NULL && dynstr->output_section != bfd_abs_section_ptr)
 	{
 	  bfd_size_type strsize;
@@ -7041,13 +6754,7 @@ bfd_elf_size_dynsym_hash_dynstr (bfd *output_bfd, struct bfd_link_info *info)
   /* Assign dynsym indices.  In a shared library we generate a section
      symbol for each output section, which come first.  Next come all
      of the back-end allocated local dynamic syms, followed by the rest
-     of the global symbols.
-
-     This is usually not needed for static binaries, however backends
-     can request to always do it, e.g. the MIPS backend uses dynamic
-     symbol counts to lay out GOT, which will be produced in the
-     presence of GOT relocations even in static binaries (holding fixed
-     data in that case, to satisfy those relocations).  */
+     of the global symbols.  */
 
   if (elf_hash_table (info)->dynamic_sections_created
       || bed->always_renumber_dynsyms)
@@ -7076,12 +6783,7 @@ bfd_elf_size_dynsym_hash_dynstr (bfd *output_bfd, struct bfd_link_info *info)
 	    return FALSE;
 	}
 
-      /* Set the size of the .dynsym and .hash sections.  We counted
-	 the number of dynamic symbols in elf_link_add_object_symbols.
-	 We will build the contents of .dynsym and .hash when we build
-	 the final symbol table, because until then we do not know the
-	 correct value to give the symbols.  We built the .dynstr
-	 section as we went along in elf_link_add_object_symbols.  */
+      /* Set the size of the .dynsym and .hash sections. */
       s = elf_hash_table (info)->dynsym;
       BFD_ASSERT (s != NULL);
       s->size = dynsymcount * bed->s->sizeof_sym;
@@ -7412,10 +7114,7 @@ _bfd_elf_link_hash_newfunc (struct bfd_hash_entry *entry,
       ret->plt = htab->init_plt_refcount;
       memset (&ret->size, 0, (sizeof (struct elf_link_hash_entry)
 			      - offsetof (struct elf_link_hash_entry, size)));
-      /* Assume that we have been called by a non-ELF symbol reader.
-	 This flag is then reset by the code which reads an ELF input
-	 file.  This ensures that a symbol created by a non-ELF symbol
-	 reader will have the flag set correctly.  */
+      /* Assume that we have been called by a non-ELF symbol reader. */
       ret->non_elf = 1;
     }
 
@@ -7646,8 +7345,7 @@ bfd_elf_get_runpath_list (bfd *abfd ATTRIBUTE_UNUSED,
 }
 
 /* Get the name actually used for a dynamic object for a link.  This
-   is the SONAME entry if there is one.  Otherwise, it is the string
-   passed to bfd_elf_set_dt_needed_name, or it is the filename.  */
+   is the SONAME entry if there is one. */
 
 const char *
 bfd_elf_get_dt_soname (bfd *abfd)
@@ -8141,30 +7839,7 @@ struct elf_outext_info
 
    Complex relocations are generalized, self-describing relocations.  The
    implementation of them consists of two parts: complex symbols, and the
-   relocations themselves.
-
-   The relocations are use a reserved elf-wide relocation type code (R_RELC
-   external / BFD_RELOC_RELC internal) and an encoding of relocation field
-   information (start bit, end bit, word width, etc) into the addend.  This
-   information is extracted from CGEN-generated operand tables within gas.
-
-   Complex symbols are mangled symbols (BSF_RELC external / STT_RELC
-   internal) representing prefix-notation expressions, including but not
-   limited to those sorts of expressions normally encoded as addends in the
-   addend field.  The symbol mangling format is:
-
-   <node> := <literal>
-	  |  <unary-operator> ':' <node>
-	  |  <binary-operator> ':' <node> ':' <node>
-	  ;
-
-   <literal> := 's' <digits=N> ':' <N character symbol name>
-	     |  'S' <digits=N> ':' <N character section name>
-	     |  '#' <hexdigits>
-	     ;
-
-   <binary-operator> := as in C
-   <unary-operator> := as in C, plus "0-" for unambiguous negation.  */
+   relocations themselves.  */
 
 static void
 set_symbol_value (bfd *bfd_with_globals,
@@ -8274,8 +7949,7 @@ resolve_symbol (const char *name,
 }
 
 /* Looks up NAME in SECTIONS.  If found sets RESULT to NAME's address (in
-   bytes) and returns TRUE, otherwise returns FALSE.  Accepts pseudo-section
-   names like "foo.end" which is the end address of section "foo".  */
+   bytes) and returns TRUE, otherwise returns FALSE.   */
 
 static bfd_boolean
 resolve_section (const char *name,
@@ -8609,11 +8283,7 @@ bfd_elf_perform_complex_relocation (bfd *input_bfd,
   unsigned long start, oplen, len, wordsz, chunksz, lsb0_p, signed_p, trunc_p;
   bfd_reloc_status_type r;
 
-  /*  Perform this reloc, since it is complex.
-      (this is not to say that it necessarily refers to a complex
-      symbol; merely that it is a self-describing CGEN based reloc.
-      i.e. the addend has the complete reloc information (bit start, end,
-      word size, etc) encoded within it.).  */
+  /*  Perform this reloc, since it is complex.  */
 
   decode_complex_addend (&start, &oplen, &len, &wordsz,
 			 &chunksz, &lsb0_p, &signed_p,
@@ -8905,9 +8575,7 @@ elf_link_adjust_relocs (bfd *abfd,
 	  if (loc != p)
 	    {
 	      /* Chances are there is a run of relocs to insert here,
-		 from one of more input files.  Files are not always
-		 linked in order due to the way elf_link_input_bfd is
-		 called.  See pr17666.  */
+		 from one of more input files.   */
 	      size_t sortlen = p - loc;
 	      bfd_vma r_off2 = (*ext_r_off) (loc);
 	      size_t runlen = elt_size;
@@ -9213,8 +8881,7 @@ elf_link_sort_relocs (bfd *abfd, struct bfd_link_info *info, asection **psec)
 	if (o->contents == NULL && o->size != 0)
 	  {
 	    /* This is a reloc section that is being handled as a normal
-	       section.  See bfd_section_from_shdr.  We can't combine
-	       relocs in this case.  */
+	       section.   */
 	    free (sort);
 	    return 0;
 	  }
@@ -9267,8 +8934,7 @@ elf_link_sort_relocs (bfd *abfd, struct bfd_link_info *info, asection **psec)
       if (i != 0 && htab->srelplt->size == i * ext_size)
 	{
 	  struct bfd_link_order **plo;
-	  /* Put srelplt link_order last.  This is so the output_offset
-	     set in the next loop is correct for DT_JMPREL.  */
+	  /* Put srelplt link_order last.  */
 	  for (plo = &dynamic_relocs->map_head.link_order; *plo != NULL; )
 	    if ((*plo)->type == bfd_indirect_link_order
 		&& (*plo)->u.indirect.section == htab->srelplt)
@@ -9473,9 +9139,7 @@ check_dynsym (bfd *abfd, Elf_Internal_Sym *sym)
 
 /* For DSOs loaded in via a DT_NEEDED entry, emulate ld.so in
    allowing an unsatisfied unversioned symbol in the DSO to match a
-   versioned symbol that would normally require an explicit version.
-   We also handle the case that a DSO references a hidden symbol
-   which may be satisfied by a versioned symbol in another DSO.  */
+   versioned symbol that would normally require an explicit version.  */
 
 static bfd_boolean
 elf_link_check_versioned_symbol (struct bfd_link_info *info,
@@ -9651,11 +9315,7 @@ elf_link_convert_common_type (struct bfd_link_info *info, int type)
 }
 
 /* Add an external symbol to the symbol table.  This is called from
-   the hash table traversal routine.  When generating a shared object,
-   we go through the symbol table twice.  The first time we output
-   anything that might have been forced to local scope in a version
-   script.  The second time we output the symbols that are still
-   global symbols.  */
+   the hash table traversal routine.  */
 
 static bfd_boolean
 elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
@@ -9695,10 +9355,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
   if (h->root.type == bfd_link_hash_undefined)
     {
       /* If we have an undefined symbol reference here then it must have
-	 come from a shared library that is being linked in.  (Undefined
-	 references in regular files have already been handled unless
-	 they are in unreferenced sections which are removed by garbage
-	 collection).  */
+	 come from a shared library that is being linked in.  */
       bfd_boolean ignore_undef = FALSE;
 
       /* Some symbols may be special in that the fact that they're
@@ -9761,9 +9418,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
     }
 
   /* We don't want to output symbols that have never been mentioned by
-     a regular file, or that we have been told to strip.  However, if
-     h->indx is set to -2, the symbol is used by a reloc and we must
-     output it.  */
+     a regular file, or that we have been told to strip.  */
   strip = FALSE;
   if (h->indx == -2)
     ;
@@ -9796,9 +9451,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
   type = h->type;
 
   /* If we're stripping it, and it's not a dynamic symbol, there's
-     nothing else to do.   However, if it is a forced local symbol or
-     an ifunc symbol we need to give the backend finish_dynamic_symbol
-     function a chance to make it dynamic.  */
+     nothing else to do.   */
   if (strip
       && h->dynindx == -1
       && type != STT_GNU_IFUNC
@@ -9875,11 +9528,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
 
     case bfd_link_hash_indirect:
       /* These symbols are created by symbol versioning.  They point
-	 to the decorated version of the name.  For example, if the
-	 symbol foo@@GNU_1.2 is the default, which should be used when
-	 foo is used with no version, then we add an indirect symbol
-	 foo which points to foo@@GNU_1.2.  We ignore these symbols,
-	 since the indirected symbol is already in the hash table.  */
+	 to the decorated version of the name.   */
       return TRUE;
     }
 
@@ -9921,9 +9570,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
 
   /* Give the processor backend a chance to tweak the symbol value,
      and also to finish up anything that needs to be done for this
-     symbol.  FIXME: Not calling elf_backend_finish_dynamic_symbol for
-     forced local syms when non-shared is due to a historical quirk.
-     STT_GNU_IFUNC symbol must go through PLT.  */
+     symbol.  */
   if ((h->type == STT_GNU_IFUNC
        && h->def_regular
        && !bfd_link_relocatable (flinfo->info))
@@ -9945,10 +9592,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
 
   /* If we are marking the symbol as undefined, and there are no
      non-weak references to this symbol from a regular object, then
-     mark the symbol as weak undefined; if there are non-weak
-     references, mark the symbol as strong.  We can't do this earlier,
-     because it might not be marked as undefined until the
-     finish_dynamic_symbol routine gets through with it.  */
+     mark the symbol as weak undefined.  */
   if (sym.st_shndx == SHN_UNDEF
       && h->ref_regular
       && (ELF_ST_BIND (sym.st_info) == STB_GLOBAL
@@ -9969,9 +9613,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
     }
 
   /* If this is a symbol defined in a dynamic library, don't use the
-     symbol size from the dynamic library.  Relinking an executable
-     against a new library may introduce gratuitous changes in the
-     executable's symbols if we keep the size.  */
+     symbol size from the dynamic library.  */
   if (sym.st_shndx == SHN_UNDEF
       && !h->def_regular
       && h->def_dynamic)
@@ -10102,8 +9744,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
     }
 
   /* If the symbol is undefined, and we didn't output it to .dynsym,
-     strip it from .symtab too.  Obviously we can't do this for
-     relocatable output or when needed for --emit-relocs.  */
+     strip it from .symtab too.  */
   else if (input_sec == bfd_und_section_ptr
 	   && h->indx != -2
 	   /* PR 22319 Do not strip global undefined symbols marked as being needed.  */
@@ -10119,12 +9760,7 @@ elf_link_output_extsym (struct bfd_hash_entry *bh, void *data)
     return TRUE;
 
   /* Output a FILE symbol so that following locals are not associated
-     with the wrong input file.  We need one for forced local symbols
-     if we've seen more than one FILE symbol or when we have exactly
-     one FILE symbol but global symbols are present in a file other
-     than the one with the FILE symbol.  We also need one if linker
-     defined symbols are present.  In practice these conditions are
-     always met, so just emit the FILE symbol unconditionally.  */
+     with the wrong input file.  */
   if (eoinfo->localsyms
       && !eoinfo->file_sym_done
       && eoinfo->flinfo->filesym_count != 0)
@@ -10184,13 +9820,7 @@ elf_section_ignore_discarded_relocs (asection *sec)
 }
 
 /* Return a mask saying how ld should treat relocations in SEC against
-   symbols defined in discarded sections.  If this function returns
-   COMPLAIN set, ld will issue a warning message.  If this function
-   returns PRETEND set, and the discarded section was link-once and the
-   same size as the kept link-once section, ld will pretend that the
-   symbol was actually defined in the kept section.  Otherwise ld will
-   zero the reloc (at least that is the intent, but some cooperation by
-   the target dependent code is needed, particularly for REL targets).  */
+   symbols defined in discarded sections.  */
 
 unsigned int
 _bfd_elf_default_action_discarded (asection *sec)
@@ -10252,10 +9882,7 @@ _bfd_elf_check_kept_section (asection *sec, struct bfd_link_info *info)
   return kept;
 }
 
-/* Link an input file into the linker output file.  This function
-   handles all the sections and relocations of the input file at once.
-   This is so that we only have to read the local symbols once, and
-   don't have to keep them in memory.  */
+/* Link an input file into the linker output file.  */
 
 static bfd_boolean
 elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
@@ -10429,10 +10056,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 	{
 	  /* In the absence of debug info, bfd_find_nearest_line uses
 	     FILE symbols to determine the source file for local
-	     function symbols.  Provide a FILE symbol here if input
-	     files lack such, so that their symbols won't be
-	     associated with a previous input file.  It's not the
-	     source file, but the best we can do.  */
+	     function symbols. */
 	  have_file_sym = TRUE;
 	  flinfo->filesym_count += 1;
 	  memset (&osym, 0, sizeof (osym));
@@ -10455,12 +10079,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 	return FALSE;
 
       /* ELF symbols in relocatable files are section relative, but
-	 in executable files they are virtual addresses.  Note that
-	 this code assumes that all ELF sections have an associated
-	 BFD section with a reasonable value for output_offset; below
-	 we assume that they also have a reasonable value for
-	 output_section.  Any special sections must be set up to meet
-	 these requirements.  */
+	 in executable files they are virtual addresses.  */
       osym.st_value += isec->output_offset;
       if (!bfd_link_relocatable (flinfo->info))
 	{
@@ -10584,9 +10203,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 	}
 
       /* Get the contents of the section.  They have been cached by a
-	 relaxation routine.  Note that o is a section in an input
-	 file, so the contents field will not have been set by any of
-	 the routines which work on output files.  */
+	 relaxation routine. */
       if (elf_section_data (o)->this_hdr.contents != NULL)
 	{
 	  contents = elf_section_data (o)->this_hdr.contents;
@@ -10651,9 +10268,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 
 	  /* Run through the relocs evaluating complex reloc symbols and
 	     looking for relocs against symbols from discarded sections
-	     or section symbols from removed link-once sections.
-	     Complain about relocs against discarded sections.  Zero
-	     relocs against removed link-once sections.  */
+	     or section symbols from removed link-once sections. */
 
 	  rel = internal_relocs;
 	  relend = rel + o->reloc_count;
@@ -10695,10 +10310,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 		  s_type = h->type;
 
 		  /* If a plugin symbol is referenced from a non-IR file,
-		     mark the symbol as undefined.  Note that the
-		     linker may attach linker created dynamic sections
-		     to the plugin bfd.  Symbols defined in linker
-		     created sections are not plugin symbols.  */
+		     mark the symbol as undefined.  */
 		  if ((h->root.non_ir_ref_regular
 		       || h->root.non_ir_ref_dynamic)
 		      && (h->root.type == bfd_link_hash_defined
@@ -10773,10 +10385,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 
 		      /* Try to do the best we can to support buggy old
 			 versions of gcc.  Pretend that the symbol is
-			 really defined in the kept linkonce section.
-			 FIXME: This is quite broken.  Modifying the
-			 symbol here means we will be changing all later
-			 uses of the symbol, not just in this section.  */
+			 really defined in the kept linkonce section.  */
 		      if (action_discarded & PRETEND)
 			{
 			  asection *kept;
@@ -10793,25 +10402,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 		}
 	    }
 
-	  /* Relocate the section by invoking a back end routine.
-
-	     The back end routine is responsible for adjusting the
-	     section contents as necessary, and (if using Rela relocs
-	     and generating a relocatable output file) adjusting the
-	     reloc addend as necessary.
-
-	     The back end routine does not have to worry about setting
-	     the reloc address or the reloc symbol index.
-
-	     The back end routine is given a pointer to the swapped in
-	     internal symbols, and can access the hash table entries
-	     for the external symbols via elf_sym_hashes (input_bfd).
-
-	     When generating relocatable output, the back end routine
-	     must handle STB_LOCAL/STT_SECTION symbols specially.  The
-	     output symbol is going to be a section symbol
-	     corresponding to the output section, which will require
-	     the addend to be adjusted.  */
+	  /* Relocate the section by invoking a back end routine.  */
 
 	  ret = (*relocate_section) (output_bfd, flinfo->info,
 				     input_bfd, o, contents,
@@ -10909,13 +10500,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 		      struct elf_link_hash_entry *rh;
 		      unsigned long indx;
 
-		      /* This is a reloc against a global symbol.  We
-			 have not yet output all the local symbols, so
-			 we do not know the symbol index of any global
-			 symbol.  We set the rel_hash entry for this
-			 reloc to point to the global hash table entry
-			 for this symbol.  The symbol index is then
-			 set at the end of bfd_elf_final_link.  */
+		      /* This is a reloc against a global symbol.   */
 		      indx = r_symndx - extsymoff;
 		      rh = elf_sym_hashes (input_bfd)[indx];
 		      while (rh->root.type == bfd_link_hash_indirect
@@ -10955,11 +10540,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 			  asection *osec = sec->output_section;
 
 			  /* If we have discarded a section, the output
-			     section will be the absolute section.  In
-			     case of discarded SEC_MERGE sections, use
-			     the kept section.  relocate_section should
-			     have already handled discarded linkonce
-			     sections.  */
+			     section will be the absolute section.   */
 			  if (bfd_is_abs_section (osec)
 			      && sec->kept_section != NULL
 			      && sec->kept_section->output_section != NULL)
@@ -11156,10 +10737,7 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
   return TRUE;
 }
 
-/* Generate a reloc when linking an ELF file.  This is a reloc
-   requested by the linker, and does not come from any input file.  This
-   is used to build constructor and destructor tables when linking
-   with -Ur.  */
+/* Generate a reloc when linking an ELF file.  */
 
 static bfd_boolean
 elf_reloc_link_order (bfd *output_bfd,
@@ -11568,8 +11146,7 @@ elf_output_implib (bfd *abfd, struct bfd_link_info *info)
   bfd_set_symtab (implib_bfd, sympp, symcount);
 
   /* Allow the BFD backend to copy any private data it understands
-     from the output BFD to the import library BFD.  This is done last
-     to permit the routine to look at the filtered symbol table.  */
+     from the output BFD to the import library BFD.  */
   if (! bfd_copy_private_bfd_data (abfd, implib_bfd))
     goto free_sym_buf;
 
@@ -11767,9 +11344,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 	      sec = p->u.indirect.section;
 
 	      /* Mark all sections which are to be included in the
-		 link.  This will normally be every section.  We need
-		 to do this so that we can identify any sections which
-		 the linker has decided to not include.  */
+		 link.  */
 	      sec->linker_mark = TRUE;
 
 	      if (sec->flags & SEC_MERGE)
@@ -11803,8 +11378,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 		  if (esdo->this_hdr.sh_type == SHT_REL
 		      || esdo->this_hdr.sh_type == SHT_RELA)
 		    /* Some backends use reloc_count in relocation sections
-		       to count particular types of relocs.  Of course,
-		       reloc sections themselves can't have relocations.  */
+		       to count particular types of relocs.  */
 		    ;
 		  else if (emit_relocs)
 		    {
@@ -11870,16 +11444,12 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 	o->flags |= SEC_RELOC;
       else
 	{
-	  /* Explicitly clear the SEC_RELOC flag.  The linker tends to
-	     set it (this is probably a bug) and if it is set
-	     assign_section_numbers will create a reloc section.  */
+	  /* Explicitly clear the SEC_RELOC flag. */
 	  o->flags &=~ SEC_RELOC;
 	}
 
       /* If the SEC_ALLOC flag is not set, force the section VMA to
-	 zero.  This is done in elf_fake_sections as well, but forcing
-	 the VMA to 0 here will ensure that relocs against these
-	 sections are handled correctly.  */
+	 zero.  */
       if ((o->flags & SEC_ALLOC) == 0
 	  && ! o->user_set_vma)
 	o->vma = 0;
@@ -11889,8 +11459,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
     elf_link_hash_traverse (htab, _bfd_elf_link_sec_merge_syms, abfd);
 
   /* Figure out the file positions for everything but the symbol table
-     and the relocs.  We set symcount to force assign_section_numbers
-     to create a symbol table.  */
+     and the relocs. */
   bfd_get_symcount (abfd) = info->strip != strip_all || emit_relocs;
   BFD_ASSERT (! abfd->output_has_begun);
   if (! _bfd_elf_compute_section_file_positions (abfd, info))
@@ -11919,8 +11488,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
       if (esdo->this_hdr.sh_offset == (file_ptr) -1)
 	{
 	  /* Cache the section contents so that they can be compressed
-	     later.  Use bfd_malloc since it will be freed by
-	     bfd_compress_section_contents.  */
+	     later. */
 	  unsigned char *contents = esdo->this_hdr.contents;
 	  if ((o->flags & SEC_ELF_COMPRESS) == 0 || contents != NULL)
 	    abort ();
@@ -11966,8 +11534,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
       _bfd_elf_assign_file_position_for_section (symtab_hdr, off, TRUE);
 
       /* Note that at this point elf_next_file_pos (abfd) is
-	 incorrect.  We do not yet know the size of the .symtab section.
-	 We correct next_file_pos below, after we do know the size.  */
+	 incorrect.  */
 
       /* Start writing out the symbol table.  The first symbol is always a
 	 dummy symbol.  */
@@ -11981,11 +11548,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 				     bfd_und_section_ptr, NULL) != 1)
 	goto error_return;
 
-      /* Output a symbol for each section.  We output these even if we are
-	 discarding local symbols, since they are used for relocs.  These
-	 symbols have no names.  We store the index of each one in the
-	 index field of the section, so that we can find it again when
-	 outputting relocs.  */
+      /* Output a symbol for each section.  */
 
       elfsym.st_size = 0;
       elfsym.st_info = ELF_ST_INFO (STB_LOCAL, STT_SECTION);
@@ -12103,24 +11666,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
     return FALSE;
 
   /* Since ELF permits relocations to be against local symbols, we
-     must have the local symbols available when we do the relocations.
-     Since we would rather only read the local symbols once, and we
-     would rather not keep them in memory, we handle all the
-     relocations for a single input file at the same time.
-
-     Unfortunately, there is no way to know the total number of local
-     symbols until we have seen all of them, and the local symbol
-     indices precede the global symbol indices.  This means that when
-     we are generating relocatable output, and we see a reloc against
-     a global symbol, we can not know the symbol index until we have
-     finished examining all the local symbols to see which ones we are
-     going to output.  To deal with this, we keep the relocations in
-     memory, and don't output them until the end of the link.  This is
-     an unfortunate waste of memory, but I don't see a good way around
-     it.  Fortunately, it only happens when performing a relocatable
-     link, which is not the common case.  FIXME: If keep_memory is set
-     we could write the relocs out and then read them again; I don't
-     know how bad the memory loss will be.  */
+     must have the local symbols available when we do the relocations. */
 
   for (sub = info->input_bfds; sub != NULL; sub = sub->link.next)
     sub->output_has_begun = FALSE;
@@ -12200,11 +11746,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
     }
 
   /* Output any global symbols that got converted to local in a
-     version script or due to symbol visibility.  We do this in a
-     separate step since ELF requires all local symbols to appear
-     prior to any global symbols.  FIXME: We should only do this if
-     some global symbols were, in fact, converted to become local.
-     FIXME: Will this work correctly with the Irix 5 linker?  */
+     version script or due to symbol visibility.  */
   eoinfo.failed = FALSE;
   eoinfo.flinfo = &flinfo;
   eoinfo.localsyms = TRUE;
@@ -12229,9 +11771,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
     }
 
   /* That wrote out all the local symbols.  Finish up the symbol table
-     with the global symbols. Even if we want to strip everything we
-     can, we still need to deal with those global symbols that got
-     converted to local in a version script.  */
+     with the global symbols.  */
 
   /* The sh_info field records the index of the first non local symbol.  */
   symtab_hdr->sh_info = bfd_get_symcount (abfd);
@@ -12287,9 +11827,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 	      asection *s;
 	      bfd_byte *dest;
 
-	      /* Copy the internal symbol and turn off visibility.
-		 Note that we saved a word of storage and overwrote
-		 the original st_name with the dynstr_index.  */
+	      /* Copy the internal symbol and turn off visibility.*/
 	      sym = e->isym;
 	      sym.st_other &= ~ELF_ST_VISIBILITY (-1);
 
@@ -12600,15 +12138,7 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 		  sh_size -= htab->srelplt->size;
 		  if (sh_size == 0)
 		    /* If the size is zero, make the address zero too.
-		       This is to avoid a glibc bug.  If the backend
-		       emits DT_RELA/DT_RELASZ even when DT_RELASZ is
-		       zero, then we'll put DT_RELA at the end of
-		       DT_JMPREL.  glibc will interpret the end of
-		       DT_RELA matching the end of DT_JMPREL as the
-		       case where DT_RELA includes DT_JMPREL, and for
-		       LD_BIND_NOW will decide that processing DT_RELA
-		       will process the PLT relocs too.  Net result:
-		       No PLT relocs applied.  */
+		       This is to avoid a glibc bug.   */
 		    sh_addr = 0;
 
 		  /* If .rela.plt is the first .rela section, exclude
@@ -12963,9 +12493,7 @@ _bfd_elf_gc_mark_rsec (struct bfd_link_info *info, asection *sec,
 	h = (struct elf_link_hash_entry *) h->root.u.i.link;
       h->mark = 1;
       /* If this symbol is weak and there is a non-weak definition, we
-	 keep the non-weak definition because many backends put
-	 dynamic reloc info on the non-weak definition for code
-	 handling copy relocs.  */
+	 keep the non-weak definition.  */
       if (h->is_weakalias)
 	weakdef (h)->mark = 1;
 
@@ -13173,8 +12701,7 @@ _bfd_elf_gc_mark_extra_sections (struct bfd_link_info *info,
 	continue;
 
       /* Keep debug and special sections like .comment when they are
-	 not part of a group.  Also keep section groups that contain
-	 just debug sections or special sections.  */
+	 not part of a group.  */
       for (isec = ibfd->sections; isec != NULL; isec = isec->next)
 	{
 	  if ((isec->flags & SEC_GROUP) != 0)
@@ -13202,8 +12729,7 @@ _bfd_elf_gc_mark_extra_sections (struct bfd_link_info *info,
 
 	      /* Association is determined by the name of the debug
 		 section containing the name of the code section as
-		 a suffix.  For example .debug_line.text.foo is a
-		 debug section associated with .text.foo.  */
+		 a suffix.  */
 	      for (dsec = ibfd->sections; dsec != NULL; dsec = dsec->next)
 		{
 		  unsigned int dlen;
@@ -13254,9 +12780,7 @@ elf_gc_sweep (bfd *abfd, struct bfd_link_info *info)
       for (o = sub->sections; o != NULL; o = o->next)
 	{
 	  /* When any section in a section group is kept, we keep all
-	     sections in the section group.  If the first member of
-	     the section group is excluded, we will also exclude the
-	     group section.  */
+	     sections in the section group.  */
 	  if (o->flags & SEC_GROUP)
 	    {
 	      asection *first = elf_next_in_group (o);
@@ -13554,10 +13078,7 @@ bfd_elf_gc_sections (bfd *abfd, struct bfd_link_info *info)
       if (o == NULL || o->sec_info_type == SEC_INFO_TYPE_JUST_SYMS)
 	continue;
 
-      /* Start at sections marked with SEC_KEEP (ref _bfd_elf_gc_keep).
-	 Also treat note sections as a root, if the section is not part
-	 of a group.  We must keep all PREINIT_ARRAY, INIT_ARRAY as
-	 well as FINI_ARRAY sections for ld -r.  */
+      /* Start at sections marked with SEC_KEEP (ref _bfd_elf_gc_keep).  */
       for (o = sub->sections; o != NULL; o = o->next)
 	if (!o->gc_mark
 	    && (o->flags & SEC_EXCLUDE) == 0
@@ -13598,8 +13119,7 @@ bfd_elf_gc_record_vtinherit (bfd *abfd,
   const struct elf_backend_data *bed = get_elf_backend_data (abfd);
 
   /* The sh_info field of the symtab header tells us where the
-     external symbols start.  We don't care about the local symbols at
-     this point.  */
+     external symbols start. */
   extsymcount = elf_tdata (abfd)->symtab_hdr.sh_size / bed->s->sizeof_sym;
   if (!elf_bad_symtab (abfd))
     extsymcount -= elf_tdata (abfd)->symtab_hdr.sh_info;
@@ -13635,10 +13155,7 @@ bfd_elf_gc_record_vtinherit (bfd *abfd,
     }
   if (!h)
     {
-      /* This *should* only be the absolute section.  It could potentially
-	 be that someone has defined a non-global vtable though, which
-	 would be bad.  It isn't worth paging in the local symbols to be
-	 sure though; that case should simply be handled by the assembler.  */
+      /* This *should* only be the absolute section.  */
 
       child->u2.vtable->parent = (struct elf_link_hash_entry *) -1;
     }
@@ -14072,8 +13589,7 @@ bfd_elf_discard_info (bfd *output_bfd, struct bfd_link_info *info)
       if (i != NULL)
 	i = i->map_tail.s;
       /* Any prior sections must pad the last FDE out to the output
-	 section alignment.  Otherwise we might have zero padding
-	 between sections, which would be seen as a terminator.  */
+	 section alignment.  */
       for (; i != NULL; i = i->map_tail.s)
 	if (i->size == 4)
 	  /* All but the last zero terminator should have been removed.  */
@@ -14180,10 +13696,7 @@ _bfd_elf_section_already_linked (bfd *abfd,
     {
       /* We may have 2 different types of sections on the list: group
 	 sections with a signature of <key> (<key> is some string),
-	 and linkonce sections named .gnu.linkonce.<type>.<key>.
-	 Match like sections.  LTO plugin sections are an exception.
-	 They are always named .gnu.linkonce.t.<key> and match either
-	 type of section.  */
+	 and linkonce sections named .gnu.linkonce.<type>.<key>.  */
       if (((flags & SEC_GROUP) == (l->sec->flags & SEC_GROUP)
 	   && ((flags & SEC_GROUP) != 0
 	       || strcmp (name, l->sec->name) == 0))
@@ -14253,14 +13766,7 @@ _bfd_elf_section_already_linked (bfd *abfd,
   /* Do not complain on unresolved relocations in `.gnu.linkonce.r.F'
      referencing its discarded `.gnu.linkonce.t.F' counterpart - g++-3.4
      specific as g++-4.x is using COMDAT groups (without the `.gnu.linkonce'
-     prefix) instead.  `.gnu.linkonce.r.*' were the `.rodata' part of its
-     matching `.gnu.linkonce.t.*'.  If `.gnu.linkonce.r.F' is not discarded
-     but its `.gnu.linkonce.t.F' is discarded means we chose one-only
-     `.gnu.linkonce.t.F' section from a different bfd not requiring any
-     `.gnu.linkonce.r.F'.  Thus `.gnu.linkonce.r.F' should be discarded.
-     The reverse order cannot happen as there is never a bfd with only the
-     `.gnu.linkonce.r.F' section.  The order of sections in a bfd does not
-     matter as here were are looking only for cross-bfd sections.  */
+     prefix) instead.  */
 
   if ((flags & SEC_GROUP) == 0 && CONST_STRNEQ (name, ".gnu.linkonce.r."))
     for (l = already_linked_list->entry; l != NULL; l = l->next)
@@ -14360,12 +13866,7 @@ _bfd_elf_get_dynamic_reloc_section (bfd *       abfd,
 /* Returns the dynamic reloc section associated with SEC.  If the
    section does not exist it is created and attached to the DYNOBJ
    bfd and stored in the SRELOC field of SEC's elf_section_data
-   structure.
-
-   ALIGNMENT is the alignment for the newly created section and
-   IS_RELA defines whether the name should be .rela.<SEC's name>
-   or .rel.<SEC's name>.  The section name is looked up in the
-   string table associated with ABFD.  */
+   structure.*/
 
 asection *
 _bfd_elf_make_dynamic_reloc_section (asection *sec,
@@ -14396,9 +13897,7 @@ _bfd_elf_make_dynamic_reloc_section (asection *sec,
 	  if (reloc_sec != NULL)
 	    {
 	      /* _bfd_elf_get_sec_type_attr chooses a section type by
-		 name.  Override as it may be wrong, eg. for a user
-		 section named "auto" we'll get ".relauto" which is
-		 seen to be a .rela section.  */
+		 name.   */
 	      elf_section_type (reloc_sec) = is_rela ? SHT_RELA : SHT_REL;
 	      if (! bfd_set_section_alignment (dynobj, reloc_sec, alignment))
 		reloc_sec = NULL;
@@ -14412,9 +13911,7 @@ _bfd_elf_make_dynamic_reloc_section (asection *sec,
 }
 
 /* Copy the ELF symbol type and other attributes for a linker script
-   assignment from HSRC to HDEST.  Generally this should be treated as
-   if we found a strong non-dynamic definition for HDEST (except that
-   ld ignores multiple definition errors).  */
+   assignment from HSRC to HDEST.   */
 void
 _bfd_elf_copy_link_hash_symbol_type (bfd *abfd,
 				     struct bfd_link_hash_entry *hdest,

@@ -52,44 +52,21 @@ RANLIB_PROG=ranlib
 
 # objcopy and strip should be the same program
 OBJCOPY_PROG=objcopy
-STRIP_PROG=strip-new
-
-STRINGS_PROG=strings
-
-ELFEDIT_PROG=elfedit
 
 # These should all be the same program too.
-SIZE_PROG=size
 OBJDUMP_PROG=objdump
 
-
-DLLTOOL_PROG=dlltool
-WINDRES_PROG=windres
-WINDMC_PROG=windmc
-DLLWRAP_PROG=dllwrap
-
-SRCONV_PROG=srconv$(EXEEXT) sysdump$(EXEEXT) coffdump$(EXEEXT)
-
-bin_PROGRAMS = $(SIZE_PROG) $(OBJDUMP_PROG) $(AR_PROG) $(STRINGS_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG) @BUILD_SRCONV@ @BUILD_DLLTOOL@ @BUILD_WINDRES@ @BUILD_WINDMC@ $(ELFEDIT_PROG) @BUILD_DLLWRAP@
+bin_PROGRAMS = $(OBJDUMP_PROG) $(AR_PROG) $(RANLIB_PROG) $(OBJCOPY_PROG)
 
 bin_SCRIPTS = @BUILD_INSTALL_MISC@
 EXTRA_SCRIPTS = embedspu
 
-## Test programs.
-BFDTEST1_PROG = bfdtest1
-BFDTEST2_PROG = bfdtest2
-
-TEST_PROGS = $(BFDTEST1_PROG) $(BFDTEST2_PROG)
 
 ## We need a special rule to install the programs which are built with
 ## -new, and to rename cxxfilt to c++filt.
-RENAMED_PROGS = $(STRIP_PROG)
-noinst_PROGRAMS = $(RENAMED_PROGS) $(TEST_PROGS) @BUILD_MISC@
-
-EXTRA_PROGRAMS = srconv sysdump coffdump $(DLLTOOL_PROG) $(WINDRES_PROG) $(WINDMC_PROG) $(DLLWRAP_PROG)
 
 # Stuff that goes in tooldir/ if appropriate.
-TOOL_PROGS = nm-new strip-new ar ranlib dlltool objdump objcopy
+TOOL_PROGS = nm-new ar ranlib objdump objcopy
 
 BASEDIR = $(srcdir)/..
 BFDDIR = $(BASEDIR)/bfd
@@ -103,32 +80,28 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 
 HFILES = \
 	arsup.h binemul.h bucomm.h budbg.h \
-	coffgrok.h debug.h dlltool.h dwarf.h elfcomm.h \
-	objdump.h sysdep.h unwind-ia64.h windres.h winduni.h windint.h \
-	windmc.h
+	coffgrok.h debug.h dwarf.h elfcomm.h \
+	objdump.h sysdep.h unwind-ia64.h
 
-GENERATED_HFILES = arparse.h sysroff.h sysinfo.h defparse.h rcparse.h mcparse.h
+GENERATED_HFILES = arparse.h sysroff.h sysinfo.h defparse.h
 BUILT_SOURCES = $(GENERATED_HFILES)
 
 CFILES = \
 	ar.c arsup.c bin2c.c binemul.c bucomm.c \
 	coffdump.c coffgrok.c  \
-	dwarf.c debug.c dlltool.c dllwrap.c \
-	elfcomm.c emul_aix.c emul_vanilla.c filemode.c \
+	dwarf.c debug.c \
+	elfcomm.c filemode.c \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
 	not-ranlib.c not-strip.c \
 	objcopy.c objdump.c prdbg.c \
-	od-xcoff.c od-macho.c \
-	rclex.c rdcoff.c rddbg.c rename.c \
-	resbin.c rescoff.c resrc.c resres.c \
-	size.c srconv.c stabs.c strings.c sysdump.c \
-	syslex_wrap.c unwind-ia64.c elfedit.c version.c \
-	windres.c winduni.c wrstabs.c \
-	windmc.c mclex.c
+	rdcoff.c rddbg.c rename.c \
+	stabs.c \
+	syslex_wrap.c unwind-ia64.c version.c \
+	wrstabs.c  mclex.c
 
 GENERATED_CFILES = \
 	arparse.c arlex.c sysroff.c sysinfo.c syslex.c \
-	defparse.c deflex.c rcparse.c mcparse.c
+	defparse.c deflex.c mcparse.c
 
 DEBUG_SRCS = rddbg.c debug.c stabs.c rdcoff.c
 WRITE_DEBUG_SRCS = $(DEBUG_SRCS) wrstabs.c
@@ -191,37 +164,14 @@ installcheck-local:
 # There's no global DEPENDENCIES.  So, we must explicitly list everything
 # which depends on libintl, since we don't know whether LIBINTL_DEP will be
 # non-empty until configure time.  Ugh!
-size_DEPENDENCIES =      $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
 ar_DEPENDENCIES =        $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-strings_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-srconv_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-sysdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-coffdump_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-dlltool_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-windres_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-windmc_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-elfedit_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
-dllwrap_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
-bfdtest1_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-bfdtest2_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 
 LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
 
-size_SOURCES = size.c $(BULIBS)
-
 objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
-
-strings_SOURCES = strings.c $(BULIBS)
-
-
-elfedit_SOURCES = elfedit.c version.c $(ELFLIBS)
-elfedit_LDADD = $(LIBINTL) $(LIBIBERTY)
-
-strip_new_SOURCES = objcopy.c is-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
 objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
@@ -362,103 +312,8 @@ endif
 	$(COMPILE) -c `test -f deflex.c || echo $(srcdir)/`deflex.c $(NO_WERROR)
 endif
 
-rcparse.@OBJEXT@: rcparse.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f rcparse.c || echo $(srcdir)/`rcparse.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='rcparse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c `test -f rcparse.c || echo $(srcdir)/`rcparse.c $(NO_WERROR)
-endif
-
-mcparse.@OBJEXT@: mcparse.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f mcparse.c || echo $(srcdir)/`mcparse.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='mcparse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c `test -f mcparse.c || echo $(srcdir)/`mcparse.c $(NO_WERROR)
-endif
-
-rclex.@OBJEXT@: rclex.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(srcdir)/rclex.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='rclex.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c $(srcdir)/rclex.c $(NO_WERROR)
-endif
-
-mclex.@OBJEXT@: mclex.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(srcdir)/mclex.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='mclex.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c $(srcdir)/mclex.c $(NO_WERROR)
-endif
-
-srconv_SOURCES = srconv.c coffgrok.c $(BULIBS)
-srconv.@OBJEXT@: sysroff.c
-
-dlltool_SOURCES = dlltool.c defparse.c deflex.c $(BULIBS)
-dlltool_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
-
-dlltool.@OBJEXT@:
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@  $(DLLTOOL_DEFS) $(srcdir)/dlltool.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='dlltool.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c $(DLLTOOL_DEFS) $(srcdir)/dlltool.c
-endif
-
-rescoff.@OBJEXT@:
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@  $(DLLTOOL_DEFS) $(srcdir)/rescoff.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='rescoff.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c $(DLLTOOL_DEFS) $(srcdir)/rescoff.c
-endif
-
-coffdump_SOURCES = coffdump.c coffgrok.c $(BULIBS)
-
-sysdump_SOURCES = sysdump.c $(BULIBS)
-sysdump.@OBJEXT@: sysroff.c
-
-windres_SOURCES = windres.c resrc.c rescoff.c resbin.c rcparse.c rclex.c \
-	winduni.c resres.c $(BULIBS)
-windres_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) $(LIBICONV)
-
-windmc_SOURCES = windmc.c mcparse.c mclex.c \
-	winduni.c $(BULIBS)
-windmc_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) $(LIBICONV)
-
-dllwrap_SOURCES = dllwrap.c version.c
-dllwrap_LDADD = $(LIBIBERTY) $(LIBINTL)
-
-
 EXTRA_DIST = arparse.c arparse.h arlex.c sysinfo.c sysinfo.h \
-	syslex.c deflex.c defparse.h defparse.c rcparse.h rcparse.c \
+	syslex.c deflex.c defparse.h defparse.c \
 	mcparse.h mcparse.c embedspu.sh
 
 diststuff: $(EXTRA_DIST) info
@@ -476,7 +331,7 @@ mostlyclean-local:
 
 .PHONY: install-exec-local
 
-install-exec-local: install-binPROGRAMS $(bin_PROGRAMS) $(noinst_PROGRAMS)
+install-exec-local: install-binPROGRAMS $(bin_PROGRAMS)
 	@list='$(RENAMED_PROGS)'; for p in $$list; do \
 	  if test -f $$p$(EXEEXT); then \
 	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \

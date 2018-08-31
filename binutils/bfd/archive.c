@@ -18,70 +18,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/*
-@setfilename archive-info
-SECTION
-	Archives
-
-DESCRIPTION
-	An archive (or library) is just another BFD.  It has a symbol
-	table, although there's not much a user program will do with it.
-
-	The big difference between an archive BFD and an ordinary BFD
-	is that the archive doesn't have sections.  Instead it has a
-	chain of BFDs that are considered its contents.  These BFDs can
-	be manipulated like any other.  The BFDs contained in an
-	archive opened for reading will all be opened for reading.  You
-	may put either input or output BFDs into an archive opened for
-	output; they will be handled correctly when the archive is closed.
-
-	Use <<bfd_openr_next_archived_file>> to step through
-	the contents of an archive opened for input.  You don't
-	have to read the entire archive if you don't want
-	to!  Read it until you find what you want.
-
-	A BFD returned by <<bfd_openr_next_archived_file>> can be
-	closed manually with <<bfd_close>>.  If you do not close it,
-	then a second iteration through the members of an archive may
-	return the same BFD.  If you close the archive BFD, then all
-	the member BFDs will automatically be closed as well.
-
-	Archive contents of output BFDs are chained through the
-	<<archive_next>> pointer in a BFD.  The first one is findable
-	through the <<archive_head>> slot of the archive.  Set it with
-	<<bfd_set_archive_head>> (q.v.).  A given BFD may be in only
-	one open output archive at a time.
-
-	As expected, the BFD archive code is more general than the
-	archive code of any given environment.  BFD archives may
-	contain files of different formats (e.g., a.out and coff) and
-	even different architectures.  You may even place archives
-	recursively into archives!
-
-	This can cause unexpected confusion, since some archive
-	formats are more expressive than others.  For instance, Intel
-	COFF archives can preserve long filenames; SunOS a.out archives
-	cannot.  If you move a file from the first to the second
-	format and back again, the filename may be truncated.
-	Likewise, different a.out environments have different
-	conventions as to how they truncate filenames, whether they
-	preserve directory names in filenames, etc.  When
-	interoperating with native tools, be sure your files are
-	homogeneous.
-
-	Beware: most of these formats do not react well to the
-	presence of spaces in filenames.  We do the best we can, but
-	can't always handle this case due to restrictions in the format of
-	archives.  Many Unix utilities are braindead in regards to
-	spaces and such in filenames anyway, so this shouldn't be much
-	of a restriction.
-
-	Archives are supported in BFD in <<archive.c>>.
-
-SUBSECTION
-	Archive functions
-*/
-
 /* Assumes:
    o - all archive elements start on an even boundary, newline padded;
    o - all arch headers are char *;
@@ -229,28 +165,6 @@ _bfd_generic_mkarchive (bfd *abfd)
   return TRUE;
 }
 
-/*
-FUNCTION
-	bfd_get_next_mapent
-
-SYNOPSIS
-	symindex bfd_get_next_mapent
-	  (bfd *abfd, symindex previous, carsym **sym);
-
-DESCRIPTION
-	Step through archive @var{abfd}'s symbol table (if it
-	has one).  Successively update @var{sym} with the next symbol's
-	information, returning that symbol's (internal) index into the
-	symbol table.
-
-	Supply <<BFD_NO_MORE_SYMBOLS>> as the @var{previous} entry to get
-	the first one; returns <<BFD_NO_MORE_SYMBOLS>> when you've already
-	got the last one.
-
-	A <<carsym>> is a canonical archive symbol.  The only
-	user-visible element is its name, a null-terminated string.
-*/
-
 symindex
 bfd_get_next_mapent (bfd *abfd, symindex prev, carsym **entry)
 {
@@ -279,17 +193,6 @@ _bfd_create_empty_archive_element_shell (bfd *obfd)
   return _bfd_new_bfd_contained_in (obfd);
 }
 
-/*
-FUNCTION
-	bfd_set_archive_head
-
-SYNOPSIS
-	bfd_boolean bfd_set_archive_head (bfd *output, bfd *new_head);
-
-DESCRIPTION
-	Set the head of the chain of
-	BFDs contained in the archive @var{output} to @var{new_head}.
-*/
 
 bfd_boolean
 bfd_set_archive_head (bfd *output_archive, bfd *new_head)
@@ -760,23 +663,6 @@ _bfd_noarchive_get_elt_at_index (bfd *abfd,
 {
   return (bfd *) _bfd_ptr_bfd_null_error (abfd);
 }
-
-/*
-FUNCTION
-	bfd_openr_next_archived_file
-
-SYNOPSIS
-	bfd *bfd_openr_next_archived_file (bfd *archive, bfd *previous);
-
-DESCRIPTION
-	Provided a BFD, @var{archive}, containing an archive and NULL, open
-	an input BFD on the first contained element and returns that.
-	Subsequent calls should pass the archive and the previous return
-	value to return a created BFD to the next contained element.  NULL
-	is returned when there are no more.
-	Note - if you want to process the bfd returned by this call be
-	sure to call bfd_check_format() on it first.
-*/
 
 bfd *
 bfd_openr_next_archived_file (bfd *archive, bfd *last_file)
