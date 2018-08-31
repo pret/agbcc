@@ -452,7 +452,7 @@ _Generic((VAL), \
     unsigned long long: safe_byte_get_64 \
 )(&(VAL),(PTR),(AMOUNT),(END))
 #else /* no _Generic */
-#define SAFE_BYTE_GET_(VAL, PTR, AMOUNT, END)	\
+#define SAFE_BYTE_GET(VAL, PTR, AMOUNT, END)	\
   do						\
     {						\
       unsigned int amount = (AMOUNT);		\
