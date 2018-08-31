@@ -390,11 +390,15 @@ read_uleb128 (unsigned char * data,
 /* Read AMOUNT bytes from PTR and store them in VAL as an unsigned value.
    Checks to make sure that the read will not reach or pass END
    and that VAL is big enough to hold AMOUNT bytes.  */
+
+/* C11 _Generic */
+#if __STDC_VERSION__ > __STDC_VERSION__>=201112L
+
 #define SAFE_BYTE_GET_(VAL, PTR, AMOUNT, END)	\
   do						\
     {						\
       unsigned int amount = (AMOUNT);		\
-      if (sizeof (VAL) < amount)		\
+      if (sizeof (*VAL) < amount)		\
 	{					\
 	  error (ngettext ("internal error: attempt to read %d byte "	\
 			   "of data in to %d sized variable",		\
@@ -414,11 +418,11 @@ read_uleb128 (unsigned char * data,
       if (amount == 0 || amount > 8)		\
 	*VAL = 0;				\
       else					\
-	*VAL = byte_get ((PTR), amount);		\
+	*VAL = byte_get ((PTR), amount);	\
     }						\
   while (0)
 
-static void safe_byte_get_64(uint64_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
+static void safe_byte_get_64(unsigned long long *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
 {
     SAFE_BYTE_GET_(val, ptr, amt, end);
 }
@@ -431,7 +435,6 @@ static void safe_byte_get_32(uint32_t *val, unsigned char *ptr, unsigned int amt
 {
     SAFE_BYTE_GET_(val, ptr, amt, end);
 }
-
 static void safe_byte_get_16(uint16_t *val, unsigned char *ptr, unsigned int amt, const unsigned char *const end)
 {
     SAFE_BYTE_GET_(val, ptr, amt, end);
@@ -446,10 +449,37 @@ _Generic((VAL), \
     uint16_t: safe_byte_get_16, \
     uint32_t: safe_byte_get_32, \
     unsigned long: safe_byte_get_ulong, \
-    uint64_t: safe_byte_get_64 \
+    unsigned long long: safe_byte_get_64 \
 )(&(VAL),(PTR),(AMOUNT),(END))
-
-
+#else /* no _Generic */
+#define SAFE_BYTE_GET_(VAL, PTR, AMOUNT, END)	\
+  do						\
+    {						\
+      unsigned int amount = (AMOUNT);		\
+      if (sizeof (VAL) < amount)		\
+	{					\
+	  error (ngettext ("internal error: attempt to read %d byte "	\
+			   "of data in to %d sized variable",		\
+			   "internal error: attempt to read %d bytes "	\
+			   "of data in to %d sized variable",		\
+			   amount),					\
+		 amount, (int) sizeof (VAL));	\
+	  amount = sizeof (VAL);		\
+	}					\
+      if (((PTR) + amount) >= (END))		\
+	{					\
+	  if ((PTR) < (END))			\
+	    amount = (END) - (PTR);		\
+	  else					\
+	    amount = 0;				\
+	}					\
+      if (amount == 0 || amount > 8)		\
+	VAL = 0;				\
+      else					\
+	VAL = byte_get ((PTR), amount);		\
+    }						\
+  while (0)
+#endif /* _Generic */
 /* Like SAFE_BYTE_GET, but also increments PTR by AMOUNT.  */
 #define SAFE_BYTE_GET_AND_INC(VAL, PTR, AMOUNT, END)	\
   do							\
