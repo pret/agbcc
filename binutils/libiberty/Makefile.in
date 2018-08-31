@@ -136,13 +136,12 @@ CFILES = argv.c asprintf.c atexit.c				\
 	make-temp-file.c md5.c mkstemps.c			\
 	objalloc.c obstack.c						\
 	partition.c pexecute.c						\
-	 pex-common.c pex-djgpp.c pex-msdos.c pex-one.c			\
-	 pex-unix.c pex-win32.c						\
+	 pex-common.c pex-djgpp.c pex-one.c			\
+	 pex-unix.c						\
          physmem.c putenv.c						\
 	random.c regex.c rename.c rindex.c				\
 	safe-ctype.c setenv.c setproctitle.c sha1.c sigsetmask.c        \
-	 simple-object.c simple-object-coff.c simple-object-elf.c	\
-	 simple-object-mach-o.c simple-object-xcoff.c			\
+	 simple-object.c simple-object-elf.c	\
          sort.c						\
 	 spaces.c splay-tree.c stack-limit.c 	\
 	 strdup.c	\
@@ -178,9 +177,8 @@ REQUIRED_OFILES =							\
 	./pex-common.$(objext) ./pex-one.$(objext)			\
 	./@pexecute@.$(objext) ./vprintf-support.$(objext)		\
 	./safe-ctype.$(objext)						\
-	./simple-object.$(objext) ./simple-object-coff.$(objext)	\
-	./simple-object-elf.$(objext) ./simple-object-mach-o.$(objext)	\
-	./simple-object-xcoff.$(objext)					\
+	./simple-object.$(objext)	\
+	./simple-object-elf.$(objext) \
 	./sort.$(objext) ./spaces.$(objext)				\
 	./splay-tree.$(objext) ./stack-limit.$(objext)			\
 	./strsignal.$(objext)			\
@@ -203,8 +201,8 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	 ./gettimeofday.$(objext)					\
 	./index.$(objext) ./insque.$(objext)				\
 	 ./mkstemps.$(objext)	\
-	./pex-djgpp.$(objext) ./pex-msdos.$(objext)			\
-	 ./pex-unix.$(objext) ./pex-win32.$(objext)			\
+	./pex-djgpp.$(objext)			\
+	 ./pex-unix.$(objext)			\
 	 ./putenv.$(objext)						\
 	./random.$(objext) ./rename.$(objext) ./rindex.$(objext)	\
 	./setenv.$(objext) 						\
@@ -635,9 +633,6 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 ./mkstemps.$(objext): $(srcdir)/mkstemps.c config.h $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/mkstemps.c $(OUTPUT_OPTION)
 
-./msdos.$(objext): $(srcdir)/msdos.c
-	$(COMPILE.c) $(srcdir)/msdos.c $(OUTPUT_OPTION)
-
 ./objalloc.$(objext): $(srcdir)/objalloc.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/objalloc.h
 	$(COMPILE.c) $(srcdir)/objalloc.c $(OUTPUT_OPTION)
@@ -657,11 +652,6 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 	$(INCDIR)/libiberty.h $(srcdir)/pex-common.h
 	$(COMPILE.c) $(srcdir)/pex-djgpp.c $(OUTPUT_OPTION)
 
-./pex-msdos.$(objext): $(srcdir)/pex-msdos.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(srcdir)/pex-common.h \
-	$(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/pex-msdos.c $(OUTPUT_OPTION)
-
 ./pex-one.$(objext): $(srcdir)/pex-one.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/pex-one.c $(OUTPUT_OPTION)
@@ -669,10 +659,6 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 ./pex-unix.$(objext): $(srcdir)/pex-unix.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h $(srcdir)/pex-common.h
 	$(COMPILE.c) $(srcdir)/pex-unix.c $(OUTPUT_OPTION)
-
-./pex-win32.$(objext): $(srcdir)/pex-win32.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(srcdir)/pex-common.h
-	$(COMPILE.c) $(srcdir)/pex-win32.c $(OUTPUT_OPTION)
 
 ./pexecute.$(objext): $(srcdir)/pexecute.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
@@ -714,25 +700,10 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 ./sigsetmask.$(objext): $(srcdir)/sigsetmask.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/sigsetmask.c $(OUTPUT_OPTION)
 
-./simple-object-coff.$(objext): $(srcdir)/simple-object-coff.c config.h \
-	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h \
-	$(srcdir)/simple-object-common.h $(INCDIR)/simple-object.h
-	$(COMPILE.c) $(srcdir)/simple-object-coff.c $(OUTPUT_OPTION)
-
 ./simple-object-elf.$(objext): $(srcdir)/simple-object-elf.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h \
 	$(srcdir)/simple-object-common.h $(INCDIR)/simple-object.h
 	$(COMPILE.c) $(srcdir)/simple-object-elf.c $(OUTPUT_OPTION)
-
-./simple-object-mach-o.$(objext): $(srcdir)/simple-object-mach-o.c config.h \
-	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h \
-	$(srcdir)/simple-object-common.h $(INCDIR)/simple-object.h
-	$(COMPILE.c) $(srcdir)/simple-object-mach-o.c $(OUTPUT_OPTION)
-
-./simple-object-xcoff.$(objext): $(srcdir)/simple-object-xcoff.c config.h \
-	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h \
-	$(srcdir)/simple-object-common.h $(INCDIR)/simple-object.h
-	$(COMPILE.c) $(srcdir)/simple-object-xcoff.c $(OUTPUT_OPTION)
 
 ./simple-object.$(objext): $(srcdir)/simple-object.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h \

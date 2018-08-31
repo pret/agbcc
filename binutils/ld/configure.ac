@@ -36,7 +36,7 @@ AC_GNU_SOURCE
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_INSTALL
 
-LT_INIT
+#LT_INIT
 ACX_LARGEFILE
 
 AC_ARG_WITH(lib-path, [  --with-lib-path=dir1:dir2...  set default LIB_PATH],LIB_PATH=$withval)

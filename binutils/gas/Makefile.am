@@ -63,7 +63,6 @@ GAS_CFILES = \
 	depend.c \
 	dwarf2dbg.c \
 	dw2gencfi.c \
-	ecoff.c \
 	ehopt.c \
 	expr.c \
 	flonum-copy.c \
@@ -97,7 +96,6 @@ HFILES = \
 	compress-debug.h \
 	dwarf2dbg.h \
 	dw2gencfi.h \
-	ecoff.h \
 	emul-target.h \
 	emul.h \
 	expr.h \
@@ -271,57 +269,17 @@ TARGET_CPU_HFILES = \
 # OBJ files in config
 
 OBJ_FORMAT_CFILES = \
-	config/obj-aout.c \
-	config/obj-coff.c \
-	config/obj-ecoff.c \
-	config/obj-elf.c \
-	config/obj-evax.c \
-	config/obj-fdpicelf.c \
-	config/obj-macho.c \
-	config/obj-multi.c \
-	config/obj-som.c
+	config/obj-elf.c
 
 OBJ_FORMAT_HFILES = \
-	config/obj-aout.h \
-	config/obj-coff.h \
-	config/obj-ecoff.h \
 	config/obj-elf.h \
-	config/obj-evax.h \
-	config/obj-fdpicelf.h \
-	config/obj-macho.h \
-	config/obj-multi.h \
-	config/obj-som.h
+	config/obj-fdpicelf.h
 
 # Emulation header files in config
 
 TARG_ENV_HFILES = \
-	config/te-386bsd.h \
-	config/te-aix5.h \
 	config/te-armeabi.h \
-	config/te-armfbsdeabi.h \
-	config/te-armfbsdvfp.h \
-	config/te-armlinuxeabi.h \
-	config/te-freebsd.h \
-	config/te-generic.h \
-	config/te-gnu.h \
-	config/te-go32.h \
-	config/te-hppa.h \
-	config/te-hppa64.h \
-	config/te-hppalinux64.h \
-	config/te-ia64aix.h \
-	config/te-interix.h \
-	config/te-lynx.h \
-	config/te-macos.h \
-	config/te-nbsd.h \
-	config/te-nbsd532.h \
-	config/te-pc532mach.h \
-	config/te-pe.h \
-	config/te-solaris.h \
-	config/te-svr4.h \
-	config/te-symbian.h \
-	config/te-tmips.h \
-	config/te-vxworks.h \
-	config/te-wince-pe.h
+	config/te-generic.h
 
 TARG_ENV_CFILES = \
 	config/te-vms.c
@@ -332,7 +290,6 @@ MULTI_CFILES = \
 	config/e-crisaout.c \
 	config/e-criself.c \
 	config/e-i386aout.c \
-	config/e-i386coff.c \
 	config/e-i386elf.c \
 	config/e-mipself.c
 
@@ -381,14 +338,14 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
 # How to link with both our special library facilities
 # and the system's installed libraries.
 
-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la ../libiberty/libiberty.a
+GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.a ../libiberty/libiberty.a
 
 # Files to be copied away after each stage in building.
 STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
 
 as_new_SOURCES = $(GAS_CFILES)
 as_new_LDADD = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
-	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM)
+	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM) -lz
 as_new_DEPENDENCIES = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 	$(extra_objects) $(GASLIBS) $(LIBINTL_DEP)
 EXTRA_as_new_SOURCES = $(CFILES) $(HFILES) $(TARGET_CPU_CFILES) \
@@ -577,8 +534,8 @@ install-exec-bindir: $(noinst_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(noinst_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo "$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -588,7 +545,7 @@ install-exec-tooldir: install-exec-bindir $(noinst_PROGRAMS)
 	if [ "$(bindir)/$$n$(EXEEXT)" != "$(tooldir)/bin/as$(EXEEXT)" ]; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
+	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	else \
 	  true ; \
 	fi

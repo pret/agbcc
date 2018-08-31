@@ -51,7 +51,6 @@
 #include "sysdep.h"
 #include "bfd.h"
 #include "elf-bfd.h"
-#include "coff-bfd.h"
 #include "progress.h"
 #include "bucomm.h"
 #include "elfcomm.h"
@@ -478,56 +477,11 @@ dump_section_header (bfd *abfd, asection *section, void *data)
   PF (SEC_NEVER_LOAD, "NEVER_LOAD");
   PF (SEC_EXCLUDE, "EXCLUDE");
   PF (SEC_SORT_ENTRIES, "SORT_ENTRIES");
-  if (bfd_get_arch (abfd) == bfd_arch_tic54x)
-    {
-      PF (SEC_TIC54X_BLOCK, "BLOCK");
-      PF (SEC_TIC54X_CLINK, "CLINK");
-    }
   PF (SEC_SMALL_DATA, "SMALL_DATA");
-  if (bfd_get_flavour (abfd) == bfd_target_coff_flavour)
-    {
-      PF (SEC_COFF_SHARED, "SHARED");
-      PF (SEC_COFF_NOREAD, "NOREAD");
-    }
-  else if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
+  if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
     PF (SEC_ELF_PURECODE, "PURECODE");
   PF (SEC_THREAD_LOCAL, "THREAD_LOCAL");
   PF (SEC_GROUP, "GROUP");
-  if (bfd_get_arch (abfd) == bfd_arch_mep)
-    {
-      PF (SEC_MEP_VLIW, "VLIW");
-    }
-
-  if ((section->flags & SEC_LINK_ONCE) != 0)
-    {
-      const char *ls;
-      struct coff_comdat_info *comdat;
-
-      switch (section->flags & SEC_LINK_DUPLICATES)
-	{
-	default:
-	  abort ();
-	case SEC_LINK_DUPLICATES_DISCARD:
-	  ls = "LINK_ONCE_DISCARD";
-	  break;
-	case SEC_LINK_DUPLICATES_ONE_ONLY:
-	  ls = "LINK_ONCE_ONE_ONLY";
-	  break;
-	case SEC_LINK_DUPLICATES_SAME_SIZE:
-	  ls = "LINK_ONCE_SAME_SIZE";
-	  break;
-	case SEC_LINK_DUPLICATES_SAME_CONTENTS:
-	  ls = "LINK_ONCE_SAME_CONTENTS";
-	  break;
-	}
-      printf ("%s%s", comma, ls);
-
-      comdat = bfd_coff_get_comdat_section (abfd, section);
-      if (comdat != NULL)
-	printf (" (COMDAT %s %ld)", comdat->name, comdat->symbol);
-
-      comma = ", ";
-    }
 
   printf ("\n");
 #undef PF

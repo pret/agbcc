@@ -38,7 +38,7 @@ AC_PROG_CC
 AC_GNU_SOURCE
 AC_USE_SYSTEM_EXTENSIONS
 
-LT_INIT
+#LT_INIT
 ACX_LARGEFILE
 ACX_PROG_CMP_IGNORE_INITIAL
 
@@ -783,7 +783,7 @@ dnl AC_SUBST(emulation)
 # do we need the opcodes library?
 case "${need_opcodes}" in
 yes)
-  OPCODES_LIB=../opcodes/libopcodes.la
+  OPCODES_LIB=../opcodes/libopcodes.a
   ;;
 esac
 

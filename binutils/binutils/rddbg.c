@@ -63,17 +63,6 @@ read_debugging_info (bfd *abfd, asymbol **syms, long symcount, bfd_boolean no_me
 	return NULL;
     }
 
-  /* Try reading the COFF symbols if we didn't find any stabs in COFF
-     sections.  */
-  if (! found
-      && bfd_get_flavour (abfd) == bfd_target_coff_flavour
-      && symcount > 0)
-    {
-      if (! parse_coff (abfd, syms, symcount, dhandle))
-	return NULL;
-      found = TRUE;
-    }
-
   if (! found)
     {
       if (! no_messages)

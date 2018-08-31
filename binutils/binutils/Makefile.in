@@ -128,9 +128,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
 	$(top_srcdir)/../config/plugins.m4 \
 	$(top_srcdir)/../config/po.m4 \
 	$(top_srcdir)/../config/progtest.m4 \
-	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/../libtool.m4 \
-	$(top_srcdir)/../ltoptions.m4 $(top_srcdir)/../ltsugar.m4 \
-	$(top_srcdir)/../ltversion.m4 $(top_srcdir)/../lt~obsolete.m4 \
+	$(top_srcdir)/../config/zlib.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -155,12 +153,7 @@ am_ar_OBJECTS = arparse.$(OBJEXT) arlex.$(OBJEXT) ar.$(OBJEXT) \
 	binemul.$(OBJEXT) emul_$(EMULATION).$(OBJEXT) $(am__objects_1)
 ar_OBJECTS = $(am_ar_OBJECTS)
 am__DEPENDENCIES_1 =
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-am__objects_2 = rddbg.$(OBJEXT) debug.$(OBJEXT) stabs.$(OBJEXT) \
-	rdcoff.$(OBJEXT)
+am__objects_2 = debug.$(OBJEXT) stabs.$(OBJEXT) rddbg.$(OBJEXT)
 am__objects_3 = $(am__objects_2) wrstabs.$(OBJEXT)
 am_objcopy_OBJECTS = objcopy.$(OBJEXT) not-strip.$(OBJEXT) \
 	rename.$(OBJEXT) $(am__objects_3) $(am__objects_1)
@@ -229,26 +222,19 @@ am__depfiles_remade = ./$(DEPDIR)/ar.Po ./$(DEPDIR)/arlex.Po \
 	./$(DEPDIR)/mclex.Po ./$(DEPDIR)/not-ranlib.Po \
 	./$(DEPDIR)/not-strip.Po ./$(DEPDIR)/objcopy.Po \
 	./$(DEPDIR)/objdump.Po ./$(DEPDIR)/od-xcoff.Po \
-	./$(DEPDIR)/prdbg.Po ./$(DEPDIR)/rdcoff.Po \
-	./$(DEPDIR)/rddbg.Po ./$(DEPDIR)/rename.Po \
-	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/syslex_wrap.Po \
-	./$(DEPDIR)/unwind-ia64.Po ./$(DEPDIR)/version.Po \
+	./$(DEPDIR)/prdbg.Po ./$(DEPDIR)/rddbg.Po \
+	./$(DEPDIR)/rename.Po ./$(DEPDIR)/stabs.Po \
+	./$(DEPDIR)/syslex_wrap.cversion.Po ./$(DEPDIR)/version.Po \
 	./$(DEPDIR)/wrstabs.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
 am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
@@ -313,10 +299,7 @@ DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEMANGLER_NAME = @DEMANGLER_NAME@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
 DLLTOOL_DEFS = @DLLTOOL_DEFS@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -325,7 +308,6 @@ EMULATION = @EMULATION@
 EMULATION_VECTOR = @EMULATION_VECTOR@
 EXEEXT = @EXEEXT@
 EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
-FGREP = @FGREP@
 GENCAT = @GENCAT@
 GMSGFMT = @GMSGFMT@
 GREP = @GREP@
@@ -337,37 +319,26 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INSTOBJEXT = @INSTOBJEXT@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBINTL_DEP = @LIBINTL_DEP@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 MSGMERGE = @MSGMERGE@
-NM = @NM@
-NMEDIT = @NMEDIT@
 NO_WERROR = @NO_WERROR@
-OBJDUMP = @OBJDUMP@
 OBJDUMP_DEFS = @OBJDUMP_DEFS@
 
 # Extra object files for objdump
 OBJDUMP_PRIVATE_OFILES = @OBJDUMP_PRIVATE_OFILES@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -378,7 +349,6 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 POSUB = @POSUB@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -392,9 +362,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -488,7 +456,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 HFILES = \
 	arsup.h binemul.h bucomm.h budbg.h \
 	coffgrok.h debug.h dwarf.h elfcomm.h \
-	objdump.h sysdep.h unwind-ia64.h
+	objdump.h sysdep.h
 
 GENERATED_HFILES = arparse.h sysroff.h sysinfo.h defparse.h
 BUILT_SOURCES = $(GENERATED_HFILES)
@@ -500,16 +468,16 @@ CFILES = \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
 	not-ranlib.c not-strip.c \
 	objcopy.c objdump.c prdbg.c \
-	rdcoff.c rddbg.c rename.c \
+	rddbg.c rename.c \
 	stabs.c \
-	syslex_wrap.c unwind-ia64.c version.c \
+	syslex_wrap.cversion.c \
 	wrstabs.c  mclex.c
 
 GENERATED_CFILES = \
 	arparse.c arlex.c sysroff.c sysinfo.c syslex.c \
 	defparse.c deflex.c mcparse.c
 
-DEBUG_SRCS = rddbg.c debug.c stabs.c rdcoff.c
+DEBUG_SRCS = debug.c stabs.c rddbg.c
 WRITE_DEBUG_SRCS = $(DEBUG_SRCS) wrstabs.c
 
 # Code shared by all the binutils.
@@ -517,8 +485,8 @@ BULIBS = bucomm.c version.c filemode.c
 
 # Code shared by the ELF related programs.
 ELFLIBS = elfcomm.c
-BFDLIB = ../bfd/libbfd.la
-OPCODES = ../opcodes/libopcodes.la
+BFDLIB = ../bfd/libbfd.a
+OPCODES = ../opcodes/libopcodes.a
 LIBIBERTY = ../libiberty/libiberty.a
 POTFILES = $(CFILES) $(DEBUG_SRCS) $(HFILES)
 EXPECT = expect
@@ -546,20 +514,20 @@ objdump_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUM
 ar_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ranlib_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
-LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
+LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
-objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
+objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 ar_SOURCES = arparse.c arlex.c ar.c not-ranlib.c arsup.c rename.c binemul.c \
 	emul_$(EMULATION).c $(BULIBS)
 
 EXTRA_ar_SOURCES = $(CFILES)
-ar_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
+ar_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) -lz
 ranlib_SOURCES = ar.c is-ranlib.c arparse.c arlex.c arsup.c rename.c \
 	binemul.c emul_$(EMULATION).c $(BULIBS)
 
-ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
+ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) -lz
 EXTRA_DIST = arparse.c arparse.h arlex.c sysinfo.c sysinfo.h \
 	syslex.c deflex.c defparse.h defparse.c \
 	mcparse.h mcparse.c embedspu.sh
@@ -575,7 +543,7 @@ all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -634,7 +602,6 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
 	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
 	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' \
@@ -649,8 +616,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -666,13 +633,7 @@ uninstall-binPROGRAMS:
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
 ar$(EXEEXT): $(ar_OBJECTS) $(ar_DEPENDENCIES) $(EXTRA_ar_DEPENDENCIES) 
 	@rm -f ar$(EXEEXT)
@@ -756,12 +717,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objdump.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/od-xcoff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prdbg.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rdcoff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rddbg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rename.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stabs.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syslex_wrap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unwind-ia64.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syslex_wrap.cversion.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wrstabs.Po@am__quote@ # am--include-marker
 
@@ -784,22 +743,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -936,7 +879,7 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -965,18 +908,15 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/objdump.Po
 	-rm -f ./$(DEPDIR)/od-xcoff.Po
 	-rm -f ./$(DEPDIR)/prdbg.Po
-	-rm -f ./$(DEPDIR)/rdcoff.Po
 	-rm -f ./$(DEPDIR)/rddbg.Po
 	-rm -f ./$(DEPDIR)/rename.Po
 	-rm -f ./$(DEPDIR)/stabs.Po
-	-rm -f ./$(DEPDIR)/syslex_wrap.Po
-	-rm -f ./$(DEPDIR)/unwind-ia64.Po
+	-rm -f ./$(DEPDIR)/syslex_wrap.cversion.Po
 	-rm -f ./$(DEPDIR)/version.Po
 	-rm -f ./$(DEPDIR)/wrstabs.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags
+	distclean-generic distclean-hdr distclean-tags
 
 dvi: dvi-am
 
@@ -1047,12 +987,10 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/objdump.Po
 	-rm -f ./$(DEPDIR)/od-xcoff.Po
 	-rm -f ./$(DEPDIR)/prdbg.Po
-	-rm -f ./$(DEPDIR)/rdcoff.Po
 	-rm -f ./$(DEPDIR)/rddbg.Po
 	-rm -f ./$(DEPDIR)/rename.Po
 	-rm -f ./$(DEPDIR)/stabs.Po
-	-rm -f ./$(DEPDIR)/syslex_wrap.Po
-	-rm -f ./$(DEPDIR)/unwind-ia64.Po
+	-rm -f ./$(DEPDIR)/syslex_wrap.cversion.Po
 	-rm -f ./$(DEPDIR)/version.Po
 	-rm -f ./$(DEPDIR)/wrstabs.Po
 	-rm -f Makefile
@@ -1061,7 +999,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool mostlyclean-local
+	mostlyclean-local
 
 pdf: pdf-am
 
@@ -1077,19 +1015,18 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-DEJAGNU check-am clean clean-binPROGRAMS clean-cscope \
-	clean-generic clean-libtool cscope cscopelist-am ctags \
-	ctags-am distclean distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags dvi dvi-am html html-am info info-am install \
-	install-am install-binPROGRAMS install-binSCRIPTS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-local install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installcheck-local \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool mostlyclean-local pdf pdf-am ps ps-am tags \
+	clean-generic cscope cscopelist-am ctags ctags-am distclean \
+	distclean-DEJAGNU distclean-compile distclean-generic \
+	distclean-hdr distclean-tags dvi dvi-am html html-am info \
+	info-am install install-am install-binPROGRAMS \
+	install-binSCRIPTS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-local \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installcheck-local installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-local pdf pdf-am ps ps-am tags \
 	tags-am uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-binSCRIPTS
 
@@ -1219,8 +1156,8 @@ mostlyclean-local:
 install-exec-local: install-binPROGRAMS $(bin_PROGRAMS)
 	@list='$(RENAMED_PROGS)'; for p in $$list; do \
 	  if test -f $$p$(EXEEXT); then \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 	$(mkinstalldirs) $(DESTDIR)$(tooldir)/bin
@@ -1231,7 +1168,7 @@ install-exec-local: install-binPROGRAMS $(bin_PROGRAMS)
 	    if [ "$(bindir)/$$k" != "$(tooldir)/bin/$$j" ]; then \
 	      rm -f $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
 	      ln $(DESTDIR)$(bindir)/$$k$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT) >/dev/null 2>/dev/null \
-		|| $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$i$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
+		|| $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$i$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
 	    fi; \
 	  else true; \
 	  fi; \

@@ -163,9 +163,6 @@
 /* Using i386 COFF? */
 #undef I386COFF
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
-#undef LT_OBJDIR
-
 /* Default CPU for MIPS targets. */
 #undef MIPS_CPU_STRING_DEFAULT
 

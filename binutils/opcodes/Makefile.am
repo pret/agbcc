@@ -36,19 +36,17 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
 LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
 	$(LDFLAGS_FOR_BUILD) -o $@
 
-libopcodes_la_LDFLAGS =
+libopcodes_a_LDFLAGS =
 if INSTALL_LIBBFD
 bfdlibdir = @bfdlibdir@
 bfdincludedir = @bfdincludedir@
-bfdlib_LTLIBRARIES = libopcodes.la
 bfdinclude_DATA = $(INCDIR)/dis-asm.h
 else
 # Empty these so that the respective installation directories will not be created.
 bfdlibdir =
 bfdincludedir =
 rpath_bfdlibdir = @bfdlibdir@
-noinst_LTLIBRARIES = libopcodes.la
-libopcodes_la_LDFLAGS += -rpath $(rpath_bfdlibdir)
+libopcodes_a_LDFLAGS += -rpath $(rpath_bfdlibdir)
 endif
 
 # This is where bfd.h lives.
@@ -289,7 +287,7 @@ CFILES = \
 	s390-mkopc.c \
 	z8kgen.c
 
-ALL_MACHINES = $(TARGET_LIBOPCODES_CFILES:.c=.lo)
+ALL_MACHINES = $(TARGET_LIBOPCODES_CFILES:.c=.o)
 
 OFILES = @BFD_MACHINES@
 
@@ -298,30 +296,30 @@ CONFIG_STATUS_DEPENDENCIES = $(BFDDIR)/development.sh
 
 AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(INCDIR) -I$(BFDDIR) @HDEFINES@
 
-disassemble.lo: disassemble.c
+disassemble.o: disassemble.c
 if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/disassemble.c
+	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/disassemble.c
 	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 else
 if AMDEP
 	source='disassemble.c' object='$@' libtool=yes @AMDEPBACKSLASH@
 	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 endif
-	$(LTCOMPILE) -c -o $@ @archdefs@ $(srcdir)/disassemble.c
+	$(COMPILE_FOR_BUILD) -c -o $@ @archdefs@ $(srcdir)/disassemble.c
 endif
 
-libopcodes_la_SOURCES =  dis-buf.c disassemble.c dis-init.c
+libopcodes_a_SOURCES =  dis-buf.c disassemble.c dis-init.c
 # It's desirable to list ../bfd/libbfd.la in DEPENDENCIES and LIBADD.
 # Unfortunately this causes libtool to add -L$(libdir), referring to the
 # planned install directory of libbfd.  This can cause us to pick up an
 # old version of libbfd, or to pick up libbfd for the wrong architecture
 # if host != build. So for building with shared libraries we use a
 # hardcoded path to libbfd.so instead of relying on the entries in libbfd.la.
-libopcodes_la_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
-libopcodes_la_LIBADD = $(OFILES) @SHARED_LIBADD@
-libopcodes_la_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@
+libopcodes_a_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
+libopcodes_a_LIBADD = $(OFILES) @SHARED_LIBADD@
+libopcodes_a_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@
 # Allow dependency tracking to work on all the source files.
-EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
+EXTRA_libopcodes_a_SOURCES = $(LIBOPCODES_CFILES)
 
 # libtool will build .libs/libopcodes.a.  We create libopcodes.a in
 # the build directory so that we don't have to convert all the
@@ -329,18 +327,18 @@ EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
 # should be removed if everything else starts using libtool.  FIXME.
 
 noinst_LIBRARIES = libopcodes.a
-libopcodes_a_SOURCES =
-
-stamp-lib: libopcodes.la
-	libtooldir=`$(LIBTOOL) --config | sed -n -e 's/^objdir=//p'`; \
-	if [ -f $$libtooldir/libopcodes.a ]; then \
-	  cp $$libtooldir/libopcodes.a libopcodes.tmp; \
-	  $(RANLIB) libopcodes.tmp; \
-	  $(SHELL) $(srcdir)/../move-if-change libopcodes.tmp libopcodes.a; \
-	else true; fi
-	touch stamp-lib
-
-libopcodes.a: stamp-lib ; @true
+#libopcodes_a_SOURCES =
+#
+#stamp-lib: libopcodes.la
+#	libtooldir=`$(LIBTOOL) --config | sed -n -e 's/^objdir=//p'`; \
+#	if [ -f $$libtooldir/libopcodes.a ]; then \
+#	  cp $$libtooldir/libopcodes.a libopcodes.tmp; \
+#	  $(RANLIB) libopcodes.tmp; \
+#	  $(SHELL) $(srcdir)/../move-if-change libopcodes.tmp libopcodes.a; \
+#	else true; fi
+#	touch stamp-lib
+#
+#libopcodes.a: stamp-lib ; @true
 
 POTFILES = $(HFILES) $(CFILES)
 po/POTFILES.in: @MAINT@ Makefile
@@ -547,7 +545,7 @@ $(srcdir)/i386-tbl.h: $(srcdir)/i386-init.h
 $(srcdir)/i386-init.h: @MAINT@ i386-gen$(EXEEXT_FOR_BUILD) i386-opc.tbl i386-reg.tbl
 	./i386-gen$(EXEEXT_FOR_BUILD) --srcdir $(srcdir)
 
-i386-opc.lo: $(srcdir)/i386-tbl.h
+i386-opc.o: $(srcdir)/i386-tbl.h
 
 ia64-gen$(EXEEXT_FOR_BUILD): ia64-gen.o $(BUILD_LIB_DEPS)
 	$(LINK_FOR_BUILD) ia64-gen.o $(BUILD_LIBS)
@@ -566,7 +564,7 @@ ia64_asmtab_deps = ia64-gen$(EXEEXT_FOR_BUILD) ia64-ic.tbl \
 $(srcdir)/ia64-asmtab.c: @MAINT@ $(ia64_asmtab_deps)
 	./ia64-gen$(EXEEXT_FOR_BUILD) --srcdir $(srcdir) > $@
 
-ia64-opc.lo: $(srcdir)/ia64-asmtab.c
+ia64-opc.o: $(srcdir)/ia64-asmtab.c
 
 $(srcdir)/msp430-decode.c: @MAINT@ $(srcdir)/msp430-decode.opc opc2c$(EXEEXT_FOR_BUILD)
 	./opc2c$(EXEEXT_FOR_BUILD) $(srcdir)/msp430-decode.opc > $(srcdir)/msp430-decode.c
@@ -589,7 +587,7 @@ s390-mkopc$(EXEEXT_FOR_BUILD): s390-mkopc.c
 s390-opc.tab: s390-mkopc$(EXEEXT_FOR_BUILD) s390-opc.txt
 	./s390-mkopc$(EXEEXT_FOR_BUILD) < $(srcdir)/s390-opc.txt > s390-opc.tab
 
-s390-opc.lo: s390-opc.tab
+s390-opc.o: s390-opc.tab
 
 z8kgen$(EXEEXT_FOR_BUILD): z8kgen.o $(BUILD_LIB_DEPS)
 	$(LINK_FOR_BUILD) z8kgen.o $(BUILD_LIBS)
@@ -600,29 +598,29 @@ z8kgen.o: z8kgen.c
 $(srcdir)/z8k-opc.h: @MAINT@ z8kgen$(EXEEXT_FOR_BUILD)
 	./z8kgen$(EXEEXT_FOR_BUILD) -a > $@
 
-z8k-dis.lo: $(srcdir)/z8k-opc.h
+z8k-dis.o: $(srcdir)/z8k-opc.h
 
 MIPS_DEFS=`case \`cat ../bfd/ofiles\` in *elfxx-mips*) echo "-DHAVE_BFD_MIPS_ELF_GET_ABIFLAGS=1";; esac`
-mips-dis.lo: mips-dis.c
+mips-dis.o: mips-dis.c
 if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(MIPS_DEFS) $<
+	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(MIPS_DEFS) $<
 	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 else
 if AMDEP
 	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 endif
-	$(LTCOMPILE) -c -o $@ $(MIPS_DEFS) $<
+	$(COMPILE_FOR_BUILD) -c -o $@ $(MIPS_DEFS) $<
 endif
 
-sh-dis.lo: sh-dis.c
+sh-dis.o: sh-dis.c
 if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
+	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
 	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 else
 if AMDEP
 	source='sh-dis.c' object='$@' libtool=yes @AMDEPBACKSLASH@
 	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 endif
-	$(LTCOMPILE) -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
+	$(COMPILE_FOR_BUILD) -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
 endif

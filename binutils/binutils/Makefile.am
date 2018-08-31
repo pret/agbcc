@@ -81,7 +81,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 HFILES = \
 	arsup.h binemul.h bucomm.h budbg.h \
 	coffgrok.h debug.h dwarf.h elfcomm.h \
-	objdump.h sysdep.h unwind-ia64.h
+	objdump.h sysdep.h
 
 GENERATED_HFILES = arparse.h sysroff.h sysinfo.h defparse.h
 BUILT_SOURCES = $(GENERATED_HFILES)
@@ -94,16 +94,16 @@ CFILES = \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
 	not-ranlib.c not-strip.c \
 	objcopy.c objdump.c prdbg.c \
-	rdcoff.c rddbg.c rename.c \
+	rddbg.c rename.c \
 	stabs.c \
-	syslex_wrap.c unwind-ia64.c version.c \
+	syslex_wrap.cversion.c \
 	wrstabs.c  mclex.c
 
 GENERATED_CFILES = \
 	arparse.c arlex.c sysroff.c sysinfo.c syslex.c \
 	defparse.c deflex.c mcparse.c
 
-DEBUG_SRCS = rddbg.c debug.c stabs.c rdcoff.c
+DEBUG_SRCS = debug.c stabs.c rddbg.c
 WRITE_DEBUG_SRCS = $(DEBUG_SRCS) wrstabs.c
 
 # Extra object files for objdump
@@ -115,9 +115,9 @@ BULIBS = bucomm.c version.c filemode.c
 # Code shared by the ELF related programs.
 ELFLIBS = elfcomm.c
 
-BFDLIB = ../bfd/libbfd.la
+BFDLIB = ../bfd/libbfd.a
 
-OPCODES = ../opcodes/libopcodes.la
+OPCODES = ../opcodes/libopcodes.a
 
 LIBIBERTY = ../libiberty/libiberty.a
 
@@ -169,13 +169,13 @@ ar_DEPENDENCIES =        $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 
-LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
+LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 
 objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
 objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
-objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
+objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 
 objdump.@OBJEXT@:objdump.c
 if am__fastdepCC
@@ -194,11 +194,11 @@ endif
 ar_SOURCES = arparse.c arlex.c ar.c not-ranlib.c arsup.c rename.c binemul.c \
 	emul_$(EMULATION).c $(BULIBS)
 EXTRA_ar_SOURCES = $(CFILES)
-ar_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
+ar_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) -lz
 
 ranlib_SOURCES = ar.c is-ranlib.c arparse.c arlex.c arsup.c rename.c \
 	binemul.c emul_$(EMULATION).c $(BULIBS)
-ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL)
+ranlib_LDADD = $(BFDLIB) $(LIBIBERTY) $(LEXLIB) $(LIBINTL) -lz
 
 
 # The following is commented out for the conversion to automake.
@@ -334,8 +334,8 @@ mostlyclean-local:
 install-exec-local: install-binPROGRAMS $(bin_PROGRAMS)
 	@list='$(RENAMED_PROGS)'; for p in $$list; do \
 	  if test -f $$p$(EXEEXT); then \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p$(EXEEXT) $(bindir)/`echo $$p|sed -e 's/-new//' |sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p$(EXEEXT) $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 	$(mkinstalldirs) $(DESTDIR)$(tooldir)/bin
@@ -346,7 +346,7 @@ install-exec-local: install-binPROGRAMS $(bin_PROGRAMS)
 	    if [ "$(bindir)/$$k" != "$(tooldir)/bin/$$j" ]; then \
 	      rm -f $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
 	      ln $(DESTDIR)$(bindir)/$$k$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT) >/dev/null 2>/dev/null \
-		|| $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$i$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
+		|| $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$i$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$$j$(EXEEXT); \
 	    fi; \
 	  else true; \
 	  fi; \

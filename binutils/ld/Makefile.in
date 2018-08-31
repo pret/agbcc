@@ -32,7 +32,6 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -117,9 +116,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
 	$(top_srcdir)/../config/lcmessage.m4 \
 	$(top_srcdir)/../config/lead-dot.m4 \
 	$(top_srcdir)/../config/override.m4 \
-	$(top_srcdir)/../config/plugins.m4 $(top_srcdir)/../libtool.m4 \
-	$(top_srcdir)/../ltoptions.m4 $(top_srcdir)/../ltsugar.m4 \
-	$(top_srcdir)/../ltversion.m4 $(top_srcdir)/../lt~obsolete.m4 \
+	$(top_srcdir)/../config/plugins.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -134,48 +131,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)"
 PROGRAMS = $(bin_PROGRAMS)
-LTLIBRARIES = $(noinst_LTLIBRARIES)
-libldtestplug_la_LIBADD =
-@ENABLE_PLUGINS_TRUE@am_libldtestplug_la_OBJECTS =  \
-@ENABLE_PLUGINS_TRUE@	libldtestplug_la-testplug.lo
-libldtestplug_la_OBJECTS = $(am_libldtestplug_la_OBJECTS)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-libldtestplug_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libldtestplug_la_CFLAGS) $(CFLAGS) \
-	$(libldtestplug_la_LDFLAGS) $(LDFLAGS) -o $@
-@ENABLE_PLUGINS_TRUE@am_libldtestplug_la_rpath =
-libldtestplug2_la_LIBADD =
-@ENABLE_PLUGINS_TRUE@am_libldtestplug2_la_OBJECTS =  \
-@ENABLE_PLUGINS_TRUE@	libldtestplug2_la-testplug2.lo
-libldtestplug2_la_OBJECTS = $(am_libldtestplug2_la_OBJECTS)
-libldtestplug2_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libldtestplug2_la_CFLAGS) $(CFLAGS) \
-	$(libldtestplug2_la_LDFLAGS) $(LDFLAGS) -o $@
-@ENABLE_PLUGINS_TRUE@am_libldtestplug2_la_rpath =
-libldtestplug3_la_LIBADD =
-@ENABLE_PLUGINS_TRUE@am_libldtestplug3_la_OBJECTS =  \
-@ENABLE_PLUGINS_TRUE@	libldtestplug3_la-testplug3.lo
-libldtestplug3_la_OBJECTS = $(am_libldtestplug3_la_OBJECTS)
-libldtestplug3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libldtestplug3_la_CFLAGS) $(CFLAGS) \
-	$(libldtestplug3_la_LDFLAGS) $(LDFLAGS) -o $@
-@ENABLE_PLUGINS_TRUE@am_libldtestplug3_la_rpath =
-libldtestplug4_la_LIBADD =
-@ENABLE_PLUGINS_TRUE@am_libldtestplug4_la_OBJECTS =  \
-@ENABLE_PLUGINS_TRUE@	libldtestplug4_la-testplug4.lo
-libldtestplug4_la_OBJECTS = $(am_libldtestplug4_la_OBJECTS)
-libldtestplug4_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libldtestplug4_la_CFLAGS) $(CFLAGS) \
-	$(libldtestplug4_la_LDFLAGS) $(LDFLAGS) -o $@
-@ENABLE_PLUGINS_TRUE@am_libldtestplug4_la_rpath =
-@ENABLE_PLUGINS_TRUE@am__objects_1 = plugin.$(OBJEXT)
+am__objects_1 =
 am_ld_new_OBJECTS = ldgram.$(OBJEXT) ldlex-wrapper.$(OBJEXT) \
 	lexsup.$(OBJEXT) ldlang.$(OBJEXT) mri.$(OBJEXT) \
 	ldctor.$(OBJEXT) ldmain.$(OBJEXT) ldwrite.$(OBJEXT) \
@@ -369,34 +325,22 @@ am__depfiles_remade = ./$(DEPDIR)/deffilep.Po \
 	./$(DEPDIR)/ldlex.Po ./$(DEPDIR)/ldmain.Po \
 	./$(DEPDIR)/ldmisc.Po ./$(DEPDIR)/ldver.Po \
 	./$(DEPDIR)/ldwrite.Po ./$(DEPDIR)/lexsup.Po \
-	./$(DEPDIR)/libldtestplug2_la-testplug2.Plo \
-	./$(DEPDIR)/libldtestplug3_la-testplug3.Plo \
-	./$(DEPDIR)/libldtestplug4_la-testplug4.Plo \
-	./$(DEPDIR)/libldtestplug_la-testplug.Plo ./$(DEPDIR)/mri.Po \
-	./$(DEPDIR)/pe-dll.Po ./$(DEPDIR)/pep-dll.Po \
-	./$(DEPDIR)/plugin.Po
+	./$(DEPDIR)/mri.Po ./$(DEPDIR)/pe-dll.Po \
+	./$(DEPDIR)/pep-dll.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
 am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libldtestplug_la_SOURCES) $(libldtestplug2_la_SOURCES) \
-	$(libldtestplug3_la_SOURCES) $(libldtestplug4_la_SOURCES) \
-	$(ld_new_SOURCES) $(EXTRA_ld_new_SOURCES)
+SOURCES = $(ld_new_SOURCES) $(EXTRA_ld_new_SOURCES)
 AM_V_DVIPS = $(am__v_DVIPS_@AM_V@)
 am__v_DVIPS_ = $(am__v_DVIPS_@AM_DEFAULT_V@)
 am__v_DVIPS_0 = @echo "  DVIPS   " $@;
@@ -495,7 +439,6 @@ transform = s/^ld-new$$/$(installed_linker)/;@program_transform_name@
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -506,15 +449,11 @@ CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
-CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -524,7 +463,6 @@ EMULATION_LIBPATH = @EMULATION_LIBPATH@
 EMULATION_OFILES = @EMULATION_OFILES@
 EMUL_EXTRA_OFILES = @EMUL_EXTRA_OFILES@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
 GREP = @GREP@
 HDEFINES = @HDEFINES@
 INSTALL = @INSTALL@
@@ -532,11 +470,9 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
 
 # Search path to override the default search path for -lfoo libraries.
 # If LIB_PATH is empty, the ones in the script (if any) are left alone.
@@ -546,22 +482,13 @@ LIBTOOL = @LIBTOOL@
 # which may have the form: LIB_PATH=/lib:/usr/local/lib.  This can be set
 # when the linker is configured via the --with-lib-path configure switch.
 LIB_PATH = @LIB_PATH@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NATIVE_LIB_DIRS = @NATIVE_LIB_DIRS@
-NM = @NM@
-NMEDIT = @NMEDIT@
 NO_WERROR = @NO_WERROR@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -570,8 +497,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRINGIFY = @STRINGIFY@
@@ -589,10 +514,8 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -662,16 +585,10 @@ ELF_CLFAGS = -DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
 
 AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
-@ENABLE_PLUGINS_FALSE@PLUGIN_C = 
-
-# Conditionally enable the plugin interface.
-@ENABLE_PLUGINS_TRUE@PLUGIN_C = plugin.c
-@ENABLE_PLUGINS_FALSE@PLUGIN_H = 
-@ENABLE_PLUGINS_TRUE@PLUGIN_H = plugin.h
-@ENABLE_PLUGINS_FALSE@PLUGIN_OBJECT = 
-@ENABLE_PLUGINS_TRUE@PLUGIN_OBJECT = plugin.@OBJEXT@
-@ENABLE_PLUGINS_FALSE@PLUGIN_CFLAGS = 
-@ENABLE_PLUGINS_TRUE@PLUGIN_CFLAGS = -DENABLE_PLUGINS
+PLUGIN_C = 
+PLUGIN_H = 
+PLUGIN_OBJECT = 
+PLUGIN_CFLAGS = 
 
 # We put the scripts in the directory $(scriptdir)/ldscripts.
 # We can't put the scripts in $(datadir) because the SEARCH_DIR
@@ -749,7 +666,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 	$(HDEFINES) $(CFLAGS) $(PLUGIN_CFLAGS) \
 	-DLOCALEDIR="\"$(datadir)/locale\""
 
-BFDLIB = ../bfd/libbfd.la
+BFDLIB = ../bfd/libbfd.a
 LIBIBERTY = ../libiberty/libiberty.a
 ALL_EMULATION_SOURCES = \
 	eaix5ppc.c \
@@ -1118,26 +1035,7 @@ ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
 		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
 
-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
-
-#
-# Build a dummy plugin using libtool.
-#
-@ENABLE_PLUGINS_TRUE@noinst_LTLIBRARIES = libldtestplug.la libldtestplug2.la \
-@ENABLE_PLUGINS_TRUE@		     libldtestplug3.la libldtestplug4.la
-
-@ENABLE_PLUGINS_TRUE@libldtestplug_la_SOURCES = testplug.c
-@ENABLE_PLUGINS_TRUE@libldtestplug_la_CFLAGS = -g -O2
-@ENABLE_PLUGINS_TRUE@libldtestplug_la_LDFLAGS = -no-undefined -rpath /nowhere
-@ENABLE_PLUGINS_TRUE@libldtestplug2_la_SOURCES = testplug2.c
-@ENABLE_PLUGINS_TRUE@libldtestplug2_la_CFLAGS = -g -O2
-@ENABLE_PLUGINS_TRUE@libldtestplug2_la_LDFLAGS = -no-undefined -rpath /nowhere
-@ENABLE_PLUGINS_TRUE@libldtestplug3_la_SOURCES = testplug3.c
-@ENABLE_PLUGINS_TRUE@libldtestplug3_la_CFLAGS = -g -O2
-@ENABLE_PLUGINS_TRUE@libldtestplug3_la_LDFLAGS = -no-undefined -rpath /nowhere
-@ENABLE_PLUGINS_TRUE@libldtestplug4_la_SOURCES = testplug4.c
-@ENABLE_PLUGINS_TRUE@libldtestplug4_la_CFLAGS = -g -O2
-@ENABLE_PLUGINS_TRUE@libldtestplug4_la_LDFLAGS = -no-undefined -rpath /nowhere
+ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 MAINTAINERCLEANFILES = configdoc.texi
 
 # We want to reconfigure if configure.host or configure.tgt changes.
@@ -1160,7 +1058,7 @@ all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .dvi .lo .o .obj .ps
+.SUFFIXES: .c .dvi .o .obj .ps
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -1219,7 +1117,6 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
 	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
 	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
 	sed -e 'p;s,.*/,,;n;h' \
@@ -1234,8 +1131,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	while read type dir files; do \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
 	    } \
 	; done
 
@@ -1251,36 +1148,7 @@ uninstall-binPROGRAMS:
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-libldtestplug.la: $(libldtestplug_la_OBJECTS) $(libldtestplug_la_DEPENDENCIES) $(EXTRA_libldtestplug_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libldtestplug_la_LINK) $(am_libldtestplug_la_rpath) $(libldtestplug_la_OBJECTS) $(libldtestplug_la_LIBADD) $(LIBS)
-
-libldtestplug2.la: $(libldtestplug2_la_OBJECTS) $(libldtestplug2_la_DEPENDENCIES) $(EXTRA_libldtestplug2_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libldtestplug2_la_LINK) $(am_libldtestplug2_la_rpath) $(libldtestplug2_la_OBJECTS) $(libldtestplug2_la_LIBADD) $(LIBS)
-
-libldtestplug3.la: $(libldtestplug3_la_OBJECTS) $(libldtestplug3_la_DEPENDENCIES) $(EXTRA_libldtestplug3_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libldtestplug3_la_LINK) $(am_libldtestplug3_la_rpath) $(libldtestplug3_la_OBJECTS) $(libldtestplug3_la_LIBADD) $(LIBS)
-
-libldtestplug4.la: $(libldtestplug4_la_OBJECTS) $(libldtestplug4_la_DEPENDENCIES) $(EXTRA_libldtestplug4_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libldtestplug4_la_LINK) $(am_libldtestplug4_la_rpath) $(libldtestplug4_la_OBJECTS) $(libldtestplug4_la_LIBADD) $(LIBS)
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
 ld-new$(EXEEXT): $(ld_new_OBJECTS) $(ld_new_DEPENDENCIES) $(EXTRA_ld_new_DEPENDENCIES) 
 	@rm -f ld-new$(EXEEXT)
@@ -1610,14 +1478,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldver.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldwrite.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lexsup.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libldtestplug2_la-testplug2.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libldtestplug3_la-testplug3.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libldtestplug4_la-testplug4.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libldtestplug_la-testplug.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mri.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pe-dll.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pep-dll.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1638,50 +1501,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-libldtestplug_la-testplug.lo: testplug.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug_la_CFLAGS) $(CFLAGS) -MT libldtestplug_la-testplug.lo -MD -MP -MF $(DEPDIR)/libldtestplug_la-testplug.Tpo -c -o libldtestplug_la-testplug.lo `test -f 'testplug.c' || echo '$(srcdir)/'`testplug.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libldtestplug_la-testplug.Tpo $(DEPDIR)/libldtestplug_la-testplug.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='testplug.c' object='libldtestplug_la-testplug.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug_la_CFLAGS) $(CFLAGS) -c -o libldtestplug_la-testplug.lo `test -f 'testplug.c' || echo '$(srcdir)/'`testplug.c
-
-libldtestplug2_la-testplug2.lo: testplug2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug2_la_CFLAGS) $(CFLAGS) -MT libldtestplug2_la-testplug2.lo -MD -MP -MF $(DEPDIR)/libldtestplug2_la-testplug2.Tpo -c -o libldtestplug2_la-testplug2.lo `test -f 'testplug2.c' || echo '$(srcdir)/'`testplug2.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libldtestplug2_la-testplug2.Tpo $(DEPDIR)/libldtestplug2_la-testplug2.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='testplug2.c' object='libldtestplug2_la-testplug2.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug2_la_CFLAGS) $(CFLAGS) -c -o libldtestplug2_la-testplug2.lo `test -f 'testplug2.c' || echo '$(srcdir)/'`testplug2.c
-
-libldtestplug3_la-testplug3.lo: testplug3.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug3_la_CFLAGS) $(CFLAGS) -MT libldtestplug3_la-testplug3.lo -MD -MP -MF $(DEPDIR)/libldtestplug3_la-testplug3.Tpo -c -o libldtestplug3_la-testplug3.lo `test -f 'testplug3.c' || echo '$(srcdir)/'`testplug3.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libldtestplug3_la-testplug3.Tpo $(DEPDIR)/libldtestplug3_la-testplug3.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='testplug3.c' object='libldtestplug3_la-testplug3.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug3_la_CFLAGS) $(CFLAGS) -c -o libldtestplug3_la-testplug3.lo `test -f 'testplug3.c' || echo '$(srcdir)/'`testplug3.c
-
-libldtestplug4_la-testplug4.lo: testplug4.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug4_la_CFLAGS) $(CFLAGS) -MT libldtestplug4_la-testplug4.lo -MD -MP -MF $(DEPDIR)/libldtestplug4_la-testplug4.Tpo -c -o libldtestplug4_la-testplug4.lo `test -f 'testplug4.c' || echo '$(srcdir)/'`testplug4.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libldtestplug4_la-testplug4.Tpo $(DEPDIR)/libldtestplug4_la-testplug4.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='testplug4.c' object='libldtestplug4_la-testplug4.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libldtestplug4_la_CFLAGS) $(CFLAGS) -c -o libldtestplug4_la-testplug4.lo `test -f 'testplug4.c' || echo '$(srcdir)/'`testplug4.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
 .dvi.ps:
 	$(AM_V_DVIPS)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
 	$(DVIPS) $(AM_V_texinfo) -o $@ $<
@@ -1868,7 +1687,7 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-DEJAGNU
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(INFO_DEPS) $(PROGRAMS) $(LTLIBRARIES) config.h
+all-am: Makefile $(INFO_DEPS) $(PROGRAMS) config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -1911,8 +1730,7 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-aminfo clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES mostlyclean-am
+clean-am: clean-aminfo clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -2234,18 +2052,12 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/ldver.Po
 	-rm -f ./$(DEPDIR)/ldwrite.Po
 	-rm -f ./$(DEPDIR)/lexsup.Po
-	-rm -f ./$(DEPDIR)/libldtestplug2_la-testplug2.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug3_la-testplug3.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug4_la-testplug4.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug_la-testplug.Plo
 	-rm -f ./$(DEPDIR)/mri.Po
 	-rm -f ./$(DEPDIR)/pe-dll.Po
 	-rm -f ./$(DEPDIR)/pep-dll.Po
-	-rm -f ./$(DEPDIR)/plugin.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-local distclean-tags
+	distclean-generic distclean-hdr distclean-local distclean-tags
 
 dvi: dvi-am
 
@@ -2699,14 +2511,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/ldver.Po
 	-rm -f ./$(DEPDIR)/ldwrite.Po
 	-rm -f ./$(DEPDIR)/lexsup.Po
-	-rm -f ./$(DEPDIR)/libldtestplug2_la-testplug2.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug3_la-testplug3.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug4_la-testplug4.Plo
-	-rm -f ./$(DEPDIR)/libldtestplug_la-testplug.Plo
 	-rm -f ./$(DEPDIR)/mri.Po
 	-rm -f ./$(DEPDIR)/pe-dll.Po
 	-rm -f ./$(DEPDIR)/pep-dll.Po
-	-rm -f ./$(DEPDIR)/plugin.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-aminfo \
 	maintainer-clean-generic
@@ -2714,7 +2521,7 @@ maintainer-clean-am: distclean-am maintainer-clean-aminfo \
 mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-aminfo mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool mostlyclean-local
+	mostlyclean-generic mostlyclean-local
 
 pdf: pdf-am
 
@@ -2731,24 +2538,22 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dvi-am uninstall-html-am \
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-DEJAGNU check-am clean clean-aminfo clean-binPROGRAMS \
-	clean-cscope clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES cscope cscopelist-am ctags ctags-am \
+	clean-cscope clean-generic cscope cscopelist-am ctags ctags-am \
 	dist-info distclean distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-local distclean-tags dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-local install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-local install-html \
+	distclean-generic distclean-hdr distclean-local distclean-tags \
+	dvi dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am \
+	install-data-local install-dvi install-dvi-am install-exec \
+	install-exec-am install-exec-local install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-aminfo \
 	maintainer-clean-generic mostlyclean mostlyclean-aminfo \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	mostlyclean-local pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-dvi-am \
-	uninstall-html-am uninstall-info-am uninstall-pdf-am \
-	uninstall-ps-am
+	mostlyclean-compile mostlyclean-generic mostlyclean-local pdf \
+	pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-dvi-am uninstall-html-am \
+	uninstall-info-am uninstall-pdf-am uninstall-ps-am
 
 .PRECIOUS: Makefile
 
@@ -4091,6 +3896,10 @@ check-DEJAGNU: site.exp
 	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
 	fi
 
+#
+# Build a dummy plugin using libtool.
+#
+
 # DOCUMENTATION TARGETS
 # Manual configuration file; not usually attached to normal configuration,
 # because almost all configs use "gen" version of manual.
@@ -4121,17 +3930,17 @@ install-exec-local: ld-new$(EXEEXT) install-binPROGRAMS
 	if test "$(bindir)" != "$(tooldir)/bin"; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
 	fi; \
 	if test "x$(install_as_default)" = "xyes"; then \
 	  ld=`echo ld | sed '$(transform)'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
 	  if test "$(bindir)" != "$(tooldir)/bin"; then \
 	    rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	    ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
+	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	  fi; \
 	fi
 

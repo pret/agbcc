@@ -19,346 +19,6 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston,
    MA 02110-1301, USA.  */
 
-/*
-INODE
-typedef bfd, Error reporting, BFD front end, BFD front end
-
-SECTION
-	<<typedef bfd>>
-
-	A BFD has type <<bfd>>; objects of this type are the
-	cornerstone of any application using BFD. Using BFD
-	consists of making references though the BFD and to data in the BFD.
-
-	Here is the structure that defines the type <<bfd>>.  It
-	contains the major data about the file and pointers
-	to the rest of the data.
-
-CODE_FRAGMENT
-.
-.enum bfd_direction
-.  {
-.    no_direction = 0,
-.    read_direction = 1,
-.    write_direction = 2,
-.    both_direction = 3
-.  };
-.
-.enum bfd_plugin_format
-.  {
-.    bfd_plugin_unknown = 0,
-.    bfd_plugin_yes = 1,
-.    bfd_plugin_no = 2
-.  };
-.
-.struct bfd_build_id
-.  {
-.    bfd_size_type size;
-.    bfd_byte data[1];
-.  };
-.
-.struct bfd
-.{
-.  {* The filename the application opened the BFD with.  *}
-.  const char *filename;
-.
-.  {* A pointer to the target jump table.  *}
-.  const struct bfd_target *xvec;
-.
-.  {* The IOSTREAM, and corresponding IO vector that provide access
-.     to the file backing the BFD.  *}
-.  void *iostream;
-.  const struct bfd_iovec *iovec;
-.
-.  {* The caching routines use these to maintain a
-.     least-recently-used list of BFDs.  *}
-.  struct bfd *lru_prev, *lru_next;
-.
-.  {* Track current file position (or current buffer offset for
-.     in-memory BFDs).  When a file is closed by the caching routines,
-.     BFD retains state information on the file here.  *}
-.  ufile_ptr where;
-.
-.  {* File modified time, if mtime_set is TRUE.  *}
-.  long mtime;
-.
-.  {* A unique identifier of the BFD  *}
-.  unsigned int id;
-.
-.  {* The format which belongs to the BFD. (object, core, etc.)  *}
-.  ENUM_BITFIELD (bfd_format) format : 3;
-.
-.  {* The direction with which the BFD was opened.  *}
-.  ENUM_BITFIELD (bfd_direction) direction : 2;
-.
-.  {* Format_specific flags.  *}
-.  flagword flags : 20;
-.
-.  {* Values that may appear in the flags field of a BFD.  These also
-.     appear in the object_flags field of the bfd_target structure, where
-.     they indicate the set of flags used by that backend (not all flags
-.     are meaningful for all object file formats) (FIXME: at the moment,
-.     the object_flags values have mostly just been copied from backend
-.     to another, and are not necessarily correct).  *}
-.
-.#define BFD_NO_FLAGS                0x0
-.
-.  {* BFD contains relocation entries.  *}
-.#define HAS_RELOC                   0x1
-.
-.  {* BFD is directly executable.  *}
-.#define EXEC_P                      0x2
-.
-.  {* BFD has line number information (basically used for F_LNNO in a
-.     COFF header).  *}
-.#define HAS_LINENO                  0x4
-.
-.  {* BFD has debugging information.  *}
-.#define HAS_DEBUG                  0x08
-.
-.  {* BFD has symbols.  *}
-.#define HAS_SYMS                   0x10
-.
-.  {* BFD has local symbols (basically used for F_LSYMS in a COFF
-.     header).  *}
-.#define HAS_LOCALS                 0x20
-.
-.  {* BFD is a dynamic object.  *}
-.#define DYNAMIC                    0x40
-.
-.  {* Text section is write protected (if D_PAGED is not set, this is
-.     like an a.out NMAGIC file) (the linker sets this by default, but
-.     clears it for -r or -N).  *}
-.#define WP_TEXT                    0x80
-.
-.  {* BFD is dynamically paged (this is like an a.out ZMAGIC file) (the
-.     linker sets this by default, but clears it for -r or -n or -N).  *}
-.#define D_PAGED                   0x100
-.
-.  {* BFD is relaxable (this means that bfd_relax_section may be able to
-.     do something) (sometimes bfd_relax_section can do something even if
-.     this is not set).  *}
-.#define BFD_IS_RELAXABLE          0x200
-.
-.  {* This may be set before writing out a BFD to request using a
-.     traditional format.  For example, this is used to request that when
-.     writing out an a.out object the symbols not be hashed to eliminate
-.     duplicates.  *}
-.#define BFD_TRADITIONAL_FORMAT    0x400
-.
-.  {* This flag indicates that the BFD contents are actually cached
-.     in memory.  If this is set, iostream points to a bfd_in_memory
-.     struct.  *}
-.#define BFD_IN_MEMORY             0x800
-.
-.  {* This BFD has been created by the linker and doesn't correspond
-.     to any input file.  *}
-.#define BFD_LINKER_CREATED       0x1000
-.
-.  {* This may be set before writing out a BFD to request that it
-.     be written using values for UIDs, GIDs, timestamps, etc. that
-.     will be consistent from run to run.  *}
-.#define BFD_DETERMINISTIC_OUTPUT 0x2000
-.
-.  {* Compress sections in this BFD.  *}
-.#define BFD_COMPRESS             0x4000
-.
-.  {* Decompress sections in this BFD.  *}
-.#define BFD_DECOMPRESS           0x8000
-.
-.  {* BFD is a dummy, for plugins.  *}
-.#define BFD_PLUGIN              0x10000
-.
-.  {* Compress sections in this BFD with SHF_COMPRESSED from gABI.  *}
-.#define BFD_COMPRESS_GABI       0x20000
-.
-.  {* Convert ELF common symbol type to STT_COMMON or STT_OBJECT in this
-.     BFD.  *}
-.#define BFD_CONVERT_ELF_COMMON  0x40000
-.
-.  {* Use the ELF STT_COMMON type in this BFD.  *}
-.#define BFD_USE_ELF_STT_COMMON  0x80000
-.
-.  {* Flags bits to be saved in bfd_preserve_save.  *}
-.#define BFD_FLAGS_SAVED \
-.  (BFD_IN_MEMORY | BFD_COMPRESS | BFD_DECOMPRESS | BFD_LINKER_CREATED \
-.   | BFD_PLUGIN | BFD_COMPRESS_GABI | BFD_CONVERT_ELF_COMMON \
-.   | BFD_USE_ELF_STT_COMMON)
-.
-.  {* Flags bits which are for BFD use only.  *}
-.#define BFD_FLAGS_FOR_BFD_USE_MASK \
-.  (BFD_IN_MEMORY | BFD_COMPRESS | BFD_DECOMPRESS | BFD_LINKER_CREATED \
-.   | BFD_PLUGIN | BFD_TRADITIONAL_FORMAT | BFD_DETERMINISTIC_OUTPUT \
-.   | BFD_COMPRESS_GABI | BFD_CONVERT_ELF_COMMON | BFD_USE_ELF_STT_COMMON)
-.
-.  {* Is the file descriptor being cached?  That is, can it be closed as
-.     needed, and re-opened when accessed later?  *}
-.  unsigned int cacheable : 1;
-.
-.  {* Marks whether there was a default target specified when the
-.     BFD was opened. This is used to select which matching algorithm
-.     to use to choose the back end.  *}
-.  unsigned int target_defaulted : 1;
-.
-.  {* ... and here: (``once'' means at least once).  *}
-.  unsigned int opened_once : 1;
-.
-.  {* Set if we have a locally maintained mtime value, rather than
-.     getting it from the file each time.  *}
-.  unsigned int mtime_set : 1;
-.
-.  {* Flag set if symbols from this BFD should not be exported.  *}
-.  unsigned int no_export : 1;
-.
-.  {* Remember when output has begun, to stop strange things
-.     from happening.  *}
-.  unsigned int output_has_begun : 1;
-.
-.  {* Have archive map.  *}
-.  unsigned int has_armap : 1;
-.
-.  {* Set if this is a thin archive.  *}
-.  unsigned int is_thin_archive : 1;
-.
-.  {* Set if only required symbols should be added in the link hash table for
-.     this object.  Used by VMS linkers.  *}
-.  unsigned int selective_search : 1;
-.
-.  {* Set if this is the linker output BFD.  *}
-.  unsigned int is_linker_output : 1;
-.
-.  {* Set if this is the linker input BFD.  *}
-.  unsigned int is_linker_input : 1;
-.
-.  {* If this is an input for a compiler plug-in library.  *}
-.  ENUM_BITFIELD (bfd_plugin_format) plugin_format : 2;
-.
-.  {* Set if this is a plugin output file.  *}
-.  unsigned int lto_output : 1;
-.
-.  {* Set to dummy BFD created when claimed by a compiler plug-in
-.     library.  *}
-.  bfd *plugin_dummy_bfd;
-.
-.  {* Currently my_archive is tested before adding origin to
-.     anything. I believe that this can become always an add of
-.     origin, with origin set to 0 for non archive files.  *}
-.  ufile_ptr origin;
-.
-.  {* The origin in the archive of the proxy entry.  This will
-.     normally be the same as origin, except for thin archives,
-.     when it will contain the current offset of the proxy in the
-.     thin archive rather than the offset of the bfd in its actual
-.     container.  *}
-.  ufile_ptr proxy_origin;
-.
-.  {* A hash table for section names.  *}
-.  struct bfd_hash_table section_htab;
-.
-.  {* Pointer to linked list of sections.  *}
-.  struct bfd_section *sections;
-.
-.  {* The last section on the section list.  *}
-.  struct bfd_section *section_last;
-.
-.  {* The number of sections.  *}
-.  unsigned int section_count;
-.
-.  {* A field used by _bfd_generic_link_add_archive_symbols.  This will
-.     be used only for archive elements.  *}
-.  int archive_pass;
-.
-.  {* Stuff only useful for object files:
-.     The start address.  *}
-.  bfd_vma start_address;
-.
-.  {* Symbol table for output BFD (with symcount entries).
-.     Also used by the linker to cache input BFD symbols.  *}
-.  struct bfd_symbol  **outsymbols;
-.
-.  {* Used for input and output.  *}
-.  unsigned int symcount;
-.
-.  {* Used for slurped dynamic symbol tables.  *}
-.  unsigned int dynsymcount;
-.
-.  {* Pointer to structure which contains architecture information.  *}
-.  const struct bfd_arch_info *arch_info;
-.
-.  {* Stuff only useful for archives.  *}
-.  void *arelt_data;
-.  struct bfd *my_archive;      {* The containing archive BFD.  *}
-.  struct bfd *archive_next;    {* The next BFD in the archive.  *}
-.  struct bfd *archive_head;    {* The first BFD in the archive.  *}
-.  struct bfd *nested_archives; {* List of nested archive in a flattened
-.				   thin archive.  *}
-.
-.  union {
-.    {* For input BFDs, a chain of BFDs involved in a link.  *}
-.    struct bfd *next;
-.    {* For output BFD, the linker hash table.  *}
-.    struct bfd_link_hash_table *hash;
-.  } link;
-.
-.  {* Used by the back end to hold private data.  *}
-.  union
-.    {
-.      struct aout_data_struct *aout_data;
-.      struct artdata *aout_ar_data;
-.      struct coff_tdata *coff_obj_data;
-.      struct pe_tdata *pe_obj_data;
-.      struct xcoff_tdata *xcoff_obj_data;
-.      struct ecoff_tdata *ecoff_obj_data;
-.      struct srec_data_struct *srec_data;
-.      struct verilog_data_struct *verilog_data;
-.      struct ihex_data_struct *ihex_data;
-.      struct tekhex_data_struct *tekhex_data;
-.      struct elf_obj_tdata *elf_obj_data;
-.      struct mmo_data_struct *mmo_data;
-.      struct sun_core_struct *sun_core_data;
-.      struct sco5_core_struct *sco5_core_data;
-.      struct trad_core_struct *trad_core_data;
-.      struct som_data_struct *som_data;
-.      struct hpux_core_struct *hpux_core_data;
-.      struct hppabsd_core_struct *hppabsd_core_data;
-.      struct sgi_core_struct *sgi_core_data;
-.      struct lynx_core_struct *lynx_core_data;
-.      struct osf_core_struct *osf_core_data;
-.      struct cisco_core_struct *cisco_core_data;
-.      struct versados_data_struct *versados_data;
-.      struct netbsd_core_struct *netbsd_core_data;
-.      struct mach_o_data_struct *mach_o_data;
-.      struct mach_o_fat_data_struct *mach_o_fat_data;
-.      struct plugin_data_struct *plugin_data;
-.      struct bfd_pef_data_struct *pef_data;
-.      struct bfd_pef_xlib_data_struct *pef_xlib_data;
-.      struct bfd_sym_data_struct *sym_data;
-.      void *any;
-.    }
-.  tdata;
-.
-.  {* Used by the application to hold private data.  *}
-.  void *usrdata;
-.
-.  {* Where all the allocated stuff under this BFD goes.  This is a
-.     struct objalloc *, but we use void * to avoid requiring the inclusion
-.     of objalloc.h.  *}
-.  void *memory;
-.
-.  {* For input BFDs, the build ID, if the object has one. *}
-.  const struct bfd_build_id *build_id;
-.};
-.
-.{* See note beside bfd_set_section_userdata.  *}
-.static inline bfd_boolean
-.bfd_set_cacheable (bfd * abfd, bfd_boolean val)
-.{
-.  abfd->cacheable = val;
-.  return TRUE;
-.}
-.
-*/
-
 #include "sysdep.h"
 #include <stdarg.h>
 #include "bfd.h"
@@ -367,10 +27,6 @@ CODE_FRAGMENT
 #include "safe-ctype.h"
 #include "bfdlink.h"
 #include "libbfd.h"
-#include "coff/internal.h"
-#include "coff/sym.h"
-#include "libcoff.h"
-#include "libecoff.h"
 #undef obj_symbols
 #include "elf-bfd.h"
 
@@ -847,7 +503,6 @@ _bfd_doprnt (FILE *stream, const char *format, union _bfd_doprnt_args *args)
 		  asection *sec;
 		  bfd *abfd;
 		  const char *group = NULL;
-		  struct coff_comdat_info *ci;
 
 		  ptr++;
 		  sec = (asection *) args[arg_no].p;
@@ -861,11 +516,7 @@ _bfd_doprnt (FILE *stream, const char *format, union _bfd_doprnt_args *args)
 		      && elf_next_in_group (sec) != NULL
 		      && (sec->flags & SEC_GROUP) == 0)
 		    group = elf_group_name (sec);
-		  else if (abfd != NULL
-			   && bfd_get_flavour (abfd) == bfd_target_coff_flavour
-			   && (ci = bfd_coff_get_comdat_section (sec->owner,
-								 sec)) != NULL)
-		    group = ci->name;
+
 		  if (group != NULL)
 		    result = fprintf (stream, "%s[%s]", sec->name, group);
 		  else
@@ -1500,31 +1151,8 @@ RETURNS
 int
 bfd_get_sign_extend_vma (bfd *abfd)
 {
-  char *name;
-
   if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
     return get_elf_backend_data (abfd)->sign_extend_vma;
-
-  name = bfd_get_target (abfd);
-
-  /* Return a proper value for DJGPP & PE COFF.
-     This function is required for DWARF2 support, but there is
-     no place to store this information in the COFF back end.
-     Should enough other COFF targets add support for DWARF2,
-     a place will have to be found.  Until then, this hack will do.  */
-  if (CONST_STRNEQ (name, "coff-go32")
-      || strcmp (name, "pe-i386") == 0
-      || strcmp (name, "pei-i386") == 0
-      || strcmp (name, "pe-x86-64") == 0
-      || strcmp (name, "pei-x86-64") == 0
-      || strcmp (name, "pe-arm-wince-little") == 0
-      || strcmp (name, "pei-arm-wince-little") == 0
-      || strcmp (name, "aixcoff-rs6000") == 0
-      || strcmp (name, "aix5coff64-rs6000") == 0)
-    return 1;
-
-  if (CONST_STRNEQ (name, "mach-o"))
-    return 0;
 
   bfd_set_error (bfd_error_wrong_format);
   return -1;
@@ -1569,9 +1197,7 @@ bfd_get_gp_size (bfd *abfd)
 {
   if (abfd->format == bfd_object)
     {
-      if (abfd->xvec->flavour == bfd_target_ecoff_flavour)
-	return ecoff_data (abfd)->gp_size;
-      else if (abfd->xvec->flavour == bfd_target_elf_flavour)
+      if (abfd->xvec->flavour == bfd_target_elf_flavour)
 	return elf_gp_size (abfd);
     }
   return 0;
@@ -1586,7 +1212,7 @@ SYNOPSIS
 
 DESCRIPTION
 	Set the maximum size of objects to be optimized using the GP
-	register under ECOFF or MIPS ELF.  This is typically set by
+	register under MIPS ELF.  This is typically set by
 	the <<-G>> argument to the compiler, assembler or linker.
 */
 
@@ -1597,9 +1223,7 @@ bfd_set_gp_size (bfd *abfd, unsigned int i)
   if (abfd->format != bfd_object)
     return;
 
-  if (abfd->xvec->flavour == bfd_target_ecoff_flavour)
-    ecoff_data (abfd)->gp_size = i;
-  else if (abfd->xvec->flavour == bfd_target_elf_flavour)
+  if (abfd->xvec->flavour == bfd_target_elf_flavour)
     elf_gp_size (abfd) = i;
 }
 
@@ -1615,9 +1239,7 @@ _bfd_get_gp_value (bfd *abfd)
   if (abfd->format != bfd_object)
     return 0;
 
-  if (abfd->xvec->flavour == bfd_target_ecoff_flavour)
-    return ecoff_data (abfd)->gp;
-  else if (abfd->xvec->flavour == bfd_target_elf_flavour)
+  if (abfd->xvec->flavour == bfd_target_elf_flavour)
     return elf_gp (abfd);
 
   return 0;
@@ -1633,9 +1255,7 @@ _bfd_set_gp_value (bfd *abfd, bfd_vma v)
   if (abfd->format != bfd_object)
     return;
 
-  if (abfd->xvec->flavour == bfd_target_ecoff_flavour)
-    ecoff_data (abfd)->gp = v;
-  else if (abfd->xvec->flavour == bfd_target_elf_flavour)
+  if (abfd->xvec->flavour == bfd_target_elf_flavour)
     elf_gp (abfd) = v;
 }
 

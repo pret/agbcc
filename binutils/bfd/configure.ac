@@ -31,16 +31,17 @@ dnl These must be called before LT_INIT, because it may want
 dnl to call AC_CHECK_PROG.
 AC_CHECK_TOOL(AR, ar)
 AC_CHECK_TOOL(RANLIB, ranlib, :)
+AC_PROG_SED
 
 dnl Default to a non shared library.  This may be overridden by the
 dnl configure option --enable-shared.
-AC_DISABLE_SHARED
+#AC_DISABLE_SHARED
 
 AC_PROG_CC
 AC_GNU_SOURCE
 AC_USE_SYSTEM_EXTENSIONS
 
-LT_INIT([dlopen])
+#LT_INIT([dlopen])
 
 # AC_PLUGINS setting $plugins is called by ACX_LARGEFILE.
 ACX_LARGEFILE
@@ -270,7 +271,7 @@ AC_CACHE_CHECK(linker --as-needed support, bfd_cv_ld_as_needed,
 	fi
 	])
 
-LT_LIB_M
+#LT_LIB_M
 
 # When building a shared libbfd, link against the pic version of libiberty
 # so that apps that use libbfd won't need libiberty just to satisfy any
@@ -396,12 +397,9 @@ selarchs="$f"
 # Target backend .o files.
 tb=
 
-elf="elf.lo elflink.lo elf-attrs.lo elf-strtab.lo elf-properties.lo
-     elf-eh-frame.lo dwarf1.lo dwarf2.lo"
-coffgen="coffgen.lo dwarf2.lo"
-coff="cofflink.lo $coffgen"
-ecoff="ecofflink.lo $coffgen"
-xcoff="xcofflink.lo $coffgen"
+elf="elf.o elflink.o elf-attrs.o elf-strtab.o elf-properties.o
+     elf-eh-frame.o dwarf1.o dwarf2.o"
+coffgen="coffgen.o dwarf2.o"
 
 for vec in $selvecs
 do
@@ -410,12 +408,12 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_be_vec)		 tb="$tb elf32-arm.lo elf32.lo elf-nacl.lo elf-vxworks.lo $elf" ;;
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.lo elf32.lo elf-nacl.lo elf-vxworks.lo $elf" ;;
-    arm_elf32_fdpic_be_vec)     tb="$tb elf32-arm.lo elf32.lo elf-nacl.lo elf-vxworks.lo $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.lo elf32.lo elf-nacl.lo elf-vxworks.lo $elf" ;;
-    elf32_be_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
-    elf32_le_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
+    arm_elf32_be_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
+    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
+    arm_elf32_fdpic_be_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
+    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
+    elf32_be_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
+    elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;
     *) AC_MSG_ERROR(*** unknown target vector $vec) ;;
@@ -432,7 +430,7 @@ done
 # Target architecture .o files.
 # A couple of CPUs use shorter file names to avoid problems on DOS
 # filesystems.
-ta=`echo $selarchs | sed -e s/bfd_/cpu-/g -e s/_arch/.lo/g -e s/mn10200/m10200/ -e s/mn10300/m10300/`
+ta=`echo $selarchs | sed -e s/bfd_/cpu-/g -e s/_arch/.o/g -e s/mn10200/m10200/ -e s/mn10300/m10300/`
 
 # Weed out duplicate .o files.
 f=""
@@ -533,19 +531,19 @@ CORE_HEADER=
 TRAD_HEADER=
 if test "${target}" = "${host}"; then
   case "${host}" in
-  arm-*-riscix)		COREFILE=trad-core.lo ;;
+  arm-*-riscix)		COREFILE=trad-core.o ;;
 
 changequote(,)dnl
   i[3-7]86-sequent-bsd*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/symmetry.h"'
 	;;
 changequote(,)dnl
   i[3-7]86-sequent-sysv4*) ;;
   i[3-7]86-sequent-sysv*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/symmetry.h"'
 	;;
 changequote(,)dnl
@@ -556,7 +554,7 @@ changequote([,])dnl
 changequote(,)dnl
   i[3-7]86-*-bsd* | i[3-7]86-*-freebsd[123] | i[3-7]86-*-freebsd[123]\.* | i[3-7]86-*-freebsd4\.[01234] | i[3-7]86-*-freebsd4\.[01234]\.* | i[3-7]86-*-freebsd*aout*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/i386bsd.h"'
 	;;
 changequote(,)dnl
@@ -568,35 +566,35 @@ changequote([,])dnl
 changequote(,)dnl
   i[3-7]86-*-netbsd* | i[3-7]86-*-knetbsd*-gnu | i[3-7]86-*-openbsd*)
 changequote([,])dnl
-	COREFILE=netbsd-core.lo
+	COREFILE=netbsd-core.o
 	;;
 changequote(,)dnl
   i[3-7]86-esix-sysv3*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/esix.h"'
 	;;
 changequote(,)dnl
   i[3-7]86-*-sco3.2v5*)
 changequote([,])dnl
-	COREFILE=sco5-core.lo
+	COREFILE=sco5-core.o
 	;;
 changequote(,)dnl
   i[3-7]86-*-sco* | i[3-7]86-*-isc*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/i386sco.h"'
 	;;
 changequote(,)dnl
   i[3-7]86-*-mach3*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/i386mach3.h"'
 	;;
 changequote(,)dnl
   i[3-7]86-*-linux-*)
 changequote([,])dnl
-	COREFILE=trad-core.lo
+	COREFILE=trad-core.o
 	TRAD_HEADER='"hosts/i386linux.h"'
 	case "$enable_targets"-"$want64" in
 	*x86_64-*linux*|*-true)
@@ -604,19 +602,19 @@ changequote([,])dnl
 	esac
 	;;
 changequote(,)dnl
-  i[3-7]86-*-isc*)	COREFILE=trad-core.lo ;;
-  i[3-7]86-*-aix*)	COREFILE=aix386-core.lo ;;
+  i[3-7]86-*-isc*)	COREFILE=trad-core.o ;;
+  i[3-7]86-*-aix*)	COREFILE=aix386-core.o ;;
 changequote([,])dnl
 changequote(,)dnl
   rs6000-*-aix[5-9].* | powerpc-*-aix[5-9].* | powerpc64-*-aix[5-9].*)
 changequote([,])dnl
-        COREFILE=rs6000-core.lo
+        COREFILE=rs6000-core.o
 	COREFLAG="$COREFLAG -DAIX_5_CORE -DAIX_CORE_DUMPX_CORE"
 	;;
 changequote(,)dnl
   rs6000-*-aix4.[3-9]* | powerpc-*-aix4.[3-9]*)
 changequote([,])dnl
-        COREFILE=rs6000-core.lo
+        COREFILE=rs6000-core.o
 	COREFLAG="$COREFLAG -DAIX_CORE_DUMPX_CORE"
 	# Not all versions of AIX with -DAIX_CORE_DUMPX_CORE
 	# have c_impl as a member of struct core_dumpx

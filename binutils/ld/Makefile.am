@@ -34,18 +34,10 @@ WARN_CFLAGS = @WARN_CFLAGS@
 NO_WERROR = @NO_WERROR@
 AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
 
-# Conditionally enable the plugin interface.
-if ENABLE_PLUGINS
-PLUGIN_C = plugin.c
-PLUGIN_H = plugin.h
-PLUGIN_OBJECT = plugin.@OBJEXT@
-PLUGIN_CFLAGS = -DENABLE_PLUGINS
-else
 PLUGIN_C =
 PLUGIN_H =
 PLUGIN_OBJECT =
 PLUGIN_CFLAGS =
-endif
 
 # We put the scripts in the directory $(scriptdir)/ldscripts.
 # We can't put the scripts in $(datadir) because the SEARCH_DIR
@@ -142,7 +134,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 	$(HDEFINES) $(CFLAGS) $(PLUGIN_CFLAGS) \
 	-DLOCALEDIR="\"$(datadir)/locale\""
 
-BFDLIB = ../bfd/libbfd.la
+BFDLIB = ../bfd/libbfd.a
 LIBIBERTY = ../libiberty/libiberty.a
 
 ALL_EMULATION_SOURCES = \
@@ -1864,7 +1856,7 @@ ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
 	ldbuildid.c
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
 		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
+ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 
 # Dependency tracking for the generated emulation files.
 EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
@@ -1893,22 +1885,6 @@ check-DEJAGNU: site.exp
 #
 # Build a dummy plugin using libtool.
 #
-if ENABLE_PLUGINS
-noinst_LTLIBRARIES = libldtestplug.la libldtestplug2.la \
-		     libldtestplug3.la libldtestplug4.la
-libldtestplug_la_SOURCES = testplug.c
-libldtestplug_la_CFLAGS= -g -O2
-libldtestplug_la_LDFLAGS = -no-undefined -rpath /nowhere
-libldtestplug2_la_SOURCES = testplug2.c
-libldtestplug2_la_CFLAGS= -g -O2
-libldtestplug2_la_LDFLAGS = -no-undefined -rpath /nowhere
-libldtestplug3_la_SOURCES = testplug3.c
-libldtestplug3_la_CFLAGS= -g -O2
-libldtestplug3_la_LDFLAGS = -no-undefined -rpath /nowhere
-libldtestplug4_la_SOURCES = testplug4.c
-libldtestplug4_la_CFLAGS= -g -O2
-libldtestplug4_la_LDFLAGS = -no-undefined -rpath /nowhere
-endif
 
 # DOCUMENTATION TARGETS
 # Manual configuration file; not usually attached to normal configuration,
@@ -1951,17 +1927,17 @@ install-exec-local: ld-new$(EXEEXT) install-binPROGRAMS
 	if test "$(bindir)" != "$(tooldir)/bin"; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
 	fi; \
 	if test "x$(install_as_default)" = "xyes"; then \
 	  ld=`echo ld | sed '$(transform)'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
 	  if test "$(bindir)" != "$(tooldir)/bin"; then \
 	    rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	    ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
+	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	  fi; \
 	fi
 

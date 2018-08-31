@@ -2070,19 +2070,7 @@ bfd_section_from_shdr (bfd *abfd, unsigned int shindex)
 
       if (hdr->sh_link > elf_numsections (abfd))
 	{
-	  /* PR 10478: Accept Solaris binaries with a sh_link
-	     field set to SHN_BEFORE or SHN_AFTER.  */
-	  switch (bfd_get_arch (abfd))
-	    {
-	    case bfd_arch_i386:
-	    case bfd_arch_sparc:
-	      if (hdr->sh_link == (SHN_LORESERVE & 0xffff) /* SHN_BEFORE */
-		  || hdr->sh_link == ((SHN_LORESERVE + 1) & 0xffff) /* SHN_AFTER */)
-		break;
-	      /* Otherwise fall through.  */
-	    default:
-	      goto fail;
-	    }
+	  goto fail;
 	}
       else if (elf_elfsections (abfd)[hdr->sh_link] == NULL)
 	goto fail;
@@ -10201,26 +10189,6 @@ elfcore_grok_netbsd_note (bfd *abfd, Elf_Internal_Note *note)
 
   switch (bfd_get_arch (abfd))
     {
-      /* On the Alpha, SPARC (32-bit and 64-bit), PT_GETREGS == mach+0 and
-	 PT_GETFPREGS == mach+2.  */
-
-    case bfd_arch_alpha:
-    case bfd_arch_sparc:
-      switch (note->type)
-	{
-	case NT_NETBSDCORE_FIRSTMACH+0:
-	  return elfcore_make_note_pseudosection (abfd, ".reg", note);
-
-	case NT_NETBSDCORE_FIRSTMACH+2:
-	  return elfcore_make_note_pseudosection (abfd, ".reg2", note);
-
-	default:
-	  return TRUE;
-	}
-
-      /* On all other arch's, PT_GETREGS == mach+1 and
-	 PT_GETFPREGS == mach+3.  */
-
     default:
       switch (note->type)
 	{

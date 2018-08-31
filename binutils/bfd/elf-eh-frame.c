@@ -2126,31 +2126,9 @@ _bfd_elf_write_section_eh_frame (bfd *abfd,
 		  break;
 		case DW_EH_PE_datarel:
 		  {
-		    switch (abfd->arch_info->arch)
-		      {
-		      case bfd_arch_ia64:
-			BFD_ASSERT (elf_gp (abfd) != 0);
-			address += elf_gp (abfd);
-			break;
-		      default:
-			_bfd_error_handler
-			  (_("DW_EH_PE_datarel unspecified"
-			     " for this architecture"));
-			/* Fall thru */
-		      case bfd_arch_frv:
-		      case bfd_arch_i386:
-			BFD_ASSERT (htab->hgot != NULL
-				    && ((htab->hgot->root.type
-					 == bfd_link_hash_defined)
-					|| (htab->hgot->root.type
-					    == bfd_link_hash_defweak)));
-			address
-			  += (htab->hgot->root.u.def.value
-			      + htab->hgot->root.u.def.section->output_offset
-			      + (htab->hgot->root.u.def.section->output_section
-				 ->vma));
-			break;
-		      }
+		    _bfd_error_handler
+		      (_("DW_EH_PE_datarel unspecified"
+		      " for this architecture"));
 		  }
 		  break;
 		case DW_EH_PE_pcrel:

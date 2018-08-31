@@ -33,14 +33,11 @@
 #include "libiberty.h"
 #include "opcode/arm.h"
 
-#ifdef OBJ_ELF
 #include "elf/arm.h"
 #include "dw2gencfi.h"
-#endif
 
 #include "dwarf2dbg.h"
 
-#ifdef OBJ_ELF
 /* Must be at least the size of the largest unwind opcode (currently two).  */
 #define ARM_OPCODE_CHUNK_SIZE 8
 
@@ -77,8 +74,6 @@ static struct
 
 /* Whether --fdpic was given.  */
 static int arm_fdpic;
-
-#endif /* OBJ_ELF */
 
 /* Results from operand parsing worker functions.  */
 
@@ -216,9 +211,7 @@ static const arm_feature_set arm_ext_div = ARM_FEATURE_CORE_LOW (ARM_EXT_DIV);
 static const arm_feature_set arm_ext_v7 = ARM_FEATURE_CORE_LOW (ARM_EXT_V7);
 static const arm_feature_set arm_ext_v7a = ARM_FEATURE_CORE_LOW (ARM_EXT_V7A);
 static const arm_feature_set arm_ext_v7r = ARM_FEATURE_CORE_LOW (ARM_EXT_V7R);
-#ifdef OBJ_ELF
 static const arm_feature_set ATTRIBUTE_UNUSED arm_ext_v7m = ARM_FEATURE_CORE_LOW (ARM_EXT_V7M);
-#endif
 static const arm_feature_set arm_ext_v8 = ARM_FEATURE_CORE_LOW (ARM_EXT_V8);
 static const arm_feature_set arm_ext_m =
   ARM_FEATURE_CORE (ARM_EXT_V6M | ARM_EXT_V7M,
@@ -240,11 +233,9 @@ static const arm_feature_set arm_ext_v6t2_v8m =
 /* Instructions shared between ARMv8-A and ARMv8-M.  */
 static const arm_feature_set arm_ext_atomics =
   ARM_FEATURE_CORE_HIGH (ARM_EXT2_ATOMICS);
-#ifdef OBJ_ELF
 /* DSP instructions Tag_DSP_extension refers to.  */
 static const arm_feature_set arm_ext_dsp =
   ARM_FEATURE_CORE_LOW (ARM_EXT_V5E | ARM_EXT_V5ExP | ARM_EXT_V6_DSP);
-#endif
 static const arm_feature_set arm_ext_ras =
   ARM_FEATURE_CORE_HIGH (ARM_EXT2_RAS);
 /* FP16 instructions.  */
@@ -258,9 +249,7 @@ static const arm_feature_set arm_ext_v8_3 =
   ARM_FEATURE_CORE_HIGH (ARM_EXT2_V8_3A);
 
 static const arm_feature_set arm_arch_any = ARM_ANY;
-#ifdef OBJ_ELF
 static const arm_feature_set fpu_any = FPU_ANY;
-#endif
 static const arm_feature_set arm_arch_full ATTRIBUTE_UNUSED = ARM_FEATURE (-1, -1, -1);
 static const arm_feature_set arm_arch_t2 = ARM_ARCH_THUMB2;
 static const arm_feature_set arm_arch_none = ARM_ARCH_NONE;
@@ -293,12 +282,10 @@ static const arm_feature_set fpu_neon_ext_v1 =
   ARM_FEATURE_COPROC (FPU_NEON_EXT_V1);
 static const arm_feature_set fpu_vfp_v3_or_neon_ext =
   ARM_FEATURE_COPROC (FPU_NEON_EXT_V1 | FPU_VFP_EXT_V3);
-#ifdef OBJ_ELF
 static const arm_feature_set fpu_vfp_fp16 =
   ARM_FEATURE_COPROC (FPU_VFP_EXT_FP16);
 static const arm_feature_set fpu_neon_ext_fma =
   ARM_FEATURE_COPROC (FPU_NEON_EXT_FMA);
-#endif
 static const arm_feature_set fpu_vfp_ext_fma =
   ARM_FEATURE_COPROC (FPU_VFP_EXT_FMA);
 static const arm_feature_set fpu_vfp_ext_armv8 =
@@ -343,7 +330,6 @@ no_cpu_selected (void)
   return ARM_FEATURE_EQUAL (selected_cpu, arm_arch_none);
 }
 
-#ifdef OBJ_ELF
 # ifdef EABI_DEFAULT
 static int meabi_flags = EABI_DEFAULT;
 # else
@@ -357,12 +343,9 @@ arm_is_eabi (void)
 {
   return (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4);
 }
-#endif
 
-#ifdef OBJ_ELF
 /* Pre-defined "_GLOBAL_OFFSET_TABLE_"	*/
 symbolS * GOT_symbol;
-#endif
 
 /* 0: assemble for ARM,
    1: assemble for Thumb,
@@ -884,9 +867,7 @@ typedef struct literal_pool
   symbolS *	         symbol;
   segT		         section;
   subsegT	         sub_section;
-#ifdef OBJ_ELF
   struct dwarf2_line_info locs [MAX_LITERAL_POOL_SIZE];
-#endif
   struct literal_pool *  next;
   unsigned int		 alignment;
 } literal_pool;
@@ -903,11 +884,7 @@ typedef enum asmfunc_states
 
 static asmfunc_states asmfunc_state = OUTSIDE_ASMFUNC;
 
-#ifdef OBJ_ELF
-#  define now_it seg_info (now_seg)->tc_segment_info_data.current_it
-#else
-static struct current_it now_it;
-#endif
+#define now_it seg_info (now_seg)->tc_segment_info_data.current_it
 
 static inline int
 now_it_compatible (int cond)
@@ -1211,7 +1188,6 @@ md_operand (expressionS * exp)
 
 /* Immediate values.  */
 
-#ifdef OBJ_ELF
 /* Generic immediate-value read function for use in directives.
    Accepts anything that 'expression' can fold to a constant.
    *val receives the number.  */
@@ -1237,7 +1213,6 @@ immediate_for_directive (int *val)
   *val = exp.X_add_number;
   return SUCCESS;
 }
-#endif
 
 /* Register parsing.  */
 
@@ -2608,7 +2583,6 @@ s_unreq (int a ATTRIBUTE_UNUSED)
 
 /* Directives: Instruction set selection.  */
 
-#ifdef OBJ_ELF
 /* This code is to handle mapping symbols as defined in the ARM ELF spec.
    (See "Mapping symbols", section 4.5.5, ARM AAELF version 1.0).
    Note that previously, $a and $t has type STT_FUNC (BSF_OBJECT flag),
@@ -2786,48 +2760,6 @@ mapping_state_2 (enum mstate state, int max_chars)
   make_mapping_symbol (state, (valueT) frag_now_fix () - max_chars, frag_now);
 }
 #undef TRANSITION
-#else
-#define mapping_state(x) ((void)0)
-#define mapping_state_2(x, y) ((void)0)
-#endif
-
-/* Find the real, Thumb encoded start of a Thumb function.  */
-
-#ifdef OBJ_COFF
-static symbolS *
-find_real_start (symbolS * symbolP)
-{
-  char *       real_start;
-  const char * name = S_GET_NAME (symbolP);
-  symbolS *    new_target;
-
-  /* This definition must agree with the one in gcc/config/arm/thumb.c.	 */
-#define STUB_NAME ".real_start_of"
-
-  if (name == NULL)
-    abort ();
-
-  /* The compiler may generate BL instructions to local labels because
-     it needs to perform a branch to a far away location. These labels
-     do not have a corresponding ".real_start_of" label.  We check
-     both for S_IS_LOCAL and for a leading dot, to give a way to bypass
-     the ".real_start_of" convention for nonlocal branches.  */
-  if (S_IS_LOCAL (symbolP) || name[0] == '.')
-    return symbolP;
-
-  real_start = concat (STUB_NAME, name, NULL);
-  new_target = symbol_find (real_start);
-  free (real_start);
-
-  if (new_target == NULL)
-    {
-      as_warn (_("Failed to find real start of function: %s\n"), name);
-      new_target = symbolP;
-    }
-
-  return new_target;
-}
-#endif
 
 static void
 opcode_select (int width)
@@ -2986,11 +2918,6 @@ s_thumb_set (int equiv)
       else
 #endif
 	symbolP = symbol_new (name, undefined_section, 0, &zero_address_frag);
-
-#ifdef OBJ_COFF
-      /* "set" symbols are local unless otherwise specified.  */
-      SF_SET_LOCAL (symbolP);
-#endif /* OBJ_COFF  */
     }				/* Make a new symbol.  */
 
   symbol_table_insert (symbolP);
@@ -3010,9 +2937,7 @@ s_thumb_set (int equiv)
 
   THUMB_SET_FUNC (symbolP, 1);
   ARM_SET_THUMB (symbolP, 1);
-#if defined OBJ_ELF || defined OBJ_COFF
   ARM_SET_INTERWORK (symbolP, support_interwork);
-#endif
 }
 
 /* Directives: Mode selection.  */
@@ -3363,14 +3288,12 @@ add_to_lit_pool (unsigned int nbytes)
 	  pool->literals[entry].X_md = 4;
 	}
 
-#ifdef OBJ_ELF
       /* PR ld/12974: Record the location of the first source line to reference
 	 this entry in the literal pool.  If it turns out during linking that the
 	 symbol does not exist we will be able to give an accurate line number for
 	 the (first use of the) missing reference.  */
       if (debug_type == DEBUG_DWARF2)
 	dwarf2_where (pool->locs + entry);
-#endif
       pool->next_free_entry += 1;
     }
   else if (padding_slot_p)
@@ -3483,10 +3406,8 @@ s_ltorg (int ignored ATTRIBUTE_UNUSED)
 
   record_alignment (now_seg, 2);
 
-#ifdef OBJ_ELF
   seg_info (now_seg)->tc_segment_info_data.mapstate = MAP_DATA;
   make_mapping_symbol (MAP_DATA, (valueT) frag_now_fix (), frag_now);
-#endif
   sprintf (sym_name, "$$lit_\002%x", pool->id);
 
   symbol_locate (pool->symbol, sym_name, now_seg,
@@ -3495,16 +3416,12 @@ s_ltorg (int ignored ATTRIBUTE_UNUSED)
 
   ARM_SET_THUMB (pool->symbol, thumb_mode);
 
-#if defined OBJ_COFF || defined OBJ_ELF
   ARM_SET_INTERWORK (pool->symbol, support_interwork);
-#endif
 
   for (entry = 0; entry < pool->next_free_entry; entry ++)
     {
-#ifdef OBJ_ELF
       if (debug_type == DEBUG_DWARF2)
 	dwarf2_gen_line_info (frag_now_fix (), pool->locs + entry);
-#endif
       /* First output the expression in the instruction to the pool.  */
       emit_expr (&(pool->literals[entry]),
 		 pool->literals[entry].X_md & LIT_ENTRY_SIZE_MASK);
@@ -3515,7 +3432,6 @@ s_ltorg (int ignored ATTRIBUTE_UNUSED)
   pool->symbol = NULL;
 }
 
-#ifdef OBJ_ELF
 /* Forward declarations for functions below, in the MD interface
    section.  */
 static void fix_new_arm (fragS *, int, short, expressionS *, int, int);
@@ -4678,35 +4594,12 @@ s_arm_tls_descseq (int ignored ATTRIBUTE_UNUSED)
 	       thumb_mode ? BFD_RELOC_ARM_THM_TLS_DESCSEQ
 	       : BFD_RELOC_ARM_TLS_DESCSEQ);
 }
-#endif /* OBJ_ELF */
 
 static void s_arm_arch (int);
 static void s_arm_object_arch (int);
 static void s_arm_cpu (int);
 static void s_arm_fpu (int);
 static void s_arm_arch_extension (int);
-
-#ifdef TE_PE
-
-static void
-pe_directive_secrel (int dummy ATTRIBUTE_UNUSED)
-{
-  expressionS exp;
-
-  do
-    {
-      expression (&exp);
-      if (exp.X_op == O_symbol)
-	exp.X_op = O_secrel;
-
-      emit_expr (&exp, 4);
-    }
-  while (*input_line_pointer++ == ',');
-
-  input_line_pointer--;
-  demand_empty_rest_of_line ();
-}
-#endif /* TE_PE */
 
 /* This table describes all the machine specific pseudo-ops the assembler
    has to support.  The fields are:
@@ -4739,7 +4632,6 @@ const pseudo_typeS md_pseudo_table[] =
   { "object_arch", s_arm_object_arch,	0 },
   { "fpu",	   s_arm_fpu,	  0 },
   { "arch_extension", s_arm_arch_extension, 0 },
-#ifdef OBJ_ELF
   { "word",	        s_arm_elf_cons, 4 },
   { "long",	        s_arm_elf_cons, 4 },
   { "inst.n",           s_arm_elf_inst, 2 },
@@ -4760,24 +4652,9 @@ const pseudo_typeS md_pseudo_table[] =
   { "unwind_raw",	s_arm_unwind_raw,	0 },
   { "eabi_attribute",	s_arm_eabi_attribute,	0 },
   { "tlsdescseq",	s_arm_tls_descseq,      0 },
-#else
-  { "word",	   cons, 4},
-
-  /* These are used for dwarf.  */
-  {"2byte", cons, 2},
-  {"4byte", cons, 4},
-  {"8byte", cons, 8},
-  /* These are used for dwarf2.  */
-  { "file", dwarf2_directive_file, 0 },
-  { "loc",  dwarf2_directive_loc,  0 },
-  { "loc_mark_labels", dwarf2_directive_loc_mark_labels, 0 },
-#endif
   { "extend",	   float_cons, 'x' },
   { "ldouble",	   float_cons, 'x' },
   { "packed",	   float_cons, 'p' },
-#ifdef TE_PE
-  {"secrel32", pe_directive_secrel, 0},
-#endif
 
   /* These are for compatibility with CodeComposer Studio.  */
   {"ref",          s_ccs_ref,        0},
@@ -8553,18 +8430,15 @@ encode_branch (int default_reloc)
 static void
 do_branch (void)
 {
-#ifdef OBJ_ELF
   if (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4)
     encode_branch (BFD_RELOC_ARM_PCREL_JUMP);
   else
-#endif
     encode_branch (BFD_RELOC_ARM_PCREL_BRANCH);
 }
 
 static void
 do_bl (void)
 {
-#ifdef OBJ_ELF
   if (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4)
     {
       if (inst.cond == COND_ALWAYS)
@@ -8573,7 +8447,6 @@ do_bl (void)
 	encode_branch (BFD_RELOC_ARM_PCREL_JUMP);
     }
   else
-#endif
     encode_branch (BFD_RELOC_ARM_PCREL_BRANCH);
 }
 
@@ -8625,9 +8498,7 @@ do_bx (void)
       && !ARM_CPU_HAS_FEATURE (selected_object_arch, arm_ext_v5))
       want_reloc = TRUE;
 
-#ifdef OBJ_ELF
   if (EF_ARM_EABI_VERSION (meabi_flags) < EF_ARM_EABI_VER4)
-#endif
     want_reloc = FALSE;
 
   if (want_reloc)
@@ -11233,19 +11104,6 @@ do_t_branch23 (void)
      keep the preexisting behaviour.  */
   if (inst.reloc.type == BFD_RELOC_ARM_PLT32)
     inst.reloc.type = BFD_RELOC_THUMB_PCREL_BRANCH23;
-
-#if defined(OBJ_COFF)
-  /* If the destination of the branch is a defined symbol which does not have
-     the THUMB_FUNC attribute, then we must be calling a function which has
-     the (interfacearm) attribute.  We look for the Thumb entry point to that
-     function and change the branch to refer to that function instead.	*/
-  if (	 inst.reloc.exp.X_op == O_symbol
-      && inst.reloc.exp.X_add_symbol != NULL
-      && S_IS_DEFINED (inst.reloc.exp.X_add_symbol)
-      && ! THUMB_IS_FUNC (inst.reloc.exp.X_add_symbol))
-    inst.reloc.exp.X_add_symbol =
-      find_real_start (inst.reloc.exp.X_add_symbol);
-#endif
 }
 
 static void
@@ -18034,9 +17892,7 @@ output_it_inst (int cond, int mask, char * to)
   if (to == NULL)
     {
       to = frag_more (2);
-#ifdef OBJ_ELF
       dwarf2_emit_insn (2);
-#endif
     }
 
   md_number_to_chars (to, instruction, 2);
@@ -18923,7 +18779,6 @@ md_assemble (char *str)
 static void
 check_it_blocks_finished (void)
 {
-#ifdef OBJ_ELF
   asection *sect;
 
   for (sect = stdoutput->sections; sect != NULL; sect = sect->next)
@@ -18933,10 +18788,6 @@ check_it_blocks_finished (void)
 	as_warn (_("section '%s' finished with an open IT block."),
 		 sect->name);
       }
-#else
-  if (now_it.state == MANUAL_IT_BLOCK)
-    as_warn (_("file finished with an open IT block."));
-#endif
 }
 
 /* Various frobbings of labels and their addresses.  */
@@ -18954,9 +18805,7 @@ arm_frob_label (symbolS * sym)
 
   ARM_SET_THUMB (sym, thumb_mode);
 
-#if defined OBJ_COFF || defined OBJ_ELF
   ARM_SET_INTERWORK (sym, support_interwork);
-#endif
 
   force_automatic_it_block_close ();
 
@@ -19304,7 +19153,6 @@ static const struct asm_shift_name shift_names [] =
 };
 
 /* Table of all explicit relocation names.  */
-#ifdef OBJ_ELF
 static struct reloc_entry reloc_names[] =
 {
   { "got",     BFD_RELOC_ARM_GOT32   },	 { "GOT",     BFD_RELOC_ARM_GOT32   },
@@ -19335,7 +19183,6 @@ static struct reloc_entry reloc_names[] =
    { "tlsldm_fdpic", BFD_RELOC_ARM_TLS_LDM32_FDPIC },    { "TLSLDM_FDPIC", BFD_RELOC_ARM_TLS_LDM32_FDPIC },
    { "gottpoff_fdpic", BFD_RELOC_ARM_TLS_IE32_FDPIC },   { "GOTTPOFF_FDIC", BFD_RELOC_ARM_TLS_IE32_FDPIC },
 };
-#endif
 
 /* Table of all conditional affixes.  0xF is not defined as a condition code.  */
 static const struct asm_cond conds[] =
@@ -21943,13 +21790,11 @@ symbol_preemptible (symbolS *s)
   if (! S_IS_EXTERNAL (s))
     return FALSE;
 
-#ifdef OBJ_ELF
   /* In ELF, a global symbol can be marked protected, or private.  In that
      case it can't be pre-empted (other definitions in the same link unit
      would violate the ODR).  */
   if (ELF_ST_VISIBILITY (S_GET_OTHER (s)) > STV_DEFAULT)
     return FALSE;
-#endif
 
   /* Other global symbols might be pre-empted.  */
   return TRUE;
@@ -21971,12 +21816,10 @@ relax_branch (fragS *fragp, asection *sec, int bits, long stretch)
       || S_IS_WEAK (fragp->fr_symbol))
     return 4;
 
-#ifdef OBJ_ELF
   /* A branch to a function in ARM state will require interworking.  */
   if (S_IS_DEFINED (fragp->fr_symbol)
       && ARM_IS_FUNC (fragp->fr_symbol))
       return 4;
-#endif
 
   if (symbol_preemptible (fragp->fr_symbol))
     return 4;
@@ -22119,9 +21962,7 @@ arm_handle_align (fragS * fragP)
   char * p;
   const unsigned char * noop;
   const unsigned char *narrow_noop = NULL;
-#ifdef OBJ_ELF
   enum mstate state;
-#endif
 
   if (fragP->fr_type != rs_align_code)
     return;
@@ -22146,9 +21987,7 @@ arm_handle_align (fragS * fragP)
       else
 	noop = thumb_noop[0][target_big_endian];
       noop_size = 2;
-#ifdef OBJ_ELF
       state = MAP_THUMB;
-#endif
     }
   else
     {
@@ -22157,9 +21996,7 @@ arm_handle_align (fragS * fragP)
 					   arm_ext_v6k) != 0]
 		     [target_big_endian];
       noop_size = 4;
-#ifdef OBJ_ELF
       state = MAP_ARM;
-#endif
     }
 
   fragP->fr_var = noop_size;
@@ -22167,9 +22004,7 @@ arm_handle_align (fragS * fragP)
   if (bytes & (noop_size - 1))
     {
       fix = bytes & (noop_size - 1);
-#ifdef OBJ_ELF
       insert_data_mapping_symbol (state, fragP->fr_fix, fragP, fix);
-#endif
       memset (p, 0, fix);
       p += fix;
       bytes -= fix;
@@ -22237,15 +22072,6 @@ arm_frag_align_code (int n, int max)
    and used a long time before its type is set, so beware of assuming that
    this initialisation is performed first.  */
 
-#ifndef OBJ_ELF
-void
-arm_init_frag (fragS * fragP, int max_chars ATTRIBUTE_UNUSED)
-{
-  /* Record whether this frag is in an ARM or a THUMB area.  */
-  fragP->tc_frag_data.thumb_mode = thumb_mode | MODE_RECORDED;
-}
-
-#else /* OBJ_ELF is defined.  */
 void
 arm_init_frag (fragS * fragP, int max_chars)
 {
@@ -22678,7 +22504,6 @@ tc_arm_frame_initial_instructions (void)
 {
   cfi_add_CFA_def_cfa (REG_SP, 0);
 }
-#endif /* OBJ_ELF */
 
 /* Convert REGNAME to a DWARF-2 register number.  */
 
@@ -22701,19 +22526,6 @@ tc_arm_regname_to_dw2regnum (char *regname)
   return FAIL;
 }
 
-#ifdef TE_PE
-void
-tc_pe_dwarf2_emit_offset (symbolS *symbol, unsigned int size)
-{
-  expressionS exp;
-
-  exp.X_op = O_secrel;
-  exp.X_add_symbol = symbol;
-  exp.X_add_number = 0;
-  emit_expr (&exp, size);
-}
-#endif
-
 /* MD interface: Symbol and relocation handling.  */
 
 /* Return the address within the segment that a PC-relative fixup is
@@ -22734,11 +22546,7 @@ md_pcrel_from_section (fixS * fixP, segT seg)
      is how the MS ARM-CE assembler behaves and we want to be compatible.  */
   if (fixP->fx_pcrel
       && ((fixP->fx_addsy && S_GET_SEGMENT (fixP->fx_addsy) != seg)
-	  || (arm_force_relocation (fixP)
-#ifdef TE_WINCE
-	      && !S_IS_EXTERNAL (fixP->fx_addsy)
-#endif
-	      )))
+	  || (arm_force_relocation (fixP))))
     base = 0;
 
 
@@ -22809,23 +22617,7 @@ md_pcrel_from_section (fixS * fixP, segT seg)
     case BFD_RELOC_ARM_PCREL_BRANCH:
     case BFD_RELOC_ARM_PCREL_JUMP:
     case BFD_RELOC_ARM_PLT32:
-#ifdef TE_WINCE
-      /* When handling fixups immediately, because we have already
-	 discovered the value of a symbol, or the address of the frag involved
-	 we must account for the offset by +8, as the OS loader will never see the reloc.
-	 see fixup_segment() in write.c
-	 The S_IS_EXTERNAL test handles the case of global symbols.
-	 Those need the calculated base, not just the pipe compensation the linker will need.  */
-      if (fixP->fx_pcrel
-	  && fixP->fx_addsy != NULL
-	  && (S_GET_SEGMENT (fixP->fx_addsy) == seg)
-	  && (S_IS_EXTERNAL (fixP->fx_addsy) || !arm_force_relocation (fixP)))
-	return base + 8;
-      return base;
-#else
       return base + 8;
-#endif
-
 
       /* ARM mode loads relative to PC are also offset by +8.  Unlike
 	 branches, the Windows CE loader *does* expect the relocation
@@ -22895,7 +22687,6 @@ arm_tc_equal_in_insn (int c ATTRIBUTE_UNUSED, char * name)
 symbolS *
 md_undefined_symbol (char * name ATTRIBUTE_UNUSED)
 {
-#ifdef OBJ_ELF
   if (name[0] == '_' && name[1] == 'G'
       && streq (name, GLOBAL_OFFSET_TABLE_NAME))
     {
@@ -22910,7 +22701,6 @@ md_undefined_symbol (char * name ATTRIBUTE_UNUSED)
 
       return GOT_symbol;
     }
-#endif
 
   return NULL;
 }
@@ -23721,7 +23511,6 @@ md_apply_fix (fixS *	fixP,
       md_number_to_chars (buf, newval, INSN_SIZE);
       break;
 
-#ifdef OBJ_ELF
     case BFD_RELOC_ARM_PCREL_CALL:
 
       if (ARM_CPU_HAS_FEATURE (selected_cpu, arm_ext_v5t)
@@ -23760,7 +23549,6 @@ md_apply_fix (fixS *	fixP,
       /* Fall through.  */
 
     case BFD_RELOC_ARM_PLT32:
-#endif
     case BFD_RELOC_ARM_PCREL_BRANCH:
       temp = 3;
       goto arm_branch_common;
@@ -23785,10 +23573,8 @@ md_apply_fix (fixS *	fixP,
 	  fixP->fx_done = 1;
 	}
 
-#ifdef OBJ_ELF
        if (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4)
 	 fixP->fx_r_type = BFD_RELOC_ARM_PCREL_CALL;
-#endif
 
     arm_branch_common:
       /* We are going to store value (shifted right by two) in the
@@ -23954,11 +23740,9 @@ md_apply_fix (fixS *	fixP,
 	   1 of the base address.  */
 	value = (value + 3) & ~ 3;
 
-#ifdef OBJ_ELF
        if (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4
 	   && fixP->fx_r_type == BFD_RELOC_THUMB_PCREL_BLX)
 	 fixP->fx_r_type = BFD_RELOC_THUMB_PCREL_BRANCH23;
-#endif
 
       if ((value & ~0x3fffff) && ((value & ~0x3fffff) != ~0x3fffff))
 	{
@@ -23994,7 +23778,6 @@ md_apply_fix (fixS *	fixP,
 	md_number_to_chars (buf, value, 2);
       break;
 
-#ifdef OBJ_ELF
     case BFD_RELOC_ARM_TLS_CALL:
     case BFD_RELOC_ARM_THM_TLS_CALL:
     case BFD_RELOC_ARM_TLS_DESCSEQ:
@@ -24055,7 +23838,6 @@ md_apply_fix (fixS *	fixP,
 			_("Relocation supported only in FDPIC mode"));
       }
       break;
-#endif
 
     case BFD_RELOC_RVA:
     case BFD_RELOC_32:
@@ -24063,18 +23845,10 @@ md_apply_fix (fixS *	fixP,
     case BFD_RELOC_ARM_ROSEGREL32:
     case BFD_RELOC_ARM_SBREL32:
     case BFD_RELOC_32_PCREL:
-#ifdef TE_PE
-    case BFD_RELOC_32_SECREL:
-#endif
       if (fixP->fx_done || !seg->use_rela_p)
-#ifdef TE_WINCE
-	/* For WinCE we only do this for pcrel fixups.  */
-	if (fixP->fx_done || fixP->fx_pcrel)
-#endif
 	  md_number_to_chars (buf, value, 4);
       break;
 
-#ifdef OBJ_ELF
     case BFD_RELOC_ARM_PREL31:
       if (fixP->fx_done || !seg->use_rela_p)
 	{
@@ -24088,7 +23862,6 @@ md_apply_fix (fixS *	fixP,
 	  md_number_to_chars (buf, newval, 4);
 	}
       break;
-#endif
 
     case BFD_RELOC_ARM_CP_OFF_IMM:
     case BFD_RELOC_ARM_T32_CP_OFF_IMM:
@@ -24743,18 +24516,13 @@ tc_gen_reloc (asection *section, fixS *fixp)
     case BFD_RELOC_THUMB_PCREL_BRANCH25:
     case BFD_RELOC_VTABLE_ENTRY:
     case BFD_RELOC_VTABLE_INHERIT:
-#ifdef TE_PE
-    case BFD_RELOC_32_SECREL:
-#endif
       code = fixp->fx_r_type;
       break;
 
     case BFD_RELOC_THUMB_PCREL_BLX:
-#ifdef OBJ_ELF
       if (EF_ARM_EABI_VERSION (meabi_flags) >= EF_ARM_EABI_VER4)
 	code = BFD_RELOC_THUMB_PCREL_BRANCH23;
       else
-#endif
 	code = BFD_RELOC_THUMB_PCREL_BLX;
       break;
 
@@ -24766,7 +24534,6 @@ tc_gen_reloc (asection *section, fixS *fixp)
 		    _("literal referenced across section boundary"));
       return NULL;
 
-#ifdef OBJ_ELF
     case BFD_RELOC_ARM_TLS_CALL:
     case BFD_RELOC_ARM_THM_TLS_CALL:
     case BFD_RELOC_ARM_TLS_DESCSEQ:
@@ -24836,7 +24603,6 @@ tc_gen_reloc (asection *section, fixS *fixp)
 	reloc->addend -= (*reloc->sym_ptr_ptr)->value;
       code = fixp->fx_r_type;
       break;
-#endif
 
     case BFD_RELOC_ARM_IMMEDIATE:
       as_bad_where (fixp->fx_file, fixp->fx_line,
@@ -24897,7 +24663,6 @@ tc_gen_reloc (asection *section, fixS *fixp)
       }
     }
 
-#ifdef OBJ_ELF
   if ((code == BFD_RELOC_32_PCREL || code == BFD_RELOC_32)
       && GOT_symbol
       && fixp->fx_addsy == GOT_symbol)
@@ -24905,7 +24670,6 @@ tc_gen_reloc (asection *section, fixS *fixp)
       code = BFD_RELOC_ARM_GOTPC;
       reloc->addend = fixp->fx_offset = reloc->address;
     }
-#endif
 
   reloc->howto = bfd_reloc_type_lookup (stdoutput, code);
 
@@ -24955,50 +24719,19 @@ cons_fix_new_arm (fragS *	frag,
       break;
     }
 
-#ifdef TE_PE
-  if (exp->X_op == O_secrel)
-  {
-    exp->X_op = O_symbol;
-    reloc = BFD_RELOC_32_SECREL;
-  }
-#endif
-
   fix_new_exp (frag, where, size, exp, pcrel, reloc);
 }
-
-#if defined (OBJ_COFF)
-void
-arm_validate_fix (fixS * fixP)
-{
-  /* If the destination of the branch is a defined symbol which does not have
-     the THUMB_FUNC attribute, then we must be calling a function which has
-     the (interfacearm) attribute.  We look for the Thumb entry point to that
-     function and change the branch to refer to that function instead.	*/
-  if (fixP->fx_r_type == BFD_RELOC_THUMB_PCREL_BRANCH23
-      && fixP->fx_addsy != NULL
-      && S_IS_DEFINED (fixP->fx_addsy)
-      && ! THUMB_IS_FUNC (fixP->fx_addsy))
-    {
-      fixP->fx_addsy = find_real_start (fixP->fx_addsy);
-    }
-}
-#endif
 
 
 int
 arm_force_relocation (struct fix * fixp)
 {
-#if defined (OBJ_COFF) && defined (TE_PE)
-  if (fixp->fx_r_type == BFD_RELOC_RVA)
-    return 1;
-#endif
 
   /* In case we have a call or a branch to a function in ARM ISA mode from
      a thumb function or vice-versa force the relocation. These relocations
      are cleared off for some cores that might have blx and simple transformations
      are possible.  */
 
-#ifdef OBJ_ELF
   switch (fixp->fx_r_type)
     {
     case BFD_RELOC_ARM_PCREL_JUMP:
@@ -25019,7 +24752,6 @@ arm_force_relocation (struct fix * fixp)
     default:
       break;
     }
-#endif
 
   /* Resolve these relocations even if the symbol is extern or weak.
      Technically this is probably wrong due to symbol preemption.
@@ -25057,7 +24789,6 @@ arm_force_relocation (struct fix * fixp)
   return generic_force_reloc (fixp);
 }
 
-#if defined (OBJ_ELF) || defined (OBJ_COFF)
 /* Relocations against function names must be left unadjusted,
    so that the linker can use this information to generate interworking
    stubs.  The MIPS version of this function
@@ -25135,25 +24866,10 @@ arm_fix_adjustable (fixS * fixP)
 
   return TRUE;
 }
-#endif /* defined (OBJ_ELF) || defined (OBJ_COFF) */
 
-#ifdef OBJ_ELF
 const char *
 elf32_arm_target_format (void)
 {
-#ifdef TE_SYMBIAN
-  return (target_big_endian
-	  ? "elf32-bigarm-symbian"
-	  : "elf32-littlearm-symbian");
-#elif defined (TE_VXWORKS)
-  return (target_big_endian
-	  ? "elf32-bigarm-vxworks"
-	  : "elf32-littlearm-vxworks");
-#elif defined (TE_NACL)
-  return (target_big_endian
-	  ? "elf32-bigarm-nacl"
-	  : "elf32-littlearm-nacl");
-#else
   if (arm_fdpic)
     {
       if (target_big_endian)
@@ -25168,7 +24884,6 @@ elf32_arm_target_format (void)
       else
 	return "elf32-littlearm";
     }
-#endif
 }
 
 void
@@ -25177,7 +24892,6 @@ armelf_frob_symbol (symbolS * symp,
 {
   elf_frob_symbol (symp, puntp);
 }
-#endif
 
 /* MD interface: Finalization.	*/
 
@@ -25193,14 +24907,11 @@ arm_cleanup (void)
     {
       /* Put it at the end of the relevant section.  */
       subseg_set (pool->section, pool->sub_section);
-#ifdef OBJ_ELF
       arm_elf_change_section ();
-#endif
       s_ltorg (0);
     }
 }
 
-#ifdef OBJ_ELF
 /* Remove any excess mapping symbols generated for alignment frags in
    SEC.  We may have created a mapping symbol before a zero byte
    alignment; remove it if there's a mapping symbol after the
@@ -25265,7 +24976,6 @@ check_mapping_symbols (bfd *abfd ATTRIBUTE_UNUSED, asection *sec,
       while (next != NULL);
     }
 }
-#endif
 
 /* Adjust the symbol table.  This marks Thumb symbols as distinct from
    ARM ones.  */
@@ -25273,48 +24983,6 @@ check_mapping_symbols (bfd *abfd ATTRIBUTE_UNUSED, asection *sec,
 void
 arm_adjust_symtab (void)
 {
-#ifdef OBJ_COFF
-  symbolS * sym;
-
-  for (sym = symbol_rootP; sym != NULL; sym = symbol_next (sym))
-    {
-      if (ARM_IS_THUMB (sym))
-	{
-	  if (THUMB_IS_FUNC (sym))
-	    {
-	      /* Mark the symbol as a Thumb function.  */
-	      if (   S_GET_STORAGE_CLASS (sym) == C_STAT
-		  || S_GET_STORAGE_CLASS (sym) == C_LABEL)  /* This can happen!	 */
-		S_SET_STORAGE_CLASS (sym, C_THUMBSTATFUNC);
-
-	      else if (S_GET_STORAGE_CLASS (sym) == C_EXT)
-		S_SET_STORAGE_CLASS (sym, C_THUMBEXTFUNC);
-	      else
-		as_bad (_("%s: unexpected function type: %d"),
-			S_GET_NAME (sym), S_GET_STORAGE_CLASS (sym));
-	    }
-	  else switch (S_GET_STORAGE_CLASS (sym))
-	    {
-	    case C_EXT:
-	      S_SET_STORAGE_CLASS (sym, C_THUMBEXT);
-	      break;
-	    case C_STAT:
-	      S_SET_STORAGE_CLASS (sym, C_THUMBSTAT);
-	      break;
-	    case C_LABEL:
-	      S_SET_STORAGE_CLASS (sym, C_THUMBLABEL);
-	      break;
-	    default:
-	      /* Do nothing.  */
-	      break;
-	    }
-	}
-
-      if (ARM_IS_INTERWORK (sym))
-	coffsymbol (symbol_get_bfdsym (sym))->native->u.syment.n_flags = 0xFF;
-    }
-#endif
-#ifdef OBJ_ELF
   symbolS * sym;
   char	    bind;
 
@@ -25346,7 +25014,6 @@ arm_adjust_symtab (void)
   bfd_map_over_sections (stdoutput, check_mapping_symbols, (char *) 0);
   /* Now do generic ELF adjustments.  */
   elf_adjust_symtab ();
-#endif
 }
 
 /* MD interface: Initialization.  */
@@ -25405,7 +25072,6 @@ md_begin (void)
        i++)
     hash_insert (arm_barrier_opt_hsh, barrier_opt_names[i].template_name,
 		 (void *) (barrier_opt_names + i));
-#ifdef OBJ_ELF
   for (i = 0; i < ARRAY_SIZE (reloc_names); i++)
     {
       struct reloc_entry * entry = reloc_names + i;
@@ -25416,7 +25082,6 @@ md_begin (void)
 
       hash_insert (arm_reloc_hsh, entry->name, (void *) entry);
     }
-#endif
 
   set_constant_flonums ();
 
@@ -25497,17 +25162,14 @@ md_begin (void)
 
   arm_arch_used = thumb_arch_used = arm_arch_none;
 
-#if defined OBJ_COFF || defined OBJ_ELF
   {
     unsigned int flags = 0;
 
-#if defined OBJ_ELF
     flags = meabi_flags;
 
     switch (meabi_flags)
       {
       case EF_ARM_EABI_UNKNOWN:
-#endif
 	/* Set the flags in the private structure.  */
 	if (uses_apcs_26)      flags |= F_APCS26;
 	if (support_interwork) flags |= F_INTERWORK;
@@ -25533,7 +25195,6 @@ md_begin (void)
 	if (ARM_CPU_HAS_FEATURE (cpu_variant, fpu_endian_pure))
 	  flags |= F_VFP_FLOAT;
 
-#if defined OBJ_ELF
 	if (ARM_CPU_HAS_FEATURE (cpu_variant, fpu_arch_maverick))
 	    flags |= EF_ARM_MAVERICK_FLOAT;
 	break;
@@ -25546,7 +25207,6 @@ md_begin (void)
       default:
 	abort ();
       }
-#endif
     bfd_set_private_flags (stdoutput, flags);
 
     /* We have run out flags in the COFF header to encode the
@@ -25567,7 +25227,6 @@ md_begin (void)
 	  }
       }
   }
-#endif
 
   /* Record the CPU type as well.  */
   if (ARM_CPU_HAS_FEATURE (cpu_variant, arm_cext_iwmmxt2))
@@ -25616,7 +25275,7 @@ md_begin (void)
 
       This routine is somewhat complicated by the need for backwards
       compatibility (since older releases of gcc can't be changed).
-      The new options try to make the interface as compatible as
+     The new options try to make the interface as compatible as
       possible with GCC.
 
       New options (supported) are:
@@ -25676,31 +25335,15 @@ md_begin (void)
 
 const char * md_shortopts = "m:k";
 
-#ifdef ARM_BI_ENDIAN
-#define OPTION_EB (OPTION_MD_BASE + 0)
 #define OPTION_EL (OPTION_MD_BASE + 1)
-#else
-#if TARGET_BYTES_BIG_ENDIAN
-#define OPTION_EB (OPTION_MD_BASE + 0)
-#else
-#define OPTION_EL (OPTION_MD_BASE + 1)
-#endif
-#endif
 #define OPTION_FIX_V4BX (OPTION_MD_BASE + 2)
 #define OPTION_FDPIC (OPTION_MD_BASE + 3)
 
 struct option md_longopts[] =
 {
-#ifdef OPTION_EB
-  {"EB", no_argument, NULL, OPTION_EB},
-#endif
-#ifdef OPTION_EL
   {"EL", no_argument, NULL, OPTION_EL},
-#endif
   {"fix-v4bx", no_argument, NULL, OPTION_FIX_V4BX},
-#ifdef OBJ_ELF
   {"fdpic", no_argument, NULL, OPTION_FDPIC},
-#endif
   {NULL, no_argument, NULL, 0}
 };
 
@@ -25727,7 +25370,6 @@ struct arm_option_table arm_opts[] =
    1, NULL},
   {"mapcs-reentrant", N_("re-entrant code"), &pic_code, 1, NULL},
   {"matpcs", N_("code is ATPCS conformant"), &atpcs, 1, NULL},
-  {"mbig-endian", N_("assemble for big-endian"), &target_big_endian, 1, NULL},
   {"mlittle-endian", N_("assemble for little-endian"), &target_big_endian, 0,
    NULL},
 
@@ -25753,114 +25395,6 @@ struct arm_legacy_option_table
 
 const struct arm_legacy_option_table arm_legacy_opts[] =
 {
-  /* DON'T add any new processors to this list -- we want the whole list
-     to go away...  Add them to the processors table instead.  */
-  {"marm1",	 &legacy_cpu, ARM_ARCH_V1,  N_("use -mcpu=arm1")},
-  {"m1",	 &legacy_cpu, ARM_ARCH_V1,  N_("use -mcpu=arm1")},
-  {"marm2",	 &legacy_cpu, ARM_ARCH_V2,  N_("use -mcpu=arm2")},
-  {"m2",	 &legacy_cpu, ARM_ARCH_V2,  N_("use -mcpu=arm2")},
-  {"marm250",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -mcpu=arm250")},
-  {"m250",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -mcpu=arm250")},
-  {"marm3",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -mcpu=arm3")},
-  {"m3",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -mcpu=arm3")},
-  {"marm6",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm6")},
-  {"m6",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm6")},
-  {"marm600",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm600")},
-  {"m600",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm600")},
-  {"marm610",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm610")},
-  {"m610",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm610")},
-  {"marm620",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm620")},
-  {"m620",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm620")},
-  {"marm7",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7")},
-  {"m7",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7")},
-  {"marm70",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm70")},
-  {"m70",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm70")},
-  {"marm700",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm700")},
-  {"m700",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm700")},
-  {"marm700i",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm700i")},
-  {"m700i",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm700i")},
-  {"marm710",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm710")},
-  {"m710",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm710")},
-  {"marm710c",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm710c")},
-  {"m710c",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm710c")},
-  {"marm720",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm720")},
-  {"m720",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm720")},
-  {"marm7d",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7d")},
-  {"m7d",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7d")},
-  {"marm7di",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7di")},
-  {"m7di",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7di")},
-  {"marm7m",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7m")},
-  {"m7m",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7m")},
-  {"marm7dm",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7dm")},
-  {"m7dm",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7dm")},
-  {"marm7dmi",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7dmi")},
-  {"m7dmi",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -mcpu=arm7dmi")},
-  {"marm7100",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7100")},
-  {"m7100",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7100")},
-  {"marm7500",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7500")},
-  {"m7500",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7500")},
-  {"marm7500fe", &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7500fe")},
-  {"m7500fe",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -mcpu=arm7500fe")},
-  {"marm7t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm7tdmi")},
-  {"m7t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm7tdmi")},
-  {"marm7tdmi",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm7tdmi")},
-  {"m7tdmi",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm7tdmi")},
-  {"marm710t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm710t")},
-  {"m710t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm710t")},
-  {"marm720t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm720t")},
-  {"m720t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm720t")},
-  {"marm740t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm740t")},
-  {"m740t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm740t")},
-  {"marm8",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -mcpu=arm8")},
-  {"m8",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -mcpu=arm8")},
-  {"marm810",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -mcpu=arm810")},
-  {"m810",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -mcpu=arm810")},
-  {"marm9",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm9")},
-  {"m9",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm9")},
-  {"marm9tdmi",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm9tdmi")},
-  {"m9tdmi",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm9tdmi")},
-  {"marm920",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm920")},
-  {"m920",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm920")},
-  {"marm940",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm940")},
-  {"m940",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -mcpu=arm940")},
-  {"mstrongarm", &legacy_cpu, ARM_ARCH_V4,  N_("use -mcpu=strongarm")},
-  {"mstrongarm110", &legacy_cpu, ARM_ARCH_V4,
-   N_("use -mcpu=strongarm110")},
-  {"mstrongarm1100", &legacy_cpu, ARM_ARCH_V4,
-   N_("use -mcpu=strongarm1100")},
-  {"mstrongarm1110", &legacy_cpu, ARM_ARCH_V4,
-   N_("use -mcpu=strongarm1110")},
-  {"mxscale",	 &legacy_cpu, ARM_ARCH_XSCALE, N_("use -mcpu=xscale")},
-  {"miwmmxt",	 &legacy_cpu, ARM_ARCH_IWMMXT, N_("use -mcpu=iwmmxt")},
-  {"mall",	 &legacy_cpu, ARM_ANY,	       N_("use -mcpu=all")},
-
-  /* Architecture variants -- don't add any more to this list either.  */
-  {"mv2",	 &legacy_cpu, ARM_ARCH_V2,  N_("use -march=armv2")},
-  {"marmv2",	 &legacy_cpu, ARM_ARCH_V2,  N_("use -march=armv2")},
-  {"mv2a",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -march=armv2a")},
-  {"marmv2a",	 &legacy_cpu, ARM_ARCH_V2S, N_("use -march=armv2a")},
-  {"mv3",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -march=armv3")},
-  {"marmv3",	 &legacy_cpu, ARM_ARCH_V3,  N_("use -march=armv3")},
-  {"mv3m",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -march=armv3m")},
-  {"marmv3m",	 &legacy_cpu, ARM_ARCH_V3M, N_("use -march=armv3m")},
-  {"mv4",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -march=armv4")},
-  {"marmv4",	 &legacy_cpu, ARM_ARCH_V4,  N_("use -march=armv4")},
-  {"mv4t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -march=armv4t")},
-  {"marmv4t",	 &legacy_cpu, ARM_ARCH_V4T, N_("use -march=armv4t")},
-  {"mv5",	 &legacy_cpu, ARM_ARCH_V5,  N_("use -march=armv5")},
-  {"marmv5",	 &legacy_cpu, ARM_ARCH_V5,  N_("use -march=armv5")},
-  {"mv5t",	 &legacy_cpu, ARM_ARCH_V5T, N_("use -march=armv5t")},
-  {"marmv5t",	 &legacy_cpu, ARM_ARCH_V5T, N_("use -march=armv5t")},
-  {"mv5e",	 &legacy_cpu, ARM_ARCH_V5TE, N_("use -march=armv5te")},
-  {"marmv5e",	 &legacy_cpu, ARM_ARCH_V5TE, N_("use -march=armv5te")},
-
-  /* Floating point variants -- don't add any more to this list either.	 */
-  {"mfpe-old",   &legacy_fpu, FPU_ARCH_FPE, N_("use -mfpu=fpe")},
-  {"mfpa10",     &legacy_fpu, FPU_ARCH_FPA, N_("use -mfpu=fpa10")},
-  {"mfpa11",     &legacy_fpu, FPU_ARCH_FPA, N_("use -mfpu=fpa11")},
-  {"mno-fpu",    &legacy_fpu, ARM_ARCH_NONE,
-   N_("use either -mfpu=softfpa or -mfpu=softvfp")},
-
   {NULL, NULL, ARM_ARCH_NONE, NULL}
 };
 
@@ -25887,87 +25421,6 @@ static const struct arm_cpu_option_table arm_cpus[] =
   ARM_CPU_OPT ("all",		  NULL,		       ARM_ANY,
 	       ARM_ARCH_NONE,
 	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm1",		  NULL,		       ARM_ARCH_V1,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm2",		  NULL,		       ARM_ARCH_V2,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm250",	  NULL,		       ARM_ARCH_V2S,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm3",		  NULL,		       ARM_ARCH_V2S,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm6",		  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm60",		  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm600",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm610",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm620",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7",		  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7m",		  NULL,		       ARM_ARCH_V3M,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7d",		  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7dm",	  NULL,		       ARM_ARCH_V3M,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7di",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7dmi",	  NULL,		       ARM_ARCH_V3M,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm70",		  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm700",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm700i",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm710",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm710t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm720",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm720t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm740t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm710c",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7100",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7500",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm7500fe",	  NULL,		       ARM_ARCH_V3,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
   ARM_CPU_OPT ("arm7t",		  NULL,		       ARM_ARCH_V4T,
 	       ARM_ARCH_NONE,
 	       FPU_ARCH_FPA),
@@ -25977,292 +25430,6 @@ static const struct arm_cpu_option_table arm_cpus[] =
   ARM_CPU_OPT ("arm7tdmi-s",	  NULL,		       ARM_ARCH_V4T,
 	       ARM_ARCH_NONE,
 	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm8",		  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm810",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("strongarm",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("strongarm1",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("strongarm110",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("strongarm1100",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("strongarm1110",	  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm9",		  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm920",	  "ARM920T",	       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm920t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm922t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm940t",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("arm9tdmi",	  NULL,		       ARM_ARCH_V4T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("fa526",		  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-  ARM_CPU_OPT ("fa626",		  NULL,		       ARM_ARCH_V4,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_FPA),
-
-  /* For V5 or later processors we default to using VFP; but the user
-     should really set the FPU type explicitly.	 */
-  ARM_CPU_OPT ("arm9e-r0",	  NULL,		       ARM_ARCH_V5TExP,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm9e",		  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm926ej",	  "ARM926EJ-S",	       ARM_ARCH_V5TEJ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm926ejs",	  "ARM926EJ-S",	       ARM_ARCH_V5TEJ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm926ej-s",	  NULL,		       ARM_ARCH_V5TEJ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm946e-r0",	  NULL,		       ARM_ARCH_V5TExP,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm946e",	  "ARM946E-S",	       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm946e-s",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm966e-r0",	  NULL,		       ARM_ARCH_V5TExP,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm966e",	  "ARM966E-S",	       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm966e-s",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm968e-s",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm10t",	  NULL,		       ARM_ARCH_V5T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V1),
-  ARM_CPU_OPT ("arm10tdmi",	  NULL,		       ARM_ARCH_V5T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V1),
-  ARM_CPU_OPT ("arm10e",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1020",	  "ARM1020E",	       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1020t",	  NULL,		       ARM_ARCH_V5T,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V1),
-  ARM_CPU_OPT ("arm1020e",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1022e",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1026ejs",	  "ARM1026EJ-S",       ARM_ARCH_V5TEJ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1026ej-s",	  NULL,		       ARM_ARCH_V5TEJ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("fa606te",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("fa616te",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("fa626te",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("fmp626",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("fa726te",	  NULL,		       ARM_ARCH_V5TE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1136js",	  "ARM1136J-S",	       ARM_ARCH_V6,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("arm1136j-s",	  NULL,		       ARM_ARCH_V6,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("arm1136jfs",	  "ARM1136JF-S",       ARM_ARCH_V6,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1136jf-s",	  NULL,		       ARM_ARCH_V6,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("mpcore",	  "MPCore",	       ARM_ARCH_V6K,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("mpcorenovfp",	  "MPCore",	       ARM_ARCH_V6K,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("arm1156t2-s",	  NULL,		       ARM_ARCH_V6T2,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("arm1156t2f-s",	  NULL,		       ARM_ARCH_V6T2,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("arm1176jz-s",	  NULL,		       ARM_ARCH_V6KZ,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("arm1176jzf-s",	  NULL,		       ARM_ARCH_V6KZ,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("cortex-a5",	  "Cortex-A5",	       ARM_ARCH_V7A,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_MP | ARM_EXT_SEC),
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-a7",	  "Cortex-A7",	       ARM_ARCH_V7VE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_NEON_VFP_V4),
-  ARM_CPU_OPT ("cortex-a8",	  "Cortex-A8",	       ARM_ARCH_V7A,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_SEC),
-	       ARM_FEATURE_COPROC (FPU_VFP_V3 | FPU_NEON_EXT_V1)),
-  ARM_CPU_OPT ("cortex-a9",	  "Cortex-A9",	       ARM_ARCH_V7A,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_MP | ARM_EXT_SEC),
-	       ARM_FEATURE_COPROC (FPU_VFP_V3 | FPU_NEON_EXT_V1)),
-  ARM_CPU_OPT ("cortex-a12",	  "Cortex-A12",	       ARM_ARCH_V7VE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_NEON_VFP_V4),
-  ARM_CPU_OPT ("cortex-a15",	  "Cortex-A15",	       ARM_ARCH_V7VE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_NEON_VFP_V4),
-  ARM_CPU_OPT ("cortex-a17",	  "Cortex-A17",	       ARM_ARCH_V7VE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_NEON_VFP_V4),
-  ARM_CPU_OPT ("cortex-a32",	  "Cortex-A32",	       ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a35",	  "Cortex-A35",	       ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a53",	  "Cortex-A53",	       ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a55",    "Cortex-A55",	       ARM_ARCH_V8_2A,
-	       ARM_FEATURE_CORE_HIGH (ARM_EXT2_FP16_INST),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8_DOTPROD),
-  ARM_CPU_OPT ("cortex-a57",	  "Cortex-A57",	       ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a72",	  "Cortex-A72",	       ARM_ARCH_V8A,
-	      ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	      FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a73",	  "Cortex-A73",	       ARM_ARCH_V8A,
-	      ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	      FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-a75",    "Cortex-A75",	       ARM_ARCH_V8_2A,
-	       ARM_FEATURE_CORE_HIGH (ARM_EXT2_FP16_INST),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8_DOTPROD),
-  ARM_CPU_OPT ("cortex-a76",    "Cortex-A76",	       ARM_ARCH_V8_2A,
-	       ARM_FEATURE_CORE_HIGH (ARM_EXT2_FP16_INST),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8_DOTPROD),
-  ARM_CPU_OPT ("cortex-r4",	  "Cortex-R4",	       ARM_ARCH_V7R,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-r4f",	  "Cortex-R4F",	       ARM_ARCH_V7R,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V3D16),
-  ARM_CPU_OPT ("cortex-r5",	  "Cortex-R5",	       ARM_ARCH_V7R,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_ADIV),
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-r7",	  "Cortex-R7",	       ARM_ARCH_V7R,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_ADIV),
-	       FPU_ARCH_VFP_V3D16),
-  ARM_CPU_OPT ("cortex-r8",	  "Cortex-R8",	       ARM_ARCH_V7R,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_ADIV),
-	       FPU_ARCH_VFP_V3D16),
-  ARM_CPU_OPT ("cortex-r52",	  "Cortex-R52",	       ARM_ARCH_V8R,
-	      ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	      FPU_ARCH_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("cortex-m33",	  "Cortex-M33",	       ARM_ARCH_V8M_MAIN,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_V5ExP | ARM_EXT_V6_DSP),
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m23",	  "Cortex-M23",	       ARM_ARCH_V8M_BASE,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m7",	  "Cortex-M7",	       ARM_ARCH_V7EM,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m4",	  "Cortex-M4",	       ARM_ARCH_V7EM,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m3",	  "Cortex-M3",	       ARM_ARCH_V7M,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m1",	  "Cortex-M1",	       ARM_ARCH_V6SM,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m0",	  "Cortex-M0",	       ARM_ARCH_V6SM,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("cortex-m0plus",	  "Cortex-M0+",	       ARM_ARCH_V6SM,
-	       ARM_ARCH_NONE,
-	       FPU_NONE),
-  ARM_CPU_OPT ("exynos-m1",	  "Samsung Exynos M1", ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-
-  /* ??? XSCALE is really an architecture.  */
-  ARM_CPU_OPT ("xscale",	  NULL,		       ARM_ARCH_XSCALE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-
-  /* ??? iwmmxt is not a processor.  */
-  ARM_CPU_OPT ("iwmmxt",	  NULL,		       ARM_ARCH_IWMMXT,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("iwmmxt2",	  NULL,		       ARM_ARCH_IWMMXT2,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-  ARM_CPU_OPT ("i80200",	  NULL,		       ARM_ARCH_XSCALE,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_VFP_V2),
-
-  /* Maverick.  */
-  ARM_CPU_OPT ("ep9312",	  "ARM920T",
-	       ARM_FEATURE_LOW (ARM_AEXT_V4T, ARM_CEXT_MAVERICK),
-	       ARM_ARCH_NONE, FPU_ARCH_MAVERICK),
-
-  /* Marvell processors.  */
-  ARM_CPU_OPT ("marvell-pj4",	  NULL,		       ARM_ARCH_V7A,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_MP | ARM_EXT_SEC),
-	       FPU_ARCH_VFP_V3D16),
-  ARM_CPU_OPT ("marvell-whitney", NULL,		       ARM_ARCH_V7A,
-	       ARM_FEATURE_CORE_LOW (ARM_EXT_MP | ARM_EXT_SEC),
-	       FPU_ARCH_NEON_VFP_V4),
-
-  /* APM X-Gene family.  */
-  ARM_CPU_OPT ("xgene1",	  "APM X-Gene 1",      ARM_ARCH_V8A,
-	       ARM_ARCH_NONE,
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
-  ARM_CPU_OPT ("xgene2",	  "APM X-Gene 2",      ARM_ARCH_V8A,
-	       ARM_FEATURE_COPROC (CRC_EXT_ARMV8),
-	       FPU_ARCH_CRYPTO_NEON_VFP_ARMV8),
 
   { NULL, 0, ARM_ARCH_NONE, ARM_ARCH_NONE, ARM_ARCH_NONE, NULL }
 };
@@ -26283,61 +25450,10 @@ struct arm_arch_option_table
 static const struct arm_arch_option_table arm_archs[] =
 {
   ARM_ARCH_OPT ("all",		ARM_ANY,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv1",	ARM_ARCH_V1,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv2",	ARM_ARCH_V2,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv2a",	ARM_ARCH_V2S,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv2s",	ARM_ARCH_V2S,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv3",	ARM_ARCH_V3,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv3m",	ARM_ARCH_V3M,	 FPU_ARCH_FPA),
   ARM_ARCH_OPT ("armv4",	ARM_ARCH_V4,	 FPU_ARCH_FPA),
   ARM_ARCH_OPT ("armv4xm",	ARM_ARCH_V4xM,	 FPU_ARCH_FPA),
   ARM_ARCH_OPT ("armv4t",	ARM_ARCH_V4T,	 FPU_ARCH_FPA),
   ARM_ARCH_OPT ("armv4txm",	ARM_ARCH_V4TxM,	 FPU_ARCH_FPA),
-  ARM_ARCH_OPT ("armv5",	ARM_ARCH_V5,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv5t",	ARM_ARCH_V5T,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv5txm",	ARM_ARCH_V5TxM,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv5te",	ARM_ARCH_V5TE,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv5texp",	ARM_ARCH_V5TExP, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv5tej",	ARM_ARCH_V5TEJ,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6",	ARM_ARCH_V6,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6j",	ARM_ARCH_V6,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6k",	ARM_ARCH_V6K,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6z",	ARM_ARCH_V6Z,	 FPU_ARCH_VFP),
-  /* The official spelling of this variant is ARMv6KZ, the name "armv6zk" is
-     kept to preserve existing behaviour.  */
-  ARM_ARCH_OPT ("armv6kz",	ARM_ARCH_V6KZ,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6zk",	ARM_ARCH_V6KZ,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6t2",	ARM_ARCH_V6T2,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6kt2",	ARM_ARCH_V6KT2,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6zt2",	ARM_ARCH_V6ZT2,	 FPU_ARCH_VFP),
-  /* The official spelling of this variant is ARMv6KZ, the name "armv6zkt2" is
-     kept to preserve existing behaviour.  */
-  ARM_ARCH_OPT ("armv6kzt2",	ARM_ARCH_V6KZT2, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6zkt2",	ARM_ARCH_V6KZT2, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6-m",	ARM_ARCH_V6M,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv6s-m",	ARM_ARCH_V6SM,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7",	ARM_ARCH_V7,	 FPU_ARCH_VFP),
-  /* The official spelling of the ARMv7 profile variants is the dashed form.
-     Accept the non-dashed form for compatibility with old toolchains.  */
-  ARM_ARCH_OPT ("armv7a",	ARM_ARCH_V7A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7ve",	ARM_ARCH_V7VE,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7r",	ARM_ARCH_V7R,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7m",	ARM_ARCH_V7M,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7-a",	ARM_ARCH_V7A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7-r",	ARM_ARCH_V7R,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7-m",	ARM_ARCH_V7M,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv7e-m",	ARM_ARCH_V7EM,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8-m.base",	ARM_ARCH_V8M_BASE, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8-m.main",	ARM_ARCH_V8M_MAIN, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8-a",	ARM_ARCH_V8A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8.1-a",	ARM_ARCH_V8_1A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8.2-a",	ARM_ARCH_V8_2A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8.3-a",	ARM_ARCH_V8_3A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8-r",	ARM_ARCH_V8R,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("armv8.4-a",	ARM_ARCH_V8_4A,	 FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("xscale",	ARM_ARCH_XSCALE, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("iwmmxt",	ARM_ARCH_IWMMXT, FPU_ARCH_VFP),
-  ARM_ARCH_OPT ("iwmmxt2",	ARM_ARCH_IWMMXT2,FPU_ARCH_VFP),
   { NULL, 0, ARM_ARCH_NONE, ARM_ARCH_NONE }
 };
 #undef ARM_ARCH_OPT
@@ -26506,7 +25622,6 @@ static const struct arm_option_value_table arm_float_abis[] =
   {NULL,	0}
 };
 
-#ifdef OBJ_ELF
 /* We only know how to output GNU and ver 4/5 (AAELF) formats.  */
 static const struct arm_option_value_table arm_eabis[] =
 {
@@ -26515,7 +25630,6 @@ static const struct arm_option_value_table arm_eabis[] =
   {"5",		EF_ARM_EABI_VER5},
   {NULL,	0}
 };
-#endif
 
 struct arm_long_option_table
 {
@@ -26780,7 +25894,6 @@ arm_parse_float_abi (const char * str)
   return FALSE;
 }
 
-#ifdef OBJ_ELF
 static bfd_boolean
 arm_parse_eabi (const char * str)
 {
@@ -26795,7 +25908,6 @@ arm_parse_eabi (const char * str)
   as_bad (_("unknown EABI `%s'\n"), str);
   return FALSE;
 }
-#endif
 
 static bfd_boolean
 arm_parse_it_mode (const char * str)
@@ -26839,10 +25951,8 @@ struct arm_long_option_table arm_long_opts[] =
    arm_parse_fpu, NULL},
   {"mfloat-abi=", N_("<abi>\t  assemble for floating point ABI <abi>"),
    arm_parse_float_abi, NULL},
-#ifdef OBJ_ELF
   {"meabi=", N_("<ver>\t\t  assemble for eabi version <ver>"),
    arm_parse_eabi, NULL},
-#endif
   {"mimplicit-it=", N_("<mode>\t  controls implicit insertion of IT instructions"),
    arm_parse_it_mode, NULL},
   {"mccs", N_("\t\t\t  TI CodeComposer Studio syntax compatibility mode"),
@@ -26859,27 +25969,17 @@ md_parse_option (int c, const char * arg)
 
   switch (c)
     {
-#ifdef OPTION_EB
-    case OPTION_EB:
-      target_big_endian = 1;
-      break;
-#endif
-
-#ifdef OPTION_EL
     case OPTION_EL:
       target_big_endian = 0;
       break;
-#endif
 
     case OPTION_FIX_V4BX:
       fix_v4bx = TRUE;
       break;
 
-#ifdef OBJ_ELF
     case OPTION_FDPIC:
       arm_fdpic = TRUE;
       break;
-#endif /* OBJ_ELF */
 
     case 'a':
       /* Listing option.  Just ignore these, we don't support additional
@@ -26963,26 +26063,15 @@ md_show_usage (FILE * fp)
     if (lopt->help != NULL)
       fprintf (fp, "  -%s%s\n", lopt->option, _(lopt->help));
 
-#ifdef OPTION_EB
-  fprintf (fp, _("\
-  -EB                     assemble code for a big-endian cpu\n"));
-#endif
-
-#ifdef OPTION_EL
   fprintf (fp, _("\
   -EL                     assemble code for a little-endian cpu\n"));
-#endif
 
   fprintf (fp, _("\
   --fix-v4bx              Allow BX in ARMv4 code\n"));
 
-#ifdef OBJ_ELF
   fprintf (fp, _("\
   --fdpic                 generate an FDPIC object file\n"));
-#endif /* OBJ_ELF */
 }
-
-#ifdef OBJ_ELF
 
 typedef struct
 {
@@ -27446,7 +26535,6 @@ arm_md_end (void)
 
   aeabi_set_public_attributes ();
 }
-#endif /* OBJ_ELF */
 
 /* Parse a .cpu directive.  */
 
@@ -27666,7 +26754,6 @@ arm_copy_symbol_attributes (symbolS *dest, symbolS *src)
   ARM_GET_FLAG (dest) = ARM_GET_FLAG (src);
 }
 
-#ifdef OBJ_ELF
 /* Given a symbolic attribute NAME, return the proper integer value.
    Returns -1 if the attribute is not known.  */
 
@@ -27778,4 +26865,3 @@ arm_apply_sym_value (struct fix * fixP, segT this_seg)
     }
   return 0;
 }
-#endif /* OBJ_ELF */

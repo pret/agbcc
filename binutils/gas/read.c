@@ -36,7 +36,6 @@
 #include "sb.h"
 #include "macro.h"
 #include "obstack.h"
-#include "ecoff.h"
 #include "dw2gencfi.h"
 #include "wchar.h"
 
@@ -2461,14 +2460,6 @@ bss_alloc (symbolS *symbolP, addressT size, unsigned int align)
 #endif
   S_SET_SEGMENT (symbolP, bss_seg);
 
-#ifdef OBJ_COFF
-  /* The symbol may already have been created with a preceding
-     ".globl" directive -- be careful not to step on storage class
-     in that case.  Otherwise, set it to static.  */
-  if (S_GET_STORAGE_CLASS (symbolP) != C_EXT)
-    S_SET_STORAGE_CLASS (symbolP, C_STAT);
-#endif /* OBJ_COFF */
-
   subseg_set (current_seg, current_subseg);
 }
 
@@ -3072,10 +3063,6 @@ assign_symbol (char *name, int mode)
 	  dummy_frag->fr_symbol = symbolP;
 	  symbol_set_frag (symbolP, dummy_frag);
 	}
-#endif
-#if defined (OBJ_COFF) && !defined (TE_PE)
-      /* "set" symbols are local unless otherwise specified.  */
-      SF_SET_LOCAL (symbolP);
 #endif
     }
 
@@ -5726,9 +5713,6 @@ generate_lineno_debug (void)
       break;
     case DEBUG_STABS:
       stabs_generate_asm_lineno ();
-      break;
-    case DEBUG_ECOFF:
-      ecoff_generate_asm_lineno ();
       break;
     case DEBUG_DWARF2:
       /* ??? We could here indicate to dwarf2dbg.c that something

@@ -125,8 +125,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
 	$(top_srcdir)/../config/po.m4 \
 	$(top_srcdir)/../config/progtest.m4 \
 	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/../libtool.m4 \
-	$(top_srcdir)/../ltoptions.m4 $(top_srcdir)/../ltsugar.m4 \
-	$(top_srcdir)/../ltversion.m4 $(top_srcdir)/../lt~obsolete.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -142,23 +140,19 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am__objects_1 = app.$(OBJEXT) as.$(OBJEXT) atof-generic.$(OBJEXT) \
 	compress-debug.$(OBJEXT) cond.$(OBJEXT) depend.$(OBJEXT) \
-	dwarf2dbg.$(OBJEXT) dw2gencfi.$(OBJEXT) ecoff.$(OBJEXT) \
-	ehopt.$(OBJEXT) expr.$(OBJEXT) flonum-copy.$(OBJEXT) \
-	flonum-konst.$(OBJEXT) flonum-mult.$(OBJEXT) frags.$(OBJEXT) \
-	hash.$(OBJEXT) input-file.$(OBJEXT) input-scrub.$(OBJEXT) \
-	listing.$(OBJEXT) literal.$(OBJEXT) macro.$(OBJEXT) \
-	messages.$(OBJEXT) output-file.$(OBJEXT) read.$(OBJEXT) \
-	remap.$(OBJEXT) sb.$(OBJEXT) stabs.$(OBJEXT) subsegs.$(OBJEXT) \
+	dwarf2dbg.$(OBJEXT) dw2gencfi.$(OBJEXT) ehopt.$(OBJEXT) \
+	expr.$(OBJEXT) flonum-copy.$(OBJEXT) flonum-konst.$(OBJEXT) \
+	flonum-mult.$(OBJEXT) frags.$(OBJEXT) hash.$(OBJEXT) \
+	input-file.$(OBJEXT) input-scrub.$(OBJEXT) listing.$(OBJEXT) \
+	literal.$(OBJEXT) macro.$(OBJEXT) messages.$(OBJEXT) \
+	output-file.$(OBJEXT) read.$(OBJEXT) remap.$(OBJEXT) \
+	sb.$(OBJEXT) stabs.$(OBJEXT) subsegs.$(OBJEXT) \
 	symbols.$(OBJEXT) write.$(OBJEXT)
 am_as_new_OBJECTS = $(am__objects_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 as_new_OBJECTS = $(am_as_new_OBJECTS)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = ../bfd/libbfd.la ../libiberty/libiberty.a
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
+am__DEPENDENCIES_2 = ../bfd/libbfd.a ../libiberty/libiberty.a
 am_itbl_test_OBJECTS = itbl-parse.$(OBJEXT) itbl-lex.$(OBJEXT)
 itbl_test_OBJECTS = $(am_itbl_test_OBJECTS)
 itbl_test_DEPENDENCIES = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ \
@@ -183,28 +177,23 @@ am__depfiles_remade = ./$(DEPDIR)/app.Po ./$(DEPDIR)/as.Po \
 	./$(DEPDIR)/atof-generic.Po ./$(DEPDIR)/cgen.Po \
 	./$(DEPDIR)/compress-debug.Po ./$(DEPDIR)/cond.Po \
 	./$(DEPDIR)/depend.Po ./$(DEPDIR)/dw2gencfi.Po \
-	./$(DEPDIR)/dwarf2dbg.Po ./$(DEPDIR)/ecoff.Po \
-	./$(DEPDIR)/ehopt.Po ./$(DEPDIR)/expr.Po \
-	./$(DEPDIR)/flonum-copy.Po ./$(DEPDIR)/flonum-konst.Po \
-	./$(DEPDIR)/flonum-mult.Po ./$(DEPDIR)/frags.Po \
-	./$(DEPDIR)/hash.Po ./$(DEPDIR)/input-file.Po \
-	./$(DEPDIR)/input-scrub.Po ./$(DEPDIR)/itbl-lex.Po \
-	./$(DEPDIR)/itbl-ops.Po ./$(DEPDIR)/itbl-parse.Po \
-	./$(DEPDIR)/listing.Po ./$(DEPDIR)/literal.Po \
-	./$(DEPDIR)/macro.Po ./$(DEPDIR)/messages.Po \
-	./$(DEPDIR)/output-file.Po ./$(DEPDIR)/read.Po \
-	./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po ./$(DEPDIR)/stabs.Po \
-	./$(DEPDIR)/subsegs.Po ./$(DEPDIR)/symbols.Po \
-	./$(DEPDIR)/write.Po config/$(DEPDIR)/atof-ieee.Po \
-	config/$(DEPDIR)/atof-vax.Po config/$(DEPDIR)/e-crisaout.Po \
-	config/$(DEPDIR)/e-criself.Po config/$(DEPDIR)/e-i386aout.Po \
-	config/$(DEPDIR)/e-i386coff.Po config/$(DEPDIR)/e-i386elf.Po \
+	./$(DEPDIR)/dwarf2dbg.Po ./$(DEPDIR)/ehopt.Po \
+	./$(DEPDIR)/expr.Po ./$(DEPDIR)/flonum-copy.Po \
+	./$(DEPDIR)/flonum-konst.Po ./$(DEPDIR)/flonum-mult.Po \
+	./$(DEPDIR)/frags.Po ./$(DEPDIR)/hash.Po \
+	./$(DEPDIR)/input-file.Po ./$(DEPDIR)/input-scrub.Po \
+	./$(DEPDIR)/itbl-lex.Po ./$(DEPDIR)/itbl-ops.Po \
+	./$(DEPDIR)/itbl-parse.Po ./$(DEPDIR)/listing.Po \
+	./$(DEPDIR)/literal.Po ./$(DEPDIR)/macro.Po \
+	./$(DEPDIR)/messages.Po ./$(DEPDIR)/output-file.Po \
+	./$(DEPDIR)/read.Po ./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po \
+	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/subsegs.Po \
+	./$(DEPDIR)/symbols.Po ./$(DEPDIR)/write.Po \
+	config/$(DEPDIR)/atof-ieee.Po config/$(DEPDIR)/atof-vax.Po \
+	config/$(DEPDIR)/e-crisaout.Po config/$(DEPDIR)/e-criself.Po \
+	config/$(DEPDIR)/e-i386aout.Po config/$(DEPDIR)/e-i386elf.Po \
 	config/$(DEPDIR)/e-mipself.Po config/$(DEPDIR)/m68k-parse.Po \
-	config/$(DEPDIR)/obj-aout.Po config/$(DEPDIR)/obj-coff.Po \
-	config/$(DEPDIR)/obj-ecoff.Po config/$(DEPDIR)/obj-elf.Po \
-	config/$(DEPDIR)/obj-evax.Po config/$(DEPDIR)/obj-fdpicelf.Po \
-	config/$(DEPDIR)/obj-macho.Po config/$(DEPDIR)/obj-multi.Po \
-	config/$(DEPDIR)/obj-som.Po config/$(DEPDIR)/rl78-parse.Po \
+	config/$(DEPDIR)/obj-elf.Po config/$(DEPDIR)/rl78-parse.Po \
 	config/$(DEPDIR)/rx-parse.Po config/$(DEPDIR)/tc-aarch64.Po \
 	config/$(DEPDIR)/tc-alpha.Po config/$(DEPDIR)/tc-arc.Po \
 	config/$(DEPDIR)/tc-arm.Po config/$(DEPDIR)/tc-avr.Po \
@@ -245,18 +234,12 @@ am__depfiles_remade = ./$(DEPDIR)/app.Po ./$(DEPDIR)/as.Po \
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
 am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
@@ -265,8 +248,6 @@ am__v_CCLD_1 =
 am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
 		   -e s/c++$$/h++/ -e s/c$$/h/
 YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
-LTYACCCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(YACC) $(AM_YFLAGS) $(YFLAGS)
 AM_V_YACC = $(am__v_YACC_@AM_V@)
 am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
 am__v_YACC_0 = @echo "  YACC    " $@;
@@ -307,7 +288,6 @@ ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -323,15 +303,11 @@ CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
 GDBINIT = @GDBINIT@
 GENCAT = @GENCAT@
 GMSGFMT = @GMSGFMT@
@@ -343,33 +319,22 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INSTOBJEXT = @INSTOBJEXT@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBINTL = @LIBINTL@
 LIBINTL_DEP = @LIBINTL_DEP@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 MSGMERGE = @MSGMERGE@
-NM = @NM@
-NMEDIT = @NMEDIT@
 NO_WERROR = @NO_WERROR@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OPCODES_LIB = @OPCODES_LIB@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -379,8 +344,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 POSUB = @POSUB@
-RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -394,9 +357,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -494,7 +455,6 @@ GAS_CFILES = \
 	depend.c \
 	dwarf2dbg.c \
 	dw2gencfi.c \
-	ecoff.c \
 	ehopt.c \
 	expr.c \
 	flonum-copy.c \
@@ -527,7 +487,6 @@ HFILES = \
 	compress-debug.h \
 	dwarf2dbg.h \
 	dw2gencfi.h \
-	ecoff.h \
 	emul-target.h \
 	emul.h \
 	expr.h \
@@ -701,57 +660,17 @@ TARGET_CPU_HFILES = \
 
 # OBJ files in config
 OBJ_FORMAT_CFILES = \
-	config/obj-aout.c \
-	config/obj-coff.c \
-	config/obj-ecoff.c \
-	config/obj-elf.c \
-	config/obj-evax.c \
-	config/obj-fdpicelf.c \
-	config/obj-macho.c \
-	config/obj-multi.c \
-	config/obj-som.c
+	config/obj-elf.c
 
 OBJ_FORMAT_HFILES = \
-	config/obj-aout.h \
-	config/obj-coff.h \
-	config/obj-ecoff.h \
 	config/obj-elf.h \
-	config/obj-evax.h \
-	config/obj-fdpicelf.h \
-	config/obj-macho.h \
-	config/obj-multi.h \
-	config/obj-som.h
+	config/obj-fdpicelf.h
 
 
 # Emulation header files in config
 TARG_ENV_HFILES = \
-	config/te-386bsd.h \
-	config/te-aix5.h \
 	config/te-armeabi.h \
-	config/te-armfbsdeabi.h \
-	config/te-armfbsdvfp.h \
-	config/te-armlinuxeabi.h \
-	config/te-freebsd.h \
-	config/te-generic.h \
-	config/te-gnu.h \
-	config/te-go32.h \
-	config/te-hppa.h \
-	config/te-hppa64.h \
-	config/te-hppalinux64.h \
-	config/te-ia64aix.h \
-	config/te-interix.h \
-	config/te-lynx.h \
-	config/te-macos.h \
-	config/te-nbsd.h \
-	config/te-nbsd532.h \
-	config/te-pc532mach.h \
-	config/te-pe.h \
-	config/te-solaris.h \
-	config/te-svr4.h \
-	config/te-symbian.h \
-	config/te-tmips.h \
-	config/te-vxworks.h \
-	config/te-wince-pe.h
+	config/te-generic.h
 
 TARG_ENV_CFILES = \
 	config/te-vms.c
@@ -762,7 +681,6 @@ MULTI_CFILES = \
 	config/e-crisaout.c \
 	config/e-criself.c \
 	config/e-i386aout.c \
-	config/e-i386coff.c \
 	config/e-i386elf.c \
 	config/e-mipself.c
 
@@ -801,13 +719,13 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
 
 # How to link with both our special library facilities
 # and the system's installed libraries.
-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la ../libiberty/libiberty.a
+GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.a ../libiberty/libiberty.a
 
 # Files to be copied away after each stage in building.
 STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
 as_new_SOURCES = $(GAS_CFILES)
 as_new_LDADD = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
-	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM)
+	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM) -lz
 
 as_new_DEPENDENCIES = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 	$(extra_objects) $(GASLIBS) $(LIBINTL_DEP)
@@ -841,7 +759,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj .y
+.SUFFIXES: .c .o .obj .y
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -896,13 +814,7 @@ gdb.ini: $(top_builddir)/config.status $(srcdir)/gdbinit.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 config/$(am__dirstamp):
 	@$(MKDIR_P) config
 	@: > config/$(am__dirstamp)
@@ -1053,23 +965,7 @@ config/tc-z8k.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/xtensa-relax.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-aout.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-coff.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-ecoff.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
 config/obj-elf.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-evax.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-fdpicelf.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-macho.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-multi.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/obj-som.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/te-vms.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
@@ -1082,8 +978,6 @@ config/e-crisaout.$(OBJEXT): config/$(am__dirstamp) \
 config/e-criself.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/e-i386aout.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/e-i386coff.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/e-i386elf.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
@@ -1120,7 +1014,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/depend.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dw2gencfi.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf2dbg.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ecoff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ehopt.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expr.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flonum-copy.Po@am__quote@ # am--include-marker
@@ -1150,19 +1043,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-crisaout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-criself.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-i386aout.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-i386coff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-i386elf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-mipself.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/m68k-parse.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-aout.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-coff.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-ecoff.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-elf.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-evax.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-fdpicelf.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-macho.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-multi.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-som.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/rl78-parse.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/rx-parse.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-aarch64.Po@am__quote@ # am--include-marker
@@ -1261,25 +1145,8 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
 .y.c:
 	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -1413,8 +1280,7 @@ maintainer-clean-generic:
 	-rm -f config/rx-parse.c
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1427,7 +1293,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/depend.Po
 	-rm -f ./$(DEPDIR)/dw2gencfi.Po
 	-rm -f ./$(DEPDIR)/dwarf2dbg.Po
-	-rm -f ./$(DEPDIR)/ecoff.Po
 	-rm -f ./$(DEPDIR)/ehopt.Po
 	-rm -f ./$(DEPDIR)/expr.Po
 	-rm -f ./$(DEPDIR)/flonum-copy.Po
@@ -1457,19 +1322,10 @@ distclean: distclean-am
 	-rm -f config/$(DEPDIR)/e-crisaout.Po
 	-rm -f config/$(DEPDIR)/e-criself.Po
 	-rm -f config/$(DEPDIR)/e-i386aout.Po
-	-rm -f config/$(DEPDIR)/e-i386coff.Po
 	-rm -f config/$(DEPDIR)/e-i386elf.Po
 	-rm -f config/$(DEPDIR)/e-mipself.Po
 	-rm -f config/$(DEPDIR)/m68k-parse.Po
-	-rm -f config/$(DEPDIR)/obj-aout.Po
-	-rm -f config/$(DEPDIR)/obj-coff.Po
-	-rm -f config/$(DEPDIR)/obj-ecoff.Po
 	-rm -f config/$(DEPDIR)/obj-elf.Po
-	-rm -f config/$(DEPDIR)/obj-evax.Po
-	-rm -f config/$(DEPDIR)/obj-fdpicelf.Po
-	-rm -f config/$(DEPDIR)/obj-macho.Po
-	-rm -f config/$(DEPDIR)/obj-multi.Po
-	-rm -f config/$(DEPDIR)/obj-som.Po
 	-rm -f config/$(DEPDIR)/rl78-parse.Po
 	-rm -f config/$(DEPDIR)/rx-parse.Po
 	-rm -f config/$(DEPDIR)/tc-aarch64.Po
@@ -1547,8 +1403,7 @@ distclean: distclean-am
 	-rm -f config/$(DEPDIR)/xtensa-relax.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags
+	distclean-generic distclean-hdr distclean-tags
 
 dvi: dvi-am
 
@@ -1602,7 +1457,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/depend.Po
 	-rm -f ./$(DEPDIR)/dw2gencfi.Po
 	-rm -f ./$(DEPDIR)/dwarf2dbg.Po
-	-rm -f ./$(DEPDIR)/ecoff.Po
 	-rm -f ./$(DEPDIR)/ehopt.Po
 	-rm -f ./$(DEPDIR)/expr.Po
 	-rm -f ./$(DEPDIR)/flonum-copy.Po
@@ -1632,19 +1486,10 @@ maintainer-clean: maintainer-clean-am
 	-rm -f config/$(DEPDIR)/e-crisaout.Po
 	-rm -f config/$(DEPDIR)/e-criself.Po
 	-rm -f config/$(DEPDIR)/e-i386aout.Po
-	-rm -f config/$(DEPDIR)/e-i386coff.Po
 	-rm -f config/$(DEPDIR)/e-i386elf.Po
 	-rm -f config/$(DEPDIR)/e-mipself.Po
 	-rm -f config/$(DEPDIR)/m68k-parse.Po
-	-rm -f config/$(DEPDIR)/obj-aout.Po
-	-rm -f config/$(DEPDIR)/obj-coff.Po
-	-rm -f config/$(DEPDIR)/obj-ecoff.Po
 	-rm -f config/$(DEPDIR)/obj-elf.Po
-	-rm -f config/$(DEPDIR)/obj-evax.Po
-	-rm -f config/$(DEPDIR)/obj-fdpicelf.Po
-	-rm -f config/$(DEPDIR)/obj-macho.Po
-	-rm -f config/$(DEPDIR)/obj-multi.Po
-	-rm -f config/$(DEPDIR)/obj-som.Po
 	-rm -f config/$(DEPDIR)/rl78-parse.Po
 	-rm -f config/$(DEPDIR)/rx-parse.Po
 	-rm -f config/$(DEPDIR)/tc-aarch64.Po
@@ -1725,8 +1570,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -1742,19 +1586,18 @@ uninstall-am:
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-DEJAGNU check-am clean clean-cscope clean-generic \
-	clean-libtool clean-noinstPROGRAMS cscope cscopelist-am ctags \
-	ctags-am distclean distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags dvi dvi-am html html-am info info-am install \
-	install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-local \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am
+	clean-noinstPROGRAMS cscope cscopelist-am ctags ctags-am \
+	distclean distclean-DEJAGNU distclean-compile \
+	distclean-generic distclean-hdr distclean-tags dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-exec-local install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
@@ -1888,8 +1731,8 @@ install-exec-bindir: $(noinst_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(noinst_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo "$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	    $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed -e 's/$(EXEEXT)$$//' -e 's/-new//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -1899,7 +1742,7 @@ install-exec-tooldir: install-exec-bindir $(noinst_PROGRAMS)
 	if [ "$(bindir)/$$n$(EXEEXT)" != "$(tooldir)/bin/as$(EXEEXT)" ]; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
+	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	else \
 	  true ; \
 	fi

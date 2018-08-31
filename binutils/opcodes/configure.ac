@@ -37,9 +37,9 @@ AC_CHECK_TOOL(RANLIB, ranlib, :)
 
 dnl Default to a non shared library.  This may be overridden by the
 dnl configure option --enable-shared.
-AC_DISABLE_SHARED
+#AC_DISABLE_SHARED
 
-LT_INIT
+#LT_INIT
 
 AC_ARG_ENABLE(targets,
 [  --enable-targets        alternative target configurations],
@@ -124,7 +124,7 @@ AC_CACHE_CHECK(linker --as-needed support, bfd_cv_ld_as_needed,
 	fi
 	])
 
-LT_LIB_M
+#LT_LIB_M
 
 #Libs for generator progs
 if test "x$cross_compiling" = "xno"; then
@@ -230,7 +230,7 @@ done
 
 # Utility var, documents generic cgen support files.
 
-cgen_files="cgen-opc.lo cgen-asm.lo cgen-dis.lo cgen-bitset.lo"
+cgen_files="cgen-opc.o cgen-asm.o cgen-dis.o cgen-bitset.o"
 
 # We don't do any links based on the target system, just makefile config.
 
@@ -244,90 +244,90 @@ if test x${all_targets} = xfalse ; then
 	ad=`echo $arch | sed -e s/bfd_//g -e s/_arch//g`
 	archdefs="$archdefs -DARCH_$ad"
 	case "$arch" in
-	bfd_aarch64_arch)	ta="$ta aarch64-asm.lo aarch64-dis.lo aarch64-opc.lo aarch64-asm-2.lo aarch64-dis-2.lo aarch64-opc-2.lo" ;;
-	bfd_alpha_arch)		ta="$ta alpha-dis.lo alpha-opc.lo" ;;
-	bfd_arc_arch)		ta="$ta arc-dis.lo arc-opc.lo arc-ext.lo" ;;
-	bfd_arm_arch)		ta="$ta arm-dis.lo" ;;
-	bfd_avr_arch)		ta="$ta avr-dis.lo" ;;
-	bfd_bfin_arch)		ta="$ta bfin-dis.lo" ;;
-	bfd_cr16_arch)		ta="$ta cr16-dis.lo cr16-opc.lo" ;;
-	bfd_cris_arch)		ta="$ta cris-dis.lo cris-opc.lo cgen-bitset.lo" ;;
-	bfd_crx_arch)		ta="$ta crx-dis.lo crx-opc.lo" ;;
-	bfd_d10v_arch)		ta="$ta d10v-dis.lo d10v-opc.lo" ;;
-	bfd_d30v_arch)		ta="$ta d30v-dis.lo d30v-opc.lo" ;;
-	bfd_dlx_arch)		ta="$ta dlx-dis.lo" ;;
-	bfd_fr30_arch)		ta="$ta fr30-asm.lo fr30-desc.lo fr30-dis.lo fr30-ibld.lo fr30-opc.lo" using_cgen=yes ;;
-	bfd_frv_arch)		ta="$ta frv-asm.lo frv-desc.lo frv-dis.lo frv-ibld.lo frv-opc.lo" using_cgen=yes ;;
-	bfd_ft32_arch)		ta="$ta ft32-opc.lo ft32-dis.lo" ;;
-	bfd_moxie_arch)		ta="$ta moxie-dis.lo moxie-opc.lo" ;;
-	bfd_h8300_arch)		ta="$ta h8300-dis.lo" ;;
-	bfd_hppa_arch)		ta="$ta hppa-dis.lo" ;;
+	bfd_aarch64_arch)	ta="$ta aarch64-asm.o aarch64-dis.o aarch64-opc.o aarch64-asm-2.o aarch64-dis-2.o aarch64-opc-2.o" ;;
+	bfd_alpha_arch)		ta="$ta alpha-dis.o alpha-opc.o" ;;
+	bfd_arc_arch)		ta="$ta arc-dis.o arc-opc.o arc-ext.o" ;;
+	bfd_arm_arch)		ta="$ta arm-dis.o" ;;
+	bfd_avr_arch)		ta="$ta avr-dis.o" ;;
+	bfd_bfin_arch)		ta="$ta bfin-dis.o" ;;
+	bfd_cr16_arch)		ta="$ta cr16-dis.o cr16-opc.o" ;;
+	bfd_cris_arch)		ta="$ta cris-dis.o cris-opc.o cgen-bitset.o" ;;
+	bfd_crx_arch)		ta="$ta crx-dis.o crx-opc.o" ;;
+	bfd_d10v_arch)		ta="$ta d10v-dis.o d10v-opc.o" ;;
+	bfd_d30v_arch)		ta="$ta d30v-dis.o d30v-opc.o" ;;
+	bfd_dlx_arch)		ta="$ta dlx-dis.o" ;;
+	bfd_fr30_arch)		ta="$ta fr30-asm.o fr30-desc.o fr30-dis.o fr30-ibld.o fr30-opc.o" using_cgen=yes ;;
+	bfd_frv_arch)		ta="$ta frv-asm.o frv-desc.o frv-dis.o frv-ibld.o frv-opc.o" using_cgen=yes ;;
+	bfd_ft32_arch)		ta="$ta ft32-opc.o ft32-dis.o" ;;
+	bfd_moxie_arch)		ta="$ta moxie-dis.o moxie-opc.o" ;;
+	bfd_h8300_arch)		ta="$ta h8300-dis.o" ;;
+	bfd_hppa_arch)		ta="$ta hppa-dis.o" ;;
 	bfd_i386_arch|bfd_iamcu_arch|bfd_l1om_arch|bfd_k1om_arch)
-				ta="$ta i386-dis.lo i386-opc.lo" ;;
-	bfd_ia64_arch)		ta="$ta ia64-dis.lo ia64-opc.lo" ;;
-	bfd_ip2k_arch)		ta="$ta ip2k-asm.lo ip2k-desc.lo ip2k-dis.lo ip2k-ibld.lo ip2k-opc.lo" using_cgen=yes ;;
-	bfd_epiphany_arch)	ta="$ta epiphany-asm.lo epiphany-desc.lo epiphany-dis.lo epiphany-ibld.lo epiphany-opc.lo" using_cgen=yes ;;
-	bfd_iq2000_arch)	ta="$ta iq2000-asm.lo iq2000-desc.lo iq2000-dis.lo iq2000-ibld.lo iq2000-opc.lo" using_cgen=yes ;;
-	bfd_lm32_arch)		ta="$ta lm32-asm.lo lm32-desc.lo lm32-dis.lo lm32-ibld.lo lm32-opc.lo lm32-opinst.lo" using_cgen=yes ;;
-	bfd_m32c_arch)		ta="$ta m32c-asm.lo m32c-desc.lo m32c-dis.lo m32c-ibld.lo m32c-opc.lo" using_cgen=yes ;;
-	bfd_m32r_arch)		ta="$ta m32r-asm.lo m32r-desc.lo m32r-dis.lo m32r-ibld.lo m32r-opc.lo m32r-opinst.lo" using_cgen=yes ;;
-	bfd_m68hc11_arch)	ta="$ta m68hc11-dis.lo m68hc11-opc.lo" ;;
-	bfd_m68hc12_arch)	ta="$ta m68hc11-dis.lo m68hc11-opc.lo" ;;
-	bfd_m9s12x_arch)	ta="$ta m68hc11-dis.lo m68hc11-opc.lo" ;;
-	bfd_m9s12xg_arch)	ta="$ta m68hc11-dis.lo m68hc11-opc.lo" ;;
-	bfd_s12z_arch)	ta="$ta s12z-dis.lo m68hc11-opc.lo" ;;
-	bfd_m68k_arch)		ta="$ta m68k-dis.lo m68k-opc.lo" ;;
-	bfd_mcore_arch)		ta="$ta mcore-dis.lo" ;;
-	bfd_mep_arch)		ta="$ta mep-asm.lo mep-desc.lo mep-dis.lo mep-ibld.lo mep-opc.lo" using_cgen=yes ;;
-	bfd_metag_arch)		ta="$ta metag-dis.lo" ;;
-	bfd_microblaze_arch)	ta="$ta microblaze-dis.lo" ;;
-	bfd_mips_arch)		ta="$ta mips-dis.lo mips-opc.lo mips16-opc.lo micromips-opc.lo" ;;
-	bfd_mmix_arch)		ta="$ta mmix-dis.lo mmix-opc.lo" ;;
-	bfd_mn10200_arch)	ta="$ta m10200-dis.lo m10200-opc.lo" ;;
-	bfd_mn10300_arch)	ta="$ta m10300-dis.lo m10300-opc.lo" ;;
-	bfd_mt_arch)		ta="$ta mt-asm.lo mt-desc.lo mt-dis.lo mt-ibld.lo mt-opc.lo" using_cgen=yes ;;
-	bfd_msp430_arch)	ta="$ta msp430-dis.lo msp430-decode.lo" ;;
-	bfd_nds32_arch)		ta="$ta nds32-asm.lo nds32-dis.lo" ;;
-	bfd_nfp_arch)		ta="$ta nfp-dis.lo" ;;
-	bfd_nios2_arch)		ta="$ta nios2-dis.lo nios2-opc.lo" ;;
-	bfd_ns32k_arch)		ta="$ta ns32k-dis.lo" ;;
-	bfd_or1k_arch)		ta="$ta or1k-asm.lo or1k-desc.lo or1k-dis.lo or1k-ibld.lo or1k-opc.lo" using_cgen=yes ;;
-	bfd_pdp11_arch)		ta="$ta pdp11-dis.lo pdp11-opc.lo" ;;
-	bfd_pj_arch)		ta="$ta pj-dis.lo pj-opc.lo" ;;
-	bfd_powerpc_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
-	bfd_powerpc_64_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
-	bfd_pru_arch)		ta="$ta pru-dis.lo pru-opc.lo" ;;
+				ta="$ta i386-dis.o i386-opc.o" ;;
+	bfd_ia64_arch)		ta="$ta ia64-dis.o ia64-opc.o" ;;
+	bfd_ip2k_arch)		ta="$ta ip2k-asm.o ip2k-desc.o ip2k-dis.o ip2k-ibld.o ip2k-opc.o" using_cgen=yes ;;
+	bfd_epiphany_arch)	ta="$ta epiphany-asm.o epiphany-desc.o epiphany-dis.o epiphany-ibld.o epiphany-opc.o" using_cgen=yes ;;
+	bfd_iq2000_arch)	ta="$ta iq2000-asm.o iq2000-desc.o iq2000-dis.o iq2000-ibld.o iq2000-opc.o" using_cgen=yes ;;
+	bfd_lm32_arch)		ta="$ta lm32-asm.o lm32-desc.o lm32-dis.o lm32-ibld.o lm32-opc.o lm32-opinst.o" using_cgen=yes ;;
+	bfd_m32c_arch)		ta="$ta m32c-asm.o m32c-desc.o m32c-dis.o m32c-ibld.o m32c-opc.o" using_cgen=yes ;;
+	bfd_m32r_arch)		ta="$ta m32r-asm.o m32r-desc.o m32r-dis.o m32r-ibld.o m32r-opc.o m32r-opinst.o" using_cgen=yes ;;
+	bfd_m68hc11_arch)	ta="$ta m68hc11-dis.o m68hc11-opc.o" ;;
+	bfd_m68hc12_arch)	ta="$ta m68hc11-dis.o m68hc11-opc.o" ;;
+	bfd_m9s12x_arch)	ta="$ta m68hc11-dis.o m68hc11-opc.o" ;;
+	bfd_m9s12xg_arch)	ta="$ta m68hc11-dis.o m68hc11-opc.o" ;;
+	bfd_s12z_arch)	ta="$ta s12z-dis.o m68hc11-opc.o" ;;
+	bfd_m68k_arch)		ta="$ta m68k-dis.o m68k-opc.o" ;;
+	bfd_mcore_arch)		ta="$ta mcore-dis.o" ;;
+	bfd_mep_arch)		ta="$ta mep-asm.o mep-desc.o mep-dis.o mep-ibld.o mep-opc.o" using_cgen=yes ;;
+	bfd_metag_arch)		ta="$ta metag-dis.o" ;;
+	bfd_microblaze_arch)	ta="$ta microblaze-dis.o" ;;
+	bfd_mips_arch)		ta="$ta mips-dis.o mips-opc.o mips16-opc.o micromips-opc.o" ;;
+	bfd_mmix_arch)		ta="$ta mmix-dis.o mmix-opc.o" ;;
+	bfd_mn10200_arch)	ta="$ta m10200-dis.o m10200-opc.o" ;;
+	bfd_mn10300_arch)	ta="$ta m10300-dis.o m10300-opc.o" ;;
+	bfd_mt_arch)		ta="$ta mt-asm.o mt-desc.o mt-dis.o mt-ibld.o mt-opc.o" using_cgen=yes ;;
+	bfd_msp430_arch)	ta="$ta msp430-dis.o msp430-decode.o" ;;
+	bfd_nds32_arch)		ta="$ta nds32-asm.o nds32-dis.o" ;;
+	bfd_nfp_arch)		ta="$ta nfp-dis.o" ;;
+	bfd_nios2_arch)		ta="$ta nios2-dis.o nios2-opc.o" ;;
+	bfd_ns32k_arch)		ta="$ta ns32k-dis.o" ;;
+	bfd_or1k_arch)		ta="$ta or1k-asm.o or1k-desc.o or1k-dis.o or1k-ibld.o or1k-opc.o" using_cgen=yes ;;
+	bfd_pdp11_arch)		ta="$ta pdp11-dis.o pdp11-opc.o" ;;
+	bfd_pj_arch)		ta="$ta pj-dis.o pj-opc.o" ;;
+	bfd_powerpc_arch)	ta="$ta ppc-dis.o ppc-opc.o" ;;
+	bfd_powerpc_64_arch)	ta="$ta ppc-dis.o ppc-opc.o" ;;
+	bfd_pru_arch)		ta="$ta pru-dis.o pru-opc.o" ;;
 	bfd_pyramid_arch)	;;
 	bfd_romp_arch)		;;
-	bfd_riscv_arch)         ta="$ta riscv-dis.lo riscv-opc.lo" ;;
-	bfd_rs6000_arch)	ta="$ta ppc-dis.lo ppc-opc.lo" ;;
-	bfd_rl78_arch)		ta="$ta rl78-dis.lo rl78-decode.lo";;
-	bfd_rx_arch)		ta="$ta rx-dis.lo rx-decode.lo";;
-	bfd_s390_arch)		ta="$ta s390-dis.lo s390-opc.lo" ;;
-	bfd_score_arch)		ta="$ta score-dis.lo score7-dis.lo" ;;
-	bfd_sh_arch)		ta="$ta sh-dis.lo cgen-bitset.lo" ;;
-	bfd_sparc_arch)		ta="$ta sparc-dis.lo sparc-opc.lo" ;;
-	bfd_spu_arch)		ta="$ta spu-dis.lo spu-opc.lo" ;;
-	bfd_tic30_arch)		ta="$ta tic30-dis.lo" ;;
-	bfd_tic4x_arch)		ta="$ta tic4x-dis.lo" ;;
-	bfd_tic54x_arch)	ta="$ta tic54x-dis.lo tic54x-opc.lo" ;;
-	bfd_tic6x_arch)		ta="$ta tic6x-dis.lo" ;;
-	bfd_tic80_arch)		ta="$ta tic80-dis.lo tic80-opc.lo" ;;
-	bfd_tilegx_arch)	ta="$ta tilegx-dis.lo tilegx-opc.lo" ;;
-	bfd_tilepro_arch)	ta="$ta tilepro-dis.lo tilepro-opc.lo" ;;
-	bfd_v850_arch)		ta="$ta v850-opc.lo v850-dis.lo" ;;
-	bfd_v850e_arch)		ta="$ta v850-opc.lo v850-dis.lo" ;;
-	bfd_v850ea_arch)	ta="$ta v850-opc.lo v850-dis.lo" ;;
-	bfd_v850_rh850_arch)	ta="$ta v850-opc.lo v850-dis.lo" ;;
-	bfd_vax_arch)		ta="$ta vax-dis.lo" ;;
-	bfd_visium_arch)	ta="$ta visium-dis.lo visium-opc.lo" ;;
-        bfd_wasm32_arch)        ta="$ta wasm32-dis.lo" ;;
-	bfd_xc16x_arch)		ta="$ta xc16x-asm.lo xc16x-desc.lo xc16x-dis.lo xc16x-ibld.lo xc16x-opc.lo" using_cgen=yes ;;
-	bfd_xgate_arch)		ta="$ta xgate-dis.lo xgate-opc.lo" ;;
-	bfd_xstormy16_arch)	ta="$ta xstormy16-asm.lo xstormy16-desc.lo xstormy16-dis.lo xstormy16-ibld.lo xstormy16-opc.lo" using_cgen=yes ;;
-	bfd_xtensa_arch)	ta="$ta xtensa-dis.lo" ;;
-	bfd_z80_arch)		ta="$ta z80-dis.lo" ;;
-	bfd_z8k_arch)		ta="$ta z8k-dis.lo" ;;
+	bfd_riscv_arch)         ta="$ta riscv-dis.o riscv-opc.o" ;;
+	bfd_rs6000_arch)	ta="$ta ppc-dis.o ppc-opc.o" ;;
+	bfd_rl78_arch)		ta="$ta rl78-dis.o rl78-decode.o";;
+	bfd_rx_arch)		ta="$ta rx-dis.o rx-decode.o";;
+	bfd_s390_arch)		ta="$ta s390-dis.o s390-opc.o" ;;
+	bfd_score_arch)		ta="$ta score-dis.o score7-dis.o" ;;
+	bfd_sh_arch)		ta="$ta sh-dis.o cgen-bitset.o" ;;
+	bfd_sparc_arch)		ta="$ta sparc-dis.o sparc-opc.o" ;;
+	bfd_spu_arch)		ta="$ta spu-dis.o spu-opc.o" ;;
+	bfd_tic30_arch)		ta="$ta tic30-dis.o" ;;
+	bfd_tic4x_arch)		ta="$ta tic4x-dis.o" ;;
+	bfd_tic54x_arch)	ta="$ta tic54x-dis.o tic54x-opc.o" ;;
+	bfd_tic6x_arch)		ta="$ta tic6x-dis.o" ;;
+	bfd_tic80_arch)		ta="$ta tic80-dis.o tic80-opc.o" ;;
+	bfd_tilegx_arch)	ta="$ta tilegx-dis.o tilegx-opc.o" ;;
+	bfd_tilepro_arch)	ta="$ta tilepro-dis.o tilepro-opc.o" ;;
+	bfd_v850_arch)		ta="$ta v850-opc.o v850-dis.o" ;;
+	bfd_v850e_arch)		ta="$ta v850-opc.o v850-dis.o" ;;
+	bfd_v850ea_arch)	ta="$ta v850-opc.o v850-dis.o" ;;
+	bfd_v850_rh850_arch)	ta="$ta v850-opc.o v850-dis.o" ;;
+	bfd_vax_arch)		ta="$ta vax-dis.o" ;;
+	bfd_visium_arch)	ta="$ta visium-dis.o visium-opc.o" ;;
+        bfd_wasm32_arch)        ta="$ta wasm32-dis.o" ;;
+	bfd_xc16x_arch)		ta="$ta xc16x-asm.o xc16x-desc.o xc16x-dis.o xc16x-ibld.o xc16x-opc.o" using_cgen=yes ;;
+	bfd_xgate_arch)		ta="$ta xgate-dis.o xgate-opc.o" ;;
+	bfd_xstormy16_arch)	ta="$ta xstormy16-asm.o xstormy16-desc.o xstormy16-dis.o xstormy16-ibld.o xstormy16-opc.o" using_cgen=yes ;;
+	bfd_xtensa_arch)	ta="$ta xtensa-dis.o" ;;
+	bfd_z80_arch)		ta="$ta z80-dis.o" ;;
+	bfd_z8k_arch)		ta="$ta z8k-dis.o" ;;
 
 	"")			;;
 	*)		AC_MSG_ERROR(*** unknown target architecture $arch) ;;

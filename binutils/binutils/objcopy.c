@@ -28,25 +28,7 @@
 #include "filenames.h"
 #include "fnmatch.h"
 #include "elf-bfd.h"
-#include "coff/internal.h"
-#include "libcoff.h"
 #include "safe-ctype.h"
-
-/* FIXME: See bfd/peXXigen.c for why we include an architecture specific
-   header in generic PE code.  */
-#include "coff/i386.h"
-#include "coff/pe.h"
-
-static bfd_vma pe_file_alignment = (bfd_vma) -1;
-static bfd_vma pe_heap_commit = (bfd_vma) -1;
-static bfd_vma pe_heap_reserve = (bfd_vma) -1;
-static bfd_vma pe_image_base = (bfd_vma) -1;
-static bfd_vma pe_section_alignment = (bfd_vma) -1;
-static bfd_vma pe_stack_commit = (bfd_vma) -1;
-static bfd_vma pe_stack_reserve = (bfd_vma) -1;
-static short pe_subsystem = -1;
-static short pe_major_subsystem_version = -1;
-static short pe_minor_subsystem_version = -1;
 
 struct is_specified_symbol_predicate_data
 {
@@ -305,13 +287,10 @@ enum command_line_switch
   OPTION_ELF_STT_COMMON,
   OPTION_EXTRACT_DWO,
   OPTION_EXTRACT_SYMBOL,
-  OPTION_FILE_ALIGNMENT,
   OPTION_FORMATS_INFO,
   OPTION_GAP_FILL,
   OPTION_GLOBALIZE_SYMBOL,
   OPTION_GLOBALIZE_SYMBOLS,
-  OPTION_HEAP,
-  OPTION_IMAGE_BASE,
   OPTION_IMPURE,
   OPTION_INTERLEAVE_WIDTH,
   OPTION_KEEPGLOBAL_SYMBOLS,
@@ -336,18 +315,15 @@ enum command_line_switch
   OPTION_REMOVE_RELOCS,
   OPTION_RENAME_SECTION,
   OPTION_REVERSE_BYTES,
-  OPTION_SECTION_ALIGNMENT,
   OPTION_SET_SECTION_FLAGS,
   OPTION_SET_START,
   OPTION_SREC_FORCES3,
   OPTION_SREC_LEN,
-  OPTION_STACK,
   OPTION_STRIP_DWO,
   OPTION_STRIP_SYMBOLS,
   OPTION_STRIP_UNNEEDED,
   OPTION_STRIP_UNNEEDED_SYMBOL,
   OPTION_STRIP_UNNEEDED_SYMBOLS,
-  OPTION_SUBSYSTEM,
   OPTION_UPDATE_SECTION,
   OPTION_WEAKEN,
   OPTION_WEAKEN_SYMBOLS,
@@ -422,14 +398,11 @@ static struct option copy_options[] =
   {"enable-deterministic-archives", no_argument, 0, 'D'},
   {"extract-dwo", no_argument, 0, OPTION_EXTRACT_DWO},
   {"extract-symbol", no_argument, 0, OPTION_EXTRACT_SYMBOL},
-  {"file-alignment", required_argument, 0, OPTION_FILE_ALIGNMENT},
   {"format", required_argument, 0, 'F'}, /* Obsolete */
   {"gap-fill", required_argument, 0, OPTION_GAP_FILL},
   {"globalize-symbol", required_argument, 0, OPTION_GLOBALIZE_SYMBOL},
   {"globalize-symbols", required_argument, 0, OPTION_GLOBALIZE_SYMBOLS},
-  {"heap", required_argument, 0, OPTION_HEAP},
   {"help", no_argument, 0, 'h'},
-  {"image-base", required_argument, 0 , OPTION_IMAGE_BASE},
   {"impure", no_argument, 0, OPTION_IMPURE},
   {"info", no_argument, 0, OPTION_FORMATS_INFO},
   {"input-format", required_argument, 0, 'I'}, /* Obsolete */
@@ -467,12 +440,10 @@ static struct option copy_options[] =
   {"remove-relocations", required_argument, 0, OPTION_REMOVE_RELOCS},
   {"rename-section", required_argument, 0, OPTION_RENAME_SECTION},
   {"reverse-bytes", required_argument, 0, OPTION_REVERSE_BYTES},
-  {"section-alignment", required_argument, 0, OPTION_SECTION_ALIGNMENT},
   {"set-section-flags", required_argument, 0, OPTION_SET_SECTION_FLAGS},
   {"set-start", required_argument, 0, OPTION_SET_START},
   {"srec-forceS3", no_argument, 0, OPTION_SREC_FORCES3},
   {"srec-len", required_argument, 0, OPTION_SREC_LEN},
-  {"stack", required_argument, 0, OPTION_STACK},
   {"strip-all", no_argument, 0, 'S'},
   {"strip-debug", no_argument, 0, 'g'},
   {"strip-dwo", no_argument, 0, OPTION_STRIP_DWO},
@@ -481,7 +452,6 @@ static struct option copy_options[] =
   {"strip-unneeded", no_argument, 0, OPTION_STRIP_UNNEEDED},
   {"strip-unneeded-symbol", required_argument, 0, OPTION_STRIP_UNNEEDED_SYMBOL},
   {"strip-unneeded-symbols", required_argument, 0, OPTION_STRIP_UNNEEDED_SYMBOLS},
-  {"subsystem", required_argument, 0, OPTION_SUBSYSTEM},
   {"target", required_argument, 0, 'F'},
   {"update-section", required_argument, 0, OPTION_UPDATE_SECTION},
   {"verbose", no_argument, 0, 'v'},
@@ -631,15 +601,6 @@ copy_usage (FILE *stream, int exit_status)
      --prefix-alloc-sections <prefix>\n\
                                    Add <prefix> to start of every allocatable\n\
                                      section name\n\
-     --file-alignment <num>        Set PE file alignment to <num>\n\
-     --heap <reserve>[,<commit>]   Set PE reserve/commit heap to <reserve>/\n\
-                                   <commit>\n\
-     --image-base <address>        Set PE image base to <address>\n\
-     --section-alignment <num>     Set PE section alignment to <num>\n\
-     --stack <reserve>[,<commit>]  Set PE reserve/commit stack to <reserve>/\n\
-                                   <commit>\n\
-     --subsystem <name>[:<version>]\n\
-                                   Set PE subsystem to <name> [& <version>]\n\
      --compress-debug-sections[={none|zlib|zlib-gnu|zlib-gabi}]\n\
                                    Compress DWARF debug sections using zlib\n\
      --decompress-debug-sections   Decompress DWARF debug sections using zlib\n\
@@ -1381,14 +1342,6 @@ is_nondebug_keep_contents_section (bfd *ibfd, asection *isection)
   if (ibfd->xvec->flavour == bfd_target_elf_flavour)
     return (elf_section_type (isection) == SHT_NOTE);
 
-  /* Always keep the .buildid section for PE/COFF.
-
-     Strictly, this should be written "always keep the section storing the debug
-     directory", but that may be the .text section for objects produced by some
-     tools, which it is not sensible to keep.  */
-  if (ibfd->xvec->flavour == bfd_target_coff_flavour)
-    return (strcmp (bfd_get_section_name (ibfd, isection), ".buildid") == 0);
-
   return FALSE;
 }
 
@@ -1577,10 +1530,6 @@ filter_symbols (bfd *abfd, bfd *obfd, asymbol **osyms,
 	keep = (strip_symbols != STRIP_DEBUG
 		&& strip_symbols != STRIP_UNNEEDED
 		&& ! convert_debugging);
-      else if (bfd_coff_get_comdat_section (abfd, bfd_get_section (sym)))
-	/* COMDAT sections store special information in local
-	   symbols, so we cannot risk stripping any of them.  */
-	keep = TRUE;
       else			/* Local symbol.  */
 	keep = (strip_symbols != STRIP_UNNEEDED
 		&& (discard_locals != LOCALS_ALL
@@ -2533,63 +2482,6 @@ copy_object (bfd *ibfd, bfd *obfd, const bfd_arch_info_type *input_arch)
       return FALSE;
     }
 
-  if (bfd_get_flavour (obfd) == bfd_target_coff_flavour
-      && bfd_pei_p (obfd))
-    {
-      /* Set up PE parameters.  */
-      pe_data_type *pe = pe_data (obfd);
-
-      /* Copy PE parameters before changing them.  */
-      if (ibfd->xvec->flavour == bfd_target_coff_flavour
-	  && bfd_pei_p (ibfd))
-	pe->pe_opthdr = pe_data (ibfd)->pe_opthdr;
-
-      if (pe_file_alignment != (bfd_vma) -1)
-	pe->pe_opthdr.FileAlignment = pe_file_alignment;
-      else
-	pe_file_alignment = PE_DEF_FILE_ALIGNMENT;
-
-      if (pe_heap_commit != (bfd_vma) -1)
-	pe->pe_opthdr.SizeOfHeapCommit = pe_heap_commit;
-
-      if (pe_heap_reserve != (bfd_vma) -1)
-	pe->pe_opthdr.SizeOfHeapCommit = pe_heap_reserve;
-
-      if (pe_image_base != (bfd_vma) -1)
-	pe->pe_opthdr.ImageBase = pe_image_base;
-
-      if (pe_section_alignment != (bfd_vma) -1)
-	pe->pe_opthdr.SectionAlignment = pe_section_alignment;
-      else
-	pe_section_alignment = PE_DEF_SECTION_ALIGNMENT;
-
-      if (pe_stack_commit != (bfd_vma) -1)
-	pe->pe_opthdr.SizeOfStackCommit = pe_stack_commit;
-
-      if (pe_stack_reserve != (bfd_vma) -1)
-	pe->pe_opthdr.SizeOfStackCommit = pe_stack_reserve;
-
-      if (pe_subsystem != -1)
-	pe->pe_opthdr.Subsystem = pe_subsystem;
-
-      if (pe_major_subsystem_version != -1)
-	pe->pe_opthdr.MajorSubsystemVersion = pe_major_subsystem_version;
-
-      if (pe_minor_subsystem_version != -1)
-	pe->pe_opthdr.MinorSubsystemVersion = pe_minor_subsystem_version;
-
-      if (pe_file_alignment > pe_section_alignment)
-	{
-	  char file_alignment[20], section_alignment[20];
-
-	  sprintf_vma (file_alignment, pe_file_alignment);
-	  sprintf_vma (section_alignment, pe_section_alignment);
-	  non_fatal (_("warning: file alignment (0x%s) > section alignment (0x%s)"),
-
-		     file_alignment, section_alignment);
-	}
-    }
-
   if (isympp)
     free (isympp);
 
@@ -2857,48 +2749,6 @@ copy_object (bfd *ibfd, bfd *obfd, const bfd_arch_info_type *input_arch)
 				    _("cannot create debug link section `%s'"),
 				    gnu_debuglink_filename);
 	      return FALSE;
-	    }
-
-	  /* Special processing for PE format files.  We
-	     have no way to distinguish PE from COFF here.  */
-	  if (bfd_get_flavour (obfd) == bfd_target_coff_flavour)
-	    {
-	      bfd_vma debuglink_vma;
-	      asection * highest_section;
-
-	      /* The PE spec requires that all sections be adjacent and sorted
-		 in ascending order of VMA.  It also specifies that debug
-		 sections should be last.  This is despite the fact that debug
-		 sections are not loaded into memory and so in theory have no
-		 use for a VMA.
-
-		 This means that the debuglink section must be given a non-zero
-		 VMA which makes it contiguous with other debug sections.  So
-		 walk the current section list, find the section with the
-		 highest VMA and start the debuglink section after that one.  */
-	      for (osec = obfd->sections, highest_section = NULL;
-		   osec != NULL;
-		   osec = osec->next)
-		if (osec->vma > 0
-		    && (highest_section == NULL
-			|| osec->vma > highest_section->vma))
-		  highest_section = osec;
-
-	      if (highest_section)
-		debuglink_vma = BFD_ALIGN (highest_section->vma
-					   + highest_section->size,
-					   /* FIXME: We ought to be using
-					      COFF_PAGE_SIZE here or maybe
-					      bfd_get_section_alignment() (if it
-					      was set) but since this is for PE
-					      and we know the required alignment
-					      it is easier just to hard code it.  */
-					   0x1000);
-	      else
-		/* Umm, not sure what to do in this case.  */
-		debuglink_vma = 0x1000;
-
-	      bfd_set_section_vma (obfd, gnu_debuglink_section, debuglink_vma);
 	    }
 	}
     }
@@ -3406,19 +3256,6 @@ copy_archive (bfd *ibfd, bfd *obfd, const char *output_target,
   rmdir (dir);
 }
 
-static void
-set_long_section_mode (bfd *output_bfd, bfd *input_bfd, enum long_section_name_handling style)
-{
-  /* This is only relevant to Coff targets.  */
-  if (bfd_get_flavour (output_bfd) == bfd_target_coff_flavour)
-    {
-      if (style == KEEP
-	  && bfd_get_flavour (input_bfd) == bfd_target_coff_flavour)
-	style = bfd_coff_long_section_names (input_bfd) ? ENABLE : DISABLE;
-      bfd_coff_set_long_section_names (output_bfd, style != DISABLE);
-    }
-}
-
 /* The top-level control.  */
 
 static void
@@ -3504,8 +3341,6 @@ copy_file (const char *input_filename, const char *output_filename,
 	  status = 1;
 	  return;
 	}
-      /* This is a no-op on non-Coff targets.  */
-      set_long_section_mode (obfd, ibfd, long_section_names);
 
       copy_archive (ibfd, obfd, output_target, force_output_target, input_arch);
     }
@@ -3526,8 +3361,6 @@ copy_file (const char *input_filename, const char *output_filename,
  	  status = 1;
  	  return;
  	}
-      /* This is a no-op on non-Coff targets.  */
-      set_long_section_mode (obfd, ibfd, long_section_names);
 
       if (! copy_object (ibfd, obfd, input_arch))
 	status = 1;
@@ -4251,8 +4084,7 @@ write_debugging_info (bfd *obfd, void *dhandle,
 		      long *symcountp ATTRIBUTE_UNUSED,
 		      asymbol ***symppp ATTRIBUTE_UNUSED)
 {
-  if (bfd_get_flavour (obfd) == bfd_target_coff_flavour
-      || bfd_get_flavour (obfd) == bfd_target_elf_flavour)
+  if (bfd_get_flavour (obfd) == bfd_target_elf_flavour)
     {
       bfd_byte *syms, *strings;
       bfd_size_type symsize, stringsize;
@@ -4495,94 +4327,6 @@ strip_main (int argc, char *argv[])
 }
 
 /* Set up PE subsystem.  */
-
-static void
-set_pe_subsystem (const char *s)
-{
-  const char *version, *subsystem;
-  size_t i;
-  static const struct
-    {
-      const char *name;
-      const char set_def;
-      const short value;
-    }
-  v[] =
-    {
-      { "native", 0, IMAGE_SUBSYSTEM_NATIVE },
-      { "windows", 0, IMAGE_SUBSYSTEM_WINDOWS_GUI },
-      { "console", 0, IMAGE_SUBSYSTEM_WINDOWS_CUI },
-      { "posix", 0, IMAGE_SUBSYSTEM_POSIX_CUI },
-      { "wince", 0, IMAGE_SUBSYSTEM_WINDOWS_CE_GUI },
-      { "efi-app", 1, IMAGE_SUBSYSTEM_EFI_APPLICATION },
-      { "efi-bsd", 1, IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER },
-      { "efi-rtd", 1, IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER },
-      { "sal-rtd", 1, IMAGE_SUBSYSTEM_SAL_RUNTIME_DRIVER },
-      { "xbox", 0, IMAGE_SUBSYSTEM_XBOX }
-    };
-  short value;
-  char *copy;
-  int set_def = -1;
-
-  /* Check for the presence of a version number.  */
-  version = strchr (s, ':');
-  if (version == NULL)
-    subsystem = s;
-  else
-    {
-      int len = version - s;
-      copy = xstrdup (s);
-      subsystem = copy;
-      copy[len] = '\0';
-      version = copy + 1 + len;
-      pe_major_subsystem_version = strtoul (version, &copy, 0);
-      if (*copy == '.')
-	pe_minor_subsystem_version = strtoul (copy + 1, &copy, 0);
-      if (*copy != '\0')
-	non_fatal (_("%s: bad version in PE subsystem"), s);
-    }
-
-  /* Check for numeric subsystem.  */
-  value = (short) strtol (subsystem, &copy, 0);
-  if (*copy == '\0')
-    {
-      for (i = 0; i < ARRAY_SIZE (v); i++)
-	if (v[i].value == value)
-	  {
-	    pe_subsystem = value;
-	    set_def = v[i].set_def;
-	    break;
-	  }
-    }
-  else
-    {
-      /* Search for subsystem by name.  */
-      for (i = 0; i < ARRAY_SIZE (v); i++)
-	if (strcmp (subsystem, v[i].name) == 0)
-	  {
-	    pe_subsystem = v[i].value;
-	    set_def = v[i].set_def;
-	    break;
-	  }
-    }
-
-  switch (set_def)
-    {
-    case -1:
-      fatal (_("unknown PE subsystem: %s"), s);
-      break;
-    case 0:
-      break;
-    default:
-      if (pe_file_alignment == (bfd_vma) -1)
-	pe_file_alignment = PE_DEF_FILE_ALIGNMENT;
-      if (pe_section_alignment == (bfd_vma) -1)
-	pe_section_alignment = PE_DEF_SECTION_ALIGNMENT;
-      break;
-    }
-  if (s != subsystem)
-    free ((char *) subsystem);
-}
 
 /* Convert EFI target to PEI target.  */
 
@@ -5311,59 +5055,6 @@ copy_main (int argc, char *argv[])
 	    break;
 	  }
 
-	case OPTION_FILE_ALIGNMENT:
-	  pe_file_alignment = parse_vma (optarg, "--file-alignment");
-	  break;
-
-	case OPTION_HEAP:
-	  {
-	    char *end;
-	    pe_heap_reserve = strtoul (optarg, &end, 0);
-	    if (end == optarg
-		|| (*end != '.' && *end != '\0'))
-	      non_fatal (_("%s: invalid reserve value for --heap"),
-			 optarg);
-	    else if (*end != '\0')
-	      {
-		pe_heap_commit = strtoul (end + 1, &end, 0);
-		if (*end != '\0')
-		  non_fatal (_("%s: invalid commit value for --heap"),
-			     optarg);
-	      }
-	  }
-	  break;
-
-	case OPTION_IMAGE_BASE:
-	  pe_image_base = parse_vma (optarg, "--image-base");
-	  break;
-
-	case OPTION_SECTION_ALIGNMENT:
-	  pe_section_alignment = parse_vma (optarg,
-					    "--section-alignment");
-	  break;
-
-	case OPTION_SUBSYSTEM:
-	  set_pe_subsystem (optarg);
-	  break;
-
-	case OPTION_STACK:
-	  {
-	    char *end;
-	    pe_stack_reserve = strtoul (optarg, &end, 0);
-	    if (end == optarg
-		|| (*end != '.' && *end != '\0'))
-	      non_fatal (_("%s: invalid reserve value for --stack"),
-			 optarg);
-	    else if (*end != '\0')
-	      {
-		pe_stack_commit = strtoul (end + 1, &end, 0);
-		if (*end != '\0')
-		  non_fatal (_("%s: invalid commit value for --stack"),
-			     optarg);
-	      }
-	  }
-	  break;
-
 	case 0:
 	  /* We've been given a long option.  */
 	  break;
@@ -5435,30 +5126,16 @@ copy_main (int argc, char *argv[])
       char *efi;
 
       efi = xstrdup (output_target + 4);
-      if (strncmp (efi, "app-", 4) == 0)
+      if (strncmp (efi, "bsdrv-", 6) == 0)
 	{
-	  if (pe_subsystem == -1)
-	    pe_subsystem = IMAGE_SUBSYSTEM_EFI_APPLICATION;
-	}
-      else if (strncmp (efi, "bsdrv-", 6) == 0)
-	{
-	  if (pe_subsystem == -1)
-	    pe_subsystem = IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER;
 	  efi += 2;
 	}
       else if (strncmp (efi, "rtdrv-", 6) == 0)
 	{
-	  if (pe_subsystem == -1)
-	    pe_subsystem = IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER;
 	  efi += 2;
 	}
       else
 	fatal (_("unknown output EFI target: %s"), output_target);
-
-      if (pe_file_alignment == (bfd_vma) -1)
-	pe_file_alignment = PE_DEF_FILE_ALIGNMENT;
-      if (pe_section_alignment == (bfd_vma) -1)
-	pe_section_alignment = PE_DEF_SECTION_ALIGNMENT;
 
       output_target = efi;
       convert_efi_target (efi);

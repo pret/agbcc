@@ -33,7 +33,6 @@
 #
 
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -118,9 +117,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
 	$(top_srcdir)/../config/lead-dot.m4 \
 	$(top_srcdir)/../config/override.m4 \
 	$(top_srcdir)/../config/warnings.m4 \
-	$(top_srcdir)/../libtool.m4 $(top_srcdir)/../ltoptions.m4 \
-	$(top_srcdir)/../ltsugar.m4 $(top_srcdir)/../ltversion.m4 \
-	$(top_srcdir)/../lt~obsolete.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -134,6 +130,149 @@ CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
+libopcodes_a_AR = $(AR) $(ARFLAGS)
+am__DEPENDENCIES_1 =
+am_libopcodes_a_OBJECTS = dis-buf.$(OBJEXT) disassemble.$(OBJEXT) \
+	dis-init.$(OBJEXT)
+libopcodes_a_OBJECTS = $(am_libopcodes_a_OBJECTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../depcomp
+am__maybe_remake_depfiles = depfiles
+am__depfiles_remade = ./$(DEPDIR)/aarch64-asm-2.Po \
+	./$(DEPDIR)/aarch64-asm.Po ./$(DEPDIR)/aarch64-dis-2.Po \
+	./$(DEPDIR)/aarch64-dis.Po ./$(DEPDIR)/aarch64-opc-2.Po \
+	./$(DEPDIR)/aarch64-opc.Po ./$(DEPDIR)/alpha-dis.Po \
+	./$(DEPDIR)/alpha-opc.Po ./$(DEPDIR)/arc-dis.Po \
+	./$(DEPDIR)/arc-ext.Po ./$(DEPDIR)/arc-opc.Po \
+	./$(DEPDIR)/arm-dis.Po ./$(DEPDIR)/avr-dis.Po \
+	./$(DEPDIR)/bfin-dis.Po ./$(DEPDIR)/cgen-asm.Po \
+	./$(DEPDIR)/cgen-bitset.Po ./$(DEPDIR)/cgen-dis.Po \
+	./$(DEPDIR)/cgen-opc.Po ./$(DEPDIR)/cr16-dis.Po \
+	./$(DEPDIR)/cr16-opc.Po ./$(DEPDIR)/cris-dis.Po \
+	./$(DEPDIR)/cris-opc.Po ./$(DEPDIR)/crx-dis.Po \
+	./$(DEPDIR)/crx-opc.Po ./$(DEPDIR)/d10v-dis.Po \
+	./$(DEPDIR)/d10v-opc.Po ./$(DEPDIR)/d30v-dis.Po \
+	./$(DEPDIR)/d30v-opc.Po ./$(DEPDIR)/dis-buf.Po \
+	./$(DEPDIR)/dis-init.Po ./$(DEPDIR)/disassemble.Po \
+	./$(DEPDIR)/dlx-dis.Po ./$(DEPDIR)/epiphany-asm.Po \
+	./$(DEPDIR)/epiphany-desc.Po ./$(DEPDIR)/epiphany-dis.Po \
+	./$(DEPDIR)/epiphany-ibld.Po ./$(DEPDIR)/epiphany-opc.Po \
+	./$(DEPDIR)/fr30-asm.Po ./$(DEPDIR)/fr30-desc.Po \
+	./$(DEPDIR)/fr30-dis.Po ./$(DEPDIR)/fr30-ibld.Po \
+	./$(DEPDIR)/fr30-opc.Po ./$(DEPDIR)/frv-asm.Po \
+	./$(DEPDIR)/frv-desc.Po ./$(DEPDIR)/frv-dis.Po \
+	./$(DEPDIR)/frv-ibld.Po ./$(DEPDIR)/frv-opc.Po \
+	./$(DEPDIR)/ft32-dis.Po ./$(DEPDIR)/ft32-opc.Po \
+	./$(DEPDIR)/h8300-dis.Po ./$(DEPDIR)/hppa-dis.Po \
+	./$(DEPDIR)/i386-dis.Po ./$(DEPDIR)/i386-opc.Po \
+	./$(DEPDIR)/ia64-dis.Po ./$(DEPDIR)/ia64-opc.Po \
+	./$(DEPDIR)/ip2k-asm.Po ./$(DEPDIR)/ip2k-desc.Po \
+	./$(DEPDIR)/ip2k-dis.Po ./$(DEPDIR)/ip2k-ibld.Po \
+	./$(DEPDIR)/ip2k-opc.Po ./$(DEPDIR)/iq2000-asm.Po \
+	./$(DEPDIR)/iq2000-desc.Po ./$(DEPDIR)/iq2000-dis.Po \
+	./$(DEPDIR)/iq2000-ibld.Po ./$(DEPDIR)/iq2000-opc.Po \
+	./$(DEPDIR)/lm32-asm.Po ./$(DEPDIR)/lm32-desc.Po \
+	./$(DEPDIR)/lm32-dis.Po ./$(DEPDIR)/lm32-ibld.Po \
+	./$(DEPDIR)/lm32-opc.Po ./$(DEPDIR)/lm32-opinst.Po \
+	./$(DEPDIR)/m10200-dis.Po ./$(DEPDIR)/m10200-opc.Po \
+	./$(DEPDIR)/m10300-dis.Po ./$(DEPDIR)/m10300-opc.Po \
+	./$(DEPDIR)/m32c-asm.Po ./$(DEPDIR)/m32c-desc.Po \
+	./$(DEPDIR)/m32c-dis.Po ./$(DEPDIR)/m32c-ibld.Po \
+	./$(DEPDIR)/m32c-opc.Po ./$(DEPDIR)/m32r-asm.Po \
+	./$(DEPDIR)/m32r-desc.Po ./$(DEPDIR)/m32r-dis.Po \
+	./$(DEPDIR)/m32r-ibld.Po ./$(DEPDIR)/m32r-opc.Po \
+	./$(DEPDIR)/m32r-opinst.Po ./$(DEPDIR)/m68hc11-dis.Po \
+	./$(DEPDIR)/m68hc11-opc.Po ./$(DEPDIR)/m68k-dis.Po \
+	./$(DEPDIR)/m68k-opc.Po ./$(DEPDIR)/mcore-dis.Po \
+	./$(DEPDIR)/mep-asm.Po ./$(DEPDIR)/mep-desc.Po \
+	./$(DEPDIR)/mep-dis.Po ./$(DEPDIR)/mep-ibld.Po \
+	./$(DEPDIR)/mep-opc.Po ./$(DEPDIR)/metag-dis.Po \
+	./$(DEPDIR)/microblaze-dis.Po ./$(DEPDIR)/micromips-opc.Po \
+	./$(DEPDIR)/mips-dis.Po ./$(DEPDIR)/mips-opc.Po \
+	./$(DEPDIR)/mips16-opc.Po ./$(DEPDIR)/mmix-dis.Po \
+	./$(DEPDIR)/mmix-opc.Po ./$(DEPDIR)/moxie-dis.Po \
+	./$(DEPDIR)/moxie-opc.Po ./$(DEPDIR)/msp430-decode.Po \
+	./$(DEPDIR)/msp430-dis.Po ./$(DEPDIR)/mt-asm.Po \
+	./$(DEPDIR)/mt-desc.Po ./$(DEPDIR)/mt-dis.Po \
+	./$(DEPDIR)/mt-ibld.Po ./$(DEPDIR)/mt-opc.Po \
+	./$(DEPDIR)/nds32-asm.Po ./$(DEPDIR)/nds32-dis.Po \
+	./$(DEPDIR)/nfp-dis.Po ./$(DEPDIR)/nios2-dis.Po \
+	./$(DEPDIR)/nios2-opc.Po ./$(DEPDIR)/ns32k-dis.Po \
+	./$(DEPDIR)/or1k-asm.Po ./$(DEPDIR)/or1k-desc.Po \
+	./$(DEPDIR)/or1k-dis.Po ./$(DEPDIR)/or1k-ibld.Po \
+	./$(DEPDIR)/or1k-opc.Po ./$(DEPDIR)/pdp11-dis.Po \
+	./$(DEPDIR)/pdp11-opc.Po ./$(DEPDIR)/pj-dis.Po \
+	./$(DEPDIR)/pj-opc.Po ./$(DEPDIR)/ppc-dis.Po \
+	./$(DEPDIR)/ppc-opc.Po ./$(DEPDIR)/pru-dis.Po \
+	./$(DEPDIR)/pru-opc.Po ./$(DEPDIR)/riscv-dis.Po \
+	./$(DEPDIR)/riscv-opc.Po ./$(DEPDIR)/rl78-decode.Po \
+	./$(DEPDIR)/rl78-dis.Po ./$(DEPDIR)/rx-decode.Po \
+	./$(DEPDIR)/rx-dis.Po ./$(DEPDIR)/s12z-dis.Po \
+	./$(DEPDIR)/s390-dis.Po ./$(DEPDIR)/s390-opc.Po \
+	./$(DEPDIR)/score-dis.Po ./$(DEPDIR)/score7-dis.Po \
+	./$(DEPDIR)/sh-dis.Po ./$(DEPDIR)/sparc-dis.Po \
+	./$(DEPDIR)/sparc-opc.Po ./$(DEPDIR)/spu-dis.Po \
+	./$(DEPDIR)/spu-opc.Po ./$(DEPDIR)/tic30-dis.Po \
+	./$(DEPDIR)/tic4x-dis.Po ./$(DEPDIR)/tic54x-dis.Po \
+	./$(DEPDIR)/tic54x-opc.Po ./$(DEPDIR)/tic6x-dis.Po \
+	./$(DEPDIR)/tic80-dis.Po ./$(DEPDIR)/tic80-opc.Po \
+	./$(DEPDIR)/tilegx-dis.Po ./$(DEPDIR)/tilegx-opc.Po \
+	./$(DEPDIR)/tilepro-dis.Po ./$(DEPDIR)/tilepro-opc.Po \
+	./$(DEPDIR)/v850-dis.Po ./$(DEPDIR)/v850-opc.Po \
+	./$(DEPDIR)/vax-dis.Po ./$(DEPDIR)/visium-dis.Po \
+	./$(DEPDIR)/visium-opc.Po ./$(DEPDIR)/wasm32-dis.Po \
+	./$(DEPDIR)/xc16x-asm.Po ./$(DEPDIR)/xc16x-desc.Po \
+	./$(DEPDIR)/xc16x-dis.Po ./$(DEPDIR)/xc16x-ibld.Po \
+	./$(DEPDIR)/xc16x-opc.Po ./$(DEPDIR)/xgate-dis.Po \
+	./$(DEPDIR)/xgate-opc.Po ./$(DEPDIR)/xstormy16-asm.Po \
+	./$(DEPDIR)/xstormy16-desc.Po ./$(DEPDIR)/xstormy16-dis.Po \
+	./$(DEPDIR)/xstormy16-ibld.Po ./$(DEPDIR)/xstormy16-opc.Po \
+	./$(DEPDIR)/xtensa-dis.Po ./$(DEPDIR)/z80-dis.Po \
+	./$(DEPDIR)/z8k-dis.Po
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
+SOURCES = $(libopcodes_a_SOURCES) $(EXTRA_libopcodes_a_SOURCES)
+RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
+	ctags-recursive dvi-recursive html-recursive info-recursive \
+	install-data-recursive install-dvi-recursive \
+	install-exec-recursive install-html-recursive \
+	install-info-recursive install-pdf-recursive \
+	install-ps-recursive install-recursive installcheck-recursive \
+	installdirs-recursive pdf-recursive ps-recursive \
+	tags-recursive uninstall-recursive
+am__can_run_installinfo = \
+  case $$AM_UPDATE_INFO_DIR in \
+    n|no|NO) false;; \
+    *) (install-info --version) >/dev/null 2>&1;; \
+  esac
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -161,170 +300,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(bfdlibdir)" \
-	"$(DESTDIR)$(bfdincludedir)"
-LTLIBRARIES = $(bfdlib_LTLIBRARIES) $(noinst_LTLIBRARIES)
-ARFLAGS = cru
-AM_V_AR = $(am__v_AR_@AM_V@)
-am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
-am__v_AR_0 = @echo "  AR      " $@;
-am__v_AR_1 = 
-libopcodes_a_AR = $(AR) $(ARFLAGS)
-libopcodes_a_LIBADD =
-am_libopcodes_a_OBJECTS =
-libopcodes_a_OBJECTS = $(am_libopcodes_a_OBJECTS)
-am__DEPENDENCIES_1 =
-am_libopcodes_la_OBJECTS = dis-buf.lo disassemble.lo dis-init.lo
-libopcodes_la_OBJECTS = $(am_libopcodes_la_OBJECTS)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-libopcodes_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libopcodes_la_LDFLAGS) $(LDFLAGS) -o $@
-@INSTALL_LIBBFD_FALSE@am_libopcodes_la_rpath =
-@INSTALL_LIBBFD_TRUE@am_libopcodes_la_rpath = -rpath $(bfdlibdir)
-AM_V_P = $(am__v_P_@AM_V@)
-am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
-am__v_P_0 = false
-am__v_P_1 = :
-AM_V_GEN = $(am__v_GEN_@AM_V@)
-am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
-am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
-am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/../depcomp
-am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/aarch64-asm-2.Plo \
-	./$(DEPDIR)/aarch64-asm.Plo ./$(DEPDIR)/aarch64-dis-2.Plo \
-	./$(DEPDIR)/aarch64-dis.Plo ./$(DEPDIR)/aarch64-opc-2.Plo \
-	./$(DEPDIR)/aarch64-opc.Plo ./$(DEPDIR)/alpha-dis.Plo \
-	./$(DEPDIR)/alpha-opc.Plo ./$(DEPDIR)/arc-dis.Plo \
-	./$(DEPDIR)/arc-ext.Plo ./$(DEPDIR)/arc-opc.Plo \
-	./$(DEPDIR)/arm-dis.Plo ./$(DEPDIR)/avr-dis.Plo \
-	./$(DEPDIR)/bfin-dis.Plo ./$(DEPDIR)/cgen-asm.Plo \
-	./$(DEPDIR)/cgen-bitset.Plo ./$(DEPDIR)/cgen-dis.Plo \
-	./$(DEPDIR)/cgen-opc.Plo ./$(DEPDIR)/cr16-dis.Plo \
-	./$(DEPDIR)/cr16-opc.Plo ./$(DEPDIR)/cris-dis.Plo \
-	./$(DEPDIR)/cris-opc.Plo ./$(DEPDIR)/crx-dis.Plo \
-	./$(DEPDIR)/crx-opc.Plo ./$(DEPDIR)/d10v-dis.Plo \
-	./$(DEPDIR)/d10v-opc.Plo ./$(DEPDIR)/d30v-dis.Plo \
-	./$(DEPDIR)/d30v-opc.Plo ./$(DEPDIR)/dis-buf.Plo \
-	./$(DEPDIR)/dis-init.Plo ./$(DEPDIR)/disassemble.Plo \
-	./$(DEPDIR)/dlx-dis.Plo ./$(DEPDIR)/epiphany-asm.Plo \
-	./$(DEPDIR)/epiphany-desc.Plo ./$(DEPDIR)/epiphany-dis.Plo \
-	./$(DEPDIR)/epiphany-ibld.Plo ./$(DEPDIR)/epiphany-opc.Plo \
-	./$(DEPDIR)/fr30-asm.Plo ./$(DEPDIR)/fr30-desc.Plo \
-	./$(DEPDIR)/fr30-dis.Plo ./$(DEPDIR)/fr30-ibld.Plo \
-	./$(DEPDIR)/fr30-opc.Plo ./$(DEPDIR)/frv-asm.Plo \
-	./$(DEPDIR)/frv-desc.Plo ./$(DEPDIR)/frv-dis.Plo \
-	./$(DEPDIR)/frv-ibld.Plo ./$(DEPDIR)/frv-opc.Plo \
-	./$(DEPDIR)/ft32-dis.Plo ./$(DEPDIR)/ft32-opc.Plo \
-	./$(DEPDIR)/h8300-dis.Plo ./$(DEPDIR)/hppa-dis.Plo \
-	./$(DEPDIR)/i386-dis.Plo ./$(DEPDIR)/i386-opc.Plo \
-	./$(DEPDIR)/ia64-dis.Plo ./$(DEPDIR)/ia64-opc.Plo \
-	./$(DEPDIR)/ip2k-asm.Plo ./$(DEPDIR)/ip2k-desc.Plo \
-	./$(DEPDIR)/ip2k-dis.Plo ./$(DEPDIR)/ip2k-ibld.Plo \
-	./$(DEPDIR)/ip2k-opc.Plo ./$(DEPDIR)/iq2000-asm.Plo \
-	./$(DEPDIR)/iq2000-desc.Plo ./$(DEPDIR)/iq2000-dis.Plo \
-	./$(DEPDIR)/iq2000-ibld.Plo ./$(DEPDIR)/iq2000-opc.Plo \
-	./$(DEPDIR)/lm32-asm.Plo ./$(DEPDIR)/lm32-desc.Plo \
-	./$(DEPDIR)/lm32-dis.Plo ./$(DEPDIR)/lm32-ibld.Plo \
-	./$(DEPDIR)/lm32-opc.Plo ./$(DEPDIR)/lm32-opinst.Plo \
-	./$(DEPDIR)/m10200-dis.Plo ./$(DEPDIR)/m10200-opc.Plo \
-	./$(DEPDIR)/m10300-dis.Plo ./$(DEPDIR)/m10300-opc.Plo \
-	./$(DEPDIR)/m32c-asm.Plo ./$(DEPDIR)/m32c-desc.Plo \
-	./$(DEPDIR)/m32c-dis.Plo ./$(DEPDIR)/m32c-ibld.Plo \
-	./$(DEPDIR)/m32c-opc.Plo ./$(DEPDIR)/m32r-asm.Plo \
-	./$(DEPDIR)/m32r-desc.Plo ./$(DEPDIR)/m32r-dis.Plo \
-	./$(DEPDIR)/m32r-ibld.Plo ./$(DEPDIR)/m32r-opc.Plo \
-	./$(DEPDIR)/m32r-opinst.Plo ./$(DEPDIR)/m68hc11-dis.Plo \
-	./$(DEPDIR)/m68hc11-opc.Plo ./$(DEPDIR)/m68k-dis.Plo \
-	./$(DEPDIR)/m68k-opc.Plo ./$(DEPDIR)/mcore-dis.Plo \
-	./$(DEPDIR)/mep-asm.Plo ./$(DEPDIR)/mep-desc.Plo \
-	./$(DEPDIR)/mep-dis.Plo ./$(DEPDIR)/mep-ibld.Plo \
-	./$(DEPDIR)/mep-opc.Plo ./$(DEPDIR)/metag-dis.Plo \
-	./$(DEPDIR)/microblaze-dis.Plo ./$(DEPDIR)/micromips-opc.Plo \
-	./$(DEPDIR)/mips-dis.Plo ./$(DEPDIR)/mips-opc.Plo \
-	./$(DEPDIR)/mips16-opc.Plo ./$(DEPDIR)/mmix-dis.Plo \
-	./$(DEPDIR)/mmix-opc.Plo ./$(DEPDIR)/moxie-dis.Plo \
-	./$(DEPDIR)/moxie-opc.Plo ./$(DEPDIR)/msp430-decode.Plo \
-	./$(DEPDIR)/msp430-dis.Plo ./$(DEPDIR)/mt-asm.Plo \
-	./$(DEPDIR)/mt-desc.Plo ./$(DEPDIR)/mt-dis.Plo \
-	./$(DEPDIR)/mt-ibld.Plo ./$(DEPDIR)/mt-opc.Plo \
-	./$(DEPDIR)/nds32-asm.Plo ./$(DEPDIR)/nds32-dis.Plo \
-	./$(DEPDIR)/nfp-dis.Plo ./$(DEPDIR)/nios2-dis.Plo \
-	./$(DEPDIR)/nios2-opc.Plo ./$(DEPDIR)/ns32k-dis.Plo \
-	./$(DEPDIR)/or1k-asm.Plo ./$(DEPDIR)/or1k-desc.Plo \
-	./$(DEPDIR)/or1k-dis.Plo ./$(DEPDIR)/or1k-ibld.Plo \
-	./$(DEPDIR)/or1k-opc.Plo ./$(DEPDIR)/pdp11-dis.Plo \
-	./$(DEPDIR)/pdp11-opc.Plo ./$(DEPDIR)/pj-dis.Plo \
-	./$(DEPDIR)/pj-opc.Plo ./$(DEPDIR)/ppc-dis.Plo \
-	./$(DEPDIR)/ppc-opc.Plo ./$(DEPDIR)/pru-dis.Plo \
-	./$(DEPDIR)/pru-opc.Plo ./$(DEPDIR)/riscv-dis.Plo \
-	./$(DEPDIR)/riscv-opc.Plo ./$(DEPDIR)/rl78-decode.Plo \
-	./$(DEPDIR)/rl78-dis.Plo ./$(DEPDIR)/rx-decode.Plo \
-	./$(DEPDIR)/rx-dis.Plo ./$(DEPDIR)/s12z-dis.Plo \
-	./$(DEPDIR)/s390-dis.Plo ./$(DEPDIR)/s390-opc.Plo \
-	./$(DEPDIR)/score-dis.Plo ./$(DEPDIR)/score7-dis.Plo \
-	./$(DEPDIR)/sh-dis.Plo ./$(DEPDIR)/sparc-dis.Plo \
-	./$(DEPDIR)/sparc-opc.Plo ./$(DEPDIR)/spu-dis.Plo \
-	./$(DEPDIR)/spu-opc.Plo ./$(DEPDIR)/tic30-dis.Plo \
-	./$(DEPDIR)/tic4x-dis.Plo ./$(DEPDIR)/tic54x-dis.Plo \
-	./$(DEPDIR)/tic54x-opc.Plo ./$(DEPDIR)/tic6x-dis.Plo \
-	./$(DEPDIR)/tic80-dis.Plo ./$(DEPDIR)/tic80-opc.Plo \
-	./$(DEPDIR)/tilegx-dis.Plo ./$(DEPDIR)/tilegx-opc.Plo \
-	./$(DEPDIR)/tilepro-dis.Plo ./$(DEPDIR)/tilepro-opc.Plo \
-	./$(DEPDIR)/v850-dis.Plo ./$(DEPDIR)/v850-opc.Plo \
-	./$(DEPDIR)/vax-dis.Plo ./$(DEPDIR)/visium-dis.Plo \
-	./$(DEPDIR)/visium-opc.Plo ./$(DEPDIR)/wasm32-dis.Plo \
-	./$(DEPDIR)/xc16x-asm.Plo ./$(DEPDIR)/xc16x-desc.Plo \
-	./$(DEPDIR)/xc16x-dis.Plo ./$(DEPDIR)/xc16x-ibld.Plo \
-	./$(DEPDIR)/xc16x-opc.Plo ./$(DEPDIR)/xgate-dis.Plo \
-	./$(DEPDIR)/xgate-opc.Plo ./$(DEPDIR)/xstormy16-asm.Plo \
-	./$(DEPDIR)/xstormy16-desc.Plo ./$(DEPDIR)/xstormy16-dis.Plo \
-	./$(DEPDIR)/xstormy16-ibld.Plo ./$(DEPDIR)/xstormy16-opc.Plo \
-	./$(DEPDIR)/xtensa-dis.Plo ./$(DEPDIR)/z80-dis.Plo \
-	./$(DEPDIR)/z8k-dis.Plo
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
-SOURCES = $(libopcodes_a_SOURCES) $(libopcodes_la_SOURCES) \
-	$(EXTRA_libopcodes_la_SOURCES)
-RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
-	ctags-recursive dvi-recursive html-recursive info-recursive \
-	install-data-recursive install-dvi-recursive \
-	install-exec-recursive install-html-recursive \
-	install-info-recursive install-pdf-recursive \
-	install-ps-recursive install-recursive installcheck-recursive \
-	installdirs-recursive pdf-recursive ps-recursive \
-	tags-recursive uninstall-recursive
-am__can_run_installinfo = \
-  case $$AM_UPDATE_INFO_DIR in \
-    n|no|NO) false;; \
-    *) (install-info --version) >/dev/null 2>&1;; \
-  esac
+am__installdirs = "$(DESTDIR)$(bfdincludedir)"
 DATA = $(bfdinclude_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -376,16 +352,12 @@ CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DLLTOOL = @DLLTOOL@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
-FGREP = @FGREP@
 GREP = @GREP@
 HDEFINES = @HDEFINES@
 INSTALL = @INSTALL@
@@ -393,28 +365,16 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-NM = @NM@
-NMEDIT = @NMEDIT@
 NO_WERROR = @NO_WERROR@
 NO_WMISSING_FIELD_INITIALIZERS = @NO_WMISSING_FIELD_INITIALIZERS@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -424,7 +384,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHARED_DEPENDENCIES = @SHARED_DEPENDENCIES@
 SHARED_LDFLAGS = @SHARED_LDFLAGS@
@@ -439,9 +398,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -514,12 +471,10 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
 LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
 	$(LDFLAGS_FOR_BUILD) -o $@
 
-libopcodes_la_LDFLAGS = $(am__append_1) -release `cat \
+libopcodes_a_LDFLAGS = $(am__append_1) -release `cat \
 	../bfd/libtool-soversion` @SHARED_LDFLAGS@
-@INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libopcodes.la
 @INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
 @INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@
-@INSTALL_LIBBFD_FALSE@noinst_LTLIBRARIES = libopcodes.la
 
 # This is where bfd.h lives.
 BFD_H = ../bfd/bfd.h
@@ -759,30 +714,41 @@ CFILES = \
 	s390-mkopc.c \
 	z8kgen.c
 
-ALL_MACHINES = $(TARGET_LIBOPCODES_CFILES:.c=.lo)
+ALL_MACHINES = $(TARGET_LIBOPCODES_CFILES:.c=.o)
 OFILES = @BFD_MACHINES@
 
 # development.sh is used to determine -Werror default.
 CONFIG_STATUS_DEPENDENCIES = $(BFDDIR)/development.sh
 AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(INCDIR) -I$(BFDDIR) @HDEFINES@
-libopcodes_la_SOURCES = dis-buf.c disassemble.c dis-init.c
+libopcodes_a_SOURCES = dis-buf.c disassemble.c dis-init.c
 # It's desirable to list ../bfd/libbfd.la in DEPENDENCIES and LIBADD.
 # Unfortunately this causes libtool to add -L$(libdir), referring to the
 # planned install directory of libbfd.  This can cause us to pick up an
 # old version of libbfd, or to pick up libbfd for the wrong architecture
 # if host != build. So for building with shared libraries we use a
 # hardcoded path to libbfd.so instead of relying on the entries in libbfd.la.
-libopcodes_la_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
-libopcodes_la_LIBADD = $(OFILES) @SHARED_LIBADD@
+libopcodes_a_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
+libopcodes_a_LIBADD = $(OFILES) @SHARED_LIBADD@
 # Allow dependency tracking to work on all the source files.
-EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
+EXTRA_libopcodes_a_SOURCES = $(LIBOPCODES_CFILES)
 
 # libtool will build .libs/libopcodes.a.  We create libopcodes.a in
 # the build directory so that we don't have to convert all the
 # programs that use libopcodes.a simultaneously.  This is a hack which
 # should be removed if everything else starts using libtool.  FIXME.
 noinst_LIBRARIES = libopcodes.a
-libopcodes_a_SOURCES = 
+#libopcodes_a_SOURCES =
+#
+#stamp-lib: libopcodes.la
+#	libtooldir=`$(LIBTOOL) --config | sed -n -e 's/^objdir=//p'`; \
+#	if [ -f $$libtooldir/libopcodes.a ]; then \
+#	  cp $$libtooldir/libopcodes.a libopcodes.tmp; \
+#	  $(RANLIB) libopcodes.tmp; \
+#	  $(SHELL) $(srcdir)/../move-if-change libopcodes.tmp libopcodes.a; \
+#	else true; fi
+#	touch stamp-lib
+#
+#libopcodes.a: stamp-lib ; @true
 POTFILES = $(HFILES) $(CFILES)
 CLEANFILES = \
 	stamp-epiphany stamp-fr30 stamp-frv stamp-ip2k stamp-iq2000 stamp-lm32 \
@@ -850,7 +816,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -903,54 +869,10 @@ distclean-hdr:
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
-install-bfdlibLTLIBRARIES: $(bfdlib_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	@list='$(bfdlib_LTLIBRARIES)'; test -n "$(bfdlibdir)" || list=; \
-	list2=; for p in $$list; do \
-	  if test -f $$p; then \
-	    list2="$$list2 $$p"; \
-	  else :; fi; \
-	done; \
-	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bfdlibdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bfdlibdir)" || exit 1; \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(bfdlibdir)'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(bfdlibdir)"; \
-	}
-
-uninstall-bfdlibLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bfdlib_LTLIBRARIES)'; test -n "$(bfdlibdir)" || list=; \
-	for p in $$list; do \
-	  $(am__strip_dir) \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(bfdlibdir)/$$f'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(bfdlibdir)/$$f"; \
-	done
-
-clean-bfdlibLTLIBRARIES:
-	-test -z "$(bfdlib_LTLIBRARIES)" || rm -f $(bfdlib_LTLIBRARIES)
-	@list='$(bfdlib_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-libopcodes.la: $(libopcodes_la_OBJECTS) $(libopcodes_la_DEPENDENCIES) $(EXTRA_libopcodes_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libopcodes_la_LINK) $(am_libopcodes_la_rpath) $(libopcodes_la_OBJECTS) $(libopcodes_la_LIBADD) $(LIBS)
+libopcodes.a: $(libopcodes_a_OBJECTS) $(libopcodes_a_DEPENDENCIES) $(EXTRA_libopcodes_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libopcodes.a
+	$(AM_V_AR)$(libopcodes_a_AR) libopcodes.a $(libopcodes_a_OBJECTS) $(libopcodes_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libopcodes.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -958,186 +880,186 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-asm-2.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-dis-2.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-opc-2.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alpha-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alpha-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-ext.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/avr-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfin-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-bitset.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cr16-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cr16-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cris-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cris-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crx-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crx-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d10v-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d10v-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d30v-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d30v-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-buf.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-init.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disassemble.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlx-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft32-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft32-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/h8300-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hppa-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i386-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i386-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ia64-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ia64-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-opinst.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10200-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10200-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10300-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10300-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-opinst.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68hc11-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68hc11-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68k-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68k-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mcore-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/metag-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/microblaze-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/micromips-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips16-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmix-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmix-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moxie-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moxie-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msp430-decode.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msp430-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nds32-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nds32-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nfp-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nios2-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nios2-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ns32k-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdp11-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdp11-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pj-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pj-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppc-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppc-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pru-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pru-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/riscv-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/riscv-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rl78-decode.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rl78-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rx-decode.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rx-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s12z-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s390-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s390-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/score-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/score7-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sh-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparc-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparc-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spu-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spu-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic30-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic4x-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic54x-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic54x-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic6x-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic80-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic80-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilegx-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilegx-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilepro-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilepro-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v850-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v850-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vax-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/visium-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/visium-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wasm32-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgate-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgate-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-asm.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-desc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-ibld.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-opc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtensa-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/z80-dis.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/z8k-dis.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-asm-2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-dis-2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-opc-2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aarch64-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alpha-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alpha-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-ext.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/avr-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfin-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-bitset.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cgen-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cr16-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cr16-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cris-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cris-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crx-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crx-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d10v-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d10v-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d30v-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/d30v-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-buf.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-init.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disassemble.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlx-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/epiphany-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fr30-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frv-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft32-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft32-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/h8300-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hppa-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i386-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i386-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ia64-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ia64-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ip2k-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq2000-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lm32-opinst.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10200-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10200-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10300-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m10300-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32c-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m32r-opinst.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68hc11-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68hc11-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68k-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/m68k-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mcore-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mep-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/metag-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/microblaze-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/micromips-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mips16-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmix-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmix-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moxie-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/moxie-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msp430-decode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msp430-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mt-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nds32-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nds32-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nfp-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nios2-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nios2-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ns32k-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/or1k-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdp11-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdp11-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pj-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pj-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppc-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppc-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pru-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pru-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/riscv-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/riscv-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rl78-decode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rl78-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rx-decode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rx-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s12z-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s390-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s390-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/score-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/score7-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sh-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparc-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparc-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spu-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spu-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic30-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic4x-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic54x-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic54x-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic6x-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic80-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tic80-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilegx-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilegx-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilepro-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tilepro-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v850-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v850-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vax-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/visium-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/visium-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wasm32-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xc16x-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgate-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgate-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-asm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-desc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-ibld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstormy16-opc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtensa-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/z80-dis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/z8k-dis.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1158,22 +1080,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
 install-bfdincludeDATA: $(bfdinclude_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(bfdinclude_DATA)'; test -n "$(bfdincludedir)" || list=; \
@@ -1303,10 +1209,10 @@ distclean-tags:
 	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(DATA) config.h
+all-am: Makefile $(LIBRARIES) $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bfdlibdir)" "$(DESTDIR)$(bfdincludedir)"; do \
+	for dir in "$(DESTDIR)$(bfdincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1344,194 +1250,193 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-recursive
 
-clean-am: clean-bfdlibLTLIBRARIES clean-generic clean-libtool \
-	clean-noinstLIBRARIES clean-noinstLTLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f ./$(DEPDIR)/aarch64-asm-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-asm.Plo
-	-rm -f ./$(DEPDIR)/aarch64-dis-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-dis.Plo
-	-rm -f ./$(DEPDIR)/aarch64-opc-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-opc.Plo
-	-rm -f ./$(DEPDIR)/alpha-dis.Plo
-	-rm -f ./$(DEPDIR)/alpha-opc.Plo
-	-rm -f ./$(DEPDIR)/arc-dis.Plo
-	-rm -f ./$(DEPDIR)/arc-ext.Plo
-	-rm -f ./$(DEPDIR)/arc-opc.Plo
-	-rm -f ./$(DEPDIR)/arm-dis.Plo
-	-rm -f ./$(DEPDIR)/avr-dis.Plo
-	-rm -f ./$(DEPDIR)/bfin-dis.Plo
-	-rm -f ./$(DEPDIR)/cgen-asm.Plo
-	-rm -f ./$(DEPDIR)/cgen-bitset.Plo
-	-rm -f ./$(DEPDIR)/cgen-dis.Plo
-	-rm -f ./$(DEPDIR)/cgen-opc.Plo
-	-rm -f ./$(DEPDIR)/cr16-dis.Plo
-	-rm -f ./$(DEPDIR)/cr16-opc.Plo
-	-rm -f ./$(DEPDIR)/cris-dis.Plo
-	-rm -f ./$(DEPDIR)/cris-opc.Plo
-	-rm -f ./$(DEPDIR)/crx-dis.Plo
-	-rm -f ./$(DEPDIR)/crx-opc.Plo
-	-rm -f ./$(DEPDIR)/d10v-dis.Plo
-	-rm -f ./$(DEPDIR)/d10v-opc.Plo
-	-rm -f ./$(DEPDIR)/d30v-dis.Plo
-	-rm -f ./$(DEPDIR)/d30v-opc.Plo
-	-rm -f ./$(DEPDIR)/dis-buf.Plo
-	-rm -f ./$(DEPDIR)/dis-init.Plo
-	-rm -f ./$(DEPDIR)/disassemble.Plo
-	-rm -f ./$(DEPDIR)/dlx-dis.Plo
-	-rm -f ./$(DEPDIR)/epiphany-asm.Plo
-	-rm -f ./$(DEPDIR)/epiphany-desc.Plo
-	-rm -f ./$(DEPDIR)/epiphany-dis.Plo
-	-rm -f ./$(DEPDIR)/epiphany-ibld.Plo
-	-rm -f ./$(DEPDIR)/epiphany-opc.Plo
-	-rm -f ./$(DEPDIR)/fr30-asm.Plo
-	-rm -f ./$(DEPDIR)/fr30-desc.Plo
-	-rm -f ./$(DEPDIR)/fr30-dis.Plo
-	-rm -f ./$(DEPDIR)/fr30-ibld.Plo
-	-rm -f ./$(DEPDIR)/fr30-opc.Plo
-	-rm -f ./$(DEPDIR)/frv-asm.Plo
-	-rm -f ./$(DEPDIR)/frv-desc.Plo
-	-rm -f ./$(DEPDIR)/frv-dis.Plo
-	-rm -f ./$(DEPDIR)/frv-ibld.Plo
-	-rm -f ./$(DEPDIR)/frv-opc.Plo
-	-rm -f ./$(DEPDIR)/ft32-dis.Plo
-	-rm -f ./$(DEPDIR)/ft32-opc.Plo
-	-rm -f ./$(DEPDIR)/h8300-dis.Plo
-	-rm -f ./$(DEPDIR)/hppa-dis.Plo
-	-rm -f ./$(DEPDIR)/i386-dis.Plo
-	-rm -f ./$(DEPDIR)/i386-opc.Plo
-	-rm -f ./$(DEPDIR)/ia64-dis.Plo
-	-rm -f ./$(DEPDIR)/ia64-opc.Plo
-	-rm -f ./$(DEPDIR)/ip2k-asm.Plo
-	-rm -f ./$(DEPDIR)/ip2k-desc.Plo
-	-rm -f ./$(DEPDIR)/ip2k-dis.Plo
-	-rm -f ./$(DEPDIR)/ip2k-ibld.Plo
-	-rm -f ./$(DEPDIR)/ip2k-opc.Plo
-	-rm -f ./$(DEPDIR)/iq2000-asm.Plo
-	-rm -f ./$(DEPDIR)/iq2000-desc.Plo
-	-rm -f ./$(DEPDIR)/iq2000-dis.Plo
-	-rm -f ./$(DEPDIR)/iq2000-ibld.Plo
-	-rm -f ./$(DEPDIR)/iq2000-opc.Plo
-	-rm -f ./$(DEPDIR)/lm32-asm.Plo
-	-rm -f ./$(DEPDIR)/lm32-desc.Plo
-	-rm -f ./$(DEPDIR)/lm32-dis.Plo
-	-rm -f ./$(DEPDIR)/lm32-ibld.Plo
-	-rm -f ./$(DEPDIR)/lm32-opc.Plo
-	-rm -f ./$(DEPDIR)/lm32-opinst.Plo
-	-rm -f ./$(DEPDIR)/m10200-dis.Plo
-	-rm -f ./$(DEPDIR)/m10200-opc.Plo
-	-rm -f ./$(DEPDIR)/m10300-dis.Plo
-	-rm -f ./$(DEPDIR)/m10300-opc.Plo
-	-rm -f ./$(DEPDIR)/m32c-asm.Plo
-	-rm -f ./$(DEPDIR)/m32c-desc.Plo
-	-rm -f ./$(DEPDIR)/m32c-dis.Plo
-	-rm -f ./$(DEPDIR)/m32c-ibld.Plo
-	-rm -f ./$(DEPDIR)/m32c-opc.Plo
-	-rm -f ./$(DEPDIR)/m32r-asm.Plo
-	-rm -f ./$(DEPDIR)/m32r-desc.Plo
-	-rm -f ./$(DEPDIR)/m32r-dis.Plo
-	-rm -f ./$(DEPDIR)/m32r-ibld.Plo
-	-rm -f ./$(DEPDIR)/m32r-opc.Plo
-	-rm -f ./$(DEPDIR)/m32r-opinst.Plo
-	-rm -f ./$(DEPDIR)/m68hc11-dis.Plo
-	-rm -f ./$(DEPDIR)/m68hc11-opc.Plo
-	-rm -f ./$(DEPDIR)/m68k-dis.Plo
-	-rm -f ./$(DEPDIR)/m68k-opc.Plo
-	-rm -f ./$(DEPDIR)/mcore-dis.Plo
-	-rm -f ./$(DEPDIR)/mep-asm.Plo
-	-rm -f ./$(DEPDIR)/mep-desc.Plo
-	-rm -f ./$(DEPDIR)/mep-dis.Plo
-	-rm -f ./$(DEPDIR)/mep-ibld.Plo
-	-rm -f ./$(DEPDIR)/mep-opc.Plo
-	-rm -f ./$(DEPDIR)/metag-dis.Plo
-	-rm -f ./$(DEPDIR)/microblaze-dis.Plo
-	-rm -f ./$(DEPDIR)/micromips-opc.Plo
-	-rm -f ./$(DEPDIR)/mips-dis.Plo
-	-rm -f ./$(DEPDIR)/mips-opc.Plo
-	-rm -f ./$(DEPDIR)/mips16-opc.Plo
-	-rm -f ./$(DEPDIR)/mmix-dis.Plo
-	-rm -f ./$(DEPDIR)/mmix-opc.Plo
-	-rm -f ./$(DEPDIR)/moxie-dis.Plo
-	-rm -f ./$(DEPDIR)/moxie-opc.Plo
-	-rm -f ./$(DEPDIR)/msp430-decode.Plo
-	-rm -f ./$(DEPDIR)/msp430-dis.Plo
-	-rm -f ./$(DEPDIR)/mt-asm.Plo
-	-rm -f ./$(DEPDIR)/mt-desc.Plo
-	-rm -f ./$(DEPDIR)/mt-dis.Plo
-	-rm -f ./$(DEPDIR)/mt-ibld.Plo
-	-rm -f ./$(DEPDIR)/mt-opc.Plo
-	-rm -f ./$(DEPDIR)/nds32-asm.Plo
-	-rm -f ./$(DEPDIR)/nds32-dis.Plo
-	-rm -f ./$(DEPDIR)/nfp-dis.Plo
-	-rm -f ./$(DEPDIR)/nios2-dis.Plo
-	-rm -f ./$(DEPDIR)/nios2-opc.Plo
-	-rm -f ./$(DEPDIR)/ns32k-dis.Plo
-	-rm -f ./$(DEPDIR)/or1k-asm.Plo
-	-rm -f ./$(DEPDIR)/or1k-desc.Plo
-	-rm -f ./$(DEPDIR)/or1k-dis.Plo
-	-rm -f ./$(DEPDIR)/or1k-ibld.Plo
-	-rm -f ./$(DEPDIR)/or1k-opc.Plo
-	-rm -f ./$(DEPDIR)/pdp11-dis.Plo
-	-rm -f ./$(DEPDIR)/pdp11-opc.Plo
-	-rm -f ./$(DEPDIR)/pj-dis.Plo
-	-rm -f ./$(DEPDIR)/pj-opc.Plo
-	-rm -f ./$(DEPDIR)/ppc-dis.Plo
-	-rm -f ./$(DEPDIR)/ppc-opc.Plo
-	-rm -f ./$(DEPDIR)/pru-dis.Plo
-	-rm -f ./$(DEPDIR)/pru-opc.Plo
-	-rm -f ./$(DEPDIR)/riscv-dis.Plo
-	-rm -f ./$(DEPDIR)/riscv-opc.Plo
-	-rm -f ./$(DEPDIR)/rl78-decode.Plo
-	-rm -f ./$(DEPDIR)/rl78-dis.Plo
-	-rm -f ./$(DEPDIR)/rx-decode.Plo
-	-rm -f ./$(DEPDIR)/rx-dis.Plo
-	-rm -f ./$(DEPDIR)/s12z-dis.Plo
-	-rm -f ./$(DEPDIR)/s390-dis.Plo
-	-rm -f ./$(DEPDIR)/s390-opc.Plo
-	-rm -f ./$(DEPDIR)/score-dis.Plo
-	-rm -f ./$(DEPDIR)/score7-dis.Plo
-	-rm -f ./$(DEPDIR)/sh-dis.Plo
-	-rm -f ./$(DEPDIR)/sparc-dis.Plo
-	-rm -f ./$(DEPDIR)/sparc-opc.Plo
-	-rm -f ./$(DEPDIR)/spu-dis.Plo
-	-rm -f ./$(DEPDIR)/spu-opc.Plo
-	-rm -f ./$(DEPDIR)/tic30-dis.Plo
-	-rm -f ./$(DEPDIR)/tic4x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic54x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic54x-opc.Plo
-	-rm -f ./$(DEPDIR)/tic6x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic80-dis.Plo
-	-rm -f ./$(DEPDIR)/tic80-opc.Plo
-	-rm -f ./$(DEPDIR)/tilegx-dis.Plo
-	-rm -f ./$(DEPDIR)/tilegx-opc.Plo
-	-rm -f ./$(DEPDIR)/tilepro-dis.Plo
-	-rm -f ./$(DEPDIR)/tilepro-opc.Plo
-	-rm -f ./$(DEPDIR)/v850-dis.Plo
-	-rm -f ./$(DEPDIR)/v850-opc.Plo
-	-rm -f ./$(DEPDIR)/vax-dis.Plo
-	-rm -f ./$(DEPDIR)/visium-dis.Plo
-	-rm -f ./$(DEPDIR)/visium-opc.Plo
-	-rm -f ./$(DEPDIR)/wasm32-dis.Plo
-	-rm -f ./$(DEPDIR)/xc16x-asm.Plo
-	-rm -f ./$(DEPDIR)/xc16x-desc.Plo
-	-rm -f ./$(DEPDIR)/xc16x-dis.Plo
-	-rm -f ./$(DEPDIR)/xc16x-ibld.Plo
-	-rm -f ./$(DEPDIR)/xc16x-opc.Plo
-	-rm -f ./$(DEPDIR)/xgate-dis.Plo
-	-rm -f ./$(DEPDIR)/xgate-opc.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-asm.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-desc.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-dis.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-ibld.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-opc.Plo
-	-rm -f ./$(DEPDIR)/xtensa-dis.Plo
-	-rm -f ./$(DEPDIR)/z80-dis.Plo
-	-rm -f ./$(DEPDIR)/z8k-dis.Plo
+		-rm -f ./$(DEPDIR)/aarch64-asm-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-asm.Po
+	-rm -f ./$(DEPDIR)/aarch64-dis-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-dis.Po
+	-rm -f ./$(DEPDIR)/aarch64-opc-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-opc.Po
+	-rm -f ./$(DEPDIR)/alpha-dis.Po
+	-rm -f ./$(DEPDIR)/alpha-opc.Po
+	-rm -f ./$(DEPDIR)/arc-dis.Po
+	-rm -f ./$(DEPDIR)/arc-ext.Po
+	-rm -f ./$(DEPDIR)/arc-opc.Po
+	-rm -f ./$(DEPDIR)/arm-dis.Po
+	-rm -f ./$(DEPDIR)/avr-dis.Po
+	-rm -f ./$(DEPDIR)/bfin-dis.Po
+	-rm -f ./$(DEPDIR)/cgen-asm.Po
+	-rm -f ./$(DEPDIR)/cgen-bitset.Po
+	-rm -f ./$(DEPDIR)/cgen-dis.Po
+	-rm -f ./$(DEPDIR)/cgen-opc.Po
+	-rm -f ./$(DEPDIR)/cr16-dis.Po
+	-rm -f ./$(DEPDIR)/cr16-opc.Po
+	-rm -f ./$(DEPDIR)/cris-dis.Po
+	-rm -f ./$(DEPDIR)/cris-opc.Po
+	-rm -f ./$(DEPDIR)/crx-dis.Po
+	-rm -f ./$(DEPDIR)/crx-opc.Po
+	-rm -f ./$(DEPDIR)/d10v-dis.Po
+	-rm -f ./$(DEPDIR)/d10v-opc.Po
+	-rm -f ./$(DEPDIR)/d30v-dis.Po
+	-rm -f ./$(DEPDIR)/d30v-opc.Po
+	-rm -f ./$(DEPDIR)/dis-buf.Po
+	-rm -f ./$(DEPDIR)/dis-init.Po
+	-rm -f ./$(DEPDIR)/disassemble.Po
+	-rm -f ./$(DEPDIR)/dlx-dis.Po
+	-rm -f ./$(DEPDIR)/epiphany-asm.Po
+	-rm -f ./$(DEPDIR)/epiphany-desc.Po
+	-rm -f ./$(DEPDIR)/epiphany-dis.Po
+	-rm -f ./$(DEPDIR)/epiphany-ibld.Po
+	-rm -f ./$(DEPDIR)/epiphany-opc.Po
+	-rm -f ./$(DEPDIR)/fr30-asm.Po
+	-rm -f ./$(DEPDIR)/fr30-desc.Po
+	-rm -f ./$(DEPDIR)/fr30-dis.Po
+	-rm -f ./$(DEPDIR)/fr30-ibld.Po
+	-rm -f ./$(DEPDIR)/fr30-opc.Po
+	-rm -f ./$(DEPDIR)/frv-asm.Po
+	-rm -f ./$(DEPDIR)/frv-desc.Po
+	-rm -f ./$(DEPDIR)/frv-dis.Po
+	-rm -f ./$(DEPDIR)/frv-ibld.Po
+	-rm -f ./$(DEPDIR)/frv-opc.Po
+	-rm -f ./$(DEPDIR)/ft32-dis.Po
+	-rm -f ./$(DEPDIR)/ft32-opc.Po
+	-rm -f ./$(DEPDIR)/h8300-dis.Po
+	-rm -f ./$(DEPDIR)/hppa-dis.Po
+	-rm -f ./$(DEPDIR)/i386-dis.Po
+	-rm -f ./$(DEPDIR)/i386-opc.Po
+	-rm -f ./$(DEPDIR)/ia64-dis.Po
+	-rm -f ./$(DEPDIR)/ia64-opc.Po
+	-rm -f ./$(DEPDIR)/ip2k-asm.Po
+	-rm -f ./$(DEPDIR)/ip2k-desc.Po
+	-rm -f ./$(DEPDIR)/ip2k-dis.Po
+	-rm -f ./$(DEPDIR)/ip2k-ibld.Po
+	-rm -f ./$(DEPDIR)/ip2k-opc.Po
+	-rm -f ./$(DEPDIR)/iq2000-asm.Po
+	-rm -f ./$(DEPDIR)/iq2000-desc.Po
+	-rm -f ./$(DEPDIR)/iq2000-dis.Po
+	-rm -f ./$(DEPDIR)/iq2000-ibld.Po
+	-rm -f ./$(DEPDIR)/iq2000-opc.Po
+	-rm -f ./$(DEPDIR)/lm32-asm.Po
+	-rm -f ./$(DEPDIR)/lm32-desc.Po
+	-rm -f ./$(DEPDIR)/lm32-dis.Po
+	-rm -f ./$(DEPDIR)/lm32-ibld.Po
+	-rm -f ./$(DEPDIR)/lm32-opc.Po
+	-rm -f ./$(DEPDIR)/lm32-opinst.Po
+	-rm -f ./$(DEPDIR)/m10200-dis.Po
+	-rm -f ./$(DEPDIR)/m10200-opc.Po
+	-rm -f ./$(DEPDIR)/m10300-dis.Po
+	-rm -f ./$(DEPDIR)/m10300-opc.Po
+	-rm -f ./$(DEPDIR)/m32c-asm.Po
+	-rm -f ./$(DEPDIR)/m32c-desc.Po
+	-rm -f ./$(DEPDIR)/m32c-dis.Po
+	-rm -f ./$(DEPDIR)/m32c-ibld.Po
+	-rm -f ./$(DEPDIR)/m32c-opc.Po
+	-rm -f ./$(DEPDIR)/m32r-asm.Po
+	-rm -f ./$(DEPDIR)/m32r-desc.Po
+	-rm -f ./$(DEPDIR)/m32r-dis.Po
+	-rm -f ./$(DEPDIR)/m32r-ibld.Po
+	-rm -f ./$(DEPDIR)/m32r-opc.Po
+	-rm -f ./$(DEPDIR)/m32r-opinst.Po
+	-rm -f ./$(DEPDIR)/m68hc11-dis.Po
+	-rm -f ./$(DEPDIR)/m68hc11-opc.Po
+	-rm -f ./$(DEPDIR)/m68k-dis.Po
+	-rm -f ./$(DEPDIR)/m68k-opc.Po
+	-rm -f ./$(DEPDIR)/mcore-dis.Po
+	-rm -f ./$(DEPDIR)/mep-asm.Po
+	-rm -f ./$(DEPDIR)/mep-desc.Po
+	-rm -f ./$(DEPDIR)/mep-dis.Po
+	-rm -f ./$(DEPDIR)/mep-ibld.Po
+	-rm -f ./$(DEPDIR)/mep-opc.Po
+	-rm -f ./$(DEPDIR)/metag-dis.Po
+	-rm -f ./$(DEPDIR)/microblaze-dis.Po
+	-rm -f ./$(DEPDIR)/micromips-opc.Po
+	-rm -f ./$(DEPDIR)/mips-dis.Po
+	-rm -f ./$(DEPDIR)/mips-opc.Po
+	-rm -f ./$(DEPDIR)/mips16-opc.Po
+	-rm -f ./$(DEPDIR)/mmix-dis.Po
+	-rm -f ./$(DEPDIR)/mmix-opc.Po
+	-rm -f ./$(DEPDIR)/moxie-dis.Po
+	-rm -f ./$(DEPDIR)/moxie-opc.Po
+	-rm -f ./$(DEPDIR)/msp430-decode.Po
+	-rm -f ./$(DEPDIR)/msp430-dis.Po
+	-rm -f ./$(DEPDIR)/mt-asm.Po
+	-rm -f ./$(DEPDIR)/mt-desc.Po
+	-rm -f ./$(DEPDIR)/mt-dis.Po
+	-rm -f ./$(DEPDIR)/mt-ibld.Po
+	-rm -f ./$(DEPDIR)/mt-opc.Po
+	-rm -f ./$(DEPDIR)/nds32-asm.Po
+	-rm -f ./$(DEPDIR)/nds32-dis.Po
+	-rm -f ./$(DEPDIR)/nfp-dis.Po
+	-rm -f ./$(DEPDIR)/nios2-dis.Po
+	-rm -f ./$(DEPDIR)/nios2-opc.Po
+	-rm -f ./$(DEPDIR)/ns32k-dis.Po
+	-rm -f ./$(DEPDIR)/or1k-asm.Po
+	-rm -f ./$(DEPDIR)/or1k-desc.Po
+	-rm -f ./$(DEPDIR)/or1k-dis.Po
+	-rm -f ./$(DEPDIR)/or1k-ibld.Po
+	-rm -f ./$(DEPDIR)/or1k-opc.Po
+	-rm -f ./$(DEPDIR)/pdp11-dis.Po
+	-rm -f ./$(DEPDIR)/pdp11-opc.Po
+	-rm -f ./$(DEPDIR)/pj-dis.Po
+	-rm -f ./$(DEPDIR)/pj-opc.Po
+	-rm -f ./$(DEPDIR)/ppc-dis.Po
+	-rm -f ./$(DEPDIR)/ppc-opc.Po
+	-rm -f ./$(DEPDIR)/pru-dis.Po
+	-rm -f ./$(DEPDIR)/pru-opc.Po
+	-rm -f ./$(DEPDIR)/riscv-dis.Po
+	-rm -f ./$(DEPDIR)/riscv-opc.Po
+	-rm -f ./$(DEPDIR)/rl78-decode.Po
+	-rm -f ./$(DEPDIR)/rl78-dis.Po
+	-rm -f ./$(DEPDIR)/rx-decode.Po
+	-rm -f ./$(DEPDIR)/rx-dis.Po
+	-rm -f ./$(DEPDIR)/s12z-dis.Po
+	-rm -f ./$(DEPDIR)/s390-dis.Po
+	-rm -f ./$(DEPDIR)/s390-opc.Po
+	-rm -f ./$(DEPDIR)/score-dis.Po
+	-rm -f ./$(DEPDIR)/score7-dis.Po
+	-rm -f ./$(DEPDIR)/sh-dis.Po
+	-rm -f ./$(DEPDIR)/sparc-dis.Po
+	-rm -f ./$(DEPDIR)/sparc-opc.Po
+	-rm -f ./$(DEPDIR)/spu-dis.Po
+	-rm -f ./$(DEPDIR)/spu-opc.Po
+	-rm -f ./$(DEPDIR)/tic30-dis.Po
+	-rm -f ./$(DEPDIR)/tic4x-dis.Po
+	-rm -f ./$(DEPDIR)/tic54x-dis.Po
+	-rm -f ./$(DEPDIR)/tic54x-opc.Po
+	-rm -f ./$(DEPDIR)/tic6x-dis.Po
+	-rm -f ./$(DEPDIR)/tic80-dis.Po
+	-rm -f ./$(DEPDIR)/tic80-opc.Po
+	-rm -f ./$(DEPDIR)/tilegx-dis.Po
+	-rm -f ./$(DEPDIR)/tilegx-opc.Po
+	-rm -f ./$(DEPDIR)/tilepro-dis.Po
+	-rm -f ./$(DEPDIR)/tilepro-opc.Po
+	-rm -f ./$(DEPDIR)/v850-dis.Po
+	-rm -f ./$(DEPDIR)/v850-opc.Po
+	-rm -f ./$(DEPDIR)/vax-dis.Po
+	-rm -f ./$(DEPDIR)/visium-dis.Po
+	-rm -f ./$(DEPDIR)/visium-opc.Po
+	-rm -f ./$(DEPDIR)/wasm32-dis.Po
+	-rm -f ./$(DEPDIR)/xc16x-asm.Po
+	-rm -f ./$(DEPDIR)/xc16x-desc.Po
+	-rm -f ./$(DEPDIR)/xc16x-dis.Po
+	-rm -f ./$(DEPDIR)/xc16x-ibld.Po
+	-rm -f ./$(DEPDIR)/xc16x-opc.Po
+	-rm -f ./$(DEPDIR)/xgate-dis.Po
+	-rm -f ./$(DEPDIR)/xgate-opc.Po
+	-rm -f ./$(DEPDIR)/xstormy16-asm.Po
+	-rm -f ./$(DEPDIR)/xstormy16-desc.Po
+	-rm -f ./$(DEPDIR)/xstormy16-dis.Po
+	-rm -f ./$(DEPDIR)/xstormy16-ibld.Po
+	-rm -f ./$(DEPDIR)/xstormy16-opc.Po
+	-rm -f ./$(DEPDIR)/xtensa-dis.Po
+	-rm -f ./$(DEPDIR)/z80-dis.Po
+	-rm -f ./$(DEPDIR)/z8k-dis.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+	distclean-hdr distclean-tags
 
 dvi: dvi-recursive
 
@@ -1545,7 +1450,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-bfdincludeDATA install-bfdlibLTLIBRARIES
+install-data-am: install-bfdincludeDATA
 
 install-dvi: install-dvi-recursive
 
@@ -1576,193 +1481,192 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f ./$(DEPDIR)/aarch64-asm-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-asm.Plo
-	-rm -f ./$(DEPDIR)/aarch64-dis-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-dis.Plo
-	-rm -f ./$(DEPDIR)/aarch64-opc-2.Plo
-	-rm -f ./$(DEPDIR)/aarch64-opc.Plo
-	-rm -f ./$(DEPDIR)/alpha-dis.Plo
-	-rm -f ./$(DEPDIR)/alpha-opc.Plo
-	-rm -f ./$(DEPDIR)/arc-dis.Plo
-	-rm -f ./$(DEPDIR)/arc-ext.Plo
-	-rm -f ./$(DEPDIR)/arc-opc.Plo
-	-rm -f ./$(DEPDIR)/arm-dis.Plo
-	-rm -f ./$(DEPDIR)/avr-dis.Plo
-	-rm -f ./$(DEPDIR)/bfin-dis.Plo
-	-rm -f ./$(DEPDIR)/cgen-asm.Plo
-	-rm -f ./$(DEPDIR)/cgen-bitset.Plo
-	-rm -f ./$(DEPDIR)/cgen-dis.Plo
-	-rm -f ./$(DEPDIR)/cgen-opc.Plo
-	-rm -f ./$(DEPDIR)/cr16-dis.Plo
-	-rm -f ./$(DEPDIR)/cr16-opc.Plo
-	-rm -f ./$(DEPDIR)/cris-dis.Plo
-	-rm -f ./$(DEPDIR)/cris-opc.Plo
-	-rm -f ./$(DEPDIR)/crx-dis.Plo
-	-rm -f ./$(DEPDIR)/crx-opc.Plo
-	-rm -f ./$(DEPDIR)/d10v-dis.Plo
-	-rm -f ./$(DEPDIR)/d10v-opc.Plo
-	-rm -f ./$(DEPDIR)/d30v-dis.Plo
-	-rm -f ./$(DEPDIR)/d30v-opc.Plo
-	-rm -f ./$(DEPDIR)/dis-buf.Plo
-	-rm -f ./$(DEPDIR)/dis-init.Plo
-	-rm -f ./$(DEPDIR)/disassemble.Plo
-	-rm -f ./$(DEPDIR)/dlx-dis.Plo
-	-rm -f ./$(DEPDIR)/epiphany-asm.Plo
-	-rm -f ./$(DEPDIR)/epiphany-desc.Plo
-	-rm -f ./$(DEPDIR)/epiphany-dis.Plo
-	-rm -f ./$(DEPDIR)/epiphany-ibld.Plo
-	-rm -f ./$(DEPDIR)/epiphany-opc.Plo
-	-rm -f ./$(DEPDIR)/fr30-asm.Plo
-	-rm -f ./$(DEPDIR)/fr30-desc.Plo
-	-rm -f ./$(DEPDIR)/fr30-dis.Plo
-	-rm -f ./$(DEPDIR)/fr30-ibld.Plo
-	-rm -f ./$(DEPDIR)/fr30-opc.Plo
-	-rm -f ./$(DEPDIR)/frv-asm.Plo
-	-rm -f ./$(DEPDIR)/frv-desc.Plo
-	-rm -f ./$(DEPDIR)/frv-dis.Plo
-	-rm -f ./$(DEPDIR)/frv-ibld.Plo
-	-rm -f ./$(DEPDIR)/frv-opc.Plo
-	-rm -f ./$(DEPDIR)/ft32-dis.Plo
-	-rm -f ./$(DEPDIR)/ft32-opc.Plo
-	-rm -f ./$(DEPDIR)/h8300-dis.Plo
-	-rm -f ./$(DEPDIR)/hppa-dis.Plo
-	-rm -f ./$(DEPDIR)/i386-dis.Plo
-	-rm -f ./$(DEPDIR)/i386-opc.Plo
-	-rm -f ./$(DEPDIR)/ia64-dis.Plo
-	-rm -f ./$(DEPDIR)/ia64-opc.Plo
-	-rm -f ./$(DEPDIR)/ip2k-asm.Plo
-	-rm -f ./$(DEPDIR)/ip2k-desc.Plo
-	-rm -f ./$(DEPDIR)/ip2k-dis.Plo
-	-rm -f ./$(DEPDIR)/ip2k-ibld.Plo
-	-rm -f ./$(DEPDIR)/ip2k-opc.Plo
-	-rm -f ./$(DEPDIR)/iq2000-asm.Plo
-	-rm -f ./$(DEPDIR)/iq2000-desc.Plo
-	-rm -f ./$(DEPDIR)/iq2000-dis.Plo
-	-rm -f ./$(DEPDIR)/iq2000-ibld.Plo
-	-rm -f ./$(DEPDIR)/iq2000-opc.Plo
-	-rm -f ./$(DEPDIR)/lm32-asm.Plo
-	-rm -f ./$(DEPDIR)/lm32-desc.Plo
-	-rm -f ./$(DEPDIR)/lm32-dis.Plo
-	-rm -f ./$(DEPDIR)/lm32-ibld.Plo
-	-rm -f ./$(DEPDIR)/lm32-opc.Plo
-	-rm -f ./$(DEPDIR)/lm32-opinst.Plo
-	-rm -f ./$(DEPDIR)/m10200-dis.Plo
-	-rm -f ./$(DEPDIR)/m10200-opc.Plo
-	-rm -f ./$(DEPDIR)/m10300-dis.Plo
-	-rm -f ./$(DEPDIR)/m10300-opc.Plo
-	-rm -f ./$(DEPDIR)/m32c-asm.Plo
-	-rm -f ./$(DEPDIR)/m32c-desc.Plo
-	-rm -f ./$(DEPDIR)/m32c-dis.Plo
-	-rm -f ./$(DEPDIR)/m32c-ibld.Plo
-	-rm -f ./$(DEPDIR)/m32c-opc.Plo
-	-rm -f ./$(DEPDIR)/m32r-asm.Plo
-	-rm -f ./$(DEPDIR)/m32r-desc.Plo
-	-rm -f ./$(DEPDIR)/m32r-dis.Plo
-	-rm -f ./$(DEPDIR)/m32r-ibld.Plo
-	-rm -f ./$(DEPDIR)/m32r-opc.Plo
-	-rm -f ./$(DEPDIR)/m32r-opinst.Plo
-	-rm -f ./$(DEPDIR)/m68hc11-dis.Plo
-	-rm -f ./$(DEPDIR)/m68hc11-opc.Plo
-	-rm -f ./$(DEPDIR)/m68k-dis.Plo
-	-rm -f ./$(DEPDIR)/m68k-opc.Plo
-	-rm -f ./$(DEPDIR)/mcore-dis.Plo
-	-rm -f ./$(DEPDIR)/mep-asm.Plo
-	-rm -f ./$(DEPDIR)/mep-desc.Plo
-	-rm -f ./$(DEPDIR)/mep-dis.Plo
-	-rm -f ./$(DEPDIR)/mep-ibld.Plo
-	-rm -f ./$(DEPDIR)/mep-opc.Plo
-	-rm -f ./$(DEPDIR)/metag-dis.Plo
-	-rm -f ./$(DEPDIR)/microblaze-dis.Plo
-	-rm -f ./$(DEPDIR)/micromips-opc.Plo
-	-rm -f ./$(DEPDIR)/mips-dis.Plo
-	-rm -f ./$(DEPDIR)/mips-opc.Plo
-	-rm -f ./$(DEPDIR)/mips16-opc.Plo
-	-rm -f ./$(DEPDIR)/mmix-dis.Plo
-	-rm -f ./$(DEPDIR)/mmix-opc.Plo
-	-rm -f ./$(DEPDIR)/moxie-dis.Plo
-	-rm -f ./$(DEPDIR)/moxie-opc.Plo
-	-rm -f ./$(DEPDIR)/msp430-decode.Plo
-	-rm -f ./$(DEPDIR)/msp430-dis.Plo
-	-rm -f ./$(DEPDIR)/mt-asm.Plo
-	-rm -f ./$(DEPDIR)/mt-desc.Plo
-	-rm -f ./$(DEPDIR)/mt-dis.Plo
-	-rm -f ./$(DEPDIR)/mt-ibld.Plo
-	-rm -f ./$(DEPDIR)/mt-opc.Plo
-	-rm -f ./$(DEPDIR)/nds32-asm.Plo
-	-rm -f ./$(DEPDIR)/nds32-dis.Plo
-	-rm -f ./$(DEPDIR)/nfp-dis.Plo
-	-rm -f ./$(DEPDIR)/nios2-dis.Plo
-	-rm -f ./$(DEPDIR)/nios2-opc.Plo
-	-rm -f ./$(DEPDIR)/ns32k-dis.Plo
-	-rm -f ./$(DEPDIR)/or1k-asm.Plo
-	-rm -f ./$(DEPDIR)/or1k-desc.Plo
-	-rm -f ./$(DEPDIR)/or1k-dis.Plo
-	-rm -f ./$(DEPDIR)/or1k-ibld.Plo
-	-rm -f ./$(DEPDIR)/or1k-opc.Plo
-	-rm -f ./$(DEPDIR)/pdp11-dis.Plo
-	-rm -f ./$(DEPDIR)/pdp11-opc.Plo
-	-rm -f ./$(DEPDIR)/pj-dis.Plo
-	-rm -f ./$(DEPDIR)/pj-opc.Plo
-	-rm -f ./$(DEPDIR)/ppc-dis.Plo
-	-rm -f ./$(DEPDIR)/ppc-opc.Plo
-	-rm -f ./$(DEPDIR)/pru-dis.Plo
-	-rm -f ./$(DEPDIR)/pru-opc.Plo
-	-rm -f ./$(DEPDIR)/riscv-dis.Plo
-	-rm -f ./$(DEPDIR)/riscv-opc.Plo
-	-rm -f ./$(DEPDIR)/rl78-decode.Plo
-	-rm -f ./$(DEPDIR)/rl78-dis.Plo
-	-rm -f ./$(DEPDIR)/rx-decode.Plo
-	-rm -f ./$(DEPDIR)/rx-dis.Plo
-	-rm -f ./$(DEPDIR)/s12z-dis.Plo
-	-rm -f ./$(DEPDIR)/s390-dis.Plo
-	-rm -f ./$(DEPDIR)/s390-opc.Plo
-	-rm -f ./$(DEPDIR)/score-dis.Plo
-	-rm -f ./$(DEPDIR)/score7-dis.Plo
-	-rm -f ./$(DEPDIR)/sh-dis.Plo
-	-rm -f ./$(DEPDIR)/sparc-dis.Plo
-	-rm -f ./$(DEPDIR)/sparc-opc.Plo
-	-rm -f ./$(DEPDIR)/spu-dis.Plo
-	-rm -f ./$(DEPDIR)/spu-opc.Plo
-	-rm -f ./$(DEPDIR)/tic30-dis.Plo
-	-rm -f ./$(DEPDIR)/tic4x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic54x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic54x-opc.Plo
-	-rm -f ./$(DEPDIR)/tic6x-dis.Plo
-	-rm -f ./$(DEPDIR)/tic80-dis.Plo
-	-rm -f ./$(DEPDIR)/tic80-opc.Plo
-	-rm -f ./$(DEPDIR)/tilegx-dis.Plo
-	-rm -f ./$(DEPDIR)/tilegx-opc.Plo
-	-rm -f ./$(DEPDIR)/tilepro-dis.Plo
-	-rm -f ./$(DEPDIR)/tilepro-opc.Plo
-	-rm -f ./$(DEPDIR)/v850-dis.Plo
-	-rm -f ./$(DEPDIR)/v850-opc.Plo
-	-rm -f ./$(DEPDIR)/vax-dis.Plo
-	-rm -f ./$(DEPDIR)/visium-dis.Plo
-	-rm -f ./$(DEPDIR)/visium-opc.Plo
-	-rm -f ./$(DEPDIR)/wasm32-dis.Plo
-	-rm -f ./$(DEPDIR)/xc16x-asm.Plo
-	-rm -f ./$(DEPDIR)/xc16x-desc.Plo
-	-rm -f ./$(DEPDIR)/xc16x-dis.Plo
-	-rm -f ./$(DEPDIR)/xc16x-ibld.Plo
-	-rm -f ./$(DEPDIR)/xc16x-opc.Plo
-	-rm -f ./$(DEPDIR)/xgate-dis.Plo
-	-rm -f ./$(DEPDIR)/xgate-opc.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-asm.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-desc.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-dis.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-ibld.Plo
-	-rm -f ./$(DEPDIR)/xstormy16-opc.Plo
-	-rm -f ./$(DEPDIR)/xtensa-dis.Plo
-	-rm -f ./$(DEPDIR)/z80-dis.Plo
-	-rm -f ./$(DEPDIR)/z8k-dis.Plo
+		-rm -f ./$(DEPDIR)/aarch64-asm-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-asm.Po
+	-rm -f ./$(DEPDIR)/aarch64-dis-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-dis.Po
+	-rm -f ./$(DEPDIR)/aarch64-opc-2.Po
+	-rm -f ./$(DEPDIR)/aarch64-opc.Po
+	-rm -f ./$(DEPDIR)/alpha-dis.Po
+	-rm -f ./$(DEPDIR)/alpha-opc.Po
+	-rm -f ./$(DEPDIR)/arc-dis.Po
+	-rm -f ./$(DEPDIR)/arc-ext.Po
+	-rm -f ./$(DEPDIR)/arc-opc.Po
+	-rm -f ./$(DEPDIR)/arm-dis.Po
+	-rm -f ./$(DEPDIR)/avr-dis.Po
+	-rm -f ./$(DEPDIR)/bfin-dis.Po
+	-rm -f ./$(DEPDIR)/cgen-asm.Po
+	-rm -f ./$(DEPDIR)/cgen-bitset.Po
+	-rm -f ./$(DEPDIR)/cgen-dis.Po
+	-rm -f ./$(DEPDIR)/cgen-opc.Po
+	-rm -f ./$(DEPDIR)/cr16-dis.Po
+	-rm -f ./$(DEPDIR)/cr16-opc.Po
+	-rm -f ./$(DEPDIR)/cris-dis.Po
+	-rm -f ./$(DEPDIR)/cris-opc.Po
+	-rm -f ./$(DEPDIR)/crx-dis.Po
+	-rm -f ./$(DEPDIR)/crx-opc.Po
+	-rm -f ./$(DEPDIR)/d10v-dis.Po
+	-rm -f ./$(DEPDIR)/d10v-opc.Po
+	-rm -f ./$(DEPDIR)/d30v-dis.Po
+	-rm -f ./$(DEPDIR)/d30v-opc.Po
+	-rm -f ./$(DEPDIR)/dis-buf.Po
+	-rm -f ./$(DEPDIR)/dis-init.Po
+	-rm -f ./$(DEPDIR)/disassemble.Po
+	-rm -f ./$(DEPDIR)/dlx-dis.Po
+	-rm -f ./$(DEPDIR)/epiphany-asm.Po
+	-rm -f ./$(DEPDIR)/epiphany-desc.Po
+	-rm -f ./$(DEPDIR)/epiphany-dis.Po
+	-rm -f ./$(DEPDIR)/epiphany-ibld.Po
+	-rm -f ./$(DEPDIR)/epiphany-opc.Po
+	-rm -f ./$(DEPDIR)/fr30-asm.Po
+	-rm -f ./$(DEPDIR)/fr30-desc.Po
+	-rm -f ./$(DEPDIR)/fr30-dis.Po
+	-rm -f ./$(DEPDIR)/fr30-ibld.Po
+	-rm -f ./$(DEPDIR)/fr30-opc.Po
+	-rm -f ./$(DEPDIR)/frv-asm.Po
+	-rm -f ./$(DEPDIR)/frv-desc.Po
+	-rm -f ./$(DEPDIR)/frv-dis.Po
+	-rm -f ./$(DEPDIR)/frv-ibld.Po
+	-rm -f ./$(DEPDIR)/frv-opc.Po
+	-rm -f ./$(DEPDIR)/ft32-dis.Po
+	-rm -f ./$(DEPDIR)/ft32-opc.Po
+	-rm -f ./$(DEPDIR)/h8300-dis.Po
+	-rm -f ./$(DEPDIR)/hppa-dis.Po
+	-rm -f ./$(DEPDIR)/i386-dis.Po
+	-rm -f ./$(DEPDIR)/i386-opc.Po
+	-rm -f ./$(DEPDIR)/ia64-dis.Po
+	-rm -f ./$(DEPDIR)/ia64-opc.Po
+	-rm -f ./$(DEPDIR)/ip2k-asm.Po
+	-rm -f ./$(DEPDIR)/ip2k-desc.Po
+	-rm -f ./$(DEPDIR)/ip2k-dis.Po
+	-rm -f ./$(DEPDIR)/ip2k-ibld.Po
+	-rm -f ./$(DEPDIR)/ip2k-opc.Po
+	-rm -f ./$(DEPDIR)/iq2000-asm.Po
+	-rm -f ./$(DEPDIR)/iq2000-desc.Po
+	-rm -f ./$(DEPDIR)/iq2000-dis.Po
+	-rm -f ./$(DEPDIR)/iq2000-ibld.Po
+	-rm -f ./$(DEPDIR)/iq2000-opc.Po
+	-rm -f ./$(DEPDIR)/lm32-asm.Po
+	-rm -f ./$(DEPDIR)/lm32-desc.Po
+	-rm -f ./$(DEPDIR)/lm32-dis.Po
+	-rm -f ./$(DEPDIR)/lm32-ibld.Po
+	-rm -f ./$(DEPDIR)/lm32-opc.Po
+	-rm -f ./$(DEPDIR)/lm32-opinst.Po
+	-rm -f ./$(DEPDIR)/m10200-dis.Po
+	-rm -f ./$(DEPDIR)/m10200-opc.Po
+	-rm -f ./$(DEPDIR)/m10300-dis.Po
+	-rm -f ./$(DEPDIR)/m10300-opc.Po
+	-rm -f ./$(DEPDIR)/m32c-asm.Po
+	-rm -f ./$(DEPDIR)/m32c-desc.Po
+	-rm -f ./$(DEPDIR)/m32c-dis.Po
+	-rm -f ./$(DEPDIR)/m32c-ibld.Po
+	-rm -f ./$(DEPDIR)/m32c-opc.Po
+	-rm -f ./$(DEPDIR)/m32r-asm.Po
+	-rm -f ./$(DEPDIR)/m32r-desc.Po
+	-rm -f ./$(DEPDIR)/m32r-dis.Po
+	-rm -f ./$(DEPDIR)/m32r-ibld.Po
+	-rm -f ./$(DEPDIR)/m32r-opc.Po
+	-rm -f ./$(DEPDIR)/m32r-opinst.Po
+	-rm -f ./$(DEPDIR)/m68hc11-dis.Po
+	-rm -f ./$(DEPDIR)/m68hc11-opc.Po
+	-rm -f ./$(DEPDIR)/m68k-dis.Po
+	-rm -f ./$(DEPDIR)/m68k-opc.Po
+	-rm -f ./$(DEPDIR)/mcore-dis.Po
+	-rm -f ./$(DEPDIR)/mep-asm.Po
+	-rm -f ./$(DEPDIR)/mep-desc.Po
+	-rm -f ./$(DEPDIR)/mep-dis.Po
+	-rm -f ./$(DEPDIR)/mep-ibld.Po
+	-rm -f ./$(DEPDIR)/mep-opc.Po
+	-rm -f ./$(DEPDIR)/metag-dis.Po
+	-rm -f ./$(DEPDIR)/microblaze-dis.Po
+	-rm -f ./$(DEPDIR)/micromips-opc.Po
+	-rm -f ./$(DEPDIR)/mips-dis.Po
+	-rm -f ./$(DEPDIR)/mips-opc.Po
+	-rm -f ./$(DEPDIR)/mips16-opc.Po
+	-rm -f ./$(DEPDIR)/mmix-dis.Po
+	-rm -f ./$(DEPDIR)/mmix-opc.Po
+	-rm -f ./$(DEPDIR)/moxie-dis.Po
+	-rm -f ./$(DEPDIR)/moxie-opc.Po
+	-rm -f ./$(DEPDIR)/msp430-decode.Po
+	-rm -f ./$(DEPDIR)/msp430-dis.Po
+	-rm -f ./$(DEPDIR)/mt-asm.Po
+	-rm -f ./$(DEPDIR)/mt-desc.Po
+	-rm -f ./$(DEPDIR)/mt-dis.Po
+	-rm -f ./$(DEPDIR)/mt-ibld.Po
+	-rm -f ./$(DEPDIR)/mt-opc.Po
+	-rm -f ./$(DEPDIR)/nds32-asm.Po
+	-rm -f ./$(DEPDIR)/nds32-dis.Po
+	-rm -f ./$(DEPDIR)/nfp-dis.Po
+	-rm -f ./$(DEPDIR)/nios2-dis.Po
+	-rm -f ./$(DEPDIR)/nios2-opc.Po
+	-rm -f ./$(DEPDIR)/ns32k-dis.Po
+	-rm -f ./$(DEPDIR)/or1k-asm.Po
+	-rm -f ./$(DEPDIR)/or1k-desc.Po
+	-rm -f ./$(DEPDIR)/or1k-dis.Po
+	-rm -f ./$(DEPDIR)/or1k-ibld.Po
+	-rm -f ./$(DEPDIR)/or1k-opc.Po
+	-rm -f ./$(DEPDIR)/pdp11-dis.Po
+	-rm -f ./$(DEPDIR)/pdp11-opc.Po
+	-rm -f ./$(DEPDIR)/pj-dis.Po
+	-rm -f ./$(DEPDIR)/pj-opc.Po
+	-rm -f ./$(DEPDIR)/ppc-dis.Po
+	-rm -f ./$(DEPDIR)/ppc-opc.Po
+	-rm -f ./$(DEPDIR)/pru-dis.Po
+	-rm -f ./$(DEPDIR)/pru-opc.Po
+	-rm -f ./$(DEPDIR)/riscv-dis.Po
+	-rm -f ./$(DEPDIR)/riscv-opc.Po
+	-rm -f ./$(DEPDIR)/rl78-decode.Po
+	-rm -f ./$(DEPDIR)/rl78-dis.Po
+	-rm -f ./$(DEPDIR)/rx-decode.Po
+	-rm -f ./$(DEPDIR)/rx-dis.Po
+	-rm -f ./$(DEPDIR)/s12z-dis.Po
+	-rm -f ./$(DEPDIR)/s390-dis.Po
+	-rm -f ./$(DEPDIR)/s390-opc.Po
+	-rm -f ./$(DEPDIR)/score-dis.Po
+	-rm -f ./$(DEPDIR)/score7-dis.Po
+	-rm -f ./$(DEPDIR)/sh-dis.Po
+	-rm -f ./$(DEPDIR)/sparc-dis.Po
+	-rm -f ./$(DEPDIR)/sparc-opc.Po
+	-rm -f ./$(DEPDIR)/spu-dis.Po
+	-rm -f ./$(DEPDIR)/spu-opc.Po
+	-rm -f ./$(DEPDIR)/tic30-dis.Po
+	-rm -f ./$(DEPDIR)/tic4x-dis.Po
+	-rm -f ./$(DEPDIR)/tic54x-dis.Po
+	-rm -f ./$(DEPDIR)/tic54x-opc.Po
+	-rm -f ./$(DEPDIR)/tic6x-dis.Po
+	-rm -f ./$(DEPDIR)/tic80-dis.Po
+	-rm -f ./$(DEPDIR)/tic80-opc.Po
+	-rm -f ./$(DEPDIR)/tilegx-dis.Po
+	-rm -f ./$(DEPDIR)/tilegx-opc.Po
+	-rm -f ./$(DEPDIR)/tilepro-dis.Po
+	-rm -f ./$(DEPDIR)/tilepro-opc.Po
+	-rm -f ./$(DEPDIR)/v850-dis.Po
+	-rm -f ./$(DEPDIR)/v850-opc.Po
+	-rm -f ./$(DEPDIR)/vax-dis.Po
+	-rm -f ./$(DEPDIR)/visium-dis.Po
+	-rm -f ./$(DEPDIR)/visium-opc.Po
+	-rm -f ./$(DEPDIR)/wasm32-dis.Po
+	-rm -f ./$(DEPDIR)/xc16x-asm.Po
+	-rm -f ./$(DEPDIR)/xc16x-desc.Po
+	-rm -f ./$(DEPDIR)/xc16x-dis.Po
+	-rm -f ./$(DEPDIR)/xc16x-ibld.Po
+	-rm -f ./$(DEPDIR)/xc16x-opc.Po
+	-rm -f ./$(DEPDIR)/xgate-dis.Po
+	-rm -f ./$(DEPDIR)/xgate-opc.Po
+	-rm -f ./$(DEPDIR)/xstormy16-asm.Po
+	-rm -f ./$(DEPDIR)/xstormy16-desc.Po
+	-rm -f ./$(DEPDIR)/xstormy16-dis.Po
+	-rm -f ./$(DEPDIR)/xstormy16-ibld.Po
+	-rm -f ./$(DEPDIR)/xstormy16-opc.Po
+	-rm -f ./$(DEPDIR)/xtensa-dis.Po
+	-rm -f ./$(DEPDIR)/z80-dis.Po
+	-rm -f ./$(DEPDIR)/z8k-dis.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-recursive
 
@@ -1772,49 +1676,34 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-bfdincludeDATA uninstall-bfdlibLTLIBRARIES
+uninstall-am: uninstall-bfdincludeDATA
 
 .MAKE: $(am__recursive_targets) all install-am install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
-	am--depfiles am--refresh check check-am clean \
-	clean-bfdlibLTLIBRARIES clean-cscope clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
-	cscope cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags dvi dvi-am html html-am info \
-	info-am install install-am install-bfdincludeDATA \
-	install-bfdlibLTLIBRARIES install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+	am--depfiles am--refresh check check-am clean clean-cscope \
+	clean-generic clean-noinstLIBRARIES cscope cscopelist-am ctags \
+	ctags-am distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-tags dvi dvi-am html html-am info \
+	info-am install install-am install-bfdincludeDATA install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-bfdincludeDATA \
-	uninstall-bfdlibLTLIBRARIES
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am uninstall-bfdincludeDATA
 
 .PRECIOUS: Makefile
 
 
-disassemble.lo: disassemble.c
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/disassemble.c
+disassemble.o: disassemble.c
+@am__fastdepCC_TRUE@	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/disassemble.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='disassemble.c' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ @archdefs@ $(srcdir)/disassemble.c
-
-stamp-lib: libopcodes.la
-	libtooldir=`$(LIBTOOL) --config | sed -n -e 's/^objdir=//p'`; \
-	if [ -f $$libtooldir/libopcodes.a ]; then \
-	  cp $$libtooldir/libopcodes.a libopcodes.tmp; \
-	  $(RANLIB) libopcodes.tmp; \
-	  $(SHELL) $(srcdir)/../move-if-change libopcodes.tmp libopcodes.a; \
-	else true; fi
-	touch stamp-lib
-
-libopcodes.a: stamp-lib ; @true
+@am__fastdepCC_FALSE@	$(COMPILE_FOR_BUILD) -c -o $@ @archdefs@ $(srcdir)/disassemble.c
 po/POTFILES.in: @MAINT@ Makefile
 	for f in $(POTFILES); do echo $$f; done | LC_ALL=C sort > tmp \
 	  && mv tmp $(srcdir)/po/POTFILES.in
@@ -1957,7 +1846,7 @@ $(srcdir)/i386-tbl.h: $(srcdir)/i386-init.h
 $(srcdir)/i386-init.h: @MAINT@ i386-gen$(EXEEXT_FOR_BUILD) i386-opc.tbl i386-reg.tbl
 	./i386-gen$(EXEEXT_FOR_BUILD) --srcdir $(srcdir)
 
-i386-opc.lo: $(srcdir)/i386-tbl.h
+i386-opc.o: $(srcdir)/i386-tbl.h
 
 ia64-gen$(EXEEXT_FOR_BUILD): ia64-gen.o $(BUILD_LIB_DEPS)
 	$(LINK_FOR_BUILD) ia64-gen.o $(BUILD_LIBS)
@@ -1971,7 +1860,7 @@ ia64-gen.o: ia64-gen.c $(BFD_H) $(INCDIR)/ansidecl.h $(INCDIR)/getopt.h \
 $(srcdir)/ia64-asmtab.c: @MAINT@ $(ia64_asmtab_deps)
 	./ia64-gen$(EXEEXT_FOR_BUILD) --srcdir $(srcdir) > $@
 
-ia64-opc.lo: $(srcdir)/ia64-asmtab.c
+ia64-opc.o: $(srcdir)/ia64-asmtab.c
 
 $(srcdir)/msp430-decode.c: @MAINT@ $(srcdir)/msp430-decode.opc opc2c$(EXEEXT_FOR_BUILD)
 	./opc2c$(EXEEXT_FOR_BUILD) $(srcdir)/msp430-decode.opc > $(srcdir)/msp430-decode.c
@@ -1994,7 +1883,7 @@ s390-mkopc$(EXEEXT_FOR_BUILD): s390-mkopc.c
 s390-opc.tab: s390-mkopc$(EXEEXT_FOR_BUILD) s390-opc.txt
 	./s390-mkopc$(EXEEXT_FOR_BUILD) < $(srcdir)/s390-opc.txt > s390-opc.tab
 
-s390-opc.lo: s390-opc.tab
+s390-opc.o: s390-opc.tab
 
 z8kgen$(EXEEXT_FOR_BUILD): z8kgen.o $(BUILD_LIB_DEPS)
 	$(LINK_FOR_BUILD) z8kgen.o $(BUILD_LIBS)
@@ -2005,20 +1894,20 @@ z8kgen.o: z8kgen.c
 $(srcdir)/z8k-opc.h: @MAINT@ z8kgen$(EXEEXT_FOR_BUILD)
 	./z8kgen$(EXEEXT_FOR_BUILD) -a > $@
 
-z8k-dis.lo: $(srcdir)/z8k-opc.h
-mips-dis.lo: mips-dis.c
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(MIPS_DEFS) $<
+z8k-dis.o: $(srcdir)/z8k-opc.h
+mips-dis.o: mips-dis.c
+@am__fastdepCC_TRUE@	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(MIPS_DEFS) $<
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $(MIPS_DEFS) $<
+@am__fastdepCC_FALSE@	$(COMPILE_FOR_BUILD) -c -o $@ $(MIPS_DEFS) $<
 
-sh-dis.lo: sh-dis.c
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
+sh-dis.o: sh-dis.c
+@am__fastdepCC_TRUE@	$(COMPILE_FOR_BUILD) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sh-dis.c' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
+@am__fastdepCC_FALSE@	$(COMPILE_FOR_BUILD) -c -o $@ @archdefs@ $(srcdir)/sh-dis.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

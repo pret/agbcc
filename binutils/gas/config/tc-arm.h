@@ -28,7 +28,6 @@
 
 #define WORKING_DOT_WORD
 
-#define COFF_MAGIC 	ARMMAGIC
 #define TARGET_ARCH 	bfd_arch_arm
 
 #define DIFF_EXPR_OK
@@ -46,21 +45,8 @@
 
 struct fix;
 
-#if defined OBJ_COFF
-# define ARM_BI_ENDIAN
-# if defined TE_PE
-#  if defined TE_WINCE
-#   define TARGET_FORMAT (target_big_endian ? "pe-arm-wince-big" : "pe-arm-wince-little")
-#  else
-#   define TARGET_FORMAT (target_big_endian ? "pe-arm-big" : "pe-arm-little")
-#  endif
-# else
-#  define TARGET_FORMAT (target_big_endian ? "coff-arm-big" : "coff-arm-little")
-# endif
-#elif defined OBJ_ELF
 # define ARM_BI_ENDIAN
 # define TARGET_FORMAT	elf32_arm_target_format ()
-#endif
 
 /* We support double slash line-comments for compatibility with the ARM AArch64 Assembler.  */
 #define DOUBLESLASH_LINE_COMMENTS
@@ -97,14 +83,12 @@ extern bfd_boolean tc_start_label_without_colon (void);
 /* We also need to mark assembler created symbols:  */
 #define tc_frob_fake_label(S) arm_frob_label (S)
 
-#ifdef OBJ_ELF
 #define md_end arm_md_end
 extern void arm_md_end (void);
 bfd_boolean arm_is_eabi (void);
 
 #define md_post_relax_hook		arm_md_post_relax ()
 extern void arm_md_post_relax (void);
-#endif
 
 /* NOTE: The fake label creation in stabs.c:s_stab_generic() has
    deliberately not been updated to mark assembler created stabs
@@ -213,13 +197,11 @@ void arm_copy_symbol_attributes (symbolS *, symbolS *);
 struct arm_frag_type
 {
   int thumb_mode;
-#ifdef OBJ_ELF
   /* If there is a mapping symbol at offset 0 in this frag,
      it will be saved in FIRST_MAP.  If there are any mapping
      symbols in this frag, the last one will be saved in
      LAST_MAP.  */
   symbolS *first_map, *last_map;
-#endif
 };
 
 static inline int
@@ -234,11 +216,9 @@ arm_min (int am_p1, int am_p2)
 #define TC_ALIGN_ZERO_IS_DEFAULT 1
 #define HANDLE_ALIGN(fragp)	arm_handle_align (fragp)
 /* PR gas/19276: COFF/PE segment alignment is already handled in coff_frob_section().  */
-#ifndef TE_PE
 #define SUB_SEGMENT_ALIGN(SEG, FRCHAIN)				\
   ((!(FRCHAIN)->frch_next && subseg_text_p (SEG))		\
    ? arm_min (2, get_recorded_alignment (SEG)) : 0)
-#endif
 
 #define md_do_align(N, FILL, LEN, MAX, LABEL)					\
   if (FILL == NULL && (N) != 0 && ! need_pass_2 && subseg_text_p (now_seg))	\
@@ -272,7 +252,6 @@ struct current_it
   int insn_cond;
 };
 
-#ifdef OBJ_ELF
 # define obj_frob_symbol(sym, punt)	armelf_frob_symbol ((sym), & (punt))
 # define md_elf_section_change_hook()	arm_elf_change_section ()
 # define md_elf_section_type(str, len)	arm_elf_section_type (str, len)
@@ -314,20 +293,13 @@ struct arm_segment_info_type
 #define tc_regname_to_dw2regnum            tc_arm_regname_to_dw2regnum
 #define tc_cfi_frame_initial_instructions  tc_arm_frame_initial_instructions
 
-#else /* Not OBJ_ELF.  */
-#define GLOBAL_OFFSET_TABLE_NAME "__GLOBAL_OFFSET_TABLE_"
-#endif
-
-#if defined OBJ_ELF || defined OBJ_COFF
 
 # define EXTERN_FORCE_RELOC 			1
 # define tc_fix_adjustable(FIX) 		arm_fix_adjustable (FIX)
-#endif
 
-#ifdef OBJ_ELF
 /* Values passed to md_apply_fix don't include the symbol value.  */
 # define MD_APPLY_SYM_VALUE(FIX) 		arm_apply_sym_value (FIX, this_segment)
-#endif
+
 
 #ifdef OBJ_COFF
 # define TC_VALIDATE_FIX(FIX, SEGTYPE, LABEL)	arm_validate_fix (FIX)
@@ -359,20 +331,9 @@ extern int arm_elf_section_type (const char *, size_t);
 extern int tc_arm_regname_to_dw2regnum (char *regname);
 extern void tc_arm_frame_initial_instructions (void);
 
-#ifdef TE_PE
-
-#define O_secrel O_md1
-
-#define TC_DWARF2_EMIT_OFFSET  tc_pe_dwarf2_emit_offset
-void tc_pe_dwarf2_emit_offset (symbolS *, unsigned int);
-
-#endif /* TE_PE */
-
-#ifdef OBJ_ELF
 #define CONVERT_SYMBOLIC_ATTRIBUTE(name) arm_convert_symbolic_attribute (name)
 extern int arm_convert_symbolic_attribute (const char *);
 extern int arm_apply_sym_value (struct fix *, segT);
-#endif
 
 #define tc_comment_chars arm_comment_chars
 extern char arm_comment_chars[];

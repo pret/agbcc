@@ -30,8 +30,6 @@
 #include "floatformat.h"
 
 /* FIXME: This shouldn't be done here.  */
-#include "coff/internal.h"
-#include "libcoff.h"
 #include "elf-bfd.h"
 #include "elf/internal.h"
 #include "elf/arm.h"
@@ -6658,18 +6656,7 @@ print_insn (bfd_vma pc, struct disassemble_info *info, bfd_boolean little)
 
   if (info->symbols != NULL)
     {
-      if (bfd_asymbol_flavour (*info->symbols) == bfd_target_coff_flavour)
-	{
-	  coff_symbol_type * cs;
-
-	  cs = coffsymbol (*info->symbols);
-	  is_thumb = (   cs->native->u.syment.n_sclass == C_THUMBEXT
-		      || cs->native->u.syment.n_sclass == C_THUMBSTAT
-		      || cs->native->u.syment.n_sclass == C_THUMBLABEL
-		      || cs->native->u.syment.n_sclass == C_THUMBEXTFUNC
-		      || cs->native->u.syment.n_sclass == C_THUMBSTATFUNC);
-	}
-      else if (bfd_asymbol_flavour (*info->symbols) == bfd_target_elf_flavour
+      if (bfd_asymbol_flavour (*info->symbols) == bfd_target_elf_flavour
 	       && !found)
 	{
 	  /* If no mapping symbol has been found then fall back to the type
