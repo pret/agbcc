@@ -92,7 +92,7 @@ is_sysrooted_pathname (const char *name)
 }
 
 /* Adds NAME to the library search path.
-   Makes a copy of NAME using xmalloc().  */
+   Makes a copy of NAME using malloc().  */
 
 void
 ldfile_add_library_path (const char *name, bfd_boolean cmdline)
@@ -102,7 +102,7 @@ ldfile_add_library_path (const char *name, bfd_boolean cmdline)
   if (!cmdline && config.only_cmd_line_lib_dirs)
     return;
 
-  new_dirs = (search_dirs_type *) xmalloc (sizeof (search_dirs_type));
+  new_dirs = (search_dirs_type *) malloc (sizeof (search_dirs_type));
   new_dirs->next = NULL;
   new_dirs->cmdline = cmdline;
   *search_tail_ptr = new_dirs;
@@ -631,7 +631,7 @@ ldfile_add_arch (const char *in_name)
 {
   char *name = xstrdup (in_name);
   search_arch_type *new_arch
-    = (search_arch_type *) xmalloc (sizeof (search_arch_type));
+    = (search_arch_type *) malloc (sizeof (search_arch_type));
 
   ldfile_output_machine_name = in_name;
 

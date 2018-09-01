@@ -337,7 +337,7 @@ push_type (struct pr_handle *info, const char *type)
   if (type == NULL)
     return FALSE;
 
-  n = (struct pr_stack *) xmalloc (sizeof *n);
+  n = (struct pr_stack *) malloc (sizeof *n);
   memset (n, 0, sizeof *n);
 
   n->type = xstrdup (type);
@@ -358,7 +358,7 @@ prepend_type (struct pr_handle *info, const char *s)
 
   assert (info->stack != NULL);
 
-  n = (char *) xmalloc (strlen (s) + strlen (info->stack->type) + 1);
+  n = (char *) malloc (strlen (s) + strlen (info->stack->type) + 1);
   sprintf (n, "%s%s", s, info->stack->type);
   free (info->stack->type);
   info->stack->type = n;
@@ -379,7 +379,7 @@ append_type (struct pr_handle *info, const char *s)
   assert (info->stack != NULL);
 
   len = strlen (info->stack->type);
-  info->stack->type = (char *) xrealloc (info->stack->type,
+  info->stack->type = (char *) realloc (info->stack->type,
 					 len + strlen (s) + 1);
   strcpy (info->stack->type + len, s);
 
@@ -399,7 +399,7 @@ append_parent (struct pr_handle *info, const char *s)
   assert (info->stack != NULL);
 
   len = info->stack->parents ? strlen (info->stack->parents) : 0;
-  info->stack->parents = (char *) xrealloc (info->stack->parents,
+  info->stack->parents = (char *) realloc (info->stack->parents,
 					    len + strlen (s) + 1);
   strcpy (info->stack->parents + len, s);
 
@@ -422,7 +422,7 @@ substitute_type (struct pr_handle *info, const char *s)
     {
       char *n;
 
-      n = (char *) xmalloc (strlen (info->stack->type) + strlen (s));
+      n = (char *) malloc (strlen (info->stack->type) + strlen (s));
 
       memcpy (n, info->stack->type, u - info->stack->type);
       strcpy (n + (u - info->stack->type), s);
@@ -726,7 +726,7 @@ pr_function_type (void *p, int argcount, bfd_boolean varargs)
     {
       int i;
 
-      arg_types = (char **) xmalloc (argcount * sizeof *arg_types);
+      arg_types = (char **) malloc (argcount * sizeof *arg_types);
       for (i = argcount - 1; i >= 0; i--)
 	{
 	  if (! substitute_type (info, ""))
@@ -748,7 +748,7 @@ pr_function_type (void *p, int argcount, bfd_boolean varargs)
 
   /* Now the return type is on the top of the stack.  */
 
-  s = (char *) xmalloc (len);
+  s = (char *) malloc (len);
   LITSTRCPY (s, "(|) (");
 
   if (argcount < 0)
@@ -953,7 +953,7 @@ pr_method_type (void *p, bfd_boolean domain, int argcount, bfd_boolean varargs)
     {
       int i;
 
-      arg_types = (char **) xmalloc (argcount * sizeof *arg_types);
+      arg_types = (char **) malloc (argcount * sizeof *arg_types);
       for (i = argcount - 1; i >= 0; i--)
 	{
 	  if (! substitute_type (info, ""))
@@ -975,7 +975,7 @@ pr_method_type (void *p, bfd_boolean domain, int argcount, bfd_boolean varargs)
 
   /* Now the return type is on the top of the stack.  */
 
-  s = (char *) xmalloc (len);
+  s = (char *) malloc (len);
   if (! domain)
     *s = '\0';
   else
@@ -1408,7 +1408,7 @@ pr_class_baseclass (void *p, bfd_vma bitpos, bfd_boolean is_virtual,
   if (t == NULL)
     return FALSE;
 
-  n = (char *) xmalloc (strlen (info->stack->type) + strlen (t) + 1);
+  n = (char *) malloc (strlen (info->stack->type) + strlen (t) + 1);
   memcpy (n, info->stack->type, s - info->stack->type);
   strcpy (n + (s - info->stack->type), t);
   strcat (n, s);
@@ -2180,7 +2180,7 @@ tg_class_static_member (void *p, const char *name,
 
   len_var = strlen (name);
   len_class = strlen (info->stack->next->type);
-  full_name = (char *) xmalloc (len_var + len_class + 3);
+  full_name = (char *) malloc (len_var + len_class + 3);
   if (! full_name)
     return FALSE;
   sprintf (full_name, "%s::%s", info->stack->next->type, name);

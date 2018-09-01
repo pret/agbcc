@@ -880,7 +880,7 @@ obj_elf_section_name (void)
 	      memcpy (newname, name, headlen);
 	      strcpy (newname + headlen, now_seg->name);
 	      strcat (newname + headlen, subst + 2);
-	      xfree (name);
+	      free (name);
 	      name = newname;
 	    }
 	  else
@@ -1790,7 +1790,7 @@ obj_elf_size (int ignore ATTRIBUTE_UNUSED)
       S_SET_SIZE (sym, exp.X_add_number);
       if (symbol_get_obj (sym)->size)
 	{
-	  xfree (symbol_get_obj (sym)->size);
+	  free (symbol_get_obj (sym)->size);
 	  symbol_get_obj (sym)->size = NULL;
 	}
     }

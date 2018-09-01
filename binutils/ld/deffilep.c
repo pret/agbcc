@@ -1846,7 +1846,7 @@ yyreduce:
   case 77:
 #line 273 "deffilep.y" /* yacc.c:1646  */
     {
-	    char *name = xmalloc (strlen ((yyvsp[0].id_const)) + 2);
+	    char *name = malloc (strlen ((yyvsp[0].id_const)) + 2);
 	    sprintf (name, ".%s", (yyvsp[0].id_const));
 	    (yyval.id) = name;
 	  }
@@ -2259,7 +2259,7 @@ static struct directive *directives = 0;
 def_file *
 def_file_empty (void)
 {
-  def_file *rv = xmalloc (sizeof (def_file));
+  def_file *rv = malloc (sizeof (def_file));
   memset (rv, 0, sizeof (def_file));
   rv->is_dll = -1;
   rv->base_address = (bfd_vma) -1;
@@ -2592,10 +2592,10 @@ def_file_add_export (def_file *fdef,
     {
       max_exports = ROUND_UP(fdef->num_exports + 1, 32);
       if (fdef->exports)
-	fdef->exports = xrealloc (fdef->exports,
+	fdef->exports = realloc (fdef->exports,
 				 max_exports * sizeof (def_file_export));
       else
-	fdef->exports = xmalloc (max_exports * sizeof (def_file_export));
+	fdef->exports = malloc (max_exports * sizeof (def_file_export));
     }
 
   e = fdef->exports + pos;
@@ -2629,7 +2629,7 @@ def_stash_module (def_file *fdef, const char *name)
 
   if ((s = def_get_module (fdef, name)) != NULL)
       return s;
-  s = xmalloc (sizeof (def_file_module) + strlen (name));
+  s = malloc (sizeof (def_file_module) + strlen (name));
   s->next = fdef->modules;
   fdef->modules = s;
   s->user_data = 0;
@@ -2754,10 +2754,10 @@ def_file_add_import (def_file *fdef,
       max_imports = ROUND_UP (fdef->num_imports+1, 16);
 
       if (fdef->imports)
-	fdef->imports = xrealloc (fdef->imports,
+	fdef->imports = realloc (fdef->imports,
 				 max_imports * sizeof (def_file_import));
       else
-	fdef->imports = xmalloc (max_imports * sizeof (def_file_import));
+	fdef->imports = malloc (max_imports * sizeof (def_file_import));
     }
   i = fdef->imports + pos;
   if (pos != fdef->num_imports)
@@ -2803,10 +2803,10 @@ def_file_add_import_from (def_file *fdef,
       max_imports = ROUND_UP (fdef->num_imports + num_imports, 16);
 
       if (fdef->imports)
-	fdef->imports = xrealloc (fdef->imports,
+	fdef->imports = realloc (fdef->imports,
 				 max_imports * sizeof (def_file_import));
       else
-	fdef->imports = xmalloc (max_imports * sizeof (def_file_import));
+	fdef->imports = malloc (max_imports * sizeof (def_file_import));
     }
   i = fdef->imports + pos;
   if (pos != fdef->num_imports)
@@ -2946,7 +2946,7 @@ def_image_name (const char *name, bfd_vma base, int is_dll)
 	{
 	  const char * suffix = is_dll ? ".dll" : ".exe";
 
-	  def->name = xmalloc (strlen (image_name) + strlen (suffix) + 1);
+	  def->name = malloc (strlen (image_name) + strlen (suffix) + 1);
 	  sprintf (def->name, "%s%s", image_name, suffix);
 	}
       else
@@ -2966,12 +2966,12 @@ def_description (const char *text)
   len += strlen (text) + 1;
   if (def->description)
     {
-      def->description = xrealloc (def->description, len);
+      def->description = realloc (def->description, len);
       strcat (def->description, text);
     }
   else
     {
-      def->description = xmalloc (len);
+      def->description = malloc (len);
       strcpy (def->description, text);
     }
 }
@@ -3001,10 +3001,10 @@ def_section (const char *name, int attr)
       max_sections = ROUND_UP (def->num_section_defs+1, 4);
 
       if (def->section_defs)
-	def->section_defs = xrealloc (def->section_defs,
+	def->section_defs = realloc (def->section_defs,
 				      max_sections * sizeof (def_file_import));
       else
-	def->section_defs = xmalloc (max_sections * sizeof (def_file_import));
+	def->section_defs = malloc (max_sections * sizeof (def_file_import));
     }
   s = def->section_defs + def->num_section_defs;
   memset (s, 0, sizeof (def_file_section));
@@ -3097,7 +3097,7 @@ def_import (const char *internal_name,
   const char *ext = dllext ? dllext : "dll";
   int is_dup = 0;
 
-  buf = xmalloc (strlen (module) + strlen (ext) + 2);
+  buf = malloc (strlen (module) + strlen (ext) + 2);
   sprintf (buf, "%s.%s", module, ext);
   module = buf;
 
@@ -3116,7 +3116,7 @@ def_version (int major, int minor)
 static void
 def_directive (char *str)
 {
-  struct directive *d = xmalloc (sizeof (struct directive));
+  struct directive *d = malloc (sizeof (struct directive));
 
   d->next = directives;
   directives = d;
@@ -3147,7 +3147,7 @@ def_aligncomm (char *str, int align)
       c = (p = c)->next;
     }
 
-  c = xmalloc (sizeof (def_file_aligncomm));
+  c = malloc (sizeof (def_file_aligncomm));
   c->symbol_name = xstrdup (str);
   c->alignment = (unsigned int) align;
   if (!p)
@@ -3188,9 +3188,9 @@ put_buf (char c)
     {
       buflen += 50;		/* overly reasonable, eh?  */
       if (buffer)
-	buffer = xrealloc (buffer, buflen + 1);
+	buffer = realloc (buffer, buflen + 1);
       else
-	buffer = xmalloc (buflen + 1);
+	buffer = malloc (buflen + 1);
     }
   buffer[bufptr++] = c;
   buffer[bufptr] = 0;		/* not optimal, but very convenient.  */
@@ -3428,7 +3428,7 @@ def_pool_alloc (size_t sz)
 {
   def_pool_str *e;
 
-  e = (def_pool_str *) xmalloc (sizeof (def_pool_str) + sz);
+  e = (def_pool_str *) malloc (sizeof (def_pool_str) + sz);
   e->next = pool_strs;
   pool_strs = e;
   return e->data;

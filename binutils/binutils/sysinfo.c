@@ -1499,7 +1499,7 @@ char *ptr = pnames[rdepth];
 		if (rdepth >= 1)
 
 		  {
-		    printf("if (!ptr->%s) ptr->%s = (%s*)xcalloc(%s, sizeof(ptr->%s[0]));\n",
+		    printf("if (!ptr->%s) ptr->%s = (%s*)calloc(%s, sizeof(ptr->%s[0]));\n",
 			   id,
 			   id,
 			   type,
@@ -1509,7 +1509,7 @@ char *ptr = pnames[rdepth];
 
 		if (rdepth == 2)
 		  {
-		    printf("if (!ptr->%s[n]) ptr->%s[n] = (%s**)xcalloc(%s[n], sizeof(ptr->%s[n][0]));\n",
+		    printf("if (!ptr->%s[n]) ptr->%s[n] = (%s**)calloc(%s[n], sizeof(ptr->%s[n][0]));\n",
 			   id,
 			   id,
 			   type,

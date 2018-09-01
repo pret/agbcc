@@ -1,4 +1,4 @@
-/* xstrdup.c -- Duplicate a string in memory, using xmalloc.
+/* xstrdup.c -- Duplicate a string in memory, using malloc.
    This trivial function is in the public domain.
    Ian Lance Taylor, Cygnus Support, December 1995.  */
 
@@ -6,7 +6,7 @@
 
 @deftypefn Replacement char* xstrdup (const char *@var{s})
 
-Duplicates a character string without fail, using @code{xmalloc} to
+Duplicates a character string without fail, using @code{malloc} to
 obtain memory.
 
 @end deftypefn

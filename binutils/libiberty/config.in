@@ -44,29 +44,12 @@
 /* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
 #undef HAVE_DECL_FFS
 
-/* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
-   */
-#undef HAVE_DECL_GETENV
-
 /* Define to 1 if you have the declaration of `getopt', and to 0 if you don't.
    */
 #undef HAVE_DECL_GETOPT
 
-/* Define to 1 if you have the declaration of `strtol', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STRTOL
-
-/* Define to 1 if you have the declaration of `strtoll', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRTOLL
-
-/* Define to 1 if you have the declaration of `strtoul', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRTOUL
-
-/* Define to 1 if you have the declaration of `strtoull', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRTOULL
+/* Define to 1 if you have the declaration of `ntf', and to 0 if you don't. */
+#undef HAVE_DECL_NTF
 
 /* Define to 1 if you have the declaration of `strverscmp', and to 0 if you
    don't. */
@@ -75,10 +58,6 @@
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_VASPRINTF
-
-/* Define to 1 if you have the declaration of `vsnprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_VSNPRINTF
 
 /* Define to 1 if you have the `dup3' function. */
 #undef HAVE_DUP3
@@ -121,9 +100,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define if you have the `long long' type. */
-#undef HAVE_LONG_LONG
 
 /* Define to 1 if you have the <machine/hal_sysinfo.h> header file. */
 #undef HAVE_MACHINE_HAL_SYSINFO_H
@@ -214,21 +190,6 @@
 
 /* Define to 1 if you have the `strsignal' function. */
 #undef HAVE_STRSIGNAL
-
-/* Define to 1 if you have the `strtod' function. */
-#undef HAVE_STRTOD
-
-/* Define to 1 if you have the `strtol' function. */
-#undef HAVE_STRTOL
-
-/* Define to 1 if you have the `strtoll' function. */
-#undef HAVE_STRTOLL
-
-/* Define to 1 if you have the `strtoul' function. */
-#undef HAVE_STRTOUL
-
-/* Define to 1 if you have the `strtoull' function. */
-#undef HAVE_STRTOULL
 
 /* Define to 1 if you have the `strverscmp' function. */
 #undef HAVE_STRVERSCMP
@@ -323,15 +284,6 @@
 /* Define to 1 if you have the <vfork.h> header file. */
 #undef HAVE_VFORK_H
 
-/* Define to 1 if you have the `vfprintf' function. */
-#undef HAVE_VFPRINTF
-
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
-
-/* Define to 1 if you have the `vsprintf' function. */
-#undef HAVE_VSPRINTF
-
 /* Define to 1 if you have the `wait3' function. */
 #undef HAVE_WAIT3
 
@@ -388,9 +340,6 @@
 
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
-
-/* The size of `long long', as computed by sizeof. */
-#undef SIZEOF_LONG_LONG
 
 /* The size of `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
@@ -458,15 +407,6 @@
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#undef const
-
-/* Define to `__inline__' or `__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-#undef inline
-#endif
 
 /* Define to the type of a signed integer type wide enough to hold a pointer,
    if such a type exists, and if the system does not define it. */

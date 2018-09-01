@@ -355,7 +355,7 @@ htab_set_functions_ex (htab_t htab, htab_hash hash_f, htab_eq eq_f,
 htab_t
 htab_create (size_t size, htab_hash hash_f, htab_eq eq_f, htab_del del_f)
 {
-  return htab_create_alloc (size, hash_f, eq_f, del_f, xcalloc, free);
+  return htab_create_alloc (size, hash_f, eq_f, del_f, calloc, free);
 }
 
 htab_t

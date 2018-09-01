@@ -57,7 +57,7 @@
 static struct obstack stat_obstack;
 static struct obstack map_obstack;
 
-#define obstack_chunk_alloc xmalloc
+#define obstack_chunk_alloc malloc
 #define obstack_chunk_free free
 static const char *entry_symbol_default = "start";
 static bfd_boolean map_head_is_link_order = FALSE;
@@ -529,7 +529,7 @@ output_section_callback_fast (lang_wild_statement_type *ptr,
   if (unique_section_p (section, os))
     return;
 
-  node = (lang_section_bst_type *) xmalloc (sizeof (lang_section_bst_type));
+  node = (lang_section_bst_type *) malloc (sizeof (lang_section_bst_type));
   node->left = 0;
   node->right = 0;
   node->section = section;
@@ -2694,9 +2694,9 @@ add_excluded_libs (const char *list)
       end = strpbrk (p, ",:");
       if (end == NULL)
 	end = p + strlen (p);
-      entry = (struct excluded_lib *) xmalloc (sizeof (*entry));
+      entry = (struct excluded_lib *) malloc (sizeof (*entry));
       entry->next = excluded_libs;
-      entry->name = (char *) xmalloc (end - p + 1);
+      entry->name = (char *) malloc (end - p + 1);
       memcpy (entry->name, p, end - p);
       entry->name[end - p] = '\0';
       excluded_libs = entry;
@@ -2978,8 +2978,8 @@ name_compare (char *first, char *second)
   char *copy2;
   int result;
 
-  copy1 = (char *) xmalloc (strlen (first) + 1);
-  copy2 = (char *) xmalloc (strlen (second) + 1);
+  copy1 = (char *) malloc (strlen (first) + 1);
+  copy2 = (char *) malloc (strlen (second) + 1);
 
   /* Convert the names to lower case.  */
   stricpy (copy1, first);
@@ -6019,7 +6019,7 @@ lang_define_start_stop (const char *symbol, asection *sec)
 	{
 	  start_stop_alloc = 2 * start_stop_alloc + 10;
 	  start_stop_syms
-	    = xrealloc (start_stop_syms,
+	    = realloc (start_stop_syms,
 			start_stop_alloc * sizeof (*start_stop_syms));
 	}
       start_stop_syms[start_stop_count++] = h;
@@ -6048,7 +6048,7 @@ lang_init_start_stop (void)
 	    break;
 	if (*ps == '\0')
 	  {
-	    char *symbol = (char *) xmalloc (10 + strlen (secname));
+	    char *symbol = (char *) malloc (10 + strlen (secname));
 
 	    symbol[0] = leading_char;
 	    sprintf (symbol + (leading_char != 0), "__start_%s", secname);
@@ -6114,7 +6114,7 @@ lang_init_startof_sizeof (void)
   for (s = link_info.output_bfd->sections; s != NULL; s = s->next)
     {
       const char *secname = s->name;
-      char *symbol = (char *) xmalloc (10 + strlen (secname));
+      char *symbol = (char *) malloc (10 + strlen (secname));
 
       sprintf (symbol, ".startof.%s", secname);
       lang_define_start_stop (symbol, s);
@@ -7769,7 +7769,7 @@ lang_record_phdrs (void)
   lang_output_section_statement_type *os;
 
   alc = 10;
-  secs = (asection **) xmalloc (alc * sizeof (asection *));
+  secs = (asection **) malloc (alc * sizeof (asection *));
   last = NULL;
 
   for (l = lang_phdr_list; l != NULL; l = l->next)
@@ -7836,7 +7836,7 @@ lang_record_phdrs (void)
 		  if (c >= alc)
 		    {
 		      alc *= 2;
-		      secs = (asection **) xrealloc (secs,
+		      secs = (asection **) realloc (secs,
 						     alc * sizeof (asection *));
 		    }
 		  secs[c] = os->bfd_section;
@@ -7891,7 +7891,7 @@ lang_add_nocrossref (lang_nocrossref_type *l)
 {
   struct lang_nocrossrefs *n;
 
-  n = (struct lang_nocrossrefs *) xmalloc (sizeof *n);
+  n = (struct lang_nocrossrefs *) malloc (sizeof *n);
   n->next = nocrossref_list;
   n->list = l;
   n->onlyfirst = FALSE;
@@ -7963,7 +7963,7 @@ lang_enter_overlay_section (const char *name)
     overlay_vma = exp_nameop (ADDR, name);
 
   /* Remember the section.  */
-  n = (struct overlay_list *) xmalloc (sizeof *n);
+  n = (struct overlay_list *) malloc (sizeof *n);
   n->os = current_section;
   n->next = overlay_list;
   overlay_list = n;
@@ -7999,20 +7999,20 @@ lang_leave_overlay_section (fill_type *fill,
 
   /* Define the magic symbols.  */
 
-  clean = (char *) xmalloc (strlen (name) + 1);
+  clean = (char *) malloc (strlen (name) + 1);
   s2 = clean;
   for (s1 = name; *s1 != '\0'; s1++)
     if (ISALNUM (*s1) || *s1 == '_')
       *s2++ = *s1;
   *s2 = '\0';
 
-  buf = (char *) xmalloc (strlen (clean) + sizeof "__load_start_");
+  buf = (char *) malloc (strlen (clean) + sizeof "__load_start_");
   sprintf (buf, "__load_start_%s", clean);
   lang_add_assignment (exp_provide (buf,
 				    exp_nameop (LOADADDR, name),
 				    FALSE));
 
-  buf = (char *) xmalloc (strlen (clean) + sizeof "__load_stop_");
+  buf = (char *) malloc (strlen (clean) + sizeof "__load_stop_");
   sprintf (buf, "__load_stop_%s", clean);
   lang_add_assignment (exp_provide (buf,
 				    exp_binop ('+',
@@ -8081,7 +8081,7 @@ lang_leave_overlay (etree_type *lma_expr,
 	{
 	  lang_nocrossref_type *nc;
 
-	  nc = (lang_nocrossref_type *) xmalloc (sizeof *nc);
+	  nc = (lang_nocrossref_type *) malloc (sizeof *nc);
 	  nc->name = l->os->name;
 	  nc->next = nocrossref;
 	  nocrossref = nc;
@@ -8172,7 +8172,7 @@ realsymbol (const char *pattern)
 {
   const char *p;
   bfd_boolean changed = FALSE, backslash = FALSE;
-  char *s, *symbol = (char *) xmalloc (strlen (pattern) + 1);
+  char *s, *symbol = (char *) malloc (strlen (pattern) + 1);
 
   for (p = pattern, s = symbol; *p != '\0'; ++p)
     {
@@ -8222,7 +8222,7 @@ lang_new_vers_pattern (struct bfd_elf_version_expr *orig,
 {
   struct bfd_elf_version_expr *ret;
 
-  ret = (struct bfd_elf_version_expr *) xmalloc (sizeof *ret);
+  ret = (struct bfd_elf_version_expr *) malloc (sizeof *ret);
   ret->next = orig;
   ret->symver = 0;
   ret->script = 0;
@@ -8259,7 +8259,7 @@ lang_new_vers_node (struct bfd_elf_version_expr *globals,
 {
   struct bfd_elf_version_tree *ret;
 
-  ret = (struct bfd_elf_version_tree *) xcalloc (1, sizeof *ret);
+  ret = (struct bfd_elf_version_tree *) calloc (1, sizeof *ret);
   ret->globals.list = globals;
   ret->locals.list = locals;
   ret->match = lang_vers_match;
@@ -8345,7 +8345,7 @@ lang_finalize_version_expr_head (struct bfd_elf_version_expr_head *head)
 		    {
 		      /* This is a duplicate.  */
 		      /* FIXME: Memory leak.  Sometimes pattern is not
-			 xmalloced alone, but in larger chunk of memory.  */
+			 malloced alone, but in larger chunk of memory.  */
 		      /* free (e->pattern); */
 		      free (e);
 		    }
@@ -8482,7 +8482,7 @@ lang_add_vers_depend (struct bfd_elf_version_deps *list, const char *name)
   struct bfd_elf_version_deps *ret;
   struct bfd_elf_version_tree *t;
 
-  ret = (struct bfd_elf_version_deps *) xmalloc (sizeof *ret);
+  ret = (struct bfd_elf_version_deps *) malloc (sizeof *ret);
   ret->next = list;
 
   for (t = link_info.version_info; t != NULL; t = t->next)
@@ -8515,7 +8515,7 @@ lang_do_version_exports_section (void)
 	continue;
 
       len = sec->size;
-      contents = (char *) xmalloc (len);
+      contents = (char *) malloc (len);
       if (!bfd_get_section_contents (is->the_bfd, sec, contents, 0, len))
 	einfo (_("%X%P: unable to read .exports section contents\n"), sec);
 
@@ -8579,7 +8579,7 @@ lang_add_unique (const char *name)
     if (strcmp (ent->name, name) == 0)
       return;
 
-  ent = (struct unique_sections *) xmalloc (sizeof *ent);
+  ent = (struct unique_sections *) malloc (sizeof *ent);
   ent->name = xstrdup (name);
   ent->next = unique_section_list;
   unique_section_list = ent;
@@ -8602,7 +8602,7 @@ lang_append_dynamic_list (struct bfd_elf_version_expr *dynamic)
     {
       struct bfd_elf_dynamic_list *d;
 
-      d = (struct bfd_elf_dynamic_list *) xcalloc (1, sizeof *d);
+      d = (struct bfd_elf_dynamic_list *) calloc (1, sizeof *d);
       d->head.list = dynamic;
       d->match = lang_vers_match;
       link_info.dynamic_list = d;

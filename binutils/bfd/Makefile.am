@@ -69,7 +69,7 @@ BFD32_LIBS = \
 	cache.o compress.o corefile.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o stab-syms.o stabs.o syms.o targets.o \
-	binary.o ihex.o srec.o tekhex.o verilog.o
+	binary.o ihex.o srec.o
 
 BFD64_LIBS = archive64.o
 
@@ -78,186 +78,20 @@ BFD32_LIBS_CFILES = \
 	cache.c  compress.c corefile.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c stab-syms.c stabs.c syms.c targets.c \
-	binary.c ihex.c srec.c tekhex.c verilog.c
+	binary.c ihex.c srec.c
 
 BFD64_LIBS_CFILES = archive64.c
 
 # This list is alphabetized to make it easier to keep in sync
 # with the decls and initializer in archures.c.
 ALL_MACHINES = \
-	cpu-aarch64.o \
-	cpu-alpha.o \
-	cpu-arc.o \
-	cpu-arm.o \
-	cpu-avr.o \
-	cpu-bfin.o \
-	cpu-cr16.o \
-	cpu-cr16c.o \
-	cpu-cris.o \
-	cpu-crx.o \
-	cpu-d10v.o \
-	cpu-d30v.o \
-	cpu-dlx.o \
-	cpu-epiphany.o \
-	cpu-fr30.o \
-	cpu-frv.o \
-	cpu-ft32.o \
-	cpu-h8300.o \
-	cpu-hppa.o \
-	cpu-i386.o \
-	cpu-iamcu.o \
-	cpu-l1om.o \
-	cpu-k1om.o \
-	cpu-ia64.o \
-	cpu-ip2k.o \
-	cpu-iq2000.o \
-	cpu-lm32.o \
-	cpu-m10200.o \
-	cpu-m10300.o \
-	cpu-m32c.o \
-	cpu-m32r.o \
-	cpu-m68hc11.o \
-	cpu-m68hc12.o \
-	cpu-m9s12x.o \
-	cpu-s12z.o \
-	cpu-m9s12xg.o \
-	cpu-m68k.o \
-	cpu-mcore.o \
-	cpu-mep.o \
-	cpu-metag.o \
-	cpu-microblaze.o \
-	cpu-mips.o \
-	cpu-mmix.o \
-	cpu-moxie.o \
-	cpu-msp430.o \
-	cpu-mt.o \
-	cpu-nds32.o \
-	cpu-nfp.o \
-	cpu-nios2.o \
-	cpu-ns32k.o \
-	cpu-or1k.o \
-	cpu-pdp11.o \
-	cpu-pj.o \
-	cpu-plugin.o \
-	cpu-powerpc.o \
-	cpu-pru.o \
-	cpu-rs6000.o \
-	cpu-riscv.o \
-	cpu-rl78.o \
-	cpu-rx.o \
-	cpu-s390.o \
-	cpu-score.o \
-	cpu-sh.o \
-	cpu-sparc.o \
-	cpu-spu.o \
-	cpu-tic30.o \
-	cpu-tic4x.o \
-	cpu-tic54x.o \
-	cpu-tic6x.o \
-	cpu-tic80.o \
-	cpu-tilegx.o \
-	cpu-tilepro.o \
-	cpu-v850.o \
-	cpu-v850_rh850.o \
-	cpu-vax.o \
-	cpu-visium.o \
-	cpu-wasm32.o \
-	cpu-xc16x.o \
-	cpu-xgate.o \
-	cpu-xstormy16.o \
-	cpu-xtensa.o \
-	cpu-z80.o \
-	cpu-z8k.o
-
+	cpu-arm.o
 ALL_MACHINES_CFILES = \
-	cpu-aarch64.c \
-	cpu-alpha.c \
-	cpu-arc.c \
-	cpu-arm.c \
-	cpu-avr.c \
-	cpu-bfin.c \
-	cpu-cr16.c \
-	cpu-cr16c.c \
-	cpu-cris.c \
-	cpu-crx.c \
-	cpu-d10v.c \
-	cpu-d30v.c \
-	cpu-dlx.c \
-	cpu-epiphany.c \
-	cpu-fr30.c \
-	cpu-frv.c \
-	cpu-ft32.c \
-	cpu-h8300.c \
-	cpu-hppa.c \
-	cpu-i386.c \
-	cpu-iamcu.c \
-	cpu-l1om.c \
-	cpu-k1om.c \
-	cpu-ia64.c \
-	cpu-ip2k.c \
-	cpu-iq2000.c \
-	cpu-lm32.c \
-	cpu-m10200.c \
-	cpu-m10300.c \
-	cpu-m32c.c \
-	cpu-m32r.c \
-	cpu-m68hc11.c \
-	cpu-m68hc12.c \
-	cpu-m9s12x.c \
-	cpu-s12z.c \
-	cpu-m9s12xg.c \
-	cpu-m68k.c \
-	cpu-mcore.c \
-	cpu-mep.c \
-	cpu-metag.c \
-	cpu-microblaze.c \
-	cpu-mips.c \
-	cpu-mmix.c \
-	cpu-moxie.c \
-	cpu-msp430.c \
-	cpu-mt.c \
-	cpu-nds32.c \
-	cpu-nfp.c \
-	cpu-ns32k.c \
-	cpu-nios2.c \
-	cpu-or1k.c \
-	cpu-pdp11.c \
-	cpu-pj.c \
-	cpu-plugin.c \
-	cpu-powerpc.c \
-	cpu-pru.c \
-	cpu-rs6000.c \
-	cpu-riscv.c \
-	cpu-rl78.c \
-	cpu-rx.c \
-	cpu-s390.c \
-	cpu-score.c \
-	cpu-sh.c \
-	cpu-sparc.c \
-	cpu-spu.c \
-	cpu-tic30.c \
-	cpu-tic4x.c \
-	cpu-tic54x.c \
-	cpu-tic6x.c \
-	cpu-tic80.c \
-	cpu-tilegx.c \
-	cpu-tilepro.c \
-	cpu-v850.c \
-	cpu-v850_rh850.c \
-	cpu-vax.c \
-	cpu-visium.c \
-	cpu-wasm32.c \
-	cpu-xc16x.c \
-	cpu-xgate.c \
-	cpu-xstormy16.c \
-	cpu-xtensa.c \
-	cpu-z80.c \
-	cpu-z8k.c
+	cpu-arm.c
 
 # The .o files needed by all of the 32 bit vectors that are configured into
 # target_vector in targets.c if configured with --enable-targets=all.
 BFD32_BACKENDS = \
-	cf-i386lynx.o \
 	dwarf1.o \
 	dwarf2.o \
 	elf-attrs.o \
@@ -267,20 +101,11 @@ BFD32_BACKENDS = \
 	elf-strtab.o \
 	elf-vxworks.o \
 	elf.o \
-	elf32-am33lin.o \
 	elf32-arc.o \
 	elf32-arm.o \
 	elf32.o \
 	elflink.o \
-	elfxx-sparc.o \
-	elfxx-tilegx.o \
-	reloc16.o \
-	som.o \
-	vax1knetbsd.o \
-	vaxnetbsd.o \
-	vms-lib.o \
-	vms-misc.o \
-	wasm-module.o
+	reloc16.o
 
 BFD32_BACKENDS_CFILES = \
 	dwarf1.c \
@@ -295,121 +120,19 @@ BFD32_BACKENDS_CFILES = \
 	elf32-arm.c \
 	elf32.c \
 	elflink.c \
-	elfxx-sparc.c \
-	elfxx-tilegx.c \
-	reloc16.c \
-	vms-lib.c \
-	vms-misc.c \
-	wasm-module.c
+	reloc16.c
 
 # The .o files needed by all of the 64 bit vectors that are configured into
 # target_vector in targets.c if configured with --enable-targets=all
 # and --enable-64-bit-bfd.
 # elf32-ia64.c requires a 64-bit bfd_vma, and hence can not be put in
 # BFD32_BACKENDS.
-BFD64_BACKENDS = \
-	elf32-aarch64.o \
-	elf64-aarch64.o \
-	elfxx-aarch64.o \
-	aix5ppc-core.o \
-	aout64.o \
-	coff-alpha.o \
-	coff-x86_64.o \
-	coff64-rs6000.o \
-	elf32-ia64.o \
-	elf32-mips.o \
-	elf32-score.o \
-	elf32-score7.o \
-	elf64-alpha.o \
-	elf64-gen.o \
-	elf64-hppa.o \
-	elf64-ia64.o \
-	elf64-ia64-vms.o \
-	elfxx-ia64.o \
-	elfn32-mips.o \
-	elf64-mips.o \
-	elfxx-mips.o \
-	elf64-mmix.o \
-	elf64-nfp.o \
-	elf64-ppc.o \
-	elf32-riscv.o \
-	elf64-riscv.o \
-	elfxx-riscv.o \
-	elf64-s390.o \
-	elf64-sparc.o \
-	elf64-tilegx.o \
-	elf64-x86-64.o \
-	elfxx-x86.o \
-	elf64.o \
-	mach-o-aarch64.o \
-	mach-o-x86-64.o \
-	mmo.o \
-	pe-x86_64.o \
-	pei-ia64.o \
-	pei-x86_64.o \
-	pepigen.o \
-	pex64igen.o \
-	vms-alpha.o
+BFD64_BACKENDS =
 
-BFD64_BACKENDS_CFILES = \
-	aix5ppc-core.c \
-	aout64.c \
-	coff-alpha.c \
-	coff-x86_64.c \
-	coff64-rs6000.c \
-	elf32-mips.c \
-	elf32-score.c \
-	elf32-score7.c \
-	elf64-alpha.c \
-	elf64-gen.c \
-	elf64-hppa.c \
-	elf64-ia64-vms.c \
-	elf64-mips.c \
-	elf64-mmix.c \
-	elf64-nfp.c \
-	elf64-ppc.c \
-	elf64-s390.c \
-	elf64-sparc.c \
-	elf64-tilegx.c \
-	elf64-x86-64.c \
-	elfxx-x86.c \
-	elf64.c \
-	elfn32-mips.c \
-	elfxx-aarch64.c \
-	elfxx-ia64.c \
-	elfxx-mips.c \
-	elfxx-riscv.c \
-	mach-o-aarch64.c \
-	mach-o-x86-64.c \
-	mmo.c \
-	pe-x86_64.c \
-	pei-ia64.c \
-	pei-x86_64.c \
-	vms-alpha.c
+BFD64_BACKENDS_CFILES =
 
-OPTIONAL_BACKENDS = \
-	aix386-core.o \
-	cisco-core.o \
-	hpux-core.o \
-	irix-core.o \
-	lynx-core.o \
-	netbsd-core.o \
-	osf-core.o \
-	rs6000-core.o \
-	sco5-core.o \
-	trad-core.o
-
-OPTIONAL_BACKENDS_CFILES = \
-	aix386-core.c \
-	cisco-core.c \
-	hpux-core.c \
-	irix-core.c \
-	lynx-core.c \
-	netbsd-core.c \
-	osf-core.c \
-	rs6000-core.c \
-	sco5-core.c \
-	trad-core.c
+OPTIONAL_BACKENDS =
+OPTIONAL_BACKENDS_CFILES =
 
 # Reconfigure if config.bfd or configure.host changes.
 # development.sh is used to determine -Werror default.
@@ -438,12 +161,7 @@ SOURCE_CFILES = \
 	$(BFD64_BACKENDS_CFILES) \
 	$(OPTIONAL_BACKENDS_CFILES)
 
-BUILD_CFILES = \
-	elf32-aarch64.c elf64-aarch64.c \
-	elf32-ia64.c elf64-ia64.c \
-	elf32-riscv.c elf64-riscv.c \
-	peigen.c pepigen.c pex64igen.c
-
+BUILD_CFILES =
 CFILES = $(SOURCE_CFILES) $(BUILD_CFILES)
 
 ## This is a list of all .h files which are in the source tree.
@@ -452,7 +170,7 @@ SOURCE_HFILES = \
 	elfcode.h elfcore.h \
 	genlink.h \
 	libaout.h libbfd.h \
-	som.h version.h
+	version.h
 
 ## ... and all .h files which are in the build tree.
 BUILD_HFILES = \
@@ -515,13 +233,6 @@ libbfd_a_LDFLAGS += -release `cat libtool-soversion` @SHARED_LDFLAGS@
 # libbfd.a simultaneously.  This is a hack which should be removed if
 # everything else starts using libtool.  FIXME.
 
-#libbfd_a_SOURCES =s
-
-
-
-#libbfd.a: $(ofiles)
-#	$(AR) $(ARFLAGS) $@ $(ofiles)
-
 # This file holds an array associating configuration triplets and
 # vector names.  It is built from config.bfd.  It is not compiled by
 # itself, but is included by targets.c.
@@ -579,55 +290,6 @@ elf64-target.h : elfxx-target.h
 	rm -f elf64-target.h
 	$(SED) -e s/NN/64/g < $(srcdir)/elfxx-target.h > elf64-target.new
 	mv -f elf64-target.new elf64-target.h
-
-elf32-aarch64.c : elfnn-aarch64.c
-	rm -f elf32-aarch64.c
-	echo "#line 1 \"$(srcdir)/elfnn-aarch64.c\"" > elf32-aarch64.new
-	$(SED) -e s/NN/32/g < $(srcdir)/elfnn-aarch64.c >> elf32-aarch64.new
-	mv -f elf32-aarch64.new elf32-aarch64.c
-
-elf64-aarch64.c : elfnn-aarch64.c
-	rm -f elf64-aarch64.c
-	echo "#line 1 \"$(srcdir)/elfnn-aarch64.c\"" > elf64-aarch64.new
-	$(SED) -e s/NN/64/g < $(srcdir)/elfnn-aarch64.c >> elf64-aarch64.new
-	mv -f elf64-aarch64.new elf64-aarch64.c
-
-elf32-ia64.c : elfnn-ia64.c
-	rm -f elf32-ia64.c
-	$(SED) -e s/NN/32/g < $(srcdir)/elfnn-ia64.c > elf32-ia64.new
-	mv -f elf32-ia64.new elf32-ia64.c
-
-elf64-ia64.c : elfnn-ia64.c
-	rm -f elf64-ia64.c
-	$(SED) -e s/NN/64/g < $(srcdir)/elfnn-ia64.c > elf64-ia64.new
-	mv -f elf64-ia64.new elf64-ia64.c
-
-elf32-riscv.c : elfnn-riscv.c
-	rm -f elf32-riscv.c
-	echo "#line 1 \"$(srcdir)/elfnn-riscv.c\"" > elf32-riscv.new
-	sed -e s/NN/32/g < $(srcdir)/elfnn-riscv.c >> elf32-riscv.new
-	mv -f elf32-riscv.new elf32-riscv.c
-
-elf64-riscv.c : elfnn-riscv.c
-	rm -f elf64-riscv.c
-	echo "#line 1 \"$(srcdir)/elfnn-riscv.c\"" > elf64-riscv.new
-	sed -e s/NN/64/g < $(srcdir)/elfnn-riscv.c >> elf64-riscv.new
-	mv -f elf64-riscv.new elf64-riscv.c
-
-peigen.c : peXXigen.c
-	rm -f peigen.c
-	$(SED) -e s/XX/pe/g < $(srcdir)/peXXigen.c > peigen.new
-	mv -f peigen.new peigen.c
-
-pepigen.c : peXXigen.c
-	rm -f pepigen.c
-	$(SED) -e s/XX/pep/g < $(srcdir)/peXXigen.c > pepigen.new
-	mv -f pepigen.new pepigen.c
-
-pex64igen.c: peXXigen.c
-	rm -f pex64igen.c
-	$(SED) -e s/XX/pex64/g < $(srcdir)/peXXigen.c > pex64igen.new
-	mv -f pex64igen.new pex64igen.c
 
 BFD_H_DEPS= $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h
 LOCAL_H_DEPS= libbfd.h sysdep.h config.h

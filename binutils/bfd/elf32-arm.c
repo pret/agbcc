@@ -6180,7 +6180,7 @@ set_cmse_veneer_addr_from_implib (struct bfd_link_info *info,
     return FALSE;
 
   /* Read in the input secure gateway import library's symbol table.  */
-  sympp = (asymbol **) xmalloc (symsize);
+  sympp = (asymbol **) malloc (symsize);
   symcount = bfd_canonicalize_symtab (in_implib_bfd, sympp);
   if (symcount < 0)
     {
@@ -13303,7 +13303,7 @@ add_unwind_table_edit (arm_unwind_table_edit **head,
 		       unsigned int tindex)
 {
   arm_unwind_table_edit *new_edit = (arm_unwind_table_edit *)
-      xmalloc (sizeof (arm_unwind_table_edit));
+      malloc (sizeof (arm_unwind_table_edit));
 
   new_edit->type = type;
   new_edit->linked_section = linked_section;

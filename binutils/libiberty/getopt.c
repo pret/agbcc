@@ -191,17 +191,7 @@ static char *posixly_correct;
 /* Avoid depending on library functions or files
    whose names are inconsistent.  */
 
-#if HAVE_DECL_GETENV
-#  include <stdlib.h>
-#elif !defined(getenv)
-#  ifdef __cplusplus
-extern "C" {
-#  endif /* __cplusplus */
-extern char *getenv (const char *);
-#  ifdef __cplusplus
-}
-#  endif /* __cplusplus */
-#endif
+#include <stdlib.h>
 
 static char *
 my_index (const char *str, int chr)

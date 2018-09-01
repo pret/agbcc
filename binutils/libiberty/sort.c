@@ -131,7 +131,7 @@ void sort_pointers (size_t n, void **pointers, void **work)
 
 #include <stdio.h>
 
-void *xmalloc (size_t n)
+void *malloc (size_t n)
 {
   return malloc (n);
 }

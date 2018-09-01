@@ -839,7 +839,7 @@ get_archive_member_name (struct archive_info *arch,
   /* The full ar_name field is used.  Don't rely on ar_date starting
      with a zero byte.  */
   {
-    char *name = xmalloc (sizeof (arch->arhdr.ar_name) + 1);
+    char *name = malloc (sizeof (arch->arhdr.ar_name) + 1);
     memcpy (name, arch->arhdr.ar_name, sizeof (arch->arhdr.ar_name));
     name[sizeof (arch->arhdr.ar_name)] = '\0';
     return name;

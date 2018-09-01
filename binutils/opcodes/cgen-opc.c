@@ -242,10 +242,10 @@ build_keyword_hash_tables (CGEN_KEYWORD *kt)
 
   kt->hash_table_size = size;
   kt->name_hash_table = (CGEN_KEYWORD_ENTRY **)
-    xmalloc (size * sizeof (CGEN_KEYWORD_ENTRY *));
+    malloc (size * sizeof (CGEN_KEYWORD_ENTRY *));
   memset (kt->name_hash_table, 0, size * sizeof (CGEN_KEYWORD_ENTRY *));
   kt->value_hash_table = (CGEN_KEYWORD_ENTRY **)
-    xmalloc (size * sizeof (CGEN_KEYWORD_ENTRY *));
+    malloc (size * sizeof (CGEN_KEYWORD_ENTRY *));
   memset (kt->value_hash_table, 0, size * sizeof (CGEN_KEYWORD_ENTRY *));
 
   /* The table is scanned backwards as we want keywords appearing earlier to
@@ -458,7 +458,7 @@ cgen_lookup_insn (CGEN_CPU_DESC cd,
   if (cd->int_insn_p)
     {
       info = NULL;
-      insn_bytes_value = (unsigned char *) xmalloc (cd->max_insn_bitsize / 8);
+      insn_bytes_value = (unsigned char *) malloc (cd->max_insn_bitsize / 8);
       cgen_put_insn_value (cd, insn_bytes_value, length, insn_int_value);
     }
   else

@@ -28,8 +28,8 @@ extern void info_msg (const char *, ...);
 extern void lfinfo (FILE *, const char *, ...);
 extern void info_assert (const char *, unsigned int);
 extern void yyerror (const char *);
-extern void *xmalloc (size_t);
-extern void *xrealloc (void *, size_t);
+extern void *malloc (size_t);
+extern void *realloc (void *, size_t);
 extern void xexit (int);
 
 #define ASSERT(x) \

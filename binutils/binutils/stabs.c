@@ -209,7 +209,7 @@ savestring (const char *start, int len)
 {
   char *ret;
 
-  ret = (char *) xmalloc (len + 1);
+  ret = (char *) malloc (len + 1);
   memcpy (ret, start, len);
   ret[len] = '\0';
   return ret;
@@ -355,14 +355,14 @@ start_stab (void *dhandle ATTRIBUTE_UNUSED, bfd *abfd, bfd_boolean sections,
 {
   struct stab_handle *ret;
 
-  ret = (struct stab_handle *) xmalloc (sizeof *ret);
+  ret = (struct stab_handle *) malloc (sizeof *ret);
   memset (ret, 0, sizeof *ret);
   ret->abfd = abfd;
   ret->sections = sections;
   ret->syms = syms;
   ret->symcount = symcount;
   ret->files = 1;
-  ret->file_types = (struct stab_types **) xmalloc (sizeof *ret->file_types);
+  ret->file_types = (struct stab_types **) malloc (sizeof *ret->file_types);
   ret->file_types[0] = NULL;
   ret->function_end = (bfd_vma) -1;
   return (void *) ret;
@@ -434,7 +434,7 @@ parse_stab (void *dhandle, void *handle, int type, int desc, bfd_vma value,
 	 debug_make_indirect_type.  */
       info->files = 1;
       info->file_types = ((struct stab_types **)
-			  xmalloc (sizeof *info->file_types));
+			  malloc (sizeof *info->file_types));
       info->file_types[0] = NULL;
       info->so_string = NULL;
 
@@ -1515,7 +1515,7 @@ parse_stab_type (void *                dhandle,
 	    return DEBUG_TYPE_NULL;
 
 	  alloc = 10;
-	  args = (debug_type *) xmalloc (alloc * sizeof *args);
+	  args = (debug_type *) malloc (alloc * sizeof *args);
 	  n = 0;
 	  while (**pp != ';')
 	    {
@@ -1530,7 +1530,7 @@ parse_stab_type (void *                dhandle,
 		{
 		  alloc += 10;
 		  args = ((debug_type *)
-			  xrealloc (args, alloc * sizeof *args));
+			  realloc (args, alloc * sizeof *args));
 		}
 
 	      args[n] = parse_stab_type (dhandle, info, (const char *) NULL,
@@ -2012,8 +2012,8 @@ parse_stab_enum_type (void *dhandle, const char **pp, const char * p_end)
      The input syntax is NAME:VALUE,NAME:VALUE, and so on.
      A semicolon or comma instead of a NAME means the end.  */
   alloc = 10;
-  names = (const char **) xmalloc (alloc * sizeof *names);
-  values = (bfd_signed_vma *) xmalloc (alloc * sizeof *values);
+  names = (const char **) malloc (alloc * sizeof *names);
+  values = (bfd_signed_vma *) malloc (alloc * sizeof *values);
   n = 0;
   while (**pp != '\0' && **pp != ';' && **pp != ',')
     {
@@ -2051,9 +2051,9 @@ parse_stab_enum_type (void *dhandle, const char **pp, const char * p_end)
 	{
 	  alloc += 10;
 	  names = ((const char **)
-		   xrealloc (names, alloc * sizeof *names));
+		   realloc (names, alloc * sizeof *names));
 	  values = ((bfd_signed_vma *)
-		    xrealloc (values, alloc * sizeof *values));
+		    realloc (values, alloc * sizeof *values));
 	}
 
       names[n] = name;
@@ -2177,7 +2177,7 @@ parse_stab_baseclasses (void *                dhandle,
     }
   ++*pp;
 
-  classes = (debug_baseclass *) xmalloc ((c + 1) * sizeof (**retp));
+  classes = (debug_baseclass *) malloc ((c + 1) * sizeof (**retp));
 
   for (i = 0; i < c; i++)
     {
@@ -2301,7 +2301,7 @@ parse_stab_struct_fields (void *                dhandle,
 
   c = 0;
   alloc = 10;
-  fields = (debug_field *) xmalloc (alloc * sizeof *fields);
+  fields = (debug_field *) malloc (alloc * sizeof *fields);
   while (**pp != ';')
     {
       /* FIXME: gdb checks os9k_stabs here.  */
@@ -2313,7 +2313,7 @@ parse_stab_struct_fields (void *                dhandle,
 	{
 	  alloc += 10;
 	  fields = ((debug_field *)
-		    xrealloc (fields, alloc * sizeof *fields));
+		    realloc (fields, alloc * sizeof *fields));
 	}
 
       /* If it starts with CPLUS_MARKER it is a special abbreviation,
@@ -2685,7 +2685,7 @@ parse_stab_members (void *                dhandle,
 
       allocvars = 10;
       variants = ((debug_method_variant *)
-		  xmalloc (allocvars * sizeof *variants));
+		  malloc (allocvars * sizeof *variants));
       cvars = 0;
 
       look_ahead_type = DEBUG_TYPE_NULL;
@@ -2865,7 +2865,7 @@ parse_stab_members (void *                dhandle,
 	    {
 	      allocvars += 10;
 	      variants = ((debug_method_variant *)
-			  xrealloc (variants,
+			  realloc (variants,
 				    allocvars * sizeof *variants));
 	    }
 
@@ -2897,7 +2897,7 @@ parse_stab_members (void *                dhandle,
 	{
 	  alloc += 10;
 	  methods = ((debug_method *)
-		     xrealloc (methods, alloc * sizeof *methods));
+		     realloc (methods, alloc * sizeof *methods));
 	}
 
       methods[c] = debug_make_method (dhandle, name, variants);
@@ -3134,7 +3134,7 @@ push_bincl (struct stab_handle *info, const char *name, bfd_vma hash)
 {
   struct bincl_file *n;
 
-  n = (struct bincl_file *) xmalloc (sizeof *n);
+  n = (struct bincl_file *) malloc (sizeof *n);
   n->next = info->bincl_list;
   n->next_stack = info->bincl_stack;
   n->name = name;
@@ -3146,7 +3146,7 @@ push_bincl (struct stab_handle *info, const char *name, bfd_vma hash)
 
   ++info->files;
   info->file_types = ((struct stab_types **)
-		      xrealloc (info->file_types,
+		      realloc (info->file_types,
 				(info->files
 				 * sizeof *info->file_types)));
   info->file_types[n->file] = NULL;
@@ -3184,7 +3184,7 @@ find_excl (struct stab_handle *info, const char *name, bfd_vma hash)
 
   ++info->files;
   info->file_types = ((struct stab_types **)
-		      xrealloc (info->file_types,
+		      realloc (info->file_types,
 				(info->files
 				 * sizeof *info->file_types)));
 
@@ -3220,7 +3220,7 @@ stab_record_variable (void *dhandle, struct stab_handle *info,
       || (info->gcc_compiled == 0 && info->n_opt_found))
     return debug_record_variable (dhandle, name, type, kind, val);
 
-  v = (struct stab_pending_var *) xmalloc (sizeof *v);
+  v = (struct stab_pending_var *) malloc (sizeof *v);
   memset (v, 0, sizeof *v);
 
   v->next = info->pending;
@@ -3288,7 +3288,7 @@ stab_find_slot (struct stab_handle *info, const int *typenums)
     {
       if (*ps == NULL)
 	{
-	  *ps = (struct stab_types *) xmalloc (sizeof **ps);
+	  *ps = (struct stab_types *) malloc (sizeof **ps);
 	  memset (*ps, 0, sizeof **ps);
 	}
       ps = &(*ps)->next;
@@ -3296,7 +3296,7 @@ stab_find_slot (struct stab_handle *info, const int *typenums)
     }
   if (*ps == NULL)
     {
-      *ps = (struct stab_types *) xmalloc (sizeof **ps);
+      *ps = (struct stab_types *) malloc (sizeof **ps);
       memset (*ps, 0, sizeof **ps);
     }
 
@@ -3560,7 +3560,7 @@ stab_find_tagged_type (void *dhandle, struct stab_handle *info,
     }
   if (st == NULL)
     {
-      st = (struct stab_tag *) xmalloc (sizeof *st);
+      st = (struct stab_tag *) malloc (sizeof *st);
       memset (st, 0, sizeof *st);
 
       st->next = info->tags;

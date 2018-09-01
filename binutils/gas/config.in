@@ -86,14 +86,6 @@
    */
 #undef HAVE_DECL_STPCPY
 
-/* Define to 1 if you have the declaration of `strstr', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STRSTR
-
-/* Define to 1 if you have the declaration of `vsnprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_VSNPRINTF
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -198,9 +190,6 @@
 
 /* Define if ffs is not declared in system header files. */
 #undef NEED_DECLARATION_FFS
-
-/* Define if strstr is not declared in system header files. */
-#undef NEED_DECLARATION_STRSTR
 
 /* a.out support? */
 #undef OBJ_MAYBE_AOUT
@@ -351,12 +340,6 @@
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
-
-/* Define to `__inline__' or `__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-#undef inline
-#endif
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t

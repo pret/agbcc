@@ -111,7 +111,7 @@ read_section_stabs_debugging_info (bfd *abfd, asymbol **syms, long symcount,
 	  bfd_size_type stroff, next_stroff;
 
 	  stabsize = bfd_section_size (abfd, sec);
-	  stabs = (bfd_byte *) xmalloc (stabsize);
+	  stabs = (bfd_byte *) malloc (stabsize);
 	  if (! bfd_get_section_contents (abfd, sec, stabs, 0, stabsize))
 	    {
 	      fprintf (stderr, "%s: %s: %s\n",
@@ -121,7 +121,7 @@ read_section_stabs_debugging_info (bfd *abfd, asymbol **syms, long symcount,
 	    }
 
 	  strsize = bfd_section_size (abfd, strsec);
-	  strings = (bfd_byte *) xmalloc (strsize + 1);
+	  strings = (bfd_byte *) malloc (strsize + 1);
 	  if (! bfd_get_section_contents (abfd, strsec, strings, 0, strsize))
 	    {
 	      fprintf (stderr, "%s: %s: %s\n",

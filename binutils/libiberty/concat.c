@@ -25,7 +25,7 @@ Boston, MA 02110-1301, USA.  */
   @dots{}, @code{NULL})
 
 Concatenate zero or more of strings and return the result in freshly
-@code{xmalloc}ed memory.  The argument list is terminated by the first
+@code{malloc}ed memory.  The argument list is terminated by the first
 @code{NULL} pointer encountered.  Pointers to empty strings are ignored.
 
 @end deftypefn

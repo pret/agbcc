@@ -28,7 +28,7 @@
 CGEN_BITSET *
 cgen_bitset_create (unsigned bit_count)
 {
-  CGEN_BITSET * mask = xmalloc (sizeof (* mask));
+  CGEN_BITSET * mask = malloc (sizeof (* mask));
   cgen_bitset_init (mask, bit_count);
   return mask;
 }
@@ -41,7 +41,7 @@ cgen_bitset_init (CGEN_BITSET * mask, unsigned bit_count)
   if (! mask)
     return;
   mask->length = (bit_count / 8) + 1;
-  mask->bits = xmalloc (mask->length);
+  mask->bits = malloc (mask->length);
   cgen_bitset_clear (mask);
 }
 

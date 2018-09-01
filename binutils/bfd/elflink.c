@@ -11103,7 +11103,7 @@ elf_output_implib (bfd *abfd, struct bfd_link_info *info)
     return FALSE;
 
   /* Read in the symbol table.  */
-  sympp = (asymbol **) xmalloc (symsize);
+  sympp = (asymbol **) malloc (symsize);
   symcount = bfd_canonicalize_symtab (abfd, sympp);
   if (symcount < 0)
     goto free_sym_buf;

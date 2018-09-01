@@ -522,7 +522,7 @@ gld${EMULATION_NAME}_search_needed (const char *path,
 	    s = path + strlen (path);
 	}
 #endif
-      filename = (char *) xmalloc (s - path + len + 2);
+      filename = (char *) malloc (s - path + len + 2);
       if (s == path)
 	sset = filename;
       else
@@ -593,7 +593,7 @@ gld${EMULATION_NAME}_search_needed (const char *path,
 			{
 			  char * current_dir = getpwd ();
 
-			  freeme = xmalloc (strlen (replacement) + strlen (current_dir) + 2);
+			  freeme = malloc (strlen (replacement) + strlen (current_dir) + 2);
 			  sprintf (freeme, "%s/%s", current_dir, replacement);
 			}
 
@@ -638,7 +638,7 @@ gld${EMULATION_NAME}_search_needed (const char *path,
 
 	  if (replacement)
 	    {
-	      char * filename2 = xmalloc (flen + strlen (replacement));
+	      char * filename2 = malloc (flen + strlen (replacement));
 
 	      if (end)
 		{
@@ -735,7 +735,7 @@ gld${EMULATION_NAME}_add_sysroot (const char *path)
       ++p;
     }
 
-  ret = xmalloc (strlen (path) + extra + 1);
+  ret = malloc (strlen (path) + extra + 1);
 
   for (q = ret, p = path; ; )
     {
@@ -820,7 +820,7 @@ gld${EMULATION_NAME}_check_ld_elf_hints (const struct bfd_link_needed_list *l,
 		{
 		  char *b;
 
-		  b = xmalloc (hdr.dirlistlen + 1);
+		  b = malloc (hdr.dirlistlen + 1);
 		  if (fread (b, 1, hdr.dirlistlen + 1, f) ==
 		      hdr.dirlistlen + 1)
 		    ld_elf_hints = gld${EMULATION_NAME}_add_sysroot (b);
@@ -876,7 +876,7 @@ gld${EMULATION_NAME}_parse_ld_so_conf_include
       char *p = strrchr (filename, '/');
       size_t patlen = strlen (pattern) + 1;
 
-      newp = xmalloc (p - filename + 1 + patlen);
+      newp = malloc (p - filename + 1 + patlen);
       memcpy (newp, filename, p - filename + 1);
       memcpy (newp + (p - filename + 1), pattern, patlen);
       pattern = newp;
@@ -912,7 +912,7 @@ gld${EMULATION_NAME}_parse_ld_so_conf
     return FALSE;
 
   linelen = 256;
-  line = xmalloc (linelen);
+  line = malloc (linelen);
   do
     {
       char *p = line, *q;
@@ -922,7 +922,7 @@ gld${EMULATION_NAME}_parse_ld_so_conf
 	     && strlen (q) == linelen - (p - line) - 1
 	     && line[linelen - 2] != '\n')
 	{
-	  line = xrealloc (line, 2 * linelen);
+	  line = realloc (line, 2 * linelen);
 	  p = line + linelen - 1;
 	  linelen += linelen;
 	}
@@ -987,7 +987,7 @@ gld${EMULATION_NAME}_parse_ld_so_conf
 	  if (info->path == NULL)
 	    {
 	      info->alloc = p - dir + 1 + 256;
-	      info->path = xmalloc (info->alloc);
+	      info->path = malloc (info->alloc);
 	      info->len = 0;
 	    }
 	  else
@@ -995,7 +995,7 @@ gld${EMULATION_NAME}_parse_ld_so_conf
 	      if (info->len + 1 + (p - dir) >= info->alloc)
 		{
 		  info->alloc += p - dir + 256;
-		  info->path = xrealloc (info->path, info->alloc);
+		  info->path = realloc (info->path, info->alloc);
 		}
 	      info->path[info->len++] = config.rpath_separator;
 	    }
@@ -1157,7 +1157,7 @@ write_build_id (bfd *abfd)
   if (i_shdr->contents == NULL)
     {
       if (asec->contents == NULL)
-	asec->contents = (unsigned char *) xmalloc (asec->size);
+	asec->contents = (unsigned char *) malloc (asec->size);
       contents = asec->contents;
     }
   else
@@ -1526,7 +1526,7 @@ fragment <<EOF
 
 	      if (search->cmdline)
 		continue;
-	      filename = (char *) xmalloc (strlen (search->name) + len + 2);
+	      filename = (char *) malloc (strlen (search->name) + len + 2);
 	      sprintf (filename, "%s/%s", search->name, l->name);
 	      nn.name = filename;
 	      if (gld${EMULATION_NAME}_try_needed (&nn, force))
@@ -1671,7 +1671,7 @@ gld${EMULATION_NAME}_append_to_separated_string (char **to, char *op_arg)
 
       if (cp == NULL)
 	{
-	  buf = xmalloc (to_len + op_arg_len + 2);
+	  buf = malloc (to_len + op_arg_len + 2);
 	  sprintf (buf, "%s%c%s", *to,
 		   config.rpath_separator, op_arg);
 	  free (*to);
@@ -1818,7 +1818,7 @@ ${ELF_INTERPRETER_SET_DEFAULT}
 	  continue;
 
 	sz = s->size;
-	msg = (char *) xmalloc ((size_t) (sz + 1));
+	msg = (char *) malloc ((size_t) (sz + 1));
 	if (! bfd_get_section_contents (is->the_bfd, s,	msg,
 					(file_ptr) 0, sz))
 	  einfo (_("%F%P: %pB: can't read contents of section .gnu.warning: %E\n"),
@@ -1887,7 +1887,7 @@ gld${EMULATION_NAME}_open_dynamic_archive
   if (entry->flags.full_name_provided)
     {
       len += sizeof "/";
-      string = (char *) xmalloc (len);
+      string = (char *) malloc (len);
       sprintf (string, "%s/%s", search->name, filename);
     }
   else
@@ -1900,7 +1900,7 @@ gld${EMULATION_NAME}_open_dynamic_archive
 	      ? strlen (EXTRA_SHLIB_EXTENSION) - 3
 	      : 0);
 #endif
-      string = (char *) xmalloc (len + xlen);
+      string = (char *) malloc (len + xlen);
       sprintf (string, "%s/lib%s%s.so", search->name, filename, arch);
 #ifdef EXTRA_SHLIB_EXTENSION
       /* Try the .so extension first.  If that fails build a new filename
@@ -2624,10 +2624,10 @@ fragment <<EOF
     {NULL, no_argument, NULL, 0}
   };
 
-  *shortopts = (char *) xrealloc (*shortopts, ns + sizeof (xtra_short));
+  *shortopts = (char *) realloc (*shortopts, ns + sizeof (xtra_short));
   memcpy (*shortopts + ns, &xtra_short, sizeof (xtra_short));
   *longopts = (struct option *)
-    xrealloc (*longopts, nl * sizeof (struct option) + sizeof (xtra_long));
+    realloc (*longopts, nl * sizeof (struct option) + sizeof (xtra_long));
   memcpy (*longopts + nl, &xtra_long, sizeof (xtra_long));
 }
 

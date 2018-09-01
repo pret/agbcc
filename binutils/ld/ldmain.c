@@ -203,7 +203,6 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   program_name = argv[0];
-  xmalloc_set_program_name (program_name);
 
   START_PROGRESS (program_name, 0);
 
@@ -363,7 +362,7 @@ main (int argc, char **argv)
 	{
 	  static const int ld_bufsz = 8193;
 	  size_t n;
-	  char *buf = (char *) xmalloc (ld_bufsz);
+	  char *buf = (char *) malloc (ld_bufsz);
 
 	  rewind (saved_script_handle);
 	  while ((n = fread (buf, 1, ld_bufsz - 1, saved_script_handle)) > 0)
@@ -504,9 +503,9 @@ main (int argc, char **argv)
 	      FILE *src;
 	      FILE *dst;
 	      const int bsize = 4096;
-	      char *buf = (char *) xmalloc (bsize);
+	      char *buf = (char *) malloc (bsize);
 	      int l;
-	      char *dst_name = (char *) xmalloc (len + 5);
+	      char *dst_name = (char *) malloc (len + 5);
 
 	      strcpy (dst_name, output_filename);
 	      strcat (dst_name, ".exe");
@@ -671,7 +670,7 @@ add_ysym (const char *name)
   if (link_info.notice_hash == NULL)
     {
       link_info.notice_hash
-	= (struct bfd_hash_table *) xmalloc (sizeof (struct bfd_hash_table));
+	= (struct bfd_hash_table *) malloc (sizeof (struct bfd_hash_table));
       if (!bfd_hash_table_init_n (link_info.notice_hash,
 				  bfd_hash_newfunc,
 				  sizeof (struct bfd_hash_entry),
@@ -688,7 +687,7 @@ add_ignoresym (struct bfd_link_info *info, const char *name)
 {
   if (info->ignore_hash == NULL)
     {
-      info->ignore_hash = xmalloc (sizeof (struct bfd_hash_table));
+      info->ignore_hash = malloc (sizeof (struct bfd_hash_table));
       if (!bfd_hash_table_init_n (info->ignore_hash,
 				  bfd_hash_newfunc,
 				  sizeof (struct bfd_hash_entry),
@@ -708,7 +707,7 @@ add_wrap (const char *name)
   if (link_info.wrap_hash == NULL)
     {
       link_info.wrap_hash
-	= (struct bfd_hash_table *) xmalloc (sizeof (struct bfd_hash_table));
+	= (struct bfd_hash_table *) malloc (sizeof (struct bfd_hash_table));
       if (!bfd_hash_table_init_n (link_info.wrap_hash,
 				  bfd_hash_newfunc,
 				  sizeof (struct bfd_hash_entry),
@@ -742,13 +741,13 @@ add_keepsyms_file (const char *filename)
     }
 
   link_info.keep_hash = (struct bfd_hash_table *)
-      xmalloc (sizeof (struct bfd_hash_table));
+      malloc (sizeof (struct bfd_hash_table));
   if (!bfd_hash_table_init (link_info.keep_hash, bfd_hash_newfunc,
 			    sizeof (struct bfd_hash_entry)))
     einfo (_("%F%P: bfd_hash_table_init failed: %E\n"));
 
   bufsize = 100;
-  buf = (char *) xmalloc (bufsize);
+  buf = (char *) malloc (bufsize);
 
   c = getc (file);
   while (c != EOF)
@@ -767,7 +766,7 @@ add_keepsyms_file (const char *filename)
 	      if (len >= bufsize)
 		{
 		  bufsize *= 2;
-		  buf = (char *) xrealloc (buf, bufsize);
+		  buf = (char *) realloc (buf, bufsize);
 		}
 	      c = getc (file);
 	    }
@@ -803,7 +802,7 @@ add_archive_element (struct bfd_link_info *info,
   lang_input_statement_type orig_input;
 
   input = (lang_input_statement_type *)
-      xcalloc (1, sizeof (lang_input_statement_type));
+      calloc (1, sizeof (lang_input_statement_type));
   input->header.type = lang_input_statement_enum;
   input->filename = abfd->filename;
   input->local_sym_name = abfd->filename;
@@ -1274,7 +1273,7 @@ warning_find_reloc (bfd *abfd, asection *sec, void *iarg)
   if (relsize == 0)
     return;
 
-  relpp = (arelent **) xmalloc (relsize);
+  relpp = (arelent **) malloc (relsize);
   relcount = bfd_canonicalize_reloc (abfd, sec, relpp, info->asymbols);
   if (relcount < 0)
     einfo (_("%F%P: %pB: could not read relocs: %E\n"), abfd);

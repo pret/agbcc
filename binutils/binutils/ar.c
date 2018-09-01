@@ -382,7 +382,7 @@ normalize (const char *file, bfd *abfd)
       char *s;
 
       /* Space leak.  */
-      s = (char *) xmalloc (abfd->xvec->ar_max_namelen + 1);
+      s = (char *) malloc (abfd->xvec->ar_max_namelen + 1);
       memcpy (s, filename, abfd->xvec->ar_max_namelen);
       s[abfd->xvec->ar_max_namelen] = '\0';
       filename = s;
@@ -435,7 +435,7 @@ decode_options (int argc, char **argv)
       /* Allocate a new argument array, and copy program name in it.  */
 
       new_argc = argc - 1 + strlen (argv[1]);
-      new_argv = xmalloc ((new_argc + 1) * sizeof (*argv));
+      new_argv = malloc ((new_argc + 1) * sizeof (*argv));
       in = argv;
       out = new_argv;
       *out++ = *in++;
@@ -672,7 +672,6 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   program_name = argv[0];
-  xmalloc_set_program_name (program_name);
   bfd_set_error_program_name (program_name);
 
   expandargv (&argc, &argv);
@@ -971,7 +970,7 @@ print_contents (bfd *abfd)
 {
   bfd_size_type ncopied = 0;
   bfd_size_type size;
-  char *cbuf = (char *) xmalloc (BUFSIZE);
+  char *cbuf = (char *) malloc (BUFSIZE);
   struct stat buf;
 
   if (bfd_stat_arch_elt (abfd, &buf) != 0)
@@ -1022,7 +1021,7 @@ void
 extract_file (bfd *abfd)
 {
   FILE *ostream;
-  char *cbuf = (char *) xmalloc (BUFSIZE);
+  char *cbuf = (char *) malloc (BUFSIZE);
   bfd_size_type nread, tocopy;
   bfd_size_type ncopied = 0;
   bfd_size_type size;
@@ -1126,7 +1125,7 @@ write_archive (bfd *iarch)
   char *old_name, *new_name;
   bfd *contents_head = iarch->archive_next;
 
-  old_name = (char *) xmalloc (strlen (bfd_get_filename (iarch)) + 1);
+  old_name = (char *) malloc (strlen (bfd_get_filename (iarch)) + 1);
   strcpy (old_name, bfd_get_filename (iarch));
   new_name = make_tempname (old_name);
 

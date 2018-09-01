@@ -892,12 +892,6 @@ now_it_compatible (int cond)
   return (cond & ~1) == (now_it.cc & ~1);
 }
 
-static inline int
-conditional_insn (void)
-{
-  return inst.cond != COND_ALWAYS;
-}
-
 static int in_it_block (void);
 
 static int handle_it_state (void);
@@ -2907,7 +2901,7 @@ s_thumb_set (int equiv)
       if (listing & LISTING_SYMBOLS)
 	{
 	  extern struct list_info_struct * listing_tail;
-	  fragS * dummy_frag = (fragS * ) xmalloc (sizeof (fragS));
+	  fragS * dummy_frag = (fragS * ) malloc (sizeof (fragS));
 
 	  memset (dummy_frag, 0, sizeof (fragS));
 	  dummy_frag->fr_type = rs_fill;
@@ -14893,7 +14887,7 @@ neon_exchange_operands (void)
 {
   if (inst.operands[1].present)
     {
-      void *scratch = xmalloc (sizeof (inst.operands[0]));
+      void *scratch = malloc (sizeof (inst.operands[0]));
 
       /* Swap operands[1] and operands[2].  */
       memcpy (scratch, &inst.operands[1], sizeof (inst.operands[0]));

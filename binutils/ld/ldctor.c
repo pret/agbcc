@@ -68,7 +68,7 @@ ldctor_add_set_entry (struct bfd_link_hash_entry *h,
 
   if (p == NULL)
     {
-      p = (struct set_info *) xmalloc (sizeof (struct set_info));
+      p = (struct set_info *) malloc (sizeof (struct set_info));
       p->next = sets;
       sets = p;
       p->h = h;
@@ -104,7 +104,7 @@ ldctor_add_set_entry (struct bfd_link_hash_entry *h,
 	}
     }
 
-  e = (struct set_element *) xmalloc (sizeof (struct set_element));
+  e = (struct set_element *) malloc (sizeof (struct set_element));
   e->next = NULL;
   e->name = name;
   e->section = section;
@@ -223,7 +223,7 @@ ldctor_build_sets (void)
 	  for (e = p->elements; e != NULL; e = e->next)
 	    ++c;
 
-	  array = (struct set_element **) xmalloc (c * sizeof *array);
+	  array = (struct set_element **) malloc (c * sizeof *array);
 
 	  i = 0;
 	  for (e = p->elements; e != NULL; e = e->next)

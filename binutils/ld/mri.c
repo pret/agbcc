@@ -70,7 +70,7 @@ lookup (const char *name, struct section_name_struct **list)
     }
 
   *ptr = (struct section_name_struct *)
-      xmalloc (sizeof (struct section_name_struct));
+      malloc (sizeof (struct section_name_struct));
   return ptr;
 }
 
@@ -211,7 +211,7 @@ mri_draw_tree (void)
 					       p->ok_to_load ? normal_section : noload_section,
 					       align, subalign, NULL, 0, 0);
 	  base = 0;
-	  tmp = (struct wildcard_list *) xmalloc (sizeof *tmp);
+	  tmp = (struct wildcard_list *) malloc (sizeof *tmp);
 	  tmp->next = NULL;
 	  tmp->spec.name = p->name;
 	  tmp->spec.exclude_name_list = NULL;
@@ -223,7 +223,7 @@ mri_draw_tree (void)
 	  for (aptr = alias; aptr; aptr = aptr->next)
 	    if (strcmp (aptr->alias, p->name) == 0)
 	      {
-		tmp = (struct wildcard_list *) xmalloc (sizeof *tmp);
+		tmp = (struct wildcard_list *) malloc (sizeof *tmp);
 		tmp->next = NULL;
 		tmp->spec.name = aptr->name;
 		tmp->spec.exclude_name_list = NULL;

@@ -1764,7 +1764,7 @@ yyreduce:
   case 79:
 #line 187 "defparse.y" /* yacc.c:1646  */
     {
-	    char *name = xmalloc (strlen ((yyvsp[0].id_const)) + 2);
+	    char *name = malloc (strlen ((yyvsp[0].id_const)) + 2);
 	    sprintf (name, ".%s", (yyvsp[0].id_const));
 	    (yyval.id) = name;
 	  }
@@ -1774,7 +1774,7 @@ yyreduce:
   case 80:
 #line 193 "defparse.y" /* yacc.c:1646  */
     {
-	    char *name = xmalloc (strlen ((yyvsp[0].id)) + 2);
+	    char *name = malloc (strlen ((yyvsp[0].id)) + 2);
 	    sprintf (name, ".%s", (yyvsp[0].id));
 	    (yyval.id) = name;
 	  }
@@ -1784,7 +1784,7 @@ yyreduce:
   case 81:
 #line 199 "defparse.y" /* yacc.c:1646  */
     {
-	    char *name = xmalloc (strlen ((yyvsp[-2].id_const)) + 1 + strlen ((yyvsp[0].id)) + 1);
+	    char *name = malloc (strlen ((yyvsp[-2].id_const)) + 1 + strlen ((yyvsp[0].id)) + 1);
 	    sprintf (name, "%s.%s", (yyvsp[-2].id_const), (yyvsp[0].id));
 	    (yyval.id) = name;
 	  }
@@ -1794,7 +1794,7 @@ yyreduce:
   case 82:
 #line 205 "defparse.y" /* yacc.c:1646  */
     {
-	    char *name = xmalloc (strlen ((yyvsp[-2].id)) + 1 + strlen ((yyvsp[0].id)) + 1);
+	    char *name = malloc (strlen ((yyvsp[-2].id)) + 1 + strlen ((yyvsp[0].id)) + 1);
 	    sprintf (name, "%s.%s", (yyvsp[-2].id), (yyvsp[0].id));
 	    (yyval.id) = name;
 	  }

@@ -554,9 +554,9 @@ parse_args (unsigned argc, char **argv)
   int last_optind;
   enum report_method how_to_report_unresolved_symbols = RM_GENERATE_ERROR;
 
-  shortopts = (char *) xmalloc (OPTION_COUNT * 3 + 2);
+  shortopts = (char *) malloc (OPTION_COUNT * 3 + 2);
   longopts = (struct option *)
-      xmalloc (sizeof (*longopts) * (OPTION_COUNT + 1));
+      malloc (sizeof (*longopts) * (OPTION_COUNT + 1));
   really_longopts = (struct option *)
       malloc (sizeof (*really_longopts) * (OPTION_COUNT + 1));
 
@@ -643,7 +643,7 @@ parse_args (unsigned argc, char **argv)
 	{
 	  char *n;
 
-	  n = (char *) xmalloc (strlen (argv[i]) + 20);
+	  n = (char *) malloc (strlen (argv[i]) + 20);
 	  sprintf (n, "--library=%s", argv[i] + 2);
 	  argv[i] = n;
 	}
@@ -813,7 +813,7 @@ parse_args (unsigned argc, char **argv)
 	  if (command_line.auxiliary_filters == NULL)
 	    {
 	      command_line.auxiliary_filters = (char **)
-		xmalloc (2 * sizeof (char *));
+		malloc (2 * sizeof (char *));
 	      command_line.auxiliary_filters[0] = optarg;
 	      command_line.auxiliary_filters[1] = NULL;
 	    }
@@ -826,7 +826,7 @@ parse_args (unsigned argc, char **argv)
 	      for (p = command_line.auxiliary_filters; *p != NULL; p++)
 		++c;
 	      command_line.auxiliary_filters = (char **)
-		xrealloc (command_line.auxiliary_filters,
+		realloc (command_line.auxiliary_filters,
 			  (c + 2) * sizeof (char *));
 	      command_line.auxiliary_filters[c] = optarg;
 	      command_line.auxiliary_filters[c + 1] = NULL;
@@ -1096,7 +1096,7 @@ parse_args (unsigned argc, char **argv)
 
 	      if (cp == NULL)
 		{
-		  buf = (char *) xmalloc (rpath_len + optarg_len + 2);
+		  buf = (char *) malloc (rpath_len + optarg_len + 2);
 		  sprintf (buf, "%s%c%s", command_line.rpath,
 			   config.rpath_separator, optarg);
 		  free (command_line.rpath);
@@ -1111,7 +1111,7 @@ parse_args (unsigned argc, char **argv)
 	    {
 	      char *buf;
 
-	      buf = (char *) xmalloc (strlen (command_line.rpath_link)
+	      buf = (char *) malloc (strlen (command_line.rpath_link)
 				      + strlen (optarg)
 				      + 2);
 	      sprintf (buf, "%s%c%s", command_line.rpath_link,
@@ -1244,7 +1244,7 @@ parse_args (unsigned argc, char **argv)
 	    /* We must copy the section name as set_section_start
 	       doesn't do it for us.  */
 	    len = optarg2 - optarg;
-	    sec_name = (char *) xmalloc (len);
+	    sec_name = (char *) malloc (len);
 	    memcpy (sec_name, optarg, len - 1);
 	    sec_name[len - 1] = 0;
 

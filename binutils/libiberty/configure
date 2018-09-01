@@ -582,7 +582,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 PACKAGE_URL=
 
-ac_unique_file="xmalloc.c"
+ac_unique_file="vprintf-support.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -625,7 +625,6 @@ pexecute
 target_header_dir
 CHECK
 LIBOBJS
-NOASANFLAG
 PICFLAG
 INSTALL_DATA
 INSTALL_SCRIPT
@@ -655,8 +654,6 @@ build_cpu
 build
 HAVE_PERL
 PERL
-BUILD_INFO
-MAKEINFO
 NOTMAINT
 MAINT
 libiberty_topdir
@@ -703,11 +700,6 @@ ac_user_opts='
 enable_option_checking
 with_target_subdir
 with_build_subdir
-with_cross_host
-with_newlib
-enable_maintainer_mode
-enable_multilib
-enable_install_libiberty
 enable_largefile
 '
       ac_precious_vars='build_alias
@@ -1330,11 +1322,6 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-maintainer-mode
-                          enable make rules and dependencies not useful
-                          (and sometimes confusing) to the casual installer
-  --enable-multilib       build many library versions (default)
-  --enable-install-libiberty       Install headers and library for end users
   --disable-largefile     omit support for large files
 
 Optional Packages:
@@ -1342,8 +1329,6 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-target-subdir=SUBDIR      Configuring in a subdirectory for target
   --with-build-subdir=SUBDIR       Configuring in a subdirectory for build
-  --with-cross-host=HOST           Configuring with a cross compiler
-  --with-newlib                    Configuring with newlib
 
 Some influential environment variables:
   CC          C compiler command
@@ -2478,18 +2463,6 @@ if test "${with_build_subdir+set}" = set; then :
 fi
 
 
-# Check whether --with-cross-host was given.
-if test "${with_cross_host+set}" = set; then :
-  withval=$with_cross_host;
-fi
-
-
-# Check whether --with-newlib was given.
-if test "${with_newlib+set}" = set; then :
-  withval=$with_newlib;
-fi
-
-
 if test "${srcdir}" = "."; then
   if test -n "${with_build_subdir}"; then
     libiberty_topdir="${srcdir}/../.."
@@ -2537,96 +2510,8 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
-$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
-    # Check whether --enable-maintainer-mode was given.
-if test "${enable_maintainer_mode+set}" = set; then :
-  enableval=$enable_maintainer_mode; maintainer_mode=$enableval
-else
-  maintainer_mode=no
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $maintainer_mode" >&5
-$as_echo "$maintainer_mode" >&6; }
-
-if test "$maintainer_mode" = "yes"; then
-  MAINT=''
-  NOTMAINT='#'
-else
-  MAINT='#'
-  NOTMAINT=''
-fi
-
-# Do we have a single-tree copy of texinfo?  Even if we do, we can't
-# rely on it - libiberty is built before texinfo.
-# Extract the first word of "makeinfo", so it can be a program name with args.
-set dummy makeinfo; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_MAKEINFO+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$MAKEINFO"; then
-  ac_cv_prog_MAKEINFO="$MAKEINFO" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_MAKEINFO="makeinfo"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi
-fi
-MAKEINFO=$ac_cv_prog_MAKEINFO
-if test -n "$MAKEINFO"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKEINFO" >&5
-$as_echo "$MAKEINFO" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test "x$MAKEINFO" = "x"; then
-    MAKEINFO="@echo makeinfo missing; true"
-    BUILD_INFO=
-else
-    BUILD_INFO=info
-    case "$MAKEINFO" in
-      */missing\ makeinfo*)
-	BUILD_INFO=
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
-*** Makeinfo is missing. Info documentation will not be built." >&5
-$as_echo "$as_me: WARNING:
-*** Makeinfo is missing. Info documentation will not be built." >&2;}
-        ;;
-      *)
-	case x"`$MAKEINFO --version | grep 'GNU texinfo'`" in
-	  x*\ [1-3].* )
-	    MAKEINFO="@echo $MAKEINFO is too old, 4.0 or newer required; true"
-	    BUILD_INFO=
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
-*** Makeinfo is too old. Info documentation will not be built." >&5
-$as_echo "$as_me: WARNING:
-*** Makeinfo is too old. Info documentation will not be built." >&2;}
-	  ;;
-	esac
-	;;
-    esac
-fi
-
-
+MAINT='#'
+NOTMAINT=''
 
 # Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
@@ -2929,56 +2814,6 @@ else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
 
-
-# Add --enable-multilib to configure.
-# Default to --enable-multilib
-# Check whether --enable-multilib was given.
-if test "${enable_multilib+set}" = set; then :
-  enableval=$enable_multilib; case "$enableval" in
-  yes) multilib=yes ;;
-  no)  multilib=no ;;
-  *)   as_fn_error $? "bad value $enableval for multilib option" "$LINENO" 5 ;;
- esac
-else
-  multilib=yes
-fi
-
-
-# Even if the default multilib is not a cross compilation,
-# it may be that some of the other multilibs are.
-if test $cross_compiling = no && test $multilib = yes \
-   && test "x${with_multisubdir}" != x ; then
-   cross_compiling=maybe
-fi
-
-# We may wish to install the target headers somewhere.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to install libiberty headers and static library" >&5
-$as_echo_n "checking whether to install libiberty headers and static library... " >&6; }
-
-# Check whether --enable-install-libiberty was given.
-if test "${enable_install_libiberty+set}" = set; then :
-  enableval=$enable_install_libiberty; enable_install_libiberty=$enableval
-else
-  enable_install_libiberty=no
-fi
-
-# Option parsed, now set things appropriately.
-case x"$enable_install_libiberty" in
-  xyes|x)
-    target_header_dir=libiberty
-    ;;
-  xno)
-    target_header_dir=
-    ;;
-  *)
-    # This could be sanity-checked in various ways...
-    target_header_dir="${enable_install_libiberty}"
-    ;;
-esac
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_install_libiberty" >&5
-$as_echo "$enable_install_libiberty" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: target_header_dir = $target_header_dir" >&5
-$as_echo "$as_me: target_header_dir = $target_header_dir" >&6;}
 
 
 ac_ext=c
@@ -4575,131 +4410,6 @@ else
   OUTPUT_OPTION='-o $@'
 fi
 
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
-$as_echo_n "checking for an ANSI C-conforming const... " >&6; }
-if ${ac_cv_c_const+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-#ifndef __cplusplus
-  /* Ultrix mips cc rejects this sort of thing.  */
-  typedef int charset[2];
-  const charset cs = { 0, 0 };
-  /* SunOS 4.1.1 cc rejects this.  */
-  char const *const *pcpcc;
-  char **ppc;
-  /* NEC SVR4.0.2 mips cc rejects this.  */
-  struct point {int x, y;};
-  static struct point const zero = {0,0};
-  /* AIX XL C 1.02.0.0 rejects this.
-     It does not let you subtract one const X* pointer from another in
-     an arm of an if-expression whose if-part is not a constant
-     expression */
-  const char *g = "string";
-  pcpcc = &g + (g ? g-g : 0);
-  /* HPUX 7.0 cc rejects these. */
-  ++pcpcc;
-  ppc = (char**) pcpcc;
-  pcpcc = (char const *const *) ppc;
-  { /* SCO 3.2v4 cc rejects this sort of thing.  */
-    char tx;
-    char *t = &tx;
-    char const *s = 0 ? (char *) 0 : (char const *) 0;
-
-    *t++ = 0;
-    if (s) return 0;
-  }
-  { /* Someone thinks the Sun supposedly-ANSI compiler will reject this.  */
-    int x[] = {25, 17};
-    const int *foo = &x[0];
-    ++foo;
-  }
-  { /* Sun SC1.0 ANSI compiler rejects this -- but not the above. */
-    typedef const int *iptr;
-    iptr p = 0;
-    ++p;
-  }
-  { /* AIX XL C 1.02.0.0 rejects this sort of thing, saying
-       "k.c", line 2.27: 1506-025 (S) Operand must be a modifiable lvalue. */
-    struct s { int j; const int *ap[3]; } bx;
-    struct s *b = &bx; b->j = 5;
-  }
-  { /* ULTRIX-32 V3.1 (Rev 9) vcc rejects this */
-    const int foo = 10;
-    if (!foo) return 0;
-  }
-  return !cs[0] && !zero.x;
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_c_const=yes
-else
-  ac_cv_c_const=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_const" >&5
-$as_echo "$ac_cv_c_const" >&6; }
-if test $ac_cv_c_const = no; then
-
-$as_echo "#define const /**/" >>confdefs.h
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for inline" >&5
-$as_echo_n "checking for inline... " >&6; }
-if ${ac_cv_c_inline+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_cv_c_inline=no
-for ac_kw in inline __inline__ __inline; do
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef __cplusplus
-typedef int foo_t;
-static $ac_kw foo_t static_foo () {return 0; }
-$ac_kw foo_t foo () {return 0; }
-#endif
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_c_inline=$ac_kw
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-  test "$ac_cv_c_inline" != no && break
-done
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_inline" >&5
-$as_echo "$ac_cv_c_inline" >&6; }
-
-case $ac_cv_c_inline in
-  inline | yes) ;;
-  *)
-    case $ac_cv_c_inline in
-      no) ac_val=;;
-      *) ac_val=$ac_cv_c_inline;;
-    esac
-    cat >>confdefs.h <<_ACEOF
-#ifndef __cplusplus
-#define inline $ac_val
-#endif
-_ACEOF
-    ;;
-esac
-
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether byte ordering is bigendian" >&5
 $as_echo_n "checking whether byte ordering is bigendian... " >&6; }
 if ${ac_cv_c_bigendian+:} false; then :
@@ -5032,9 +4742,6 @@ fi
 
 frag=
 case "${host}" in
-  rs6000-ibm-aix3.1 | rs6000-ibm-aix)
-                        frag=mh-aix ;;
-  *-*-cxux7*)		frag=mh-cxux7 ;;
   *-*-freebsd2.1.*)	frag=mh-fbsd21 ;;
   *-*-freebsd2.2.[012])	frag=mh-fbsd21 ;;
   i370-*-opened*)       frag=mh-openedition ;;
@@ -5126,29 +4833,11 @@ case "${CFLAGS}" in
 	;;
 esac
 
-
-# If they didn't specify --enable-shared, don't generate shared libs.
-case "${enable_shared}" in
-  yes) shared=yes ;;
-  no) shared=no ;;
-  "") shared=no ;;
-  *) shared=yes ;;
-esac
-
-# ...unless --enable-host-shared was passed from top-level config:
-if [ "${enable_host_shared}" = "yes" ]; then
-  shared=yes
-fi
+shared=no
 
 if [ "${shared}" != "yes" ]; then
   PICFLAG=
 fi
-
-
-NOASANFLAG=
-case " ${CFLAGS} " in
-  *\ -fsanitize=address\ *) NOASANFLAG=-fno-sanitize=address ;;
-esac
 
 
 echo "# Warning: this fragment is automatically generated" > temp-frag
@@ -5159,12 +4848,7 @@ if [ -n "${frag}" ] && [ -f "${frag}" ]; then
   cat ${frag} >> temp-frag
 fi
 
-# record if we want to build shared libs.
-if [ "${shared}" = "yes" ]; then
-  echo enable_shared = yes >> temp-frag
-else
-  echo enable_shared = no >> temp-frag
-fi
+echo enable_shared = no >> temp-frag
 
 frag=xhost-mkfrag
 ${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/move-if-change temp-frag xhost-mkfrag
@@ -5403,49 +5087,6 @@ _ACEOF
 
 
 
-# Check for presense of long long
-ac_fn_c_check_type "$LINENO" "long long" "ac_cv_type_long_long" "$ac_includes_default"
-if test "x$ac_cv_type_long_long" = xyes; then :
-
-$as_echo "#define HAVE_LONG_LONG 1" >>confdefs.h
-
-    # The cast to long int works around a bug in the HP C Compiler
-# version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
-# declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
-# This bug is HP SR number 8606223364.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking size of long long" >&5
-$as_echo_n "checking size of long long... " >&6; }
-if ${ac_cv_sizeof_long_long+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if ac_fn_c_compute_int "$LINENO" "(long int) (sizeof (long long))" "ac_cv_sizeof_long_long"        "
-"; then :
-
-else
-  if test "$ac_cv_type_long_long" = yes; then
-     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error 77 "cannot compute sizeof (long long)
-See \`config.log' for more details" "$LINENO" 5; }
-   else
-     ac_cv_sizeof_long_long=0
-   fi
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sizeof_long_long" >&5
-$as_echo "$ac_cv_sizeof_long_long" >&6; }
-
-
-
-cat >>confdefs.h <<_ACEOF
-#define SIZEOF_LONG_LONG $ac_cv_sizeof_long_long
-_ACEOF
-
-
-fi
-
-
 # Look for a 64-bit type.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a 64-bit type" >&5
 $as_echo_n "checking for a 64-bit type... " >&6; }
@@ -5657,18 +5298,9 @@ funcs="$funcs stpcpy"
 funcs="$funcs stpncpy"
 funcs="$funcs strdup"
 funcs="$funcs strndup"
-funcs="$funcs strtod"
-funcs="$funcs strtol"
-funcs="$funcs strtoul"
-funcs="$funcs strtoll"
-funcs="$funcs strtoull"
 funcs="$funcs strverscmp"
 funcs="$funcs tmpnam"
 funcs="$funcs vasprintf"
-funcs="$funcs vfprintf"
-funcs="$funcs vprintf"
-funcs="$funcs vsnprintf"
-funcs="$funcs vsprintf"
 funcs="$funcs waitpid"
 funcs="$funcs setproctitle"
 
@@ -5697,10 +5329,10 @@ if test "x" = "y"; then
     random realpath rename rindex \
     setenv setproctitle setrlimit sigsetmask spawnve spawnvpe \
      stpcpy stpncpy strdup \
-       strndup strsignal strtod \
-     strtol strtoul strtoll strtoull strverscmp sysconf sysctl sysmp \
+       strndup strsignal \
+    strverscmp sysconf sysctl sysmp \
     table times tmpnam \
-    vasprintf vfprintf vprintf vsprintf \
+    vasprintf  \
     wait3 wait4 waitpid
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -5754,55 +5386,15 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_VASPRINTF $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "vsnprintf" "ac_cv_have_decl_vsnprintf" "$ac_includes_default"
-if test "x$ac_cv_have_decl_vsnprintf" = xyes; then :
+ac_fn_c_check_decl "$LINENO" "ntf" "ac_cv_have_decl_ntf" "$ac_includes_default"
+if test "x$ac_cv_have_decl_ntf" = xyes; then :
   ac_have_decl=1
 else
   ac_have_decl=0
 fi
 
 cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_VSNPRINTF $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtol" "ac_cv_have_decl_strtol" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtol" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoul" "ac_cv_have_decl_strtoul" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoul" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOUL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoll" "ac_cv_have_decl_strtoll" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoll" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOLL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoull" "ac_cv_have_decl_strtoull" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoull" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOULL $ac_have_decl
+#define HAVE_DECL_NTF $ac_have_decl
 _ACEOF
 
 
@@ -6045,12 +5637,6 @@ _ACEOF
 esac
 
     case " $LIBOBJS " in
-  *" vsnprintf.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS vsnprintf.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
   *" asprintf.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS asprintf.$ac_objext"
  ;;
@@ -6061,9 +5647,8 @@ esac
              getcwd getpagesize getrusage gettimeofday \
              index insque psignal \
              putenv random rename rindex setenv stpcpy \
-             strdup strtod \
-             strtol strtoul sysconf times tmpnam vfprintf vprintf \
-             vsprintf waitpid
+             strdup  sysconf times tmpnamf \
+             waitpid
     do
       n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
       cat >>confdefs.h <<_ACEOF
@@ -6520,25 +6105,7 @@ fi
 esac
 
   fi
-  # We only need _doprnt if we might use it to implement v*printf.
-  if test $ac_cv_func_vprintf != yes \
-     || test $ac_cv_func_vfprintf != yes \
-     || test $ac_cv_func_vsprintf != yes; then
-    ac_fn_c_check_func "$LINENO" "_doprnt" "ac_cv_func__doprnt"
-if test "x$ac_cv_func__doprnt" = xyes; then :
-  $as_echo "#define HAVE__DOPRNT 1" >>confdefs.h
 
-else
-  case " $LIBOBJS " in
-  *" _doprnt.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS _doprnt.$ac_objext"
- ;;
-esac
-
-fi
-
-
-  else
     for ac_func in _doprnt
 do :
   ac_fn_c_check_func "$LINENO" "_doprnt" "ac_cv_func__doprnt"
@@ -6550,7 +6117,6 @@ _ACEOF
 fi
 done
 
-  fi
 
   for v in $vars; do
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $v" >&5
@@ -6675,28 +6241,8 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_VASPRINTF $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "vsnprintf" "ac_cv_have_decl_vsnprintf" "$ac_includes_default"
-if test "x$ac_cv_have_decl_vsnprintf" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
 
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_VSNPRINTF $ac_have_decl
-_ACEOF
-
-  ac_fn_c_check_decl "$LINENO" "getenv" "ac_cv_have_decl_getenv" "$ac_includes_default"
-if test "x$ac_cv_have_decl_getenv" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_GETENV $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "getopt" "ac_cv_have_decl_getopt" "$ac_includes_default"
+  ac_fn_c_check_decl "$LINENO" "getopt" "ac_cv_have_decl_getopt" "$ac_includes_default"
 if test "x$ac_cv_have_decl_getopt" = xyes; then :
   ac_have_decl=1
 else
@@ -6705,47 +6251,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_GETOPT $ac_have_decl
-_ACEOF
-
-  ac_fn_c_check_decl "$LINENO" "strtol" "ac_cv_have_decl_strtol" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtol" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoul" "ac_cv_have_decl_strtoul" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoul" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOUL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoll" "ac_cv_have_decl_strtoll" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoll" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOLL $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "strtoull" "ac_cv_have_decl_strtoull" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strtoull" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRTOULL $ac_have_decl
 _ACEOF
 
   ac_fn_c_check_decl "$LINENO" "strverscmp" "ac_cv_have_decl_strverscmp" "$ac_includes_default"
@@ -6817,13 +6322,7 @@ case "${host}" in
 esac
 
 
-# Install a library built with a cross compiler in $(tooldir) rather
-# than $(libdir).
-if test -z "${with_cross_host}"; then
   INSTALL_DEST=libdir
-else
-  INSTALL_DEST=tooldir
-fi
 
 
 

@@ -1627,7 +1627,7 @@ write_contents (bfd *abfd ATTRIBUTE_UNUSED,
 	  gas_assert (count >= 0 && fill_size == 1);
 	  if (count > 0)
 	    {
-	      char *buf = xmalloc (count);
+	      char *buf = malloc (count);
 	      md_generate_nops (f, buf, count, *fill_literal);
 	      x = bfd_set_section_contents
 		(stdoutput, sec, buf, (file_ptr) offset,

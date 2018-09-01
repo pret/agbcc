@@ -122,10 +122,7 @@ flags_to_pass = { flag= AS_FOR_TARGET ; };
 flags_to_pass = { flag= CC_FOR_TARGET ; };
 flags_to_pass = { flag= CFLAGS_FOR_TARGET ; };
 flags_to_pass = { flag= CPPFLAGS_FOR_TARGET ; };
-flags_to_pass = { flag= DLLTOOL_FOR_TARGET ; };
 flags_to_pass = { flag= FLAGS_FOR_TARGET ; };
-flags_to_pass = { flag= GOC_FOR_TARGET ; };
-flags_to_pass = { flag= GOCFLAGS_FOR_TARGET ; };
 flags_to_pass = { flag= LD_FOR_TARGET ; };
 flags_to_pass = { flag= LIPO_FOR_TARGET ; };
 flags_to_pass = { flag= LDFLAGS_FOR_TARGET ; };
@@ -136,8 +133,6 @@ flags_to_pass = { flag= OBJCOPY_FOR_TARGET ; };
 flags_to_pass = { flag= RANLIB_FOR_TARGET ; };
 flags_to_pass = { flag= READELF_FOR_TARGET ; };
 flags_to_pass = { flag= STRIP_FOR_TARGET ; };
-flags_to_pass = { flag= WINDRES_FOR_TARGET ; };
-flags_to_pass = { flag= WINDMC_FOR_TARGET ; };
 
 // Miscellaneous
 flags_to_pass = { flag= BUILD_CONFIG ; };

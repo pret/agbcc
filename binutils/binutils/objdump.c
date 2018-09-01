@@ -387,7 +387,7 @@ add_only (char * name)
     if (strcmp (only->name, name) == 0)
       return;
 
-  only = xmalloc (sizeof * only);
+  only = malloc (sizeof * only);
   only->name = name;
   only->seen = FALSE;
   only->next = only_list;
@@ -566,7 +566,7 @@ slurp_symtab (bfd *abfd)
       bfd_fatal (_("error message was"));
     }
   if (storage)
-    sy = (asymbol **) xmalloc (storage);
+    sy = (asymbol **) malloc (storage);
 
   symcount = bfd_canonicalize_symtab (abfd, sy);
   if (symcount < 0)
@@ -596,7 +596,7 @@ slurp_dynamic_symtab (bfd *abfd)
       bfd_fatal (bfd_get_filename (abfd));
     }
   if (storage)
-    sy = (asymbol **) xmalloc (storage);
+    sy = (asymbol **) malloc (storage);
 
   dynsymcount = bfd_canonicalize_dynamic_symtab (abfd, sy);
   if (dynsymcount < 0)
@@ -1311,7 +1311,7 @@ index_file (const char *map, size_t size, unsigned int *maxline)
 	  if (line_map_size < lineno + 1)
 	    line_map_size = lineno + 1;
 	  newsize = line_map_size * sizeof (char *);
-	  linemap = (const char **) xrealloc (linemap, newsize);
+	  linemap = (const char **) realloc (linemap, newsize);
 	}
 
       linemap[lineno++] = lstart;
@@ -1330,7 +1330,7 @@ try_print_file_open (const char *origname, const char *modname, struct stat *fst
 {
   struct print_file_list *p;
 
-  p = (struct print_file_list *) xmalloc (sizeof (struct print_file_list));
+  p = (struct print_file_list *) malloc (sizeof (struct print_file_list));
 
   p->map = slurp_file (modname, &p->mapsize, fst);
   if (p->map == NULL)
@@ -1463,7 +1463,7 @@ show_line (bfd *abfd, asection *section, bfd_vma addr_offset)
       char *path_up;
       const char *fname = filename;
 
-      path = xmalloc (prefix_length + PATH_MAX + 1);
+      path = malloc (prefix_length + PATH_MAX + 1);
 
       if (prefix_length)
 	memcpy (path, prefix, prefix_length);
@@ -1579,7 +1579,7 @@ show_line (bfd *abfd, asection *section, bfd_vma addr_offset)
     {
       if (prev_functionname != NULL)
 	free (prev_functionname);
-      prev_functionname = (char *) xmalloc (strlen (functionname) + 1);
+      prev_functionname = (char *) malloc (strlen (functionname) + 1);
       strcpy (prev_functionname, functionname);
     }
 
@@ -1621,7 +1621,7 @@ objdump_sprintf (SFILE *f, const char *format, ...)
 	break;
 
       f->alloc = (f->alloc + n) * 2;
-      f->buffer = (char *) xrealloc (f->buffer, f->alloc);
+      f->buffer = (char *) realloc (f->buffer, f->alloc);
     }
   f->pos += n;
 
@@ -1670,7 +1670,7 @@ disassemble_bytes (struct disassemble_info * inf,
   section = aux->sec;
 
   sfile.alloc = 120;
-  sfile.buffer = (char *) xmalloc (sfile.alloc);
+  sfile.buffer = (char *) malloc (sfile.alloc);
   sfile.pos = 0;
 
   if (insn_width)
@@ -2135,7 +2135,7 @@ disassemble_section (bfd *abfd, asection *section, void *inf)
 
 	  if (relsize > 0)
 	    {
-	      rel_ppstart = rel_pp = (arelent **) xmalloc (relsize);
+	      rel_ppstart = rel_pp = (arelent **) malloc (relsize);
 	      rel_count = bfd_canonicalize_reloc (abfd, section, rel_pp, syms);
 	      if (rel_count < 0)
 		bfd_fatal (bfd_get_filename (abfd));
@@ -2310,7 +2310,7 @@ disassemble_data (bfd *abfd)
   /* We make a copy of syms to sort.  We don't want to sort syms
      because that will screw up the relocs.  */
   sorted_symcount = symcount ? symcount : dynsymcount;
-  sorted_syms = (asymbol **) xmalloc ((sorted_symcount + synthcount)
+  sorted_syms = (asymbol **) malloc ((sorted_symcount + synthcount)
                                       * sizeof (asymbol *));
   memcpy (sorted_syms, symcount ? syms : dynsyms,
 	  sorted_symcount * sizeof (asymbol *));
@@ -2352,7 +2352,7 @@ disassemble_data (bfd *abfd)
     {
       struct bfd_target *xvec;
 
-      xvec = (struct bfd_target *) xmalloc (sizeof (struct bfd_target));
+      xvec = (struct bfd_target *) malloc (sizeof (struct bfd_target));
       memcpy (xvec, abfd->xvec, sizeof (struct bfd_target));
       xvec->byteorder = endian;
       abfd->xvec = xvec;
@@ -2400,7 +2400,7 @@ disassemble_data (bfd *abfd)
 
       if (relsize > 0)
 	{
-	  aux.dynrelbuf = (arelent **) xmalloc (relsize);
+	  aux.dynrelbuf = (arelent **) malloc (relsize);
 	  aux.dynrelcount = bfd_canonicalize_dynamic_reloc (abfd,
 							    aux.dynrelbuf,
 							    dynsyms);
@@ -2485,7 +2485,7 @@ load_specific_debug_section (enum dwarf_section_display_enum debug,
 	  unsigned long reloc_count;
 	  arelent **relocs;
 
-	  relocs = (arelent **) xmalloc (reloc_size);
+	  relocs = (arelent **) malloc (reloc_size);
 
 	  reloc_count = bfd_canonicalize_reloc (abfd, sec, relocs, NULL);
 	  if (reloc_count == 0)
@@ -3392,7 +3392,7 @@ dump_relocs_in_section (bfd *abfd,
       bfd_fatal (bfd_get_filename (abfd));
     }
 
-  relpp = (arelent **) xmalloc (relsize);
+  relpp = (arelent **) malloc (relsize);
   relcount = bfd_canonicalize_reloc (abfd, section, relpp, syms);
 
   if (relcount < 0)
@@ -3435,7 +3435,7 @@ dump_dynamic_relocs (bfd *abfd)
     printf (" (none)\n\n");
   else
     {
-      relpp = (arelent **) xmalloc (relsize);
+      relpp = (arelent **) malloc (relsize);
       relcount = bfd_canonicalize_dynamic_reloc (abfd, relpp, dynsyms);
 
       if (relcount < 0)
@@ -3461,7 +3461,7 @@ add_include_path (const char *path)
     return;
   include_path_count++;
   include_paths = (const char **)
-      xrealloc (include_paths, include_path_count * sizeof (*include_paths));
+      realloc (include_paths, include_path_count * sizeof (*include_paths));
 #ifdef HAVE_DOS_BASED_FILE_SYSTEM
   if (path[1] == ':' && path[2] == 0)
     path = concat (path, ".", (const char *) 0);
@@ -3723,7 +3723,6 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   program_name = *argv;
-  xmalloc_set_program_name (program_name);
   bfd_set_error_program_name (program_name);
 
   START_PROGRESS (program_name, 0);

@@ -23,7 +23,7 @@ Boston, MA 02110-1301, USA.  */
 @deftypefn Replacement char* xstrndup (const char *@var{s}, size_t @var{n})
 
 Returns a pointer to a copy of @var{s} with at most @var{n} characters
-without fail, using @code{xmalloc} to obtain memory.  The result is
+without fail, using @code{malloc} to obtain memory.  The result is
 always NUL terminated.
 
 @end deftypefn

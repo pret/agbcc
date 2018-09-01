@@ -43,7 +43,7 @@ Boston, MA 02110-1301, USA.  */
 Return a prefix for temporary file names or @code{NULL} if unable to
 find one.  The current directory is chosen if all else fails so the
 program is exited if a temporary directory can't be found (@code{mktemp}
-fails).  The buffer for the result is obtained with @code{xmalloc}.
+fails).  The buffer for the result is obtained with @code{malloc}.
 
 This function is provided for backwards compatibility only.  Its use is
 not recommended.

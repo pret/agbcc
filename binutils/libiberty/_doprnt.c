@@ -152,11 +152,7 @@ _doprnt (const char *format, va_list ap, FILE *stream)
 			break;
 		      case 2:
 		      default:
-#if defined(__GNUC__) || defined(HAVE_LONG_LONG)
 			PRINT_TYPE(long long);
-#else
-			PRINT_TYPE(long); /* Fake it and hope for the best.  */
-#endif
 			break;
 		      } /* End of switch (wide_width) */
 		  } /* End of else statement */
@@ -273,12 +269,10 @@ main (void)
   RESULT(checkit ("Testing (hd) short: <%d><%ld><%hd><%hd><%d>\n", 123, (long)234, 345, 123456789, 456));
   RESULT(printf ("Testing (hd) short: <%d><%ld><%hd><%hd><%d>\n", 123, (long)234, 345, 123456789, 456));
 
-#if defined(__GNUC__) || defined (HAVE_LONG_LONG)
   RESULT(checkit ("Testing (lld) long long: <%d><%lld><%d>\n", 123, 234234234234234234LL, 345));
   RESULT(printf ("Testing (lld) long long: <%d><%lld><%d>\n", 123, 234234234234234234LL, 345));
   RESULT(checkit ("Testing (Ld) long long: <%d><%Ld><%d>\n", 123, 234234234234234234LL, 345));
   RESULT(printf ("Testing (Ld) long long: <%d><%Ld><%d>\n", 123, 234234234234234234LL, 345));
-#endif
 
 #if defined(__GNUC__) || defined (HAVE_LONG_DOUBLE)
   RESULT(checkit ("Testing (Lf) long double: <%.20f><%.20Lf><%0+#.20f>\n",

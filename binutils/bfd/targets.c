@@ -151,9 +151,7 @@ DESCRIPTION
 .  bfd_target_ecoff_flavour,
 .  bfd_target_xcoff_flavour,
 .  bfd_target_elf_flavour,
-.  bfd_target_tekhex_flavour,
 .  bfd_target_srec_flavour,
-.  bfd_target_verilog_flavour,
 .  bfd_target_ihex_flavour,
 .  bfd_target_som_flavour,
 .  bfd_target_os9k_flavour,
@@ -599,8 +597,6 @@ extern const bfd_target elf32_le_vec;
 /* These are always included.  */
 extern const bfd_target srec_vec;
 extern const bfd_target symbolsrec_vec;
-extern const bfd_target verilog_vec;
-extern const bfd_target tekhex_vec;
 extern const bfd_target binary_vec;
 extern const bfd_target ihex_vec;
 
@@ -625,10 +621,6 @@ static const bfd_target * const _bfd_target_vector[] =
 /* Always support S-records, for convenience.  */
 	&srec_vec,
 	&symbolsrec_vec,
-/* And verilog.  */
-	&verilog_vec,
-/* And tekhex */
-	&tekhex_vec,
 /* Likewise for binary output.  */
 	&binary_vec,
 /* Likewise for ihex.  */

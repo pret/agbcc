@@ -232,7 +232,7 @@ handle_asneeded_cref (bfd *abfd ATTRIBUTE_UNUSED,
 	}
 
       tabsize = cref_table.root.size * sizeof (struct bfd_hash_entry *);
-      old_tab = xmalloc (tabsize + entsize + refsize);
+      old_tab = malloc (tabsize + entsize + refsize);
 
       alloc_mark = bfd_hash_allocate (&cref_table.root, 1);
       if (alloc_mark == NULL)
@@ -377,7 +377,7 @@ output_cref (FILE *fp)
       return;
     }
 
-  csyms = (struct cref_hash_entry **) xmalloc (cref_symcount * sizeof (*csyms));
+  csyms = (struct cref_hash_entry **) malloc (cref_symcount * sizeof (*csyms));
 
   csym_fill = csyms;
   cref_hash_traverse (&cref_table, cref_fill_array, &csym_fill);
@@ -675,7 +675,7 @@ check_reloc_refs (bfd *abfd, asection *sec, void *iarg)
   if (relsize == 0)
     return;
 
-  relpp = (arelent **) xmalloc (relsize);
+  relpp = (arelent **) malloc (relsize);
   relcount = bfd_canonicalize_reloc (abfd, sec, relpp, info->asymbols);
   if (relcount < 0)
     einfo (_("%F%P: %pB: could not read relocs: %E\n"), abfd);

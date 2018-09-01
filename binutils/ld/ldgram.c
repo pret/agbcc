@@ -2992,7 +2992,7 @@ yyreduce:
 #line 526 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct flag_info_list *n;
-			  n = ((struct flag_info_list *) xmalloc (sizeof *n));
+			  n = ((struct flag_info_list *) malloc (sizeof *n));
 			  if ((yyvsp[0].name)[0] == '!')
 			    {
 			      n->with = without_flags;
@@ -3014,7 +3014,7 @@ yyreduce:
 #line 544 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct flag_info_list *n;
-			  n = ((struct flag_info_list *) xmalloc (sizeof *n));
+			  n = ((struct flag_info_list *) malloc (sizeof *n));
 			  if ((yyvsp[0].name)[0] == '!')
 			    {
 			      n->with = without_flags;
@@ -3036,7 +3036,7 @@ yyreduce:
 #line 565 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct flag_info *n;
-			  n = ((struct flag_info *) xmalloc (sizeof *n));
+			  n = ((struct flag_info *) malloc (sizeof *n));
 			  n->flag_list = (yyvsp[-1].flag_info_list);
 			  n->flags_initialized = FALSE;
 			  n->not_with_flags = 0;
@@ -3050,7 +3050,7 @@ yyreduce:
 #line 578 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct name_list *tmp;
-			  tmp = (struct name_list *) xmalloc (sizeof *tmp);
+			  tmp = (struct name_list *) malloc (sizeof *tmp);
 			  tmp->name = (yyvsp[0].cname);
 			  tmp->next = (yyvsp[-1].name_list);
 			  (yyval.name_list) = tmp;
@@ -3062,7 +3062,7 @@ yyreduce:
 #line 587 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct name_list *tmp;
-			  tmp = (struct name_list *) xmalloc (sizeof *tmp);
+			  tmp = (struct name_list *) malloc (sizeof *tmp);
 			  tmp->name = (yyvsp[0].cname);
 			  tmp->next = NULL;
 			  (yyval.name_list) = tmp;
@@ -3074,7 +3074,7 @@ yyreduce:
 #line 598 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct wildcard_list *tmp;
-			  tmp = (struct wildcard_list *) xmalloc (sizeof *tmp);
+			  tmp = (struct wildcard_list *) malloc (sizeof *tmp);
 			  tmp->next = (yyvsp[-2].wildcard_list);
 			  tmp->spec = (yyvsp[0].wildcard);
 			  (yyval.wildcard_list) = tmp;
@@ -3086,7 +3086,7 @@ yyreduce:
 #line 607 "ldgram.y" /* yacc.c:1646  */
     {
 			  struct wildcard_list *tmp;
-			  tmp = (struct wildcard_list *) xmalloc (sizeof *tmp);
+			  tmp = (struct wildcard_list *) malloc (sizeof *tmp);
 			  tmp->next = NULL;
 			  tmp->spec = (yyvsp[0].wildcard);
 			  (yyval.wildcard_list) = tmp;
@@ -3493,7 +3493,7 @@ yyreduce:
     {
 		  struct lang_nocrossref *n;
 
-		  n = (struct lang_nocrossref *) xmalloc (sizeof *n);
+		  n = (struct lang_nocrossref *) malloc (sizeof *n);
 		  n->name = (yyvsp[-1].name);
 		  n->next = (yyvsp[0].nocrossref);
 		  (yyval.nocrossref) = n;
@@ -3506,7 +3506,7 @@ yyreduce:
     {
 		  struct lang_nocrossref *n;
 
-		  n = (struct lang_nocrossref *) xmalloc (sizeof *n);
+		  n = (struct lang_nocrossref *) malloc (sizeof *n);
 		  n->name = (yyvsp[-2].name);
 		  n->next = (yyvsp[0].nocrossref);
 		  (yyval.nocrossref) = n;
@@ -4127,7 +4127,7 @@ yyreduce:
 		  struct lang_output_section_phdr_list *n;
 
 		  n = ((struct lang_output_section_phdr_list *)
-		       xmalloc (sizeof *n));
+		       malloc (sizeof *n));
 		  n->name = (yyvsp[0].name);
 		  n->used = FALSE;
 		  n->next = (yyvsp[-2].section_phdr);

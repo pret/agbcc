@@ -152,7 +152,7 @@ char *
   * rx++ = '$';
   * rx = '\0';
 
-  CGEN_INSN_RX (insn) = xmalloc (sizeof (regex_t));
+  CGEN_INSN_RX (insn) = malloc (sizeof (regex_t));
   reg_err = regcomp ((regex_t *) CGEN_INSN_RX (insn), rxbuf, REG_NOSUB);
 
   if (reg_err == 0)

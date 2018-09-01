@@ -247,15 +247,15 @@ splay_tree_foreach_helper (splay_tree_node node,
   return val;
 }
 
-/* An allocator and deallocator based on xmalloc.  */
+/* An allocator and deallocator based on malloc.  */
 static void *
-splay_tree_xmalloc_allocate (int size, void *data ATTRIBUTE_UNUSED)
+splay_tree_malloc_allocate (int size, void *data ATTRIBUTE_UNUSED)
 {
-  return (void *) xmalloc (size);
+  return (void *) malloc (size);
 }
 
 static void
-splay_tree_xmalloc_deallocate (void *object, void *data ATTRIBUTE_UNUSED)
+splay_tree_malloc_deallocate (void *object, void *data ATTRIBUTE_UNUSED)
 {
   free (object);
 }
@@ -263,7 +263,7 @@ splay_tree_xmalloc_deallocate (void *object, void *data ATTRIBUTE_UNUSED)
 
 /* Allocate a new splay tree, using COMPARE_FN to compare nodes,
    DELETE_KEY_FN to deallocate keys, and DELETE_VALUE_FN to deallocate
-   values.  Use xmalloc to allocate the splay tree structure, and any
+   values.  Use malloc to allocate the splay tree structure, and any
    nodes added.  */
 
 splay_tree 
@@ -273,7 +273,7 @@ splay_tree_new (splay_tree_compare_fn compare_fn,
 {
   return (splay_tree_new_with_allocator
           (compare_fn, delete_key_fn, delete_value_fn,
-           splay_tree_xmalloc_allocate, splay_tree_xmalloc_deallocate, 0));
+           splay_tree_malloc_allocate, splay_tree_malloc_deallocate, 0));
 }
 
 

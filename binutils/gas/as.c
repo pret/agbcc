@@ -571,7 +571,7 @@ parse_args (int * pargc, char *** pargv)
      dependent list.  Include space for an extra NULL option and
      always NULL terminate.  */
   shortopts = concat (std_shortopts, md_shortopts, (char *) NULL);
-  longopts = (struct option *) xmalloc (sizeof (std_longopts)
+  longopts = (struct option *) malloc (sizeof (std_longopts)
                                         + md_longopts_size + sizeof (struct option));
   memcpy (longopts, std_longopts, sizeof (std_longopts));
   memcpy (((char *) longopts) + sizeof (std_longopts), md_longopts, md_longopts_size);
@@ -1218,7 +1218,6 @@ main (int argc, char ** argv)
 #endif
 
   myname = argv[0];
-  xmalloc_set_program_name (myname);
 
   expandargv (&argc, &argv);
 

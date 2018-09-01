@@ -3244,9 +3244,9 @@ symbol_relc_make_expr (expressionS * exp)
 			    operands[2], (char *) NULL);
 
   /* Free operand strings (not opstr).  */
-  if (arity >= 1) xfree (operands[0]);
-  if (arity >= 2) xfree (operands[1]);
-  if (arity >= 3) xfree (operands[2]);
+  if (arity >= 1) free (operands[0]);
+  if (arity >= 2) free (operands[1]);
+  if (arity >= 3) free (operands[2]);
 
   return concat_string;
 }

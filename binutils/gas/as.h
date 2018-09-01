@@ -103,10 +103,6 @@ extern int ffs (int);
 void *mempcpy(void *, const void *, size_t);
 #endif
 
-#if !HAVE_DECL_VSNPRINTF
-extern int vsnprintf(char *, size_t, const char *, va_list);
-#endif
-
 /* This is needed for VMS.  */
 #if ! defined (HAVE_UNLINK) && defined (HAVE_REMOVE)
 #define unlink remove
@@ -142,10 +138,8 @@ extern int vsnprintf(char *, size_t, const char *, va_list);
 #define SEEK_SET 0
 #endif
 
-#define obstack_chunk_alloc xmalloc
-#define obstack_chunk_free xfree
-
-#define xfree free
+#define obstack_chunk_alloc malloc
+#define obstack_chunk_free free
 
 #include "asintl.h"
 
@@ -502,7 +496,7 @@ void add_debug_prefix_map (const char *);
 static inline char *
 xmemdup0 (const char *in, size_t len)
 {
-  char *out = (char *) xmalloc (len + 1);
+  char *out = (char *) malloc (len + 1);
   out[len] = 0;
   return (char *) memcpy (out, in, len);
 }

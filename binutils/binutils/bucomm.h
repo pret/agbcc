@@ -74,8 +74,8 @@ extern void set_times (const char *, const struct stat *);
 extern int smart_rename (const char *, const char *, int);
 
 /* In libiberty.  */
-void *xmalloc (size_t);
+void *malloc (size_t);
 
-void *xrealloc (void *, size_t);
+void *realloc (void *, size_t);
 
 #endif /* _BUCOMM_H */

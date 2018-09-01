@@ -628,7 +628,7 @@ minfo (const char *fmt, ...)
 	  /* Stash info about --as-needed shared libraries.  Print
 	     later so they don't appear intermingled with archive
 	     library info.  */
-	  struct asneeded_minfo *m = xmalloc (sizeof *m);
+	  struct asneeded_minfo *m = malloc (sizeof *m);
 
 	  m->next = NULL;
 	  m->soname = va_arg (arg, const char *);

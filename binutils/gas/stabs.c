@@ -502,7 +502,7 @@ stabs_generate_asm_file (void)
       dir2 = concat (dir, "/", NULL);
       generate_asm_file (N_SO, dir2);
       free (dir2);
-      xfree ((char *) dir);
+      free ((char *) dir);
     }
   generate_asm_file (N_SO, file);
 }

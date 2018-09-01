@@ -379,7 +379,7 @@ stab_write_symbol (struct stab_write_handle *info, int type, int desc,
   if (info->symbols_size + STAB_SYMBOL_SIZE > info->symbols_alloc)
     {
       info->symbols_alloc *= 2;
-      info->symbols = (bfd_byte *) xrealloc (info->symbols,
+      info->symbols = (bfd_byte *) realloc (info->symbols,
 					     info->symbols_alloc);
     }
 
@@ -398,7 +398,7 @@ stab_push_string (struct stab_write_handle *info, const char *string,
 {
   struct stab_type_stack *s;
 
-  s = (struct stab_type_stack *) xmalloc (sizeof *s);
+  s = (struct stab_type_stack *) malloc (sizeof *s);
   s->string = xstrdup (string);
   s->index = tindex;
   s->definition = definition;
@@ -472,7 +472,7 @@ write_stabs_in_sections_debugging_info (bfd *abfd, void *dhandle,
 
   info.symbols_size = 0;
   info.symbols_alloc = 500;
-  info.symbols = (bfd_byte *) xmalloc (info.symbols_alloc);
+  info.symbols = (bfd_byte *) malloc (info.symbols_alloc);
 
   info.strings = NULL;
   info.last_string = NULL;
@@ -525,7 +525,7 @@ write_stabs_in_sections_debugging_info (bfd *abfd, void *dhandle,
   *psymsize = info.symbols_size;
 
   *pstringsize = info.strings_size;
-  *pstrings = (bfd_byte *) xmalloc (info.strings_size);
+  *pstrings = (bfd_byte *) malloc (info.strings_size);
 
   p = *pstrings;
   *p++ = '\0';
@@ -790,7 +790,7 @@ stab_enum_type (void *p, const char *tag, const char **names,
     {
       assert (tag != NULL);
 
-      buf = (char *) xmalloc (10 + strlen (tag));
+      buf = (char *) malloc (10 + strlen (tag));
       sprintf (buf, "xe%s:", tag);
       /* FIXME: The size is just a guess.  */
       if (! stab_push_string (info, buf, 0, FALSE, 4))
@@ -805,7 +805,7 @@ stab_enum_type (void *p, const char *tag, const char **names,
   for (pn = names; *pn != NULL; pn++)
     len += strlen (*pn) + 20;
 
-  buf = (char *) xmalloc (len);
+  buf = (char *) malloc (len);
 
   if (tag == NULL)
     strcpy (buf, "e");
@@ -863,7 +863,7 @@ stab_modify_type (struct stab_write_handle *info, int mod,
          new type, so we don't bother to define one.  */
       definition = info->type_stack->definition;
       s = stab_pop_type (info);
-      buf = (char *) xmalloc (strlen (s) + 2);
+      buf = (char *) malloc (strlen (s) + 2);
       sprintf (buf, "%c%s", mod, s);
       free (s);
       if (! stab_push_string (info, buf, 0, definition, size))
@@ -881,7 +881,7 @@ stab_modify_type (struct stab_write_handle *info, int mod,
 	    alloc = 10;
 	  while ((size_t) targindex >= alloc)
 	    alloc *= 2;
-	  *cache = (long *) xrealloc (*cache, alloc * sizeof (long));
+	  *cache = (long *) realloc (*cache, alloc * sizeof (long));
 	  memset (*cache + *cache_alloc, 0,
 		  (alloc - *cache_alloc) * sizeof (long));
 	  *cache_alloc = alloc;
@@ -906,7 +906,7 @@ stab_modify_type (struct stab_write_handle *info, int mod,
 	  ++info->type_index;
 
 	  s = stab_pop_type (info);
-	  buf = (char *) xmalloc (strlen (s) + 20);
+	  buf = (char *) malloc (strlen (s) + 20);
 	  sprintf (buf, "%ld=%c%s", tindex, mod, s);
 	  free (s);
 
@@ -956,7 +956,7 @@ stab_function_type (void *p, int argcount,
 
 	  s = stab_pop_type (info);
 
-	  buf = (char *) xmalloc (strlen (s) + 3);
+	  buf = (char *) malloc (strlen (s) + 3);
 	  sprintf (buf, ":t%s", s);
 	  free (s);
 
@@ -997,7 +997,7 @@ stab_range_type (void *p, bfd_signed_vma low, bfd_signed_vma high)
   size = info->type_stack->size;
 
   s = stab_pop_type (info);
-  buf = (char *) xmalloc (strlen (s) + 100);
+  buf = (char *) malloc (strlen (s) + 100);
   sprintf (buf, "r%s;%ld;%ld;", s, (long) low, (long) high);
   free (s);
 
@@ -1029,7 +1029,7 @@ stab_array_type (void *p, bfd_signed_vma low, bfd_signed_vma high,
   element_size = info->type_stack->size;
   element = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (range) + strlen (element) + 100);
+  buf = (char *) malloc (strlen (range) + strlen (element) + 100);
 
   if (! stringp)
     {
@@ -1076,7 +1076,7 @@ stab_set_type (void *p, bfd_boolean bitstringp)
   definition = info->type_stack->definition;
 
   s = stab_pop_type (info);
-  buf = (char *) xmalloc (strlen (s) + 30);
+  buf = (char *) malloc (strlen (s) + 30);
 
   if (! bitstringp)
     {
@@ -1119,7 +1119,7 @@ stab_offset_type (void *p)
   definition = definition || info->type_stack->definition;
   base = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (target) + strlen (base) + 3);
+  buf = (char *) malloc (strlen (target) + strlen (base) + 3);
   sprintf (buf, "@%s,%s", base, target);
   free (base);
   free (target);
@@ -1174,7 +1174,7 @@ stab_method_type (void *p, bfd_boolean domainp, int argcount,
 	args = NULL;
       else
 	{
-	  args = (char **) xmalloc (1 * sizeof (*args));
+	  args = (char **) malloc (1 * sizeof (*args));
 	  if (! stab_empty_type (p))
 	    return FALSE;
 	  definition = definition || info->type_stack->definition;
@@ -1184,7 +1184,7 @@ stab_method_type (void *p, bfd_boolean domainp, int argcount,
     }
   else
     {
-      args = (char **) xmalloc ((argcount + 1) * sizeof (*args));
+      args = (char **) malloc ((argcount + 1) * sizeof (*args));
       for (i = argcount - 1; i >= 0; i--)
 	{
 	  definition = definition || info->type_stack->definition;
@@ -1207,7 +1207,7 @@ stab_method_type (void *p, bfd_boolean domainp, int argcount,
   for (i = 0; i < argcount; i++)
     len += strlen (args[i]);
 
-  buf = (char *) xmalloc (len);
+  buf = (char *) malloc (len);
 
   sprintf (buf, "#%s,%s", domain, return_type);
   free (domain);
@@ -1271,7 +1271,7 @@ stab_get_struct_index (struct stab_write_handle *info, const char *tag,
       while (id >= alloc)
 	alloc *= 2;
       info->type_cache.struct_types =
-	(struct stab_tag *) xrealloc (info->type_cache.struct_types,
+	(struct stab_tag *) realloc (info->type_cache.struct_types,
 				      alloc * sizeof (struct stab_tag));
       memset ((info->type_cache.struct_types
 	       + info->type_cache.struct_types_alloc),
@@ -1336,7 +1336,7 @@ stab_start_struct_type (void *p, const char *tag, unsigned int id,
   if (! stab_push_string (info, buf, tindex, definition, size))
     return FALSE;
 
-  info->type_stack->fields = (char *) xmalloc (1);
+  info->type_stack->fields = (char *) malloc (1);
   info->type_stack->fields[0] = '\0';
 
   return TRUE;
@@ -1362,7 +1362,7 @@ stab_struct_field (void *p, const char *name, bfd_vma bitpos,
      currently on the top of the stack.  */
 
   assert (info->type_stack->fields != NULL);
-  n = (char *) xmalloc (strlen (info->type_stack->fields)
+  n = (char *) malloc (strlen (info->type_stack->fields)
 			+ strlen (name)
 			+ strlen (s)
 			+ 50);
@@ -1424,7 +1424,7 @@ stab_end_struct_type (void *p)
   fields = info->type_stack->fields;
   first = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (first) + strlen (fields) + 2);
+  buf = (char *) malloc (strlen (first) + strlen (fields) + 2);
   sprintf (buf, "%s%s;", first, fields);
   free (first);
   free (fields);
@@ -1467,12 +1467,12 @@ stab_start_class_type (void *p, const char *tag, unsigned int id, bfd_boolean st
       if (ownvptr)
 	{
 	  assert (info->type_stack->index > 0);
-	  vtable = (char *) xmalloc (20);
+	  vtable = (char *) malloc (20);
 	  sprintf (vtable, "~%%%ld", info->type_stack->index);
 	}
       else
 	{
-	  vtable = (char *) xmalloc (strlen (vstring) + 3);
+	  vtable = (char *) malloc (strlen (vstring) + 3);
 	  sprintf (vtable, "~%%%s", vstring);
 	  free (vstring);
 	}
@@ -1504,7 +1504,7 @@ stab_class_static_member (void *p, const char *name, const char *physname,
      currently on the top of the stack.  */
 
   assert (info->type_stack->fields != NULL);
-  n = (char *) xmalloc (strlen (info->type_stack->fields)
+  n = (char *) malloc (strlen (info->type_stack->fields)
 			+ strlen (name)
 			+ strlen (s)
 			+ strlen (physname)
@@ -1558,7 +1558,7 @@ stab_class_baseclass (void *p, bfd_vma bitpos, bfd_boolean is_virtual,
 
   /* Build the base class specifier.  */
 
-  buf = (char *) xmalloc (strlen (s) + 25);
+  buf = (char *) malloc (strlen (s) + 25);
   buf[0] = is_virtual ? '1' : '0';
   switch (visibility)
     {
@@ -1594,7 +1594,7 @@ stab_class_baseclass (void *p, bfd_vma bitpos, bfd_boolean is_virtual,
 	++c;
     }
 
-  baseclasses = (char **) xrealloc (info->type_stack->baseclasses,
+  baseclasses = (char **) realloc (info->type_stack->baseclasses,
 				    (c + 2) * sizeof (*baseclasses));
   baseclasses[c] = buf;
   baseclasses[c + 1] = NULL;
@@ -1619,12 +1619,12 @@ stab_class_start_method (void *p, const char *name)
 
   if (info->type_stack->methods == NULL)
     {
-      m = (char *) xmalloc (strlen (name) + 3);
+      m = (char *) malloc (strlen (name) + 3);
       *m = '\0';
     }
   else
     {
-      m = (char *) xrealloc (info->type_stack->methods,
+      m = (char *) realloc (info->type_stack->methods,
 			     (strlen (info->type_stack->methods)
 			      + strlen (name)
 			      + 4));
@@ -1703,7 +1703,7 @@ stab_class_method_var (struct stab_write_handle *info, const char *physname,
     typec = '*';
 
   info->type_stack->methods =
-    (char *) xrealloc (info->type_stack->methods,
+    (char *) realloc (info->type_stack->methods,
 		       (strlen (info->type_stack->methods)
 			+ strlen (type)
 			+ strlen (physname)
@@ -1800,7 +1800,7 @@ stab_end_class_type (void *p)
 
   /* Build the class definition.  */
 
-  buf = (char *) xmalloc (len);
+  buf = (char *) malloc (len);
 
   strcpy (buf, info->type_stack->string);
 
@@ -1890,7 +1890,7 @@ stab_typdef (void *p, const char *name)
   size = info->type_stack->size;
   s = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (name) + strlen (s) + 20);
+  buf = (char *) malloc (strlen (name) + strlen (s) + 20);
 
   if (tindex > 0)
     sprintf (buf, "%s:t%s", name, s);
@@ -1934,7 +1934,7 @@ stab_tag (void *p, const char *tag)
 
   s = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (tag) + strlen (s) + 3);
+  buf = (char *) malloc (strlen (tag) + strlen (s) + 3);
 
   sprintf (buf, "%s:T%s", tag, s);
   free (s);
@@ -1955,7 +1955,7 @@ stab_int_constant (void *p, const char *name, bfd_vma val)
   struct stab_write_handle *info = (struct stab_write_handle *) p;
   char *buf;
 
-  buf = (char *) xmalloc (strlen (name) + 20);
+  buf = (char *) malloc (strlen (name) + 20);
   sprintf (buf, "%s:c=i%ld", name, (long) val);
 
   if (! stab_write_symbol (info, N_LSYM, 0, 0, buf))
@@ -1974,7 +1974,7 @@ stab_float_constant (void *p, const char *name, double val)
   struct stab_write_handle *info = (struct stab_write_handle *) p;
   char *buf;
 
-  buf = (char *) xmalloc (strlen (name) + 20);
+  buf = (char *) malloc (strlen (name) + 20);
   sprintf (buf, "%s:c=f%g", name, val);
 
   if (! stab_write_symbol (info, N_LSYM, 0, 0, buf))
@@ -1995,7 +1995,7 @@ stab_typed_constant (void *p, const char *name, bfd_vma val)
 
   s = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (name) + strlen (s) + 20);
+  buf = (char *) malloc (strlen (name) + strlen (s) + 20);
   sprintf (buf, "%s:c=e%s,%ld", name, s, (long) val);
   free (s);
 
@@ -2052,7 +2052,7 @@ stab_variable (void *p, const char *name, enum debug_var_kind kind,
 
 	  tindex = info->type_index;
 	  ++info->type_index;
-	  n = (char *) xmalloc (strlen (s) + 20);
+	  n = (char *) malloc (strlen (s) + 20);
 	  sprintf (n, "%ld=%s", tindex, s);
 	  free (s);
 	  s = n;
@@ -2065,7 +2065,7 @@ stab_variable (void *p, const char *name, enum debug_var_kind kind,
       break;
     }
 
-  buf = (char *) xmalloc (strlen (name) + strlen (s) + 3);
+  buf = (char *) malloc (strlen (name) + strlen (s) + 3);
   sprintf (buf, "%s:%s%s", name, kindstr, s);
   free (s);
 
@@ -2089,7 +2089,7 @@ stab_start_function (void *p, const char *name, bfd_boolean globalp)
 
   rettype = stab_pop_type (info);
 
-  buf = (char *) xmalloc (strlen (name) + strlen (rettype) + 3);
+  buf = (char *) malloc (strlen (name) + strlen (rettype) + 3);
   sprintf (buf, "%s:%c%s", name,
 	   globalp ? 'F' : 'f',
 	   rettype);
@@ -2143,7 +2143,7 @@ stab_function_parameter (void *p, const char *name, enum debug_parm_kind kind, b
       break;
     }
 
-  buf = (char *) xmalloc (strlen (name) + strlen (s) + 3);
+  buf = (char *) malloc (strlen (name) + strlen (s) + 3);
   sprintf (buf, "%s:%c%s", name, kindc, s);
   free (s);
 

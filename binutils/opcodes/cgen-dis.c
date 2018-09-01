@@ -186,10 +186,10 @@ build_dis_hash_table (CGEN_CPU_DESC cd)
      the hash table and the hash lists.  */
 
   dis_hash_table = (CGEN_INSN_LIST **)
-    xmalloc (hash_size * sizeof (CGEN_INSN_LIST *));
+    malloc (hash_size * sizeof (CGEN_INSN_LIST *));
   memset (dis_hash_table, 0, hash_size * sizeof (CGEN_INSN_LIST *));
   dis_hash_table_entries = hash_entry_buf = (CGEN_INSN_LIST *)
-    xmalloc (count * sizeof (CGEN_INSN_LIST));
+    malloc (count * sizeof (CGEN_INSN_LIST));
 
   /* Add compiled in insns.
      Don't include the first one as it is a reserved entry.  */

@@ -299,51 +299,6 @@ AC_ARG_ENABLE(offload-targets,
 # --enable-gold=default --enable-ld=default
 #     Error.
 
-default_ld=
-AC_ARG_ENABLE(gold,
-[AS_HELP_STRING([[--enable-gold[=ARG]]],
-		[build gold @<:@ARG={default,yes,no}@:>@])],
-ENABLE_GOLD=$enableval,
-ENABLE_GOLD=no)
-case "${ENABLE_GOLD}" in
-  yes|default)
-    # Check for ELF target.
-    is_elf=no
-    case "${target}" in
-      *-*-elf* | *-*-sysv4* | *-*-unixware* | *-*-eabi* | hppa*64*-*-hpux* \
-      | *-*-linux* | *-*-gnu* | frv-*-uclinux* | *-*-irix5* | *-*-irix6* \
-      | *-*-netbsd* | *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* \
-      | *-*-solaris2* | *-*-nto* | *-*-nacl*)
-        case "${target}" in
-          *-*-linux*aout* | *-*-linux*oldld*)
-            ;;
-          *)
-            is_elf=yes
-            ;;
-        esac
-    esac
-
-    if test "$is_elf" = "yes"; then
-      # Check for target supported by gold.
-      case "${target}" in
-        i?86-*-* | x86_64-*-* | sparc*-*-* | powerpc*-*-* | arm*-*-* \
-        | aarch64*-*-* | tilegx*-*-* | mips*-*-* | s390*-*-*)
-	  configdirs="$configdirs gold"
-	  if test x${ENABLE_GOLD} = xdefault; then
-	    default_ld=gold
-	  fi
-	  ENABLE_GOLD=yes
-          ;;
-      esac
-    fi
-    ;;
-  no)
-    ;;
-  *)
-    AC_MSG_ERROR([invalid --enable-gold argument])
-    ;;
-esac
-
 AC_ARG_ENABLE(ld,
 [AS_HELP_STRING([[--enable-ld[=ARG]]],
 		[build ld @<:@ARG={default,yes,no}@:>@])],
@@ -662,8 +617,6 @@ if test "${build}" != "${host}" ; then
   LD_FOR_BUILD=${LD_FOR_BUILD-ld}
   NM_FOR_BUILD=${NM_FOR_BUILD-nm}
   RANLIB_FOR_BUILD=${RANLIB_FOR_BUILD-ranlib}
-  WINDRES_FOR_BUILD=${WINDRES_FOR_BUILD-windres}
-  WINDMC_FOR_BUILD=${WINDMC_FOR_BUILD-windmc}
 else
   AR_FOR_BUILD="\$(AR)"
   AS_FOR_BUILD="\$(AS)"
@@ -672,8 +625,6 @@ else
   LD_FOR_BUILD="\$(LD)"
   NM_FOR_BUILD="\$(NM)"
   RANLIB_FOR_BUILD="\$(RANLIB)"
-  WINDRES_FOR_BUILD="\$(WINDRES)"
-  WINDMC_FOR_BUILD="\$(WINDMC)"
 fi
 
 AC_PROG_CC
@@ -697,27 +648,6 @@ if test -z "$LD"; then
   fi
 fi
 
-# Check whether -static-libstdc++ -static-libgcc is supported.
-have_static_libs=no
-if test "$GCC" = yes; then
-  saved_LDFLAGS="$LDFLAGS"
-
-  LDFLAGS="$LDFLAGS -static-libstdc++ -static-libgcc"
-  AC_MSG_CHECKING([whether g++ accepts -static-libstdc++ -static-libgcc])
-  AC_LANG_PUSH(C++)
-  AC_LINK_IFELSE([AC_LANG_SOURCE([
-#if (__GNUC__ < 4) || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
-#error -static-libstdc++ not implemented
-#endif
-int main() {}])],
-    [AC_MSG_RESULT([yes]); have_static_libs=yes],
-    [AC_MSG_RESULT([no])])
-  AC_LANG_POP(C++)
-
-  LDFLAGS="$saved_LDFLAGS"
-fi
-
-ACX_PROG_GNAT
 ACX_PROG_CMP_IGNORE_INITIAL
 
 AC_ARG_ENABLE([bootstrap],
@@ -762,9 +692,6 @@ case "$have_compiler:$host:$target:$enable_bootstrap" in
     AC_MSG_ERROR([invalid option for --enable-bootstrap])
     ;;
 esac
-
-# Used for setting $lt_cv_objdir
-_LT_CHECK_OBJDIR
 
 # Check for GMP, MPFR and MPC
 gmplibs="-lmpc -lmpfr -lgmp"
@@ -1023,7 +950,7 @@ AC_ARG_WITH(stage1-ldflags,
  # if supported.  But if the user explicitly specified the libraries to use,
  # trust that they are doing what they want.
  if test "$stage1_libs" = "" -a "$have_static_libs" = yes; then
-   stage1_ldflags="-static-libstdc++ -static-libgcc"
+   stage1_ldflags="-static-libgcc"
  fi])
 AC_SUBST(stage1_ldflags)
 
@@ -1052,7 +979,7 @@ AC_ARG_WITH(boot-ldflags,
  # statically.  But if the user explicitly specified the libraries to
  # use, trust that they are doing what they want.
  if test "$poststage1_libs" = ""; then
-   poststage1_ldflags="-static-libstdc++ -static-libgcc"
+   poststage1_ldflags="-static-libgcc"
  fi])
 AC_SUBST(poststage1_ldflags)
 
@@ -1176,19 +1103,6 @@ if test -d ${srcdir}/gcc; then
   fi
   enable_languages=`echo "${enable_languages}" | sed -e 's/[[ 	,]][[ 	,]]*/,/g' -e 's/,$//'`
 
-
-  # If bootstrapping, C++ must be enabled.
-  case ",$enable_languages,:$enable_bootstrap" in
-    *,c++,*:*) ;;
-    *:yes)
-      if test -f ${srcdir}/gcc/cp/config-lang.in; then
-        enable_languages="${enable_languages},c++"
-      else
-        AC_MSG_ERROR([bootstrapping requires c++ sources])
-      fi
-      ;;
-  esac
-
   # First scan to see if an enabled language requires some other language.
   # We assume that a given config-lang.in will list all the language
   # front ends it requires, even if some are required indirectly.
@@ -1292,10 +1206,6 @@ if test -d ${srcdir}/gcc; then
           echo "${lang_frag} doesn't set \$language." 1>&2
           exit 1
         fi
-
-	if test "$language" = "c++"; then
-	  boot_language=yes
-	fi
 
         add_this_lang=no
         # C is always enabled, so no need to add it again
@@ -1528,20 +1438,7 @@ case ,${enable_languages},:${enable_objc_gc} in *,objc,*:yes|*,objc,*:auto)
 esac
 
 # Disable libitm, libsanitizer, libvtv, liboffloadmic if we're not building C++
-case ,${enable_languages}, in
-  *,c++,*)
-    # Disable libitm, libsanitizer if we're not building libstdc++
-    case "${noconfigdirs}" in
-      *target-libstdc++-v3*)
-        noconfigdirs="$noconfigdirs target-libitm target-libsanitizer"
-        ;;
-      *) ;;
-    esac
-    ;;
-  *)
     noconfigdirs="$noconfigdirs target-liboffloadmic target-libitm target-libsanitizer target-libvtv"
-    ;;
-esac
 
 # Remove the entries in $skipdirs and $noconfigdirs from $configdirs,
 # $build_configdirs and $target_configdirs.
@@ -2109,12 +2006,6 @@ INSTALL_GDB_TK=`echo ${GDB_TK} | sed s/-all-/-install-/g`
 # 99 commands in a script, for HP-UX sed.
 # Do not nest @if/@endif pairs, because configure will not warn you at all.
 
-case "$enable_bootstrap:$ENABLE_GOLD: $configdirs :,$stage1_languages," in
-  yes:yes:*\ gold\ *:*,c++,*) ;;
-  yes:yes:*\ gold\ *:*)
-    AC_MSG_ERROR([in a combined tree, bootstrapping with --enable-gold requires c++ in stage1_languages])
-    ;;
-esac
 
 extrasub_build=
 for module in ${build_configdirs} ; do
@@ -2612,8 +2503,6 @@ AC_SUBST(LDFLAGS_FOR_BUILD)
 AC_SUBST(LD_FOR_BUILD)
 AC_SUBST(NM_FOR_BUILD)
 AC_SUBST(RANLIB_FOR_BUILD)
-AC_SUBST(WINDMC_FOR_BUILD)
-AC_SUBST(WINDRES_FOR_BUILD)
 
 # Generate default definitions for YACC, M4, LEX and other programs that run
 # on the build machine.  These are used if the Makefile can't locate these
@@ -2635,8 +2524,6 @@ NCN_STRICT_CHECK_TOOLS(LIPO, lipo)
 NCN_STRICT_CHECK_TOOLS(NM, nm)
 NCN_STRICT_CHECK_TOOLS(RANLIB, ranlib, true)
 NCN_STRICT_CHECK_TOOLS(STRIP, strip, true)
-NCN_STRICT_CHECK_TOOLS(WINDRES, windres)
-NCN_STRICT_CHECK_TOOLS(WINDMC, windmc)
 NCN_STRICT_CHECK_TOOLS(OBJCOPY, objcopy)
 NCN_STRICT_CHECK_TOOLS(OBJDUMP, objdump)
 NCN_STRICT_CHECK_TOOLS(READELF, readelf)
@@ -2670,8 +2557,6 @@ ACX_CHECK_INSTALLED_TARGET_TOOL(OBJDUMP_FOR_TARGET, objdump)
 ACX_CHECK_INSTALLED_TARGET_TOOL(RANLIB_FOR_TARGET, ranlib)
 ACX_CHECK_INSTALLED_TARGET_TOOL(READELF_FOR_TARGET, readelf)
 ACX_CHECK_INSTALLED_TARGET_TOOL(STRIP_FOR_TARGET, strip)
-ACX_CHECK_INSTALLED_TARGET_TOOL(WINDRES_FOR_TARGET, windres)
-ACX_CHECK_INSTALLED_TARGET_TOOL(WINDMC_FOR_TARGET, windmc)
 
 GCC_TARGET_TOOL(ar, AR_FOR_TARGET, AR, [binutils/ar])
 GCC_TARGET_TOOL(as, AS_FOR_TARGET, AS, [gas/as-new])
@@ -2686,8 +2571,6 @@ GCC_TARGET_TOOL(objdump, OBJDUMP_FOR_TARGET, OBJDUMP, [binutils/objdump])
 GCC_TARGET_TOOL(ranlib, RANLIB_FOR_TARGET, RANLIB, [binutils/ranlib])
 GCC_TARGET_TOOL(readelf, READELF_FOR_TARGET, READELF, [binutils/readelf])
 GCC_TARGET_TOOL(strip, STRIP_FOR_TARGET, STRIP, [binutils/strip-new])
-GCC_TARGET_TOOL(windres, WINDRES_FOR_TARGET, WINDRES, [binutils/windres])
-GCC_TARGET_TOOL(windmc, WINDMC_FOR_TARGET, WINDMC, [binutils/windmc])
 
 AC_SUBST(FLAGS_FOR_TARGET)
 

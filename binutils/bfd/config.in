@@ -118,21 +118,6 @@
 /* Define to 1 if the system has the type `long long'. */
 #undef HAVE_LONG_LONG
 
-/* Define if <sys/procfs.h> has lwpstatus_t. */
-#undef HAVE_LWPSTATUS_T
-
-/* Define if <sys/procfs.h> has lwpstatus_t.pr_context. */
-#undef HAVE_LWPSTATUS_T_PR_CONTEXT
-
-/* Define if <sys/procfs.h> has lwpstatus_t.pr_fpreg. */
-#undef HAVE_LWPSTATUS_T_PR_FPREG
-
-/* Define if <sys/procfs.h> has lwpstatus_t.pr_reg. */
-#undef HAVE_LWPSTATUS_T_PR_REG
-
-/* Define if <sys/procfs.h> has lwpxstatus_t. */
-#undef HAVE_LWPXSTATUS_T
-
 /* Define to 1 if you have the `madvise' function. */
 #undef HAVE_MADVISE
 
@@ -147,51 +132,6 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
-
-/* Define if <sys/procfs.h> has prpsinfo32_t. */
-#undef HAVE_PRPSINFO32_T
-
-/* Define if <sys/procfs.h> has prpsinfo32_t.pr_pid. */
-#undef HAVE_PRPSINFO32_T_PR_PID
-
-/* Define if <sys/procfs.h> has prpsinfo_t. */
-#undef HAVE_PRPSINFO_T
-
-/* Define if <sys/procfs.h> has prpsinfo_t.pr_pid. */
-#undef HAVE_PRPSINFO_T_PR_PID
-
-/* Define if <sys/procfs.h> has prstatus32_t. */
-#undef HAVE_PRSTATUS32_T
-
-/* Define if <sys/procfs.h> has prstatus32_t.pr_who. */
-#undef HAVE_PRSTATUS32_T_PR_WHO
-
-/* Define if <sys/procfs.h> has prstatus_t. */
-#undef HAVE_PRSTATUS_T
-
-/* Define if <sys/procfs.h> has prstatus_t.pr_who. */
-#undef HAVE_PRSTATUS_T_PR_WHO
-
-/* Define if <sys/procfs.h> has psinfo32_t. */
-#undef HAVE_PSINFO32_T
-
-/* Define if <sys/procfs.h> has psinfo32_t.pr_pid. */
-#undef HAVE_PSINFO32_T_PR_PID
-
-/* Define if <sys/procfs.h> has psinfo_t. */
-#undef HAVE_PSINFO_T
-
-/* Define if <sys/procfs.h> has psinfo_t.pr_pid. */
-#undef HAVE_PSINFO_T_PR_PID
-
-/* Define if <sys/procfs.h> has pstatus32_t. */
-#undef HAVE_PSTATUS32_T
-
-/* Define if <sys/procfs.h> has pstatus_t. */
-#undef HAVE_PSTATUS_T
-
-/* Define if <sys/procfs.h> has pxstatus_t. */
-#undef HAVE_PXSTATUS_T
 
 /* Define to 1 if you have the `setitimer' function. */
 #undef HAVE_SETITIMER
@@ -211,9 +151,6 @@
 /* Define to 1 if you have the `strtoull' function. */
 #undef HAVE_STRTOULL
 
-/* Define if struct core_dumpx has member c_impl */
-#undef HAVE_ST_C_IMPL
-
 /* Define to 1 if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
 
@@ -227,9 +164,6 @@
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
 #undef HAVE_SYS_NDIR_H
-
-/* Define to 1 if you have the <sys/procfs.h> header file. */
-#undef HAVE_SYS_PROCFS_H
 
 /* Define to 1 if you have the <sys/resource.h> header file. */
 #undef HAVE_SYS_RESOURCE_H
@@ -254,9 +188,6 @@
 
 /* Define to 1 if you have the <wctype.h> header file. */
 #undef HAVE_WCTYPE_H
-
-/* Define if <sys/procfs.h> has win32_pstatus_t. */
-#undef HAVE_WIN32_PSTATUS_T
 
 /* Define to 1 if you have the <windows.h> header file. */
 #undef HAVE_WINDOWS_H
@@ -320,9 +251,6 @@
 
 /* Use b modifier when opening binary files? */
 #undef USE_BINARY_FOPEN
-
-/* Define if we should use leading underscore on 64 bit mingw targets */
-#undef USE_MINGW64_LEADING_UNDERSCORES
 
 /* Use mmap if it's available? */
 #undef USE_MMAP

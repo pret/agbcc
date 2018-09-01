@@ -79,7 +79,7 @@ dupargv (char * const *argv)
   
   /* the vector */
   for (argc = 0; argv[argc] != NULL; argc++);
-  copy = (char **) xmalloc ((argc + 1) * sizeof (char *));
+  copy = (char **) malloc ((argc + 1) * sizeof (char *));
 
   /* the strings */
   for (argc = 0; argv[argc] != NULL; argc++)
@@ -145,7 +145,7 @@ remains unchanged.  The last element of the vector is followed by a
 @code{NULL} element.
 
 All of the memory for the pointer array and copies of the string
-is obtained from @code{xmalloc}.  All of the memory can be returned to the
+is obtained from @code{malloc}.  All of the memory can be returned to the
 system with the single function call @code{freeargv}, which takes the
 returned result of @code{buildargv}, as it's argument.
 
@@ -187,7 +187,7 @@ char **buildargv (const char *input)
 
   if (input != NULL)
     {
-      copybuf = (char *) xmalloc (strlen (input) + 1);
+      copybuf = (char *) malloc (strlen (input) + 1);
       /* Is a do{}while to always execute the loop once.  Always return an
 	 argv, even for null strings.  See NOTES above, test case below. */
       do
@@ -201,12 +201,12 @@ char **buildargv (const char *input)
 	      if (argv == NULL)
 		{
 		  maxargc = INITIAL_MAXARGC;
-		  nargv = (char **) xmalloc (maxargc * sizeof (char *));
+		  nargv = (char **) malloc (maxargc * sizeof (char *));
 		}
 	      else
 		{
 		  maxargc *= 2;
-		  nargv = (char **) xrealloc (argv, maxargc * sizeof (char *));
+		  nargv = (char **) realloc (argv, maxargc * sizeof (char *));
 		}
 	      argv = nargv;
 	      argv[argc] = NULL;
@@ -427,7 +427,7 @@ expandargv (int *argcp, char ***argvp)
 	goto error;
       if (fseek (f, 0L, SEEK_SET) == -1)
 	goto error;
-      buffer = (char *) xmalloc (pos * sizeof (char) + 1);
+      buffer = (char *) malloc (pos * sizeof (char) + 1);
       len = fread (buffer, sizeof (char), pos, f);
       if (len != (size_t) pos
 	  /* On Windows, fread may return a value smaller than POS,
@@ -442,7 +442,7 @@ expandargv (int *argcp, char ***argvp)
 	 instead.  */
       if (only_whitespace (buffer))
 	{
-	  file_argv = (char **) xmalloc (sizeof (char *));
+	  file_argv = (char **) malloc (sizeof (char *));
 	  file_argv[0] = NULL;
 	}
       else
@@ -460,7 +460,7 @@ expandargv (int *argcp, char ***argvp)
       /* Now, insert FILE_ARGV into ARGV.  The "+1" below handles the
 	 NULL terminator at the end of ARGV.  */ 
       *argvp = ((char **) 
-		xrealloc (*argvp, 
+		realloc (*argvp, 
 			  (*argcp + file_argc + 1) * sizeof (char *)));
       memmove (*argvp + i + file_argc, *argvp + i + 1, 
 	       (*argcp - i) * sizeof (char *));

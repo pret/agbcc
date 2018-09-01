@@ -24,12 +24,6 @@
 
 # First, test for a proper version of make, but only where one is required.
 
-@if gcc
-ifeq (,$(.VARIABLES)) # The variable .VARIABLES, new with 3.80, is never empty.
-$(error GNU make version 3.80 or newer is required.)
-endif
-@endif gcc
-
 # -------------------------------
 # Standard Autoconf-set variables
 # -------------------------------
@@ -152,18 +146,10 @@ BUILD_EXPORTS = \
 	CC="$(CC_FOR_BUILD)"; export CC; \
 	CFLAGS="$(CFLAGS_FOR_BUILD)"; export CFLAGS; \
 	CONFIG_SHELL="$(SHELL)"; export CONFIG_SHELL; \
-	CXX="$(CXX_FOR_BUILD)"; export CXX; \
-	CXXFLAGS="$(CXXFLAGS_FOR_BUILD)"; export CXXFLAGS; \
-	GFORTRAN="$(GFORTRAN_FOR_BUILD)"; export GFORTRAN; \
-	GOC="$(GOC_FOR_BUILD)"; export GOC; \
-	GOCFLAGS="$(GOCFLAGS_FOR_BUILD)"; export GOCFLAGS; \
-	DLLTOOL="$(DLLTOOL_FOR_BUILD)"; export DLLTOOL; \
 	LD="$(LD_FOR_BUILD)"; export LD; \
 	LDFLAGS="$(LDFLAGS_FOR_BUILD)"; export LDFLAGS; \
 	NM="$(NM_FOR_BUILD)"; export NM; \
-	RANLIB="$(RANLIB_FOR_BUILD)"; export RANLIB; \
-	WINDRES="$(WINDRES_FOR_BUILD)"; export WINDRES; \
-	WINDMC="$(WINDMC_FOR_BUILD)"; export WINDMC;
+	RANLIB="$(RANLIB_FOR_BUILD)"; export RANLIB;
 
 # These variables must be set on the make command line for directories
 # built for the build system to override those in BASE_FLAGS_TO_PASS.
@@ -186,23 +172,15 @@ HOST_SUBDIR = @host_subdir@
 HOST_EXPORTS = \
 	$(BASE_EXPORTS) \
 	CC="$(CC)"; export CC; \
-	ADA_CFLAGS="$(ADA_CFLAGS)"; export ADA_CFLAGS; \
 	CFLAGS="$(CFLAGS)"; export CFLAGS; \
 	CONFIG_SHELL="$(SHELL)"; export CONFIG_SHELL; \
-	CXX="$(CXX)"; export CXX; \
-	CXXFLAGS="$(CXXFLAGS)"; export CXXFLAGS; \
-	GFORTRAN="$(GFORTRAN)"; export GFORTRAN; \
-	GOC="$(GOC)"; export GOC; \
 	AR="$(AR)"; export AR; \
 	AS="$(AS)"; export AS; \
 	CC_FOR_BUILD="$(CC_FOR_BUILD)"; export CC_FOR_BUILD; \
-	DLLTOOL="$(DLLTOOL)"; export DLLTOOL; \
 	LD="$(LD)"; export LD; \
 	LDFLAGS="$(STAGE1_LDFLAGS) $(LDFLAGS)"; export LDFLAGS; \
 	NM="$(NM)"; export NM; \
 	RANLIB="$(RANLIB)"; export RANLIB; \
-	WINDRES="$(WINDRES)"; export WINDRES; \
-	WINDMC="$(WINDMC)"; export WINDMC; \
 	OBJCOPY="$(OBJCOPY)"; export OBJCOPY; \
 	OBJDUMP="$(OBJDUMP)"; export OBJDUMP; \
 	READELF="$(READELF)"; export READELF; \
@@ -225,29 +203,7 @@ HOST_EXPORTS = \
 	LIBELFLIBS="$(HOST_LIBELFLIBS)"; export LIBELFLIBS; \
 	LIBELFINC="$(HOST_LIBELFINC)"; export LIBELFINC; \
 	XGCC_FLAGS_FOR_TARGET="$(XGCC_FLAGS_FOR_TARGET)"; export XGCC_FLAGS_FOR_TARGET; \
-@if gcc-bootstrap
-	$(RPATH_ENVVAR)=`echo "$(TARGET_LIB_PATH)$$$(RPATH_ENVVAR)" | sed 's,::*,:,g;s,^:*,,;s,:*$$,,'`; export $(RPATH_ENVVAR); \
-@endif gcc-bootstrap
 	$(RPATH_ENVVAR)=`echo "$(HOST_LIB_PATH)$$$(RPATH_ENVVAR)" | sed 's,::*,:,g;s,^:*,,;s,:*$$,,'`; export $(RPATH_ENVVAR);
-
-POSTSTAGE1_CXX_EXPORT = \
-	CXX='$(CXX)'; export CXX; \
-	CXX_FOR_BUILD='$(CXX_FOR_BUILD)'; export CXX_FOR_BUILD;
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-POSTSTAGE1_CXX_EXPORT = \
-	CXX="$(STAGE_CC_WRAPPER) $$r/$(HOST_SUBDIR)/prev-gcc/xg++$(exeext) \
-	  -B$$r/$(HOST_SUBDIR)/prev-gcc/ -B$(build_tooldir)/bin/ -nostdinc++ \
-	  -B$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/src/.libs \
-	  -B$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/libsupc++/.libs \
-	  `if $(LEAN); then echo ' -isystem '; else echo ' -I'; fi`$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/include/$(TARGET_SUBDIR) \
-	  `if $(LEAN); then echo ' -isystem '; else echo ' -I'; fi`$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/include \
-	  `if $(LEAN); then echo ' -isystem '; else echo ' -I'; fi`$$s/libstdc++-v3/libsupc++ \
-	  -L$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/src/.libs \
-	  -L$$r/prev-$(TARGET_SUBDIR)/libstdc++-v3/libsupc++/.libs"; \
-	  export CXX; \
-	CXX_FOR_BUILD="$$CXX"; export CXX_FOR_BUILD;
-@endif target-libstdc++-v3-bootstrap
 
 # Similar, for later GCC stages.
 POSTSTAGE1_HOST_EXPORTS = \
@@ -256,7 +212,6 @@ POSTSTAGE1_HOST_EXPORTS = \
 	  -B$$r/$(HOST_SUBDIR)/prev-gcc/ -B$(build_tooldir)/bin/ \
 	  $(XGCC_FLAGS_FOR_TARGET) $$TFLAGS"; export CC; \
 	CC_FOR_BUILD="$$CC"; export CC_FOR_BUILD; \
-	$(POSTSTAGE1_CXX_EXPORT) \
 	$(LTO_EXPORTS) \
 	GNATBIND="$$r/$(HOST_SUBDIR)/prev-gcc/gnatbind"; export GNATBIND; \
 	LDFLAGS="$(POSTSTAGE1_LDFLAGS) $(BOOT_LDFLAGS)"; export LDFLAGS; \
@@ -277,10 +232,6 @@ BASE_TARGET_EXPORTS = \
 	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
 	CONFIG_SHELL="$(SHELL)"; export CONFIG_SHELL; \
 	CPPFLAGS="$(CPPFLAGS_FOR_TARGET)"; export CPPFLAGS; \
-	CXXFLAGS="$(CXXFLAGS_FOR_TARGET)"; export CXXFLAGS; \
-	GFORTRAN="$(GFORTRAN_FOR_TARGET) $(XGCC_FLAGS_FOR_TARGET) $$TFLAGS"; export GFORTRAN; \
-	GOC="$(GOC_FOR_TARGET) $(XGCC_FLAGS_FOR_TARGET) $$TFLAGS"; export GOC; \
-	DLLTOOL="$(DLLTOOL_FOR_TARGET)"; export DLLTOOL; \
 	LD="$(COMPILER_LD_FOR_TARGET)"; export LD; \
 	LDFLAGS="$(LDFLAGS_FOR_TARGET)"; export LDFLAGS; \
 	LIPO="$(LIPO_FOR_TARGET)"; export LIPO; \
@@ -290,22 +241,11 @@ BASE_TARGET_EXPORTS = \
 	RANLIB="$(RANLIB_FOR_TARGET)"; export RANLIB; \
 	READELF="$(READELF_FOR_TARGET)"; export READELF; \
 	STRIP="$(STRIP_FOR_TARGET)"; export STRIP; \
-	WINDRES="$(WINDRES_FOR_TARGET)"; export WINDRES; \
-	WINDMC="$(WINDMC_FOR_TARGET)"; export WINDMC; \
-@if gcc-bootstrap
-	$(RPATH_ENVVAR)=`echo "$(TARGET_LIB_PATH)$$$(RPATH_ENVVAR)" | sed 's,::*,:,g;s,^:*,,;s,:*$$,,'`; export $(RPATH_ENVVAR); \
-@endif gcc-bootstrap
 	$(RPATH_ENVVAR)=`echo "$(HOST_LIB_PATH)$$$(RPATH_ENVVAR)" | sed 's,::*,:,g;s,^:*,,;s,:*$$,,'`; export $(RPATH_ENVVAR); \
 	TARGET_CONFIGDIRS="$(TARGET_CONFIGDIRS)"; export TARGET_CONFIGDIRS;
 
-RAW_CXX_TARGET_EXPORTS = \
-	$(BASE_TARGET_EXPORTS) \
-	CXX_FOR_TARGET="$(RAW_CXX_FOR_TARGET)"; export CXX_FOR_TARGET; \
-	CXX="$(RAW_CXX_FOR_TARGET) $(XGCC_FLAGS_FOR_TARGET) $$TFLAGS"; export CXX;
-
 NORMAL_TARGET_EXPORTS = \
-	$(BASE_TARGET_EXPORTS) \
-	CXX="$(CXX_FOR_TARGET) $(XGCC_FLAGS_FOR_TARGET) $$TFLAGS"; export CXX;
+	$(BASE_TARGET_EXPORTS);
 
 # Where to find GMP
 HOST_GMPLIBS = @gmplibs@
@@ -340,17 +280,10 @@ AR_FOR_BUILD = @AR_FOR_BUILD@
 AS_FOR_BUILD = @AS_FOR_BUILD@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@
-CXXFLAGS_FOR_BUILD = @CXXFLAGS_FOR_BUILD@
-CXX_FOR_BUILD = @CXX_FOR_BUILD@
-DLLTOOL_FOR_BUILD = @DLLTOOL_FOR_BUILD@
-GFORTRAN_FOR_BUILD = @GFORTRAN_FOR_BUILD@
-GOC_FOR_BUILD = @GOC_FOR_BUILD@
 LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 LD_FOR_BUILD = @LD_FOR_BUILD@
 NM_FOR_BUILD = @NM_FOR_BUILD@
 RANLIB_FOR_BUILD = @RANLIB_FOR_BUILD@
-WINDMC_FOR_BUILD = @WINDMC_FOR_BUILD@
-WINDRES_FOR_BUILD = @WINDRES_FOR_BUILD@
 
 # Special variables passed down in EXTRA_GCC_FLAGS.  They are defined
 # here so that they can be overridden by Makefile fragments.
@@ -390,8 +323,6 @@ AS = @AS@
 AR = @AR@
 AR_FLAGS = rc
 CC = @CC@
-CXX = @CXX@
-DLLTOOL = @DLLTOOL@
 LD = @LD@
 LIPO = @LIPO@
 NM = @NM@
@@ -399,8 +330,6 @@ OBJDUMP = @OBJDUMP@
 RANLIB = @RANLIB@
 READELF = @READELF@
 STRIP = @STRIP@
-WINDRES = @WINDRES@
-WINDMC = @WINDMC@
 
 GNATBIND = @GNATBIND@
 GNATMAKE = @GNATMAKE@
@@ -408,9 +337,6 @@ GNATMAKE = @GNATMAKE@
 CFLAGS = @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBCFLAGS = $(CFLAGS)
-CXXFLAGS = @CXXFLAGS@
-LIBCXXFLAGS = $(CXXFLAGS) -fno-implicit-templates
-GOCFLAGS = $(CFLAGS)
 
 CREATE_GCOV = create_gcov
 
@@ -425,61 +351,31 @@ STAGE_CONFIGURE_FLAGS=@stage2_werror_flag@
 
 # Defaults for stage 1; some are overridden below.
 STAGE1_CFLAGS = $(STAGE_CFLAGS)
-STAGE1_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGE1_CXXFLAGS = $(STAGE1_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGE1_TFLAGS = $(STAGE_TFLAGS)
 STAGE1_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
 # Defaults for stage 2; some are overridden below.
 STAGE2_CFLAGS = $(STAGE_CFLAGS)
-STAGE2_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGE2_CXXFLAGS = $(STAGE2_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGE2_TFLAGS = $(STAGE_TFLAGS)
 STAGE2_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
 # Defaults for stage 3; some are overridden below.
 STAGE3_CFLAGS = $(STAGE_CFLAGS)
-STAGE3_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGE3_CXXFLAGS = $(STAGE3_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGE3_TFLAGS = $(STAGE_TFLAGS)
 STAGE3_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
 # Defaults for stage 4; some are overridden below.
 STAGE4_CFLAGS = $(STAGE_CFLAGS)
-STAGE4_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGE4_CXXFLAGS = $(STAGE4_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGE4_TFLAGS = $(STAGE_TFLAGS)
 STAGE4_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
 # Defaults for stage profile; some are overridden below.
 STAGEprofile_CFLAGS = $(STAGE_CFLAGS)
-STAGEprofile_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGEprofile_CXXFLAGS = $(STAGEprofile_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGEprofile_TFLAGS = $(STAGE_TFLAGS)
 STAGEprofile_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
 # Defaults for stage feedback; some are overridden below.
 STAGEfeedback_CFLAGS = $(STAGE_CFLAGS)
-STAGEfeedback_CXXFLAGS = $(CXXFLAGS)
-@if target-libstdc++-v3-bootstrap
-# Override the above if we're bootstrapping C++.
-STAGEfeedback_CXXFLAGS = $(STAGEfeedback_CFLAGS)
-@endif target-libstdc++-v3-bootstrap
 STAGEfeedback_TFLAGS = $(STAGE_TFLAGS)
 STAGEfeedback_CONFIGURE_FLAGS = $(STAGE_CONFIGURE_FLAGS)
 
@@ -530,11 +426,6 @@ CC_FOR_TARGET=$(STAGE_CC_WRAPPER) @CC_FOR_TARGET@
 # build libgcc2.a.  We define it here so that it can itself be
 # overridden on the command line.
 GCC_FOR_TARGET=$(STAGE_CC_WRAPPER) @GCC_FOR_TARGET@
-CXX_FOR_TARGET=$(STAGE_CC_WRAPPER) @CXX_FOR_TARGET@
-RAW_CXX_FOR_TARGET=$(STAGE_CC_WRAPPER) @RAW_CXX_FOR_TARGET@
-GFORTRAN_FOR_TARGET=$(STAGE_CC_WRAPPER) @GFORTRAN_FOR_TARGET@
-GOC_FOR_TARGET=$(STAGE_CC_WRAPPER) @GOC_FOR_TARGET@
-DLLTOOL_FOR_TARGET=@DLLTOOL_FOR_TARGET@
 LD_FOR_TARGET=@LD_FOR_TARGET@
 
 LIPO_FOR_TARGET=@LIPO_FOR_TARGET@
@@ -544,20 +435,15 @@ OBJCOPY_FOR_TARGET=@OBJCOPY_FOR_TARGET@
 RANLIB_FOR_TARGET=@RANLIB_FOR_TARGET@
 READELF_FOR_TARGET=@READELF_FOR_TARGET@
 STRIP_FOR_TARGET=@STRIP_FOR_TARGET@
-WINDRES_FOR_TARGET=@WINDRES_FOR_TARGET@
-WINDMC_FOR_TARGET=@WINDMC_FOR_TARGET@
 
 COMPILER_AS_FOR_TARGET=@COMPILER_AS_FOR_TARGET@
 COMPILER_LD_FOR_TARGET=@COMPILER_LD_FOR_TARGET@
 COMPILER_NM_FOR_TARGET=@COMPILER_NM_FOR_TARGET@
 
 CFLAGS_FOR_TARGET = @CFLAGS_FOR_TARGET@
-CXXFLAGS_FOR_TARGET = @CXXFLAGS_FOR_TARGET@
 
 LIBCFLAGS_FOR_TARGET = $(CFLAGS_FOR_TARGET)
-LIBCXXFLAGS_FOR_TARGET = $(CXXFLAGS_FOR_TARGET) -fno-implicit-templates
 LDFLAGS_FOR_TARGET = @LDFLAGS_FOR_TARGET@
-GOCFLAGS_FOR_TARGET = -O2 -g
 
 FLAGS_FOR_TARGET = @FLAGS_FOR_TARGET@
 SYSROOT_CFLAGS_FOR_TARGET = @SYSROOT_CFLAGS_FOR_TARGET@
@@ -591,31 +477,8 @@ TARGET_LIB_PATH = $(HOST_LIB_PATH_gcc)
 HOST_LIB_PATH = 
 
 # Define HOST_LIB_PATH_gcc here, for the sake of TARGET_LIB_PATH, ouch
-@if gcc
-HOST_LIB_PATH_gcc = $$r/$(HOST_SUBDIR)/gcc$(GCC_SHLIB_SUBDIR):$$r/$(HOST_SUBDIR)/prev-gcc$(GCC_SHLIB_SUBDIR):
-@endif gcc
 
 
-
-CXX_FOR_TARGET_FLAG_TO_PASS = \
-	"CXX_FOR_TARGET=$(CXX_FOR_TARGET)"
-@if target-libstdc++-v3
-# CXX_FOR_TARGET is tricky to get right for target libs that require a
-# functional C++ compiler.  When we recurse, if we expand
-# CXX_FOR_TARGET before configuring libstdc++-v3, we won't get
-# libstdc++ include flags from the script.  Instead, we get an
-# -funconfigured-* word, so that we'll get errors if this invalid C++
-# command line is used for anything, but also so that we can use the
-# word to decide whether or not to pass on this CXX_FOR_TARGET.  If we
-# don't pass it on, sub-make will use the default definition, that
-# re-expands it at the time of use, so we'll get it right when we need
-# it.  One potential exception is the expansion of CXX_FOR_TARGET
-# passed down as part of CXX within TARGET_FLAGS, but this wouldn't
-# really work, for C++ host programs can't depend on the current-stage
-# C++ target library.
-CXX_FOR_TARGET_FLAG_TO_PASS = \
-	$(shell if echo "$(CXX_FOR_TARGET)" | grep " -funconfigured-" > /dev/null; then :; else echo '"CXX_FOR_TARGET=$(CXX_FOR_TARGET)"'; fi)
-@endif target-libstdc++-v3
 
 # Flags to pass down to all sub-makes. STAGE*FLAGS,
 # MAKEINFO and MAKEINFOFLAGS are explicitly passed here to make them
@@ -675,10 +538,7 @@ BASE_FLAGS_TO_PASS = \
 	"CC_FOR_TARGET=$(CC_FOR_TARGET)" \
 	"CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET)" \
 	"CPPFLAGS_FOR_TARGET=$(CPPFLAGS_FOR_TARGET)" \
-	"DLLTOOL_FOR_TARGET=$(DLLTOOL_FOR_TARGET)" \
 	"FLAGS_FOR_TARGET=$(FLAGS_FOR_TARGET)" \
-	"GOC_FOR_TARGET=$(GOC_FOR_TARGET)" \
-	"GOCFLAGS_FOR_TARGET=$(GOCFLAGS_FOR_TARGET)" \
 	"LD_FOR_TARGET=$(LD_FOR_TARGET)" \
 	"LIPO_FOR_TARGET=$(LIPO_FOR_TARGET)" \
 	"LDFLAGS_FOR_TARGET=$(LDFLAGS_FOR_TARGET)" \
@@ -689,30 +549,21 @@ BASE_FLAGS_TO_PASS = \
 	"RANLIB_FOR_TARGET=$(RANLIB_FOR_TARGET)" \
 	"READELF_FOR_TARGET=$(READELF_FOR_TARGET)" \
 	"STRIP_FOR_TARGET=$(STRIP_FOR_TARGET)" \
-	"WINDRES_FOR_TARGET=$(WINDRES_FOR_TARGET)" \
-	"WINDMC_FOR_TARGET=$(WINDMC_FOR_TARGET)" \
 	"BUILD_CONFIG=$(BUILD_CONFIG)" \
 	"`echo 'LANGUAGES=$(LANGUAGES)' | sed -e s'/[^=][^=]*=$$/XFOO=/'`" \
 	"LEAN=$(LEAN)" \
 	"STAGE1_CFLAGS=$(STAGE1_CFLAGS)" \
-	"STAGE1_CXXFLAGS=$(STAGE1_CXXFLAGS)" \
 	"STAGE1_TFLAGS=$(STAGE1_TFLAGS)" \
 	"STAGE2_CFLAGS=$(STAGE2_CFLAGS)" \
-	"STAGE2_CXXFLAGS=$(STAGE2_CXXFLAGS)" \
 	"STAGE2_TFLAGS=$(STAGE2_TFLAGS)" \
 	"STAGE3_CFLAGS=$(STAGE3_CFLAGS)" \
-	"STAGE3_CXXFLAGS=$(STAGE3_CXXFLAGS)" \
 	"STAGE3_TFLAGS=$(STAGE3_TFLAGS)" \
 	"STAGE4_CFLAGS=$(STAGE4_CFLAGS)" \
-	"STAGE4_CXXFLAGS=$(STAGE4_CXXFLAGS)" \
 	"STAGE4_TFLAGS=$(STAGE4_TFLAGS)" \
 	"STAGEprofile_CFLAGS=$(STAGEprofile_CFLAGS)" \
-	"STAGEprofile_CXXFLAGS=$(STAGEprofile_CXXFLAGS)" \
 	"STAGEprofile_TFLAGS=$(STAGEprofile_TFLAGS)" \
 	"STAGEfeedback_CFLAGS=$(STAGEfeedback_CFLAGS)" \
-	"STAGEfeedback_CXXFLAGS=$(STAGEfeedback_CXXFLAGS)" \
 	"STAGEfeedback_TFLAGS=$(STAGEfeedback_TFLAGS)" \
-	$(CXX_FOR_TARGET_FLAG_TO_PASS) \
 	"TFLAGS=$(TFLAGS)" \
 	"CONFIG_SHELL=$(SHELL)" \
 	"MAKEINFO=$(MAKEINFO) $(MAKEINFOFLAGS)" \
@@ -727,10 +578,6 @@ EXTRA_HOST_FLAGS = \
 	'AR=$(AR)' \
 	'AS=$(AS)' \
 	'CC=$(CC)' \
-	'CXX=$(CXX)' \
-	'DLLTOOL=$(DLLTOOL)' \
-	'GFORTRAN=$(GFORTRAN)' \
-	'GOC=$(GOC)' \
 	'LD=$(LD)' \
 	'LIPO=$(LIPO)' \
 	'NM=$(NM)' \
@@ -738,8 +585,6 @@ EXTRA_HOST_FLAGS = \
 	'RANLIB=$(RANLIB)' \
 	'READELF=$(READELF)' \
 	'STRIP=$(STRIP)' \
-	'WINDRES=$(WINDRES)' \
-	'WINDMC=$(WINDMC)' \
 	'CREATE_GCOV=$(CREATE_GCOV)'
 
 FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS)
@@ -754,20 +599,10 @@ STAGE1_FLAGS_TO_PASS = \
 
 POSTSTAGE1_FLAGS_TO_PASS = \
 	CC="$${CC}" CC_FOR_BUILD="$${CC_FOR_BUILD}" \
-	CXX="$${CXX}" CXX_FOR_BUILD="$${CXX_FOR_BUILD}" \
 	GNATBIND="$${GNATBIND}" \
 	LDFLAGS="$${LDFLAGS}" \
 	HOST_LIBS="$${HOST_LIBS}" \
-	$(LTO_FLAGS_TO_PASS) \
-	"`echo 'ADAFLAGS=$(BOOT_ADAFLAGS)' | sed -e s'/[^=][^=]*=$$/XFOO=/'`"
-
-@if gcc-bootstrap
-EXTRA_HOST_EXPORTS = if [ $(current_stage) != stage1 ]; then \
-		       $(POSTSTAGE1_HOST_EXPORTS) \
-		     fi;
-
-EXTRA_BOOTSTRAP_FLAGS = CC="$$CC" CXX="$$CXX" LDFLAGS="$$LDFLAGS"
-@endif gcc-bootstrap
+	$(LTO_FLAGS_TO_PASS)
 
 # Flags to pass down to makes which are built with the target environment.
 # The double $ decreases the length of the command line; those variables
@@ -779,25 +614,14 @@ EXTRA_TARGET_FLAGS = \
 	'AS=$(COMPILER_AS_FOR_TARGET)' \
 	'CC=$$(CC_FOR_TARGET) $$(XGCC_FLAGS_FOR_TARGET) $$(TFLAGS)' \
 	'CFLAGS=$$(CFLAGS_FOR_TARGET)' \
-	'CXX=$$(CXX_FOR_TARGET) -B$$r/$$(TARGET_SUBDIR)/libstdc++-v3/src/.libs \
-	 -B$$r/$$(TARGET_SUBDIR)/libstdc++-v3/libsupc++/.libs \
-	 $$(XGCC_FLAGS_FOR_TARGET) $$(TFLAGS)' \
-	'CXXFLAGS=$$(CXXFLAGS_FOR_TARGET)' \
-	'DLLTOOL=$$(DLLTOOL_FOR_TARGET)' \
-	'GFORTRAN=$$(GFORTRAN_FOR_TARGET) $$(XGCC_FLAGS_FOR_TARGET) $$(TFLAGS)' \
-	'GOC=$$(GOC_FOR_TARGET) $$(XGCC_FLAGS_FOR_TARGET) $$(TFLAGS)' \
-	'GOCFLAGS=$$(GOCFLAGS_FOR_TARGET)' \
 	'LD=$(COMPILER_LD_FOR_TARGET)' \
 	'LDFLAGS=$$(LDFLAGS_FOR_TARGET)' \
 	'LIBCFLAGS=$$(LIBCFLAGS_FOR_TARGET)' \
-	'LIBCXXFLAGS=$$(LIBCXXFLAGS_FOR_TARGET)' \
 	'NM=$(COMPILER_NM_FOR_TARGET)' \
 	'OBJDUMP=$$(OBJDUMP_FOR_TARGET)' \
 	'OBJCOPY=$$(OBJCOPY_FOR_TARGET)' \
 	'RANLIB=$$(RANLIB_FOR_TARGET)' \
 	'READELF=$$(READELF_FOR_TARGET)' \
-	'WINDRES=$$(WINDRES_FOR_TARGET)' \
-	'WINDMC=$$(WINDMC_FOR_TARGET)' \
 	'XGCC_FLAGS_FOR_TARGET=$(XGCC_FLAGS_FOR_TARGET)' \
 	'STAGE1_LDFLAGS=$$(POSTSTAGE1_LDFLAGS)' \
 	'STAGE1_LIBS=$$(POSTSTAGE1_LIBS)' \
@@ -811,20 +635,6 @@ TARGET_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_TARGET_FLAGS)
 # If any variables are added here, they must be added to do-*, below.
 # The BUILD_* variables are a special case, which are used for the gcc
 # cross-building scheme.
-EXTRA_GCC_FLAGS = \
-	"GCC_FOR_TARGET=$(GCC_FOR_TARGET)" \
-	"`echo 'STMP_FIXPROTO=$(STMP_FIXPROTO)' | sed -e s'/[^=][^=]*=$$/XFOO=/'`" \
-	"`echo 'LIMITS_H_TEST=$(LIMITS_H_TEST)' | sed -e s'/[^=][^=]*=$$/XFOO=/'`"
-
-GCC_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(EXTRA_GCC_FLAGS)
-
-@if gcc
-BUILD_CONFIG = @BUILD_CONFIG@
-ifneq ($(BUILD_CONFIG),)
-include $(foreach CONFIG, $(BUILD_CONFIG), $(srcdir)/config/$(CONFIG).mk)
-endif
-@endif gcc
-
 .PHONY: configure-host
 configure-host:  \
     maybe-configure-bfd \
@@ -844,26 +654,10 @@ configure-target:
 # The target built for a native non-bootstrap build.
 .PHONY: all
 all:
-@if gcc-bootstrap
-	[ -f stage_final ] || echo stage3 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) `cat stage_final`-bubble
-@endif gcc-bootstrap
 	@: $(MAKE); $(unstage)
 	@r=`${PWD_COMMAND}`; export r; \
 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-@if gcc-bootstrap
-	if [ -f stage_last ]; then \
-	  TFLAGS="$(STAGE$(shell test ! -f stage_last || sed s,^stage,, stage_last)_TFLAGS)"; \
-	  $(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target; \
-	else \
-@endif gcc-bootstrap
 	  $(MAKE) $(RECURSE_FLAGS_TO_PASS) all-host all-target \
-@if gcc-bootstrap
-	    ; \
-	fi \
-@endif gcc-bootstrap
 	&& :
 
 .PHONY: all-build
@@ -1277,9 +1071,6 @@ TAGS: do-TAGS
 
 .PHONY: configure-build-libiberty maybe-configure-build-libiberty
 maybe-configure-build-libiberty:
-@if gcc-bootstrap
-configure-build-libiberty: stage_current
-@endif gcc-bootstrap
 @if build-libiberty
 maybe-configure-build-libiberty: configure-build-libiberty
 configure-build-libiberty: 
@@ -1312,9 +1103,6 @@ configure-build-libiberty:
 
 .PHONY: all-build-libiberty maybe-all-build-libiberty
 maybe-all-build-libiberty:
-@if gcc-bootstrap
-all-build-libiberty: stage_current
-@endif gcc-bootstrap
 @if build-libiberty
 TARGET-build-libiberty=all
 maybe-all-build-libiberty: all-build-libiberty
@@ -1334,9 +1122,6 @@ all-build-libiberty: configure-build-libiberty
 
 .PHONY: configure-build-m4 maybe-configure-build-m4
 maybe-configure-build-m4:
-@if gcc-bootstrap
-configure-build-m4: stage_current
-@endif gcc-bootstrap
 @if build-m4
 maybe-configure-build-m4: configure-build-m4
 configure-build-m4: 
@@ -1369,9 +1154,6 @@ configure-build-m4:
 
 .PHONY: all-build-m4 maybe-all-build-m4
 maybe-all-build-m4:
-@if gcc-bootstrap
-all-build-m4: stage_current
-@endif gcc-bootstrap
 @if build-m4
 TARGET-build-m4=all
 maybe-all-build-m4: all-build-m4
@@ -1391,9 +1173,6 @@ all-build-m4: configure-build-m4
 
 .PHONY: configure-build-libcpp maybe-configure-build-libcpp
 maybe-configure-build-libcpp:
-@if gcc-bootstrap
-configure-build-libcpp: stage_current
-@endif gcc-bootstrap
 @if build-libcpp
 maybe-configure-build-libcpp: configure-build-libcpp
 configure-build-libcpp: 
@@ -1426,9 +1205,6 @@ configure-build-libcpp:
 
 .PHONY: all-build-libcpp maybe-all-build-libcpp
 maybe-all-build-libcpp:
-@if gcc-bootstrap
-all-build-libcpp: stage_current
-@endif gcc-bootstrap
 @if build-libcpp
 TARGET-build-libcpp=all
 maybe-all-build-libcpp: all-build-libcpp
@@ -1453,9 +1229,6 @@ all-build-libcpp: configure-build-libcpp
 
 .PHONY: configure-bfd maybe-configure-bfd
 maybe-configure-bfd:
-@if gcc-bootstrap
-configure-bfd: stage_current
-@endif gcc-bootstrap
 @if bfd
 maybe-configure-bfd: configure-bfd
 configure-bfd: 
@@ -1494,9 +1267,11 @@ configure-stage1-bfd:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1526,10 +1301,12 @@ configure-stage2-bfd:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1559,10 +1336,12 @@ configure-stage3-bfd:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1592,10 +1371,12 @@ configure-stage4-bfd:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1625,10 +1406,12 @@ configure-stageprofile-bfd:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1658,10 +1441,12 @@ configure-stagefeedback-bfd:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/bfd/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/bfd; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/bfd; \
 	cd $(HOST_SUBDIR)/bfd || exit 1; \
@@ -1685,9 +1470,6 @@ configure-stagefeedback-bfd:
 
 .PHONY: all-bfd maybe-all-bfd
 maybe-all-bfd:
-@if gcc-bootstrap
-all-bfd: stage_current
-@endif gcc-bootstrap
 @if bfd
 TARGET-bfd=all
 maybe-all-bfd: all-bfd
@@ -1720,10 +1502,9 @@ all-stage1-bfd: configure-stage1-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -1764,10 +1545,9 @@ all-stage2-bfd: configure-stage2-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -1806,10 +1586,9 @@ all-stage3-bfd: configure-stage3-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -1848,10 +1627,9 @@ all-stage4-bfd: configure-stage4-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -1890,10 +1668,9 @@ all-stageprofile-bfd: configure-stageprofile-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -1932,10 +1709,9 @@ all-stagefeedback-bfd: configure-stagefeedback-bfd
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -2021,9 +1797,8 @@ mostlyclean-bfd:
 	echo "Doing mostlyclean in bfd"; \
 	(cd $(HOST_SUBDIR)/bfd && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -2045,9 +1820,8 @@ clean-bfd:
 	echo "Doing clean in bfd"; \
 	(cd $(HOST_SUBDIR)/bfd && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -2069,9 +1843,8 @@ distclean-bfd:
 	echo "Doing distclean in bfd"; \
 	(cd $(HOST_SUBDIR)/bfd && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -2093,9 +1866,8 @@ maintainer-clean-bfd:
 	echo "Doing maintainer-clean in bfd"; \
 	(cd $(HOST_SUBDIR)/bfd && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -2105,9 +1877,6 @@ maintainer-clean-bfd:
 
 .PHONY: configure-opcodes maybe-configure-opcodes
 maybe-configure-opcodes:
-@if gcc-bootstrap
-configure-opcodes: stage_current
-@endif gcc-bootstrap
 @if opcodes
 maybe-configure-opcodes: configure-opcodes
 configure-opcodes: 
@@ -2146,9 +1915,11 @@ configure-stage1-opcodes:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2178,10 +1949,12 @@ configure-stage2-opcodes:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2211,10 +1984,12 @@ configure-stage3-opcodes:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2244,10 +2019,12 @@ configure-stage4-opcodes:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2277,10 +2054,12 @@ configure-stageprofile-opcodes:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2310,10 +2089,12 @@ configure-stagefeedback-opcodes:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/opcodes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
 	cd $(HOST_SUBDIR)/opcodes || exit 1; \
@@ -2337,9 +2118,6 @@ configure-stagefeedback-opcodes:
 
 .PHONY: all-opcodes maybe-all-opcodes
 maybe-all-opcodes:
-@if gcc-bootstrap
-all-opcodes: stage_current
-@endif gcc-bootstrap
 @if opcodes
 TARGET-opcodes=all
 maybe-all-opcodes: all-opcodes
@@ -2372,10 +2150,9 @@ all-stage1-opcodes: configure-stage1-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -2416,10 +2193,9 @@ all-stage2-opcodes: configure-stage2-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -2458,10 +2234,9 @@ all-stage3-opcodes: configure-stage3-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -2500,10 +2275,9 @@ all-stage4-opcodes: configure-stage4-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -2542,10 +2316,9 @@ all-stageprofile-opcodes: configure-stageprofile-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -2584,10 +2357,9 @@ all-stagefeedback-opcodes: configure-stagefeedback-opcodes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -2673,9 +2445,8 @@ mostlyclean-opcodes:
 	echo "Doing mostlyclean in opcodes"; \
 	(cd $(HOST_SUBDIR)/opcodes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -2697,9 +2468,8 @@ clean-opcodes:
 	echo "Doing clean in opcodes"; \
 	(cd $(HOST_SUBDIR)/opcodes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -2721,9 +2491,8 @@ distclean-opcodes:
 	echo "Doing distclean in opcodes"; \
 	(cd $(HOST_SUBDIR)/opcodes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -2745,9 +2514,8 @@ maintainer-clean-opcodes:
 	echo "Doing maintainer-clean in opcodes"; \
 	(cd $(HOST_SUBDIR)/opcodes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -2757,9 +2525,6 @@ maintainer-clean-opcodes:
 
 .PHONY: configure-binutils maybe-configure-binutils
 maybe-configure-binutils:
-@if gcc-bootstrap
-configure-binutils: stage_current
-@endif gcc-bootstrap
 @if binutils
 maybe-configure-binutils: configure-binutils
 configure-binutils: 
@@ -2798,9 +2563,11 @@ configure-stage1-binutils:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2830,10 +2597,12 @@ configure-stage2-binutils:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2863,10 +2632,12 @@ configure-stage3-binutils:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2896,10 +2667,12 @@ configure-stage4-binutils:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2929,10 +2702,12 @@ configure-stageprofile-binutils:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2962,10 +2737,12 @@ configure-stagefeedback-binutils:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/binutils/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/binutils; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/binutils; \
 	cd $(HOST_SUBDIR)/binutils || exit 1; \
@@ -2989,9 +2766,6 @@ configure-stagefeedback-binutils:
 
 .PHONY: all-binutils maybe-all-binutils
 maybe-all-binutils:
-@if gcc-bootstrap
-all-binutils: stage_current
-@endif gcc-bootstrap
 @if binutils
 TARGET-binutils=all
 maybe-all-binutils: all-binutils
@@ -3024,10 +2798,9 @@ all-stage1-binutils: configure-stage1-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -3068,10 +2841,9 @@ all-stage2-binutils: configure-stage2-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -3110,10 +2882,9 @@ all-stage3-binutils: configure-stage3-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -3152,10 +2923,9 @@ all-stage4-binutils: configure-stage4-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -3194,10 +2964,9 @@ all-stageprofile-binutils: configure-stageprofile-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -3236,10 +3005,9 @@ all-stagefeedback-binutils: configure-stagefeedback-binutils
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -3325,9 +3093,8 @@ mostlyclean-binutils:
 	echo "Doing mostlyclean in binutils"; \
 	(cd $(HOST_SUBDIR)/binutils && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -3349,9 +3116,8 @@ clean-binutils:
 	echo "Doing clean in binutils"; \
 	(cd $(HOST_SUBDIR)/binutils && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -3373,9 +3139,8 @@ distclean-binutils:
 	echo "Doing distclean in binutils"; \
 	(cd $(HOST_SUBDIR)/binutils && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -3397,9 +3162,8 @@ maintainer-clean-binutils:
 	echo "Doing maintainer-clean in binutils"; \
 	(cd $(HOST_SUBDIR)/binutils && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -3409,9 +3173,6 @@ maintainer-clean-binutils:
 
 .PHONY: configure-etc maybe-configure-etc
 maybe-configure-etc:
-@if gcc-bootstrap
-configure-etc: stage_current
-@endif gcc-bootstrap
 @if etc
 maybe-configure-etc: configure-etc
 configure-etc: 
@@ -3443,9 +3204,6 @@ configure-etc:
 
 .PHONY: all-etc maybe-all-etc
 maybe-all-etc:
-@if gcc-bootstrap
-all-etc: stage_current
-@endif gcc-bootstrap
 @if etc
 TARGET-etc=all
 maybe-all-etc: all-etc
@@ -3526,9 +3284,8 @@ mostlyclean-etc:
 	echo "Doing mostlyclean in etc"; \
 	(cd $(HOST_SUBDIR)/etc && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -3551,9 +3308,8 @@ clean-etc:
 	echo "Doing clean in etc"; \
 	(cd $(HOST_SUBDIR)/etc && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -3576,9 +3332,8 @@ distclean-etc:
 	echo "Doing distclean in etc"; \
 	(cd $(HOST_SUBDIR)/etc && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -3601,9 +3356,8 @@ maintainer-clean-etc:
 	echo "Doing maintainer-clean in etc"; \
 	(cd $(HOST_SUBDIR)/etc && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -3613,9 +3367,6 @@ maintainer-clean-etc:
 
 .PHONY: configure-fixincludes maybe-configure-fixincludes
 maybe-configure-fixincludes:
-@if gcc-bootstrap
-configure-fixincludes: stage_current
-@endif gcc-bootstrap
 @if fixincludes
 maybe-configure-fixincludes: configure-fixincludes
 configure-fixincludes: 
@@ -3654,9 +3405,11 @@ configure-stage1-fixincludes:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3686,10 +3439,12 @@ configure-stage2-fixincludes:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3719,10 +3474,12 @@ configure-stage3-fixincludes:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3752,10 +3509,12 @@ configure-stage4-fixincludes:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3785,10 +3544,12 @@ configure-stageprofile-fixincludes:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3818,10 +3579,12 @@ configure-stagefeedback-fixincludes:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/fixincludes/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/fixincludes; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/fixincludes; \
 	cd $(HOST_SUBDIR)/fixincludes || exit 1; \
@@ -3845,9 +3608,6 @@ configure-stagefeedback-fixincludes:
 
 .PHONY: all-fixincludes maybe-all-fixincludes
 maybe-all-fixincludes:
-@if gcc-bootstrap
-all-fixincludes: stage_current
-@endif gcc-bootstrap
 @if fixincludes
 TARGET-fixincludes=all
 maybe-all-fixincludes: all-fixincludes
@@ -3880,10 +3640,9 @@ all-stage1-fixincludes: configure-stage1-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -3924,10 +3683,9 @@ all-stage2-fixincludes: configure-stage2-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -3966,10 +3724,9 @@ all-stage3-fixincludes: configure-stage3-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -4008,10 +3765,9 @@ all-stage4-fixincludes: configure-stage4-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -4050,10 +3806,9 @@ all-stageprofile-fixincludes: configure-stageprofile-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -4092,10 +3847,9 @@ all-stagefeedback-fixincludes: configure-stagefeedback-fixincludes
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -4181,9 +3935,8 @@ mostlyclean-fixincludes:
 	echo "Doing mostlyclean in fixincludes"; \
 	(cd $(HOST_SUBDIR)/fixincludes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -4205,9 +3958,8 @@ clean-fixincludes:
 	echo "Doing clean in fixincludes"; \
 	(cd $(HOST_SUBDIR)/fixincludes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -4229,9 +3981,8 @@ distclean-fixincludes:
 	echo "Doing distclean in fixincludes"; \
 	(cd $(HOST_SUBDIR)/fixincludes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -4253,9 +4004,8 @@ maintainer-clean-fixincludes:
 	echo "Doing maintainer-clean in fixincludes"; \
 	(cd $(HOST_SUBDIR)/fixincludes && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -4265,9 +4015,6 @@ maintainer-clean-fixincludes:
 
 .PHONY: configure-gas maybe-configure-gas
 maybe-configure-gas:
-@if gcc-bootstrap
-configure-gas: stage_current
-@endif gcc-bootstrap
 @if gas
 maybe-configure-gas: configure-gas
 configure-gas: 
@@ -4306,9 +4053,11 @@ configure-stage1-gas:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4338,10 +4087,12 @@ configure-stage2-gas:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4371,10 +4122,12 @@ configure-stage3-gas:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4404,10 +4157,12 @@ configure-stage4-gas:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4437,10 +4192,12 @@ configure-stageprofile-gas:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4470,10 +4227,12 @@ configure-stagefeedback-gas:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/gas/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/gas; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gas; \
 	cd $(HOST_SUBDIR)/gas || exit 1; \
@@ -4497,9 +4256,6 @@ configure-stagefeedback-gas:
 
 .PHONY: all-gas maybe-all-gas
 maybe-all-gas:
-@if gcc-bootstrap
-all-gas: stage_current
-@endif gcc-bootstrap
 @if gas
 TARGET-gas=all
 maybe-all-gas: all-gas
@@ -4532,10 +4288,9 @@ all-stage1-gas: configure-stage1-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -4576,10 +4331,9 @@ all-stage2-gas: configure-stage2-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -4618,10 +4372,9 @@ all-stage3-gas: configure-stage3-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -4660,10 +4413,9 @@ all-stage4-gas: configure-stage4-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -4702,10 +4454,9 @@ all-stageprofile-gas: configure-stageprofile-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -4744,10 +4495,9 @@ all-stagefeedback-gas: configure-stagefeedback-gas
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -4833,9 +4583,8 @@ mostlyclean-gas:
 	echo "Doing mostlyclean in gas"; \
 	(cd $(HOST_SUBDIR)/gas && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -4857,9 +4606,8 @@ clean-gas:
 	echo "Doing clean in gas"; \
 	(cd $(HOST_SUBDIR)/gas && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -4881,9 +4629,8 @@ distclean-gas:
 	echo "Doing distclean in gas"; \
 	(cd $(HOST_SUBDIR)/gas && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -4905,9 +4652,8 @@ maintainer-clean-gas:
 	echo "Doing maintainer-clean in gas"; \
 	(cd $(HOST_SUBDIR)/gas && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -4917,9 +4663,6 @@ maintainer-clean-gas:
 
 .PHONY: configure-ld maybe-configure-ld
 maybe-configure-ld:
-@if gcc-bootstrap
-configure-ld: stage_current
-@endif gcc-bootstrap
 @if ld
 maybe-configure-ld: configure-ld
 configure-ld: 
@@ -4958,9 +4701,11 @@ configure-stage1-ld:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -4990,10 +4735,12 @@ configure-stage2-ld:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -5023,10 +4770,12 @@ configure-stage3-ld:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -5056,10 +4805,12 @@ configure-stage4-ld:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -5089,10 +4840,12 @@ configure-stageprofile-ld:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -5122,10 +4875,12 @@ configure-stagefeedback-ld:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/ld/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/ld; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/ld; \
 	cd $(HOST_SUBDIR)/ld || exit 1; \
@@ -5149,9 +4904,6 @@ configure-stagefeedback-ld:
 
 .PHONY: all-ld maybe-all-ld
 maybe-all-ld:
-@if gcc-bootstrap
-all-ld: stage_current
-@endif gcc-bootstrap
 @if ld
 TARGET-ld=all
 maybe-all-ld: all-ld
@@ -5184,10 +4936,9 @@ all-stage1-ld: configure-stage1-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -5228,10 +4979,9 @@ all-stage2-ld: configure-stage2-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -5270,10 +5020,9 @@ all-stage3-ld: configure-stage3-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -5312,10 +5061,9 @@ all-stage4-ld: configure-stage4-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -5354,10 +5102,9 @@ all-stageprofile-ld: configure-stageprofile-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -5396,10 +5143,9 @@ all-stagefeedback-ld: configure-stagefeedback-ld
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -5485,9 +5231,8 @@ mostlyclean-ld:
 	echo "Doing mostlyclean in ld"; \
 	(cd $(HOST_SUBDIR)/ld && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -5509,9 +5254,8 @@ clean-ld:
 	echo "Doing clean in ld"; \
 	(cd $(HOST_SUBDIR)/ld && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -5533,9 +5277,8 @@ distclean-ld:
 	echo "Doing distclean in ld"; \
 	(cd $(HOST_SUBDIR)/ld && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -5557,9 +5300,8 @@ maintainer-clean-ld:
 	echo "Doing maintainer-clean in ld"; \
 	(cd $(HOST_SUBDIR)/ld && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -5569,9 +5311,6 @@ maintainer-clean-ld:
 
 .PHONY: configure-libcpp maybe-configure-libcpp
 maybe-configure-libcpp:
-@if gcc-bootstrap
-configure-libcpp: stage_current
-@endif gcc-bootstrap
 @if libcpp
 maybe-configure-libcpp: configure-libcpp
 configure-libcpp: 
@@ -5610,9 +5349,11 @@ configure-stage1-libcpp:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5642,10 +5383,12 @@ configure-stage2-libcpp:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5675,10 +5418,12 @@ configure-stage3-libcpp:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5708,10 +5453,12 @@ configure-stage4-libcpp:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5741,10 +5488,12 @@ configure-stageprofile-libcpp:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5774,10 +5523,12 @@ configure-stagefeedback-libcpp:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libcpp/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/libcpp; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libcpp; \
 	cd $(HOST_SUBDIR)/libcpp || exit 1; \
@@ -5801,9 +5552,6 @@ configure-stagefeedback-libcpp:
 
 .PHONY: all-libcpp maybe-all-libcpp
 maybe-all-libcpp:
-@if gcc-bootstrap
-all-libcpp: stage_current
-@endif gcc-bootstrap
 @if libcpp
 TARGET-libcpp=all
 maybe-all-libcpp: all-libcpp
@@ -5836,10 +5584,9 @@ all-stage1-libcpp: configure-stage1-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -5880,10 +5627,9 @@ all-stage2-libcpp: configure-stage2-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -5922,10 +5668,9 @@ all-stage3-libcpp: configure-stage3-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -5964,10 +5709,9 @@ all-stage4-libcpp: configure-stage4-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -6006,10 +5750,9 @@ all-stageprofile-libcpp: configure-stageprofile-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -6048,10 +5791,9 @@ all-stagefeedback-libcpp: configure-stagefeedback-libcpp
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -6137,9 +5879,8 @@ mostlyclean-libcpp:
 	echo "Doing mostlyclean in libcpp"; \
 	(cd $(HOST_SUBDIR)/libcpp && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -6161,9 +5902,8 @@ clean-libcpp:
 	echo "Doing clean in libcpp"; \
 	(cd $(HOST_SUBDIR)/libcpp && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -6185,9 +5925,8 @@ distclean-libcpp:
 	echo "Doing distclean in libcpp"; \
 	(cd $(HOST_SUBDIR)/libcpp && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -6209,9 +5948,8 @@ maintainer-clean-libcpp:
 	echo "Doing maintainer-clean in libcpp"; \
 	(cd $(HOST_SUBDIR)/libcpp && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -6221,9 +5959,6 @@ maintainer-clean-libcpp:
 
 .PHONY: configure-libiberty maybe-configure-libiberty
 maybe-configure-libiberty:
-@if gcc-bootstrap
-configure-libiberty: stage_current
-@endif gcc-bootstrap
 @if libiberty
 maybe-configure-libiberty: configure-libiberty
 configure-libiberty: 
@@ -6262,9 +5997,11 @@ configure-stage1-libiberty:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6295,10 +6032,12 @@ configure-stage2-libiberty:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6329,10 +6068,12 @@ configure-stage3-libiberty:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6363,10 +6104,12 @@ configure-stage4-libiberty:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6397,10 +6140,12 @@ configure-stageprofile-libiberty:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6431,10 +6176,12 @@ configure-stagefeedback-libiberty:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/libiberty; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty; \
 	cd $(HOST_SUBDIR)/libiberty || exit 1; \
@@ -6459,9 +6206,6 @@ configure-stagefeedback-libiberty:
 
 .PHONY: all-libiberty maybe-all-libiberty
 maybe-all-libiberty:
-@if gcc-bootstrap
-all-libiberty: stage_current
-@endif gcc-bootstrap
 @if libiberty
 TARGET-libiberty=all
 maybe-all-libiberty: all-libiberty
@@ -6494,10 +6238,9 @@ all-stage1-libiberty: configure-stage1-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS)  \
@@ -6538,10 +6281,9 @@ all-stage2-libiberty: configure-stage2-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -6580,10 +6322,9 @@ all-stage3-libiberty: configure-stage3-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -6622,10 +6363,9 @@ all-stage4-libiberty: configure-stage4-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -6664,10 +6404,9 @@ all-stageprofile-libiberty: configure-stageprofile-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -6706,10 +6445,9 @@ all-stagefeedback-libiberty: configure-stagefeedback-libiberty
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -6795,9 +6533,8 @@ mostlyclean-libiberty:
 	echo "Doing mostlyclean in libiberty"; \
 	(cd $(HOST_SUBDIR)/libiberty && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -6819,9 +6556,8 @@ clean-libiberty:
 	echo "Doing clean in libiberty"; \
 	(cd $(HOST_SUBDIR)/libiberty && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -6843,9 +6579,8 @@ distclean-libiberty:
 	echo "Doing distclean in libiberty"; \
 	(cd $(HOST_SUBDIR)/libiberty && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -6867,9 +6602,8 @@ maintainer-clean-libiberty:
 	echo "Doing maintainer-clean in libiberty"; \
 	(cd $(HOST_SUBDIR)/libiberty && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -6879,9 +6613,6 @@ maintainer-clean-libiberty:
 
 .PHONY: configure-libiberty-linker-plugin maybe-configure-libiberty-linker-plugin
 maybe-configure-libiberty-linker-plugin:
-@if gcc-bootstrap
-configure-libiberty-linker-plugin: stage_current
-@endif gcc-bootstrap
 @if libiberty-linker-plugin
 maybe-configure-libiberty-linker-plugin: configure-libiberty-linker-plugin
 configure-libiberty-linker-plugin: 
@@ -6920,9 +6651,11 @@ configure-stage1-libiberty-linker-plugin:
 	TFLAGS="$(STAGE1_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 1 in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -6953,10 +6686,12 @@ configure-stage2-libiberty-linker-plugin:
 	TFLAGS="$(STAGE2_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 2 in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -6987,10 +6722,12 @@ configure-stage3-libiberty-linker-plugin:
 	TFLAGS="$(STAGE3_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 3 in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -7021,10 +6758,12 @@ configure-stage4-libiberty-linker-plugin:
 	TFLAGS="$(STAGE4_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage 4 in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -7055,10 +6794,12 @@ configure-stageprofile-libiberty-linker-plugin:
 	TFLAGS="$(STAGEprofile_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage profile in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -7089,10 +6830,12 @@ configure-stagefeedback-libiberty-linker-plugin:
 	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
 	test ! -f $(HOST_SUBDIR)/libiberty-linker-plugin/Makefile || exit 0; \
 	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS) \
+		$(POSTSTAGE1_HOST_EXPORTS) \
+	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
+	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
 	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
+	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
+	  \
 	echo Configuring stage feedback in $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/libiberty-linker-plugin; \
 	cd $(HOST_SUBDIR)/libiberty-linker-plugin || exit 1; \
@@ -7117,9 +6860,6 @@ configure-stagefeedback-libiberty-linker-plugin:
 
 .PHONY: all-libiberty-linker-plugin maybe-all-libiberty-linker-plugin
 maybe-all-libiberty-linker-plugin:
-@if gcc-bootstrap
-all-libiberty-linker-plugin: stage_current
-@endif gcc-bootstrap
 @if libiberty-linker-plugin
 TARGET-libiberty-linker-plugin=all
 maybe-all-libiberty-linker-plugin: all-libiberty-linker-plugin
@@ -7152,10 +6892,9 @@ all-stage1-libiberty-linker-plugin: configure-stage1-libiberty-linker-plugin
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE1_CFLAGS)" \
-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+		LIBCFLAGS="$(STAGE1_CFLAGS)" \
 		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS)  \
 		$(STAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
@@ -7196,10 +6935,9 @@ all-stage2-libiberty-linker-plugin: configure-stage2-libiberty-linker-plugin
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE2_CFLAGS)" \
-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
 		TFLAGS="$(STAGE2_TFLAGS)"  \
@@ -7238,10 +6976,9 @@ all-stage3-libiberty-linker-plugin: configure-stage3-libiberty-linker-plugin
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE3_CFLAGS)" \
-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
 		TFLAGS="$(STAGE3_TFLAGS)"  \
@@ -7280,10 +7017,9 @@ all-stage4-libiberty-linker-plugin: configure-stage4-libiberty-linker-plugin
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGE4_CFLAGS)" \
-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
 		TFLAGS="$(STAGE4_TFLAGS)"  \
@@ -7322,10 +7058,9 @@ all-stageprofile-libiberty-linker-plugin: configure-stageprofile-libiberty-linke
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
@@ -7364,10 +7099,9 @@ all-stagefeedback-libiberty-linker-plugin: configure-stagefeedback-libiberty-lin
 	 \
 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
 		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
 		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+		LIBCFLAGS="$(LIBCFLAGS)" \
 		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
 		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) @extra_linker_plugin_flags@ \
 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
@@ -7453,9 +7187,8 @@ mostlyclean-libiberty-linker-plugin:
 	echo "Doing mostlyclean in libiberty-linker-plugin"; \
 	(cd $(HOST_SUBDIR)/libiberty-linker-plugin && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -7477,9 +7210,8 @@ clean-libiberty-linker-plugin:
 	echo "Doing clean in libiberty-linker-plugin"; \
 	(cd $(HOST_SUBDIR)/libiberty-linker-plugin && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -7501,9 +7233,8 @@ distclean-libiberty-linker-plugin:
 	echo "Doing distclean in libiberty-linker-plugin"; \
 	(cd $(HOST_SUBDIR)/libiberty-linker-plugin && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -7525,9 +7256,8 @@ maintainer-clean-libiberty-linker-plugin:
 	echo "Doing maintainer-clean in libiberty-linker-plugin"; \
 	(cd $(HOST_SUBDIR)/libiberty-linker-plugin && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -7537,9 +7267,6 @@ maintainer-clean-libiberty-linker-plugin:
 
 .PHONY: configure-m4 maybe-configure-m4
 maybe-configure-m4:
-@if gcc-bootstrap
-configure-m4: stage_current
-@endif gcc-bootstrap
 @if m4
 maybe-configure-m4: configure-m4
 configure-m4: 
@@ -7571,9 +7298,6 @@ configure-m4:
 
 .PHONY: all-m4 maybe-all-m4
 maybe-all-m4:
-@if gcc-bootstrap
-all-m4: stage_current
-@endif gcc-bootstrap
 @if m4
 TARGET-m4=all
 maybe-all-m4: all-m4
@@ -7654,9 +7378,8 @@ mostlyclean-m4:
 	echo "Doing mostlyclean in m4"; \
 	(cd $(HOST_SUBDIR)/m4 && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          mostlyclean) \
 	  || exit 1
 
@@ -7679,9 +7402,8 @@ clean-m4:
 	echo "Doing clean in m4"; \
 	(cd $(HOST_SUBDIR)/m4 && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          clean) \
 	  || exit 1
 
@@ -7704,9 +7426,8 @@ distclean-m4:
 	echo "Doing distclean in m4"; \
 	(cd $(HOST_SUBDIR)/m4 && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          distclean) \
 	  || exit 1
 
@@ -7729,9 +7450,8 @@ maintainer-clean-m4:
 	echo "Doing maintainer-clean in m4"; \
 	(cd $(HOST_SUBDIR)/m4 && \
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "CXX=$${CXX}" "LD=$${LD}" "NM=$${NM}" \
+	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
 	          "RANLIB=$${RANLIB}" \
-	          "DLLTOOL=$${DLLTOOL}" "WINDRES=$${WINDRES}" "WINDMC=$${WINDMC}" \
 	          maintainer-clean) \
 	  || exit 1
 
@@ -7743,58 +7463,6 @@ maintainer-clean-m4:
 # Modules which run on the target machine
 # ---------------------------------------
 
-
-@if target-libgomp
-.PHONY: check-target-libgomp-c++
-check-target-libgomp-c++:
-	$(MAKE) RUNTESTFLAGS="$(RUNTESTFLAGS) c++.exp" check-target-libgomp
-
-.PHONY: check-target-libgomp-fortran
-check-target-libgomp-fortran:
-	$(MAKE) RUNTESTFLAGS="$(RUNTESTFLAGS) fortran.exp" check-target-libgomp
-
-@endif target-libgomp
-
-@if target-libitm
-.PHONY: check-target-libitm-c++
-check-target-libitm-c++:
-	$(MAKE) RUNTESTFLAGS="$(RUNTESTFLAGS) c++.exp" check-target-libitm
-
-@endif target-libitm
-
-# ----------
-# GCC module
-# ----------
-
-@if gcc-no-bootstrap
-.PHONY: cross
-cross: all-build all-gas all-ld
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	echo "Building the C and C++ compiler"; \
-	cd gcc && $(MAKE) $(GCC_FLAGS_TO_PASS) LANGUAGES="c c++"
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	echo "Building runtime libraries"; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) LANGUAGES="c c++" all
-@endif gcc-no-bootstrap
-
-@if gcc
-
-
-# The gcc part of install-no-fixedincludes, which relies on an intimate
-# knowledge of how a number of gcc internal targets (inter)operate.  Delegate.
-.PHONY: gcc-install-no-fixedincludes
-gcc-install-no-fixedincludes:
-	@if [ -f ./gcc/Makefile ]; then \
-	  r=`${PWD_COMMAND}`; export r; \
-	  s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	  $(HOST_EXPORTS) \
-	  (cd ./gcc \
-	   && $(MAKE) $(GCC_FLAGS_TO_PASS) install-no-fixedincludes); \
-	else true; fi
-@endif gcc
 
 # ---------------------
 # GCC bootstrap support
@@ -7813,12 +7481,6 @@ gcc-install-no-fixedincludes:
 unstage = :
 stage = :
 current_stage = ""
-
-@if gcc-bootstrap
-unstage = if [ -f stage_last ]; then [ -f stage_current ] || $(MAKE) `cat stage_last`-start || exit 1; else :; fi
-stage = if [ -f stage_current ]; then $(MAKE) `cat stage_current`-end || exit 1; else :; fi
-current_stage = "`cat stage_current 2> /dev/null`"
-@endif gcc-bootstrap
 
 .PHONY: unstage stage
 unstage:
@@ -7973,21 +7635,6 @@ do-clean: clean-stage1
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-
-.PHONY: distclean-stage1
-distclean-stage1::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stage1 || rm -f stage_last
-	rm -rf stage1-* 
-
-
-@endif gcc-bootstrap
 
 
 .PHONY: stage2-start stage2-end
@@ -8136,44 +7783,6 @@ do-clean: clean-stage2
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-
-
-.PHONY: bootstrap2 bootstrap2-lean
-bootstrap2:
-	echo stage2 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stage2-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE2_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-bootstrap2-lean:
-	echo stage2 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) LEAN=: stage2-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE2_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-distclean-stage1:: distclean-stage2 
-.PHONY: distclean-stage2
-distclean-stage2::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stage2 || rm -f stage_last
-	rm -rf stage2-* 
-
-
-@endif gcc-bootstrap
 
 
 .PHONY: stage3-start stage3-end
@@ -8327,95 +7936,6 @@ do-clean: clean-stage3
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-compare:
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	if test -f stage2-lean; then \
-	  echo Cannot compare object files as stage 2 was deleted.; \
-	  exit 0; \
-	fi; \
-	: $(MAKE); $(stage); \
-	rm -f .bad_compare; \
-	echo Comparing stages 2 and 3; \
-        sed=`echo stage3 | sed 's,^stage,,;s,.,.,g'`; \
-	files=`find stage3-* -name "*$(objext)" -print | \
-		 sed -n s,^stage$$sed-,,p`; \
-	for file in $${files}; do \
-	  f1=$$r/stage2-$$file; f2=$$r/stage3-$$file; \
-	  if test ! -f $$f1; then continue; fi; \
-	  $(do-compare) > /dev/null 2>&1; \
-	  if test $$? -eq 1; then \
-	    case $$file in \
-	      @compare_exclusions@) \
-	        echo warning: $$file differs ;; \
-	      *) \
-	        echo $$file differs >> .bad_compare ;; \
-	    esac; \
-	  fi; \
-	done; \
-	if [ -f .bad_compare ]; then \
-	  echo "Bootstrap comparison failure!"; \
-	  cat .bad_compare; \
-	  exit 1; \
-	else \
-	  echo Comparison successful.; \
-	fi; \
-	$(STAMP) compare
-	if $(LEAN); then \
-	  rm -rf stage2-*; \
-	  $(STAMP) stage2-lean; \
-	fi
-
-
-
-.PHONY: bootstrap bootstrap-lean
-bootstrap:
-	echo stage3 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stage3-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE3_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-bootstrap-lean:
-	echo stage3 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) LEAN=: stage3-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE3_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-distclean-stage2:: distclean-stage3 
-.PHONY: distclean-stage3
-distclean-stage3::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stage3 || rm -f stage_last
-	rm -rf stage3-* compare 
-
-
-.PHONY: cleanstrap
-cleanstrap: do-distclean local-clean
-	echo stage3 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stage3-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE3_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-@endif gcc-bootstrap
 
 
 .PHONY: stage4-start stage4-end
@@ -8569,83 +8089,6 @@ do-clean: clean-stage4
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-compare3:
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	if test -f stage3-lean; then \
-	  echo Cannot compare object files as stage 3 was deleted.; \
-	  exit 0; \
-	fi; \
-	: $(MAKE); $(stage); \
-	rm -f .bad_compare; \
-	echo Comparing stages 3 and 4; \
-        sed=`echo stage4 | sed 's,^stage,,;s,.,.,g'`; \
-	files=`find stage4-* -name "*$(objext)" -print | \
-		 sed -n s,^stage$$sed-,,p`; \
-	for file in $${files}; do \
-	  f1=$$r/stage3-$$file; f2=$$r/stage4-$$file; \
-	  if test ! -f $$f1; then continue; fi; \
-	  $(do-compare3) > /dev/null 2>&1; \
-	  if test $$? -eq 1; then \
-	    case $$file in \
-	      @compare_exclusions@) \
-	        echo warning: $$file differs ;; \
-	      *) \
-	        echo $$file differs >> .bad_compare ;; \
-	    esac; \
-	  fi; \
-	done; \
-	if [ -f .bad_compare ]; then \
-	  echo "Bootstrap comparison failure!"; \
-	  cat .bad_compare; \
-	  exit 1; \
-	else \
-	  echo Comparison successful.; \
-	fi; \
-	$(STAMP) compare3
-	if $(LEAN); then \
-	  rm -rf stage3-*; \
-	  $(STAMP) stage3-lean; \
-	fi
-
-
-
-.PHONY: bootstrap4 bootstrap4-lean
-bootstrap4:
-	echo stage4 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stage4-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE4_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-bootstrap4-lean:
-	echo stage4 > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) LEAN=: stage4-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE4_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-distclean-stage3:: distclean-stage4 
-.PHONY: distclean-stage4
-distclean-stage4::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stage4 || rm -f stage_last
-	rm -rf stage4-* compare3 
-
-
-@endif gcc-bootstrap
 
 
 .PHONY: stageprofile-start stageprofile-end
@@ -8794,21 +8237,6 @@ do-clean: clean-stageprofile
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-distclean-stage1:: distclean-stageprofile 
-.PHONY: distclean-stageprofile
-distclean-stageprofile::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stageprofile || rm -f stage_last
-	rm -rf stageprofile-* 
-
-
-@endif gcc-bootstrap
 
 
 .PHONY: stagefeedback-start stagefeedback-end
@@ -8957,44 +8385,6 @@ do-clean: clean-stagefeedback
 
 # FIXME: Will not need to be conditional when toplevel bootstrap is the
 # only possibility, but now it conflicts with no-bootstrap rules
-@if gcc-bootstrap
-
-
-
-.PHONY: profiledbootstrap profiledbootstrap-lean
-profiledbootstrap:
-	echo stagefeedback > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stagefeedback-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-profiledbootstrap-lean:
-	echo stagefeedback > stage_final
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) LEAN=: stagefeedback-bubble
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
-	$(MAKE) $(TARGET_FLAGS_TO_PASS) all-host all-target
-
-
-# Rules to wipe a stage and all the following ones, also used for cleanstrap
-distclean-stageprofile:: distclean-stagefeedback 
-.PHONY: distclean-stagefeedback
-distclean-stagefeedback::
-	@: $(MAKE); $(stage)
-	@test "`cat stage_last`" != stagefeedback || rm -f stage_last
-	rm -rf stagefeedback-* 
-
-
-@endif gcc-bootstrap
 
 
 
@@ -9011,39 +8401,13 @@ stagefeedback-start::
 	  { find . -name '*.*da' | sed 's,.*,$(LN) -f "&" "../'$$j'/&",' | $(SHELL); }; \
 	done
 
-@if gcc-bootstrap
-do-distclean: distclean-stage1
-
-# Provide a GCC build when we're building target libraries.  This does
-# not work as a dependency, just as the minimum necessary to avoid errors.
-stage_last:
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(MAKE) $(RECURSE_FLAGS_TO_PASS) stage1-bubble
-
-# Same as unstage, but not phony and defaulting to stage1-start.  We place
-# it in the dependency so that for example `make -j3 all-gcc' works.
-stage_current:
-	@if test -f stage_last; then $(unstage); else $(MAKE) stage1-start; fi
-
-.PHONY: restrap
-restrap::
-	@: $(MAKE); $(stage)
-	rm -rf stage1-$(TARGET_SUBDIR) stage2-* stage3-* stage4-* stageprofile-* stagefeedback-*
-restrap:: all
-@endif gcc-bootstrap
-
 # --------------------------------------
 # Dependencies between different modules
 # --------------------------------------
 
 # Generic dependencies for target modules on host stuff, especially gcc
-@if gcc-bootstrap
-@endif gcc-bootstrap
 
-@if gcc-no-bootstrap
-@endif gcc-no-bootstrap
-
+	
 
 # There are two types of dependencies here: 'hard' dependencies, where one
 # module simply won't build without the other; and 'soft' dependencies, where
@@ -9244,12 +8608,6 @@ all-m4: maybe-all-build-texinfo
 # described by lang_env_dependencies; the defaults apply to anything
 # not mentioned there.
 
-
-@if gcc-bootstrap
-@endif gcc-bootstrap
-
-@if gcc-no-bootstrap
-@endif gcc-no-bootstrap
 
 
 

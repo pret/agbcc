@@ -50,7 +50,7 @@ static fibnode_t fibnode_remove (fibnode_t);
 fibheap_t
 fibheap_new (void)
 {
-  return (fibheap_t) xcalloc (1, sizeof (struct fibheap));
+  return (fibheap_t) calloc (1, sizeof (struct fibheap));
 }
 
 /* Create a new fibonacci heap node.  */
@@ -59,7 +59,7 @@ fibnode_new (void)
 {
   fibnode_t node;
 
-  node = (fibnode_t) xcalloc (1, sizeof *node);
+  node = (fibnode_t) calloc (1, sizeof *node);
   node->left = node;
   node->right = node;
 

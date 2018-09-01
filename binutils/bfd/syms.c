@@ -76,7 +76,7 @@ SUBSECTION
 |         if (storage_needed == 0)
 |           return;
 |
-|         symbol_table = xmalloc (storage_needed);
+|         symbol_table = malloc (storage_needed);
 |           ...
 |         number_of_symbols =
 |            bfd_canonicalize_symtab (abfd, symbol_table);

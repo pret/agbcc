@@ -364,7 +364,7 @@ atof_generic (/* return pointer to just AFTER number we read.  */
 	* sizeof (LITTLENUM_TYPE);
 
       digits_binary_low = (LITTLENUM_TYPE *)
-	xmalloc (size_of_digits_in_chars);
+	malloc (size_of_digits_in_chars);
 
       memset ((char *) digits_binary_low, '\0', size_of_digits_in_chars);
 
@@ -479,8 +479,8 @@ atof_generic (/* return pointer to just AFTER number we read.  */
 	size_of_power_in_chars = size_of_power_in_littlenums
 	  * sizeof (LITTLENUM_TYPE) + 2;
 
-	power_binary_low = (LITTLENUM_TYPE *) xmalloc (size_of_power_in_chars);
-	temporary_binary_low = (LITTLENUM_TYPE *) xmalloc (size_of_power_in_chars);
+	power_binary_low = (LITTLENUM_TYPE *) malloc (size_of_power_in_chars);
+	temporary_binary_low = (LITTLENUM_TYPE *) malloc (size_of_power_in_chars);
 
 	memset ((char *) power_binary_low, '\0', size_of_power_in_chars);
 	*power_binary_low = 1;

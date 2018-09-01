@@ -5,3 +5,18 @@ agbcc
 old_agbcc
 *.lo
 
+gcc/genattr
+gcc/genattrtab
+gcc/gencheck
+gcc/gencodes
+gcc/genconfig
+gcc/genemit
+gcc/genextract
+gcc/genflags
+gcc/gengenrtl
+gcc/genopinit
+gcc/genoutput
+gcc/genpeep
+gcc/genrecog
+
+*.cache

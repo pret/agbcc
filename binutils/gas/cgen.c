@@ -891,7 +891,7 @@ gas_cgen_md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 	     finish the job.  Testing for pcrel is a temporary hack.  */
 	  || fixP->fx_pcrel)
 	{
-	  CGEN_FIELDS *fields = xmalloc (CGEN_CPU_SIZEOF_FIELDS (cd));
+	  CGEN_FIELDS *fields = malloc (CGEN_CPU_SIZEOF_FIELDS (cd));
 
 	  CGEN_CPU_SET_FIELDS_BITSIZE (cd) (fields, CGEN_INSN_BITSIZE (insn));
 	  CGEN_CPU_SET_VMA_OPERAND (cd) (cd, opindex, fields, (bfd_vma) value);

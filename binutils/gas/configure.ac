@@ -820,7 +820,6 @@ AC_MSG_RESULT($cross_gas)
 dnl ansidecl.h will deal with const
 dnl AC_C_CONST
 AC_FUNC_ALLOCA
-AC_C_INLINE
 
 # VMS doesn't have unlink.
 AC_CHECK_FUNCS(unlink remove, break)
@@ -877,9 +876,8 @@ fi
 
 GAS_CHECK_DECL_NEEDED(environ, f, char **f, $gas_test_headers)
 GAS_CHECK_DECL_NEEDED(ffs, f, int (*f)(int), $gas_test_headers)
-GAS_CHECK_DECL_NEEDED(strstr, f, char *(*f)(), $gas_test_headers)
 
-AC_CHECK_DECLS([getenv, mempcpy, stpcpy, strstr, vsnprintf, asprintf])
+AC_CHECK_DECLS([getenv, mempcpy, stpcpy, asprintf])
 
 BFD_BINARY_FOPEN
 

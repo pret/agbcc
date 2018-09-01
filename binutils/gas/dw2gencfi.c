@@ -268,7 +268,7 @@ alloc_debugseg_item (segT seg, int subseg, char *name)
   struct dwcfi_seg_list *r;
 
   r = (struct dwcfi_seg_list *)
-    xmalloc (sizeof (struct dwcfi_seg_list) + strlen (name));
+    malloc (sizeof (struct dwcfi_seg_list) + strlen (name));
   r->seg = seg;
   r->subseg = subseg;
   r->seg_name = name;

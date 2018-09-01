@@ -124,14 +124,6 @@ AC_DEFINE_UNQUOTED(DEFAULT_LD_Z_SEPARATE_CODE,
   $ac_default_ld_z_separate_code,
   [Define to 1 if you want to enable -z separate-code in ELF linker by default.])
 
-AC_ARG_ENABLE(leading-mingw64-underscores,
-  AS_HELP_STRING([--enable-leading-mingw64-underscores],
-                 [Enable leading underscores on 64 bit mingw targets]),
-  [],[])
-AS_IF([ test x"$enable_leading_mingw64_underscores" = xyes ],
-  [AC_DEFINE(USE_MINGW64_LEADING_UNDERSCORES, 1,
-    [Define if we should use leading underscore on 64 bit mingw targets])])
-
 DEBUGDIR=${libdir}/debug
 AC_ARG_WITH(separate-debug-dir,
   AS_HELP_STRING([--with-separate-debug-dir=DIR],
@@ -220,22 +212,21 @@ AC_SUBST(BFD_HOSTPTR_T)
 
 BFD_CC_FOR_BUILD
 
-AC_CHECK_HEADERS(alloca.h strings.h time.h unistd.h wchar.h wctype.h)
-AC_CHECK_HEADERS(fcntl.h sys/file.h sys/time.h sys/stat.h sys/resource.h)
+AC_CHECK_HEADERS(alloca.h strings.h time.h unistd.h wchar.h wctype.h \
+                 fcntl.h sys/file.h sys/time.h sys/stat.h sys/resource.h)
 GCC_HEADER_STDINT(bfd_stdint.h)
 AC_HEADER_TIME
 AC_HEADER_DIRENT
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS(fcntl getpagesize setitimer sysconf fdopen getuid getgid fileno)
-AC_CHECK_FUNCS(strtoull getrlimit)
+AC_CHECK_FUNCS(fcntl getpagesize setitimer sysconf fdopen getuid getgid fileno \
+               strtoull getrlimit)
 
 AC_CHECK_DECLS(basename)
 AC_CHECK_DECLS(ftello)
 AC_CHECK_DECLS(ftello64)
 AC_CHECK_DECLS(fseeko)
 AC_CHECK_DECLS(fseeko64)
-
 BFD_BINARY_FOPEN
 
 AC_CHECK_DECLS(ffs)
@@ -262,15 +253,6 @@ if test $bfd_cv_hidden = yes; then
   AC_DEFINE(HAVE_HIDDEN, 1,
 	    [Define if your compiler supports hidden visibility.])
 fi
-
-# Check if linker supports --as-needed and --no-as-needed options
-AC_CACHE_CHECK(linker --as-needed support, bfd_cv_ld_as_needed,
-	[bfd_cv_ld_as_needed=no
-	if $LD --help 2>/dev/null | grep as-needed > /dev/null; then
-		bfd_cv_ld_as_needed=yes
-	fi
-	])
-
 #LT_LIB_M
 
 # When building a shared libbfd, link against the pic version of libiberty
@@ -524,134 +506,6 @@ AC_SUBST(bfd_default_target_size)
 AC_SUBST(tdefaults)
 AC_SUBST(havevecs)
 
-# If we are configured native, pick a core file support file.
-COREFILE=
-COREFLAG=
-CORE_HEADER=
-TRAD_HEADER=
-if test "${target}" = "${host}"; then
-  case "${host}" in
-  arm-*-riscix)		COREFILE=trad-core.o ;;
-
-changequote(,)dnl
-  i[3-7]86-sequent-bsd*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/symmetry.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-sequent-sysv4*) ;;
-  i[3-7]86-sequent-sysv*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/symmetry.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-bsdi)
-changequote([,])dnl
-	COREFILE=
-	;;
-changequote(,)dnl
-  i[3-7]86-*-bsd* | i[3-7]86-*-freebsd[123] | i[3-7]86-*-freebsd[123]\.* | i[3-7]86-*-freebsd4\.[01234] | i[3-7]86-*-freebsd4\.[01234]\.* | i[3-7]86-*-freebsd*aout*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/i386bsd.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-freebsd* | i[3-7]86-*-kfreebsd*-gnu | i[3-7]86-*-dragonfly*)
-changequote([,])dnl
-	COREFILE=''
-	TRAD_HEADER='"hosts/i386bsd.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-netbsd* | i[3-7]86-*-knetbsd*-gnu | i[3-7]86-*-openbsd*)
-changequote([,])dnl
-	COREFILE=netbsd-core.o
-	;;
-changequote(,)dnl
-  i[3-7]86-esix-sysv3*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/esix.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-sco3.2v5*)
-changequote([,])dnl
-	COREFILE=sco5-core.o
-	;;
-changequote(,)dnl
-  i[3-7]86-*-sco* | i[3-7]86-*-isc*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/i386sco.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-mach3*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/i386mach3.h"'
-	;;
-changequote(,)dnl
-  i[3-7]86-*-linux-*)
-changequote([,])dnl
-	COREFILE=trad-core.o
-	TRAD_HEADER='"hosts/i386linux.h"'
-	case "$enable_targets"-"$want64" in
-	*x86_64-*linux*|*-true)
-	  CORE_HEADER='"hosts/x86-64linux.h"'
-	esac
-	;;
-changequote(,)dnl
-  i[3-7]86-*-isc*)	COREFILE=trad-core.o ;;
-  i[3-7]86-*-aix*)	COREFILE=aix386-core.o ;;
-changequote([,])dnl
-changequote(,)dnl
-  rs6000-*-aix[5-9].* | powerpc-*-aix[5-9].* | powerpc64-*-aix[5-9].*)
-changequote([,])dnl
-        COREFILE=rs6000-core.o
-	COREFLAG="$COREFLAG -DAIX_5_CORE -DAIX_CORE_DUMPX_CORE"
-	;;
-changequote(,)dnl
-  rs6000-*-aix4.[3-9]* | powerpc-*-aix4.[3-9]*)
-changequote([,])dnl
-        COREFILE=rs6000-core.o
-	COREFLAG="$COREFLAG -DAIX_CORE_DUMPX_CORE"
-	# Not all versions of AIX with -DAIX_CORE_DUMPX_CORE
-	# have c_impl as a member of struct core_dumpx
-	AC_MSG_CHECKING([for c_impl in struct core_dumpx])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <core.h>]], [[struct core_dumpx c; c.c_impl = 0;]])],[AC_DEFINE(HAVE_ST_C_IMPL, 1,
-	    [Define if struct core_dumpx has member c_impl])
-	  AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
-	;;
-  esac
-
-  # ELF corefile support has several flavors, but all of
-  # them use something called <sys/procfs.h>
-  AC_CHECK_HEADERS(sys/procfs.h)
-  if test "$ac_cv_header_sys_procfs_h" = yes; then
-    BFD_HAVE_SYS_PROCFS_TYPE(prstatus_t)
-    BFD_HAVE_SYS_PROCFS_TYPE(prstatus32_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(prstatus_t, pr_who)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(prstatus32_t, pr_who)
-    BFD_HAVE_SYS_PROCFS_TYPE(pstatus_t)
-    BFD_HAVE_SYS_PROCFS_TYPE(pxstatus_t)
-    BFD_HAVE_SYS_PROCFS_TYPE(pstatus32_t)
-    BFD_HAVE_SYS_PROCFS_TYPE(prpsinfo_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(prpsinfo_t, pr_pid)
-    BFD_HAVE_SYS_PROCFS_TYPE(prpsinfo32_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(prpsinfo32_t, pr_pid)
-    BFD_HAVE_SYS_PROCFS_TYPE(psinfo_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(psinfo_t, pr_pid)
-    BFD_HAVE_SYS_PROCFS_TYPE(psinfo32_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(psinfo32_t, pr_pid)
-    BFD_HAVE_SYS_PROCFS_TYPE(lwpstatus_t)
-    BFD_HAVE_SYS_PROCFS_TYPE(lwpxstatus_t)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(lwpstatus_t, pr_context)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(lwpstatus_t, pr_reg)
-    BFD_HAVE_SYS_PROCFS_TYPE_MEMBER(lwpstatus_t, pr_fpreg)
-    BFD_HAVE_SYS_PROCFS_TYPE(win32_pstatus_t)
-  fi
-fi
 AC_SUBST(COREFILE)
 AC_SUBST(COREFLAG)
 if test -n "$CORE_HEADER"; then
@@ -663,12 +517,7 @@ if test -n "$TRAD_HEADER"; then
     [Name of host specific header file to include in trad-core.c.])
 fi
 
-if test "$plugins" = "yes"; then
-  supports_plugins=1
-else
   supports_plugins=0
-fi
-AC_SUBST(supports_plugins)
 AC_SUBST(lt_cv_dlopen_libs)
 
 # Determine the host dependent file_ptr a.k.a. off_t type.  In order

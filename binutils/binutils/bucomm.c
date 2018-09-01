@@ -258,7 +258,7 @@ do_display_target (const bfd_target *targ, void *data)
     {
       size_t size = ((param->count < 64 ? 64 : param->count)
 		     * sizeof (*param->info) * 2);
-      param->info = xrealloc (param->info, size);
+      param->info = realloc (param->info, size);
       memset ((char *) param->info + param->alloc, 0, size - param->alloc);
       param->alloc = size;
     }
@@ -497,7 +497,7 @@ template_in_dir (const char *path)
   if (slash != (char *) NULL)
     {
       len = slash - path;
-      tmpname = (char *) xmalloc (len + sizeof (template) + 2);
+      tmpname = (char *) malloc (len + sizeof (template) + 2);
       memcpy (tmpname, path, len);
 
 #ifdef HAVE_DOS_BASED_FILE_SYSTEM
@@ -511,7 +511,7 @@ template_in_dir (const char *path)
     }
   else
     {
-      tmpname = (char *) xmalloc (sizeof (template));
+      tmpname = (char *) malloc (sizeof (template));
       len = 0;
     }
 
@@ -643,7 +643,7 @@ bfd_get_archive_filename (const bfd *abfd)
       if (curr)
 	free (buf);
       curr = needed + (needed >> 1);
-      buf = (char *) xmalloc (curr);
+      buf = (char *) malloc (curr);
     }
   sprintf (buf, "%s(%s)", bfd_get_filename (abfd->my_archive),
 	   bfd_get_filename (abfd));

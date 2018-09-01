@@ -118,10 +118,9 @@ am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/override.m4 \
 	$(top_srcdir)/../config/plugins.m4 \
 	$(top_srcdir)/../config/stdint.m4 \
-	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/bfd.m4 \
-	$(top_srcdir)/warning.m4 $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/version.m4 $(top_srcdir)/../config/lean.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/warning.m4 \
+	$(top_srcdir)/acinclude.m4 $(top_srcdir)/version.m4 \
+	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
@@ -148,7 +147,7 @@ am__objects_1 = archive.$(OBJEXT) archures.$(OBJEXT) bfd.$(OBJEXT) \
 	reloc.$(OBJEXT) section.$(OBJEXT) simple.$(OBJEXT) \
 	stab-syms.$(OBJEXT) stabs.$(OBJEXT) syms.$(OBJEXT) \
 	targets.$(OBJEXT) binary.$(OBJEXT) ihex.$(OBJEXT) \
-	srec.$(OBJEXT) tekhex.$(OBJEXT) verilog.$(OBJEXT)
+	srec.$(OBJEXT)
 am_libbfd_a_OBJECTS = $(am__objects_1)
 libbfd_a_OBJECTS = $(am_libbfd_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -166,98 +165,26 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/aix386-core.Po \
-	./$(DEPDIR)/aix5ppc-core.Po ./$(DEPDIR)/aout64.Po \
-	./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
+am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
 	./$(DEPDIR)/archures.Po ./$(DEPDIR)/bfd.Po \
 	./$(DEPDIR)/bfdio.Po ./$(DEPDIR)/bfdwin.Po \
 	./$(DEPDIR)/binary.Po ./$(DEPDIR)/cache.Po \
-	./$(DEPDIR)/cisco-core.Po ./$(DEPDIR)/coff-alpha.Po \
-	./$(DEPDIR)/coff-x86_64.Po ./$(DEPDIR)/coff64-rs6000.Po \
 	./$(DEPDIR)/compress.Po ./$(DEPDIR)/corefile.Po \
-	./$(DEPDIR)/cpu-aarch64.Po ./$(DEPDIR)/cpu-alpha.Po \
-	./$(DEPDIR)/cpu-arc.Po ./$(DEPDIR)/cpu-arm.Po \
-	./$(DEPDIR)/cpu-avr.Po ./$(DEPDIR)/cpu-bfin.Po \
-	./$(DEPDIR)/cpu-cr16.Po ./$(DEPDIR)/cpu-cr16c.Po \
-	./$(DEPDIR)/cpu-cris.Po ./$(DEPDIR)/cpu-crx.Po \
-	./$(DEPDIR)/cpu-d10v.Po ./$(DEPDIR)/cpu-d30v.Po \
-	./$(DEPDIR)/cpu-dlx.Po ./$(DEPDIR)/cpu-epiphany.Po \
-	./$(DEPDIR)/cpu-fr30.Po ./$(DEPDIR)/cpu-frv.Po \
-	./$(DEPDIR)/cpu-ft32.Po ./$(DEPDIR)/cpu-h8300.Po \
-	./$(DEPDIR)/cpu-hppa.Po ./$(DEPDIR)/cpu-i386.Po \
-	./$(DEPDIR)/cpu-ia64.Po ./$(DEPDIR)/cpu-iamcu.Po \
-	./$(DEPDIR)/cpu-ip2k.Po ./$(DEPDIR)/cpu-iq2000.Po \
-	./$(DEPDIR)/cpu-k1om.Po ./$(DEPDIR)/cpu-l1om.Po \
-	./$(DEPDIR)/cpu-lm32.Po ./$(DEPDIR)/cpu-m10200.Po \
-	./$(DEPDIR)/cpu-m10300.Po ./$(DEPDIR)/cpu-m32c.Po \
-	./$(DEPDIR)/cpu-m32r.Po ./$(DEPDIR)/cpu-m68hc11.Po \
-	./$(DEPDIR)/cpu-m68hc12.Po ./$(DEPDIR)/cpu-m68k.Po \
-	./$(DEPDIR)/cpu-m9s12x.Po ./$(DEPDIR)/cpu-m9s12xg.Po \
-	./$(DEPDIR)/cpu-mcore.Po ./$(DEPDIR)/cpu-mep.Po \
-	./$(DEPDIR)/cpu-metag.Po ./$(DEPDIR)/cpu-microblaze.Po \
-	./$(DEPDIR)/cpu-mips.Po ./$(DEPDIR)/cpu-mmix.Po \
-	./$(DEPDIR)/cpu-moxie.Po ./$(DEPDIR)/cpu-msp430.Po \
-	./$(DEPDIR)/cpu-mt.Po ./$(DEPDIR)/cpu-nds32.Po \
-	./$(DEPDIR)/cpu-nfp.Po ./$(DEPDIR)/cpu-nios2.Po \
-	./$(DEPDIR)/cpu-ns32k.Po ./$(DEPDIR)/cpu-or1k.Po \
-	./$(DEPDIR)/cpu-pdp11.Po ./$(DEPDIR)/cpu-pj.Po \
-	./$(DEPDIR)/cpu-plugin.Po ./$(DEPDIR)/cpu-powerpc.Po \
-	./$(DEPDIR)/cpu-pru.Po ./$(DEPDIR)/cpu-riscv.Po \
-	./$(DEPDIR)/cpu-rl78.Po ./$(DEPDIR)/cpu-rs6000.Po \
-	./$(DEPDIR)/cpu-rx.Po ./$(DEPDIR)/cpu-s12z.Po \
-	./$(DEPDIR)/cpu-s390.Po ./$(DEPDIR)/cpu-score.Po \
-	./$(DEPDIR)/cpu-sh.Po ./$(DEPDIR)/cpu-sparc.Po \
-	./$(DEPDIR)/cpu-spu.Po ./$(DEPDIR)/cpu-tic30.Po \
-	./$(DEPDIR)/cpu-tic4x.Po ./$(DEPDIR)/cpu-tic54x.Po \
-	./$(DEPDIR)/cpu-tic6x.Po ./$(DEPDIR)/cpu-tic80.Po \
-	./$(DEPDIR)/cpu-tilegx.Po ./$(DEPDIR)/cpu-tilepro.Po \
-	./$(DEPDIR)/cpu-v850.Po ./$(DEPDIR)/cpu-v850_rh850.Po \
-	./$(DEPDIR)/cpu-vax.Po ./$(DEPDIR)/cpu-visium.Po \
-	./$(DEPDIR)/cpu-wasm32.Po ./$(DEPDIR)/cpu-xc16x.Po \
-	./$(DEPDIR)/cpu-xgate.Po ./$(DEPDIR)/cpu-xstormy16.Po \
-	./$(DEPDIR)/cpu-xtensa.Po ./$(DEPDIR)/cpu-z80.Po \
-	./$(DEPDIR)/cpu-z8k.Po ./$(DEPDIR)/dwarf1.Po \
+	./$(DEPDIR)/cpu-arm.Po ./$(DEPDIR)/dwarf1.Po \
 	./$(DEPDIR)/dwarf2.Po ./$(DEPDIR)/elf-attrs.Po \
 	./$(DEPDIR)/elf-eh-frame.Po ./$(DEPDIR)/elf-nacl.Po \
 	./$(DEPDIR)/elf-properties.Po ./$(DEPDIR)/elf-strtab.Po \
 	./$(DEPDIR)/elf-vxworks.Po ./$(DEPDIR)/elf.Po \
-	./$(DEPDIR)/elf32-aarch64.Po ./$(DEPDIR)/elf32-arm.Po \
-	./$(DEPDIR)/elf32-ia64.Po ./$(DEPDIR)/elf32-mips.Po \
-	./$(DEPDIR)/elf32-riscv.Po ./$(DEPDIR)/elf32-score.Po \
-	./$(DEPDIR)/elf32-score7.Po ./$(DEPDIR)/elf32.Po \
-	./$(DEPDIR)/elf64-aarch64.Po ./$(DEPDIR)/elf64-alpha.Po \
-	./$(DEPDIR)/elf64-gen.Po ./$(DEPDIR)/elf64-hppa.Po \
-	./$(DEPDIR)/elf64-ia64-vms.Po ./$(DEPDIR)/elf64-ia64.Po \
-	./$(DEPDIR)/elf64-mips.Po ./$(DEPDIR)/elf64-mmix.Po \
-	./$(DEPDIR)/elf64-nfp.Po ./$(DEPDIR)/elf64-ppc.Po \
-	./$(DEPDIR)/elf64-riscv.Po ./$(DEPDIR)/elf64-s390.Po \
-	./$(DEPDIR)/elf64-sparc.Po ./$(DEPDIR)/elf64-tilegx.Po \
-	./$(DEPDIR)/elf64-x86-64.Po ./$(DEPDIR)/elf64.Po \
-	./$(DEPDIR)/elflink.Po ./$(DEPDIR)/elfn32-mips.Po \
-	./$(DEPDIR)/elfxx-aarch64.Po ./$(DEPDIR)/elfxx-ia64.Po \
-	./$(DEPDIR)/elfxx-mips.Po ./$(DEPDIR)/elfxx-riscv.Po \
-	./$(DEPDIR)/elfxx-sparc.Po ./$(DEPDIR)/elfxx-tilegx.Po \
-	./$(DEPDIR)/elfxx-x86.Po ./$(DEPDIR)/format.Po \
-	./$(DEPDIR)/hash.Po ./$(DEPDIR)/hpux-core.Po \
-	./$(DEPDIR)/ihex.Po ./$(DEPDIR)/init.Po \
-	./$(DEPDIR)/irix-core.Po ./$(DEPDIR)/libbfd.Po \
-	./$(DEPDIR)/linker.Po ./$(DEPDIR)/lynx-core.Po \
-	./$(DEPDIR)/mach-o-aarch64.Po ./$(DEPDIR)/mach-o-x86-64.Po \
-	./$(DEPDIR)/merge.Po ./$(DEPDIR)/mmo.Po \
-	./$(DEPDIR)/netbsd-core.Po ./$(DEPDIR)/opncls.Po \
-	./$(DEPDIR)/osf-core.Po ./$(DEPDIR)/pe-x86_64.Po \
-	./$(DEPDIR)/pei-ia64.Po ./$(DEPDIR)/pei-x86_64.Po \
-	./$(DEPDIR)/peigen.Po ./$(DEPDIR)/pepigen.Po \
-	./$(DEPDIR)/pex64igen.Po ./$(DEPDIR)/reloc.Po \
-	./$(DEPDIR)/reloc16.Po ./$(DEPDIR)/rs6000-core.Po \
-	./$(DEPDIR)/sco5-core.Po ./$(DEPDIR)/section.Po \
-	./$(DEPDIR)/simple.Po ./$(DEPDIR)/srec.Po \
-	./$(DEPDIR)/stab-syms.Po ./$(DEPDIR)/stabs.Po \
-	./$(DEPDIR)/syms.Po ./$(DEPDIR)/targets.Po \
-	./$(DEPDIR)/tekhex.Po ./$(DEPDIR)/trad-core.Po \
-	./$(DEPDIR)/verilog.Po ./$(DEPDIR)/vms-alpha.Po \
-	./$(DEPDIR)/vms-lib.Po ./$(DEPDIR)/vms-misc.Po \
-	./$(DEPDIR)/wasm-module.Po
+	./$(DEPDIR)/elf32-arm.Po ./$(DEPDIR)/elf32.Po \
+	./$(DEPDIR)/elflink.Po ./$(DEPDIR)/format.Po \
+	./$(DEPDIR)/hash.Po ./$(DEPDIR)/ihex.Po ./$(DEPDIR)/init.Po \
+	./$(DEPDIR)/libbfd.Po ./$(DEPDIR)/linker.Po \
+	./$(DEPDIR)/merge.Po ./$(DEPDIR)/opncls.Po \
+	./$(DEPDIR)/reloc.Po ./$(DEPDIR)/reloc16.Po \
+	./$(DEPDIR)/section.Po ./$(DEPDIR)/simple.Po \
+	./$(DEPDIR)/srec.Po ./$(DEPDIR)/stab-syms.Po \
+	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/syms.Po \
+	./$(DEPDIR)/targets.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -461,7 +388,6 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-supports_plugins = @supports_plugins@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -515,7 +441,7 @@ BFD32_LIBS = \
 	cache.o compress.o corefile.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o stab-syms.o stabs.o syms.o targets.o \
-	binary.o ihex.o srec.o tekhex.o verilog.o
+	binary.o ihex.o srec.o
 
 BFD64_LIBS = archive64.o
 BFD32_LIBS_CFILES = \
@@ -523,187 +449,22 @@ BFD32_LIBS_CFILES = \
 	cache.c  compress.c corefile.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c stab-syms.c stabs.c syms.c targets.c \
-	binary.c ihex.c srec.c tekhex.c verilog.c
+	binary.c ihex.c srec.c
 
 BFD64_LIBS_CFILES = archive64.c
 
 # This list is alphabetized to make it easier to keep in sync
 # with the decls and initializer in archures.c.
 ALL_MACHINES = \
-	cpu-aarch64.o \
-	cpu-alpha.o \
-	cpu-arc.o \
-	cpu-arm.o \
-	cpu-avr.o \
-	cpu-bfin.o \
-	cpu-cr16.o \
-	cpu-cr16c.o \
-	cpu-cris.o \
-	cpu-crx.o \
-	cpu-d10v.o \
-	cpu-d30v.o \
-	cpu-dlx.o \
-	cpu-epiphany.o \
-	cpu-fr30.o \
-	cpu-frv.o \
-	cpu-ft32.o \
-	cpu-h8300.o \
-	cpu-hppa.o \
-	cpu-i386.o \
-	cpu-iamcu.o \
-	cpu-l1om.o \
-	cpu-k1om.o \
-	cpu-ia64.o \
-	cpu-ip2k.o \
-	cpu-iq2000.o \
-	cpu-lm32.o \
-	cpu-m10200.o \
-	cpu-m10300.o \
-	cpu-m32c.o \
-	cpu-m32r.o \
-	cpu-m68hc11.o \
-	cpu-m68hc12.o \
-	cpu-m9s12x.o \
-	cpu-s12z.o \
-	cpu-m9s12xg.o \
-	cpu-m68k.o \
-	cpu-mcore.o \
-	cpu-mep.o \
-	cpu-metag.o \
-	cpu-microblaze.o \
-	cpu-mips.o \
-	cpu-mmix.o \
-	cpu-moxie.o \
-	cpu-msp430.o \
-	cpu-mt.o \
-	cpu-nds32.o \
-	cpu-nfp.o \
-	cpu-nios2.o \
-	cpu-ns32k.o \
-	cpu-or1k.o \
-	cpu-pdp11.o \
-	cpu-pj.o \
-	cpu-plugin.o \
-	cpu-powerpc.o \
-	cpu-pru.o \
-	cpu-rs6000.o \
-	cpu-riscv.o \
-	cpu-rl78.o \
-	cpu-rx.o \
-	cpu-s390.o \
-	cpu-score.o \
-	cpu-sh.o \
-	cpu-sparc.o \
-	cpu-spu.o \
-	cpu-tic30.o \
-	cpu-tic4x.o \
-	cpu-tic54x.o \
-	cpu-tic6x.o \
-	cpu-tic80.o \
-	cpu-tilegx.o \
-	cpu-tilepro.o \
-	cpu-v850.o \
-	cpu-v850_rh850.o \
-	cpu-vax.o \
-	cpu-visium.o \
-	cpu-wasm32.o \
-	cpu-xc16x.o \
-	cpu-xgate.o \
-	cpu-xstormy16.o \
-	cpu-xtensa.o \
-	cpu-z80.o \
-	cpu-z8k.o
+	cpu-arm.o
 
 ALL_MACHINES_CFILES = \
-	cpu-aarch64.c \
-	cpu-alpha.c \
-	cpu-arc.c \
-	cpu-arm.c \
-	cpu-avr.c \
-	cpu-bfin.c \
-	cpu-cr16.c \
-	cpu-cr16c.c \
-	cpu-cris.c \
-	cpu-crx.c \
-	cpu-d10v.c \
-	cpu-d30v.c \
-	cpu-dlx.c \
-	cpu-epiphany.c \
-	cpu-fr30.c \
-	cpu-frv.c \
-	cpu-ft32.c \
-	cpu-h8300.c \
-	cpu-hppa.c \
-	cpu-i386.c \
-	cpu-iamcu.c \
-	cpu-l1om.c \
-	cpu-k1om.c \
-	cpu-ia64.c \
-	cpu-ip2k.c \
-	cpu-iq2000.c \
-	cpu-lm32.c \
-	cpu-m10200.c \
-	cpu-m10300.c \
-	cpu-m32c.c \
-	cpu-m32r.c \
-	cpu-m68hc11.c \
-	cpu-m68hc12.c \
-	cpu-m9s12x.c \
-	cpu-s12z.c \
-	cpu-m9s12xg.c \
-	cpu-m68k.c \
-	cpu-mcore.c \
-	cpu-mep.c \
-	cpu-metag.c \
-	cpu-microblaze.c \
-	cpu-mips.c \
-	cpu-mmix.c \
-	cpu-moxie.c \
-	cpu-msp430.c \
-	cpu-mt.c \
-	cpu-nds32.c \
-	cpu-nfp.c \
-	cpu-ns32k.c \
-	cpu-nios2.c \
-	cpu-or1k.c \
-	cpu-pdp11.c \
-	cpu-pj.c \
-	cpu-plugin.c \
-	cpu-powerpc.c \
-	cpu-pru.c \
-	cpu-rs6000.c \
-	cpu-riscv.c \
-	cpu-rl78.c \
-	cpu-rx.c \
-	cpu-s390.c \
-	cpu-score.c \
-	cpu-sh.c \
-	cpu-sparc.c \
-	cpu-spu.c \
-	cpu-tic30.c \
-	cpu-tic4x.c \
-	cpu-tic54x.c \
-	cpu-tic6x.c \
-	cpu-tic80.c \
-	cpu-tilegx.c \
-	cpu-tilepro.c \
-	cpu-v850.c \
-	cpu-v850_rh850.c \
-	cpu-vax.c \
-	cpu-visium.c \
-	cpu-wasm32.c \
-	cpu-xc16x.c \
-	cpu-xgate.c \
-	cpu-xstormy16.c \
-	cpu-xtensa.c \
-	cpu-z80.c \
-	cpu-z8k.c
+	cpu-arm.c
 
 
 # The .o files needed by all of the 32 bit vectors that are configured into
 # target_vector in targets.c if configured with --enable-targets=all.
 BFD32_BACKENDS = \
-	cf-i386lynx.o \
 	dwarf1.o \
 	dwarf2.o \
 	elf-attrs.o \
@@ -713,20 +474,11 @@ BFD32_BACKENDS = \
 	elf-strtab.o \
 	elf-vxworks.o \
 	elf.o \
-	elf32-am33lin.o \
 	elf32-arc.o \
 	elf32-arm.o \
 	elf32.o \
 	elflink.o \
-	elfxx-sparc.o \
-	elfxx-tilegx.o \
-	reloc16.o \
-	som.o \
-	vax1knetbsd.o \
-	vaxnetbsd.o \
-	vms-lib.o \
-	vms-misc.o \
-	wasm-module.o
+	reloc16.o
 
 BFD32_BACKENDS_CFILES = \
 	dwarf1.c \
@@ -741,12 +493,7 @@ BFD32_BACKENDS_CFILES = \
 	elf32-arm.c \
 	elf32.c \
 	elflink.c \
-	elfxx-sparc.c \
-	elfxx-tilegx.c \
-	reloc16.c \
-	vms-lib.c \
-	vms-misc.c \
-	wasm-module.c
+	reloc16.c
 
 
 # The .o files needed by all of the 64 bit vectors that are configured into
@@ -754,110 +501,10 @@ BFD32_BACKENDS_CFILES = \
 # and --enable-64-bit-bfd.
 # elf32-ia64.c requires a 64-bit bfd_vma, and hence can not be put in
 # BFD32_BACKENDS.
-BFD64_BACKENDS = \
-	elf32-aarch64.o \
-	elf64-aarch64.o \
-	elfxx-aarch64.o \
-	aix5ppc-core.o \
-	aout64.o \
-	coff-alpha.o \
-	coff-x86_64.o \
-	coff64-rs6000.o \
-	elf32-ia64.o \
-	elf32-mips.o \
-	elf32-score.o \
-	elf32-score7.o \
-	elf64-alpha.o \
-	elf64-gen.o \
-	elf64-hppa.o \
-	elf64-ia64.o \
-	elf64-ia64-vms.o \
-	elfxx-ia64.o \
-	elfn32-mips.o \
-	elf64-mips.o \
-	elfxx-mips.o \
-	elf64-mmix.o \
-	elf64-nfp.o \
-	elf64-ppc.o \
-	elf32-riscv.o \
-	elf64-riscv.o \
-	elfxx-riscv.o \
-	elf64-s390.o \
-	elf64-sparc.o \
-	elf64-tilegx.o \
-	elf64-x86-64.o \
-	elfxx-x86.o \
-	elf64.o \
-	mach-o-aarch64.o \
-	mach-o-x86-64.o \
-	mmo.o \
-	pe-x86_64.o \
-	pei-ia64.o \
-	pei-x86_64.o \
-	pepigen.o \
-	pex64igen.o \
-	vms-alpha.o
-
-BFD64_BACKENDS_CFILES = \
-	aix5ppc-core.c \
-	aout64.c \
-	coff-alpha.c \
-	coff-x86_64.c \
-	coff64-rs6000.c \
-	elf32-mips.c \
-	elf32-score.c \
-	elf32-score7.c \
-	elf64-alpha.c \
-	elf64-gen.c \
-	elf64-hppa.c \
-	elf64-ia64-vms.c \
-	elf64-mips.c \
-	elf64-mmix.c \
-	elf64-nfp.c \
-	elf64-ppc.c \
-	elf64-s390.c \
-	elf64-sparc.c \
-	elf64-tilegx.c \
-	elf64-x86-64.c \
-	elfxx-x86.c \
-	elf64.c \
-	elfn32-mips.c \
-	elfxx-aarch64.c \
-	elfxx-ia64.c \
-	elfxx-mips.c \
-	elfxx-riscv.c \
-	mach-o-aarch64.c \
-	mach-o-x86-64.c \
-	mmo.c \
-	pe-x86_64.c \
-	pei-ia64.c \
-	pei-x86_64.c \
-	vms-alpha.c
-
-OPTIONAL_BACKENDS = \
-	aix386-core.o \
-	cisco-core.o \
-	hpux-core.o \
-	irix-core.o \
-	lynx-core.o \
-	netbsd-core.o \
-	osf-core.o \
-	rs6000-core.o \
-	sco5-core.o \
-	trad-core.o
-
-OPTIONAL_BACKENDS_CFILES = \
-	aix386-core.c \
-	cisco-core.c \
-	hpux-core.c \
-	irix-core.c \
-	lynx-core.c \
-	netbsd-core.c \
-	osf-core.c \
-	rs6000-core.c \
-	sco5-core.c \
-	trad-core.c
-
+BFD64_BACKENDS = 
+BFD64_BACKENDS_CFILES = 
+OPTIONAL_BACKENDS = 
+OPTIONAL_BACKENDS_CFILES = 
 
 # Reconfigure if config.bfd or configure.host changes.
 # development.sh is used to determine -Werror default.
@@ -884,19 +531,14 @@ SOURCE_CFILES = \
 	$(BFD64_BACKENDS_CFILES) \
 	$(OPTIONAL_BACKENDS_CFILES)
 
-BUILD_CFILES = \
-	elf32-aarch64.c elf64-aarch64.c \
-	elf32-ia64.c elf64-ia64.c \
-	elf32-riscv.c elf64-riscv.c \
-	peigen.c pepigen.c pex64igen.c
-
+BUILD_CFILES = 
 CFILES = $(SOURCE_CFILES) $(BUILD_CFILES)
 SOURCE_HFILES = \
 	elf-bfd.h  \
 	elfcode.h elfcore.h \
 	genlink.h \
 	libaout.h libbfd.h \
-	som.h version.h
+	version.h
 
 BUILD_HFILES = \
 	bfdver.h elf32-target.h elf64-target.h targmatch.h bfd_stdint.h
@@ -1009,9 +651,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aix386-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aix5ppc-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aout64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archures.Po@am__quote@ # am--include-marker
@@ -1020,95 +659,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfdwin.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cache.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cisco-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coff-alpha.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coff-x86_64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coff64-rs6000.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compress.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/corefile.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-aarch64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-alpha.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-arc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-arm.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-avr.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-bfin.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-cr16.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-cr16c.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-cris.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-crx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-d10v.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-d30v.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-dlx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-epiphany.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-fr30.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-frv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-ft32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-h8300.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-hppa.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-i386.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-iamcu.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-ip2k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-iq2000.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-k1om.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-l1om.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-lm32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m10200.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m10300.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m32c.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m32r.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m68hc11.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m68hc12.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m68k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m9s12x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-m9s12xg.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-mcore.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-mep.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-metag.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-microblaze.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-mmix.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-moxie.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-msp430.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-mt.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-nds32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-nfp.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-nios2.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-ns32k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-or1k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-pdp11.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-pj.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-plugin.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-powerpc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-pru.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-riscv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-rl78.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-rs6000.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-rx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-s12z.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-s390.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-score.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-sh.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-sparc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-spu.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic30.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic4x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic54x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic6x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic80.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tilegx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tilepro.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-v850.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-v850_rh850.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-vax.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-visium.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-wasm32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-xc16x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-xgate.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-xstormy16.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-xtensa.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-z80.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-z8k.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-attrs.Po@am__quote@ # am--include-marker
@@ -1118,65 +671,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-strtab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-vxworks.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-aarch64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-arm.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-riscv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-score.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-score7.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-aarch64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-alpha.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-gen.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-hppa.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-ia64-vms.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-mmix.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-nfp.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-ppc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-riscv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-s390.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-sparc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-tilegx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-x86-64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elflink.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfn32-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-aarch64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-riscv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-sparc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-tilegx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfxx-x86.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hpux-core.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ihex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/irix-core.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbfd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/linker.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lynx-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mach-o-aarch64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mach-o-x86-64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/merge.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmo.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netbsd-core.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opncls.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osf-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pe-x86_64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pei-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pei-x86_64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/peigen.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pepigen.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pex64igen.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reloc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reloc16.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rs6000-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sco5-core.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/section.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/srec.Po@am__quote@ # am--include-marker
@@ -1184,13 +691,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stabs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syms.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/targets.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tekhex.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trad-core.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/verilog.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vms-alpha.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vms-lib.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vms-misc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wasm-module.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1340,10 +840,7 @@ clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f ./$(DEPDIR)/aix386-core.Po
-	-rm -f ./$(DEPDIR)/aix5ppc-core.Po
-	-rm -f ./$(DEPDIR)/aout64.Po
-	-rm -f ./$(DEPDIR)/archive.Po
+		-rm -f ./$(DEPDIR)/archive.Po
 	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
@@ -1351,95 +848,9 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/bfdwin.Po
 	-rm -f ./$(DEPDIR)/binary.Po
 	-rm -f ./$(DEPDIR)/cache.Po
-	-rm -f ./$(DEPDIR)/cisco-core.Po
-	-rm -f ./$(DEPDIR)/coff-alpha.Po
-	-rm -f ./$(DEPDIR)/coff-x86_64.Po
-	-rm -f ./$(DEPDIR)/coff64-rs6000.Po
 	-rm -f ./$(DEPDIR)/compress.Po
 	-rm -f ./$(DEPDIR)/corefile.Po
-	-rm -f ./$(DEPDIR)/cpu-aarch64.Po
-	-rm -f ./$(DEPDIR)/cpu-alpha.Po
-	-rm -f ./$(DEPDIR)/cpu-arc.Po
 	-rm -f ./$(DEPDIR)/cpu-arm.Po
-	-rm -f ./$(DEPDIR)/cpu-avr.Po
-	-rm -f ./$(DEPDIR)/cpu-bfin.Po
-	-rm -f ./$(DEPDIR)/cpu-cr16.Po
-	-rm -f ./$(DEPDIR)/cpu-cr16c.Po
-	-rm -f ./$(DEPDIR)/cpu-cris.Po
-	-rm -f ./$(DEPDIR)/cpu-crx.Po
-	-rm -f ./$(DEPDIR)/cpu-d10v.Po
-	-rm -f ./$(DEPDIR)/cpu-d30v.Po
-	-rm -f ./$(DEPDIR)/cpu-dlx.Po
-	-rm -f ./$(DEPDIR)/cpu-epiphany.Po
-	-rm -f ./$(DEPDIR)/cpu-fr30.Po
-	-rm -f ./$(DEPDIR)/cpu-frv.Po
-	-rm -f ./$(DEPDIR)/cpu-ft32.Po
-	-rm -f ./$(DEPDIR)/cpu-h8300.Po
-	-rm -f ./$(DEPDIR)/cpu-hppa.Po
-	-rm -f ./$(DEPDIR)/cpu-i386.Po
-	-rm -f ./$(DEPDIR)/cpu-ia64.Po
-	-rm -f ./$(DEPDIR)/cpu-iamcu.Po
-	-rm -f ./$(DEPDIR)/cpu-ip2k.Po
-	-rm -f ./$(DEPDIR)/cpu-iq2000.Po
-	-rm -f ./$(DEPDIR)/cpu-k1om.Po
-	-rm -f ./$(DEPDIR)/cpu-l1om.Po
-	-rm -f ./$(DEPDIR)/cpu-lm32.Po
-	-rm -f ./$(DEPDIR)/cpu-m10200.Po
-	-rm -f ./$(DEPDIR)/cpu-m10300.Po
-	-rm -f ./$(DEPDIR)/cpu-m32c.Po
-	-rm -f ./$(DEPDIR)/cpu-m32r.Po
-	-rm -f ./$(DEPDIR)/cpu-m68hc11.Po
-	-rm -f ./$(DEPDIR)/cpu-m68hc12.Po
-	-rm -f ./$(DEPDIR)/cpu-m68k.Po
-	-rm -f ./$(DEPDIR)/cpu-m9s12x.Po
-	-rm -f ./$(DEPDIR)/cpu-m9s12xg.Po
-	-rm -f ./$(DEPDIR)/cpu-mcore.Po
-	-rm -f ./$(DEPDIR)/cpu-mep.Po
-	-rm -f ./$(DEPDIR)/cpu-metag.Po
-	-rm -f ./$(DEPDIR)/cpu-microblaze.Po
-	-rm -f ./$(DEPDIR)/cpu-mips.Po
-	-rm -f ./$(DEPDIR)/cpu-mmix.Po
-	-rm -f ./$(DEPDIR)/cpu-moxie.Po
-	-rm -f ./$(DEPDIR)/cpu-msp430.Po
-	-rm -f ./$(DEPDIR)/cpu-mt.Po
-	-rm -f ./$(DEPDIR)/cpu-nds32.Po
-	-rm -f ./$(DEPDIR)/cpu-nfp.Po
-	-rm -f ./$(DEPDIR)/cpu-nios2.Po
-	-rm -f ./$(DEPDIR)/cpu-ns32k.Po
-	-rm -f ./$(DEPDIR)/cpu-or1k.Po
-	-rm -f ./$(DEPDIR)/cpu-pdp11.Po
-	-rm -f ./$(DEPDIR)/cpu-pj.Po
-	-rm -f ./$(DEPDIR)/cpu-plugin.Po
-	-rm -f ./$(DEPDIR)/cpu-powerpc.Po
-	-rm -f ./$(DEPDIR)/cpu-pru.Po
-	-rm -f ./$(DEPDIR)/cpu-riscv.Po
-	-rm -f ./$(DEPDIR)/cpu-rl78.Po
-	-rm -f ./$(DEPDIR)/cpu-rs6000.Po
-	-rm -f ./$(DEPDIR)/cpu-rx.Po
-	-rm -f ./$(DEPDIR)/cpu-s12z.Po
-	-rm -f ./$(DEPDIR)/cpu-s390.Po
-	-rm -f ./$(DEPDIR)/cpu-score.Po
-	-rm -f ./$(DEPDIR)/cpu-sh.Po
-	-rm -f ./$(DEPDIR)/cpu-sparc.Po
-	-rm -f ./$(DEPDIR)/cpu-spu.Po
-	-rm -f ./$(DEPDIR)/cpu-tic30.Po
-	-rm -f ./$(DEPDIR)/cpu-tic4x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic54x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic6x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic80.Po
-	-rm -f ./$(DEPDIR)/cpu-tilegx.Po
-	-rm -f ./$(DEPDIR)/cpu-tilepro.Po
-	-rm -f ./$(DEPDIR)/cpu-v850.Po
-	-rm -f ./$(DEPDIR)/cpu-v850_rh850.Po
-	-rm -f ./$(DEPDIR)/cpu-vax.Po
-	-rm -f ./$(DEPDIR)/cpu-visium.Po
-	-rm -f ./$(DEPDIR)/cpu-wasm32.Po
-	-rm -f ./$(DEPDIR)/cpu-xc16x.Po
-	-rm -f ./$(DEPDIR)/cpu-xgate.Po
-	-rm -f ./$(DEPDIR)/cpu-xstormy16.Po
-	-rm -f ./$(DEPDIR)/cpu-xtensa.Po
-	-rm -f ./$(DEPDIR)/cpu-z80.Po
-	-rm -f ./$(DEPDIR)/cpu-z8k.Po
 	-rm -f ./$(DEPDIR)/dwarf1.Po
 	-rm -f ./$(DEPDIR)/dwarf2.Po
 	-rm -f ./$(DEPDIR)/elf-attrs.Po
@@ -1449,65 +860,19 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/elf-strtab.Po
 	-rm -f ./$(DEPDIR)/elf-vxworks.Po
 	-rm -f ./$(DEPDIR)/elf.Po
-	-rm -f ./$(DEPDIR)/elf32-aarch64.Po
 	-rm -f ./$(DEPDIR)/elf32-arm.Po
-	-rm -f ./$(DEPDIR)/elf32-ia64.Po
-	-rm -f ./$(DEPDIR)/elf32-mips.Po
-	-rm -f ./$(DEPDIR)/elf32-riscv.Po
-	-rm -f ./$(DEPDIR)/elf32-score.Po
-	-rm -f ./$(DEPDIR)/elf32-score7.Po
 	-rm -f ./$(DEPDIR)/elf32.Po
-	-rm -f ./$(DEPDIR)/elf64-aarch64.Po
-	-rm -f ./$(DEPDIR)/elf64-alpha.Po
-	-rm -f ./$(DEPDIR)/elf64-gen.Po
-	-rm -f ./$(DEPDIR)/elf64-hppa.Po
-	-rm -f ./$(DEPDIR)/elf64-ia64-vms.Po
-	-rm -f ./$(DEPDIR)/elf64-ia64.Po
-	-rm -f ./$(DEPDIR)/elf64-mips.Po
-	-rm -f ./$(DEPDIR)/elf64-mmix.Po
-	-rm -f ./$(DEPDIR)/elf64-nfp.Po
-	-rm -f ./$(DEPDIR)/elf64-ppc.Po
-	-rm -f ./$(DEPDIR)/elf64-riscv.Po
-	-rm -f ./$(DEPDIR)/elf64-s390.Po
-	-rm -f ./$(DEPDIR)/elf64-sparc.Po
-	-rm -f ./$(DEPDIR)/elf64-tilegx.Po
-	-rm -f ./$(DEPDIR)/elf64-x86-64.Po
-	-rm -f ./$(DEPDIR)/elf64.Po
 	-rm -f ./$(DEPDIR)/elflink.Po
-	-rm -f ./$(DEPDIR)/elfn32-mips.Po
-	-rm -f ./$(DEPDIR)/elfxx-aarch64.Po
-	-rm -f ./$(DEPDIR)/elfxx-ia64.Po
-	-rm -f ./$(DEPDIR)/elfxx-mips.Po
-	-rm -f ./$(DEPDIR)/elfxx-riscv.Po
-	-rm -f ./$(DEPDIR)/elfxx-sparc.Po
-	-rm -f ./$(DEPDIR)/elfxx-tilegx.Po
-	-rm -f ./$(DEPDIR)/elfxx-x86.Po
 	-rm -f ./$(DEPDIR)/format.Po
 	-rm -f ./$(DEPDIR)/hash.Po
-	-rm -f ./$(DEPDIR)/hpux-core.Po
 	-rm -f ./$(DEPDIR)/ihex.Po
 	-rm -f ./$(DEPDIR)/init.Po
-	-rm -f ./$(DEPDIR)/irix-core.Po
 	-rm -f ./$(DEPDIR)/libbfd.Po
 	-rm -f ./$(DEPDIR)/linker.Po
-	-rm -f ./$(DEPDIR)/lynx-core.Po
-	-rm -f ./$(DEPDIR)/mach-o-aarch64.Po
-	-rm -f ./$(DEPDIR)/mach-o-x86-64.Po
 	-rm -f ./$(DEPDIR)/merge.Po
-	-rm -f ./$(DEPDIR)/mmo.Po
-	-rm -f ./$(DEPDIR)/netbsd-core.Po
 	-rm -f ./$(DEPDIR)/opncls.Po
-	-rm -f ./$(DEPDIR)/osf-core.Po
-	-rm -f ./$(DEPDIR)/pe-x86_64.Po
-	-rm -f ./$(DEPDIR)/pei-ia64.Po
-	-rm -f ./$(DEPDIR)/pei-x86_64.Po
-	-rm -f ./$(DEPDIR)/peigen.Po
-	-rm -f ./$(DEPDIR)/pepigen.Po
-	-rm -f ./$(DEPDIR)/pex64igen.Po
 	-rm -f ./$(DEPDIR)/reloc.Po
 	-rm -f ./$(DEPDIR)/reloc16.Po
-	-rm -f ./$(DEPDIR)/rs6000-core.Po
-	-rm -f ./$(DEPDIR)/sco5-core.Po
 	-rm -f ./$(DEPDIR)/section.Po
 	-rm -f ./$(DEPDIR)/simple.Po
 	-rm -f ./$(DEPDIR)/srec.Po
@@ -1515,13 +880,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/stabs.Po
 	-rm -f ./$(DEPDIR)/syms.Po
 	-rm -f ./$(DEPDIR)/targets.Po
-	-rm -f ./$(DEPDIR)/tekhex.Po
-	-rm -f ./$(DEPDIR)/trad-core.Po
-	-rm -f ./$(DEPDIR)/verilog.Po
-	-rm -f ./$(DEPDIR)/vms-alpha.Po
-	-rm -f ./$(DEPDIR)/vms-lib.Po
-	-rm -f ./$(DEPDIR)/vms-misc.Po
-	-rm -f ./$(DEPDIR)/wasm-module.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1569,10 +927,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f ./$(DEPDIR)/aix386-core.Po
-	-rm -f ./$(DEPDIR)/aix5ppc-core.Po
-	-rm -f ./$(DEPDIR)/aout64.Po
-	-rm -f ./$(DEPDIR)/archive.Po
+		-rm -f ./$(DEPDIR)/archive.Po
 	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
@@ -1580,95 +935,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/bfdwin.Po
 	-rm -f ./$(DEPDIR)/binary.Po
 	-rm -f ./$(DEPDIR)/cache.Po
-	-rm -f ./$(DEPDIR)/cisco-core.Po
-	-rm -f ./$(DEPDIR)/coff-alpha.Po
-	-rm -f ./$(DEPDIR)/coff-x86_64.Po
-	-rm -f ./$(DEPDIR)/coff64-rs6000.Po
 	-rm -f ./$(DEPDIR)/compress.Po
 	-rm -f ./$(DEPDIR)/corefile.Po
-	-rm -f ./$(DEPDIR)/cpu-aarch64.Po
-	-rm -f ./$(DEPDIR)/cpu-alpha.Po
-	-rm -f ./$(DEPDIR)/cpu-arc.Po
 	-rm -f ./$(DEPDIR)/cpu-arm.Po
-	-rm -f ./$(DEPDIR)/cpu-avr.Po
-	-rm -f ./$(DEPDIR)/cpu-bfin.Po
-	-rm -f ./$(DEPDIR)/cpu-cr16.Po
-	-rm -f ./$(DEPDIR)/cpu-cr16c.Po
-	-rm -f ./$(DEPDIR)/cpu-cris.Po
-	-rm -f ./$(DEPDIR)/cpu-crx.Po
-	-rm -f ./$(DEPDIR)/cpu-d10v.Po
-	-rm -f ./$(DEPDIR)/cpu-d30v.Po
-	-rm -f ./$(DEPDIR)/cpu-dlx.Po
-	-rm -f ./$(DEPDIR)/cpu-epiphany.Po
-	-rm -f ./$(DEPDIR)/cpu-fr30.Po
-	-rm -f ./$(DEPDIR)/cpu-frv.Po
-	-rm -f ./$(DEPDIR)/cpu-ft32.Po
-	-rm -f ./$(DEPDIR)/cpu-h8300.Po
-	-rm -f ./$(DEPDIR)/cpu-hppa.Po
-	-rm -f ./$(DEPDIR)/cpu-i386.Po
-	-rm -f ./$(DEPDIR)/cpu-ia64.Po
-	-rm -f ./$(DEPDIR)/cpu-iamcu.Po
-	-rm -f ./$(DEPDIR)/cpu-ip2k.Po
-	-rm -f ./$(DEPDIR)/cpu-iq2000.Po
-	-rm -f ./$(DEPDIR)/cpu-k1om.Po
-	-rm -f ./$(DEPDIR)/cpu-l1om.Po
-	-rm -f ./$(DEPDIR)/cpu-lm32.Po
-	-rm -f ./$(DEPDIR)/cpu-m10200.Po
-	-rm -f ./$(DEPDIR)/cpu-m10300.Po
-	-rm -f ./$(DEPDIR)/cpu-m32c.Po
-	-rm -f ./$(DEPDIR)/cpu-m32r.Po
-	-rm -f ./$(DEPDIR)/cpu-m68hc11.Po
-	-rm -f ./$(DEPDIR)/cpu-m68hc12.Po
-	-rm -f ./$(DEPDIR)/cpu-m68k.Po
-	-rm -f ./$(DEPDIR)/cpu-m9s12x.Po
-	-rm -f ./$(DEPDIR)/cpu-m9s12xg.Po
-	-rm -f ./$(DEPDIR)/cpu-mcore.Po
-	-rm -f ./$(DEPDIR)/cpu-mep.Po
-	-rm -f ./$(DEPDIR)/cpu-metag.Po
-	-rm -f ./$(DEPDIR)/cpu-microblaze.Po
-	-rm -f ./$(DEPDIR)/cpu-mips.Po
-	-rm -f ./$(DEPDIR)/cpu-mmix.Po
-	-rm -f ./$(DEPDIR)/cpu-moxie.Po
-	-rm -f ./$(DEPDIR)/cpu-msp430.Po
-	-rm -f ./$(DEPDIR)/cpu-mt.Po
-	-rm -f ./$(DEPDIR)/cpu-nds32.Po
-	-rm -f ./$(DEPDIR)/cpu-nfp.Po
-	-rm -f ./$(DEPDIR)/cpu-nios2.Po
-	-rm -f ./$(DEPDIR)/cpu-ns32k.Po
-	-rm -f ./$(DEPDIR)/cpu-or1k.Po
-	-rm -f ./$(DEPDIR)/cpu-pdp11.Po
-	-rm -f ./$(DEPDIR)/cpu-pj.Po
-	-rm -f ./$(DEPDIR)/cpu-plugin.Po
-	-rm -f ./$(DEPDIR)/cpu-powerpc.Po
-	-rm -f ./$(DEPDIR)/cpu-pru.Po
-	-rm -f ./$(DEPDIR)/cpu-riscv.Po
-	-rm -f ./$(DEPDIR)/cpu-rl78.Po
-	-rm -f ./$(DEPDIR)/cpu-rs6000.Po
-	-rm -f ./$(DEPDIR)/cpu-rx.Po
-	-rm -f ./$(DEPDIR)/cpu-s12z.Po
-	-rm -f ./$(DEPDIR)/cpu-s390.Po
-	-rm -f ./$(DEPDIR)/cpu-score.Po
-	-rm -f ./$(DEPDIR)/cpu-sh.Po
-	-rm -f ./$(DEPDIR)/cpu-sparc.Po
-	-rm -f ./$(DEPDIR)/cpu-spu.Po
-	-rm -f ./$(DEPDIR)/cpu-tic30.Po
-	-rm -f ./$(DEPDIR)/cpu-tic4x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic54x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic6x.Po
-	-rm -f ./$(DEPDIR)/cpu-tic80.Po
-	-rm -f ./$(DEPDIR)/cpu-tilegx.Po
-	-rm -f ./$(DEPDIR)/cpu-tilepro.Po
-	-rm -f ./$(DEPDIR)/cpu-v850.Po
-	-rm -f ./$(DEPDIR)/cpu-v850_rh850.Po
-	-rm -f ./$(DEPDIR)/cpu-vax.Po
-	-rm -f ./$(DEPDIR)/cpu-visium.Po
-	-rm -f ./$(DEPDIR)/cpu-wasm32.Po
-	-rm -f ./$(DEPDIR)/cpu-xc16x.Po
-	-rm -f ./$(DEPDIR)/cpu-xgate.Po
-	-rm -f ./$(DEPDIR)/cpu-xstormy16.Po
-	-rm -f ./$(DEPDIR)/cpu-xtensa.Po
-	-rm -f ./$(DEPDIR)/cpu-z80.Po
-	-rm -f ./$(DEPDIR)/cpu-z8k.Po
 	-rm -f ./$(DEPDIR)/dwarf1.Po
 	-rm -f ./$(DEPDIR)/dwarf2.Po
 	-rm -f ./$(DEPDIR)/elf-attrs.Po
@@ -1678,65 +947,19 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/elf-strtab.Po
 	-rm -f ./$(DEPDIR)/elf-vxworks.Po
 	-rm -f ./$(DEPDIR)/elf.Po
-	-rm -f ./$(DEPDIR)/elf32-aarch64.Po
 	-rm -f ./$(DEPDIR)/elf32-arm.Po
-	-rm -f ./$(DEPDIR)/elf32-ia64.Po
-	-rm -f ./$(DEPDIR)/elf32-mips.Po
-	-rm -f ./$(DEPDIR)/elf32-riscv.Po
-	-rm -f ./$(DEPDIR)/elf32-score.Po
-	-rm -f ./$(DEPDIR)/elf32-score7.Po
 	-rm -f ./$(DEPDIR)/elf32.Po
-	-rm -f ./$(DEPDIR)/elf64-aarch64.Po
-	-rm -f ./$(DEPDIR)/elf64-alpha.Po
-	-rm -f ./$(DEPDIR)/elf64-gen.Po
-	-rm -f ./$(DEPDIR)/elf64-hppa.Po
-	-rm -f ./$(DEPDIR)/elf64-ia64-vms.Po
-	-rm -f ./$(DEPDIR)/elf64-ia64.Po
-	-rm -f ./$(DEPDIR)/elf64-mips.Po
-	-rm -f ./$(DEPDIR)/elf64-mmix.Po
-	-rm -f ./$(DEPDIR)/elf64-nfp.Po
-	-rm -f ./$(DEPDIR)/elf64-ppc.Po
-	-rm -f ./$(DEPDIR)/elf64-riscv.Po
-	-rm -f ./$(DEPDIR)/elf64-s390.Po
-	-rm -f ./$(DEPDIR)/elf64-sparc.Po
-	-rm -f ./$(DEPDIR)/elf64-tilegx.Po
-	-rm -f ./$(DEPDIR)/elf64-x86-64.Po
-	-rm -f ./$(DEPDIR)/elf64.Po
 	-rm -f ./$(DEPDIR)/elflink.Po
-	-rm -f ./$(DEPDIR)/elfn32-mips.Po
-	-rm -f ./$(DEPDIR)/elfxx-aarch64.Po
-	-rm -f ./$(DEPDIR)/elfxx-ia64.Po
-	-rm -f ./$(DEPDIR)/elfxx-mips.Po
-	-rm -f ./$(DEPDIR)/elfxx-riscv.Po
-	-rm -f ./$(DEPDIR)/elfxx-sparc.Po
-	-rm -f ./$(DEPDIR)/elfxx-tilegx.Po
-	-rm -f ./$(DEPDIR)/elfxx-x86.Po
 	-rm -f ./$(DEPDIR)/format.Po
 	-rm -f ./$(DEPDIR)/hash.Po
-	-rm -f ./$(DEPDIR)/hpux-core.Po
 	-rm -f ./$(DEPDIR)/ihex.Po
 	-rm -f ./$(DEPDIR)/init.Po
-	-rm -f ./$(DEPDIR)/irix-core.Po
 	-rm -f ./$(DEPDIR)/libbfd.Po
 	-rm -f ./$(DEPDIR)/linker.Po
-	-rm -f ./$(DEPDIR)/lynx-core.Po
-	-rm -f ./$(DEPDIR)/mach-o-aarch64.Po
-	-rm -f ./$(DEPDIR)/mach-o-x86-64.Po
 	-rm -f ./$(DEPDIR)/merge.Po
-	-rm -f ./$(DEPDIR)/mmo.Po
-	-rm -f ./$(DEPDIR)/netbsd-core.Po
 	-rm -f ./$(DEPDIR)/opncls.Po
-	-rm -f ./$(DEPDIR)/osf-core.Po
-	-rm -f ./$(DEPDIR)/pe-x86_64.Po
-	-rm -f ./$(DEPDIR)/pei-ia64.Po
-	-rm -f ./$(DEPDIR)/pei-x86_64.Po
-	-rm -f ./$(DEPDIR)/peigen.Po
-	-rm -f ./$(DEPDIR)/pepigen.Po
-	-rm -f ./$(DEPDIR)/pex64igen.Po
 	-rm -f ./$(DEPDIR)/reloc.Po
 	-rm -f ./$(DEPDIR)/reloc16.Po
-	-rm -f ./$(DEPDIR)/rs6000-core.Po
-	-rm -f ./$(DEPDIR)/sco5-core.Po
 	-rm -f ./$(DEPDIR)/section.Po
 	-rm -f ./$(DEPDIR)/simple.Po
 	-rm -f ./$(DEPDIR)/srec.Po
@@ -1744,13 +967,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/stabs.Po
 	-rm -f ./$(DEPDIR)/syms.Po
 	-rm -f ./$(DEPDIR)/targets.Po
-	-rm -f ./$(DEPDIR)/tekhex.Po
-	-rm -f ./$(DEPDIR)/trad-core.Po
-	-rm -f ./$(DEPDIR)/verilog.Po
-	-rm -f ./$(DEPDIR)/vms-alpha.Po
-	-rm -f ./$(DEPDIR)/vms-lib.Po
-	-rm -f ./$(DEPDIR)/vms-misc.Po
-	-rm -f ./$(DEPDIR)/wasm-module.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1820,11 +1036,6 @@ ofiles: stamp-ofiles ; @true
 # libbfd.a simultaneously.  This is a hack which should be removed if
 # everything else starts using libtool.  FIXME.
 
-#libbfd_a_SOURCES =s
-
-#libbfd.a: $(ofiles)
-#	$(AR) $(ARFLAGS) $@ $(ofiles)
-
 # This file holds an array associating configuration triplets and
 # vector names.  It is built from config.bfd.  It is not compiled by
 # itself, but is included by targets.c.
@@ -1867,55 +1078,6 @@ elf64-target.h : elfxx-target.h
 	rm -f elf64-target.h
 	$(SED) -e s/NN/64/g < $(srcdir)/elfxx-target.h > elf64-target.new
 	mv -f elf64-target.new elf64-target.h
-
-elf32-aarch64.c : elfnn-aarch64.c
-	rm -f elf32-aarch64.c
-	echo "#line 1 \"$(srcdir)/elfnn-aarch64.c\"" > elf32-aarch64.new
-	$(SED) -e s/NN/32/g < $(srcdir)/elfnn-aarch64.c >> elf32-aarch64.new
-	mv -f elf32-aarch64.new elf32-aarch64.c
-
-elf64-aarch64.c : elfnn-aarch64.c
-	rm -f elf64-aarch64.c
-	echo "#line 1 \"$(srcdir)/elfnn-aarch64.c\"" > elf64-aarch64.new
-	$(SED) -e s/NN/64/g < $(srcdir)/elfnn-aarch64.c >> elf64-aarch64.new
-	mv -f elf64-aarch64.new elf64-aarch64.c
-
-elf32-ia64.c : elfnn-ia64.c
-	rm -f elf32-ia64.c
-	$(SED) -e s/NN/32/g < $(srcdir)/elfnn-ia64.c > elf32-ia64.new
-	mv -f elf32-ia64.new elf32-ia64.c
-
-elf64-ia64.c : elfnn-ia64.c
-	rm -f elf64-ia64.c
-	$(SED) -e s/NN/64/g < $(srcdir)/elfnn-ia64.c > elf64-ia64.new
-	mv -f elf64-ia64.new elf64-ia64.c
-
-elf32-riscv.c : elfnn-riscv.c
-	rm -f elf32-riscv.c
-	echo "#line 1 \"$(srcdir)/elfnn-riscv.c\"" > elf32-riscv.new
-	sed -e s/NN/32/g < $(srcdir)/elfnn-riscv.c >> elf32-riscv.new
-	mv -f elf32-riscv.new elf32-riscv.c
-
-elf64-riscv.c : elfnn-riscv.c
-	rm -f elf64-riscv.c
-	echo "#line 1 \"$(srcdir)/elfnn-riscv.c\"" > elf64-riscv.new
-	sed -e s/NN/64/g < $(srcdir)/elfnn-riscv.c >> elf64-riscv.new
-	mv -f elf64-riscv.new elf64-riscv.c
-
-peigen.c : peXXigen.c
-	rm -f peigen.c
-	$(SED) -e s/XX/pe/g < $(srcdir)/peXXigen.c > peigen.new
-	mv -f peigen.new peigen.c
-
-pepigen.c : peXXigen.c
-	rm -f pepigen.c
-	$(SED) -e s/XX/pep/g < $(srcdir)/peXXigen.c > pepigen.new
-	mv -f pepigen.new pepigen.c
-
-pex64igen.c: peXXigen.c
-	rm -f pex64igen.c
-	$(SED) -e s/XX/pex64/g < $(srcdir)/peXXigen.c > pex64igen.new
-	mv -f pex64igen.new pex64igen.c
 $(BFD32_LIBS) \
  $(BFD64_LIBS) \
  $(ALL_MACHINES) \

@@ -32,7 +32,7 @@ Floor, Boston, MA 02110-1301, USA.  */
 
 Print to allocated string without fail.  If @code{xasprintf} fails,
 this will print a message to @code{stderr} (using the name set by
-@code{xmalloc_set_program_name}, if any) and then call @code{xexit}.
+@code{malloc_set_program_name}, if any) and then call @code{xexit}.
 
 @end deftypefn
 

@@ -4116,7 +4116,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 		}
 
 	      directory_table = (unsigned char **)
-		xmalloc (n_directories * sizeof (unsigned char *));
+		malloc (n_directories * sizeof (unsigned char *));
 
 	      for (entryi = 0; entryi < n_directories; entryi++)
 		{
@@ -4188,7 +4188,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 		  break;
 		}
 
-	      file_table = (File_Entry *) xcalloc (1, n_files
+	      file_table = (File_Entry *) calloc (1, n_files
 						      * sizeof (File_Entry));
 
 	      for (entryi = 0; entryi < n_files; entryi++)
@@ -4281,7 +4281,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 
 		  /* Go through the directory table again to save the directories.  */
 		  directory_table = (unsigned char **)
-		    xmalloc (n_directories * sizeof (unsigned char *));
+		    malloc (n_directories * sizeof (unsigned char *));
 
 		  i = 0;
 		  while (*ptr_directory_table != 0)
@@ -4325,7 +4325,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 		    }
 
 		  /* Go through the file table again to save the strings.  */
-		  file_table = (File_Entry *) xmalloc (n_files * sizeof (File_Entry));
+		  file_table = (File_Entry *) malloc (n_files * sizeof (File_Entry));
 
 		  i = 0;
 		  while (*ptr_file_name_table != 0)
@@ -4469,7 +4469,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 			 break;
 		       case DW_LNE_define_file:
 			 {
-			   file_table = (File_Entry *) xrealloc
+			   file_table = (File_Entry *) realloc
 			     (file_table, (n_files + 1) * sizeof (File_Entry));
 
 			   ++state_machine_regs.last_file_entry;
@@ -4684,7 +4684,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 
 	      if ((fileNameLength > MAX_FILENAME_LENGTH) && (!do_wide))
 		{
-		  newFileName = (char *) xmalloc (MAX_FILENAME_LENGTH + 1);
+		  newFileName = (char *) malloc (MAX_FILENAME_LENGTH + 1);
 		  /* Truncate file name */
 		  strncpy (newFileName,
 			   fileName + fileNameLength - MAX_FILENAME_LENGTH,
@@ -4692,7 +4692,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 		}
 	      else
 		{
-		  newFileName = (char *) xmalloc (fileNameLength + 1);
+		  newFileName = (char *) malloc (fileNameLength + 1);
 		  strncpy (newFileName, fileName, fileNameLength + 1);
 		}
 
@@ -6524,10 +6524,10 @@ display_debug_addr (struct dwarf_section *section,
   introduce (section, FALSE);
 
   /* PR  17531: file: cf38d01b.
-     We use xcalloc because a corrupt file may not have initialised all of the
+     We use calloc because a corrupt file may not have initialised all of the
      fields in the debug_info structure, which means that the sort below might
      try to move uninitialised data.  */
-  debug_addr_info = (debug_info **) xcalloc ((num_debug_info_entries + 1),
+  debug_addr_info = (debug_info **) calloc ((num_debug_info_entries + 1),
 					     sizeof (debug_info *));
 
   count = 0;
@@ -6543,7 +6543,7 @@ display_debug_addr (struct dwarf_section *section,
       }
 
   /* Add a sentinel to make iteration convenient.  */
-  debug_addr_info [count] = (debug_info *) xmalloc (sizeof (debug_info));
+  debug_addr_info [count] = (debug_info *) malloc (sizeof (debug_info));
   debug_addr_info [count]->addr_base = section->size;
   qsort (debug_addr_info, count, sizeof (debug_info *), comp_addr_base);
 
@@ -6849,7 +6849,7 @@ display_debug_ranges (struct dwarf_section *section,
     }
 
   range_entries = (struct range_entry *)
-      xmalloc (sizeof (*range_entries) * num_range_list);
+      malloc (sizeof (*range_entries) * num_range_list);
   range_entry_fill = range_entries;
 
   for (i = 0; i < num_debug_info_entries; i++)
@@ -7328,11 +7328,11 @@ read_cie (unsigned char *start, unsigned char *end,
   if (start >= end)
     return end;
 
-  fc = (Frame_Chunk *) xmalloc (sizeof (Frame_Chunk));
+  fc = (Frame_Chunk *) malloc (sizeof (Frame_Chunk));
   memset (fc, 0, sizeof (Frame_Chunk));
 
-  fc->col_type = (short int *) xmalloc (sizeof (short int));
-  fc->col_offset = (int *) xmalloc (sizeof (int));
+  fc->col_type = (short int *) malloc (sizeof (short int));
+  fc->col_offset = (int *) malloc (sizeof (int));
 
   version = *start++;
 
@@ -7690,8 +7690,8 @@ display_debug_frames (struct dwarf_section *section,
 		    dwarf_vmatoa_1 (NULL, cie_id, offset_size),
 		    (unsigned long) (saved_start - section_start));
 	      fc->ncols = 0;
-	      fc->col_type = (short int *) xmalloc (sizeof (short int));
-	      fc->col_offset = (int *) xmalloc (sizeof (int));
+	      fc->col_type = (short int *) malloc (sizeof (short int));
+	      fc->col_offset = (int *) malloc (sizeof (int));
 	      if (frame_need_space (fc, max_regs > 0 ? max_regs - 1 : 0) < 0)
 		{
 		  warn (_("Invalid max register\n"));
@@ -8171,7 +8171,7 @@ display_debug_frames (struct dwarf_section *section,
 	    case DW_CFA_remember_state:
 	      if (! do_debug_frames_interp)
 		printf ("  DW_CFA_remember_state\n");
-	      rs = (Frame_Chunk *) xmalloc (sizeof (Frame_Chunk));
+	      rs = (Frame_Chunk *) malloc (sizeof (Frame_Chunk));
 	      rs->cfa_offset = fc->cfa_offset;
 	      rs->cfa_reg = fc->cfa_reg;
 	      rs->ra = fc->ra;
@@ -8637,7 +8637,7 @@ display_debug_names (struct dwarf_section *section, void *file)
 	    {
 	      abbrev_lookup_allocated = MAX (0x100,
 					     abbrev_lookup_allocated * 2);
-	      abbrev_lookup = xrealloc (abbrev_lookup,
+	      abbrev_lookup = realloc (abbrev_lookup,
 					(abbrev_lookup_allocated
 					 * sizeof (*abbrev_lookup)));
 	    }
@@ -9321,13 +9321,13 @@ process_cu_tu_index (struct dwarf_section *section, int do_display)
 	  if (is_tu_index)
 	    {
 	      tu_count = nused;
-	      tu_sets = xcalloc2 (nused, sizeof (struct cu_tu_set));
+	      tu_sets = calloc2 (nused, sizeof (struct cu_tu_set));
 	      this_set = tu_sets;
 	    }
 	  else
 	    {
 	      cu_count = nused;
-	      cu_sets = xcalloc2 (nused, sizeof (struct cu_tu_set));
+	      cu_sets = calloc2 (nused, sizeof (struct cu_tu_set));
 	      this_set = cu_sets;
 	    }
 	}
@@ -9555,10 +9555,10 @@ cmalloc (size_t nmemb, size_t size)
   if (nmemb >= ~(size_t) 0 / size)
     return NULL;
 
-  return xmalloc (nmemb * size);
+  return malloc (nmemb * size);
 }
 
-/* Like xmalloc, but takes two parameters like calloc.
+/* Like malloc, but takes two parameters like calloc.
    Verifies that the first parameter is not too large.
    Note: does *not* initialise the allocated memory to zero.  */
 
@@ -9574,10 +9574,10 @@ xcmalloc (size_t nmemb, size_t size)
       xexit (1);
     }
 
-  return xmalloc (nmemb * size);
+  return malloc (nmemb * size);
 }
 
-/* Like xrealloc, but takes three parameters.
+/* Like realloc, but takes three parameters.
    Verifies that the second parameter is not too large.
    Note: does *not* initialise any new memory to zero.  */
 
@@ -9592,13 +9592,13 @@ xcrealloc (void *ptr, size_t nmemb, size_t size)
       xexit (1);
     }
 
-  return xrealloc (ptr, nmemb * size);
+  return realloc (ptr, nmemb * size);
 }
 
-/* Like xcalloc, but verifies that the first parameter is not too large.  */
+/* Like calloc, but verifies that the first parameter is not too large.  */
 
 void *
-xcalloc2 (size_t nmemb, size_t size)
+calloc2 (size_t nmemb, size_t size)
 {
   /* Check for overflow.  */
   if (nmemb >= ~(size_t) 0 / size)
@@ -9608,7 +9608,7 @@ xcalloc2 (size_t nmemb, size_t size)
       xexit (1);
     }
 
-  return xcalloc (nmemb, size);
+  return calloc (nmemb, size);
 }
 
 static unsigned long

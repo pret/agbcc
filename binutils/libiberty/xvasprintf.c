@@ -37,7 +37,7 @@ Floor, Boston, MA 02110-1301, USA.  */
 
 Print to allocated string without fail.  If @code{xvasprintf} fails,
 this will print a message to @code{stderr} (using the name set by
-@code{xmalloc_set_program_name}, if any) and then call @code{xexit}.
+@code{malloc_set_program_name}, if any) and then call @code{xexit}.
 
 @end deftypefn
 
@@ -53,7 +53,7 @@ xvasprintf (const char *format,
 {
   char *result;
   int total_width = libiberty_vprintf_buffer_size (format, args);
-  result = (char *) xmalloc (total_width);
+  result = (char *) malloc (total_width);
   vsprintf (result, format, args);
   return result;
 }

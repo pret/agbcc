@@ -4178,11 +4178,11 @@ PREFIX(regex_compile) (const char *ARG_PREFIX(pattern),
 # ifdef emacs
 	if (! fail_stack.stack)
 	  fail_stack.stack
-	    = (PREFIX(fail_stack_elt_t) *) xmalloc (fail_stack.size
+	    = (PREFIX(fail_stack_elt_t) *) malloc (fail_stack.size
 				    * sizeof (PREFIX(fail_stack_elt_t)));
 	else
 	  fail_stack.stack
-	    = (PREFIX(fail_stack_elt_t) *) xrealloc (fail_stack.stack,
+	    = (PREFIX(fail_stack_elt_t) *) realloc (fail_stack.stack,
 				     (fail_stack.size
 				      * sizeof (PREFIX(fail_stack_elt_t))));
 # else /* not emacs */

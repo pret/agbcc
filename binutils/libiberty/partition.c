@@ -40,7 +40,7 @@ partition_new (int num_elements)
   int e;
   
   partition part = (partition) 
-    xmalloc (sizeof (struct partition_def) + 
+    malloc (sizeof (struct partition_def) + 
 	     (num_elements - 1) * sizeof (struct partition_elem));
   part->num_elements = num_elements;
   for (e = 0; e < num_elements; ++e) 
@@ -141,11 +141,11 @@ partition_print (partition part, FILE *fp)
   int e;
 
   /* Flag the elements we've already printed.  */
-  done = (char *) xmalloc (num_elements);
+  done = (char *) malloc (num_elements);
   memset (done, 0, num_elements);
 
   /* A buffer used to sort elements in a class.  */
-  class_elements = (int *) xmalloc (num_elements * sizeof (int));
+  class_elements = (int *) malloc (num_elements * sizeof (int));
 
   fputc ('[', fp);
   for (e = 0; e < num_elements; ++e)

@@ -608,7 +608,7 @@ debug_add_to_namespace (struct debug_handle *info ATTRIBUTE_UNUSED,
   struct debug_name *n;
   struct debug_namespace *ns;
 
-  n = (struct debug_name *) xmalloc (sizeof *n);
+  n = (struct debug_name *) malloc (sizeof *n);
   memset (n, 0, sizeof *n);
 
   n->name = name;
@@ -618,7 +618,7 @@ debug_add_to_namespace (struct debug_handle *info ATTRIBUTE_UNUSED,
   ns = *nsp;
   if (ns == NULL)
     {
-      ns = (struct debug_namespace *) xmalloc (sizeof *ns);
+      ns = (struct debug_namespace *) malloc (sizeof *ns);
       memset (ns, 0, sizeof *ns);
 
       ns->tail = &ns->list;
@@ -663,7 +663,7 @@ debug_init (void)
 {
   struct debug_handle *ret;
 
-  ret = (struct debug_handle *) xmalloc (sizeof *ret);
+  ret = (struct debug_handle *) malloc (sizeof *ret);
   memset (ret, 0, sizeof *ret);
   return (void *) ret;
 }
@@ -681,12 +681,12 @@ debug_set_filename (void *handle, const char *name)
   if (name == NULL)
     name = "";
 
-  nfile = (struct debug_file *) xmalloc (sizeof *nfile);
+  nfile = (struct debug_file *) malloc (sizeof *nfile);
   memset (nfile, 0, sizeof *nfile);
 
   nfile->filename = name;
 
-  nunit = (struct debug_unit *) xmalloc (sizeof *nunit);
+  nunit = (struct debug_unit *) malloc (sizeof *nunit);
   memset (nunit, 0, sizeof *nunit);
 
   nunit->files = nfile;
@@ -736,7 +736,7 @@ debug_start_source (void *handle, const char *name)
 	}
     }
 
-  f = (struct debug_file *) xmalloc (sizeof *f);
+  f = (struct debug_file *) malloc (sizeof *f);
   memset (f, 0, sizeof *f);
 
   f->filename = name;
@@ -781,12 +781,12 @@ debug_record_function (void *handle, const char *name,
       return FALSE;
     }
 
-  f = (struct debug_function *) xmalloc (sizeof *f);
+  f = (struct debug_function *) malloc (sizeof *f);
   memset (f, 0, sizeof *f);
 
   f->return_type = return_type;
 
-  b = (struct debug_block *) xmalloc (sizeof *b);
+  b = (struct debug_block *) malloc (sizeof *b);
   memset (b, 0, sizeof *b);
 
   b->start = addr;
@@ -833,7 +833,7 @@ debug_record_parameter (void *handle, const char *name, debug_type type,
       return FALSE;
     }
 
-  p = (struct debug_parameter *) xmalloc (sizeof *p);
+  p = (struct debug_parameter *) malloc (sizeof *p);
   memset (p, 0, sizeof *p);
 
   p->name = name;
@@ -899,7 +899,7 @@ debug_start_block (void *handle, bfd_vma addr)
       return FALSE;
     }
 
-  b = (struct debug_block *) xmalloc (sizeof *b);
+  b = (struct debug_block *) malloc (sizeof *b);
   memset (b, 0, sizeof *b);
 
   b->parent = info->current_block;
@@ -987,7 +987,7 @@ debug_record_line (void *handle, unsigned long lineno, bfd_vma addr)
      it in the right place, and make it the new current_lineno
      structure.  */
 
-  l = (struct debug_lineno *) xmalloc (sizeof *l);
+  l = (struct debug_lineno *) malloc (sizeof *l);
   memset (l, 0, sizeof *l);
 
   l->file = info->current_file;
@@ -1089,7 +1089,7 @@ debug_record_typed_const (void *handle, const char *name, debug_type type,
   if (n == NULL)
     return FALSE;
 
-  tc = (struct debug_typed_constant *) xmalloc (sizeof *tc);
+  tc = (struct debug_typed_constant *) malloc (sizeof *tc);
   memset (tc, 0, sizeof *tc);
 
   tc->type = type;
@@ -1156,7 +1156,7 @@ debug_record_variable (void *handle, const char *name, debug_type type,
   if (n == NULL)
     return FALSE;
 
-  v = (struct debug_variable *) xmalloc (sizeof *v);
+  v = (struct debug_variable *) malloc (sizeof *v);
   memset (v, 0, sizeof *v);
 
   v->kind = kind;
@@ -1176,7 +1176,7 @@ debug_make_type (struct debug_handle *info ATTRIBUTE_UNUSED,
 {
   struct debug_type_s *t;
 
-  t = (struct debug_type_s *) xmalloc (sizeof *t);
+  t = (struct debug_type_s *) malloc (sizeof *t);
   memset (t, 0, sizeof *t);
 
   t->kind = kind;
@@ -1199,7 +1199,7 @@ debug_make_indirect_type (void *handle, debug_type *slot, const char *tag)
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  i = (struct debug_indirect_type *) xmalloc (sizeof *i);
+  i = (struct debug_indirect_type *) malloc (sizeof *i);
   memset (i, 0, sizeof *i);
 
   i->slot = slot;
@@ -1288,7 +1288,7 @@ debug_make_struct_type (void *handle, bfd_boolean structp, bfd_vma size,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  c = (struct debug_class_type *) xmalloc (sizeof *c);
+  c = (struct debug_class_type *) malloc (sizeof *c);
   memset (c, 0, sizeof *c);
 
   c->fields = fields;
@@ -1321,7 +1321,7 @@ debug_make_object_type (void *handle, bfd_boolean structp, bfd_vma size,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  c = (struct debug_class_type *) xmalloc (sizeof *c);
+  c = (struct debug_class_type *) malloc (sizeof *c);
   memset (c, 0, sizeof *c);
 
   c->fields = fields;
@@ -1352,7 +1352,7 @@ debug_make_enum_type (void *handle, const char **names,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  e = (struct debug_enum_type *) xmalloc (sizeof *e);
+  e = (struct debug_enum_type *) malloc (sizeof *e);
   memset (e, 0, sizeof *e);
 
   e->names = names;
@@ -1406,7 +1406,7 @@ debug_make_function_type (void *handle, debug_type type,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  f = (struct debug_function_type *) xmalloc (sizeof *f);
+  f = (struct debug_function_type *) malloc (sizeof *f);
   memset (f, 0, sizeof *f);
 
   f->return_type = type;
@@ -1455,7 +1455,7 @@ debug_make_range_type (void *handle, debug_type type, bfd_signed_vma lower,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  r = (struct debug_range_type *) xmalloc (sizeof *r);
+  r = (struct debug_range_type *) malloc (sizeof *r);
   memset (r, 0, sizeof *r);
 
   r->type = type;
@@ -1489,7 +1489,7 @@ debug_make_array_type (void *handle, debug_type element_type,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  a = (struct debug_array_type *) xmalloc (sizeof *a);
+  a = (struct debug_array_type *) malloc (sizeof *a);
   memset (a, 0, sizeof *a);
 
   a->element_type = element_type;
@@ -1521,7 +1521,7 @@ debug_make_set_type (void *handle, debug_type type, bfd_boolean bitstringp)
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  s = (struct debug_set_type *) xmalloc (sizeof *s);
+  s = (struct debug_set_type *) malloc (sizeof *s);
   memset (s, 0, sizeof *s);
 
   s->type = type;
@@ -1552,7 +1552,7 @@ debug_make_offset_type (void *handle, debug_type base_type,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  o = (struct debug_offset_type *) xmalloc (sizeof *o);
+  o = (struct debug_offset_type *) malloc (sizeof *o);
   memset (o, 0, sizeof *o);
 
   o->base_type = base_type;
@@ -1583,7 +1583,7 @@ debug_make_method_type (void *handle, debug_type return_type,
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  m = (struct debug_method_type *) xmalloc (sizeof *m);
+  m = (struct debug_method_type *) malloc (sizeof *m);
   memset (m, 0, sizeof *m);
 
   m->return_type = return_type;
@@ -1683,7 +1683,7 @@ debug_make_baseclass (void *handle ATTRIBUTE_UNUSED, debug_type type,
 {
   struct debug_baseclass_s *b;
 
-  b = (struct debug_baseclass_s *) xmalloc (sizeof *b);
+  b = (struct debug_baseclass_s *) malloc (sizeof *b);
   memset (b, 0, sizeof *b);
 
   b->type = type;
@@ -1707,7 +1707,7 @@ debug_make_field (void *handle ATTRIBUTE_UNUSED, const char *name,
 {
   struct debug_field_s *f;
 
-  f = (struct debug_field_s *) xmalloc (sizeof *f);
+  f = (struct debug_field_s *) malloc (sizeof *f);
   memset (f, 0, sizeof *f);
 
   f->name = name;
@@ -1733,7 +1733,7 @@ debug_make_static_member (void *handle ATTRIBUTE_UNUSED, const char *name,
 {
   struct debug_field_s *f;
 
-  f = (struct debug_field_s *) xmalloc (sizeof *f);
+  f = (struct debug_field_s *) malloc (sizeof *f);
   memset (f, 0, sizeof *f);
 
   f->name = name;
@@ -1754,7 +1754,7 @@ debug_make_method (void *handle ATTRIBUTE_UNUSED, const char *name,
 {
   struct debug_method_s *m;
 
-  m = (struct debug_method_s *) xmalloc (sizeof *m);
+  m = (struct debug_method_s *) malloc (sizeof *m);
   memset (m, 0, sizeof *m);
 
   m->name = name;
@@ -1781,7 +1781,7 @@ debug_make_method_variant (void *handle ATTRIBUTE_UNUSED,
 {
   struct debug_method_variant_s *m;
 
-  m = (struct debug_method_variant_s *) xmalloc (sizeof *m);
+  m = (struct debug_method_variant_s *) malloc (sizeof *m);
   memset (m, 0, sizeof *m);
 
   m->physname = physname;
@@ -1807,7 +1807,7 @@ debug_make_static_method_variant (void *handle ATTRIBUTE_UNUSED,
 {
   struct debug_method_variant_s *m;
 
-  m = (struct debug_method_variant_s *) xmalloc (sizeof *m);
+  m = (struct debug_method_variant_s *) malloc (sizeof *m);
   memset (m, 0, sizeof *m);
 
   m->physname = physname;
@@ -1844,7 +1844,7 @@ debug_name_type (void *handle, const char *name, debug_type type)
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  n = (struct debug_named_type *) xmalloc (sizeof *n);
+  n = (struct debug_named_type *) malloc (sizeof *n);
   memset (n, 0, sizeof *n);
 
   n->type = type;
@@ -1897,7 +1897,7 @@ debug_tag_type (void *handle, const char *name, debug_type type)
   if (t == NULL)
     return DEBUG_TYPE_NULL;
 
-  n = (struct debug_named_type *) xmalloc (sizeof *n);
+  n = (struct debug_named_type *) malloc (sizeof *n);
   memset (n, 0, sizeof *n);
 
   n->type = type;
@@ -2978,7 +2978,7 @@ debug_set_class_id (struct debug_handle *info, const char *tag,
   ++info->class_id;
   c->id = info->class_id;
 
-  l = (struct debug_class_id *) xmalloc (sizeof *l);
+  l = (struct debug_class_id *) malloc (sizeof *l);
   memset (l, 0, sizeof *l);
 
   l->type = type;

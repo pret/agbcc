@@ -60,7 +60,6 @@ MAKEINFO = @MAKEINFO@
 PERL = @PERL@
 
 PICFLAG = @PICFLAG@
-NOASANFLAG = @NOASANFLAG@
 
 MAKEOVERRIDES =
 
@@ -97,7 +96,7 @@ FLAGS_TO_PASS = \
 	"tooldir=$(tooldir)"
 
 # FIXME: add @BUILD_INFO@ once we're sure it works for everyone.
-all: stamp-picdir stamp-noasandir $(TARGETLIB) required-list all-subdir
+all: $(TARGETLIB) required-list all-subdir
 	@: $(MAKE) ; $(MULTIDO) $(FLAGS_TO_PASS) multi-do DO=all
 
 .PHONY: check installcheck
@@ -145,14 +144,13 @@ CFILES = argv.c asprintf.c atexit.c				\
          sort.c						\
 	 spaces.c splay-tree.c stack-limit.c 	\
 	 strdup.c	\
-	 strsignal.c strtod.c strtol.c	\
-	 strtoll.c strtoul.c strtoull.c strndup.c             \
+	 strsignal.c	\
+	 sstrndup.c             \
 	 strverscmp.c timeval-utils.c tmpnam.c				\
 	unlink-if-ordinary.c						\
-	vasprintf.c vfork.c vfprintf.c vprintf.c vprintf-support.c	\
-	 vsnprintf.c vsprintf.c						\
+	vasprintf.c vfork.c vprintf-support.c	\
 	waitpid.c							\
-	xasprintf.c xatexit.c xexit.c xmalloc.c xmemdup.c xstrdup.c	\
+	xasprintf.c xatexit.c xexit.c xmemdup.c xstrdup.c	\
 	 xstrerror.c xstrndup.c xvasprintf.c
 
 # These are always included in the library.  The first four are listed
@@ -184,7 +182,7 @@ REQUIRED_OFILES =							\
 	./strsignal.$(objext)			\
 	./timeval-utils.$(objext) ./unlink-if-ordinary.$(objext)	\
 	./xasprintf.$(objext) ./xatexit.$(objext) ./xexit.$(objext)	\
-	./xmalloc.$(objext) ./xmemdup.$(objext) ./xstrdup.$(objext)	\
+	./xmemdup.$(objext) ./xstrdup.$(objext)	\
 	./xstrerror.$(objext) ./xstrndup.$(objext)			\
 	./xvasprintf.$(objext)
 
@@ -211,11 +209,8 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	 ./stpcpy.$(objext)	\
 	 ./strdup.$(objext)	\
 	 ./strndup.$(objext)	\
-	 ./strtod.$(objext)	\
-	 ./strtol.$(objext) ./strtoul.$(objext) strtoll.$(objext)	\
-	./strtoull.$(objext) ./tmpnam.$(objext) ./strverscmp.$(objext)	\
-	./vasprintf.$(objext) ./vfork.$(objext) ./vfprintf.$(objext)	\
-	 ./vprintf.$(objext) ./vsnprintf.$(objext) ./vsprintf.$(objext)	\
+	./tmpnam.$(objext) ./strverscmp.$(objext)	\
+	./vasprintf.$(objext) ./vfork.$(objext)	\
 	./waitpid.$(objext)
 
 # These files are installed if the library has been configured to do so.
@@ -234,7 +229,7 @@ INSTALLED_HEADERS =                                                     \
 	$(INCDIR)/timeval-utils.h
 
 $(TARGETLIB): $(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS)
-	-rm -f $(TARGETLIB) pic/$(TARGETLIB) noasan/$(TARGETLIB)
+	-rm -f $(TARGETLIB)
 	$(AR) $(AR_FLAGS) $(TARGETLIB) \
 	  $(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS)
 	$(RANLIB) $(TARGETLIB)
@@ -369,30 +364,10 @@ install_to_tooldir: all
 required-list: Makefile
 	echo $(REQUIRED_OFILES) > required-list
 
-stamp-picdir:
-	if [ x"$(PICFLAG)" != x ] && [ ! -d pic ]; then \
-	  mkdir pic; \
-	else true; fi
-	touch stamp-picdir
-
-stamp-noasandir:
-	if [ x"$(NOASANFLAG)" != x ] && [ ! -d noasan ]; then \
-	  mkdir noasan; \
-	else true; fi
-	touch stamp-noasandir
-
 .PHONY: all etags tags TAGS ls clean stage1 stage2
 
 etags tags TAGS: etags-subdir
 	cd $(srcdir) && etags $(CFILES)
-
-# The standalone demangler (c++filt) has been moved to binutils.
-# But make this target work anyway for demangler hacking.
-demangle: $(ALL) $(srcdir)/cp-demangle.c
-	@echo "The standalone demangler, now named c++filt, is now"
-	@echo "a part of binutils."
-	$(CC) @DEFS@ $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) $(HDEFINES) \
-	  $(srcdir)/cp-demangle.c -DSTANDALONE_DEMANGLER $(TARGETLIB) -o $@
 
 ls:
 	@echo Makefile $(CFILES)
@@ -416,9 +391,9 @@ maint-deps :
 # Cleaning has to be done carefully to ensure that we don't clean our SUBDIRS
 # multiple times, hence our explicit recursion with an empty SUBDIRS.
 mostlyclean: mostlyclean-subdir
-	-rm -rf *.$(objext) pic noasan core errs \#* *.E a.out
+	-rm -rf *.$(objext) core errs \#* *.E a.out
 	-rm -f errors dummy config.h stamp-*
-	-rm -f $(CONFIG_H) stamp-picdir stamp-noasandir
+	-rm -f $(CONFIG_H)
 	-rm -f libiberty.aux libiberty.cp libiberty.cps libiberty.fn libiberty.ky
 	-rm -f libiberty.log libiberty.tmp libiberty.tps libiberty.pg
 	-rm -f libiberty.pgs libiberty.toc libiberty.tp libiberty.tpl libiberty.vr
@@ -476,8 +451,8 @@ maintainer-clean-subdir: config.h
 	  cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $$target; \
 	done
 
-$(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS): stamp-picdir stamp-noasandir
-$(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
+$(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS):
+$(CONFIGURED_OFILES):
 
 # Don't export variables to the environment, in order to not confuse
 # configure.
@@ -741,24 +716,6 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/strsignal.c $(OUTPUT_OPTION)
 
-./strtod.$(objext): $(srcdir)/strtod.c $(INCDIR)/ansidecl.h \
-	$(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strtod.c $(OUTPUT_OPTION)
-
-./strtol.$(objext): $(srcdir)/strtol.c config.h $(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strtol.c $(OUTPUT_OPTION)
-
-./strtoll.$(objext): $(srcdir)/strtoll.c config.h $(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strtoll.c $(OUTPUT_OPTION)
-
-./strtoul.$(objext): $(srcdir)/strtoul.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strtoul.c $(OUTPUT_OPTION)
-
-./strtoull.$(objext): $(srcdir)/strtoull.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strtoull.c $(OUTPUT_OPTION)
-
 ./strverscmp.$(objext): $(srcdir)/strverscmp.c $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h $(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/strverscmp.c $(OUTPUT_OPTION)
@@ -781,22 +738,10 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 ./vfork.$(objext): $(srcdir)/vfork.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/vfork.c $(OUTPUT_OPTION)
 
-./vfprintf.$(objext): $(srcdir)/vfprintf.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/vfprintf.c $(OUTPUT_OPTION)
 
 ./vprintf-support.$(objext): $(srcdir)/vprintf-support.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/vprintf-support.c $(OUTPUT_OPTION)
-
-./vprintf.$(objext): $(srcdir)/vprintf.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/vprintf.c $(OUTPUT_OPTION)
-
-./vsnprintf.$(objext): $(srcdir)/vsnprintf.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/vsnprintf.c $(OUTPUT_OPTION)
-
-./vsprintf.$(objext): $(srcdir)/vsprintf.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/vsprintf.c $(OUTPUT_OPTION)
 
 ./waitpid.$(objext): $(srcdir)/waitpid.c config.h $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/waitpid.c $(OUTPUT_OPTION)
@@ -812,10 +757,6 @@ $(CONFIGURED_OFILES): stamp-picdir stamp-noasandir
 ./xexit.$(objext): $(srcdir)/xexit.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/xexit.c $(OUTPUT_OPTION)
-
-./xmalloc.$(objext): $(srcdir)/xmalloc.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/xmalloc.c $(OUTPUT_OPTION)
 
 ./xmemdup.$(objext): $(srcdir)/xmemdup.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h

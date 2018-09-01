@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script
 
 
 AC_INIT
-AC_CONFIG_SRCDIR([xmalloc.c])
+AC_CONFIG_SRCDIR([vprintf-support.c])
 m4_include([../config/lean.m4])
 
 # This works around the fact that libtool configuration may change LD
@@ -16,10 +16,6 @@ AC_ARG_WITH(target-subdir,
 [  --with-target-subdir=SUBDIR      Configuring in a subdirectory for target])
 AC_ARG_WITH(build-subdir,
 [  --with-build-subdir=SUBDIR       Configuring in a subdirectory for build])
-AC_ARG_WITH(cross-host,
-[  --with-cross-host=HOST           Configuring with a cross compiler])
-AC_ARG_WITH(newlib,
-[  --with-newlib                    Configuring with newlib])
 
 if test "${srcdir}" = "."; then
   if test -n "${with_build_subdir}"; then
@@ -40,57 +36,10 @@ fi
 AC_SUBST(libiberty_topdir)
 AC_CONFIG_AUX_DIR($libiberty_topdir)
 
-dnl Very limited version of automake's enable-maintainer-mode
-
-AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
-  dnl maintainer-mode is disabled by default
-  AC_ARG_ENABLE(maintainer-mode,
-[  --enable-maintainer-mode
-                          enable make rules and dependencies not useful
-                          (and sometimes confusing) to the casual installer],
-      maintainer_mode=$enableval,
-      maintainer_mode=no)
-
-AC_MSG_RESULT($maintainer_mode)
-
-if test "$maintainer_mode" = "yes"; then
-  MAINT=''
-  NOTMAINT='#'
-else
-  MAINT='#'
-  NOTMAINT=''
-fi
+MAINT='#'
+NOTMAINT=''
 AC_SUBST(MAINT)dnl
 AC_SUBST(NOTMAINT)dnl
-
-# Do we have a single-tree copy of texinfo?  Even if we do, we can't
-# rely on it - libiberty is built before texinfo.
-AC_CHECK_PROG(MAKEINFO, makeinfo, makeinfo, )
-if test "x$MAKEINFO" = "x"; then
-    MAKEINFO="@echo makeinfo missing; true"
-    BUILD_INFO=
-else
-    BUILD_INFO=info
-    case "$MAKEINFO" in
-      */missing\ makeinfo*)
-	BUILD_INFO=
-	AC_MSG_WARN([
-*** Makeinfo is missing. Info documentation will not be built.])
-        ;;
-      *)
-	case x"`$MAKEINFO --version | grep 'GNU texinfo'`" in
-	  x*\ [[1-3]].* )
-	    MAKEINFO="@echo $MAKEINFO is too old, 4.0 or newer required; true"
-	    BUILD_INFO=
-	    AC_MSG_WARN([
-*** Makeinfo is too old. Info documentation will not be built.])
-	  ;;
-	esac
-	;;
-    esac
-fi
-AC_SUBST(MAKEINFO)
-AC_SUBST(BUILD_INFO)
 
 AC_CHECK_PROG(PERL, perl, perl, )
 if test x"$PERL" = x""; then
@@ -110,50 +59,6 @@ dnl to call AC_CHECK_PROG.
 AC_CHECK_TOOL(AR, ar)
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 
-dnl When switching to automake, replace the following with AM_ENABLE_MULTILIB.
-# Add --enable-multilib to configure.
-# Default to --enable-multilib
-AC_ARG_ENABLE(multilib,
-[  --enable-multilib       build many library versions (default)],
-[case "$enableval" in
-  yes) multilib=yes ;;
-  no)  multilib=no ;;
-  *)   AC_MSG_ERROR([bad value $enableval for multilib option]) ;;
- esac],
-	      [multilib=yes])
-
-# Even if the default multilib is not a cross compilation,
-# it may be that some of the other multilibs are.
-if test $cross_compiling = no && test $multilib = yes \
-   && test "x${with_multisubdir}" != x ; then
-   cross_compiling=maybe
-fi
-
-# We may wish to install the target headers somewhere.
-AC_MSG_CHECKING([whether to install libiberty headers and static library])
-dnl install-libiberty is disabled by default
-
-AC_ARG_ENABLE(install-libiberty,
-[  --enable-install-libiberty       Install headers and library for end users],
-enable_install_libiberty=$enableval,
-enable_install_libiberty=no)dnl
-
-# Option parsed, now set things appropriately.
-case x"$enable_install_libiberty" in
-  xyes|x)
-    target_header_dir=libiberty
-    ;;
-  xno)   
-    target_header_dir=
-    ;;
-  *) 
-    # This could be sanity-checked in various ways...
-    target_header_dir="${enable_install_libiberty}"
-    ;;
-esac
-AC_MSG_RESULT($enable_install_libiberty)
-AC_MSG_NOTICE([target_header_dir = $target_header_dir])
-
 GCC_NO_EXECUTABLES
 AC_PROG_CC
 AC_GNU_SOURCE
@@ -171,11 +76,7 @@ else
   OUTPUT_OPTION='-o $@'
 fi
 AC_SUBST(NO_MINUS_C_MINUS_O)
-AC_SUBST(OUTPUT_OPTION)
-
-AC_C_CONST
-AC_C_INLINE
-AC_C_BIGENDIAN
+AC_SUBST(OUTPUT_OPTION)AC_C_BIGENDIAN
 
 dnl When we start using libtool:
 dnl Default to a non shared library.  This may be overridden by the
@@ -204,9 +105,6 @@ fi
 
 frag=
 case "${host}" in
-  rs6000-ibm-aix3.1 | rs6000-ibm-aix)
-                        frag=mh-aix ;;
-  *-*-cxux7*)		frag=mh-cxux7 ;;
   *-*-freebsd2.1.*)	frag=mh-fbsd21 ;;
   *-*-freebsd2.2.[[012]])	frag=mh-fbsd21 ;;
   i370-*-opened*)       frag=mh-openedition ;;
@@ -218,30 +116,12 @@ if [[ -n "${frag}" ]]; then
 fi
 
 GCC_PICFLAG
-
-# If they didn't specify --enable-shared, don't generate shared libs.
-case "${enable_shared}" in
-  yes) shared=yes ;;
-  no) shared=no ;;
-  "") shared=no ;;
-  *) shared=yes ;;
-esac
-
-# ...unless --enable-host-shared was passed from top-level config:
-if [[ "${enable_host_shared}" = "yes" ]]; then
-  shared=yes
-fi
+shared=no
 
 if [[ "${shared}" != "yes" ]]; then
   PICFLAG=
 fi
 AC_SUBST(PICFLAG)
-
-NOASANFLAG=
-case " ${CFLAGS} " in
-  *\ -fsanitize=address\ *) NOASANFLAG=-fno-sanitize=address ;;
-esac
-AC_SUBST(NOASANFLAG)
 
 echo "# Warning: this fragment is automatically generated" > temp-frag
 
@@ -251,12 +131,7 @@ if [[ -n "${frag}" ]] && [[ -f "${frag}" ]]; then
   cat ${frag} >> temp-frag
 fi
 
-# record if we want to build shared libs.
-if [[ "${shared}" = "yes" ]]; then
-  echo enable_shared = yes >> temp-frag
-else
-  echo enable_shared = no >> temp-frag
-fi
+echo enable_shared = no >> temp-frag
 
 frag=xhost-mkfrag
 ${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/move-if-change temp-frag xhost-mkfrag
@@ -277,11 +152,6 @@ libiberty_AC_DECLARE_ERRNO
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([size_t])
-
-# Check for presense of long long
-AC_CHECK_TYPE([long long],
-  [AC_DEFINE(HAVE_LONG_LONG, 1, [Define if you have the `long long' type.]) AC_CHECK_SIZEOF([long long])],
-  [])
 
 # Look for a 64-bit type.
 AC_MSG_CHECKING([for a 64-bit type])
@@ -355,18 +225,9 @@ funcs="$funcs stpcpy"
 funcs="$funcs stpncpy"
 funcs="$funcs strdup"
 funcs="$funcs strndup"
-funcs="$funcs strtod"
-funcs="$funcs strtol"
-funcs="$funcs strtoul"
-funcs="$funcs strtoll"
-funcs="$funcs strtoull"
 funcs="$funcs strverscmp"
 funcs="$funcs tmpnam"
 funcs="$funcs vasprintf"
-funcs="$funcs vfprintf"
-funcs="$funcs vprintf"
-funcs="$funcs vsnprintf"
-funcs="$funcs vsprintf"
 funcs="$funcs waitpid"
 funcs="$funcs setproctitle"
 
@@ -395,12 +256,12 @@ if test "x" = "y"; then
     random realpath rename rindex \
     setenv setproctitle setrlimit sigsetmask spawnve spawnvpe \
      stpcpy stpncpy strdup \
-       strndup strsignal strtod \
-     strtol strtoul strtoll strtoull strverscmp sysconf sysctl sysmp \
+       strndup strsignal \
+    strverscmp sysconf sysctl sysmp \
     table times tmpnam \
-    vasprintf vfprintf vprintf vsprintf \
+    vasprintf  \
     wait3 wait4 waitpid)
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, vsnprintf, strtol, strtoul, strtoll, strtoull])
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, ntf])
   AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Define if you have the sys_errlist variable.])
   AC_DEFINE(HAVE_SYS_NERR,    1, [Define if you have the sys_nerr variable.])
   AC_DEFINE(HAVE_SYS_SIGLIST, 1, [Define if you have the sys_siglist variable.])
@@ -493,16 +354,14 @@ if test -n "${with_target_subdir}"; then
 
   *-*-msdosdjgpp)
     AC_LIBOBJ([vasprintf])
-    AC_LIBOBJ([vsnprintf])
     AC_LIBOBJ([asprintf])
 
     for f in atexit basename bcmp bcopy bsearch bzero clock ffs \
              getcwd getpagesize getrusage gettimeofday \
              index insque psignal \
              putenv random rename rindex setenv stpcpy \
-             strdup strtod \
-             strtol strtoul sysconf times tmpnam vfprintf vprintf \
-             vsprintf waitpid
+             strdup  sysconf times tmpnamf \
+             waitpid
     do
       n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
       AC_DEFINE_UNQUOTED($n)
@@ -619,14 +478,8 @@ if test -z "${setobjs}"; then
   if test $ac_cv_func_vfork_works = no; then
     AC_LIBOBJ([vfork])
   fi
-  # We only need _doprnt if we might use it to implement v*printf.
-  if test $ac_cv_func_vprintf != yes \
-     || test $ac_cv_func_vfprintf != yes \
-     || test $ac_cv_func_vsprintf != yes; then
-    AC_REPLACE_FUNCS(_doprnt)
-  else
+
     AC_CHECK_FUNCS(_doprnt)
-  fi
 
   for v in $vars; do
     AC_MSG_CHECKING([for $v])
@@ -654,9 +507,8 @@ if test -z "${setobjs}"; then
     [AC_MSG_RESULT([no])])
 
   AC_CHECK_FUNCS($checkfuncs)
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, vsnprintf])
-  AC_CHECK_DECLS([getenv, getopt])
-  AC_CHECK_DECLS([strtol, strtoul, strtoll, strtoull])
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf])
+  AC_CHECK_DECLS([getopt])
   AC_CHECK_DECLS([strverscmp])
   libiberty_NEED_DECLARATION(canonicalize_file_name)
 fi
@@ -670,13 +522,7 @@ case "${host}" in
 esac
 AC_SUBST(pexecute)
 
-# Install a library built with a cross compiler in $(tooldir) rather
-# than $(libdir).
-if test -z "${with_cross_host}"; then
   INSTALL_DEST=libdir
-else
-  INSTALL_DEST=tooldir
-fi
 AC_SUBST(INSTALL_DEST)
 
 m4_pattern_allow(LIBOBJS)

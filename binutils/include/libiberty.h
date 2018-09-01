@@ -139,16 +139,16 @@ extern char *lrealpath (const char *);
 
 /* Concatenate an arbitrary number of strings.  You must pass NULL as
    the last argument of this function, to terminate the list of
-   strings.  Allocates memory using xmalloc.  */
+   strings.  Allocates memory using malloc.  */
 
 extern char *concat (const char *, ...) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL ATTRIBUTE_SENTINEL;
 
 /* Concatenate an arbitrary number of strings.  You must pass NULL as
    the last argument of this function, to terminate the list of
-   strings.  Allocates memory using xmalloc.  The first argument is
+   strings.  Allocates memory using malloc.  The first argument is
    not one of the strings to be concatenated, but if not NULL is a
    pointer to be freed after the new string is created, similar to the
-   way xrealloc works.  */
+   way realloc works.  */
 
 extern char *reconcat (char *, const char *, ...) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL ATTRIBUTE_SENTINEL;
 
@@ -294,29 +294,29 @@ extern int xatexit (void (*fn) (void));
 
 extern void xexit (int status) ATTRIBUTE_NORETURN;
 
-/* Set the program name used by xmalloc.  */
+/* Set the program name used by malloc.  */
 
-extern void xmalloc_set_program_name (const char *);
+extern void malloc_set_program_name (const char *);
 
 /* Report an allocation failure.  */
-extern void xmalloc_failed (size_t) ATTRIBUTE_NORETURN;
+extern void malloc_failed (size_t) ATTRIBUTE_NORETURN;
 
 /* Allocate memory without fail.  If malloc fails, this will print a
-   message to stderr (using the name set by xmalloc_set_program_name,
+   message to stderr (using the name set by malloc_set_program_name,
    if any) and then call xexit.  */
 
-extern void *xmalloc (size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
+extern void *malloc (size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
 
-/* Reallocate memory without fail.  This works like xmalloc.  Note,
+/* Reallocate memory without fail.  This works like malloc.  Note,
    realloc type functions are not suitable for attribute malloc since
    they may return the same address across multiple calls. */
 
-extern void *xrealloc (void *, size_t) ATTRIBUTE_RETURNS_NONNULL;
+extern void *realloc (void *, size_t) ATTRIBUTE_RETURNS_NONNULL;
 
 /* Allocate memory without fail and set it to zero.  This works like
-   xmalloc.  */
+   malloc.  */
 
-extern void *xcalloc (size_t, size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
+extern void *calloc (size_t, size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
 
 /* Copy a string into a memory buffer without fail.  */
 
@@ -346,27 +346,27 @@ extern unsigned int xcrc32 (const unsigned char *, int, unsigned int);
 /* Scalar allocators.  */
 
 #define XALLOCA(T)		((T *) alloca (sizeof (T)))
-#define XNEW(T)			((T *) xmalloc (sizeof (T)))
-#define XCNEW(T)		((T *) xcalloc (1, sizeof (T)))
+#define XNEW(T)			((T *) malloc (sizeof (T)))
+#define XCNEW(T)		((T *) calloc (1, sizeof (T)))
 #define XDUP(T, P)		((T *) xmemdup ((P), sizeof (T), sizeof (T)))
 #define XDELETE(P)		free ((void*) (P))
 
 /* Array allocators.  */
 
 #define XALLOCAVEC(T, N)	((T *) alloca (sizeof (T) * (N)))
-#define XNEWVEC(T, N)		((T *) xmalloc (sizeof (T) * (N)))
-#define XCNEWVEC(T, N)		((T *) xcalloc ((N), sizeof (T)))
+#define XNEWVEC(T, N)		((T *) malloc (sizeof (T) * (N)))
+#define XCNEWVEC(T, N)		((T *) calloc ((N), sizeof (T)))
 #define XDUPVEC(T, P, N)	((T *) xmemdup ((P), sizeof (T) * (N), sizeof (T) * (N)))
-#define XRESIZEVEC(T, P, N)	((T *) xrealloc ((void *) (P), sizeof (T) * (N)))
+#define XRESIZEVEC(T, P, N)	((T *) realloc ((void *) (P), sizeof (T) * (N)))
 #define XDELETEVEC(P)		free ((void*) (P))
 
 /* Allocators for variable-sized structures and raw buffers.  */
 
 #define XALLOCAVAR(T, S)	((T *) alloca ((S)))
-#define XNEWVAR(T, S)		((T *) xmalloc ((S)))
-#define XCNEWVAR(T, S)		((T *) xcalloc (1, (S)))
+#define XNEWVAR(T, S)		((T *) malloc ((S)))
+#define XCNEWVAR(T, S)		((T *) calloc (1, (S)))
 #define XDUPVAR(T, P, S1, S2)	((T *) xmemdup ((P), (S1), (S2)))
-#define XRESIZEVAR(T, P, S)	((T *) xrealloc ((P), (S)))
+#define XRESIZEVAR(T, P, S)	((T *) realloc ((P), (S)))
 
 /* Type-safe obstack allocator.  */
 
@@ -640,7 +640,7 @@ extern int asprintf (char **, const char *, ...) ATTRIBUTE_PRINTF_2;
 #endif
 
 /* Like asprintf but allocates memory without fail. This works like
-   xmalloc.  */
+   malloc.  */
 
 extern char *xasprintf (const char *, ...) ATTRIBUTE_MALLOC ATTRIBUTE_PRINTF_1;
 
@@ -652,7 +652,7 @@ extern int vasprintf (char **, const char *, va_list) ATTRIBUTE_PRINTF(2,0);
 #endif
 
 /* Like vasprintf but allocates memory without fail. This works like
-   xmalloc.  */
+   malloc.  */
 
 extern char *xvasprintf (const char *, va_list) ATTRIBUTE_MALLOC ATTRIBUTE_PRINTF(1,0);
 

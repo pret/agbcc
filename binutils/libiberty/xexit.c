@@ -37,7 +37,7 @@ Termination is handled via the system's normal @code{exit} call.
 #include "libiberty.h"
 
 
-/* This variable is set by xatexit if it is called.  This way, xmalloc
+/* This variable is set by xatexit if it is called.  This way, malloc
    doesn't drag xatexit into the link.  */
 void (*_xexit_cleanup) (void);
 
