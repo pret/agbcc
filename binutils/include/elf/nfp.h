@@ -21,10 +21,11 @@
 #ifndef _ELF_NFP_H
 #define _ELF_NFP_H
 
+#include <stdint.h>
+
 #include "bfd.h"
 #include "elf/common.h"
 #include "elf/reloc-macros.h"
-#include "bfd_stdint.h"
 
 #ifdef __cplusplus
 extern "C"

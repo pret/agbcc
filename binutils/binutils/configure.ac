@@ -185,9 +185,7 @@ fi
 AC_MSG_CHECKING([for utime.h])
 AC_CACHE_VAL(bu_cv_header_utime_h,
 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <sys/types.h>
-#ifdef HAVE_TIME_H
 #include <time.h>
-#endif
 #include <utime.h>],
 [struct utimbuf s;])],
 bu_cv_header_utime_h=yes, bu_cv_header_utime_h=no)])
@@ -196,8 +194,7 @@ if test $bu_cv_header_utime_h = yes; then
   AC_DEFINE(HAVE_GOOD_UTIME_H, 1, [Does <utime.h> define struct utimbuf?])
 fi
 
-AC_CHECK_DECLS([asprintf, environ, getc_unlocked, getenv,
-		stpcpy, vsnprintf])
+AC_CHECK_DECLS([asprintf, environ, getc_unlocked, stpcpy])
 
 # Link in zlib if we can.  This allows us to read compressed debug
 # sections.  This is used only by readelf.c (objdump uses bfd for

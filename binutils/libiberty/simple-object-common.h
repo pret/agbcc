@@ -17,6 +17,8 @@ License along with libiberty; see the file COPYING.LIB.  If not,
 write to the Free Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
 Boston, MA 02110-1301, USA.  */
 
+#include <stdint.h>
+
 /* Forward reference.  */
 struct simple_object_functions;
 
@@ -177,11 +179,7 @@ simple_object_internal_write (int descriptor, off_t offset,
 /* Define ulong_type as an unsigned 64-bit type if available.
    Otherwise just make it unsigned long.  */
 
-#ifdef UNSIGNED_64BIT_TYPE
-__extension__ typedef UNSIGNED_64BIT_TYPE ulong_type;
-#else
-typedef unsigned long ulong_type;
-#endif
+typedef uint64_t ulong_type;
 
 /* Fetch a big-endian 16-bit value.  */
 
@@ -237,8 +235,6 @@ simple_object_fetch_little_32_ulong (const unsigned char *buf)
   return (ulong_type) simple_object_fetch_little_32 (buf);
 }
 
-#ifdef UNSIGNED_64BIT_TYPE
-
 /* Fetch a big-endian 64-bit value.  */
 
 static inline ulong_type
@@ -268,8 +264,6 @@ simple_object_fetch_little_64 (const unsigned char *buf)
 	  | ((ulong_type) buf[1] << 8)
 	  | (ulong_type) buf[0]);
 }
-
-#endif
 
 /* Store a big-endian 16-bit value.  */
 
@@ -327,8 +321,6 @@ simple_object_set_little_32_ulong (unsigned char *buf, ulong_type val)
   simple_object_set_little_32 (buf, val);
 }
 
-#ifdef UNSIGNED_64BIT_TYPE
-
 /* Store a big-endian 64-bit value.  */
 
 static inline void
@@ -358,5 +350,3 @@ simple_object_set_little_64 (unsigned char *buf, ulong_type val)
   buf[1] = (val >> 8) & 0xff;
   buf[0] = val & 0xff;
 }
-
-#endif

@@ -212,10 +212,8 @@ AC_SUBST(BFD_HOSTPTR_T)
 
 BFD_CC_FOR_BUILD
 
-AC_CHECK_HEADERS(alloca.h strings.h time.h unistd.h wchar.h wctype.h \
+AC_CHECK_HEADERS(alloca.h strings.h unistd.h wchar.h wctype.h \
                  fcntl.h sys/file.h sys/time.h sys/stat.h sys/resource.h)
-GCC_HEADER_STDINT(bfd_stdint.h)
-AC_HEADER_TIME
 AC_HEADER_DIRENT
 
 ACX_HEADER_STRING
@@ -230,11 +228,9 @@ AC_CHECK_DECLS(fseeko64)
 BFD_BINARY_FOPEN
 
 AC_CHECK_DECLS(ffs)
-AC_CHECK_DECLS(getenv)
 AC_CHECK_DECLS(stpcpy)
 AC_CHECK_DECLS(asprintf)
 AC_CHECK_DECLS(vasprintf)
-AC_CHECK_DECLS(vsnprintf)
 
 # Link in zlib if we can.  This allows us to read compressed debug sections.
 # This is used only by compress.c.
@@ -390,11 +386,8 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_be_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
     arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    arm_elf32_fdpic_be_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
     arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    elf32_be_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
     elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;

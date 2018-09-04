@@ -6851,9 +6851,7 @@ else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-#ifdef HAVE_TIME_H
 #include <time.h>
-#endif
 #include <utime.h>
 int
 main ()
@@ -6909,16 +6907,6 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_GETC_UNLOCKED $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "getenv" "ac_cv_have_decl_getenv" "$ac_includes_default"
-if test "x$ac_cv_have_decl_getenv" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_GETENV $ac_have_decl
-_ACEOF
 ac_fn_c_check_decl "$LINENO" "stpcpy" "ac_cv_have_decl_stpcpy" "$ac_includes_default"
 if test "x$ac_cv_have_decl_stpcpy" = xyes; then :
   ac_have_decl=1
@@ -6928,16 +6916,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_STPCPY $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "vsnprintf" "ac_cv_have_decl_vsnprintf" "$ac_includes_default"
-if test "x$ac_cv_have_decl_vsnprintf" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_VSNPRINTF $ac_have_decl
 _ACEOF
 
 

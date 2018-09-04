@@ -268,8 +268,6 @@ static const struct elf_type_functions elf_little_32_functions =
   simple_object_set_little_32_ulong
 };
 
-#ifdef UNSIGNED_64BIT_TYPE
-
 static const struct elf_type_functions elf_big_64_functions =
 {
   simple_object_fetch_big_16,
@@ -289,8 +287,6 @@ static const struct elf_type_functions elf_little_64_functions =
   simple_object_set_little_32,
   simple_object_set_little_64
 };
-
-#endif
 
 /* Hideous macro to fetch the value of a field from an external ELF
    struct of some sort.  TYPEFUNCS is the set of type functions.
@@ -448,16 +444,10 @@ simple_object_elf_match (unsigned char header[SIMPLE_OBJECT_MATCH_HEADER_LEN],
       break;
 
     case ELFCLASS64:
-#ifndef UNSIGNED_64BIT_TYPE
-      *errmsg = "64-bit ELF objects not supported";
-      *err = 0;
-      return NULL;
-#else
       type_functions = (ei_data == ELFDATA2LSB
 			? &elf_little_64_functions
 			: &elf_big_64_functions);
       break;
-#endif
 
     default:
       *errmsg = "unrecognized ELF size";

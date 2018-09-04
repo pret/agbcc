@@ -44,7 +44,7 @@ SUBSECTION
 #include "bfd.h"
 #include "libbfd.h"
 #include "libiberty.h"
-#include "bfd_stdint.h"
+#include <stdint.h>
 
 #ifdef HAVE_MMAP
 #include <sys/mman.h>

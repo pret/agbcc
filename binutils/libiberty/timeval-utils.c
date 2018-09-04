@@ -30,9 +30,7 @@ Boston, MA 02110-1301, USA.  */
 # if HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # else
-#  ifdef HAVE_TIME_H
-#   include <time.h>
-#  endif
+#  include <time.h>
 # endif
 #endif
 

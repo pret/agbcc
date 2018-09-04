@@ -31,7 +31,7 @@
 #endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#elif HAVE_TIME_H
+#else
 #include <time.h>
 #endif
 #include "ansidecl.h"

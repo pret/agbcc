@@ -193,13 +193,11 @@ htab_mod_1 (hashval_t x, hashval_t y, hashval_t inv, int shift)
 {
   /* The multiplicative inverses computed above are for 32-bit types, and
      requires that we be able to compute a highpart multiply.  */
-#ifdef UNSIGNED_64BIT_TYPE
-  __extension__ typedef UNSIGNED_64BIT_TYPE ull;
   if (sizeof (hashval_t) * CHAR_BIT <= 32)
     {
       hashval_t t1, t2, t3, t4, q, r;
 
-      t1 = ((ull)x * inv) >> 32;
+      t1 = ((uint64_t)x * inv) >> 32;
       t2 = x - t1;
       t3 = t2 >> 1;
       t4 = t1 + t3;
@@ -208,7 +206,6 @@ htab_mod_1 (hashval_t x, hashval_t y, hashval_t inv, int shift)
 
       return r;
     }
-#endif
 
   /* Otherwise just use the native division routines.  */
   return x % y;

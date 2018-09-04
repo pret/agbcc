@@ -174,7 +174,7 @@ SOURCE_HFILES = \
 
 ## ... and all .h files which are in the build tree.
 BUILD_HFILES = \
-	bfdver.h elf32-target.h elf64-target.h targmatch.h bfd_stdint.h
+	bfdver.h elf32-target.h elf64-target.h targmatch.h
 
 # Ensure they are built early:
 BUILT_SOURCES = $(BUILD_HFILES)

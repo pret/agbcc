@@ -117,7 +117,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/lead-dot.m4 \
 	$(top_srcdir)/../config/override.m4 \
 	$(top_srcdir)/../config/plugins.m4 \
-	$(top_srcdir)/../config/stdint.m4 \
 	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/warning.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
@@ -541,7 +540,7 @@ SOURCE_HFILES = \
 	version.h
 
 BUILD_HFILES = \
-	bfdver.h elf32-target.h elf64-target.h targmatch.h bfd_stdint.h
+	bfdver.h elf32-target.h elf64-target.h targmatch.h
 
 
 # Ensure they are built early:

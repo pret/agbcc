@@ -41,8 +41,8 @@
 # if (_GNU_OBSTACK_INTERFACE_VERSION == _OBSTACK_INTERFACE_VERSION	      \
       || (_GNU_OBSTACK_INTERFACE_VERSION == 1				      \
           && _OBSTACK_INTERFACE_VERSION == 2				      \
-          && defined SIZEOF_INT && defined SIZEOF_SIZE_T		      \
-          && SIZEOF_INT == SIZEOF_SIZE_T))
+          && defined SIZEOF_SIZE_T		      \
+          && SIZEOF_SIZE_T == 4 ))
 #  define _OBSTACK_ELIDE_CODE
 # endif
 #endif
