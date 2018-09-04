@@ -95,10 +95,6 @@
 #define SEEK_END 2
 #endif
 
-#if !HAVE_DECL_GETENV
-extern char *getenv ();
-#endif
-
 #if !HAVE_DECL_ENVIRON
 extern char **environ;
 #endif

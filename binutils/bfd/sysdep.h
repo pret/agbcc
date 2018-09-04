@@ -111,10 +111,6 @@ extern int errno;
 extern int ffs (int);
 #endif
 
-#if !HAVE_DECL_GETENV
-extern char *getenv ();
-#endif
-
 #if !HAVE_DECL_STPCPY
 extern char *stpcpy (char *__dest, const char *__src);
 #endif

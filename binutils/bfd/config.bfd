@@ -65,10 +65,6 @@ case "${targ}" in
     ;;
 
 # START OF targmatch.h
-  armeb-*-elf | arm*b-*-freebsd* | arm*b-*-linux-* | armeb-*-eabi*)
-    targ_defvec=arm_elf32_be_vec
-    targ_selvecs=arm_elf32_le_vec
-    ;;
   arm-*-elf | arm*-*-freebsd* | arm*-*-linux-* | arm*-*-conix* | \
   arm*-*-uclinux* | arm-*-kfreebsd*-gnu | \
   arm*-*-eabi* | arm-*-rtems* | arm*-*-uclinuxfdpiceabi)
@@ -80,13 +76,6 @@ case "${targ}" in
     echo 1>&2 "*** BFD does not support target ${targ}."
     echo 1>&2 "*** Look in bfd/config.bfd for supported targets."
     exit 1
-    ;;
-esac
-
-# All MIPS ELF targets need a 64-bit bfd_vma.
-case "${targ_defvec} ${targ_selvecs}" in
-  *mips_elf*)
-    want64=true
     ;;
 esac
 
@@ -102,9 +91,9 @@ esac
 # relocation information.
 case "${targ_defvec} ${targ_selvecs}" in
   *elf64* | *mips_elf32_n*)
-    targ_selvecs="${targ_selvecs} elf64_le_vec elf64_be_vec elf32_le_vec elf32_be_vec"
+    targ_selvecs="${targ_selvecs} elf64_le_vec elf32_le_vec"
     ;;
   *elf32*)
-    targ_selvecs="${targ_selvecs} elf32_le_vec elf32_be_vec"
+    targ_selvecs="${targ_selvecs} elf32_le_vec"
     ;;
 esac

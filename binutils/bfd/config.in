@@ -44,10 +44,6 @@
    don't. */
 #undef HAVE_DECL_FTELLO64
 
-/* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
-   */
-#undef HAVE_DECL_GETENV
-
 /* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
    */
 #undef HAVE_DECL_STPCPY
@@ -55,10 +51,6 @@
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_VASPRINTF
-
-/* Define to 1 if you have the declaration of `vsnprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_VSNPRINTF
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -177,9 +169,6 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you have the <time.h> header file. */
-#undef HAVE_TIME_H
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -230,9 +219,6 @@
 
 /* Define if you can safely include both <string.h> and <strings.h>. */
 #undef STRING_WITH_STRINGS
-
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
 
 /* Name of host specific header file to include in trad-core.c. */
 #undef TRAD_HEADER

@@ -33,7 +33,6 @@
 #include "arsup.h"
 #include "filenames.h"
 #include "binemul.h"
-#include "plugin-api.h"
 
 #ifdef __GO32___
 #define EXT_NAME_LEN 3		/* Bufflen of addition to name if it's MS-DOS.  */
@@ -140,21 +139,13 @@ static int show_version = 0;
 
 static int show_help = 0;
 
-#if BFD_SUPPORTS_PLUGINS
-static const char *plugin_target = "plugin";
-#else
-static const char *plugin_target = NULL;
-#endif
-
 static const char *target = NULL;
 
-#define OPTION_PLUGIN 201
 #define OPTION_TARGET 202
 
 static struct option long_options[] =
 {
   {"help", no_argument, &show_help, 1},
-  {"plugin", required_argument, NULL, OPTION_PLUGIN},
   {"target", required_argument, NULL, OPTION_TARGET},
   {"version", no_argument, &show_version, 1},
   {NULL, no_argument, NULL, 0}
@@ -563,10 +554,6 @@ decode_options (int argc, char **argv)
         case 'U':
           deterministic = FALSE;
           break;
-	case OPTION_PLUGIN:
-	  fprintf (stderr, _("sorry - this program has been built without plugin support\n"));
-	  xexit (1);
-	  break;
 	case OPTION_TARGET:
 	  target = optarg;
 	  break;
@@ -616,12 +603,6 @@ ranlib_main (int argc, char **argv)
 	case 'v':
 	case 'V':
 	  show_version = 1;
-	  break;
-
-	  /* PR binutils/13493: Support plugins.  */
-	case OPTION_PLUGIN:
-	  fprintf (stderr, _("sorry - this program has been built without plugin support\n"));
-	  xexit (1);
 	  break;
 	}
     }
@@ -857,9 +838,6 @@ open_inarch (const char *archive_filename, const char *file)
   char **matching;
 
   bfd_set_error (bfd_error_no_error);
-
-  if (target == NULL)
-    target = plugin_target;
 
   if (stat (archive_filename, &sbuf) != 0)
     {

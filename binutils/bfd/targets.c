@@ -585,13 +585,8 @@ to find an alternative output format that is suitable.
    They are listed a second time below, since
    we can't intermix extern's and initializers.  */
 
-extern const bfd_target arc_elf32_be_vec;
-extern const bfd_target arc_elf32_le_vec;
-extern const bfd_target arm_elf32_be_vec;
 extern const bfd_target arm_elf32_le_vec;
-extern const bfd_target arm_elf32_fdpic_be_vec;
 extern const bfd_target arm_elf32_fdpic_le_vec;
-extern const bfd_target elf32_be_vec;
 extern const bfd_target elf32_le_vec;
 
 /* These are always included.  */

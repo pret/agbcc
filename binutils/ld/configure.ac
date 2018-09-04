@@ -284,7 +284,7 @@ fi
 
 BFD_BINARY_FOPEN
 
-AC_CHECK_DECLS([strstr, getenv, environ])
+AC_CHECK_DECLS([environ])
 
 # When converting linker scripts into strings for use in emulation
 # files, use astring.sed if the compiler supports ANSI string

@@ -120,151 +120,10 @@ HFILES = \
 # CPU files in config.
 
 TARGET_CPU_CFILES = \
-	config/tc-aarch64.c \
-	config/tc-alpha.c \
-	config/tc-arc.c \
-	config/tc-arm.c \
-	config/tc-avr.c \
-	config/tc-bfin.c \
-	config/tc-cr16.c \
-	config/tc-cris.c \
-	config/tc-crx.c \
-	config/tc-d10v.c \
-	config/tc-d30v.c \
-	config/tc-dlx.c \
-	config/tc-epiphany.c \
-	config/tc-fr30.c \
-	config/tc-frv.c \
-	config/tc-ft32.c \
-	config/tc-h8300.c \
-	config/tc-hppa.c \
-	config/tc-ia64.c \
-	config/tc-i386.c \
-	config/tc-ip2k.c \
-	config/tc-iq2000.c \
-	config/tc-lm32.c \
-	config/tc-m32c.c \
-	config/tc-m32r.c \
-	config/tc-m68hc11.c \
-	config/tc-m68k.c \
-	config/tc-s12z.c \
-	config/tc-mcore.c \
-	config/tc-mep.c \
-	config/tc-metag.c \
-	config/tc-microblaze.c \
-	config/tc-mips.c \
-	config/tc-mmix.c \
-	config/tc-mn10200.c \
-	config/tc-mn10300.c \
-	config/tc-moxie.c \
-	config/tc-msp430.c \
-	config/tc-mt.c \
-	config/tc-nds32.c \
-	config/tc-nios2.c \
-	config/tc-ns32k.c \
-	config/tc-or1k.c \
-	config/tc-pdp11.c \
-	config/tc-pj.c \
-	config/tc-ppc.c \
-	config/tc-pru.c \
-	config/tc-riscv.c \
-	config/tc-rl78.c \
-	config/tc-rx.c \
-	config/tc-s390.c \
-	config/tc-score.c \
-	config/tc-sh.c \
-	config/tc-sparc.c \
-	config/tc-spu.c \
-	config/tc-tic30.c \
-	config/tc-tic4x.c \
-	config/tc-tic54x.c \
-	config/tc-tic6x.c \
-	config/tc-tilegx.c \
-	config/tc-tilepro.c \
-	config/tc-v850.c \
-	config/tc-vax.c \
-	config/tc-visium.c \
-	config/tc-wasm32.c \
-	config/tc-xstormy16.c \
-	config/tc-xc16x.c \
-	config/tc-xgate.c \
-	config/tc-xtensa.c \
-	config/tc-z80.c \
-	config/tc-z8k.c \
-	config/xtensa-relax.c
+	config/tc-arm.c
 
 TARGET_CPU_HFILES = \
-	config/tc-aarch64.h \
-	config/tc-alpha.h \
-	config/tc-arc.h \
-	config/tc-arm.h \
-	config/tc-avr.h \
-	config/tc-bfin.h \
-	config/tc-cr16.h \
-	config/tc-cris.h \
-	config/tc-crx.h \
-	config/tc-d10v.h \
-	config/tc-d30v.h \
-	config/tc-dlx.h \
-	config/tc-epiphany.h \
-	config/tc-fr30.h \
-	config/tc-frv.h \
-	config/tc-ft32.h \
-	config/tc-h8300.h \
-	config/tc-hppa.h \
-	config/tc-ia64.h \
-	config/tc-i386.h \
-	config/tc-ip2k.h \
-	config/tc-iq2000.h \
-	config/tc-lm32.h \
-	config/tc-m32c.h \
-	config/tc-m32r.h \
-	config/tc-m68hc11.h \
-	config/tc-m68k.h \
-	config/tc-s12z.h \
-	config/tc-mcore.h \
-	config/tc-mep.h \
-	config/tc-metag.h \
-	config/tc-microblaze.h \
-	config/tc-mips.h \
-	config/tc-mmix.h \
-	config/tc-mn10200.h \
-	config/tc-mn10300.h \
-	config/tc-msp430.h \
-	config/tc-mt.h \
-	config/tc-nds32.h \
-	config/tc-nios2.h \
-	config/tc-ns32k.h \
-	config/tc-or1k.h \
-	config/tc-pdp11.h \
-	config/tc-pj.h \
-	config/tc-ppc.h \
-	config/tc-pru.h \
-	config/tc-riscv.h \
-	config/tc-rl78.h \
-	config/tc-rx.h \
-	config/tc-s390.h \
-	config/tc-score.h \
-	config/tc-sh.h \
-	config/tc-sparc.h \
-	config/tc-spu.h \
-	config/tc-tic30.h \
-	config/tc-tic4x.h \
-	config/tc-tic54x.h \
-	config/tc-tic6x.h \
-	config/tc-tilegx.h \
-	config/tc-tilepro.h \
-	config/tc-v850.h \
-	config/tc-vax.h \
-	config/tc-visium.h \
-	config/tc-wasm32.h \
-	config/tc-xstormy16.h \
-	config/tc-xc16x.h \
-	config/tc-xgate.h \
-	config/tc-xtensa.h \
-	config/tc-z80.h \
-	config/tc-z8k.h \
-	config/xtensa-relax.h
+	config/tc-arm.h
 
 # OBJ files in config
 
@@ -294,8 +153,7 @@ MULTI_CFILES = \
 	config/e-mipself.c
 
 CONFIG_ATOF_CFILES = \
-	config/atof-ieee.c \
-	config/atof-vax.c
+	config/atof-ieee.c
 
 POTFILES = $(MULTI_CFILES) $(CONFIG_ATOF_CFILES) \
 	$(TARG_ENV_HFILES) $(TARG_ENV_CFILES) $(OBJ_FORMAT_HFILES) \
@@ -311,12 +169,8 @@ noinst_PROGRAMS = as-new
 noinst_SCRIPTS = $(GDBINIT)
 EXTRA_SCRIPTS = .gdbinit
 
-EXTRA_DIST = m68k-parse.c itbl-parse.c itbl-parse.h itbl-lex.c \
-	bfin-parse.c bfin-parse.h bfin-lex.c \
-	rl78-parse.c rl78-parse.h \
-	rx-parse.c rx-parse.h
 
-diststuff: $(EXTRA_DIST) info
+diststuff: info
 
 DISTCLEANFILES = targ-cpu.h obj-format.h targ-env.h itbl-cpu.h cgen-desc.h
 
@@ -375,76 +229,6 @@ check-DEJAGNU: site.exp
 		$(RUNTESTFLAGS); \
 	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
 	fi
-
-# The m68k operand parser.
-
-EXTRA_as_new_SOURCES += config/m68k-parse.c
-
-# If m68k-parse.y is in a different directory, then ylwrap will use an
-# absolute path when it invokes yacc, which will cause yacc to put the
-# absolute path into the generated file.  That's a pain when it comes
-# to generating snapshots, because it introduces spurious diffs.
-# Since when we make the snapshots $(srcdir) = ".", we check for that
-# case and handle it differently.  This means that anybody who
-# configures with $(srcdir) = "." will have to set their path in the
-# debugger if they want to debug m68k-parse.y.  This is bad, but on
-# the other hand it's good that people who use the prebuilt
-# m68k-parse.c don't get a spurious absolute path.
-m68k-parse.c: $(srcdir)/config/m68k-parse.y
-	f=$(srcdir)/config/m68k-parse.y; \
-	if [ $$f = "./config/m68k-parse.y" ]; then \
-	  ln -s config/m68k-parse.y . > /dev/null 2>/dev/null || \
-	   ln config/m68k-parse.y . > /dev/null 2>/dev/null || \
-	   cp config/m68k-parse.y . >/dev/null 2>/dev/null; \
-	  f=m68k-parse.y; \
-	else true; fi; \
-	$(SHELL) $(YLWRAP) $$f y.tab.c m68k-parse.c -- $(YACCCOMPILE); \
-	if [ $$f = "m68k-parse.y" ]; then \
-	  rm -f m68k-parse.y; \
-	else true; fi
-# Disable -Werror, if it has been enabled, since old versions of bison/
-# yacc will produce working code which contain compile time warnings.
-m68k-parse.@OBJEXT@: m68k-parse.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f m68k-parse.c || echo $(srcdir)/`m68k-parse.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='m68k-parse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c `test -f m68k-parse.c || echo $(srcdir)/`m68k-parse.c $(NO_WERROR)
-endif
-
-# Don't let the .y.h rule clobber m68k-parse.h.
-m68k-parse.h: ; @true
-$(srcdir)/config/m68k-parse.h: ; @true
-
-bfin-parse.h: bfin-parse.c
-bfin-parse.h: ; @true
-$(srcdir)/config/bfin-parse.h: ; @true
-
-bfin-lex-wrapper.@OBJEXT@: $(srcdir)/config/bfin-lex-wrapper.c bfin-lex.c bfin-parse.h $(srcdir)/config/bfin-defs.h
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='bfin-lex-wrapper.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
-	$(COMPILE) -c $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
-endif
-
-EXTRA_as_new_SOURCES += config/rl78-parse.c
-rl78-parse.h: rl78-parse.c
-rl78-defs.h: ; @true
-$(srcdir)/config/rl78-defs.h: ; @true
-
-EXTRA_as_new_SOURCES += config/rx-parse.y
-rx-parse.h: rx-parse.c
-rx-defs.h: ; @true
-$(srcdir)/config/rx-defs.h: ; @true
 
 # The instruction table specification lexical analyzer and parser.
 

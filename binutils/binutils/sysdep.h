@@ -71,16 +71,8 @@ extern int errno;
 extern char *stpcpy (char *, const char *);
 #endif
 
-#if !HAVE_DECL_GETENV
-extern char *getenv ();
-#endif
-
 #if !HAVE_DECL_ENVIRON
 extern char **environ;
-#endif
-
-#if !HAVE_DECL_VSNPRINTF
-extern int vsnprintf(char *, size_t, const char *, va_list);
 #endif
 
 #ifndef O_RDONLY

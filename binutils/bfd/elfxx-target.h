@@ -915,107 +915,6 @@ static struct elf_backend_data elfNN_bed =
 extern const bfd_target TARGET_LITTLE_SYM;
 #endif
 
-#ifdef TARGET_BIG_SYM
-const bfd_target TARGET_BIG_SYM =
-{
-  /* name: identify kind of target */
-  TARGET_BIG_NAME,
-
-  /* flavour: general indication about file */
-  bfd_target_elf_flavour,
-
-  /* byteorder: data is big endian */
-  BFD_ENDIAN_BIG,
-
-  /* header_byteorder: header is also big endian */
-  BFD_ENDIAN_BIG,
-
-  /* object_flags: mask of all file flags */
-  (HAS_RELOC | EXEC_P | HAS_LINENO | HAS_DEBUG | HAS_SYMS | HAS_LOCALS
-   | DYNAMIC | WP_TEXT | D_PAGED | BFD_COMPRESS | BFD_DECOMPRESS
-   | BFD_COMPRESS_GABI | BFD_CONVERT_ELF_COMMON | BFD_USE_ELF_STT_COMMON),
-
-  /* section_flags: mask of all section flags */
-  (SEC_HAS_CONTENTS | SEC_ALLOC | SEC_LOAD | SEC_RELOC | SEC_READONLY
-   | SEC_CODE | SEC_DATA | SEC_DEBUGGING | SEC_EXCLUDE | SEC_SORT_ENTRIES
-   | SEC_SMALL_DATA | SEC_MERGE | SEC_STRINGS | SEC_GROUP),
-
-   /* leading_symbol_char: is the first char of a user symbol
-      predictable, and if so what is it */
-  elf_symbol_leading_char,
-
-  /* ar_pad_char: pad character for filenames within an archive header
-     FIXME:  this really has nothing to do with ELF, this is a characteristic
-     of the archiver and/or os and should be independently tunable */
-  '/',
-
-  /* ar_max_namelen: maximum number of characters in an archive header
-     FIXME:  this really has nothing to do with ELF, this is a characteristic
-     of the archiver and should be independently tunable.  The System V ABI,
-     Chapter 7 (Formats & Protocols), Archive section sets this as 15.  */
-  15,
-
-  elf_match_priority,
-
-  /* Routines to byte-swap various sized integers from the data sections */
-  bfd_getb64, bfd_getb_signed_64, bfd_putb64,
-    bfd_getb32, bfd_getb_signed_32, bfd_putb32,
-    bfd_getb16, bfd_getb_signed_16, bfd_putb16,
-
-  /* Routines to byte-swap various sized integers from the file headers */
-  bfd_getb64, bfd_getb_signed_64, bfd_putb64,
-    bfd_getb32, bfd_getb_signed_32, bfd_putb32,
-    bfd_getb16, bfd_getb_signed_16, bfd_putb16,
-
-  /* bfd_check_format: check the format of a file being read */
-  { _bfd_dummy_target,		/* unknown format */
-    bfd_elfNN_object_p,		/* assembler/linker output (object file) */
-    bfd_elfNN_archive_p,	/* an archive */
-    bfd_elfNN_core_file_p	/* a core file */
-  },
-
-  /* bfd_set_format: set the format of a file being written */
-  { _bfd_bool_bfd_false_error,
-    bfd_elfNN_mkobject,
-    bfd_elfNN_mkarchive,
-    bfd_elfNN_mkcorefile
-  },
-
-  /* bfd_write_contents: write cached information into a file being written */
-  { _bfd_bool_bfd_false_error,
-    bfd_elfNN_write_object_contents,
-    bfd_elfNN_write_archive_contents,
-    bfd_elfNN_write_corefile_contents,
-  },
-
-  BFD_JUMP_TABLE_GENERIC (bfd_elfNN),
-  BFD_JUMP_TABLE_COPY (bfd_elfNN),
-  BFD_JUMP_TABLE_CORE (bfd_elfNN),
-#ifdef bfd_elfNN_archive_functions
-  BFD_JUMP_TABLE_ARCHIVE (bfd_elfNN_archive),
-#elif defined USE_64_BIT_ARCHIVE
-  BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_64_bit),
-#else
-  BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_coff),
-#endif
-  BFD_JUMP_TABLE_SYMBOLS (bfd_elfNN),
-  BFD_JUMP_TABLE_RELOCS (bfd_elfNN),
-  BFD_JUMP_TABLE_WRITE (bfd_elfNN),
-  BFD_JUMP_TABLE_LINK (bfd_elfNN),
-  BFD_JUMP_TABLE_DYNAMIC (bfd_elfNN),
-
-  /* Alternative endian target.  */
-#ifdef TARGET_LITTLE_SYM
-  & TARGET_LITTLE_SYM,
-#else
-  NULL,
-#endif
-
-  /* backend_data: */
-  &elfNN_bed
-};
-#endif
-
 #ifdef TARGET_LITTLE_SYM
 const bfd_target TARGET_LITTLE_SYM =
 {
@@ -1106,11 +1005,7 @@ const bfd_target TARGET_LITTLE_SYM =
   BFD_JUMP_TABLE_DYNAMIC (bfd_elfNN),
 
   /* Alternative endian target.  */
-#ifdef TARGET_BIG_SYM
-  & TARGET_BIG_SYM,
-#else
   NULL,
-#endif
 
   /* backend_data: */
   &elfNN_bed

@@ -173,17 +173,16 @@ am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
 	./$(DEPDIR)/dwarf2.Po ./$(DEPDIR)/elf-attrs.Po \
 	./$(DEPDIR)/elf-eh-frame.Po ./$(DEPDIR)/elf-nacl.Po \
 	./$(DEPDIR)/elf-properties.Po ./$(DEPDIR)/elf-strtab.Po \
-	./$(DEPDIR)/elf-vxworks.Po ./$(DEPDIR)/elf.Po \
-	./$(DEPDIR)/elf32-arm.Po ./$(DEPDIR)/elf32.Po \
-	./$(DEPDIR)/elflink.Po ./$(DEPDIR)/format.Po \
-	./$(DEPDIR)/hash.Po ./$(DEPDIR)/ihex.Po ./$(DEPDIR)/init.Po \
-	./$(DEPDIR)/libbfd.Po ./$(DEPDIR)/linker.Po \
-	./$(DEPDIR)/merge.Po ./$(DEPDIR)/opncls.Po \
-	./$(DEPDIR)/reloc.Po ./$(DEPDIR)/reloc16.Po \
-	./$(DEPDIR)/section.Po ./$(DEPDIR)/simple.Po \
-	./$(DEPDIR)/srec.Po ./$(DEPDIR)/stab-syms.Po \
-	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/syms.Po \
-	./$(DEPDIR)/targets.Po
+	./$(DEPDIR)/elf.Po ./$(DEPDIR)/elf32-arm.Po \
+	./$(DEPDIR)/elf32.Po ./$(DEPDIR)/elflink.Po \
+	./$(DEPDIR)/format.Po ./$(DEPDIR)/hash.Po ./$(DEPDIR)/ihex.Po \
+	./$(DEPDIR)/init.Po ./$(DEPDIR)/libbfd.Po \
+	./$(DEPDIR)/linker.Po ./$(DEPDIR)/merge.Po \
+	./$(DEPDIR)/opncls.Po ./$(DEPDIR)/reloc.Po \
+	./$(DEPDIR)/reloc16.Po ./$(DEPDIR)/section.Po \
+	./$(DEPDIR)/simple.Po ./$(DEPDIR)/srec.Po \
+	./$(DEPDIR)/stab-syms.Po ./$(DEPDIR)/stabs.Po \
+	./$(DEPDIR)/syms.Po ./$(DEPDIR)/targets.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -471,7 +470,6 @@ BFD32_BACKENDS = \
 	elf-nacl.o \
 	elf-properties.o \
 	elf-strtab.o \
-	elf-vxworks.o \
 	elf.o \
 	elf32-arc.o \
 	elf32-arm.o \
@@ -487,7 +485,6 @@ BFD32_BACKENDS_CFILES = \
 	elf-nacl.c \
 	elf-properties.c \
 	elf-strtab.c \
-	elf-vxworks.c \
 	elf.c \
 	elf32-arm.c \
 	elf32.c \
@@ -668,7 +665,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-nacl.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-properties.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-strtab.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-vxworks.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32-arm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf32.Po@am__quote@ # am--include-marker
@@ -857,7 +853,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/elf-nacl.Po
 	-rm -f ./$(DEPDIR)/elf-properties.Po
 	-rm -f ./$(DEPDIR)/elf-strtab.Po
-	-rm -f ./$(DEPDIR)/elf-vxworks.Po
 	-rm -f ./$(DEPDIR)/elf.Po
 	-rm -f ./$(DEPDIR)/elf32-arm.Po
 	-rm -f ./$(DEPDIR)/elf32.Po
@@ -944,7 +939,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/elf-nacl.Po
 	-rm -f ./$(DEPDIR)/elf-properties.Po
 	-rm -f ./$(DEPDIR)/elf-strtab.Po
-	-rm -f ./$(DEPDIR)/elf-vxworks.Po
 	-rm -f ./$(DEPDIR)/elf.Po
 	-rm -f ./$(DEPDIR)/elf32-arm.Po
 	-rm -f ./$(DEPDIR)/elf32.Po

@@ -386,8 +386,8 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
+    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
+    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
     elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;

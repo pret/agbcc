@@ -33,10 +33,6 @@
 #include "ldemul.h"
 #include "libiberty.h"
 #include "filenames.h"
-#ifdef ENABLE_PLUGINS
-#include "plugin-api.h"
-#include "plugin.h"
-#endif /* ENABLE_PLUGINS */
 
 bfd_boolean ldfile_assumed_script = FALSE;
 const char *ldfile_output_machine_name = "";
@@ -146,11 +142,6 @@ ldfile_try_open_bfd (const char *attempt,
 
   /* This is a linker input BFD.  */
   entry->the_bfd->is_linker_input = 1;
-
-#ifdef ENABLE_PLUGINS
-  if (entry->flags.lto_output)
-    entry->the_bfd->lto_output = 1;
-#endif
 
   /* If we are searching for this file, see if the architecture is
      compatible with the output file.  If it isn't, keep searching.
@@ -302,21 +293,6 @@ ldfile_try_open_bfd (const char *attempt,
 	}
     }
 success:
-#ifdef ENABLE_PLUGINS
-  /* If plugins are active, they get first chance to claim
-     any successfully-opened input file.  We skip archives
-     here; the plugin wants us to offer it the individual
-     members when we enumerate them, not the whole file.  We
-     also ignore corefiles, because that's just weird.  It is
-     a needed side-effect of calling  bfd_check_format with
-     bfd_object that it sets the bfd's arch and mach, which
-     will be needed when and if we want to bfd_create a new
-     one using this one as a template.  */
-  if (link_info.lto_plugin_active
-      && !no_more_claiming
-      && bfd_check_format (entry->the_bfd, bfd_object))
-    plugin_maybe_claim (entry);
-#endif /* ENABLE_PLUGINS */
 
   /* It opened OK, the format checked out, and the plugins have had
      their chance to claim it, so this is success.  */

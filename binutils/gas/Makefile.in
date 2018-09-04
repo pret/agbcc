@@ -189,48 +189,11 @@ am__depfiles_remade = ./$(DEPDIR)/app.Po ./$(DEPDIR)/as.Po \
 	./$(DEPDIR)/read.Po ./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po \
 	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/subsegs.Po \
 	./$(DEPDIR)/symbols.Po ./$(DEPDIR)/write.Po \
-	config/$(DEPDIR)/atof-ieee.Po config/$(DEPDIR)/atof-vax.Po \
-	config/$(DEPDIR)/e-crisaout.Po config/$(DEPDIR)/e-criself.Po \
-	config/$(DEPDIR)/e-i386aout.Po config/$(DEPDIR)/e-i386elf.Po \
-	config/$(DEPDIR)/e-mipself.Po config/$(DEPDIR)/m68k-parse.Po \
-	config/$(DEPDIR)/obj-elf.Po config/$(DEPDIR)/rl78-parse.Po \
-	config/$(DEPDIR)/rx-parse.Po config/$(DEPDIR)/tc-aarch64.Po \
-	config/$(DEPDIR)/tc-alpha.Po config/$(DEPDIR)/tc-arc.Po \
-	config/$(DEPDIR)/tc-arm.Po config/$(DEPDIR)/tc-avr.Po \
-	config/$(DEPDIR)/tc-bfin.Po config/$(DEPDIR)/tc-cr16.Po \
-	config/$(DEPDIR)/tc-cris.Po config/$(DEPDIR)/tc-crx.Po \
-	config/$(DEPDIR)/tc-d10v.Po config/$(DEPDIR)/tc-d30v.Po \
-	config/$(DEPDIR)/tc-dlx.Po config/$(DEPDIR)/tc-epiphany.Po \
-	config/$(DEPDIR)/tc-fr30.Po config/$(DEPDIR)/tc-frv.Po \
-	config/$(DEPDIR)/tc-ft32.Po config/$(DEPDIR)/tc-h8300.Po \
-	config/$(DEPDIR)/tc-hppa.Po config/$(DEPDIR)/tc-i386.Po \
-	config/$(DEPDIR)/tc-ia64.Po config/$(DEPDIR)/tc-ip2k.Po \
-	config/$(DEPDIR)/tc-iq2000.Po config/$(DEPDIR)/tc-lm32.Po \
-	config/$(DEPDIR)/tc-m32c.Po config/$(DEPDIR)/tc-m32r.Po \
-	config/$(DEPDIR)/tc-m68hc11.Po config/$(DEPDIR)/tc-m68k.Po \
-	config/$(DEPDIR)/tc-mcore.Po config/$(DEPDIR)/tc-mep.Po \
-	config/$(DEPDIR)/tc-metag.Po config/$(DEPDIR)/tc-microblaze.Po \
-	config/$(DEPDIR)/tc-mips.Po config/$(DEPDIR)/tc-mmix.Po \
-	config/$(DEPDIR)/tc-mn10200.Po config/$(DEPDIR)/tc-mn10300.Po \
-	config/$(DEPDIR)/tc-moxie.Po config/$(DEPDIR)/tc-msp430.Po \
-	config/$(DEPDIR)/tc-mt.Po config/$(DEPDIR)/tc-nds32.Po \
-	config/$(DEPDIR)/tc-nios2.Po config/$(DEPDIR)/tc-ns32k.Po \
-	config/$(DEPDIR)/tc-or1k.Po config/$(DEPDIR)/tc-pdp11.Po \
-	config/$(DEPDIR)/tc-pj.Po config/$(DEPDIR)/tc-ppc.Po \
-	config/$(DEPDIR)/tc-pru.Po config/$(DEPDIR)/tc-riscv.Po \
-	config/$(DEPDIR)/tc-rl78.Po config/$(DEPDIR)/tc-rx.Po \
-	config/$(DEPDIR)/tc-s12z.Po config/$(DEPDIR)/tc-s390.Po \
-	config/$(DEPDIR)/tc-score.Po config/$(DEPDIR)/tc-sh.Po \
-	config/$(DEPDIR)/tc-sparc.Po config/$(DEPDIR)/tc-spu.Po \
-	config/$(DEPDIR)/tc-tic30.Po config/$(DEPDIR)/tc-tic4x.Po \
-	config/$(DEPDIR)/tc-tic54x.Po config/$(DEPDIR)/tc-tic6x.Po \
-	config/$(DEPDIR)/tc-tilegx.Po config/$(DEPDIR)/tc-tilepro.Po \
-	config/$(DEPDIR)/tc-v850.Po config/$(DEPDIR)/tc-vax.Po \
-	config/$(DEPDIR)/tc-visium.Po config/$(DEPDIR)/tc-wasm32.Po \
-	config/$(DEPDIR)/tc-xc16x.Po config/$(DEPDIR)/tc-xgate.Po \
-	config/$(DEPDIR)/tc-xstormy16.Po config/$(DEPDIR)/tc-xtensa.Po \
-	config/$(DEPDIR)/tc-z80.Po config/$(DEPDIR)/tc-z8k.Po \
-	config/$(DEPDIR)/te-vms.Po config/$(DEPDIR)/xtensa-relax.Po
+	config/$(DEPDIR)/atof-ieee.Po config/$(DEPDIR)/e-crisaout.Po \
+	config/$(DEPDIR)/e-criself.Po config/$(DEPDIR)/e-i386aout.Po \
+	config/$(DEPDIR)/e-i386elf.Po config/$(DEPDIR)/e-mipself.Po \
+	config/$(DEPDIR)/obj-elf.Po config/$(DEPDIR)/tc-arm.Po \
+	config/$(DEPDIR)/te-vms.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -244,15 +207,6 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-@MAINTAINER_MODE_FALSE@am__skipyacc = test -f $@ ||
-am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
-		   -e s/c++$$/h++/ -e s/c$$/h/
-YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
-AM_V_YACC = $(am__v_YACC_@AM_V@)
-am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
-am__v_YACC_0 = @echo "  YACC    " $@;
-am__v_YACC_1 = 
-YLWRAP = $(top_srcdir)/../ylwrap
 SOURCES = $(as_new_SOURCES) $(EXTRA_as_new_SOURCES) \
 	$(itbl_test_SOURCES)
 am__can_run_installinfo = \
@@ -511,151 +465,10 @@ HFILES = \
 
 # CPU files in config.
 TARGET_CPU_CFILES = \
-	config/tc-aarch64.c \
-	config/tc-alpha.c \
-	config/tc-arc.c \
-	config/tc-arm.c \
-	config/tc-avr.c \
-	config/tc-bfin.c \
-	config/tc-cr16.c \
-	config/tc-cris.c \
-	config/tc-crx.c \
-	config/tc-d10v.c \
-	config/tc-d30v.c \
-	config/tc-dlx.c \
-	config/tc-epiphany.c \
-	config/tc-fr30.c \
-	config/tc-frv.c \
-	config/tc-ft32.c \
-	config/tc-h8300.c \
-	config/tc-hppa.c \
-	config/tc-ia64.c \
-	config/tc-i386.c \
-	config/tc-ip2k.c \
-	config/tc-iq2000.c \
-	config/tc-lm32.c \
-	config/tc-m32c.c \
-	config/tc-m32r.c \
-	config/tc-m68hc11.c \
-	config/tc-m68k.c \
-	config/tc-s12z.c \
-	config/tc-mcore.c \
-	config/tc-mep.c \
-	config/tc-metag.c \
-	config/tc-microblaze.c \
-	config/tc-mips.c \
-	config/tc-mmix.c \
-	config/tc-mn10200.c \
-	config/tc-mn10300.c \
-	config/tc-moxie.c \
-	config/tc-msp430.c \
-	config/tc-mt.c \
-	config/tc-nds32.c \
-	config/tc-nios2.c \
-	config/tc-ns32k.c \
-	config/tc-or1k.c \
-	config/tc-pdp11.c \
-	config/tc-pj.c \
-	config/tc-ppc.c \
-	config/tc-pru.c \
-	config/tc-riscv.c \
-	config/tc-rl78.c \
-	config/tc-rx.c \
-	config/tc-s390.c \
-	config/tc-score.c \
-	config/tc-sh.c \
-	config/tc-sparc.c \
-	config/tc-spu.c \
-	config/tc-tic30.c \
-	config/tc-tic4x.c \
-	config/tc-tic54x.c \
-	config/tc-tic6x.c \
-	config/tc-tilegx.c \
-	config/tc-tilepro.c \
-	config/tc-v850.c \
-	config/tc-vax.c \
-	config/tc-visium.c \
-	config/tc-wasm32.c \
-	config/tc-xstormy16.c \
-	config/tc-xc16x.c \
-	config/tc-xgate.c \
-	config/tc-xtensa.c \
-	config/tc-z80.c \
-	config/tc-z8k.c \
-	config/xtensa-relax.c
+	config/tc-arm.c
 
 TARGET_CPU_HFILES = \
-	config/tc-aarch64.h \
-	config/tc-alpha.h \
-	config/tc-arc.h \
-	config/tc-arm.h \
-	config/tc-avr.h \
-	config/tc-bfin.h \
-	config/tc-cr16.h \
-	config/tc-cris.h \
-	config/tc-crx.h \
-	config/tc-d10v.h \
-	config/tc-d30v.h \
-	config/tc-dlx.h \
-	config/tc-epiphany.h \
-	config/tc-fr30.h \
-	config/tc-frv.h \
-	config/tc-ft32.h \
-	config/tc-h8300.h \
-	config/tc-hppa.h \
-	config/tc-ia64.h \
-	config/tc-i386.h \
-	config/tc-ip2k.h \
-	config/tc-iq2000.h \
-	config/tc-lm32.h \
-	config/tc-m32c.h \
-	config/tc-m32r.h \
-	config/tc-m68hc11.h \
-	config/tc-m68k.h \
-	config/tc-s12z.h \
-	config/tc-mcore.h \
-	config/tc-mep.h \
-	config/tc-metag.h \
-	config/tc-microblaze.h \
-	config/tc-mips.h \
-	config/tc-mmix.h \
-	config/tc-mn10200.h \
-	config/tc-mn10300.h \
-	config/tc-msp430.h \
-	config/tc-mt.h \
-	config/tc-nds32.h \
-	config/tc-nios2.h \
-	config/tc-ns32k.h \
-	config/tc-or1k.h \
-	config/tc-pdp11.h \
-	config/tc-pj.h \
-	config/tc-ppc.h \
-	config/tc-pru.h \
-	config/tc-riscv.h \
-	config/tc-rl78.h \
-	config/tc-rx.h \
-	config/tc-s390.h \
-	config/tc-score.h \
-	config/tc-sh.h \
-	config/tc-sparc.h \
-	config/tc-spu.h \
-	config/tc-tic30.h \
-	config/tc-tic4x.h \
-	config/tc-tic54x.h \
-	config/tc-tic6x.h \
-	config/tc-tilegx.h \
-	config/tc-tilepro.h \
-	config/tc-v850.h \
-	config/tc-vax.h \
-	config/tc-visium.h \
-	config/tc-wasm32.h \
-	config/tc-xstormy16.h \
-	config/tc-xc16x.h \
-	config/tc-xgate.h \
-	config/tc-xtensa.h \
-	config/tc-z80.h \
-	config/tc-z8k.h \
-	config/xtensa-relax.h
+	config/tc-arm.h
 
 
 # OBJ files in config
@@ -685,8 +498,7 @@ MULTI_CFILES = \
 	config/e-mipself.c
 
 CONFIG_ATOF_CFILES = \
-	config/atof-ieee.c \
-	config/atof-vax.c
+	config/atof-ieee.c
 
 POTFILES = $(MULTI_CFILES) $(CONFIG_ATOF_CFILES) \
 	$(TARG_ENV_HFILES) $(TARG_ENV_CFILES) $(OBJ_FORMAT_HFILES) \
@@ -695,11 +507,6 @@ POTFILES = $(MULTI_CFILES) $(CONFIG_ATOF_CFILES) \
 
 noinst_SCRIPTS = $(GDBINIT)
 EXTRA_SCRIPTS = .gdbinit
-EXTRA_DIST = m68k-parse.c itbl-parse.c itbl-parse.h itbl-lex.c \
-	bfin-parse.c bfin-parse.h bfin-lex.c \
-	rl78-parse.c rl78-parse.h \
-	rx-parse.c rx-parse.h
-
 DISTCLEANFILES = targ-cpu.h obj-format.h targ-env.h itbl-cpu.h cgen-desc.h
 
 # Now figure out from those variables how to compile and link.
@@ -730,12 +537,10 @@ as_new_LDADD = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 as_new_DEPENDENCIES = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 	$(extra_objects) $(GASLIBS) $(LIBINTL_DEP)
 
-
-# The m68k operand parser.
 EXTRA_as_new_SOURCES = $(CFILES) $(HFILES) $(TARGET_CPU_CFILES) \
 	$(TARGET_CPU_HFILES) $(OBJ_FORMAT_CFILES) $(OBJ_FORMAT_HFILES) \
-	$(TARG_ENV_CFILES) $(CONFIG_ATOF_CFILES) $(MULTI_CFILES) \
-	config/m68k-parse.c config/rl78-parse.c config/rx-parse.y
+	$(TARG_ENV_CFILES) $(CONFIG_ATOF_CFILES) $(MULTI_CFILES)
+
 EXPECT = expect
 RUNTEST = runtest
 RUNTESTFLAGS = 
@@ -759,7 +564,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj .y
+.SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -821,157 +626,13 @@ config/$(am__dirstamp):
 config/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) config/$(DEPDIR)
 	@: > config/$(DEPDIR)/$(am__dirstamp)
-config/tc-aarch64.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-alpha.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-arc.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
 config/tc-arm.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-avr.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-bfin.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-cr16.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-cris.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-crx.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-d10v.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-d30v.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-dlx.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-epiphany.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-fr30.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-frv.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-ft32.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-h8300.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-hppa.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-ia64.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-i386.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-ip2k.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-iq2000.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-lm32.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-m32c.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-m32r.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-m68hc11.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-m68k.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-s12z.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mcore.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mep.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-metag.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-microblaze.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mips.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mmix.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mn10200.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mn10300.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-moxie.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-msp430.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-mt.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-nds32.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-nios2.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-ns32k.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-or1k.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-pdp11.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-pj.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-ppc.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-pru.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-riscv.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-rl78.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-rx.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-s390.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-score.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-sh.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-sparc.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-spu.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tic30.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tic4x.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tic54x.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tic6x.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tilegx.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-tilepro.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-v850.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-vax.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-visium.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-wasm32.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-xstormy16.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-xc16x.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-xgate.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-xtensa.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-z80.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/tc-z8k.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/xtensa-relax.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/obj-elf.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/te-vms.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/atof-ieee.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/atof-vax.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/e-crisaout.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
@@ -982,12 +643,6 @@ config/e-i386aout.$(OBJEXT): config/$(am__dirstamp) \
 config/e-i386elf.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 config/e-mipself.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/m68k-parse.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/rl78-parse.$(OBJEXT): config/$(am__dirstamp) \
-	config/$(DEPDIR)/$(am__dirstamp)
-config/rx-parse.$(OBJEXT): config/$(am__dirstamp) \
 	config/$(DEPDIR)/$(am__dirstamp)
 
 as-new$(EXEEXT): $(as_new_OBJECTS) $(as_new_DEPENDENCIES) $(EXTRA_as_new_DEPENDENCIES) 
@@ -1039,89 +694,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symbols.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/atof-ieee.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/atof-vax.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-crisaout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-criself.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-i386aout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-i386elf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/e-mipself.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/m68k-parse.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/obj-elf.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/rl78-parse.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/rx-parse.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-aarch64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-alpha.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-arc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-arm.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-avr.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-bfin.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-cr16.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-cris.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-crx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-d10v.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-d30v.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-dlx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-epiphany.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-fr30.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-frv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-ft32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-h8300.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-hppa.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-i386.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-ia64.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-ip2k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-iq2000.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-lm32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-m32c.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-m32r.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-m68hc11.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-m68k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mcore.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mep.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-metag.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-microblaze.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mips.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mmix.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mn10200.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mn10300.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-moxie.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-msp430.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-mt.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-nds32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-nios2.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-ns32k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-or1k.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-pdp11.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-pj.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-ppc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-pru.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-riscv.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-rl78.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-rx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-s12z.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-s390.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-score.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-sh.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-sparc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-spu.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tic30.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tic4x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tic54x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tic6x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tilegx.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-tilepro.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-v850.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-vax.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-visium.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-wasm32.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-xc16x.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-xgate.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-xstormy16.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-xtensa.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-z80.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/tc-z8k.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/te-vms.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@config/$(DEPDIR)/xtensa-relax.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1144,9 +724,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.y.c:
-	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -1277,7 +854,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f config/rx-parse.c
 clean: clean-am
 
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
@@ -1318,89 +894,14 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/symbols.Po
 	-rm -f ./$(DEPDIR)/write.Po
 	-rm -f config/$(DEPDIR)/atof-ieee.Po
-	-rm -f config/$(DEPDIR)/atof-vax.Po
 	-rm -f config/$(DEPDIR)/e-crisaout.Po
 	-rm -f config/$(DEPDIR)/e-criself.Po
 	-rm -f config/$(DEPDIR)/e-i386aout.Po
 	-rm -f config/$(DEPDIR)/e-i386elf.Po
 	-rm -f config/$(DEPDIR)/e-mipself.Po
-	-rm -f config/$(DEPDIR)/m68k-parse.Po
 	-rm -f config/$(DEPDIR)/obj-elf.Po
-	-rm -f config/$(DEPDIR)/rl78-parse.Po
-	-rm -f config/$(DEPDIR)/rx-parse.Po
-	-rm -f config/$(DEPDIR)/tc-aarch64.Po
-	-rm -f config/$(DEPDIR)/tc-alpha.Po
-	-rm -f config/$(DEPDIR)/tc-arc.Po
 	-rm -f config/$(DEPDIR)/tc-arm.Po
-	-rm -f config/$(DEPDIR)/tc-avr.Po
-	-rm -f config/$(DEPDIR)/tc-bfin.Po
-	-rm -f config/$(DEPDIR)/tc-cr16.Po
-	-rm -f config/$(DEPDIR)/tc-cris.Po
-	-rm -f config/$(DEPDIR)/tc-crx.Po
-	-rm -f config/$(DEPDIR)/tc-d10v.Po
-	-rm -f config/$(DEPDIR)/tc-d30v.Po
-	-rm -f config/$(DEPDIR)/tc-dlx.Po
-	-rm -f config/$(DEPDIR)/tc-epiphany.Po
-	-rm -f config/$(DEPDIR)/tc-fr30.Po
-	-rm -f config/$(DEPDIR)/tc-frv.Po
-	-rm -f config/$(DEPDIR)/tc-ft32.Po
-	-rm -f config/$(DEPDIR)/tc-h8300.Po
-	-rm -f config/$(DEPDIR)/tc-hppa.Po
-	-rm -f config/$(DEPDIR)/tc-i386.Po
-	-rm -f config/$(DEPDIR)/tc-ia64.Po
-	-rm -f config/$(DEPDIR)/tc-ip2k.Po
-	-rm -f config/$(DEPDIR)/tc-iq2000.Po
-	-rm -f config/$(DEPDIR)/tc-lm32.Po
-	-rm -f config/$(DEPDIR)/tc-m32c.Po
-	-rm -f config/$(DEPDIR)/tc-m32r.Po
-	-rm -f config/$(DEPDIR)/tc-m68hc11.Po
-	-rm -f config/$(DEPDIR)/tc-m68k.Po
-	-rm -f config/$(DEPDIR)/tc-mcore.Po
-	-rm -f config/$(DEPDIR)/tc-mep.Po
-	-rm -f config/$(DEPDIR)/tc-metag.Po
-	-rm -f config/$(DEPDIR)/tc-microblaze.Po
-	-rm -f config/$(DEPDIR)/tc-mips.Po
-	-rm -f config/$(DEPDIR)/tc-mmix.Po
-	-rm -f config/$(DEPDIR)/tc-mn10200.Po
-	-rm -f config/$(DEPDIR)/tc-mn10300.Po
-	-rm -f config/$(DEPDIR)/tc-moxie.Po
-	-rm -f config/$(DEPDIR)/tc-msp430.Po
-	-rm -f config/$(DEPDIR)/tc-mt.Po
-	-rm -f config/$(DEPDIR)/tc-nds32.Po
-	-rm -f config/$(DEPDIR)/tc-nios2.Po
-	-rm -f config/$(DEPDIR)/tc-ns32k.Po
-	-rm -f config/$(DEPDIR)/tc-or1k.Po
-	-rm -f config/$(DEPDIR)/tc-pdp11.Po
-	-rm -f config/$(DEPDIR)/tc-pj.Po
-	-rm -f config/$(DEPDIR)/tc-ppc.Po
-	-rm -f config/$(DEPDIR)/tc-pru.Po
-	-rm -f config/$(DEPDIR)/tc-riscv.Po
-	-rm -f config/$(DEPDIR)/tc-rl78.Po
-	-rm -f config/$(DEPDIR)/tc-rx.Po
-	-rm -f config/$(DEPDIR)/tc-s12z.Po
-	-rm -f config/$(DEPDIR)/tc-s390.Po
-	-rm -f config/$(DEPDIR)/tc-score.Po
-	-rm -f config/$(DEPDIR)/tc-sh.Po
-	-rm -f config/$(DEPDIR)/tc-sparc.Po
-	-rm -f config/$(DEPDIR)/tc-spu.Po
-	-rm -f config/$(DEPDIR)/tc-tic30.Po
-	-rm -f config/$(DEPDIR)/tc-tic4x.Po
-	-rm -f config/$(DEPDIR)/tc-tic54x.Po
-	-rm -f config/$(DEPDIR)/tc-tic6x.Po
-	-rm -f config/$(DEPDIR)/tc-tilegx.Po
-	-rm -f config/$(DEPDIR)/tc-tilepro.Po
-	-rm -f config/$(DEPDIR)/tc-v850.Po
-	-rm -f config/$(DEPDIR)/tc-vax.Po
-	-rm -f config/$(DEPDIR)/tc-visium.Po
-	-rm -f config/$(DEPDIR)/tc-wasm32.Po
-	-rm -f config/$(DEPDIR)/tc-xc16x.Po
-	-rm -f config/$(DEPDIR)/tc-xgate.Po
-	-rm -f config/$(DEPDIR)/tc-xstormy16.Po
-	-rm -f config/$(DEPDIR)/tc-xtensa.Po
-	-rm -f config/$(DEPDIR)/tc-z80.Po
-	-rm -f config/$(DEPDIR)/tc-z8k.Po
 	-rm -f config/$(DEPDIR)/te-vms.Po
-	-rm -f config/$(DEPDIR)/xtensa-relax.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
 	distclean-generic distclean-hdr distclean-tags
@@ -1482,89 +983,14 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/symbols.Po
 	-rm -f ./$(DEPDIR)/write.Po
 	-rm -f config/$(DEPDIR)/atof-ieee.Po
-	-rm -f config/$(DEPDIR)/atof-vax.Po
 	-rm -f config/$(DEPDIR)/e-crisaout.Po
 	-rm -f config/$(DEPDIR)/e-criself.Po
 	-rm -f config/$(DEPDIR)/e-i386aout.Po
 	-rm -f config/$(DEPDIR)/e-i386elf.Po
 	-rm -f config/$(DEPDIR)/e-mipself.Po
-	-rm -f config/$(DEPDIR)/m68k-parse.Po
 	-rm -f config/$(DEPDIR)/obj-elf.Po
-	-rm -f config/$(DEPDIR)/rl78-parse.Po
-	-rm -f config/$(DEPDIR)/rx-parse.Po
-	-rm -f config/$(DEPDIR)/tc-aarch64.Po
-	-rm -f config/$(DEPDIR)/tc-alpha.Po
-	-rm -f config/$(DEPDIR)/tc-arc.Po
 	-rm -f config/$(DEPDIR)/tc-arm.Po
-	-rm -f config/$(DEPDIR)/tc-avr.Po
-	-rm -f config/$(DEPDIR)/tc-bfin.Po
-	-rm -f config/$(DEPDIR)/tc-cr16.Po
-	-rm -f config/$(DEPDIR)/tc-cris.Po
-	-rm -f config/$(DEPDIR)/tc-crx.Po
-	-rm -f config/$(DEPDIR)/tc-d10v.Po
-	-rm -f config/$(DEPDIR)/tc-d30v.Po
-	-rm -f config/$(DEPDIR)/tc-dlx.Po
-	-rm -f config/$(DEPDIR)/tc-epiphany.Po
-	-rm -f config/$(DEPDIR)/tc-fr30.Po
-	-rm -f config/$(DEPDIR)/tc-frv.Po
-	-rm -f config/$(DEPDIR)/tc-ft32.Po
-	-rm -f config/$(DEPDIR)/tc-h8300.Po
-	-rm -f config/$(DEPDIR)/tc-hppa.Po
-	-rm -f config/$(DEPDIR)/tc-i386.Po
-	-rm -f config/$(DEPDIR)/tc-ia64.Po
-	-rm -f config/$(DEPDIR)/tc-ip2k.Po
-	-rm -f config/$(DEPDIR)/tc-iq2000.Po
-	-rm -f config/$(DEPDIR)/tc-lm32.Po
-	-rm -f config/$(DEPDIR)/tc-m32c.Po
-	-rm -f config/$(DEPDIR)/tc-m32r.Po
-	-rm -f config/$(DEPDIR)/tc-m68hc11.Po
-	-rm -f config/$(DEPDIR)/tc-m68k.Po
-	-rm -f config/$(DEPDIR)/tc-mcore.Po
-	-rm -f config/$(DEPDIR)/tc-mep.Po
-	-rm -f config/$(DEPDIR)/tc-metag.Po
-	-rm -f config/$(DEPDIR)/tc-microblaze.Po
-	-rm -f config/$(DEPDIR)/tc-mips.Po
-	-rm -f config/$(DEPDIR)/tc-mmix.Po
-	-rm -f config/$(DEPDIR)/tc-mn10200.Po
-	-rm -f config/$(DEPDIR)/tc-mn10300.Po
-	-rm -f config/$(DEPDIR)/tc-moxie.Po
-	-rm -f config/$(DEPDIR)/tc-msp430.Po
-	-rm -f config/$(DEPDIR)/tc-mt.Po
-	-rm -f config/$(DEPDIR)/tc-nds32.Po
-	-rm -f config/$(DEPDIR)/tc-nios2.Po
-	-rm -f config/$(DEPDIR)/tc-ns32k.Po
-	-rm -f config/$(DEPDIR)/tc-or1k.Po
-	-rm -f config/$(DEPDIR)/tc-pdp11.Po
-	-rm -f config/$(DEPDIR)/tc-pj.Po
-	-rm -f config/$(DEPDIR)/tc-ppc.Po
-	-rm -f config/$(DEPDIR)/tc-pru.Po
-	-rm -f config/$(DEPDIR)/tc-riscv.Po
-	-rm -f config/$(DEPDIR)/tc-rl78.Po
-	-rm -f config/$(DEPDIR)/tc-rx.Po
-	-rm -f config/$(DEPDIR)/tc-s12z.Po
-	-rm -f config/$(DEPDIR)/tc-s390.Po
-	-rm -f config/$(DEPDIR)/tc-score.Po
-	-rm -f config/$(DEPDIR)/tc-sh.Po
-	-rm -f config/$(DEPDIR)/tc-sparc.Po
-	-rm -f config/$(DEPDIR)/tc-spu.Po
-	-rm -f config/$(DEPDIR)/tc-tic30.Po
-	-rm -f config/$(DEPDIR)/tc-tic4x.Po
-	-rm -f config/$(DEPDIR)/tc-tic54x.Po
-	-rm -f config/$(DEPDIR)/tc-tic6x.Po
-	-rm -f config/$(DEPDIR)/tc-tilegx.Po
-	-rm -f config/$(DEPDIR)/tc-tilepro.Po
-	-rm -f config/$(DEPDIR)/tc-v850.Po
-	-rm -f config/$(DEPDIR)/tc-vax.Po
-	-rm -f config/$(DEPDIR)/tc-visium.Po
-	-rm -f config/$(DEPDIR)/tc-wasm32.Po
-	-rm -f config/$(DEPDIR)/tc-xc16x.Po
-	-rm -f config/$(DEPDIR)/tc-xgate.Po
-	-rm -f config/$(DEPDIR)/tc-xstormy16.Po
-	-rm -f config/$(DEPDIR)/tc-xtensa.Po
-	-rm -f config/$(DEPDIR)/tc-z80.Po
-	-rm -f config/$(DEPDIR)/tc-z8k.Po
 	-rm -f config/$(DEPDIR)/te-vms.Po
-	-rm -f config/$(DEPDIR)/xtensa-relax.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1605,7 +1031,7 @@ po/POTFILES.in: @MAINT@ Makefile
 	for f in $(POTFILES); do echo $$f; done | LC_ALL=C sort > tmp \
 	  && mv tmp $(srcdir)/po/POTFILES.in
 
-diststuff: $(EXTRA_DIST) info
+diststuff: info
 
 check-DEJAGNU: site.exp
 	if [ -d testsuite ]; then \
@@ -1626,58 +1052,6 @@ check-DEJAGNU: site.exp
 		$(RUNTESTFLAGS); \
 	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
 	fi
-
-# If m68k-parse.y is in a different directory, then ylwrap will use an
-# absolute path when it invokes yacc, which will cause yacc to put the
-# absolute path into the generated file.  That's a pain when it comes
-# to generating snapshots, because it introduces spurious diffs.
-# Since when we make the snapshots $(srcdir) = ".", we check for that
-# case and handle it differently.  This means that anybody who
-# configures with $(srcdir) = "." will have to set their path in the
-# debugger if they want to debug m68k-parse.y.  This is bad, but on
-# the other hand it's good that people who use the prebuilt
-# m68k-parse.c don't get a spurious absolute path.
-m68k-parse.c: $(srcdir)/config/m68k-parse.y
-	f=$(srcdir)/config/m68k-parse.y; \
-	if [ $$f = "./config/m68k-parse.y" ]; then \
-	  ln -s config/m68k-parse.y . > /dev/null 2>/dev/null || \
-	   ln config/m68k-parse.y . > /dev/null 2>/dev/null || \
-	   cp config/m68k-parse.y . >/dev/null 2>/dev/null; \
-	  f=m68k-parse.y; \
-	else true; fi; \
-	$(SHELL) $(YLWRAP) $$f y.tab.c m68k-parse.c -- $(YACCCOMPILE); \
-	if [ $$f = "m68k-parse.y" ]; then \
-	  rm -f m68k-parse.y; \
-	else true; fi
-# Disable -Werror, if it has been enabled, since old versions of bison/
-# yacc will produce working code which contain compile time warnings.
-m68k-parse.@OBJEXT@: m68k-parse.c
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f m68k-parse.c || echo $(srcdir)/`m68k-parse.c $(NO_WERROR)
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='m68k-parse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `test -f m68k-parse.c || echo $(srcdir)/`m68k-parse.c $(NO_WERROR)
-
-# Don't let the .y.h rule clobber m68k-parse.h.
-m68k-parse.h: ; @true
-$(srcdir)/config/m68k-parse.h: ; @true
-
-bfin-parse.h: bfin-parse.c
-bfin-parse.h: ; @true
-$(srcdir)/config/bfin-parse.h: ; @true
-
-bfin-lex-wrapper.@OBJEXT@: $(srcdir)/config/bfin-lex-wrapper.c bfin-lex.c bfin-parse.h $(srcdir)/config/bfin-defs.h
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bfin-lex-wrapper.c' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $(srcdir)/config/bfin-lex-wrapper.c $(NO_WERROR)
-rl78-parse.h: rl78-parse.c
-rl78-defs.h: ; @true
-$(srcdir)/config/rl78-defs.h: ; @true
-rx-parse.h: rx-parse.c
-rx-defs.h: ; @true
-$(srcdir)/config/rx-defs.h: ; @true
 
 # The instruction table specification lexical analyzer and parser.
 

@@ -27,7 +27,6 @@
 #include "libbfd.h"
 #include "elf-bfd.h"
 #include "elf-nacl.h"
-#include "elf-vxworks.h"
 #include "elf/arm.h"
 
 /* Return the relocation section associated with NAME.  HTAB is the
@@ -2218,8 +2217,6 @@ elf32_arm_nabi_write_core_note (bfd *abfd, char *buf, int *bufsiz,
 
 #define TARGET_LITTLE_SYM		arm_elf32_le_vec
 #define TARGET_LITTLE_NAME		"elf32-littlearm"
-#define TARGET_BIG_SYM			arm_elf32_be_vec
-#define TARGET_BIG_NAME			"elf32-bigarm"
 
 #define elf_backend_grok_prstatus	elf32_arm_nabi_grok_prstatus
 #define elf_backend_grok_psinfo		elf32_arm_nabi_grok_psinfo
@@ -2406,37 +2403,6 @@ static const bfd_vma elf32_thumb2_plt_entry [] =
 			/* nop			  */
 };
 
-/* The format of the first entry in the procedure linkage table
-   for a VxWorks executable.  */
-static const bfd_vma elf32_arm_vxworks_exec_plt0_entry[] =
-{
-  0xe52dc008,		/* str	  ip,[sp,#-8]!			*/
-  0xe59fc000,		/* ldr	  ip,[pc]			*/
-  0xe59cf008,		/* ldr	  pc,[ip,#8]			*/
-  0x00000000,		/* .long  _GLOBAL_OFFSET_TABLE_		*/
-};
-
-/* The format of subsequent entries in a VxWorks executable.  */
-static const bfd_vma elf32_arm_vxworks_exec_plt_entry[] =
-{
-  0xe59fc000,	      /* ldr	ip,[pc]			*/
-  0xe59cf000,	      /* ldr	pc,[ip]			*/
-  0x00000000,	      /* .long	@got				*/
-  0xe59fc000,	      /* ldr	ip,[pc]			*/
-  0xea000000,	      /* b	_PLT				*/
-  0x00000000,	      /* .long	@pltindex*sizeof(Elf32_Rela)	*/
-};
-
-/* The format of entries in a VxWorks shared library.  */
-static const bfd_vma elf32_arm_vxworks_shared_plt_entry[] =
-{
-  0xe59fc000,	      /* ldr	ip,[pc]			*/
-  0xe79cf009,	      /* ldr	pc,[ip,r9]			*/
-  0x00000000,	      /* .long	@got				*/
-  0xe59fc000,	      /* ldr	ip,[pc]			*/
-  0xe599f008,	      /* ldr	pc,[r9,#8]			*/
-  0x00000000,	      /* .long	@pltindex*sizeof(Elf32_Rela)	*/
-};
 
 /* An initial stub used if the PLT entry is referenced from Thumb code.  */
 #define PLT_THUMB_STUB_SIZE 4
@@ -3310,9 +3276,6 @@ struct elf32_arm_link_hash_table
   /* The number of bytes in the subsequent PLT etries.  */
   bfd_size_type plt_entry_size;
 
-  /* True if the target system is VxWorks.  */
-  int vxworks_p;
-
   /* True if the target system is Symbian OS.  */
   int symbian_p;
 
@@ -3908,30 +3871,6 @@ elf32_arm_create_dynamic_sections (bfd *dynobj, struct bfd_link_info *info)
   if (!_bfd_elf_create_dynamic_sections (dynobj, info))
     return FALSE;
 
-  if (htab->vxworks_p)
-    {
-      if (!elf_vxworks_create_dynamic_sections (dynobj, info, &htab->srelplt2))
-	return FALSE;
-
-      if (bfd_link_pic (info))
-	{
-	  htab->plt_header_size = 0;
-	  htab->plt_entry_size
-	    = 4 * ARRAY_SIZE (elf32_arm_vxworks_shared_plt_entry);
-	}
-      else
-	{
-	  htab->plt_header_size
-	    = 4 * ARRAY_SIZE (elf32_arm_vxworks_exec_plt0_entry);
-	  htab->plt_entry_size
-	    = 4 * ARRAY_SIZE (elf32_arm_vxworks_exec_plt_entry);
-	}
-
-      if (elf_elfheader (dynobj))
-	elf_elfheader (dynobj)->e_ident[EI_CLASS] = ELFCLASS32;
-    }
-  else
-    {
       /* PR ld/16017
 	 Test for thumb only architectures.  Note - we cannot just call
 	 using_thumb_only() as the attributes in the output bfd have not been
@@ -3945,7 +3884,6 @@ elf32_arm_create_dynamic_sections (bfd *dynobj, struct bfd_link_info *info)
 	  htab->plt_entry_size  = 4 * ARRAY_SIZE (elf32_thumb2_plt_entry);
 	}
       htab->obfd = saved_obfd;
-    }
 
   if (htab->fdpic_p) {
     htab->plt_header_size = 0;
@@ -9662,63 +9600,7 @@ elf32_arm_populate_plt_entry (bfd *output_bfd, struct bfd_link_info *info,
 		     + root_plt->offset);
 
       ptr = splt->contents + root_plt->offset;
-      if (htab->vxworks_p && bfd_link_pic (info))
-	{
-	  unsigned int i;
-	  bfd_vma val;
-
-	  for (i = 0; i != htab->plt_entry_size / 4; i++, ptr += 4)
-	    {
-	      val = elf32_arm_vxworks_shared_plt_entry[i];
-	      if (i == 2)
-		val |= got_address - sgot->output_section->vma;
-	      if (i == 5)
-		val |= plt_index * RELOC_SIZE (htab);
-	      if (i == 2 || i == 5)
-		bfd_put_32 (output_bfd, val, ptr);
-	      else
-		put_arm_insn (htab, output_bfd, val, ptr);
-	    }
-	}
-      else if (htab->vxworks_p)
-	{
-	  unsigned int i;
-	  bfd_vma val;
-
-	  for (i = 0; i != htab->plt_entry_size / 4; i++, ptr += 4)
-	    {
-	      val = elf32_arm_vxworks_exec_plt_entry[i];
-	      if (i == 2)
-		val |= got_address;
-	      if (i == 4)
-		val |= 0xffffff & -((root_plt->offset + i * 4 + 8) >> 2);
-	      if (i == 5)
-		val |= plt_index * RELOC_SIZE (htab);
-	      if (i == 2 || i == 5)
-		bfd_put_32 (output_bfd, val, ptr);
-	      else
-		put_arm_insn (htab, output_bfd, val, ptr);
-	    }
-
-	  loc = (htab->srelplt2->contents
-		 + (plt_index * 2 + 1) * RELOC_SIZE (htab));
-
-	  /* Create the .rela.plt.unloaded R_ARM_ABS32 relocation
-	     referencing the GOT for this PLT entry.  */
-	  rel.r_offset = plt_address + 8;
-	  rel.r_info = ELF32_R_INFO (htab->root.hgot->indx, R_ARM_ABS32);
-	  rel.r_addend = got_offset;
-	  SWAP_RELOC_OUT (htab) (output_bfd, &rel, loc);
-	  loc += RELOC_SIZE (htab);
-
-	  /* Create the R_ARM_ABS32 relocation referencing the
-	     beginning of the PLT for this GOT entry.  */
-	  rel.r_offset = got_address;
-	  rel.r_info = ELF32_R_INFO (htab->root.hplt->indx, R_ARM_ABS32);
-	  rel.r_addend = 0;
-	  SWAP_RELOC_OUT (htab) (output_bfd, &rel, loc);
-	}
-      else if (htab->nacl_p)
+      if (htab->nacl_p)
 	{
 	  /* Calculate the displacement between the PLT slot and the
 	     common tail that's part of the special initial PLT slot.  */
@@ -10417,10 +10299,6 @@ elf32_arm_final_link_relocate (reloc_howto_type *	    howto,
       return bfd_reloc_ok;
 
     case R_ARM_ABS12:
-      if (!globals->vxworks_p)
-	return elf32_arm_abs12_reloc (input_bfd, hit_data, value + addend);
-      /* Fall through.  */
-
     case R_ARM_PC24:
     case R_ARM_ABS32:
     case R_ARM_ABS32_NOI:
@@ -10465,8 +10343,7 @@ elf32_arm_final_link_relocate (reloc_howto_type *	    howto,
 	   || globals->root.is_relocatable_executable
 	   || globals->fdpic_p)
 	  && (input_section->flags & SEC_ALLOC)
-	  && !(globals->vxworks_p
-	       && strcmp (input_section->output_section->name,
+	  && !(strcmp (input_section->output_section->name,
 			  ".tls_vars") == 0)
 	  && ((r_type != R_ARM_REL32 && r_type != R_ARM_REL32_NOI)
 	      || !SYMBOL_CALLS_LOCAL (info, h))
@@ -15260,14 +15137,7 @@ elf32_arm_check_relocs (bfd *abfd, struct bfd_link_info *info,
 	    break;
 
 	  case R_ARM_ABS12:
-	    /* VxWorks uses dynamic R_ARM_ABS12 relocations for
-	       ldr __GOTT_INDEX__ offsets.  */
-	    if (!htab->vxworks_p)
-	      {
-		may_need_local_target_p = TRUE;
-		break;
-	      }
-	    else goto jump_over;
+	    goto jump_over;
 
 	    /* Fall through.  */
 
@@ -16089,22 +15959,6 @@ allocate_dynrelocs_for_symbol (struct elf_link_hash_entry *h, void * inf)
 		 point to the PLT entry.  */
 	      ARM_SET_SYM_BRANCH_TYPE (h->target_internal, ST_BRANCH_TO_ARM);
 	    }
-
-	  /* VxWorks executables have a second set of relocations for
-	     each PLT entry.  They go in a separate relocation section,
-	     which is processed by the kernel loader.  */
-	  if (htab->vxworks_p && !bfd_link_pic (info))
-	    {
-	      /* There is a relocation for the initial PLT entry:
-		 an R_ARM_32 relocation for _GLOBAL_OFFSET_TABLE_.  */
-	      if (h->plt.offset == htab->plt_header_size)
-		elf32_arm_allocate_dynrelocs (info, htab->srelplt2, 1);
-
-	      /* There are two extra relocations for each subsequent
-		 PLT entry: an R_ARM_32 relocation for the GOT entry,
-		 and an R_ARM_32 relocation for the PLT entry.  */
-	      elf32_arm_allocate_dynrelocs (info, htab->srelplt2, 2);
-	    }
 	}
       else
 	{
@@ -16399,19 +16253,6 @@ allocate_dynrelocs_for_symbol (struct elf_link_hash_entry *h, void * inf)
 	    }
 	}
 
-      if (htab->vxworks_p)
-	{
-	  struct elf_dyn_relocs **pp;
-
-	  for (pp = &eh->dyn_relocs; (p = *pp) != NULL; )
-	    {
-	      if (strcmp (p->sec->output_section->name, ".tls_vars") == 0)
-		*pp = p->next;
-	      else
-		pp = &p->next;
-	    }
-	}
-
       /* Also discard relocs on undefined weak syms with non-default
 	 visibility.  */
       if (eh->dyn_relocs != NULL
@@ -16581,7 +16422,6 @@ elf32_arm_size_dynamic_sections (bfd * output_bfd ATTRIBUTE_UNUSED,
       bfd_size_type locsymcount;
       Elf_Internal_Shdr *symtab_hdr;
       asection *srel;
-      bfd_boolean is_vxworks = htab->vxworks_p;
       unsigned int symndx;
       struct fdpic_local *local_fdpic_cnts;
 
@@ -16602,13 +16442,6 @@ elf32_arm_size_dynamic_sections (bfd * output_bfd ATTRIBUTE_UNUSED,
 		     it is a copy of a linkonce section or due to
 		     linker script /DISCARD/, so we'll be discarding
 		     the relocs too.  */
-		}
-	      else if (is_vxworks
-		       && strcmp (p->sec->output_section->name,
-				  ".tls_vars") == 0)
-		{
-		  /* Relocations in vxworks .tls_vars sections are
-		     handled specially by the loader.  */
 		}
 	      else if (p->count != 0)
 		{
@@ -16973,9 +16806,6 @@ elf32_arm_size_dynamic_sections (bfd * output_bfd ATTRIBUTE_UNUSED,
 	  if (!add_dynamic_entry (DT_TEXTREL, 0))
 	    return FALSE;
 	}
-      if (htab->vxworks_p
-	  && !elf_vxworks_add_dynamic_entries (output_bfd, info))
-	return FALSE;
     }
 #undef add_dynamic_entry
 
@@ -17118,7 +16948,7 @@ elf32_arm_finish_dynamic_symbol (bfd * output_bfd,
      and for FDPIC, the _GLOBAL_OFFSET_TABLE_ symbol is not absolute:
      it is relative to the ".got" section.  */
   if (h == htab->root.hdynamic
-      || (!htab->fdpic_p && !htab->vxworks_p && h == htab->root.hgot))
+      || (!htab->fdpic_p && h == htab->root.hgot))
     sym->st_shndx = SHN_ABS;
 
   return TRUE;
@@ -17222,9 +17052,6 @@ elf32_arm_finish_dynamic_sections (bfd * output_bfd, struct bfd_link_info * info
 	      unsigned int type;
 
 	    default:
-	      if (htab->vxworks_p
-		  && elf_vxworks_finish_dynamic_entry (output_bfd, &dyn))
-		bfd_elf32_swap_dyn_out (output_bfd, &dyn, dyncon);
 	      break;
 
 	    case DT_HASH:
@@ -17369,30 +17196,7 @@ elf32_arm_finish_dynamic_sections (bfd * output_bfd, struct bfd_link_info * info
 	  got_address = sgot->output_section->vma + sgot->output_offset;
 	  plt_address = splt->output_section->vma + splt->output_offset;
 
-	  if (htab->vxworks_p)
-	    {
-	      /* The VxWorks GOT is relocated by the dynamic linker.
-		 Therefore, we must emit relocations rather than simply
-		 computing the values now.  */
-	      Elf_Internal_Rela rel;
-
-	      plt0_entry = elf32_arm_vxworks_exec_plt0_entry;
-	      put_arm_insn (htab, output_bfd, plt0_entry[0],
-			    splt->contents + 0);
-	      put_arm_insn (htab, output_bfd, plt0_entry[1],
-			    splt->contents + 4);
-	      put_arm_insn (htab, output_bfd, plt0_entry[2],
-			    splt->contents + 8);
-	      bfd_put_32 (output_bfd, got_address, splt->contents + 12);
-
-	      /* Generate a relocation for _GLOBAL_OFFSET_TABLE_.  */
-	      rel.r_offset = plt_address + 12;
-	      rel.r_info = ELF32_R_INFO (htab->root.hgot->indx, R_ARM_ABS32);
-	      rel.r_addend = 0;
-	      SWAP_RELOC_OUT (htab) (output_bfd, &rel,
-				     htab->srelplt2->contents);
-	    }
-	  else if (htab->nacl_p)
+	  if (htab->nacl_p)
 	    arm_nacl_put_plt0 (htab, output_bfd, splt,
 			       got_address + 8 - (plt_address + 16));
 	  else if (using_thumb_only (htab))
@@ -17471,35 +17275,6 @@ elf32_arm_finish_dynamic_sections (bfd * output_bfd, struct bfd_link_info * info
 	  bfd_put_32 (output_bfd, 0x00000000,
 		      splt->contents + htab->tls_trampoline + 12);
 #endif
-	}
-
-      if (htab->vxworks_p
-	  && !bfd_link_pic (info)
-	  && htab->root.splt->size > 0)
-	{
-	  /* Correct the .rel(a).plt.unloaded relocations.  They will have
-	     incorrect symbol indexes.  */
-	  int num_plts;
-	  unsigned char *p;
-
-	  num_plts = ((htab->root.splt->size - htab->plt_header_size)
-		      / htab->plt_entry_size);
-	  p = htab->srelplt2->contents + RELOC_SIZE (htab);
-
-	  for (; num_plts; num_plts--)
-	    {
-	      Elf_Internal_Rela rel;
-
-	      SWAP_RELOC_IN (htab) (output_bfd, p, &rel);
-	      rel.r_info = ELF32_R_INFO (htab->root.hgot->indx, R_ARM_ABS32);
-	      SWAP_RELOC_OUT (htab) (output_bfd, &rel, p);
-	      p += RELOC_SIZE (htab);
-
-	      SWAP_RELOC_IN (htab) (output_bfd, p, &rel);
-	      rel.r_info = ELF32_R_INFO (htab->root.hplt->indx, R_ARM_ABS32);
-	      SWAP_RELOC_OUT (htab) (output_bfd, &rel, p);
-	      p += RELOC_SIZE (htab);
-	    }
 	}
     }
 
@@ -17776,17 +17551,6 @@ elf32_arm_output_plt_map_1 (output_arch_syminfo *osi,
       if (!elf32_arm_output_map_sym (osi, ARM_MAP_ARM, addr))
 	return FALSE;
       if (!elf32_arm_output_map_sym (osi, ARM_MAP_DATA, addr + 4))
-	return FALSE;
-    }
-  else if (htab->vxworks_p)
-    {
-      if (!elf32_arm_output_map_sym (osi, ARM_MAP_ARM, addr))
-	return FALSE;
-      if (!elf32_arm_output_map_sym (osi, ARM_MAP_DATA, addr + 8))
-	return FALSE;
-      if (!elf32_arm_output_map_sym (osi, ARM_MAP_ARM, addr + 12))
-	return FALSE;
-      if (!elf32_arm_output_map_sym (osi, ARM_MAP_DATA, addr + 20))
 	return FALSE;
     }
   else if (htab->nacl_p)
@@ -18151,18 +17915,7 @@ elf32_arm_output_arch_local_syms (bfd *output_bfd,
 
       /* Output mapping symbols for the plt header.  SymbianOS does not have a
 	 plt header.  */
-      if (htab->vxworks_p)
-	{
-	  /* VxWorks shared libraries have no PLT header.  */
-	  if (!bfd_link_pic (info))
-	    {
-	      if (!elf32_arm_output_map_sym (&osi, ARM_MAP_ARM, 0))
-		return FALSE;
-	      if (!elf32_arm_output_map_sym (&osi, ARM_MAP_DATA, 12))
-		return FALSE;
-	    }
-	}
-      else if (htab->nacl_p)
+      if (htab->nacl_p)
 	{
 	  if (!elf32_arm_output_map_sym (&osi, ARM_MAP_ARM, 0))
 	    return FALSE;
@@ -19760,16 +19513,15 @@ elf32_arm_additional_program_headers (bfd *abfd,
    file.  */
 
 static bfd_boolean
-elf32_arm_add_symbol_hook (bfd *abfd, struct bfd_link_info *info,
-			   Elf_Internal_Sym *sym, const char **namep,
-			   flagword *flagsp, asection **secp, bfd_vma *valp)
+elf32_arm_add_symbol_hook (bfd *abfd ATTRIBUTE_UNUSED,
+			   struct bfd_link_info *info,
+			   Elf_Internal_Sym *sym ATTRIBUTE_UNUSED,
+			   const char **namep ATTRIBUTE_UNUSED,
+			   flagword *flagsp ATTRIBUTE_UNUSED,
+			   asection **secp ATTRIBUTE_UNUSED,
+			   bfd_vma *valp ATTRIBUTE_UNUSED)
 {
   if (elf32_arm_hash_table (info) == NULL)
-    return FALSE;
-
-  if (elf32_arm_hash_table (info)->vxworks_p
-      && !elf_vxworks_add_symbol_hook (abfd, info, sym, namep,
-				       flagsp, secp, valp))
     return FALSE;
 
   return TRUE;
@@ -20260,10 +20012,6 @@ elf32_arm_backend_symbol_processing (bfd *abfd, asymbol *sym)
 #define TARGET_LITTLE_SYM		arm_elf32_nacl_le_vec
 #undef	TARGET_LITTLE_NAME
 #define TARGET_LITTLE_NAME		"elf32-littlearm-nacl"
-#undef	TARGET_BIG_SYM
-#define TARGET_BIG_SYM			arm_elf32_nacl_be_vec
-#undef	TARGET_BIG_NAME
-#define TARGET_BIG_NAME			"elf32-bigarm-nacl"
 
 /* Like elf32_arm_link_hash_table_create -- but overrides
    appropriately for NaCl.  */
@@ -20357,10 +20105,6 @@ elf32_arm_nacl_plt_sym_val (bfd_vma i, const asection *plt,
 #define TARGET_LITTLE_SYM		arm_elf32_fdpic_le_vec
 #undef  TARGET_LITTLE_NAME
 #define TARGET_LITTLE_NAME		"elf32-littlearm-fdpic"
-#undef  TARGET_BIG_SYM
-#define TARGET_BIG_SYM			arm_elf32_fdpic_be_vec
-#undef  TARGET_BIG_NAME
-#define TARGET_BIG_NAME			"elf32-bigarm-fdpic"
 #undef elf_match_priority
 #define elf_match_priority		128
 #undef ELF_OSABI
@@ -20422,66 +20166,6 @@ elf32_arm_fdpic_omit_section_dynsym (bfd *output_bfd ATTRIBUTE_UNUSED,
 #undef elf_match_priority
 #undef ELF_OSABI
 #undef elf_backend_omit_section_dynsym
-
-/* VxWorks Targets.  */
-
-#undef	TARGET_LITTLE_SYM
-#define TARGET_LITTLE_SYM		arm_elf32_vxworks_le_vec
-#undef	TARGET_LITTLE_NAME
-#define TARGET_LITTLE_NAME		"elf32-littlearm-vxworks"
-#undef	TARGET_BIG_SYM
-#define TARGET_BIG_SYM			arm_elf32_vxworks_be_vec
-#undef	TARGET_BIG_NAME
-#define TARGET_BIG_NAME			"elf32-bigarm-vxworks"
-
-/* Like elf32_arm_link_hash_table_create -- but overrides
-   appropriately for VxWorks.  */
-
-static struct bfd_link_hash_table *
-elf32_arm_vxworks_link_hash_table_create (bfd *abfd)
-{
-  struct bfd_link_hash_table *ret;
-
-  ret = elf32_arm_link_hash_table_create (abfd);
-  if (ret)
-    {
-      struct elf32_arm_link_hash_table *htab
-	= (struct elf32_arm_link_hash_table *) ret;
-      htab->use_rel = 0;
-      htab->vxworks_p = 1;
-    }
-  return ret;
-}
-
-static void
-elf32_arm_vxworks_final_write_processing (bfd *abfd, bfd_boolean linker)
-{
-  elf32_arm_final_write_processing (abfd, linker);
-  elf_vxworks_final_write_processing (abfd, linker);
-}
-
-#undef  elf32_bed
-#define elf32_bed elf32_arm_vxworks_bed
-
-#undef  bfd_elf32_bfd_link_hash_table_create
-#define bfd_elf32_bfd_link_hash_table_create	elf32_arm_vxworks_link_hash_table_create
-#undef  elf_backend_final_write_processing
-#define elf_backend_final_write_processing	elf32_arm_vxworks_final_write_processing
-#undef  elf_backend_emit_relocs
-#define elf_backend_emit_relocs			elf_vxworks_emit_relocs
-
-#undef  elf_backend_may_use_rel_p
-#define elf_backend_may_use_rel_p	0
-#undef  elf_backend_may_use_rela_p
-#define elf_backend_may_use_rela_p	1
-#undef  elf_backend_default_use_rela_p
-#define elf_backend_default_use_rela_p	1
-#undef  elf_backend_want_plt_sym
-#define elf_backend_want_plt_sym	1
-#undef  ELF_MAXPAGESIZE
-#define ELF_MAXPAGESIZE			0x1000
-
-#include "elf32-target.h"
 
 
 /* Merge backend specific data from an object file to the output
@@ -20606,9 +20290,7 @@ elf32_arm_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
 
   /* Not sure what needs to be checked for EABI versions >= 1.  */
   /* VxWorks libraries do not use these flags.  */
-  if (get_elf_backend_data (obfd) != &elf32_arm_vxworks_bed
-      && get_elf_backend_data (ibfd) != &elf32_arm_vxworks_bed
-      && EF_ARM_EABI_VERSION (in_flags) == EF_ARM_EABI_UNKNOWN)
+  if (EF_ARM_EABI_VERSION (in_flags) == EF_ARM_EABI_UNKNOWN)
     {
       if ((in_flags & EF_ARM_APCS_26) != (out_flags & EF_ARM_APCS_26))
 	{
@@ -20714,10 +20396,6 @@ elf32_arm_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
 #define TARGET_LITTLE_SYM		arm_elf32_symbian_le_vec
 #undef	TARGET_LITTLE_NAME
 #define TARGET_LITTLE_NAME		"elf32-littlearm-symbian"
-#undef	TARGET_BIG_SYM
-#define TARGET_BIG_SYM			arm_elf32_symbian_be_vec
-#undef	TARGET_BIG_NAME
-#define TARGET_BIG_NAME			"elf32-bigarm-symbian"
 
 /* Like elf32_arm_link_hash_table_create -- but overrides
    appropriately for Symbian OS.  */

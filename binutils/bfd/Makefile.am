@@ -99,7 +99,6 @@ BFD32_BACKENDS = \
 	elf-nacl.o \
 	elf-properties.o \
 	elf-strtab.o \
-	elf-vxworks.o \
 	elf.o \
 	elf32-arc.o \
 	elf32-arm.o \
@@ -115,7 +114,6 @@ BFD32_BACKENDS_CFILES = \
 	elf-nacl.c \
 	elf-properties.c \
 	elf-strtab.c \
-	elf-vxworks.c \
 	elf.c \
 	elf32-arm.c \
 	elf32.c \

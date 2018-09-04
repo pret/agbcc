@@ -6368,7 +6368,7 @@ $as_echo "$bfd_cv_build_exeext" >&6; }
 fi
 
 
-for ac_header in alloca.h strings.h time.h unistd.h wchar.h wctype.h \
+for ac_header in alloca.h strings.h unistd.h wchar.h wctype.h \
                  fcntl.h sys/file.h sys/time.h sys/stat.h sys/resource.h
 do :
 
@@ -6384,41 +6384,6 @@ fi
 
 
 done
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether time.h and sys/time.h may both be included" >&5
-$as_echo_n "checking whether time.h and sys/time.h may both be included... " >&6; }
-if ${ac_cv_header_time+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/time.h>
-#include <time.h>
-
-int
-main ()
-{
-if ((struct tm *) 0)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_header_time=yes
-else
-  ac_cv_header_time=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_time" >&5
-$as_echo "$ac_cv_header_time" >&6; }
-if test $ac_cv_header_time = yes; then
-
-$as_echo "#define TIME_WITH_SYS_TIME 1" >>confdefs.h
-
-fi
 
 ac_header_dirent=no
 for ac_hdr in dirent.h sys/ndir.h sys/dir.h ndir.h; do
@@ -6699,17 +6664,6 @@ cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_FFS $ac_have_decl
 _ACEOF
 
-ac_fn_c_check_decl "$LINENO" "getenv" "ac_cv_have_decl_getenv" "$ac_includes_default"
-if test "x$ac_cv_have_decl_getenv" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_GETENV $ac_have_decl
-_ACEOF
-
 ac_fn_c_check_decl "$LINENO" "stpcpy" "ac_cv_have_decl_stpcpy" "$ac_includes_default"
 if test "x$ac_cv_have_decl_stpcpy" = xyes; then :
   ac_have_decl=1
@@ -6741,17 +6695,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_VASPRINTF $ac_have_decl
-_ACEOF
-
-ac_fn_c_check_decl "$LINENO" "vsnprintf" "ac_cv_have_decl_vsnprintf" "$ac_includes_default"
-if test "x$ac_cv_have_decl_vsnprintf" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_VSNPRINTF $ac_have_decl
 _ACEOF
 
 
@@ -6945,11 +6888,8 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_be_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    arm_elf32_fdpic_be_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o elf-vxworks.o $elf" ;;
-    elf32_be_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
+    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
+    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
     elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;

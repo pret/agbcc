@@ -66,6 +66,7 @@
  */
 
 #include "sysdep.h"
+#include <time.h>
 #include "bfd.h"
 #include "libiberty.h"
 #include "bfdlink.h"

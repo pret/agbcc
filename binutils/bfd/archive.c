@@ -77,7 +77,7 @@
 #include "hashtab.h"
 #include "filenames.h"
 #include "bfdlink.h"
-
+#include <time.h>
 #ifndef errno
 extern int errno;
 #endif
