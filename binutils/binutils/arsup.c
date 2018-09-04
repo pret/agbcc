@@ -337,7 +337,7 @@ ar_save (void)
     }
   else
     {
-      char *ofilename = xstrdup (bfd_get_filename (obfd));
+      char *ofilename = strdup (bfd_get_filename (obfd));
 
       if (deterministic > 0)
         obfd->flags |= BFD_DETERMINISTIC_OUTPUT;

@@ -2602,9 +2602,9 @@ def_file_add_export (def_file *fdef,
   if (pos != fdef->num_exports)
     memmove (&e[1], e, (sizeof (def_file_export) * (fdef->num_exports - pos)));
   memset (e, 0, sizeof (def_file_export));
-  e->name = xstrdup (external_name);
-  e->internal_name = xstrdup (internal_name);
-  e->its_name = (its_name ? xstrdup (its_name) : NULL);
+  e->name = strdup (external_name);
+  e->internal_name = strdup (internal_name);
+  e->its_name = (its_name ? strdup (its_name) : NULL);
   e->ordinal = ordinal;
   fdef->num_exports++;
   return e;
@@ -2717,14 +2717,14 @@ fill_in_import (def_file_import *i,
 {
   memset (i, 0, sizeof (def_file_import));
   if (name)
-    i->name = xstrdup (name);
+    i->name = strdup (name);
   i->module = module;
   i->ordinal = ordinal;
   if (internal_name)
-    i->internal_name = xstrdup (internal_name);
+    i->internal_name = strdup (internal_name);
   else
     i->internal_name = i->name;
-  i->its_name = (its_name ? xstrdup (its_name) : NULL);
+  i->its_name = (its_name ? strdup (its_name) : NULL);
 }
 
 def_file_import *
@@ -2950,7 +2950,7 @@ def_image_name (const char *name, bfd_vma base, int is_dll)
 	  sprintf (def->name, "%s%s", image_name, suffix);
 	}
       else
-	def->name = xstrdup (image_name);
+	def->name = strdup (image_name);
     }
 
   /* Honor a BASE address statement, even if LIBRARY string is empty.  */
@@ -3008,7 +3008,7 @@ def_section (const char *name, int attr)
     }
   s = def->section_defs + def->num_section_defs;
   memset (s, 0, sizeof (def_file_section));
-  s->name = xstrdup (name);
+  s->name = strdup (name);
   if (attr & 1)
     s->flag_read = 1;
   if (attr & 2)
@@ -3120,7 +3120,7 @@ def_directive (char *str)
 
   d->next = directives;
   directives = d;
-  d->name = xstrdup (str);
+  d->name = strdup (str);
   d->len = strlen (str);
 }
 
@@ -3148,7 +3148,7 @@ def_aligncomm (char *str, int align)
     }
 
   c = malloc (sizeof (def_file_aligncomm));
-  c->symbol_name = xstrdup (str);
+  c->symbol_name = strdup (str);
   c->alignment = (unsigned int) align;
   if (!p)
     {

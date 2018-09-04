@@ -2134,7 +2134,7 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 140 "ldlex.l"
-{ yylval.name = xstrdup (yytext); return NAME; }
+{ yylval.name = strdup (yytext); return NAME; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -2207,7 +2207,7 @@ YY_RULE_SETUP
 					   && (yytext[1] == 'x'
 					       || yytext[1] == 'X'))
 				    {
-				      yylval.bigint.str = xstrdup (yytext + 2);
+				      yylval.bigint.str = strdup (yytext + 2);
 				    }
 				  return INT;
 				}
@@ -3044,7 +3044,7 @@ YY_RULE_SETUP
 #line 369 "ldlex.l"
 {
 /* Filename without commas, needed to parse mri stuff */
-				 yylval.name = xstrdup (yytext);
+				 yylval.name = strdup (yytext);
 				  return NAME;
 				}
 	YY_BREAK
@@ -3052,7 +3052,7 @@ case 175:
 YY_RULE_SETUP
 #line 376 "ldlex.l"
 {
-				 yylval.name = xstrdup (yytext);
+				 yylval.name = strdup (yytext);
 				  return NAME;
 				}
 	YY_BREAK
@@ -3061,7 +3061,7 @@ YY_RULE_SETUP
 #line 380 "ldlex.l"
 {
 /* Filename to be prefixed by --sysroot or when non-sysrooted, nothing.  */
-				 yylval.name = xstrdup (yytext);
+				 yylval.name = strdup (yytext);
 				  return NAME;
 				}
 	YY_BREAK
@@ -3070,7 +3070,7 @@ YY_RULE_SETUP
 #line 385 "ldlex.l"
 {
 /* Filename to be prefixed by --sysroot or when non-sysrooted, nothing.  */
-				 yylval.name = xstrdup (yytext);
+				 yylval.name = strdup (yytext);
 				  return NAME;
 				}
 	YY_BREAK
@@ -3078,7 +3078,7 @@ case 178:
 YY_RULE_SETUP
 #line 390 "ldlex.l"
 {
-				  yylval.name = xstrdup (yytext + 2);
+				  yylval.name = strdup (yytext + 2);
 				  return LNAME;
 				}
 	YY_BREAK
@@ -3086,7 +3086,7 @@ case 179:
 YY_RULE_SETUP
 #line 394 "ldlex.l"
 {
-				 yylval.name = xstrdup (yytext);
+				 yylval.name = strdup (yytext);
 				  return NAME;
 				}
 	YY_BREAK
@@ -3094,7 +3094,7 @@ case 180:
 YY_RULE_SETUP
 #line 398 "ldlex.l"
 {
-				  yylval.name = xstrdup (yytext + 2);
+				  yylval.name = strdup (yytext + 2);
 				  return LNAME;
 				}
 	YY_BREAK
@@ -3113,7 +3113,7 @@ YY_RULE_SETUP
 		  }
 		else
 		  {
-		    yylval.name = xstrdup (yytext);
+		    yylval.name = strdup (yytext);
 		    return NAME;
 		  }
 	}
@@ -3126,7 +3126,7 @@ YY_RULE_SETUP
 					/* No matter the state, quotes
 					   give what's inside.  */
 					bfd_size_type len;
-					yylval.name = xstrdup (yytext + 1);
+					yylval.name = strdup (yytext + 1);
 					/* PR ld/20906.  A corrupt input file
 					   can contain bogus strings.  */
 					len = strlen (yylval.name);
@@ -3170,13 +3170,13 @@ YY_RULE_SETUP
 case 189:
 YY_RULE_SETUP
 #line 443 "ldlex.l"
-{ yylval.name = xstrdup (yytext);
+{ yylval.name = strdup (yytext);
 				  return VERS_IDENTIFIER; }
 	YY_BREAK
 case 190:
 YY_RULE_SETUP
 #line 446 "ldlex.l"
-{ yylval.name = xstrdup (yytext);
+{ yylval.name = strdup (yytext);
 				  return VERS_TAG; }
 	YY_BREAK
 case 191:

@@ -250,7 +250,7 @@ static char *
 handle_lto_debug_sections (const char *name, int rename)
 {
   char *newname = rename ? XCNEWVEC (char, strlen (name) + 1)
-	  	         : xstrdup (name);
+	  	         : strdup (name);
 
   /* ???  So we can't use .gnu.lto_ prefixed sections as the assembler
      complains about bogus section flags.  Which means we need to arrange
@@ -426,7 +426,7 @@ simple_object_start_write (simple_object_attributes *attrs,
     return NULL;
   ret = XNEW (simple_object_write);
   ret->functions = attrs->functions;
-  ret->segment_name = segment_name ? xstrdup (segment_name) : NULL;
+  ret->segment_name = segment_name ? strdup (segment_name) : NULL;
   ret->sections = NULL;
   ret->last_section = NULL;
   ret->data = data;
@@ -445,7 +445,7 @@ simple_object_write_create_section (simple_object_write *sobj, const char *name,
 
   ret = XNEW (simple_object_write_section);
   ret->next = NULL;
-  ret->name = xstrdup (name);
+  ret->name = strdup (name);
   ret->align = align;
   ret->buffers = NULL;
   ret->last_buffer = NULL;

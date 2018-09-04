@@ -2209,7 +2209,7 @@ insert_reg_alias (char *str, unsigned number, int type)
       return NULL;
     }
 
-  name = xstrdup (str);
+  name = strdup (str);
   new_reg = XNEW (struct reg_entry);
 
   new_reg->name = name;

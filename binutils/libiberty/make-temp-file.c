@@ -157,7 +157,7 @@ choose_tmpdir (void)
 	}
       if (!memoized_tmpdir)
 	/* If all else fails, use the current directory.  */
-	memoized_tmpdir = xstrdup (".\\");
+	memoized_tmpdir = strdup (".\\");
 #endif /* defined(_WIN32) && !defined(__CYGWIN__) */
     }
 

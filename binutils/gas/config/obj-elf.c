@@ -1064,7 +1064,7 @@ obj_elf_section (int push)
 	      const char *now_group = elf_group_name (now_seg);
 	      if (now_group != NULL)
 		{
-		  group_name = xstrdup (now_group);
+		  group_name = strdup (now_group);
 		  linkonce = (now_seg->flags & SEC_LINK_ONCE) != 0;
 		}
 	    }
@@ -1311,7 +1311,7 @@ obj_elf_symver (int ignore ATTRIBUTE_UNUSED)
 
   if (symbol_get_obj (sym)->versioned_name == NULL)
     {
-      symbol_get_obj (sym)->versioned_name = xstrdup (name);
+      symbol_get_obj (sym)->versioned_name = strdup (name);
 
       (void) restore_line_pointer (c);
 

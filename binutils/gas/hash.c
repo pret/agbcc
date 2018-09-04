@@ -545,7 +545,7 @@ what (description)
 {
   printf ("   %s : ", description);
   gets (answer);
-  return xstrdup (answer);
+  return strdup (answer);
 }
 
 void

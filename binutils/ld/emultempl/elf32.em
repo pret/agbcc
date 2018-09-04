@@ -588,7 +588,7 @@ gld${EMULATION_NAME}_search_needed (const char *path,
 		      char * slash;
 
 		      if (replacement[0] == '/')
-			freeme = xstrdup (replacement);
+			freeme = strdup (replacement);
 		      else
 			{
 			  char * current_dir = getpwd ();
@@ -1645,7 +1645,7 @@ static void
 gld${EMULATION_NAME}_append_to_separated_string (char **to, char *op_arg)
 {
   if (*to == NULL)
-    *to = xstrdup (op_arg);
+    *to = strdup (op_arg);
   else
     {
       size_t to_len = strlen (*to);
@@ -1761,7 +1761,7 @@ gld${EMULATION_NAME}_before_allocation (void)
 	   a dep audit entry.  */
 	if (audit_libs && *audit_libs != '\0')
 	  {
-	    char *cp = xstrdup (audit_libs);
+	    char *cp = strdup (audit_libs);
 	    do
 	      {
 		int more = 0;
@@ -2650,7 +2650,7 @@ gld${EMULATION_NAME}_handle_option (int optc)
       if (optarg == NULL)
 	optarg = DEFAULT_BUILD_ID_STYLE;
       if (strcmp (optarg, "none"))
-	emit_note_gnu_build_id = xstrdup (optarg);
+	emit_note_gnu_build_id = strdup (optarg);
       break;
 
     case OPTION_COMPRESS_DEBUG:

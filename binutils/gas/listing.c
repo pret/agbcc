@@ -276,7 +276,7 @@ file_info (const char *file_name)
   p = XNEW (file_info_type);
   p->next = file_info_head;
   file_info_head = p;
-  p->filename = xstrdup (file_name);
+  p->filename = strdup (file_name);
   p->pos = 0;
   p->linenum = 0;
   p->at_end = 0;

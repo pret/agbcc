@@ -1002,7 +1002,7 @@ parse_args (unsigned argc, char **argv)
 	  lang_add_output_format (optarg, NULL, NULL, 0);
 	  break;
 	case OPTION_OUT_IMPLIB:
-	  command_line.out_implib_filename = xstrdup (optarg);
+	  command_line.out_implib_filename = strdup (optarg);
 	  break;
 	case OPTION_PRINT_SYSROOT:
 	  if (*ld_sysroot)
@@ -1070,7 +1070,7 @@ parse_args (unsigned argc, char **argv)
 	  /* Fall through.  */
 	case OPTION_RPATH:
 	  if (command_line.rpath == NULL)
-	    command_line.rpath = xstrdup (optarg);
+	    command_line.rpath = strdup (optarg);
 	  else
 	    {
 	      size_t rpath_len = strlen (command_line.rpath);
@@ -1106,7 +1106,7 @@ parse_args (unsigned argc, char **argv)
 	  break;
 	case OPTION_RPATH_LINK:
 	  if (command_line.rpath_link == NULL)
-	    command_line.rpath_link = xstrdup (optarg);
+	    command_line.rpath_link = strdup (optarg);
 	  else
 	    {
 	      char *buf;
@@ -1450,7 +1450,7 @@ parse_args (unsigned argc, char **argv)
 	    optarg += 2;
 	  if (default_dirlist != NULL)
 	    free (default_dirlist);
-	  default_dirlist = xstrdup (optarg);
+	  default_dirlist = strdup (optarg);
 	  break;
 	case 'y':
 	  add_ysym (optarg);

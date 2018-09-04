@@ -192,9 +192,6 @@ static struct section_add *dump_sections;
    This should be the filename to store in the .gnu_debuglink section.  */
 static const char * gnu_debuglink_filename = NULL;
 
-/* Whether to convert debugging information.  */
-static bfd_boolean convert_debugging = FALSE;
-
 /* Whether to compress/decompress DWARF debug sections.  */
 static enum
 {
@@ -489,7 +486,6 @@ static void copy_section (bfd *, asection *, void *);
 static void get_sections (bfd *, asection *, void *);
 static int compare_section_lma (const void *, const void *);
 static void mark_symbols_used_in_relocations (bfd *, asection *, void *);
-static bfd_boolean write_debugging_info (bfd *, void *, long *, asymbol ***);
 static const char *lookup_sym_redefinition (const char *);
 static const char *find_section_rename (const char *, flagword *);
 
@@ -1267,8 +1263,7 @@ is_strip_section_1 (bfd *abfd ATTRIBUTE_UNUSED, asection *sec)
       if (strip_symbols == STRIP_DEBUG
 	  || strip_symbols == STRIP_UNNEEDED
 	  || strip_symbols == STRIP_ALL
-	  || discard_locals == LOCALS_ALL
-	  || convert_debugging)
+	  || discard_locals == LOCALS_ALL)
 	{
 	  /* By default we don't want to strip .reloc section.
 	     This section has for pe-coff special meaning.   See
@@ -1528,8 +1523,7 @@ filter_symbols (bfd *abfd, bfd *obfd, asymbol **osyms,
 	keep = strip_symbols != STRIP_UNNEEDED;
       else if ((flags & BSF_DEBUGGING) != 0)	/* Debugging symbol.  */
 	keep = (strip_symbols != STRIP_DEBUG
-		&& strip_symbols != STRIP_UNNEEDED
-		&& ! convert_debugging);
+		&& strip_symbols != STRIP_UNNEEDED);
       else			/* Local symbol.  */
 	keep = (strip_symbols != STRIP_UNNEEDED
 		&& (discard_locals != LOCALS_ALL
@@ -2836,8 +2830,6 @@ copy_object (bfd *ibfd, bfd *obfd, const bfd_arch_info_type *input_arch)
   /* Symbol filtering must happen after the output sections
      have been created, but before their contents are set.  */
   dhandle = NULL;
-  if (convert_debugging)
-    dhandle = read_debugging_info (ibfd, isympp, symcount, FALSE);
 
   if (strip_symbols == STRIP_DEBUG
       || strip_symbols == STRIP_ALL
@@ -2857,7 +2849,6 @@ copy_object (bfd *ibfd, bfd *obfd, const bfd_arch_info_type *input_arch)
       || prefix_symbols_string
       || sections_removed
       || sections_copied
-      || convert_debugging
       || change_leading_char
       || remove_leading_char
       || section_rename_list
@@ -2887,15 +2878,6 @@ copy_object (bfd *ibfd, bfd *obfd, const bfd_arch_info_type *input_arch)
 
       osympp = (asymbol **) malloc ((symcount + add_symbols + 1) * sizeof (asymbol *));
       symcount = filter_symbols (ibfd, obfd, osympp, isympp, symcount);
-    }
-
-  if (convert_debugging && dhandle != NULL)
-    {
-      if (! write_debugging_info (obfd, dhandle, &symcount, &osympp))
-	{
-	  status = 1;
-	  return FALSE;
-	}
     }
 
   bfd_set_symtab (obfd, osympp, symcount);
@@ -4077,62 +4059,6 @@ mark_symbols_used_in_relocations (bfd *ibfd, sec_ptr isection, void *symbolsarg)
     free (relpp);
 }
 
-/* Write out debugging information.  */
-
-static bfd_boolean
-write_debugging_info (bfd *obfd, void *dhandle,
-		      long *symcountp ATTRIBUTE_UNUSED,
-		      asymbol ***symppp ATTRIBUTE_UNUSED)
-{
-  if (bfd_get_flavour (obfd) == bfd_target_elf_flavour)
-    {
-      bfd_byte *syms, *strings;
-      bfd_size_type symsize, stringsize;
-      asection *stabsec, *stabstrsec;
-      flagword flags;
-
-      if (! write_stabs_in_sections_debugging_info (obfd, dhandle, &syms,
-						    &symsize, &strings,
-						    &stringsize))
-	return FALSE;
-
-      flags = SEC_HAS_CONTENTS | SEC_READONLY | SEC_DEBUGGING;
-      stabsec = bfd_make_section_with_flags (obfd, ".stab", flags);
-      stabstrsec = bfd_make_section_with_flags (obfd, ".stabstr", flags);
-      if (stabsec == NULL
-	  || stabstrsec == NULL
-	  || ! bfd_set_section_size (obfd, stabsec, symsize)
-	  || ! bfd_set_section_size (obfd, stabstrsec, stringsize)
-	  || ! bfd_set_section_alignment (obfd, stabsec, 2)
-	  || ! bfd_set_section_alignment (obfd, stabstrsec, 0))
-	{
-	  bfd_nonfatal_message (NULL, obfd, NULL,
-				_("can't create debugging section"));
-	  return FALSE;
-	}
-
-      /* We can get away with setting the section contents now because
-	 the next thing the caller is going to do is copy over the
-	 real sections.  We may someday have to split the contents
-	 setting out of this function.  */
-      if (! bfd_set_section_contents (obfd, stabsec, syms, 0, symsize)
-	  || ! bfd_set_section_contents (obfd, stabstrsec, strings, 0,
-					 stringsize))
-	{
-	  bfd_nonfatal_message (NULL, obfd, NULL,
-				_("can't set debugging section contents"));
-	  return FALSE;
-	}
-
-      return TRUE;
-    }
-
-  bfd_nonfatal_message (NULL, obfd, NULL,
-			_("don't know how to write debugging information for %s"),
-			bfd_get_target (obfd));
-  return FALSE;
-}
-
 /* If neither -D nor -U was specified explicitly,
    then use the configured default.  */
 static void
@@ -4789,10 +4715,6 @@ copy_main (int argc, char *argv[])
 	    do_debug_sections = compress;
 	  break;
 
-	case OPTION_DEBUGGING:
-	  convert_debugging = TRUE;
-	  break;
-
 	case OPTION_DECOMPRESS_DEBUG_SECTIONS:
 	  do_debug_sections = decompress;
 	  break;
@@ -5108,7 +5030,7 @@ copy_main (int argc, char *argv[])
     {
       char *efi;
 
-      efi = xstrdup (output_target + 4);
+      efi = strdup (output_target + 4);
       if (strncmp (efi, "bsdrv-", 6) == 0
 	  || strncmp (efi, "rtdrv-", 6) == 0)
 	efi += 2;
@@ -5125,7 +5047,7 @@ copy_main (int argc, char *argv[])
     {
       char *efi;
 
-      efi = xstrdup (output_target + 4);
+      efi = strdup (output_target + 4);
       if (strncmp (efi, "bsdrv-", 6) == 0)
 	{
 	  efi += 2;

@@ -479,15 +479,6 @@ if test -z "${setobjs}"; then
   libiberty_NEED_DECLARATION(canonicalize_file_name)
 fi
 
-# Figure out which version of pexecute to use.
-case "${host}" in
-     *-*-mingw* | *-*-winnt*)	pexecute=pex-win32  ;;
-     *-*-msdosdjgpp*)		pexecute=pex-djgpp  ;;
-     *-*-msdos*)		pexecute=pex-msdos  ;;
-     *)				pexecute=pex-unix   ;;
-esac
-AC_SUBST(pexecute)
-
   INSTALL_DEST=libdir
 AC_SUBST(INSTALL_DEST)
 

@@ -5555,7 +5555,7 @@ s_incbin (int x ATTRIBUTE_UNUSED)
 	as_bad (_("file not found: %s"), filename);
     }
   else
-    path = xstrdup (filename);
+    path = strdup (filename);
 
   if (binfile)
     {
@@ -5771,7 +5771,7 @@ do_s_func (int end_p, const char *default_prefix)
 	}
 
       delim1 = get_symbol_name (& name);
-      name = xstrdup (name);
+      name = strdup (name);
       *input_line_pointer = delim1;
       SKIP_WHITESPACE_AFTER_NAME ();
       if (*input_line_pointer != ',')
@@ -5800,7 +5800,7 @@ do_s_func (int end_p, const char *default_prefix)
 	  ++input_line_pointer;
 	  SKIP_WHITESPACE ();
 	  delim2 = get_symbol_name (& label);
-	  label = xstrdup (label);
+	  label = strdup (label);
 	  restore_line_pointer (delim2);
 	}
 

@@ -436,7 +436,7 @@ decode_options (int argc, char **argv)
       for (letter = *in++; *letter; letter++)
 	{
 	  buffer[1] = *letter;
-	  *out++ = xstrdup (buffer);
+	  *out++ = strdup (buffer);
 	}
 
       /* Copy all remaining options.  */

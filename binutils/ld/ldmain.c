@@ -1300,7 +1300,7 @@ undefined_symbol (struct bfd_link_info *info,
       error_count = 0;
       if (error_name != NULL)
 	free (error_name);
-      error_name = xstrdup (name);
+      error_name = strdup (name);
     }
 
   if (section != NULL)

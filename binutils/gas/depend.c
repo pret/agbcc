@@ -68,7 +68,7 @@ register_dependency (const char *filename)
     }
 
   dep = XNEW (struct dependency);
-  dep->file = xstrdup (filename);
+  dep->file = strdup (filename);
   dep->next = dep_chain;
   dep_chain = dep;
 }

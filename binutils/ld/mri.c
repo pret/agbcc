@@ -264,7 +264,7 @@ mri_alias (const char *want, const char *is, int isn)
       /* Some sections are digits.  */
       sprintf (buf, "%d", isn);
 
-      is = xstrdup (buf);
+      is = strdup (buf);
 
       if (is == NULL)
 	abort ();

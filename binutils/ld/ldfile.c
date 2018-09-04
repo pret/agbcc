@@ -111,7 +111,7 @@ ldfile_add_library_path (const char *name, bfd_boolean cmdline)
   else if (CONST_STRNEQ (name, "$SYSROOT"))
     new_dirs->name = concat (ld_sysroot, name + strlen ("$SYSROOT"), (const char *) NULL);
   else
-    new_dirs->name = xstrdup (name);
+    new_dirs->name = strdup (name);
 }
 
 /* Try to open a BFD for a lang_input_statement.  */
@@ -605,7 +605,7 @@ ldfile_open_default_command_file (const char *name)
 void
 ldfile_add_arch (const char *in_name)
 {
-  char *name = xstrdup (in_name);
+  char *name = strdup (in_name);
   search_arch_type *new_arch
     = (search_arch_type *) malloc (sizeof (search_arch_type));
 

@@ -153,14 +153,14 @@ am_ar_OBJECTS = arparse.$(OBJEXT) arlex.$(OBJEXT) ar.$(OBJEXT) \
 	binemul.$(OBJEXT) emul_$(EMULATION).$(OBJEXT) $(am__objects_1)
 ar_OBJECTS = $(am_ar_OBJECTS)
 am__DEPENDENCIES_1 =
-am__objects_2 = debug.$(OBJEXT) stabs.$(OBJEXT) rddbg.$(OBJEXT)
-am__objects_3 = $(am__objects_2) wrstabs.$(OBJEXT)
+am__objects_2 =
+am__objects_3 = $(am__objects_2)
 am_objcopy_OBJECTS = objcopy.$(OBJEXT) not-strip.$(OBJEXT) \
 	rename.$(OBJEXT) $(am__objects_3) $(am__objects_1)
 objcopy_OBJECTS = $(am_objcopy_OBJECTS)
 objcopy_LDADD = $(LDADD)
 am__objects_4 = elfcomm.$(OBJEXT)
-am_objdump_OBJECTS = objdump.$(OBJEXT) dwarf.$(OBJEXT) prdbg.$(OBJEXT) \
+am_objdump_OBJECTS = objdump.$(OBJEXT) dwarf.$(OBJEXT) \
 	$(am__objects_2) $(am__objects_1) $(am__objects_4)
 objdump_OBJECTS = $(am_objdump_OBJECTS)
 am_ranlib_OBJECTS = ar.$(OBJEXT) is-ranlib.$(OBJEXT) arparse.$(OBJEXT) \
@@ -214,18 +214,15 @@ am__depfiles_remade = ./$(DEPDIR)/ar.Po ./$(DEPDIR)/arlex.Po \
 	./$(DEPDIR)/arparse.Po ./$(DEPDIR)/arsup.Po \
 	./$(DEPDIR)/bin2c.Po ./$(DEPDIR)/binemul.Po \
 	./$(DEPDIR)/bucomm.Po ./$(DEPDIR)/coffdump.Po \
-	./$(DEPDIR)/coffgrok.Po ./$(DEPDIR)/debug.Po \
-	./$(DEPDIR)/dwarf.Po ./$(DEPDIR)/elfcomm.Po \
-	./$(DEPDIR)/emul_$(EMULATION).Po ./$(DEPDIR)/filemode.Po \
-	./$(DEPDIR)/is-ranlib.Po ./$(DEPDIR)/is-strip.Po \
-	./$(DEPDIR)/maybe-ranlib.Po ./$(DEPDIR)/maybe-strip.Po \
-	./$(DEPDIR)/mclex.Po ./$(DEPDIR)/not-ranlib.Po \
-	./$(DEPDIR)/not-strip.Po ./$(DEPDIR)/objcopy.Po \
-	./$(DEPDIR)/objdump.Po ./$(DEPDIR)/od-xcoff.Po \
-	./$(DEPDIR)/prdbg.Po ./$(DEPDIR)/rddbg.Po \
-	./$(DEPDIR)/rename.Po ./$(DEPDIR)/stabs.Po \
-	./$(DEPDIR)/syslex_wrap.cversion.Po ./$(DEPDIR)/version.Po \
-	./$(DEPDIR)/wrstabs.Po
+	./$(DEPDIR)/coffgrok.Po ./$(DEPDIR)/dwarf.Po \
+	./$(DEPDIR)/elfcomm.Po ./$(DEPDIR)/emul_$(EMULATION).Po \
+	./$(DEPDIR)/filemode.Po ./$(DEPDIR)/is-ranlib.Po \
+	./$(DEPDIR)/is-strip.Po ./$(DEPDIR)/maybe-ranlib.Po \
+	./$(DEPDIR)/maybe-strip.Po ./$(DEPDIR)/mclex.Po \
+	./$(DEPDIR)/not-ranlib.Po ./$(DEPDIR)/not-strip.Po \
+	./$(DEPDIR)/objcopy.Po ./$(DEPDIR)/objdump.Po \
+	./$(DEPDIR)/od-xcoff.Po ./$(DEPDIR)/rename.Po \
+	./$(DEPDIR)/syslex_wrap.Po ./$(DEPDIR)/version.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -463,22 +460,20 @@ BUILT_SOURCES = $(GENERATED_HFILES)
 CFILES = \
 	ar.c arsup.c bin2c.c binemul.c bucomm.c \
 	coffdump.c coffgrok.c  \
-	dwarf.c debug.c \
+	dwarf.c  \
 	elfcomm.c filemode.c \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
 	not-ranlib.c not-strip.c \
-	objcopy.c objdump.c prdbg.c \
-	rddbg.c rename.c \
-	stabs.c \
-	syslex_wrap.cversion.c \
-	wrstabs.c  mclex.c
+	objcopy.c objdump.c  \
+	rename.c \
+	syslex_wrap.c version.c mclex.c
 
 GENERATED_CFILES = \
 	arparse.c arlex.c sysroff.c sysinfo.c syslex.c \
 	defparse.c deflex.c mcparse.c
 
-DEBUG_SRCS = debug.c stabs.c rddbg.c
-WRITE_DEBUG_SRCS = $(DEBUG_SRCS) wrstabs.c
+DEBUG_SRCS = 
+WRITE_DEBUG_SRCS = $(DEBUG_SRCS)
 
 # Code shared by all the binutils.
 BULIBS = bucomm.c version.c filemode.c
@@ -516,7 +511,7 @@ ranlib_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
-objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
+objdump_SOURCES = objdump.c dwarf.c  $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
 objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 ar_SOURCES = arparse.c arlex.c ar.c not-ranlib.c arsup.c rename.c binemul.c \
@@ -701,7 +696,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bucomm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coffdump.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coffgrok.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elfcomm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emul_$(EMULATION).Po@am__quote@ # am--include-marker
@@ -716,13 +710,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objcopy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objdump.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/od-xcoff.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prdbg.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rddbg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rename.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stabs.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syslex_wrap.cversion.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syslex_wrap.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wrstabs.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -892,7 +882,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/bucomm.Po
 	-rm -f ./$(DEPDIR)/coffdump.Po
 	-rm -f ./$(DEPDIR)/coffgrok.Po
-	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/dwarf.Po
 	-rm -f ./$(DEPDIR)/elfcomm.Po
 	-rm -f ./$(DEPDIR)/emul_$(EMULATION).Po
@@ -907,13 +896,9 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/objcopy.Po
 	-rm -f ./$(DEPDIR)/objdump.Po
 	-rm -f ./$(DEPDIR)/od-xcoff.Po
-	-rm -f ./$(DEPDIR)/prdbg.Po
-	-rm -f ./$(DEPDIR)/rddbg.Po
 	-rm -f ./$(DEPDIR)/rename.Po
-	-rm -f ./$(DEPDIR)/stabs.Po
-	-rm -f ./$(DEPDIR)/syslex_wrap.cversion.Po
+	-rm -f ./$(DEPDIR)/syslex_wrap.Po
 	-rm -f ./$(DEPDIR)/version.Po
-	-rm -f ./$(DEPDIR)/wrstabs.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
 	distclean-generic distclean-hdr distclean-tags
@@ -971,7 +956,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/bucomm.Po
 	-rm -f ./$(DEPDIR)/coffdump.Po
 	-rm -f ./$(DEPDIR)/coffgrok.Po
-	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/dwarf.Po
 	-rm -f ./$(DEPDIR)/elfcomm.Po
 	-rm -f ./$(DEPDIR)/emul_$(EMULATION).Po
@@ -986,13 +970,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/objcopy.Po
 	-rm -f ./$(DEPDIR)/objdump.Po
 	-rm -f ./$(DEPDIR)/od-xcoff.Po
-	-rm -f ./$(DEPDIR)/prdbg.Po
-	-rm -f ./$(DEPDIR)/rddbg.Po
 	-rm -f ./$(DEPDIR)/rename.Po
-	-rm -f ./$(DEPDIR)/stabs.Po
-	-rm -f ./$(DEPDIR)/syslex_wrap.cversion.Po
+	-rm -f ./$(DEPDIR)/syslex_wrap.Po
 	-rm -f ./$(DEPDIR)/version.Po
-	-rm -f ./$(DEPDIR)/wrstabs.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -1858,7 +1858,7 @@ NAME(_bfd_elf,bfd_from_remote_memory)
       free (contents);
       return NULL;
     }
-  nbfd->filename = xstrdup ("<in-memory>");
+  nbfd->filename = strdup ("<in-memory>");
   nbfd->xvec = templ->xvec;
   bim->size = high_offset;
   bim->buffer = contents;

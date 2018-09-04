@@ -1048,7 +1048,7 @@ case 35:
 YY_RULE_SETUP
 #line 81 "arlex.l"
 {
-		yylval.name =  xstrdup (yytext);
+		yylval.name =  strdup (yytext);
 		return FILENAME;
 		}
 	YY_BREAK

@@ -377,10 +377,10 @@ vfinfo (FILE *fp, const char *fmt, va_list ap, bfd_boolean is_warning)
 			      free (last_file);
 			    last_file = NULL;
 			    if (filename)
-			      last_file = xstrdup (filename);
+			      last_file = strdup (filename);
 			    if (last_function != NULL)
 			      free (last_function);
-			    last_function = xstrdup (functionname);
+			    last_function = strdup (functionname);
 			  }
 			discard_last = FALSE;
 		      }

@@ -733,7 +733,7 @@ get_filenum (const char *filename, unsigned int num)
       memset (files + old, 0, (i + 32 - old) * sizeof (struct file_entry));
     }
 
-  files[i].filename = num ? file : xstrdup (file);
+  files[i].filename = num ? file : strdup (file);
   files[i].dir = dir;
   if (files_in_use < i + 1)
     files_in_use = i + 1;

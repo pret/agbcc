@@ -95,7 +95,6 @@ static int with_line_numbers;		/* -l */
 static bfd_boolean with_source_code;	/* -S */
 static int show_raw_insn;		/* --show-raw-insn */
 static int dump_dwarf_section_info;	/* --dwarf */
-static int dump_stab_section_info;	/* --stabs */
 static bfd_boolean disassemble;		/* -d */
 static bfd_boolean disassemble_all;	/* -D */
 static int disassemble_zeroes;		/* --disassemble-zeroes */
@@ -175,12 +174,6 @@ static long synthcount = 0;
 /* Number of symbols in `dynsyms'.  */
 static long dynsymcount = 0;
 
-static bfd_byte *stabs;
-static bfd_size_type stab_size;
-
-static bfd_byte *strtab;
-static bfd_size_type stabstr_size;
-
 static bfd_boolean is_relocatable = FALSE;
 
 /* Handlers for -P/--private.  */
@@ -210,7 +203,6 @@ usage (FILE *stream, int status)
   -s, --full-contents      Display the full contents of all sections requested\n\
   -g, --debugging          Display debug information in object file\n\
   -e, --debugging-tags     Display debug information using ctags style\n\
-  -G, --stabs              Display (in raw form) any STABS info in the file\n\
   -W[lLiaprmfFsoRtUuTgAckK] or\n\
   --dwarf[=rawline,=decodedline,=info,=abbrev,=pubnames,=aranges,=macro,=frames,\n\
           =frames-interp,=str,=loc,=Ranges,=pubtypes,\n\
@@ -330,7 +322,6 @@ static struct option long_options[]=
   {"special-syms", no_argument, &dump_special_syms, 1},
   {"include", required_argument, NULL, 'I'},
   {"dwarf", optional_argument, NULL, OPTION_DWARF},
-  {"stabs", no_argument, NULL, 'G'},
   {"start-address", required_argument, NULL, OPTION_START_ADDRESS},
   {"stop-address", required_argument, NULL, OPTION_STOP_ADDRESS},
   {"syms", no_argument, NULL, 't'},
@@ -1544,7 +1535,7 @@ show_line (bfd *abfd, asection *section, bfd_vma addr_offset)
       if (p == NULL)
 	{
 	  if (reloc)
-	    filename = xstrdup (filename);
+	    filename = strdup (filename);
 	  p = update_source_path (filename, abfd);
 	}
 
@@ -2712,197 +2703,7 @@ dump_dwarf (bfd *abfd)
 
   free_debug_memory ();
 }
-
-/* Read ABFD's stabs section STABSECT_NAME, and return a pointer to
-   it.  Return NULL on failure.   */
 
-static bfd_byte *
-read_section_stabs (bfd *abfd, const char *sect_name, bfd_size_type *size_ptr)
-{
-  asection *stabsect;
-  bfd_byte *contents;
-
-  stabsect = bfd_get_section_by_name (abfd, sect_name);
-  if (stabsect == NULL)
-    {
-      printf (_("No %s section present\n\n"), sect_name);
-      return FALSE;
-    }
-
-  if (!bfd_malloc_and_get_section (abfd, stabsect, &contents))
-    {
-      non_fatal (_("reading %s section of %s failed: %s"),
-		 sect_name, bfd_get_filename (abfd),
-		 bfd_errmsg (bfd_get_error ()));
-      exit_status = 1;
-      free (contents);
-      return NULL;
-    }
-
-  *size_ptr = bfd_section_size (abfd, stabsect);
-
-  return contents;
-}
-
-/* Stabs entries use a 12 byte format:
-     4 byte string table index
-     1 byte stab type
-     1 byte stab other field
-     2 byte stab desc field
-     4 byte stab value
-   FIXME: This will have to change for a 64 bit object format.  */
-
-#define STRDXOFF  (0)
-#define TYPEOFF   (4)
-#define OTHEROFF  (5)
-#define DESCOFF   (6)
-#define VALOFF    (8)
-#define STABSIZE (12)
-
-/* Print ABFD's stabs section STABSECT_NAME (in `stabs'),
-   using string table section STRSECT_NAME (in `strtab').  */
-
-static void
-print_section_stabs (bfd *abfd,
-		     const char *stabsect_name,
-		     unsigned *string_offset_ptr)
-{
-  int i;
-  unsigned file_string_table_offset = 0;
-  unsigned next_file_string_table_offset = *string_offset_ptr;
-  bfd_byte *stabp, *stabs_end;
-
-  stabp = stabs;
-  stabs_end = stabp + stab_size;
-
-  printf (_("Contents of %s section:\n\n"), stabsect_name);
-  printf ("Symnum n_type n_othr n_desc n_value  n_strx String\n");
-
-  /* Loop through all symbols and print them.
-
-     We start the index at -1 because there is a dummy symbol on
-     the front of stabs-in-{coff,elf} sections that supplies sizes.  */
-  for (i = -1; stabp <= stabs_end - STABSIZE; stabp += STABSIZE, i++)
-    {
-      const char *name;
-      unsigned long strx;
-      unsigned char type, other;
-      unsigned short desc;
-      bfd_vma value;
-
-      strx = bfd_h_get_32 (abfd, stabp + STRDXOFF);
-      type = bfd_h_get_8 (abfd, stabp + TYPEOFF);
-      other = bfd_h_get_8 (abfd, stabp + OTHEROFF);
-      desc = bfd_h_get_16 (abfd, stabp + DESCOFF);
-      value = bfd_h_get_32 (abfd, stabp + VALOFF);
-
-      printf ("\n%-6d ", i);
-      /* Either print the stab name, or, if unnamed, print its number
-	 again (makes consistent formatting for tools like awk).  */
-      name = bfd_get_stab_name (type);
-      if (name != NULL)
-	printf ("%-6s", name);
-      else if (type == N_UNDF)
-	printf ("HdrSym");
-      else
-	printf ("%-6d", type);
-      printf (" %-6d %-6d ", other, desc);
-      bfd_printf_vma (abfd, value);
-      printf (" %-6lu", strx);
-
-      /* Symbols with type == 0 (N_UNDF) specify the length of the
-	 string table associated with this file.  We use that info
-	 to know how to relocate the *next* file's string table indices.  */
-      if (type == N_UNDF)
-	{
-	  file_string_table_offset = next_file_string_table_offset;
-	  next_file_string_table_offset += value;
-	}
-      else
-	{
-	  bfd_size_type amt = strx + file_string_table_offset;
-
-	  /* Using the (possibly updated) string table offset, print the
-	     string (if any) associated with this symbol.  */
-	  if (amt < stabstr_size)
-	    /* PR 17512: file: 079-79389-0.001:0.1.  */
-	    printf (" %.*s", (int)(stabstr_size - amt), strtab + amt);
-	  else
-	    printf (" *");
-	}
-    }
-  printf ("\n\n");
-  *string_offset_ptr = next_file_string_table_offset;
-}
-
-typedef struct
-{
-  const char * section_name;
-  const char * string_section_name;
-  unsigned string_offset;
-}
-stab_section_names;
-
-static void
-find_stabs_section (bfd *abfd, asection *section, void *names)
-{
-  int len;
-  stab_section_names * sought = (stab_section_names *) names;
-
-  /* Check for section names for which stabsect_name is a prefix, to
-     handle .stab.N, etc.  */
-  len = strlen (sought->section_name);
-
-  /* If the prefix matches, and the files section name ends with a
-     nul or a digit, then we match.  I.e., we want either an exact
-     match or a section followed by a number.  */
-  if (strncmp (sought->section_name, section->name, len) == 0
-      && (section->name[len] == 0
-	  || (section->name[len] == '.' && ISDIGIT (section->name[len + 1]))))
-    {
-      if (strtab == NULL)
-	strtab = read_section_stabs (abfd, sought->string_section_name,
-				     &stabstr_size);
-
-      if (strtab)
-	{
-	  stabs = read_section_stabs (abfd, section->name, &stab_size);
-	  if (stabs)
-	    print_section_stabs (abfd, section->name, &sought->string_offset);
-	}
-    }
-}
-
-static void
-dump_stabs_section (bfd *abfd, char *stabsect_name, char *strsect_name)
-{
-  stab_section_names s;
-
-  s.section_name = stabsect_name;
-  s.string_section_name = strsect_name;
-  s.string_offset = 0;
-
-  bfd_map_over_sections (abfd, find_stabs_section, & s);
-
-  free (strtab);
-  strtab = NULL;
-}
-
-/* Dump the any sections containing stabs debugging information.  */
-
-static void
-dump_stabs (bfd *abfd)
-{
-  dump_stabs_section (abfd, ".stab", ".stabstr");
-  dump_stabs_section (abfd, ".stab.excl", ".stab.exclstr");
-  dump_stabs_section (abfd, ".stab.index", ".stab.indexstr");
-
-  /* For Darwin.  */
-  dump_stabs_section (abfd, "LC_SYMTAB.stabs", "LC_SYMTAB.stabstr");
-
-  dump_stabs_section (abfd, "$GDB_SYMBOLS$", "$GDB_STRINGS$");
-}
-
 static void
 dump_bfd_header (bfd *abfd)
 {
@@ -3234,7 +3035,7 @@ dump_reloc_set (bfd *abfd, asection *sec, arelent **relpp, long relcount)
 	      printf ("%s():\n", functionname);
 	      if (last_functionname != NULL)
 		free (last_functionname);
-	      last_functionname = xstrdup (functionname);
+	      last_functionname = strdup (functionname);
 	    }
 
 	  if (linenumber > 0
@@ -3256,7 +3057,7 @@ dump_reloc_set (bfd *abfd, asection *sec, arelent **relpp, long relcount)
 	      if (filename == NULL)
 		last_filename = NULL;
 	      else
-		last_filename = xstrdup (filename);
+		last_filename = strdup (filename);
 	    }
 	}
 
@@ -3538,8 +3339,6 @@ dump_bfd (bfd *abfd)
     dump_symbols (abfd, TRUE);
   if (dump_dwarf_section_info)
     dump_dwarf (abfd);
-  if (dump_stab_section_info)
-    dump_stabs (abfd);
   if (dump_reloc_info && ! disassemble)
     dump_relocs (abfd);
   if (dump_dynamic_reloc_info && ! disassemble)
@@ -3921,10 +3720,6 @@ main (int argc, char **argv)
 	  break;
 	case OPTION_DWARF_CHECK:
 	  dwarf_check = TRUE;
-	  break;
-	case 'G':
-	  dump_stab_section_info = TRUE;
-	  seenflag = TRUE;
 	  break;
 	case 's':
 	  dump_section_contents = TRUE;

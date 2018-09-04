@@ -624,7 +624,7 @@ _bfd_get_elt_at_filepos (bfd *archive, file_ptr filepos)
   else
     {
       n_bfd->origin = n_bfd->proxy_origin;
-      n_bfd->filename = xstrdup (filename);
+      n_bfd->filename = strdup (filename);
     }
 
   n_bfd->arelt_data = new_areldata;

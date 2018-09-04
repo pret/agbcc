@@ -744,7 +744,7 @@ symbol_find_noref (const char *name, int noref)
 
 #ifdef tc_canonicalize_symbol_name
   {
-    copy = xstrdup (name);
+    copy = strdup (name);
     name = tc_canonicalize_symbol_name (copy);
   }
 #endif
@@ -3074,7 +3074,7 @@ symbol_relc_make_sym (symbolS * sym)
   /* This may be a "fake symbol", referring to ".".
      Write out a special null symbol to refer to this position.  */
   if (! strcmp (S_GET_NAME (sym), FAKE_LABEL_NAME))
-    return xstrdup (".");
+    return strdup (".");
 
   /* We hope this is a plain leaf symbol.  Construct the encoding
      as {S,s}II...:CCCCCCC....
@@ -3233,7 +3233,7 @@ symbol_relc_make_expr (expressionS * exp)
   if (opstr == NULL)
     concat_string = NULL;
   else if (arity == 0)
-    concat_string = xstrdup (opstr);
+    concat_string = strdup (opstr);
   else if (arity == 1)
     concat_string = concat (opstr, ":", operands[0], (char *) NULL);
   else if (arity == 2)

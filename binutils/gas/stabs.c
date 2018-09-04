@@ -108,7 +108,7 @@ get_stab_string_offset (const char *string, const char *stabstr_secname)
       retval = seg_info (seg)->stabu.stab_string_size = 1;
       bfd_set_section_flags (stdoutput, seg, SEC_READONLY | SEC_DEBUGGING);
       if (seg->name == stabstr_secname)
-	seg->name = xstrdup (stabstr_secname);
+	seg->name = strdup (stabstr_secname);
     }
 
   if (length > 0)
@@ -330,7 +330,7 @@ s_stab_generic (int          what,
 	  seg = subseg_new (stab_secname, 0);
 	  if (cached_secname)
 	    free (cached_secname);
-	  cached_secname = xstrdup (stab_secname);
+	  cached_secname = strdup (stab_secname);
 	  cached_sec = seg;
 	}
 
@@ -566,7 +566,7 @@ generate_asm_file (int type, const char *file)
 
   if (last_file != NULL)
     free (last_file);
-  last_file = xstrdup (file);
+  last_file = strdup (file);
 
   free (buf);
 }
@@ -597,7 +597,7 @@ stabs_generate_asm_lineno (void)
   if (prev_file == NULL)
     {
       /* First time through.  */
-      prev_file = xstrdup (file);
+      prev_file = strdup (file);
       prev_lineno = lineno;
     }
   else if (lineno == prev_lineno
@@ -613,7 +613,7 @@ stabs_generate_asm_lineno (void)
       if (filename_cmp (file, prev_file) != 0)
 	{
 	  free (prev_file);
-	  prev_file = xstrdup (file);
+	  prev_file = strdup (file);
 	}
     }
 
@@ -676,7 +676,7 @@ stabs_generate_asm_func (const char *funcname, const char *startlabname)
   restore_ilp ();
   free (buf);
 
-  current_function_label = xstrdup (startlabname);
+  current_function_label = strdup (startlabname);
   in_dot_func_p = TRUE;
 }
 

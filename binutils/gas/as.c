@@ -780,7 +780,7 @@ This program has absolutely no warranty.\n"));
 	       table.  If multiple instruction tables are specified, the
 	       information from this table gets appended onto the existing
 	       internal table.  */
-	    itbl_files->name = xstrdup (optarg);
+	    itbl_files->name = strdup (optarg);
 	    if (itbl_parse (itbl_files->name) != 0)
 	      as_fatal (_("failed to read instruction table %s\n"),
 			itbl_files->name);
@@ -931,7 +931,7 @@ This program has absolutely no warranty.\n"));
  	case OPTION_AL:
 	  listing |= LISTING_LISTING;
 	  if (optarg)
-	    listing_filename = xstrdup (optarg);
+	    listing_filename = strdup (optarg);
 	  break;
 
  	case OPTION_ALTERNATE:
@@ -985,7 +985,7 @@ This program has absolutely no warranty.\n"));
 		      listing |= LISTING_SYMBOLS;
 		      break;
 		    case '=':
-		      listing_filename = xstrdup (optarg + 1);
+		      listing_filename = strdup (optarg + 1);
 		      optarg += strlen (listing_filename);
 		      break;
 		    default:
@@ -1011,14 +1011,14 @@ This program has absolutely no warranty.\n"));
 
 	case 'I':
 	  {			/* Include file directory.  */
-	    char *temp = xstrdup (optarg);
+	    char *temp = strdup (optarg);
 
 	    add_include_dir (temp);
 	    break;
 	  }
 
 	case 'o':
-	  out_file_name = xstrdup (optarg);
+	  out_file_name = strdup (optarg);
 	  break;
 
 	case 'w':

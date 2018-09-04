@@ -1326,7 +1326,7 @@ lang_memory_region_lookup (const char *const name, bfd_boolean create)
   new_region = (lang_memory_region_type *)
       stat_alloc (sizeof (lang_memory_region_type));
 
-  new_region->name_list.name = xstrdup (name);
+  new_region->name_list.name = strdup (name);
   new_region->name_list.next = NULL;
   new_region->next = NULL;
   new_region->origin_exp = NULL;
@@ -1381,7 +1381,7 @@ lang_memory_region_alias (const char *alias, const char *region_name)
 
   /* Add alias to region name list.  */
   n = (lang_memory_region_name *) stat_alloc (sizeof (lang_memory_region_name));
-  n->name = xstrdup (alias);
+  n->name = strdup (alias);
   n->next = region->name_list.next;
   region->name_list.next = n;
 }
@@ -3392,7 +3392,7 @@ ldlang_add_undef (const char *const name, bfd_boolean cmdline)
   new_undef->next = ldlang_undef_chain_list_head;
   ldlang_undef_chain_list_head = new_undef;
 
-  new_undef->name = xstrdup (name);
+  new_undef->name = strdup (name);
 
   if (link_info.output_bfd != NULL)
     insert_undefined (new_undef->name);
@@ -8580,7 +8580,7 @@ lang_add_unique (const char *name)
       return;
 
   ent = (struct unique_sections *) malloc (sizeof *ent);
-  ent->name = xstrdup (name);
+  ent->name = strdup (name);
   ent->next = unique_section_list;
   unique_section_list = ent;
 }

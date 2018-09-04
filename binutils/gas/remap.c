@@ -54,12 +54,12 @@ add_debug_prefix_map (const char *arg)
       return;
     }
   map = XNEW (debug_prefix_map);
-  o = xstrdup (arg);
+  o = strdup (arg);
   map->old_prefix = o;
   map->old_len = p - arg;
   o[map->old_len] = 0;
   p++;
-  map->new_prefix = xstrdup (p);
+  map->new_prefix = strdup (p);
   map->new_len = strlen (p);
   map->next = debug_prefix_maps;
   debug_prefix_maps = map;
@@ -81,5 +81,5 @@ remap_debug_filename (const char *filename)
 	return concat (map->new_prefix, name, NULL);
       }
 	
-  return xstrdup (filename);
+  return strdup (filename);
 }

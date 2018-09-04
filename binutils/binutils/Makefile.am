@@ -89,22 +89,20 @@ BUILT_SOURCES = $(GENERATED_HFILES)
 CFILES = \
 	ar.c arsup.c bin2c.c binemul.c bucomm.c \
 	coffdump.c coffgrok.c  \
-	dwarf.c debug.c \
+	dwarf.c  \
 	elfcomm.c filemode.c \
 	is-ranlib.c is-strip.c maybe-ranlib.c maybe-strip.c \
 	not-ranlib.c not-strip.c \
-	objcopy.c objdump.c prdbg.c \
-	rddbg.c rename.c \
-	stabs.c \
-	syslex_wrap.cversion.c \
-	wrstabs.c  mclex.c
+	objcopy.c objdump.c  \
+	rename.c \
+	syslex_wrap.c version.c mclex.c
 
 GENERATED_CFILES = \
 	arparse.c arlex.c sysroff.c sysinfo.c syslex.c \
 	defparse.c deflex.c mcparse.c
 
-DEBUG_SRCS = debug.c stabs.c rddbg.c
-WRITE_DEBUG_SRCS = $(DEBUG_SRCS) wrstabs.c
+DEBUG_SRCS =
+WRITE_DEBUG_SRCS = $(DEBUG_SRCS)
 
 # Extra object files for objdump
 OBJDUMP_PRIVATE_OFILES = @OBJDUMP_PRIVATE_OFILES@
@@ -173,7 +171,7 @@ LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 
 objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
-objdump_SOURCES = objdump.c dwarf.c prdbg.c $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
+objdump_SOURCES = objdump.c dwarf.c  $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
 objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 

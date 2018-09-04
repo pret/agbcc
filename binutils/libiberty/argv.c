@@ -83,7 +83,7 @@ dupargv (char * const *argv)
 
   /* the strings */
   for (argc = 0; argv[argc] != NULL; argc++)
-    copy[argc] = xstrdup (argv[argc]);
+    copy[argc] = strdup (argv[argc]);
   copy[argc] = NULL;
   return copy;
 }
@@ -271,7 +271,7 @@ char **buildargv (const char *input)
 		}
 	    }
 	  *arg = EOS;
-	  argv[argc] = xstrdup (copybuf);
+	  argv[argc] = strdup (copybuf);
 	  argc++;
 	  argv[argc] = NULL;
 

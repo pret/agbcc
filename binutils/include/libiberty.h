@@ -318,10 +318,6 @@ extern void *realloc (void *, size_t) ATTRIBUTE_RETURNS_NONNULL;
 
 extern void *calloc (size_t, size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
 
-/* Copy a string into a memory buffer without fail.  */
-
-extern char *xstrdup (const char *) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
-
 /* Copy at most N characters from string into a buffer without fail.  */
 
 extern char *xstrndup (const char *, size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;

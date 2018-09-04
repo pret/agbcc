@@ -22,10 +22,6 @@
 #ifndef BUDBG_H
 #define BUDBG_H
 
-/* Routine used to read generic debugging information.  */
-
-extern void *read_debugging_info (bfd *, asymbol **, long, bfd_boolean);
-
 /* Routine used to print generic debugging information.  */
 
 extern bfd_boolean print_debugging_info
