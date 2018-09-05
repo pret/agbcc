@@ -146,8 +146,8 @@ am__objects_1 = app.$(OBJEXT) as.$(OBJEXT) atof-generic.$(OBJEXT) \
 	input-file.$(OBJEXT) input-scrub.$(OBJEXT) listing.$(OBJEXT) \
 	literal.$(OBJEXT) macro.$(OBJEXT) messages.$(OBJEXT) \
 	output-file.$(OBJEXT) read.$(OBJEXT) remap.$(OBJEXT) \
-	sb.$(OBJEXT) stabs.$(OBJEXT) subsegs.$(OBJEXT) \
-	symbols.$(OBJEXT) write.$(OBJEXT)
+	sb.$(OBJEXT) subsegs.$(OBJEXT) symbols.$(OBJEXT) \
+	write.$(OBJEXT)
 am_as_new_OBJECTS = $(am__objects_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 as_new_OBJECTS = $(am_as_new_OBJECTS)
@@ -187,13 +187,12 @@ am__depfiles_remade = ./$(DEPDIR)/app.Po ./$(DEPDIR)/as.Po \
 	./$(DEPDIR)/literal.Po ./$(DEPDIR)/macro.Po \
 	./$(DEPDIR)/messages.Po ./$(DEPDIR)/output-file.Po \
 	./$(DEPDIR)/read.Po ./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po \
-	./$(DEPDIR)/stabs.Po ./$(DEPDIR)/subsegs.Po \
-	./$(DEPDIR)/symbols.Po ./$(DEPDIR)/write.Po \
-	config/$(DEPDIR)/atof-ieee.Po config/$(DEPDIR)/e-crisaout.Po \
-	config/$(DEPDIR)/e-criself.Po config/$(DEPDIR)/e-i386aout.Po \
-	config/$(DEPDIR)/e-i386elf.Po config/$(DEPDIR)/e-mipself.Po \
-	config/$(DEPDIR)/obj-elf.Po config/$(DEPDIR)/tc-arm.Po \
-	config/$(DEPDIR)/te-vms.Po
+	./$(DEPDIR)/subsegs.Po ./$(DEPDIR)/symbols.Po \
+	./$(DEPDIR)/write.Po config/$(DEPDIR)/atof-ieee.Po \
+	config/$(DEPDIR)/e-crisaout.Po config/$(DEPDIR)/e-criself.Po \
+	config/$(DEPDIR)/e-i386aout.Po config/$(DEPDIR)/e-i386elf.Po \
+	config/$(DEPDIR)/e-mipself.Po config/$(DEPDIR)/obj-elf.Po \
+	config/$(DEPDIR)/tc-arm.Po config/$(DEPDIR)/te-vms.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -426,7 +425,6 @@ GAS_CFILES = \
 	read.c \
 	remap.c \
 	sb.c \
-	stabs.c \
 	subsegs.c \
 	symbols.c \
 	write.c
@@ -689,7 +687,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/remap.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sb.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stabs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subsegs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symbols.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write.Po@am__quote@ # am--include-marker
@@ -889,7 +886,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/read.Po
 	-rm -f ./$(DEPDIR)/remap.Po
 	-rm -f ./$(DEPDIR)/sb.Po
-	-rm -f ./$(DEPDIR)/stabs.Po
 	-rm -f ./$(DEPDIR)/subsegs.Po
 	-rm -f ./$(DEPDIR)/symbols.Po
 	-rm -f ./$(DEPDIR)/write.Po
@@ -978,7 +974,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/read.Po
 	-rm -f ./$(DEPDIR)/remap.Po
 	-rm -f ./$(DEPDIR)/sb.Po
-	-rm -f ./$(DEPDIR)/stabs.Po
 	-rm -f ./$(DEPDIR)/subsegs.Po
 	-rm -f ./$(DEPDIR)/symbols.Po
 	-rm -f ./$(DEPDIR)/write.Po

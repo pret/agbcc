@@ -115,7 +115,6 @@ extern char original_case_string[];
 extern void pop_insert (const pseudo_typeS *);
 extern unsigned int get_stab_string_offset
   (const char *string, const char *stabstr_secname);
-extern void aout_process_stab (int, const char *, int, int, int);
 extern char *demand_copy_string (int *lenP);
 extern char *demand_copy_C_string (int *len_pointer);
 extern char get_absolute_expression_and_terminator (long *val_pointer);

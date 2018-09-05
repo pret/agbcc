@@ -1988,67 +1988,6 @@ obj_elf_ident (int ignore ATTRIBUTE_UNUSED)
   subseg_set (old_section, old_subsection);
 }
 
-#ifdef INIT_STAB_SECTION
-
-/* The first entry in a .stabs section is special.  */
-
-void
-obj_elf_init_stab_section (segT seg)
-{
-  const char *file;
-  char *p;
-  char *stabstr_name;
-  unsigned int stroff;
-
-  /* Force the section to align to a longword boundary.  Without this,
-     UnixWare ar crashes.  */
-  bfd_set_section_alignment (stdoutput, seg, 2);
-
-  /* Make space for this first symbol.  */
-  p = frag_more (12);
-  /* Zero it out.  */
-  memset (p, 0, 12);
-  file = as_where (NULL);
-  stabstr_name = concat (segment_name (seg), "str", (char *) NULL);
-  stroff = get_stab_string_offset (file, stabstr_name);
-  know (stroff == 1 || (stroff == 0 && file[0] == '\0'));
-  md_number_to_chars (p, stroff, 4);
-  seg_info (seg)->stabu.p = p;
-}
-
-#endif
-
-/* Fill in the counts in the first entry in a .stabs section.  */
-
-static void
-adjust_stab_sections (bfd *abfd, asection *sec, void *xxx ATTRIBUTE_UNUSED)
-{
-  char *name;
-  asection *strsec;
-  char *p;
-  int strsz, nsyms;
-
-  if (strncmp (".stab", sec->name, 5))
-    return;
-  if (!strcmp ("str", sec->name + strlen (sec->name) - 3))
-    return;
-
-  name = concat (sec->name, "str", NULL);
-  strsec = bfd_get_section_by_name (abfd, name);
-  if (strsec)
-    strsz = bfd_section_size (abfd, strsec);
-  else
-    strsz = 0;
-  nsyms = bfd_section_size (abfd, sec) / 12 - 1;
-
-  p = seg_info (sec)->stabu.p;
-  gas_assert (p != 0);
-
-  bfd_h_put_16 (abfd, nsyms, p + 6);
-  bfd_h_put_32 (abfd, strsz, p + 8);
-  free (name);
-}
-
 void
 elf_frob_symbol (symbolS *symp, int *puntp)
 {
@@ -2315,8 +2254,6 @@ elf_adjust_symtab (void)
 void
 elf_frob_file (void)
 {
-  bfd_map_over_sections (stdoutput, adjust_stab_sections, NULL);
-
 #ifdef elf_tc_final_processing
   elf_tc_final_processing ();
 #endif
@@ -2404,28 +2341,6 @@ elf_generate_asm_lineno (void)
 {
 }
 
-static void
-elf_process_stab (segT sec ATTRIBUTE_UNUSED,
-		  int what ATTRIBUTE_UNUSED,
-		  const char *string ATTRIBUTE_UNUSED,
-		  int type ATTRIBUTE_UNUSED,
-		  int other ATTRIBUTE_UNUSED,
-		  int desc ATTRIBUTE_UNUSED)
-{
-}
-
-static int
-elf_separate_stab_sections (void)
-{
-  return 1;
-}
-
-static void
-elf_init_stab_section (segT seg)
-{
-    obj_elf_init_stab_section (seg);
-}
-
 const struct format_ops elf_format_ops =
 {
   bfd_target_elf_flavour,
@@ -2448,9 +2363,9 @@ const struct format_ops elf_format_ops =
   0,	/* s_set_type */
   elf_copy_symbol_attributes,
   elf_generate_asm_lineno,
-  elf_process_stab,
-  elf_separate_stab_sections,
-  elf_init_stab_section,
+  0,
+  0,
+  0,
   elf_sec_sym_ok_for_reloc,
   elf_pop_insert,
   0,	/* ecoff_set_ext */

@@ -34,11 +34,7 @@
 #include "filenames.h"
 #include "binemul.h"
 
-#ifdef __GO32___
-#define EXT_NAME_LEN 3		/* Bufflen of addition to name if it's MS-DOS.  */
-#else
 #define EXT_NAME_LEN 6		/* Ditto for *NIX.  */
-#endif
 
 /* Static declarations.  */
 
@@ -841,19 +837,6 @@ open_inarch (const char *archive_filename, const char *file)
 
   if (stat (archive_filename, &sbuf) != 0)
     {
-#if !defined(__GO32__) || defined(__DJGPP__)
-
-      /* FIXME: I don't understand why this fragment was ifndef'ed
-	 away for __GO32__; perhaps it was in the days of DJGPP v1.x.
-	 stat() works just fine in v2.x, so I think this should be
-	 removed.  For now, I enable it for DJGPP v2. -- EZ.  */
-
-      /* KLUDGE ALERT! Temporary fix until I figger why
-	 stat() is wrong ... think it's buried in GO32's IDT - Jax */
-      if (errno != ENOENT)
-	bfd_fatal (archive_filename);
-#endif
-
       if (!operation_alters_arch)
 	{
 	  fprintf (stderr, "%s: ", program_name);
@@ -1408,10 +1391,6 @@ ranlib_only (const char *archname)
 static int
 ranlib_touch (const char *archname)
 {
-#ifdef __GO32__
-  /* I don't think updating works on go32.  */
-  ranlib_only (archname);
-#else
   int f;
   bfd *arch;
   char **matching;
@@ -1450,7 +1429,6 @@ ranlib_touch (const char *archname)
 
   if (! bfd_close (arch))
     bfd_fatal (archname);
-#endif
   return 0;
 }
 

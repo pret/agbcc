@@ -319,7 +319,6 @@ LIBS = @LIBS@
 # when the linker is configured via the --with-lib-path configure switch.
 LIB_PATH = @LIB_PATH@
 LTLIBOBJS = @LTLIBOBJS@
-MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NATIVE_LIB_DIRS = @NATIVE_LIB_DIRS@
@@ -412,9 +411,6 @@ AUTOMAKE_OPTIONS = dejagnu no-texinfo.tex no-dist foreign info-in-builddir
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
 TEXINFO_TEX = ../texinfo/texinfo.tex
 tooldir = $(exec_prefix)/$(target_alias)
-YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bison/; else echo @YACC@; fi`
-YFLAGS = -d
-LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
 ELF_CLFAGS = -DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
@@ -550,7 +546,6 @@ ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
 		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
 
 ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
-MAINTAINERCLEANFILES = configdoc.texi
 
 # We want to reconfigure if configure.host or configure.tgt changes.
 # development.sh is used to determine -Werror default.
@@ -575,7 +570,7 @@ all: $(BUILT_SOURCES) config.h
 .SUFFIXES: .c .dvi .o .obj .ps
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -601,9 +596,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 
-$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	$(am__cd) $(srcdir) && $(AUTOCONF)
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
@@ -614,7 +609,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status config.h
-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+$(srcdir)/config.in:  $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
@@ -942,7 +937,6 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
-	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
 clean-am: clean-aminfo clean-binPROGRAMS clean-generic mostlyclean-am
@@ -1197,14 +1191,6 @@ deffilep.@OBJEXT@: deffilep.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='deffilep.c' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `test -f deffilep.c || echo $(srcdir)/`deffilep.c $(NO_WERROR)
-
-po/SRC-POTFILES.in: @MAINT@ Makefile
-	for f in $(SRC_POTFILES); do echo $$f; done | LC_ALL=C sort > $@-tmp \
-	  && mv $@-tmp $(srcdir)/po/SRC-POTFILES.in
-
-po/BLD-POTFILES.in: @MAINT@ Makefile $(BLD_POTFILES)
-	for f in $(BLD_POTFILES); do echo $$f; done | LC_ALL=C sort > $@-tmp \
-	  && mv $@-tmp $(srcdir)/po/BLD-POTFILES.in
 
 ldmain.@OBJEXT@: ldmain.c config.status
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ \

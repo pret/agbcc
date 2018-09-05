@@ -69,8 +69,6 @@ if test -z "$target" ; then
     AC_MSG_ERROR(Unrecognized target system type; please check config.sub.)
 fi
 
-AM_MAINTAINER_MODE
-AM_INSTALL_LIBBFD
 AC_EXEEXT
 
 . ${srcdir}/../bfd/configure.host
@@ -94,25 +92,6 @@ bfd_cv_func_sigsetjmp=yes, bfd_cv_func_sigsetjmp=no)])
 if test $bfd_cv_func_sigsetjmp = yes; then
   AC_DEFINE(HAVE_SIGSETJMP, 1, [Define if sigsetjmp is available. ])
 fi
-
-cgen_maint=no
-cgendir='$(srcdir)/../cgen'
-
-AC_ARG_ENABLE(cgen-maint,
-[  --enable-cgen-maint[=dir]    build cgen generated files],
-[case "${enableval}" in
-  yes)	cgen_maint=yes ;;
-  no)	cgen_maint=no ;;
-  *)
-	# argument is cgen install directory (not implemented yet).
-	# Having a `share' directory might be more appropriate for the .scm,
-	# .cpu, etc. files.
-	cgen_maint=yes
-	cgendir=${cgen_maint}/lib/cgen
-	;;
-esac])dnl
-AM_CONDITIONAL(CGEN_MAINT, test x${cgen_maint} = xyes)
-AC_SUBST(cgendir)
 
 using_cgen=no
 
@@ -146,56 +125,6 @@ AC_SUBST(BUILD_LIB_DEPS)
 SHARED_LDFLAGS=
 SHARED_LIBADD=
 SHARED_DEPENDENCIES=
-if test "$enable_shared" = "yes"; then
-# When building a shared libopcodes, link against the pic version of libiberty
-# so that apps that use libopcodes won't need libiberty just to satisfy any
-# libopcodes references.
-# We can't do that if a pic libiberty is unavailable since including non-pic
-# code would insert text relocations into libopcodes.
-# Note that linking against libbfd as we do here, which is itself linked
-# against libiberty, may not satisfy all the libopcodes libiberty references
-# since libbfd may not pull in the entirety of libiberty.
-changequote(,)dnl
-  x=`sed -n -e 's/^[ 	]*PICFLAG[ 	]*=[ 	]*//p' < ../libiberty/Makefile | sed -n '$p'`
-changequote([,])dnl
-  if test -n "$x"; then
-    SHARED_LIBADD="-L`pwd`/../libiberty/pic -liberty"
-  fi
-
-  case "${host}" in
-    *-*-cygwin*)
-      SHARED_LDFLAGS="-no-undefined"
-      SHARED_LIBADD="-L`pwd`/../bfd -lbfd -L`pwd`/../libiberty -liberty -L`pwd`/../intl -lintl -lcygwin"
-      ;;
-   *-*-darwin*)
-     SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.dylib ${SHARED_LIBADD}"
-     SHARED_DEPENDENCIES="../bfd/libbfd.la"
-     ;;
-    *)
-      case "$host_vendor" in
-        hp)
-          SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.sl ${SHARED_LIBADD}"
-	  ;;
-	*)
-          SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.so ${SHARED_LIBADD}"
-	  ;;
-      esac
-      SHARED_DEPENDENCIES="../bfd/libbfd.la"
-      ;;
-  esac
-
-  if test -n "$SHARED_LIBADD"; then
-    if test -n "$LIBM"; then
-      if test x"$bfd_cv_ld_as_needed" = xyes; then
-	# Link against libm only when needed.  Put -lc, -lm inside -Wl
-	# to stop libtool reordering these options.
-	SHARED_LIBADD="$SHARED_LIBADD -Wl,-lc,--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
-      else
-	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
-      fi
-    fi
-  fi
-fi
 AC_SUBST(SHARED_LDFLAGS)
 AC_SUBST(SHARED_LIBADD)
 AC_SUBST(SHARED_DEPENDENCIES)
@@ -230,8 +159,6 @@ done
 
 # Utility var, documents generic cgen support files.
 
-cgen_files="cgen-opc.o cgen-asm.o cgen-dis.o cgen-bitset.o"
-
 # We don't do any links based on the target system, just makefile config.
 
 if test x${all_targets} = xfalse ; then
@@ -249,10 +176,6 @@ if test x${all_targets} = xfalse ; then
 	*)		AC_MSG_ERROR(*** unknown target architecture $arch) ;;
 	esac
     done
-
-    if test $using_cgen = yes ; then
-	ta="$ta $cgen_files"
-    fi
 
     # Weed out duplicate .o files.
     f=""

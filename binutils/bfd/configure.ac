@@ -43,14 +43,7 @@ AC_USE_SYSTEM_EXTENSIONS
 
 #LT_INIT([dlopen])
 
-# AC_PLUGINS setting $plugins is called by ACX_LARGEFILE.
 ACX_LARGEFILE
-
-AM_CONDITIONAL(PLUGINS, test "$plugins" = "yes")
-
-if test "$plugins" = "yes"; then
-  enable_targets="$enable_targets plugin"
-fi
 
 AC_ARG_ENABLE(64-bit-bfd,
 [  --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)],
@@ -151,9 +144,7 @@ if test -z "$target" ; then
     AC_MSG_ERROR(Unrecognized target system type; please check config.sub.)
 fi
 
-AM_MAINTAINER_MODE
 AM_CONDITIONAL(GENINSRC_NEVER, false)
-AM_INSTALL_LIBBFD
 AC_EXEEXT
 
 host64=false
@@ -386,8 +377,8 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
+    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o $elf" ;;
+    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o $elf" ;;
     elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;

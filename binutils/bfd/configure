@@ -650,17 +650,8 @@ BFD_HOST_64_BIT_DEFINED
 BFD_HOST_64BIT_LONG_LONG
 BFD_HOST_64BIT_LONG
 HDEFINES
-bfdincludedir
-bfdlibdir
-target_noncanonical
-host_noncanonical
-INSTALL_LIBBFD_FALSE
-INSTALL_LIBBFD_TRUE
 GENINSRC_NEVER_FALSE
 GENINSRC_NEVER_TRUE
-MAINT
-MAINTAINER_MODE_FALSE
-MAINTAINER_MODE_TRUE
 WARN_WRITE_STRINGS
 NO_WERROR
 WARN_CFLAGS_FOR_BUILD
@@ -669,8 +660,6 @@ REPORT_BUGS_TEXI
 REPORT_BUGS_TO
 PKGVERSION
 DEBUGDIR
-PLUGINS_FALSE
-PLUGINS_TRUE
 EGREP
 GREP
 CPP
@@ -789,8 +778,6 @@ with_pkgversion
 with_bugurl
 enable_werror
 enable_build_warnings
-enable_maintainer_mode
-enable_install_libbfd
 with_system_zlib
 '
       ac_precious_vars='build_alias
@@ -1436,10 +1423,6 @@ Optional Features:
   --enable-separate-code  enable -z separate-code in ELF linker by default
   --enable-werror         treat compile warnings as errors
   --enable-build-warnings enable build-time compiler warnings
-  --enable-maintainer-mode
-                          enable make rules and dependencies not useful (and
-                          sometimes confusing) to the casual installer
-  --enable-install-libbfd controls installation of libbfd and related headers
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -5385,7 +5368,6 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
 #LT_INIT([dlopen])
 
-# AC_PLUGINS setting $plugins is called by ACX_LARGEFILE.
 
 # The tests for host and target for $enable_largefile require
 # canonical names.
@@ -5717,19 +5699,6 @@ fi
 
 
 
- if test "$plugins" = "yes"; then
-  PLUGINS_TRUE=
-  PLUGINS_FALSE='#'
-else
-  PLUGINS_TRUE='#'
-  PLUGINS_FALSE=
-fi
-
-
-if test "$plugins" = "yes"; then
-  enable_targets="$enable_targets plugin"
-fi
-
 # Check whether --enable-64-bit-bfd was given.
 if test "${enable_64_bit_bfd+set}" = set; then :
   enableval=$enable_64_bit_bfd; case "${enableval}" in
@@ -6035,29 +6004,6 @@ if test -z "$target" ; then
     as_fn_error $? "Unrecognized target system type; please check config.sub." "$LINENO" 5
 fi
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
-$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
-    # Check whether --enable-maintainer-mode was given.
-if test "${enable_maintainer_mode+set}" = set; then :
-  enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
-else
-  USE_MAINTAINER_MODE=no
-fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5
-$as_echo "$USE_MAINTAINER_MODE" >&6; }
-   if test $USE_MAINTAINER_MODE = yes; then
-  MAINTAINER_MODE_TRUE=
-  MAINTAINER_MODE_FALSE='#'
-else
-  MAINTAINER_MODE_TRUE='#'
-  MAINTAINER_MODE_FALSE=
-fi
-
-  MAINT=$MAINTAINER_MODE_TRUE
-
-
  if false; then
   GENINSRC_NEVER_TRUE=
   GENINSRC_NEVER_FALSE='#'
@@ -6065,62 +6011,6 @@ else
   GENINSRC_NEVER_TRUE='#'
   GENINSRC_NEVER_FALSE=
 fi
-
- case ${build_alias} in
-  "") build_noncanonical=${build} ;;
-  *) build_noncanonical=${build_alias} ;;
-esac
-
- case ${host_alias} in
-  "") host_noncanonical=${build_noncanonical} ;;
-  *) host_noncanonical=${host_alias} ;;
-esac
-
- case ${target_alias} in
-  "") target_noncanonical=${host_noncanonical} ;;
-  *) target_noncanonical=${target_alias} ;;
-esac
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to install libbfd" >&5
-$as_echo_n "checking whether to install libbfd... " >&6; }
-  # Check whether --enable-install-libbfd was given.
-if test "${enable_install_libbfd+set}" = set; then :
-  enableval=$enable_install_libbfd; install_libbfd_p=$enableval
-else
-  if test "${host}" = "${target}" || test "$enable_shared" = "yes"; then
-        install_libbfd_p=yes
-      else
-        install_libbfd_p=no
-      fi
-fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $install_libbfd_p" >&5
-$as_echo "$install_libbfd_p" >&6; }
-   if test $install_libbfd_p = yes; then
-  INSTALL_LIBBFD_TRUE=
-  INSTALL_LIBBFD_FALSE='#'
-else
-  INSTALL_LIBBFD_TRUE='#'
-  INSTALL_LIBBFD_FALSE=
-fi
-
-  # Need _noncanonical variables for this.
-
-
-
-
-  # libbfd.a is a host library containing target dependent code
-  bfdlibdir='$(libdir)'
-  bfdincludedir='$(includedir)'
-  if test "${host}" != "${target}"; then
-    bfdlibdir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/lib'
-    bfdincludedir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/include'
-  fi
-
-
-
-
-
 
 
 
@@ -6888,8 +6778,8 @@ do
     # This list is alphabetized to make it easy to compare
     # with the two vector lists in targets.c.  For the same reason,
     # use one entry per line, even though this leads to long lines.
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o elf-nacl.o $elf" ;;
+    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o $elf" ;;
+    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o $elf" ;;
     elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
 
     "")				 ;;
@@ -7257,20 +7147,8 @@ else
   am__EXEEXT_FALSE=
 fi
 
-if test -z "${PLUGINS_TRUE}" && test -z "${PLUGINS_FALSE}"; then
-  as_fn_error $? "conditional \"PLUGINS\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${MAINTAINER_MODE_TRUE}" && test -z "${MAINTAINER_MODE_FALSE}"; then
-  as_fn_error $? "conditional \"MAINTAINER_MODE\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${GENINSRC_NEVER_TRUE}" && test -z "${GENINSRC_NEVER_FALSE}"; then
   as_fn_error $? "conditional \"GENINSRC_NEVER\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${INSTALL_LIBBFD_TRUE}" && test -z "${INSTALL_LIBBFD_FALSE}"; then
-  as_fn_error $? "conditional \"INSTALL_LIBBFD\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

@@ -629,21 +629,9 @@ SHARED_LIBADD
 SHARED_LDFLAGS
 BUILD_LIB_DEPS
 BUILD_LIBS
-cgendir
-CGEN_MAINT_FALSE
-CGEN_MAINT_TRUE
 HDEFINES
 EXEEXT_FOR_BUILD
 CC_FOR_BUILD
-bfdincludedir
-bfdlibdir
-target_noncanonical
-host_noncanonical
-INSTALL_LIBBFD_FALSE
-INSTALL_LIBBFD_TRUE
-MAINT
-MAINTAINER_MODE_FALSE
-MAINTAINER_MODE_TRUE
 NO_WMISSING_FIELD_INITIALIZERS
 WARN_WRITE_STRINGS
 NO_WERROR
@@ -756,9 +744,6 @@ enable_silent_rules
 enable_targets
 enable_werror
 enable_build_warnings
-enable_maintainer_mode
-enable_install_libbfd
-enable_cgen_maint
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1397,11 +1382,6 @@ Optional Features:
   --enable-targets        alternative target configurations
   --enable-werror         treat compile warnings as errors
   --enable-build-warnings enable build-time compiler warnings
-  --enable-maintainer-mode
-                          enable make rules and dependencies not useful (and
-                          sometimes confusing) to the casual installer
-  --enable-install-libbfd controls installation of libbfd and related headers
-  --enable-cgen-maint=dir    build cgen generated files
 
 Some influential environment variables:
   CC          C compiler command
@@ -5192,85 +5172,6 @@ if test -z "$target" ; then
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
-$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
-    # Check whether --enable-maintainer-mode was given.
-if test "${enable_maintainer_mode+set}" = set; then :
-  enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
-else
-  USE_MAINTAINER_MODE=no
-fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5
-$as_echo "$USE_MAINTAINER_MODE" >&6; }
-   if test $USE_MAINTAINER_MODE = yes; then
-  MAINTAINER_MODE_TRUE=
-  MAINTAINER_MODE_FALSE='#'
-else
-  MAINTAINER_MODE_TRUE='#'
-  MAINTAINER_MODE_FALSE=
-fi
-
-  MAINT=$MAINTAINER_MODE_TRUE
-
-
- case ${build_alias} in
-  "") build_noncanonical=${build} ;;
-  *) build_noncanonical=${build_alias} ;;
-esac
-
- case ${host_alias} in
-  "") host_noncanonical=${build_noncanonical} ;;
-  *) host_noncanonical=${host_alias} ;;
-esac
-
- case ${target_alias} in
-  "") target_noncanonical=${host_noncanonical} ;;
-  *) target_noncanonical=${target_alias} ;;
-esac
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to install libbfd" >&5
-$as_echo_n "checking whether to install libbfd... " >&6; }
-  # Check whether --enable-install-libbfd was given.
-if test "${enable_install_libbfd+set}" = set; then :
-  enableval=$enable_install_libbfd; install_libbfd_p=$enableval
-else
-  if test "${host}" = "${target}" || test "$enable_shared" = "yes"; then
-        install_libbfd_p=yes
-      else
-        install_libbfd_p=no
-      fi
-fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $install_libbfd_p" >&5
-$as_echo "$install_libbfd_p" >&6; }
-   if test $install_libbfd_p = yes; then
-  INSTALL_LIBBFD_TRUE=
-  INSTALL_LIBBFD_FALSE='#'
-else
-  INSTALL_LIBBFD_TRUE='#'
-  INSTALL_LIBBFD_FALSE=
-fi
-
-  # Need _noncanonical variables for this.
-
-
-
-
-  # libbfd.a is a host library containing target dependent code
-  bfdlibdir='$(libdir)'
-  bfdincludedir='$(includedir)'
-  if test "${host}" != "${target}"; then
-    bfdlibdir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/lib'
-    bfdincludedir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/include'
-  fi
-
-
-
-
-
-
-
 
 . ${srcdir}/../bfd/configure.host
 
@@ -5405,33 +5306,6 @@ $as_echo "#define HAVE_SIGSETJMP 1" >>confdefs.h
 
 fi
 
-cgen_maint=no
-cgendir='$(srcdir)/../cgen'
-
-# Check whether --enable-cgen-maint was given.
-if test "${enable_cgen_maint+set}" = set; then :
-  enableval=$enable_cgen_maint; case "${enableval}" in
-  yes)	cgen_maint=yes ;;
-  no)	cgen_maint=no ;;
-  *)
-	# argument is cgen install directory (not implemented yet).
-	# Having a `share' directory might be more appropriate for the .scm,
-	# .cpu, etc. files.
-	cgen_maint=yes
-	cgendir=${cgen_maint}/lib/cgen
-	;;
-esac
-fi
- if test x${cgen_maint} = xyes; then
-  CGEN_MAINT_TRUE=
-  CGEN_MAINT_FALSE='#'
-else
-  CGEN_MAINT_TRUE='#'
-  CGEN_MAINT_FALSE=
-fi
-
-
-
 using_cgen=no
 
 # Check if linker supports --as-needed and --no-as-needed options
@@ -5471,54 +5345,6 @@ BUILD_LIB_DEPS="$BUILD_LIB_DEPS $LIBINTL_DEP"
 SHARED_LDFLAGS=
 SHARED_LIBADD=
 SHARED_DEPENDENCIES=
-if test "$enable_shared" = "yes"; then
-# When building a shared libopcodes, link against the pic version of libiberty
-# so that apps that use libopcodes won't need libiberty just to satisfy any
-# libopcodes references.
-# We can't do that if a pic libiberty is unavailable since including non-pic
-# code would insert text relocations into libopcodes.
-# Note that linking against libbfd as we do here, which is itself linked
-# against libiberty, may not satisfy all the libopcodes libiberty references
-# since libbfd may not pull in the entirety of libiberty.
-  x=`sed -n -e 's/^[ 	]*PICFLAG[ 	]*=[ 	]*//p' < ../libiberty/Makefile | sed -n '$p'`
-  if test -n "$x"; then
-    SHARED_LIBADD="-L`pwd`/../libiberty/pic -liberty"
-  fi
-
-  case "${host}" in
-    *-*-cygwin*)
-      SHARED_LDFLAGS="-no-undefined"
-      SHARED_LIBADD="-L`pwd`/../bfd -lbfd -L`pwd`/../libiberty -liberty -L`pwd`/../intl -lintl -lcygwin"
-      ;;
-   *-*-darwin*)
-     SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.dylib ${SHARED_LIBADD}"
-     SHARED_DEPENDENCIES="../bfd/libbfd.la"
-     ;;
-    *)
-      case "$host_vendor" in
-        hp)
-          SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.sl ${SHARED_LIBADD}"
-	  ;;
-	*)
-          SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.so ${SHARED_LIBADD}"
-	  ;;
-      esac
-      SHARED_DEPENDENCIES="../bfd/libbfd.la"
-      ;;
-  esac
-
-  if test -n "$SHARED_LIBADD"; then
-    if test -n "$LIBM"; then
-      if test x"$bfd_cv_ld_as_needed" = xyes; then
-	# Link against libm only when needed.  Put -lc, -lm inside -Wl
-	# to stop libtool reordering these options.
-	SHARED_LIBADD="$SHARED_LIBADD -Wl,-lc,--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
-      else
-	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
-      fi
-    fi
-  fi
-fi
 
 
 
@@ -5553,8 +5379,6 @@ done
 
 # Utility var, documents generic cgen support files.
 
-cgen_files="cgen-opc.o cgen-asm.o cgen-dis.o cgen-bitset.o"
-
 # We don't do any links based on the target system, just makefile config.
 
 if test x${all_targets} = xfalse ; then
@@ -5572,10 +5396,6 @@ if test x${all_targets} = xfalse ; then
 	*)		as_fn_error $? "*** unknown target architecture $arch" "$LINENO" 5 ;;
 	esac
     done
-
-    if test $using_cgen = yes ; then
-	ta="$ta $cgen_files"
-    fi
 
     # Weed out duplicate .o files.
     f=""
@@ -5734,18 +5554,6 @@ else
   am__EXEEXT_FALSE=
 fi
 
-if test -z "${MAINTAINER_MODE_TRUE}" && test -z "${MAINTAINER_MODE_FALSE}"; then
-  as_fn_error $? "conditional \"MAINTAINER_MODE\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${INSTALL_LIBBFD_TRUE}" && test -z "${INSTALL_LIBBFD_FALSE}"; then
-  as_fn_error $? "conditional \"INSTALL_LIBBFD\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${CGEN_MAINT_TRUE}" && test -z "${CGEN_MAINT_FALSE}"; then
-  as_fn_error $? "conditional \"CGEN_MAINT\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0

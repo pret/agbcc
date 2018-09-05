@@ -58,32 +58,3 @@ else
   test x"${bfd_cv_build_exeext}" != xno && EXEEXT_FOR_BUILD=${bfd_cv_build_exeext}
 fi
 AC_SUBST(EXEEXT_FOR_BUILD)])dnl
-
-AC_DEFUN([AM_INSTALL_LIBBFD],
-[AC_MSG_CHECKING([whether to install libbfd])
-  AC_ARG_ENABLE(install-libbfd,
-[  --enable-install-libbfd controls installation of libbfd and related headers],
-      install_libbfd_p=$enableval,
-      if test "${host}" = "${target}" || test "$enable_shared" = "yes"; then
-        install_libbfd_p=yes
-      else
-        install_libbfd_p=no
-      fi)
-  AC_MSG_RESULT($install_libbfd_p)
-  AM_CONDITIONAL(INSTALL_LIBBFD, test $install_libbfd_p = yes)
-  # Need _noncanonical variables for this.
-  ACX_NONCANONICAL_HOST
-  ACX_NONCANONICAL_TARGET
-  # libbfd.a is a host library containing target dependent code
-  bfdlibdir='$(libdir)'
-  bfdincludedir='$(includedir)'
-  if test "${host}" != "${target}"; then
-    bfdlibdir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/lib'
-    bfdincludedir='$(exec_prefix)/$(host_noncanonical)/$(target_noncanonical)/include'
-  fi
-  AC_SUBST(bfdlibdir)
-  AM_SUBST_NOTMAKE(bfdlibdir)
-  AC_SUBST(bfdincludedir)
-  AM_SUBST_NOTMAKE(bfdincludedir)
-]
-)

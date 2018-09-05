@@ -32,7 +32,6 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -108,7 +107,6 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@INSTALL_LIBBFD_FALSE@am__append_1 = -rpath $(rpath_bfdlibdir)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
@@ -184,35 +182,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(bfdincludedir)"
-DATA = $(bfdinclude_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -280,7 +249,6 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
-MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NO_WERROR = @NO_WERROR@
@@ -316,11 +284,6 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 archdefs = @archdefs@
-@INSTALL_LIBBFD_FALSE@bfdincludedir = 
-@INSTALL_LIBBFD_TRUE@bfdincludedir = @bfdincludedir@
-# Empty these so that the respective installation directories will not be created.
-@INSTALL_LIBBFD_FALSE@bfdlibdir = 
-@INSTALL_LIBBFD_TRUE@bfdlibdir = @bfdlibdir@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -328,7 +291,6 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 builddir = @builddir@
-cgendir = @cgendir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
@@ -337,7 +299,6 @@ exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
-host_noncanonical = @host_noncanonical@
 host_os = @host_os@
 host_vendor = @host_vendor@
 htmldir = @htmldir@
@@ -362,7 +323,6 @@ sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
 target_cpu = @target_cpu@
-target_noncanonical = @target_noncanonical@
 target_os = @target_os@
 target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
@@ -382,10 +342,13 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
 LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
 	$(LDFLAGS_FOR_BUILD) -o $@
 
-libopcodes_a_LDFLAGS = $(am__append_1) -release `cat \
+libopcodes_a_LDFLAGS = -rpath $(rpath_bfdlibdir) -release `cat \
 	../bfd/libtool-soversion` @SHARED_LDFLAGS@
-@INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
-@INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@
+
+# Empty these so that the respective installation directories will not be created.
+bfdlibdir = 
+bfdincludedir = 
+rpath_bfdlibdir = @bfdlibdir@
 
 # This is where bfd.h lives.
 BFD_H = ../bfd/bfd.h
@@ -452,18 +415,6 @@ POTFILES = $(HFILES) $(CFILES)
 CLEANFILES = \
 	libopcodes.a stamp-lib
 
-CGENDIR = @cgendir@
-CPUDIR = $(srcdir)/../cpu
-CGEN = "`if test -f ../guile/libguile/guile ; then echo ../guile/libguile/guile; else echo guile ; fi` -l ${cgendir}/guile.scm -s"
-CGENFLAGS = -v
-CGENDEPS = \
-	$(CGENDIR)/desc.scm $(CGENDIR)/desc-cpu.scm \
-	$(CGENDIR)/opcodes.scm $(CGENDIR)/opc-asmdis.scm \
-	$(CGENDIR)/opc-ibld.scm $(CGENDIR)/opc-itab.scm \
-	$(CGENDIR)/opc-opinst.scm \
-	cgen-asm.in cgen-dis.in cgen-ibld.in
-
-CGEN_CPUS = 
 EPIPHANY_DEPS = 
 FR30_DEPS = 
 FRV_DEPS = 
@@ -478,7 +429,6 @@ OR1K_DEPS =
 XC16X_DEPS = 
 XSTORMY16_DEPS = 
 MOSTLYCLEANFILES = 
-MAINTAINERCLEANFILES = 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -486,7 +436,7 @@ all: config.h
 .SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -512,9 +462,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 
-$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	$(am__cd) $(srcdir) && $(AUTOCONF)
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
@@ -525,7 +475,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status config.h
-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+$(srcdir)/config.in:  $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
@@ -571,27 +521,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-install-bfdincludeDATA: $(bfdinclude_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(bfdinclude_DATA)'; test -n "$(bfdincludedir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bfdincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bfdincludedir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(bfdincludedir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(bfdincludedir)" || exit $$?; \
-	done
-
-uninstall-bfdincludeDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bfdinclude_DATA)'; test -n "$(bfdincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(bfdincludedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -700,12 +629,9 @@ distclean-tags:
 	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) $(DATA) config.h
+all-am: Makefile $(LIBRARIES) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bfdincludedir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -738,7 +664,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-recursive
 
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
@@ -765,7 +690,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-bfdincludeDATA
+install-data-am:
 
 install-dvi: install-dvi-recursive
 
@@ -815,7 +740,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-bfdincludeDATA
+uninstall-am:
 
 .MAKE: $(am__recursive_targets) all install-am install-strip
 
@@ -824,15 +749,15 @@ uninstall-am: uninstall-bfdincludeDATA
 	clean-generic clean-noinstLIBRARIES cscope cscopelist-am ctags \
 	ctags-am distclean distclean-compile distclean-generic \
 	distclean-hdr distclean-tags dvi dvi-am html html-am info \
-	info-am install install-am install-bfdincludeDATA install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
+	info-am install install-am install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-bfdincludeDATA
+	uninstall-am
 
 .PRECIOUS: Makefile
 
@@ -843,24 +768,9 @@ disassemble.o: disassemble.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='disassemble.c' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE_FOR_BUILD) -c -o $@ @archdefs@ $(srcdir)/disassemble.c
-po/POTFILES.in: @MAINT@ Makefile
+po/POTFILES.in: Makefile
 	for f in $(POTFILES); do echo $$f; done | LC_ALL=C sort > tmp \
 	  && mv tmp $(srcdir)/po/POTFILES.in
-
-run-cgen:
-	$(SHELL) $(srcdir)/cgen.sh opcodes $(srcdir) $(CGEN) \
-	  $(CGENDIR) "$(CGENFLAGS)" $(arch) $(prefix) $(archfile) $(opcfile) \
-	  "$(options)" "$(extrafiles)"
-	touch stamp-${prefix}
-.PHONY: run-cgen
-
-# Maintainer utility rule to regenerate all cgen files.
-run-cgen-all:
-	for c in $(CGEN_CPUS) ; \
-	do \
-		$(MAKE) stamp-$$c || exit 1 ; \
-	done
-.PHONY: run-cgen-all
 
 opc2c$(EXEEXT_FOR_BUILD): opc2c.o $(BUILD_LIBS_DEPS)
 	$(LINK_FOR_BUILD) opc2c.o $(BUILD_LIBS)

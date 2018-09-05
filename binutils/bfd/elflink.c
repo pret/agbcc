@@ -5191,32 +5191,6 @@ error_free_dyn:
       && is_elf_hash_table (htab)
       && (info->strip != strip_all && info->strip != strip_debugger))
     {
-      asection *stabstr;
-
-      stabstr = bfd_get_section_by_name (abfd, ".stabstr");
-      if (stabstr != NULL)
-	{
-	  bfd_size_type string_offset = 0;
-	  asection *stab;
-
-	  for (stab = abfd->sections; stab; stab = stab->next)
-	    if (CONST_STRNEQ (stab->name, ".stab")
-		&& (!stab->name[5] ||
-		    (stab->name[5] == '.' && ISDIGIT (stab->name[6])))
-		&& (stab->flags & SEC_MERGE) == 0
-		&& !bfd_is_abs_section (stab->output_section))
-	      {
-		struct bfd_elf_section_data *secdata;
-
-		secdata = elf_section_data (stab);
-		if (! _bfd_link_section_stabs (abfd, &htab->stab_info, stab,
-					       stabstr, &secdata->sec_info,
-					       &string_offset))
-		  goto error_return;
-		if (secdata->sec_info)
-		  stab->sec_info_type = SEC_INFO_TYPE_STABS;
-	    }
-	}
     }
 
   if (is_elf_hash_table (htab) && add_needed)
@@ -9803,7 +9777,6 @@ elf_section_ignore_discarded_relocs (asection *sec)
 
   switch (sec->sec_info_type)
     {
-    case SEC_INFO_TYPE_STABS:
     case SEC_INFO_TYPE_EH_FRAME:
     case SEC_INFO_TYPE_EH_FRAME_ENTRY:
       return TRUE;
@@ -10669,13 +10642,6 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 	}
       else switch (o->sec_info_type)
 	{
-	case SEC_INFO_TYPE_STABS:
-	  if (! (_bfd_write_section_stabs
-		 (output_bfd,
-		  &elf_hash_table (flinfo->info)->stab_info,
-		  o, &elf_section_data (o)->sec_info, contents)))
-	    return FALSE;
-	  break;
 	case SEC_INFO_TYPE_MERGE:
 	  if (! _bfd_write_merged_section (output_bfd, o,
 					   elf_section_data (o)->sec_info))
@@ -12241,13 +12207,6 @@ bfd_elf_final_link (bfd *abfd, struct bfd_link_info *info)
 	goto error_return;
     }
 
-  /* If we have optimized stabs strings, output them.  */
-  if (htab->stab_info.stabstr != NULL)
-    {
-      if (!_bfd_write_stab_strings (abfd, &htab->stab_info))
-	goto error_return;
-    }
-
   if (! _bfd_elf_write_section_eh_frame_hdr (abfd, info))
     goto error_return;
 
@@ -13513,35 +13472,6 @@ bfd_elf_discard_info (bfd *output_bfd, struct bfd_link_info *info)
   if (info->traditional_format
       || !is_elf_hash_table (info->hash))
     return 0;
-
-  o = bfd_get_section_by_name (output_bfd, ".stab");
-  if (o != NULL)
-    {
-      asection *i;
-
-      for (i = o->map_head.s; i != NULL; i = i->map_head.s)
-	{
-	  if (i->size == 0
-	      || i->reloc_count == 0
-	      || i->sec_info_type != SEC_INFO_TYPE_STABS)
-	    continue;
-
-	  abfd = i->owner;
-	  if (bfd_get_flavour (abfd) != bfd_target_elf_flavour)
-	    continue;
-
-	  if (!init_reloc_cookie_for_section (&cookie, info, i))
-	    return -1;
-
-	  if (_bfd_discard_section_stabs (abfd, i,
-					  elf_section_data (i)->sec_info,
-					  bfd_elf_reloc_symbol_deleted_p,
-					  &cookie))
-	    changed = 1;
-
-	  fini_reloc_cookie_for_section (&cookie, i);
-	}
-    }
 
   o = NULL;
   if (info->eh_frame_hdr_type != COMPACT_EH_HDR)

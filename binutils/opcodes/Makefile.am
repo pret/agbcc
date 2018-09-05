@@ -37,17 +37,12 @@ LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
 	$(LDFLAGS_FOR_BUILD) -o $@
 
 libopcodes_a_LDFLAGS =
-if INSTALL_LIBBFD
-bfdlibdir = @bfdlibdir@
-bfdincludedir = @bfdincludedir@
-bfdinclude_DATA = $(INCDIR)/dis-asm.h
-else
+
 # Empty these so that the respective installation directories will not be created.
 bfdlibdir =
 bfdincludedir =
 rpath_bfdlibdir = @bfdlibdir@
 libopcodes_a_LDFLAGS += -rpath $(rpath_bfdlibdir)
-endif
 
 # This is where bfd.h lives.
 BFD_H = ../bfd/bfd.h
@@ -129,27 +124,13 @@ noinst_LIBRARIES = libopcodes.a
 #libopcodes.a: stamp-lib ; @true
 
 POTFILES = $(HFILES) $(CFILES)
-po/POTFILES.in: @MAINT@ Makefile
+po/POTFILES.in: Makefile
 	for f in $(POTFILES); do echo $$f; done | LC_ALL=C sort > tmp \
 	  && mv tmp $(srcdir)/po/POTFILES.in
 
 CLEANFILES = \
 	libopcodes.a stamp-lib
 
-
-CGENDIR = @cgendir@
-CPUDIR = $(srcdir)/../cpu
-CGEN = "`if test -f ../guile/libguile/guile ; then echo ../guile/libguile/guile; else echo guile ; fi` -l ${cgendir}/guile.scm -s"
-CGENFLAGS = -v
-
-CGENDEPS = \
-	$(CGENDIR)/desc.scm $(CGENDIR)/desc-cpu.scm \
-	$(CGENDIR)/opcodes.scm $(CGENDIR)/opc-asmdis.scm \
-	$(CGENDIR)/opc-ibld.scm $(CGENDIR)/opc-itab.scm \
-	$(CGENDIR)/opc-opinst.scm \
-	cgen-asm.in cgen-dis.in cgen-ibld.in
-
-CGEN_CPUS =
 
 EPIPHANY_DEPS =
 FR30_DEPS =
@@ -165,24 +146,7 @@ OR1K_DEPS =
 XC16X_DEPS =
 XSTORMY16_DEPS =
 
-run-cgen:
-	$(SHELL) $(srcdir)/cgen.sh opcodes $(srcdir) $(CGEN) \
-	  $(CGENDIR) "$(CGENFLAGS)" $(arch) $(prefix) $(archfile) $(opcfile) \
-	  "$(options)" "$(extrafiles)"
-	touch stamp-${prefix}
-.PHONY: run-cgen
-
-# Maintainer utility rule to regenerate all cgen files.
-run-cgen-all:
-	for c in $(CGEN_CPUS) ; \
-	do \
-		$(MAKE) stamp-$$c || exit 1 ; \
-	done
-.PHONY: run-cgen-all
-
 MOSTLYCLEANFILES =
-
-MAINTAINERCLEANFILES =
 
 opc2c$(EXEEXT_FOR_BUILD): opc2c.o $(BUILD_LIBS_DEPS)
 	$(LINK_FOR_BUILD) opc2c.o $(BUILD_LIBS)

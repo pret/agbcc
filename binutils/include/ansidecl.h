@@ -54,6 +54,7 @@ and then test "#if HAVE_GCC_VERSION(2,7)".
 
 So instead we use the macro below and test it against specific values.  */
 
+#define PTR void *
 /* This macro simplifies testing whether we are using gcc, and if it
    is of a particular minimum version. (Both major & minor numbers are
    significant.)  This macro will evaluate to 0 if we are not using
@@ -62,48 +63,12 @@ So instead we use the macro below and test it against specific values.  */
 #define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
 #endif /* GCC_VERSION */
 
-#if defined (__STDC__) || defined(__cplusplus) || defined (_AIX) || (defined (__mips) && defined (_SYSTYPE_SVR4)) || defined(_WIN32)
 /* All known AIX compilers implement these things (but don't always
    define __STDC__).  The RISC/OS MIPS compiler defines these things
    in SVR4 mode, but does not define __STDC__.  */
 /* eraxxon@alumni.rice.edu: The Compaq C++ compiler, unlike many other
    C++ compilers, does not define __STDC__, though it acts as if this
    was so. (Verified versions: 5.7, 6.2, 6.3, 6.5) */
-
-#define PTR		void *
-
-#undef const
-#undef volatile
-#undef signed
-
-/* inline requires special treatment; it's in C99, and GCC >=2.7 supports
-   it too, but it's not in C89.  */
-#undef inline
-#if __STDC_VERSION__ >= 199901L || defined(__cplusplus) || (defined(__SUNPRO_C) && defined(__C99FEATURES__))
-/* it's a keyword */
-#else
-# if GCC_VERSION >= 2007
-#  define inline __inline__   /* __inline__ prevents -pedantic warnings */
-# else
-#  define inline  /* nothing */
-# endif
-#endif
-
-#else	/* Not ANSI C.  */
-
-#define PTR		char *
-
-/* some systems define these in header files for non-ansi mode */
-#undef const
-#undef volatile
-#undef signed
-#undef inline
-#define const
-#define volatile
-#define signed
-#define inline
-
-#endif	/* ANSI C.  */
 
 /* Define macros for some gcc attributes.  This permits us to use the
    macros freely, and know that they will come into play for the

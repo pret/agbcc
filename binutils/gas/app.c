@@ -26,12 +26,6 @@
 
 #include "as.h"
 
-#if (__STDC__ != 1)
-#ifndef const
-#define const  /* empty */
-#endif
-#endif
-
 #ifdef H_TICK_HEX
 int enable_h_tick_hex = 0;
 #endif
@@ -313,39 +307,6 @@ do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
   /* Character that started the string we're working on.  */
   static char quotechar;
 
-  /*State 0: beginning of normal line
-	  1: After first whitespace on line (flush more white)
-	  2: After first non-white (opcode) on line (keep 1white)
-	  3: after second white on line (into operands) (flush white)
-	  4: after putting out a .linefile, put out digits
-	  5: parsing a string, then go to old-state
-	  6: putting out \ escape in a "d string.
-	  7: no longer used
-	  8: no longer used
-	  9: After seeing symbol char in state 3 (keep 1white after symchar)
-	 10: After seeing whitespace in state 9 (keep white before symchar)
-	 11: After seeing a symbol character in state 0 (eg a label definition)
-	 -1: output string in out_string and go to the state in old_state
-	 -2: flush text until a '*' '/' is seen, then go to state old_state
-#ifdef TC_V850
-	 12: After seeing a dash, looking for a second dash as a start
-	     of comment.
-#endif
-#ifdef DOUBLEBAR_PARALLEL
-	 13: After seeing a vertical bar, looking for a second
-	     vertical bar as a parallel expression separator.
-#endif
-#ifdef TC_PREDICATE_START_CHAR
-	 14: After seeing a predicate start character at state 0, looking
-	     for a predicate end character as predicate.
-	 15: After seeing a predicate start character at state 1, looking
-	     for a predicate end character as predicate.
-#endif
-#ifdef TC_Z80
-	 16: After seeing an 'a' or an 'A' at the start of a symbol
-	 17: After seeing an 'f' or an 'F' in state 16
-#endif
-	  */
 
   /* I added states 9 and 10 because the MIPS ECOFF assembler uses
      constructs like ``.loc 1 20''.  This was turning into ``.loc

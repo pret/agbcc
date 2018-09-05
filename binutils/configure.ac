@@ -128,7 +128,7 @@ build_tools="build-m4"
 
 # these libraries are used by various programs built for the host environment
 #f
-host_libs="intl libiberty opcodes bfd libcpp libdecnumber libelf"
+host_libs="libiberty opcodes bfd libcpp  libelf"
 
 # these tools are built for the host environment
 # Note, the powerpc-eabi build depends on sim occurring before gdb in order to
@@ -136,7 +136,7 @@ host_libs="intl libiberty opcodes bfd libcpp libdecnumber libelf"
 # binutils, gas and ld appear in that order because it makes sense to run
 # "make check" in that particular order.
 # If --enable-gold is used, "gold" may replace "ld".
-host_tools="binutils gas ld gcc etc m4 utils"
+host_tools="binutils gas ld etc m4"
 
 # these libraries are built for the target environment, and are built after
 # the host libraries and the host tools (which may be a cross compiler)
@@ -224,22 +224,9 @@ if test x$with_system_zlib = xyes ; then
   noconfigdirs="$noconfigdirs zlib"
 fi
 
-# some tools are so dependent upon X11 that if we're not building with X, 
-# it's not even worth trying to configure, much less build, that tool.
-
-case ${with_x} in
-  yes | "") ;; # the default value for this tree is that X11 is available
-  no)
-    skipdirs="${skipdirs} tk itcl libgui"
-    # We won't be able to build gdbtk without X.
-    enable_gdbtk=no 
-    ;;
-  *)  echo "*** bad value \"${with_x}\" for -with-x flag; ignored" 1>&2 ;;
-esac
-
 # Some are only suitable for cross toolchains.
 # Remove these if host=target.
-cross_only="target-libgloss target-newlib target-opcodes"
+cross_only="target-opcodes"
 
 case $is_cross_compiler in
   no) skipdirs="${skipdirs} ${cross_only}" ;;
@@ -249,16 +236,9 @@ esac
 # --without-newlib.
 if test x"${with_headers}" != x && test x"${with_headers}" != xno \
    && test x"${with_libs}" != x && test x"${with_libs}" != xno ; then
-  if test x"${with_newlib}" = x ; then
-    with_newlib=no
-  fi
 fi
 
-# Recognize --with-newlib/--without-newlib.
-case ${with_newlib} in
-  no) skipdirs="${skipdirs} target-newlib" ;;
-  yes) skipdirs=`echo " ${skipdirs} " | sed -e 's/ target-newlib / /'` ;;
-esac
+skipdirs="${skipdirs} target-newlib" ;;
 
 AC_ARG_ENABLE(as-accelerator-for,
 [AS_HELP_STRING([--enable-as-accelerator-for=ARG],
@@ -557,13 +537,6 @@ case "${target}" in
   arm*-*-*)
     libgloss_dir=arm
     ;;
-esac
-
-# If we aren't building newlib, then don't build libgloss, since libgloss
-# depends upon some newlib header files.
-case "${noconfigdirs}" in
-  *target-libgloss*) ;;
-  *target-newlib*) noconfigdirs="$noconfigdirs target-libgloss" ;;
 esac
 
 # Work in distributions that contain no compiler tools, like Autoconf.
@@ -1695,14 +1668,6 @@ else
   extra_host_args="$extra_host_args --with-system-zlib"
 fi
 
-# If using newlib, add --with-newlib to the extra_host_args so that gcc/configure
-# can detect this case.
-
-if test x${with_newlib} != xno && echo " ${target_configdirs} " | grep " target-newlib " > /dev/null 2>&1 ; then
-  with_newlib=yes
-  extra_host_args="$extra_host_args --with-newlib"
-fi
-
 # Handle ${copy_dirs}
 set fnord ${copy_dirs}
 shift
@@ -2327,12 +2292,6 @@ if test x${enable_multilib} = x ; then
   target_configargs="--enable-multilib ${target_configargs}"
 fi
 
-# Pass --with-newlib if appropriate.  Note that target_configdirs has
-# changed from the earlier setting of with_newlib.
-if test x${with_newlib} != xno && echo " ${target_configdirs} " | grep " newlib " > /dev/null 2>&1 && test -d ${srcdir}/newlib ; then
-  target_configargs="--with-newlib ${target_configargs}"
-fi
-
 # Different target subdirs use different values of certain variables
 # (notably CXX).  Worse, multilibs use *lots* of different values.
 # Worse yet, autoconf 2.5x makes some of these 'precious', meaning that
@@ -2348,69 +2307,6 @@ fi
 target_configargs="--cache-file=./config.cache ${target_configargs}"
 
 FLAGS_FOR_TARGET=
-case " $target_configdirs " in
- *" newlib "*)
-  case " $target_configargs " in
-  *" --with-newlib "*)
-   case "$target" in
-    *-cygwin*)
-      FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L$$r/$(TARGET_SUBDIR)/winsup/cygwin -isystem $$s/winsup/cygwin/include'
-      ;;
-   esac
-
-   # If we're not building GCC, don't discard standard headers.
-   if test -d ${srcdir}/gcc; then
-     FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -nostdinc'
-
-     if test "${build}" != "${host}"; then
-       # On Canadian crosses, CC_FOR_TARGET will have already been set
-       # by `configure', so we won't have an opportunity to add -Bgcc/
-       # to it.  This is right: we don't want to search that directory
-       # for binaries, but we want the header files in there, so add
-       # them explicitly.
-       FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -isystem $$r/$(HOST_SUBDIR)/gcc/include -isystem $$r/$(HOST_SUBDIR)/gcc/include-fixed'
-
-       # Someone might think of using the pre-installed headers on
-       # Canadian crosses, in case the installed compiler is not fully
-       # compatible with the compiler being built.  In this case, it
-       # would be better to flag an error than risking having
-       # incompatible object files being constructed.  We can't
-       # guarantee that an error will be flagged, but let's hope the
-       # compiler will do it, when presented with incompatible header
-       # files.
-     fi
-   fi
-
-   case "${target}-${is_cross_compiler}" in
-   i[[3456789]]86-*-linux*-no)
-      # Here host == target, so we don't need to build gcc,
-      # so we don't want to discard standard headers.
-      FLAGS_FOR_TARGET=`echo " $FLAGS_FOR_TARGET " | sed -e 's/ -nostdinc / /'`
-      ;;
-   *)
-      # If we're building newlib, use its generic headers last, but search
-      # for any libc-related directories first (so make it the last -B
-      # switch).
-      FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -B$$r/$(TARGET_SUBDIR)/newlib/ -isystem $$r/$(TARGET_SUBDIR)/newlib/targ-include -isystem $$s/newlib/libc/include'
-
-      # If we're building libgloss, find the startup file, simulator library
-      # and linker script.
-      case " $target_configdirs " in
-	*" libgloss "*)
-	# Look for startup file, simulator library and maybe linker script.
-	FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -B$$r/$(TARGET_SUBDIR)/libgloss/'"$libgloss_dir"
-	# Look for libnosys.a in case the target needs it.
-	FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L$$r/$(TARGET_SUBDIR)/libgloss/libnosys'
-	# Most targets have the linker script in the source directory.
-	FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L$$s/libgloss/'"$libgloss_dir"
-	;;
-      esac
-      ;;
-   esac
-   ;;
-  esac
-  ;;
-esac
 
 case "$target" in
   x86_64-*mingw* | *-w64-mingw*)
@@ -2471,9 +2367,6 @@ AC_SUBST(RPATH_ENVVAR)
 AC_SUBST(GCC_SHLIB_SUBDIR)
 AC_SUBST(tooldir)
 AC_SUBST(build_tooldir)
-AC_SUBST(CONFIGURE_GDB_TK)
-AC_SUBST(GDB_TK)
-AC_SUBST(INSTALL_GDB_TK)
 
 # Build module lists & subconfigure args.
 AC_SUBST(build_configargs)
@@ -2593,23 +2486,8 @@ AC_SUBST(COMPILER_AS_FOR_TARGET)
 AC_SUBST(COMPILER_LD_FOR_TARGET)
 AC_SUBST(COMPILER_NM_FOR_TARGET)
 
-AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
-AC_ARG_ENABLE(maintainer-mode,
-[AS_HELP_STRING([--enable-maintainer-mode],
-		[enable make rules and dependencies not useful
-		 (and sometimes confusing) to the casual installer])],
-      USE_MAINTAINER_MODE=$enableval,
-      USE_MAINTAINER_MODE=no)
-AC_MSG_RESULT($USE_MAINTAINER_MODE)
-AC_SUBST(MAINTAINER_MODE_TRUE)
-AC_SUBST(MAINTAINER_MODE_FALSE)
-if test "$USE_MAINTAINER_MODE" = yes; then
-  MAINTAINER_MODE_TRUE=
-  MAINTAINER_MODE_FALSE='#'
-else
   MAINTAINER_MODE_TRUE='#'
   MAINTAINER_MODE_FALSE=
-fi	
 MAINT=$MAINTAINER_MODE_TRUE
 AC_SUBST(MAINT)dnl
 

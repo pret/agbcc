@@ -28,19 +28,12 @@ noinst_LIBRARIES = libbfd.a
 bfddocdir =
 
 libbfd_a_LDFLAGS =
-if INSTALL_LIBBFD
-bfdlibdir = @bfdlibdir@
-bfdincludedir = @bfdincludedir@
-bfdinclude_HEADERS = $(BFD_H) $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h \
-		     $(INCDIR)/bfdlink.h $(INCDIR)/diagnostics.h
-else !INSTALL_LIBBFD
 # Empty these so that the respective installation directories will not be created.
 bfdlibdir =
 bfdincludedir =
 bfdinclude_HEADERS =
 rpath_bfdlibdir = @bfdlibdir@
 libbfd_a_LDFLAGS += -rpath $(rpath_bfdlibdir)
-endif
 
 # This is where we get zlib from.  zlibdir is -L../zlib and zlibinc is
 # -I../zlib, unless we were configured with --with-system-zlib, in which
@@ -68,8 +61,8 @@ BFD32_LIBS = \
 	archive.o archures.o bfd.o bfdio.o bfdwin.o \
 	cache.o compress.o corefile.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
-	section.o simple.o stab-syms.o stabs.o syms.o targets.o \
-	binary.o ihex.o srec.o
+	section.o simple.o syms.o targets.o \
+	binary.o srec.o
 
 BFD64_LIBS = archive64.o
 
@@ -77,8 +70,8 @@ BFD32_LIBS_CFILES = \
 	archive.c archures.c bfd.c bfdio.c bfdwin.c \
 	cache.c  compress.c corefile.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
-	section.c simple.c stab-syms.c stabs.c syms.c targets.c \
-	binary.c ihex.c srec.c
+	section.c simple.c syms.c targets.c \
+	binary.c srec.c
 
 BFD64_LIBS_CFILES = archive64.c
 
@@ -96,7 +89,6 @@ BFD32_BACKENDS = \
 	dwarf2.o \
 	elf-attrs.o \
 	elf-eh-frame.o \
-	elf-nacl.o \
 	elf-properties.o \
 	elf-strtab.o \
 	elf.o \
@@ -111,7 +103,6 @@ BFD32_BACKENDS_CFILES = \
 	dwarf2.c \
 	elf-attrs.c \
 	elf-eh-frame.c \
-	elf-nacl.c \
 	elf-properties.c \
 	elf-strtab.c \
 	elf.c \
@@ -178,19 +169,6 @@ BUILD_HFILES = \
 BUILT_SOURCES = $(BUILD_HFILES)
 
 HFILES = $(SOURCE_HFILES) $(BUILD_HFILES)
-
-SRC_POTFILES = $(SOURCE_CFILES) $(SOURCE_HFILES)
-BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
-
-po/SRC-POTFILES.in: @MAINT@ Makefile $(SRC_POTFILES)
-	for file in $(SRC_POTFILES); do echo $$file; done \
-	  | LC_ALL=C sort > tmp.src \
-	  && mv tmp.src $(srcdir)/po/SRC-POTFILES.in
-
-po/BLD-POTFILES.in: @MAINT@ Makefile $(BLD_POTFILES)
-	for file in $(BLD_POTFILES); do echo $$file; done \
-	  | LC_ALL=C sort > tmp.bld \
-	  && mv tmp.bld $(srcdir)/po/BLD-POTFILES.in
 
 all diststuff: info
 
@@ -307,7 +285,7 @@ aout-params.h: gen-aout
 gen-aout: $(srcdir)/gen-aout.c Makefile
 	$(CC) -o gen-aout $(CFLAGS) $(LFLAGS) $(srcdir)/gen-aout.c
 
-$(BFD_H): stmp-bfd-h ; @true
+$(BFD_H): libbfd.h stmp-bfd-h ; @true
 
 stmp-bfd-h: bfd-in3.h
 	rm -f bfd-tmp.h
@@ -331,23 +309,6 @@ headers:
 	$(SHELL) $(srcdir)/../move-if-change bfd-in2.h-new $(srcdir)/bfd-in2.h
 	cp $(bfddocdir)/libbfd.h libbfd.h-new
 	$(SHELL) $(srcdir)/../move-if-change libbfd.h-new $(srcdir)/libbfd.h
-
-# We only rebuild the header files automatically if we have been
-# configured with --enable-maintainer-mode.
-
-$(srcdir)/bfd-in2.h: @MAINT@ stmp-bin2-h ; @true
-stmp-bin2-h: $(BFD_H_FILES) $(BFD64_H_FILES)
-	(cd $(bfddocdir); $(MAKE) $(FLAGS_TO_PASS) bfd.h)
-	cp $(bfddocdir)/bfd.h bfd-in2.h-new
-	$(SHELL) $(srcdir)/../move-if-change bfd-in2.h-new $(srcdir)/bfd-in2.h
-	touch stmp-bin2-h
-
-$(srcdir)/libbfd.h: @MAINT@ stmp-lbfd-h ; @true
-stmp-lbfd-h: $(LIBBFD_H_FILES)
-	(cd $(bfddocdir); $(MAKE) $(FLAGS_TO_PASS) libbfd.h)
-	cp $(bfddocdir)/libbfd.h libbfd.h-new
-	$(SHELL) $(srcdir)/../move-if-change libbfd.h-new $(srcdir)/libbfd.h
-	touch stmp-lbfd-h
 
 MOSTLYCLEANFILES = ofiles stamp-ofiles
 

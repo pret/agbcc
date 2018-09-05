@@ -80,7 +80,6 @@ GAS_CFILES = \
 	read.c \
 	remap.c \
 	sb.c \
-	stabs.c \
 	subsegs.c \
 	symbols.c \
 	write.c

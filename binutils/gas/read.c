@@ -246,7 +246,6 @@ static int hex_float (int, char *);
 static segT get_known_segmented_expression (expressionS * expP);
 static void pobegin (void);
 static size_t get_non_macro_line_sb (sb *);
-static void generate_file_debug (void);
 static char *_find_end_of_line (char *, int, int, int);
 
 void
@@ -444,9 +443,6 @@ static const pseudo_typeS potable[] = {
   {"skip", s_space, 0},
   {"sleb128", s_leb128, 1},
   {"spc", s_ignore, 0},
-  {"stabd", s_stab, 'd'},
-  {"stabn", s_stab, 'n'},
-  {"stabs", s_stab, 's'},
   {"string", stringer, 8+1},
   {"string8", stringer, 8+1},
   {"string16", stringer, 16+1},
@@ -475,7 +471,6 @@ static const pseudo_typeS potable[] = {
   {"xcom", s_comm, 0},
   {"xdef", s_globl, 0},
   {"xref", s_ignore, 0},
-  {"xstabs", s_xstab, 's'},
   {"warning", s_errwarn, 0},
   {"weakref", s_weakref, 0},
   {"word", cons, 2},
@@ -827,11 +822,6 @@ read_a_source_file (const char *name)
   listing_file (name);
   listing_newline (NULL);
   register_dependency (name);
-
-  /* Generate debugging information before we've read anything in to denote
-     this file as the "main" source file and not a subordinate one
-     (e.g. N_SO vs N_SOL in stabs).  */
-  generate_file_debug ();
 
   while ((buffer_limit = input_scrub_next_buffer (&input_line_pointer)) != 0)
     {				/* We have another line to parse.  */
@@ -5691,15 +5681,6 @@ add_include_dir (char *path)
     include_dir_maxlen = i;
 }
 
-/* Output debugging information to denote the source file.  */
-
-static void
-generate_file_debug (void)
-{
-  if (debug_type == DEBUG_STABS)
-    stabs_generate_asm_file ();
-}
-
 /* Output line number debugging information for the current source line.  */
 
 void
@@ -5710,9 +5691,6 @@ generate_lineno_debug (void)
     case DEBUG_UNSPECIFIED:
     case DEBUG_NONE:
     case DEBUG_DWARF:
-      break;
-    case DEBUG_STABS:
-      stabs_generate_asm_lineno ();
       break;
     case DEBUG_DWARF2:
       /* ??? We could here indicate to dwarf2dbg.c that something
@@ -5752,9 +5730,6 @@ do_s_func (int end_p, const char *default_prefix)
 	  ignore_rest_of_line ();
 	  return;
 	}
-
-      if (debug_type == DEBUG_STABS)
-	stabs_generate_asm_endfunc (current_name, current_label);
 
       current_name = current_label = NULL;
     }
@@ -5803,9 +5778,6 @@ do_s_func (int end_p, const char *default_prefix)
 	  label = strdup (label);
 	  restore_line_pointer (delim2);
 	}
-
-      if (debug_type == DEBUG_STABS)
-	stabs_generate_asm_func (name, label);
 
       current_name = name;
       current_label = label;

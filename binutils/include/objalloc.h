@@ -73,7 +73,6 @@ extern void *_objalloc_alloc (struct objalloc *, unsigned long);
    gcc, because otherwise we would have to evaluate the arguments
    multiple times, or use a temporary field as obstack.h does.  */
 
-#if defined (__GNUC__) && defined (__STDC__) && __STDC__
 
 /* NextStep 2.0 cc is really gcc 1.93 but it defines __GNUC__ = 2 and
    does not implement __extension__.  But that compiler doesn't define
@@ -94,12 +93,6 @@ extern void *_objalloc_alloc (struct objalloc *, unsigned long);
 	 __o->current_space -= __len,					\
 	 (void *) (__o->current_ptr - __len))				\
       : _objalloc_alloc (__o, __len)); })
-
-#else /* ! __GNUC__ */
-
-#define objalloc_alloc(o, l) _objalloc_alloc ((o), (l))
-
-#endif /* ! __GNUC__ */
 
 /* Free an entire objalloc structure.  */
 

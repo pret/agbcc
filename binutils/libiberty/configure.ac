@@ -173,7 +173,6 @@ funcs="$funcs bcmp"
 funcs="$funcs bcopy"
 funcs="$funcs bsearch"
 funcs="$funcs bzero"
-funcs="$funcs clock"
 funcs="$funcs ffs"
 funcs="$funcs getcwd"
 funcs="$funcs getpagesize"
@@ -211,7 +210,7 @@ checkfuncs="__fsetlocking canonicalize_file_name dup3 getrlimit getrusage \
 if test "x" = "y"; then
   AC_CHECK_FUNCS(asprintf atexit \
     basename bcmp bcopy bsearch bzero \
-    canonicalize_file_name clock \
+    canonicalize_file_name \
     dup3 \
     ffs __fsetlocking \
     getcwd getpagesize getrlimit getrusage getsysinfo gettimeofday \
@@ -285,7 +284,6 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([bcmp])
     AC_LIBOBJ([bcopy])
     AC_LIBOBJ([bzero])
-    AC_LIBOBJ([clock])
     AC_LIBOBJ([ffs])
     AC_LIBOBJ([getpagesize])
     AC_LIBOBJ([index])
@@ -303,7 +301,7 @@ if test -n "${with_target_subdir}"; then
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bcmp | bcopy | bzero | clock | ffs | getpagesize | index | insque |  mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strverscmp | vasprintf | waitpid)
+	asprintf | basename | bcmp | bcopy | bzero | ffs | getpagesize | index | insque |  mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strverscmp | vasprintf | waitpid)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -322,7 +320,7 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([vasprintf])
     AC_LIBOBJ([asprintf])
 
-    for f in atexit basename bcmp bcopy bsearch bzero clock ffs \
+    for f in atexit basename bcmp bcopy bsearch bzero ffs \
              getcwd getpagesize getrusage gettimeofday \
              index insque psignal \
              putenv random rename rindex setenv stpcpy \

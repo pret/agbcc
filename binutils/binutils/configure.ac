@@ -115,13 +115,6 @@ AC_PROG_INSTALL
 
 BFD_CC_FOR_BUILD
 
-DEMANGLER_NAME=c++filt
-case "${host}" in
-  *-*-go32* | *-*-msdos*)
-    DEMANGLER_NAME=cxxfilt
-esac
-AC_SUBST(DEMANGLER_NAME)
-
 AC_CHECK_SIZEOF([long])
 AC_CHECK_TYPES([long long], [AC_CHECK_SIZEOF(long long)])
 

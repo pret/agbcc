@@ -3009,16 +3009,10 @@ asmfunc_debug (const char * name)
     {
       gas_assert (last_name == NULL);
       last_name = name;
-
-      if (debug_type == DEBUG_STABS)
-         stabs_generate_asm_func (name, name);
     }
   else
     {
       gas_assert (last_name != NULL);
-
-      if (debug_type == DEBUG_STABS)
-        stabs_generate_asm_endfunc (last_name, last_name);
 
       last_name = NULL;
     }

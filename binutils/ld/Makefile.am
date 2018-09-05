@@ -23,10 +23,6 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
 
 tooldir = $(exec_prefix)/$(target_alias)
 
-YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bison/; else echo @YACC@; fi`
-YFLAGS = -d
-LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
-
 ELF_CLFAGS=-DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
@@ -199,14 +195,6 @@ endif
 SRC_POTFILES = $(CFILES) $(HFILES)
 BLD_POTFILES = $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
 
-po/SRC-POTFILES.in: @MAINT@ Makefile
-	for f in $(SRC_POTFILES); do echo $$f; done | LC_ALL=C sort > $@-tmp \
-	  && mv $@-tmp $(srcdir)/po/SRC-POTFILES.in
-
-po/BLD-POTFILES.in: @MAINT@ Makefile $(BLD_POTFILES)
-	for f in $(BLD_POTFILES); do echo $$f; done | LC_ALL=C sort > $@-tmp \
-	  && mv $@-tmp $(srcdir)/po/BLD-POTFILES.in
-
 ldmain.@OBJEXT@: ldmain.c config.status
 if am__fastdepCC
 	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ \
@@ -374,8 +362,6 @@ ld.1: $(srcdir)/ld.texi configdoc.texi
 		mv -f $@.T$$$$ $@) || \
 		(rm -f $@.T$$$$ && exit 1)
 	rm -f ld.pod
-
-MAINTAINERCLEANFILES = configdoc.texi
 
 # We want to reconfigure if configure.host or configure.tgt changes.
 # development.sh is used to determine -Werror default.
