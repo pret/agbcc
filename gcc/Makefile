@@ -45,7 +45,7 @@ jump.c cse.c loop.c unroll.c flow.c stupid.c combine.c varray.c regclass.c \
 local-alloc.c global.c reload.c reload1.c caller-save.c gcse.c insn-peep.c \
 final.c recog.c insn-opinit.c insn-recog.c insn-extract.c insn-output.c \
 insn-emit.c lcm.c insn-attrtab.c thumb.c getpwd.c convert.c dyn-string.c \
-splay-tree.c graph.c sbitmap.c resource.c c-parse.c c-lex.c c-decl.c \
+splay-tree.c graph.c sbitmap.c c-parse.c c-lex.c c-decl.c \
 c-typeck.c c-convert.c c-aux-info.c c-common.c c-iterate.c
 
 OBJS = $(SRCS:.c=.o)
@@ -118,7 +118,7 @@ REGS_H = regs.h varray.h machmode.h machmode.def
 tree-check.h: s-check
 s-check : gencheck $(srcdir)/move-if-change
 	./gencheck > tmp-check.h
-	$(srcdir)/move-if-change tmp-check.h tree-check.h
+	$(SHELL) $(srcdir)/move-if-change tmp-check.h tree-check.h
 	touch s-check
 
 gencheck : gencheck.o tree.def
@@ -149,74 +149,74 @@ gencheck.o : gencheck.c config.h system.h
 insn-config.h: s-config
 s-config : $(md_file) genconfig $(srcdir)/move-if-change
 	./genconfig $(md_file) > tmp-config.h
-	$(srcdir)/move-if-change tmp-config.h insn-config.h
+	$(SHELL) $(srcdir)/move-if-change tmp-config.h insn-config.h
 	touch s-config
 
 insn-flags.h: s-flags
 s-flags : $(md_file) genflags $(srcdir)/move-if-change
 	./genflags $(md_file) > tmp-flags.h
-	$(srcdir)/move-if-change tmp-flags.h insn-flags.h
+	$(SHELL) $(srcdir)/move-if-change tmp-flags.h insn-flags.h
 	touch s-flags
 
 insn-codes.h: s-codes
 s-codes : $(md_file) gencodes $(srcdir)/move-if-change
 	./gencodes $(md_file) > tmp-codes.h
-	$(srcdir)/move-if-change tmp-codes.h insn-codes.h
+	$(SHELL) $(srcdir)/move-if-change tmp-codes.h insn-codes.h
 	touch s-codes
 
 insn-emit.c: s-emit
 s-emit : $(md_file) genemit $(srcdir)/move-if-change
 	./genemit $(md_file) > tmp-emit.c
-	$(srcdir)/move-if-change tmp-emit.c insn-emit.c
+	$(SHELL) $(srcdir)/move-if-change tmp-emit.c insn-emit.c
 	touch s-emit
 
 insn-recog.c: s-recog
 s-recog : $(md_file) genrecog $(srcdir)/move-if-change
 	./genrecog $(md_file) > tmp-recog.c
-	$(srcdir)/move-if-change tmp-recog.c insn-recog.c
+	$(SHELL) $(srcdir)/move-if-change tmp-recog.c insn-recog.c
 	touch s-recog
 
 insn-opinit.c: s-opinit
 s-opinit : $(md_file) genopinit $(srcdir)/move-if-change
 	./genopinit $(md_file) > tmp-opinit.c
-	$(srcdir)/move-if-change tmp-opinit.c insn-opinit.c
+	$(SHELL) $(srcdir)/move-if-change tmp-opinit.c insn-opinit.c
 	touch s-opinit
 
 insn-extract.c: s-extract
 s-extract : $(md_file) genextract $(srcdir)/move-if-change
 	./genextract $(md_file) > tmp-extract.c
-	$(srcdir)/move-if-change tmp-extract.c insn-extract.c
+	$(SHELL) $(srcdir)/move-if-change tmp-extract.c insn-extract.c
 	touch s-extract
 
 insn-peep.c: s-peep
 s-peep : $(md_file) genpeep $(srcdir)/move-if-change
 	./genpeep $(md_file) > tmp-peep.c
-	$(srcdir)/move-if-change tmp-peep.c insn-peep.c
+	$(SHELL) $(srcdir)/move-if-change tmp-peep.c insn-peep.c
 	touch s-peep
 
 insn-attr.h: s-attr
 s-attr : $(md_file) genattr $(srcdir)/move-if-change
 	./genattr $(md_file) > tmp-attr.h
-	$(srcdir)/move-if-change tmp-attr.h insn-attr.h
+	$(SHELL) $(srcdir)/move-if-change tmp-attr.h insn-attr.h
 	touch s-attr
 
 insn-attrtab.c: s-attrtab
 s-attrtab : $(md_file) genattrtab $(srcdir)/move-if-change
 	./genattrtab $(md_file) > tmp-attrtab.c;
-	$(srcdir)/move-if-change tmp-attrtab.c insn-attrtab.c
+	$(SHELL) $(srcdir)/move-if-change tmp-attrtab.c insn-attrtab.c
 	touch s-attrtab
 
 insn-output.c: s-output
 s-output : $(md_file) genoutput $(srcdir)/move-if-change
 	./genoutput $(md_file) > tmp-output.c
-	$(srcdir)/move-if-change tmp-output.c insn-output.c
+	$(SHELL) $(srcdir)/move-if-change tmp-output.c insn-output.c
 	touch s-output
 
 genrtl.c genrtl.h : s-genrtl
 s-genrtl: gengenrtl $(srcdir)/move-if-change $(RTL_BASE_H)
 	./gengenrtl tmp-genrtl.h tmp-genrtl.c
-	$(srcdir)/move-if-change tmp-genrtl.h genrtl.h
-	$(srcdir)/move-if-change tmp-genrtl.c genrtl.c
+	$(SHELL) $(srcdir)/move-if-change tmp-genrtl.h genrtl.h
+	$(SHELL) $(srcdir)/move-if-change tmp-genrtl.c genrtl.c
 	touch s-genrtl
 
 # Compile the programs that generate insn-* from the machine description.

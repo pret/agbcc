@@ -58,18 +58,14 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && ./configure LDFLAGS="-s" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-s" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
 
-binutils/built: binutils/Makefile
+binutils: binutils/Makefile
 	@$(MAKE) -C binutils
-	touch binutils/built
-
-binutils: binutils/built
 
 binutils_clean:
 	@[ ! -f binutils/Makefile ] || $(MAKE) -C binutils clean
 	find binutils -name "Makefile" -o -name "config.cache" -exec rm -rf {} \;
-	$(RM) binutils/built
 
 libc.a: old_gcc binutils
 	@$(MAKE) -C libc

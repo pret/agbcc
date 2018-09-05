@@ -1,4 +1,13 @@
-SHELL := /bin/bash -o pipefail
+# Prefer the faster mksh over Bash, we just need pipefail
+ifneq (,$(shell command -v mksh || true))
+SHELL := mksh -o pipefail
+# Android's /system/bin/sh is also mksh
+else ifneq (,$(wildcard /system/bin/sh))
+SHELL := /system/bin/sh -o pipefail
+# otherwise, use Bash.
+else ifneq (,$(shell command -v bash || true))
+SHELL := bash -o pipefail
+endif
 
 ASFLAGS := -mcpu=arm7tdmi
 
@@ -6,9 +15,9 @@ CC1    := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
 AR     := ../binutils/binutils/ar
 AS     := ../binutils/gas/as-new
-CPP    := cpp
+CPP    := $(CC) -E
 
-CPPFLAGS := -Wold-style-declaration -Wold-style-definition -I ../ginclude -I include -nostdinc -undef \
+CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
 -DABORT_PROVIDED -DHAVE_GETTIMEOFDAY -D__thumb__ -DARM_RDI_MONITOR \
 -D__GNUC__ -DINTERNAL_NEWLIB -D__USER_LABEL_PREFIX__=
 
