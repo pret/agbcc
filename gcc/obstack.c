@@ -265,31 +265,6 @@ void _obstack_newchunk(struct obstack *h, int length)
     h->maybe_empty_object = 0;
 }
 
-/* Return nonzero if object OBJ has been allocated from obstack H.
-   This is here for debugging.
-   If you use it in a program, you are probably losing.  */
-
-/* Suppress -Wmissing-prototypes warning.  We don't want to declare this in
-   obstack.h because it is just for debugging.  */
-int _obstack_allocated_p(struct obstack *h, void *obj);
-
-int _obstack_allocated_p(struct obstack *h, void *obj)
-{
-    register struct _obstack_chunk *lp;  /* below addr of any objects in this chunk */
-    register struct _obstack_chunk *plp; /* point to previous chunk if any */
-
-    lp = (h)->chunk;
-    /* We use >= rather than > since the object cannot be exactly at
-       the beginning of the chunk but might be an empty object exactly
-       at the end of an adjacent chunk.  */
-    while (lp != 0 && ((void *)lp >= obj || (void *)(lp)->limit < obj))
-    {
-        plp = lp->prev;
-        lp = plp;
-    }
-    return lp != 0;
-}
-
 /* Free objects in obstack H, including OBJ and everything allocate
    more recently than OBJ.  If OBJ is zero, free everything in H.  */
 

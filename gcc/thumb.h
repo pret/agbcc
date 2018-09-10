@@ -1088,7 +1088,6 @@ typedef union tree_node *tree;
 extern int thumb_cmp_operand();
 extern void thumb_reorg();
 extern void thumb_expand_movstrqi();
-extern void thumb_reload_out_si();
 extern void final_prescan_insn();
 extern int far_jump_used_p();
 extern void thumb_function_prologue(FILE *, int);

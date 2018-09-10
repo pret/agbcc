@@ -90,7 +90,6 @@ typedef struct splay_tree
 extern splay_tree splay_tree_new        (splay_tree_compare_fn,
 					        splay_tree_delete_key_fn,
 					        splay_tree_delete_value_fn);
-extern void splay_tree_delete           (splay_tree);
 extern void splay_tree_insert           (splay_tree,
 					        splay_tree_key,
 					        splay_tree_value);

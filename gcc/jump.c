@@ -1262,18 +1262,9 @@ void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
                    (TEMP1 is the insn where this happens), win.  */
                 && GET_CODE(temp1) == INSN
                 && GET_CODE(PATTERN(temp1)) == SET
-#ifdef HAVE_cc0
                 /* Does temp1 `tst' the value of x?  */
                 && SET_SRC(PATTERN(temp1)) == SET_DEST(PATTERN(temp))
                 && SET_DEST(PATTERN(temp1)) == cc0_rtx && (temp1 = next_nonnote_insn(temp1))
-#else
-                /* Does temp1 compare the value of x against zero?  */
-                && GET_CODE(SET_SRC(PATTERN(temp1))) == COMPARE
-                && XEXP(SET_SRC(PATTERN(temp1)), 1) == const0_rtx
-                && (XEXP(SET_SRC(PATTERN(temp1)), 0) == SET_DEST(PATTERN(temp)))
-                && GET_CODE(SET_DEST(PATTERN(temp1))) == REG
-                && (temp1 = find_next_ref(SET_DEST(PATTERN(temp1)), temp1))
-#endif
                 && condjump_p(temp1))
             {
                 /* Get the if_then_else from the condjump.  */
@@ -1304,102 +1295,6 @@ void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
             }
 #endif
 
-#if 0
-	  /* @@ This needs a bit of work before it will be right.
-
-	     Any type of comparison can be accepted for the first and
-	     second compare.  When rewriting the first jump, we must
-	     compute the what conditions can reach label3, and use the
-	     appropriate code.  We can not simply reverse/swap the code
-	     of the first jump.  In some cases, the second jump must be
-	     rewritten also.
-
-	     For example, 
-	     <  == converts to >  ==
-	     <  != converts to ==  >
-	     etc.
-
-	     If the code is written to only accept an '==' test for the second
-	     compare, then all that needs to be done is to swap the condition
-	     of the first branch.
-
-	     It is questionable whether we want this optimization anyways,
-	     since if the user wrote code like this because he/she knew that
-	     the jump to label1 is taken most of the time, then rewriting
-	     this gives slower code.  */
-	  /* @@ This should call get_condition to find the values being
-	     compared, instead of looking for a COMPARE insn when HAVE_cc0
-	     is not defined.  This would allow it to work on the m88k.  */
-	  /* @@ This optimization is only safe before cse is run if HAVE_cc0
-	     is not defined and the condition is tested by a separate compare
-	     insn.  This is because the code below assumes that the result
-	     of the compare dies in the following branch.  */
-
-	  /* Simplify  test a ~= b
-		       condjump label1;
-		       test a == b
-		       condjump label2;
-		       jump label3;
-		       label1:
-
-	     rewriting as
-		       test a ~~= b
-		       condjump label3
-		       test a == b
-		       condjump label2
-		       label1:
-
-	     where ~= is an inequality, e.g. >, and ~~= is the swapped
-	     inequality, e.g. <.
-
-	     We recognize this case scanning backwards.
-
-	     TEMP is the conditional jump to `label2';
-	     TEMP1 is the test for `a == b';
-	     TEMP2 is the conditional jump to `label1';
-	     TEMP3 is the test for `a ~= b'.  */
-	  else if (this_is_simplejump
-		   && (temp = prev_active_insn (insn))
-		   && no_labels_between_p (temp, insn)
-		   && condjump_p (temp)
-		   && (temp1 = prev_active_insn (temp))
-		   && no_labels_between_p (temp1, temp)
-		   && GET_CODE (temp1) == INSN
-		   && GET_CODE (PATTERN (temp1)) == SET
-#ifdef HAVE_cc0
-		   && sets_cc0_p (PATTERN (temp1)) == 1
-#else
-		   && GET_CODE (SET_SRC (PATTERN (temp1))) == COMPARE
-		   && GET_CODE (SET_DEST (PATTERN (temp1))) == REG
-		   && (temp == find_next_ref (SET_DEST (PATTERN (temp1)), temp1))
-#endif
-		   && (temp2 = prev_active_insn (temp1))
-		   && no_labels_between_p (temp2, temp1)
-		   && condjump_p (temp2)
-		   && JUMP_LABEL (temp2) == next_nonnote_insn (NEXT_INSN (insn))
-		   && (temp3 = prev_active_insn (temp2))
-		   && no_labels_between_p (temp3, temp2)
-		   && GET_CODE (PATTERN (temp3)) == SET
-		   && rtx_equal_p (SET_DEST (PATTERN (temp3)),
-				   SET_DEST (PATTERN (temp1)))
-		   && rtx_equal_p (SET_SRC (PATTERN (temp1)),
-				   SET_SRC (PATTERN (temp3)))
-		   && ! inequality_comparisons_p (PATTERN (temp))
-		   && inequality_comparisons_p (PATTERN (temp2)))
-	    {
-	      rtx fallthrough_label = JUMP_LABEL (temp2);
-
-	      ++LABEL_NUSES (fallthrough_label);
-	      if (swap_jump (temp2, JUMP_LABEL (insn)))
-		{
-		  delete_insn (insn);
-		  changed = 1;
-		}
-
-	      if (--LABEL_NUSES (fallthrough_label) == 0)
-		delete_insn (fallthrough_label);
-	    }
-#endif
             /* Simplify  if (...) {... x = 1;} if (x) ...
 
                We recognize this case backwards.
@@ -1407,114 +1302,6 @@ void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
                TEMP is the test of `x';
                TEMP1 is the assignment to `x' at the end of the
                previous statement.  */
-            /* @@ This should call get_condition to find the values being
-               compared, instead of looking for a COMPARE insn when HAVE_cc0
-               is not defined.  This would allow it to work on the m88k.  */
-            /* @@ This optimization is only safe before cse is run if HAVE_cc0
-               is not defined and the condition is tested by a separate compare
-               insn.  This is because the code below assumes that the result
-               of the compare dies in the following branch.  */
-
-            /* ??? This has to be turned off.  The problem is that the
-               unconditional jump might indirectly end up branching to the
-               label between TEMP1 and TEMP.  We can't detect this, in general,
-               since it may become a jump to there after further optimizations.
-               If that jump is done, it will be deleted, so we will retry
-               this optimization in the next pass, thus an infinite loop.
-
-               The present code prevents this by putting the jump after the
-               label, but this is not logically correct.  */
-#if 0
-	  else if (this_is_condjump
-		   /* Safe to skip USE and CLOBBER insns here
-		      since they will not be deleted.  */
-		   && (temp = prev_active_insn (insn))
-		   && no_labels_between_p (temp, insn)
-		   && GET_CODE (temp) == INSN
-		   && GET_CODE (PATTERN (temp)) == SET
-#ifdef HAVE_cc0
-		   && sets_cc0_p (PATTERN (temp)) == 1
-		   && GET_CODE (SET_SRC (PATTERN (temp))) == REG
-#else
-		   /* Temp must be a compare insn, we can not accept a register
-		      to register move here, since it may not be simply a
-		      tst insn.  */
-		   && GET_CODE (SET_SRC (PATTERN (temp))) == COMPARE
-		   && XEXP (SET_SRC (PATTERN (temp)), 1) == const0_rtx
-		   && GET_CODE (XEXP (SET_SRC (PATTERN (temp)), 0)) == REG
-		   && GET_CODE (SET_DEST (PATTERN (temp))) == REG
-		   && insn == find_next_ref (SET_DEST (PATTERN (temp)), temp)
-#endif
-		   /* May skip USE or CLOBBER insns here
-		      for checking for opportunity, since we
-		      take care of them later.  */
-		   && (temp1 = prev_active_insn (temp))
-		   && GET_CODE (temp1) == INSN
-		   && GET_CODE (PATTERN (temp1)) == SET
-#ifdef HAVE_cc0
-		   && SET_SRC (PATTERN (temp)) == SET_DEST (PATTERN (temp1))
-#else
-		   && (XEXP (SET_SRC (PATTERN (temp)), 0)
-		       == SET_DEST (PATTERN (temp1)))
-#endif
-		   && CONSTANT_P (SET_SRC (PATTERN (temp1)))
-		   /* If this isn't true, cse will do the job.  */
-		   && ! no_labels_between_p (temp1, temp))
-	    {
-	      /* Get the if_then_else from the condjump.  */
-	      rtx choice = SET_SRC (PATTERN (insn));
-	      if (GET_CODE (choice) == IF_THEN_ELSE
-		  && (GET_CODE (XEXP (choice, 0)) == EQ
-		      || GET_CODE (XEXP (choice, 0)) == NE))
-		{
-		  int want_nonzero = (GET_CODE (XEXP (choice, 0)) == NE);
-		  rtx last_insn;
-		  rtx ultimate;
-		  rtx p;
-
-		  /* Get the place that condjump will jump to
-		     if it is reached from here.  */
-		  if ((SET_SRC (PATTERN (temp1)) != const0_rtx)
-		      == want_nonzero)
-		    ultimate = XEXP (choice, 1);
-		  else
-		    ultimate = XEXP (choice, 2);
-		  /* Get it as a CODE_LABEL.  */
-		  if (ultimate == pc_rtx)
-		    ultimate = get_label_after (insn);
-		  else
-		    /* Get the label out of the LABEL_REF.  */
-		    ultimate = XEXP (ultimate, 0);
-
-		  /* Insert the jump immediately before TEMP, specifically
-		     after the label that is between TEMP1 and TEMP.  */
-		  last_insn = PREV_INSN (temp);
-
-		  /* If we would be branching to the next insn, the jump
-		     would immediately be deleted and the re-inserted in
-		     a subsequent pass over the code.  So don't do anything
-		     in that case.  */
-		  if (next_active_insn (last_insn)
-		      != next_active_insn (ultimate))
-		    {
-		      emit_barrier_after (last_insn);
-		      p = emit_jump_insn_after (gen_jump (ultimate),
-						last_insn);
-		      JUMP_LABEL (p) = ultimate;
-		      ++LABEL_NUSES (ultimate);
-		      if (INSN_UID (ultimate) < max_jump_chain
-			  && INSN_CODE (p) < max_jump_chain)
-			{
-			  jump_chain[INSN_UID (p)]
-			    = jump_chain[INSN_UID (ultimate)];
-			  jump_chain[INSN_UID (ultimate)] = p;
-			}
-		      changed = 1;
-		      continue;
-		    }
-		}
-	    }
-#endif
             /* Detect a conditional jump going to the same place
                as an immediately following unconditional jump.  */
             else if (this_is_condjump && (temp = next_active_insn(insn)) != 0 && simplejump_p(temp)
@@ -1529,68 +1316,6 @@ void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
                     continue;
                 }
             }
-#ifdef HAVE_trap
-            /* Detect a conditional jump jumping over an unconditional trap.  */
-            else if (HAVE_trap && this_is_condjump && !this_is_simplejump && reallabelprev != 0
-                && GET_CODE(reallabelprev) == INSN && GET_CODE(PATTERN(reallabelprev)) == TRAP_IF
-                && TRAP_CONDITION(PATTERN(reallabelprev)) == const_true_rtx
-                && prev_active_insn(reallabelprev) == insn
-                && no_labels_between_p(insn, reallabelprev) && (temp2 = get_condition(insn, &temp4))
-                && can_reverse_comparison_p(temp2, insn))
-            {
-                rtx new = gen_cond_trap(reverse_condition(GET_CODE(temp2)), XEXP(temp2, 0),
-                    XEXP(temp2, 1), TRAP_CODE(PATTERN(reallabelprev)));
-
-                if (new)
-                {
-                    emit_insn_before(new, temp4);
-                    delete_insn(reallabelprev);
-                    delete_jump(insn);
-                    changed = 1;
-                    continue;
-                }
-            }
-            /* Detect a jump jumping to an unconditional trap.  */
-            else if (HAVE_trap && this_is_condjump && (temp = next_active_insn(JUMP_LABEL(insn)))
-                && GET_CODE(temp) == INSN && GET_CODE(PATTERN(temp)) == TRAP_IF
-                && (this_is_simplejump || (temp2 = get_condition(insn, &temp4))))
-            {
-                rtx tc = TRAP_CONDITION(PATTERN(temp));
-
-                if (tc == const_true_rtx || (!this_is_simplejump && rtx_equal_p(temp2, tc)))
-                {
-                    rtx new;
-                    /* Replace an unconditional jump to a trap with a trap.  */
-                    if (this_is_simplejump)
-                    {
-                        emit_barrier_after(emit_insn_before(gen_trap(), insn));
-                        delete_jump(insn);
-                        changed = 1;
-                        continue;
-                    }
-                    new = gen_cond_trap(
-                        GET_CODE(temp2), XEXP(temp2, 0), XEXP(temp2, 1), TRAP_CODE(PATTERN(temp)));
-                    if (new)
-                    {
-                        emit_insn_before(new, temp4);
-                        delete_jump(insn);
-                        changed = 1;
-                        continue;
-                    }
-                }
-                /* If the trap condition and jump condition are mutually
-                   exclusive, redirect the jump to the following insn.  */
-                else if (GET_RTX_CLASS(GET_CODE(tc)) == '<' && !this_is_simplejump
-                    && swap_condition(GET_CODE(temp2)) == GET_CODE(tc)
-                    && rtx_equal_p(XEXP(tc, 0), XEXP(temp2, 0))
-                    && rtx_equal_p(XEXP(tc, 1), XEXP(temp2, 1))
-                    && redirect_jump(insn, get_label_after(temp)))
-                {
-                    changed = 1;
-                    continue;
-                }
-            }
-#endif
 
             /* Detect a conditional jump jumping over an unconditional jump.  */
 
@@ -3564,16 +3289,6 @@ rtx delete_insn(register rtx insn)
     }
 
     return next;
-}
-
-/* Advance from INSN till reaching something not deleted
-   then return that.  May return INSN itself.  */
-
-rtx next_nondeleted_insn(rtx insn)
-{
-    while (INSN_DELETED_P(insn))
-        insn = NEXT_INSN(insn);
-    return insn;
 }
 
 /* Delete a range of insns from FROM to TO, inclusive.

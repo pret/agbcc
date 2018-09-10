@@ -88,10 +88,6 @@ extern void output_asm_insn();
    Defined in final.c.  */
 extern int insn_current_reference_address();
 
-/* Find the alignment associated with a CODE_LABEL.
-   Defined in final.c.  */
-extern int label_to_alignment();
-
 /* Output a LABEL_REF, or a bare CODE_LABEL, as an assembler symbol.  */
 extern void output_asm_label();
 
@@ -107,10 +103,6 @@ extern void output_addr_const (FILE *, rtx);
 /* Output a string of assembler code, substituting numbers, strings
    and fixed syntactic prefixes.  */
 extern void asm_fprintf		(FILE *file, char *p, ...);
-
-/* Split up a CONST_DOUBLE or integer constant rtx into two rtx's for single
-   words.  */
-extern void split_double();
 
 /* Return nonzero if this function has no function calls.  */
 extern int leaf_function_p();
@@ -141,9 +133,6 @@ extern void text_section();
 
 /* Tell assembler to switch to data section.  */
 extern void data_section();
-
-/* Tell assembler to make sure its in the data section.  */
-extern void force_data_section();
 
 /* Tell assembler to switch to read-only data section.  This is normally
    the text section.  */
@@ -200,9 +189,6 @@ extern void make_decl_rtl();
    Use this only for static variables.  */
 extern void make_var_volatile();
 
-/* Output alignment directive to align for constant expression EXP.  */
-extern void assemble_constant_align();
-
 extern void assemble_alias();
 
 /* Output a string of literal assembler code
@@ -249,9 +235,6 @@ extern void assemble_external();
 extern void assemble_external_libcall();
 #endif
 
-/* Declare the label NAME global.  */
-extern void assemble_global();
-
 /* Assemble a label named NAME.  */
 extern void assemble_label();
 
@@ -290,9 +273,6 @@ extern void output_deferred_addressed_constants();
 
 /* Initialize constant pool hashing for next function.  */
 extern void init_const_rtx_hash_table();
-
-/* Return the size of the constant pool.  */
-extern int get_pool_size();
 
 #ifdef TREE_CODE
 /* Write all the constants in the constant pool.  */

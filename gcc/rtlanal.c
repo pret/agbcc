@@ -675,46 +675,6 @@ int multiple_sets(rtx insn)
     return 0;
 }
 
-/* Return the last thing that X was assigned from before *PINSN.  Verify that
-   the object is not modified up to VALID_TO.  If it was, if we hit
-   a partial assignment to X, or hit a CODE_LABEL first, return X.  If we
-   found an assignment, update *PINSN to point to it.  */
-
-rtx find_last_value(rtx x, rtx *pinsn, rtx valid_to)
-{
-    rtx p;
-
-    for (p = PREV_INSN(*pinsn); p && GET_CODE(p) != CODE_LABEL; p = PREV_INSN(p))
-        if (GET_RTX_CLASS(GET_CODE(p)) == 'i')
-        {
-            rtx set = single_set(p);
-            rtx note = find_reg_note(p, REG_EQUAL, NULL_RTX);
-
-            if (set && rtx_equal_p(x, SET_DEST(set)))
-            {
-                rtx src = SET_SRC(set);
-
-                if (note && GET_CODE(XEXP(note, 0)) != EXPR_LIST)
-                    src = XEXP(note, 0);
-
-                if (!modified_between_p(src, PREV_INSN(p), valid_to)
-                    /* Reject hard registers because we don't usually want
-                       to use them; we'd rather use a pseudo.  */
-                    && !(GET_CODE(src) == REG && REGNO(src) < FIRST_PSEUDO_REGISTER))
-                {
-                    *pinsn = p;
-                    return src;
-                }
-            }
-
-            /* If set in non-simple way, we don't have a value.  */
-            if (reg_set_p(x, p))
-                break;
-        }
-
-    return x;
-}
-
 /* Return nonzero if register in range [REGNO, ENDREGNO)
    appears either explicitly or implicitly in X
    other than being stored into.
@@ -1663,64 +1623,6 @@ int may_trap_p(rtx x)
     return 0;
 }
 
-/* Return nonzero if X contains a comparison that is not either EQ or NE,
-   i.e., an inequality.  */
-
-int inequality_comparisons_p(rtx x)
-{
-    register char *fmt;
-    register int len, i;
-    register enum rtx_code code = GET_CODE(x);
-
-    switch (code)
-    {
-    case REG:
-    case SCRATCH:
-    case PC:
-    case CC0:
-    case CONST_INT:
-    case CONST_DOUBLE:
-    case CONST:
-    case LABEL_REF:
-    case SYMBOL_REF:
-        return 0;
-
-    case LT:
-    case LTU:
-    case GT:
-    case GTU:
-    case LE:
-    case LEU:
-    case GE:
-    case GEU:
-        return 1;
-
-    default:
-        break;
-    }
-
-    len = GET_RTX_LENGTH(code);
-    fmt = GET_RTX_FORMAT(code);
-
-    for (i = 0; i < len; i++)
-    {
-        if (fmt[i] == 'e')
-        {
-            if (inequality_comparisons_p(XEXP(x, i)))
-                return 1;
-        }
-        else if (fmt[i] == 'E')
-        {
-            register int j;
-            for (j = XVECLEN(x, i) - 1; j >= 0; j--)
-                if (inequality_comparisons_p(XVECEXP(x, i, j)))
-                    return 1;
-        }
-    }
-
-    return 0;
-}
-
 /* Replace any occurrence of FROM in X with TO.  The function does
    not enter into CONST_DOUBLE for the replace.
 
@@ -2038,32 +1940,3 @@ int insn_first_p(rtx insn, rtx reference)
     }
 }
 
-
-/* Searches X for any reference to REGNO, returning the rtx of the
-   reference found if any.  Otherwise, returns NULL_RTX.  */
-
-rtx regno_use_in(int regno, rtx x)
-{
-    register char *fmt;
-    int i, j;
-    rtx tem;
-
-    if (GET_CODE(x) == REG && REGNO(x) == regno)
-        return x;
-
-    fmt = GET_RTX_FORMAT(GET_CODE(x));
-    for (i = GET_RTX_LENGTH(GET_CODE(x)) - 1; i >= 0; i--)
-    {
-        if (fmt[i] == 'e')
-        {
-            if ((tem = regno_use_in(regno, XEXP(x, i))))
-                return tem;
-        }
-        else if (fmt[i] == 'E')
-            for (j = XVECLEN(x, i) - 1; j >= 0; j--)
-                if ((tem = regno_use_in(regno, XVECEXP(x, i, j))))
-                    return tem;
-    }
-
-    return NULL_RTX;
-}

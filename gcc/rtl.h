@@ -893,7 +893,6 @@ extern rtx gen_imagpart();
 extern rtx operand_subword();
 extern rtx operand_subword_force();
 extern int subreg_lowpart_p();
-extern rtx make_safe_from();
 extern rtx convert_memory_address();
 extern rtx memory_address();
 extern rtx get_insns();
@@ -908,7 +907,6 @@ extern rtx force_const_mem();
 extern rtx force_reg();
 extern rtx get_pool_constant();
 extern enum machine_mode get_pool_mode();
-extern int get_pool_offset();
 extern rtx simplify_subtraction();
 extern rtx assign_stack_local();
 extern rtx assign_stack_temp();
@@ -939,19 +937,15 @@ extern rtx emit_line_note();
 extern rtx emit_note();
 extern rtx emit_line_note_force();
 extern rtx make_insn_raw();
-extern rtx previous_insn();
-extern rtx next_insn();
 extern rtx prev_nonnote_insn();
 extern rtx next_nonnote_insn();
 extern rtx prev_real_insn();
 extern rtx next_real_insn();
 extern rtx prev_active_insn();
 extern rtx next_active_insn();
-extern rtx prev_label();
 extern rtx next_label();
 extern rtx next_cc0_user();
 extern rtx prev_cc0_setter();
-extern rtx next_nondeleted_insn();
 extern enum rtx_code reverse_condition();
 extern enum rtx_code swap_condition();
 extern enum rtx_code unsigned_condition();
@@ -1001,7 +995,6 @@ extern int modified_in_p();
 extern int reg_set_p();
 extern rtx single_set();
 extern int multiple_sets();
-extern rtx find_last_value();
 extern int refers_to_regno_p();
 extern int reg_overlap_mentioned_p();
 extern void note_stores();
@@ -1025,7 +1018,6 @@ extern int computed_jump_p();
 typedef int (*rtx_function)             (rtx *, void *);
 extern int for_each_rtx();
 extern int insn_first_p();
-extern rtx regno_use_in();
 
 /* flow.c */
 
@@ -1051,7 +1043,6 @@ extern enum reg_class reg_alternate_class();
 
 extern rtx get_first_nonparm_insn();
 
-extern void split_block_insns();
 extern void update_flow_info();
 
 /* Standard pieces of rtx, to be substituted directly into things.  */
@@ -1177,7 +1168,6 @@ extern rtx gen_rtx_MEM();
 
 #define LAST_VIRTUAL_REGISTER		((FIRST_VIRTUAL_REGISTER) + 4)
 
-extern rtx find_next_ref();
 extern rtx *find_single_use();
 
 extern rtx output_constant_def();
@@ -1296,17 +1286,13 @@ extern void init_emit_once();
 extern void push_topmost_sequence();
 extern void pop_topmost_sequence();
 extern int subreg_realpart_p();
-extern void reverse_comparison();
 extern void set_new_first_and_last_insn();
 extern void set_new_first_and_last_label_num();
 extern void unshare_all_rtl();
 extern void set_last_insn();
-extern void link_cc0_insns();
 extern void add_insn();
 extern void add_insn_before();
 extern void add_insn_after();
-extern void remove_insn();
-extern void reorder_insns_with_line_notes();
 extern void emit_insn_after_with_line_notes();
 extern enum rtx_code classify_insn();
 extern void init_virtual_regs();
@@ -1322,21 +1308,16 @@ extern void add_clobbers();
 
 /* In combine.c */
 extern void combine_instructions();
-extern int extended_count();
 extern rtx remove_death();
 #ifdef BUFSIZ
-extern void dump_combine_stats		(FILE *);
 extern void dump_combine_total_stats	(FILE *);
 #endif
 
 /* In print-rtl.c */
 extern void debug_rtx();
-extern void debug_rtx_list();
-extern rtx debug_rtx_find();
 #ifdef BUFSIZ
 extern void print_rtl			(FILE *, rtx);
 extern int print_rtl_single		(FILE *, rtx);
-extern void print_inline_rtx		(FILE *, rtx, int);
 #endif
 
 /* In loop.c */
@@ -1347,7 +1328,6 @@ extern void loop_optimize		(rtx, FILE *, int, int);
 extern void record_excess_regs();
 
 /* In function.c */
-extern void reposition_prologue_and_epilogue_notes();
 extern void thread_prologue_and_epilogue_insns();
 extern void use_variable();
 extern int32_t get_frame_size();
@@ -1468,15 +1448,12 @@ extern int set_dominates_use();
 
 /* In varasm.c */
 extern void bss_section();
-extern int in_data_section();
 
 /* In rtl.c */
 extern void init_rtl();
-extern void rtx_free();
 
 /* In alias.c */
 extern int true_dependence();
-extern int read_dependence();
 extern int anti_dependence();
 extern int output_dependence();
 extern void init_alias_once();

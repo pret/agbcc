@@ -1373,7 +1373,6 @@ extern int floor_log2_wide             (uint32_t);
 extern char *oballoc			(int);
 extern char *permalloc			(int);
 extern char *savealloc			(int);
-extern char *expralloc			(int);
 
 /* Lowest level primitive for allocating a node.
    The TREE_CODE is the only argument.  Contents are initialized
@@ -1390,10 +1389,6 @@ extern tree copy_node			(tree);
 /* Make a copy of a chain of TREE_LIST nodes.  */
 
 extern tree copy_list			(tree);
-
-/* Make a TREE_VEC.  */
-
-extern tree make_tree_vec		(int);
 
 /* Return the (unique) IDENTIFIER_NODE node for a given name.
    The name is supplied as a char *.  */
@@ -1413,7 +1408,6 @@ extern tree maybe_get_identifier	(char *);
 
 extern tree build			(enum tree_code, tree, ...);
 extern tree build_nt			(enum tree_code, ...);
-extern tree build_parse_node		(enum tree_code, ...);
 
 extern tree build_int_2_wide		(int32_t, int32_t);
 extern tree build_real			(tree, REAL_VALUE_TYPE);
@@ -1422,11 +1416,7 @@ extern tree build_complex		(tree, tree, tree);
 extern tree build_string		(int, char *);
 extern tree build1			(enum tree_code, tree, tree);
 extern tree build_tree_list		(tree, tree);
-extern tree build_decl_list		(tree, tree);
-extern tree build_expr_list		(tree, tree);
 extern tree build_decl			(enum tree_code, tree, tree);
-extern tree build_block			(tree, tree, tree, tree, tree);
-extern tree build_expr_wfl              (tree, char *, int, int);
 
 /* Construct various nodes representing data types.  */
 
@@ -1436,27 +1426,19 @@ extern void set_sizetype		(tree);
 extern tree signed_or_unsigned_type 	(int, tree);
 extern void fixup_unsigned_type		(tree);
 extern tree build_pointer_type		(tree);
-extern tree build_reference_type 	(tree);
 extern tree build_index_type		(tree);
-extern tree build_index_2_type		(tree, tree);
 extern tree build_array_type		(tree, tree);
 extern tree build_function_type		(tree, tree);
-extern tree build_method_type		(tree, tree);
-extern tree build_offset_type		(tree, tree);
 extern tree build_complex_type		(tree);
-extern tree array_type_nelts		(tree);
 
 extern tree value_member		(tree, tree);
 extern tree purpose_member		(tree, tree);
-extern tree binfo_member		(tree, tree);
 extern int attribute_hash_list		(tree);
 extern int attribute_list_equal		(tree, tree);
 extern int attribute_list_contained	(tree, tree);
 extern int tree_int_cst_equal		(tree, tree);
 extern int tree_int_cst_lt		(tree, tree);
 extern int tree_int_cst_sgn		(tree);
-extern int index_type_equal		(tree, tree);
-extern tree get_inner_array_type	(tree);
 
 /* From expmed.c.  Since rtl.h is included after tree.h, we can't
    put the prototype here.  Rtl.h does declare the prototype if
@@ -1479,10 +1461,6 @@ extern tree merge_machine_type_attributes (tree, tree);
 /* Split a list of declspecs and attributes into two.  */
 
 extern void split_specs_attrs		(tree, tree *, tree *);
-
-/* Strip attributes from a list of combined specs and attrs.  */
-
-extern tree strip_attrs			(tree);
 
 /* Return 1 if an attribute and its arguments are valid for a decl or type.  */
 
@@ -1558,7 +1536,6 @@ extern tree convert			(tree, tree);
 extern tree size_in_bytes		(tree);
 extern int32_t int_size_in_bytes	(tree);
 extern tree size_binop			(enum tree_code, tree, tree);
-extern tree ssize_binop			(enum tree_code, tree, tree);
 extern tree size_int_wide		(uint32_t,
 					       uint32_t, int);
 #define size_int(L) size_int_2 ((L), 0, 0)
@@ -1569,7 +1546,6 @@ extern tree size_int_wide		(uint32_t,
 
 extern tree round_up			(tree, int);
 extern tree get_pending_sizes		(void);
-extern void put_pending_sizes		(tree);
 
 /* Type for sizes of data-type.  */
 
@@ -1612,8 +1588,6 @@ extern tree tree_cons			(tree, tree, tree);
 extern tree perm_tree_cons		(tree, tree, tree);
 extern tree temp_tree_cons		(tree, tree, tree);
 extern tree saveable_tree_cons		(tree, tree, tree);
-extern tree decl_tree_cons		(tree, tree, tree);
-extern tree expr_tree_cons		(tree, tree, tree);
 
 /* Return the last tree node in a chain.  */
 
@@ -1690,13 +1664,6 @@ extern int contains_placeholder_p	(tree);
    outer scope to deal with.  Used by fold.  */
 
 extern int has_cleanups			(tree);
-
-/* Given a tree EXP, a FIELD_DECL F, and a replacement value R,
-   return a tree with all occurrences of references to F in a
-   PLACEHOLDER_EXPR replaced by R.   Note that we assume here that EXP
-   contains only arithmetic expressions.  */
-
-extern tree substitute_in_expr		(tree, tree, tree);
 
 /* variable_size (EXP) is like save_expr (EXP) except that it
    is for the special case of something that is part of a
@@ -1877,7 +1844,6 @@ extern char *(*decl_printable_name)		(tree, int);
 extern void (*incomplete_decl_finalize_hook)	(tree);
 
 /* In tree.c */
-extern char *perm_calloc			(int, long);
 extern tree get_set_constructor_bits		(tree, char *, int);
 extern tree get_set_constructor_bytes		(tree,
 						       unsigned char *, int);
@@ -1900,13 +1866,11 @@ extern void expand_asm				(tree);
 extern void expand_start_cond			(tree, int);
 extern void expand_end_cond			(void);
 extern void expand_start_else			(void);
-extern void expand_start_elseif			(tree);
 extern struct nesting *expand_start_loop 	(int);
 extern struct nesting *expand_start_loop_continue_elsewhere 	(int);
 extern void expand_loop_continue_here		(void);
 extern void expand_end_loop			(void);
 extern int expand_continue_loop			(struct nesting *);
-extern int expand_exit_loop			(struct nesting *);
 extern int expand_exit_loop_if_false		(struct nesting *,
 						       tree);
 extern int expand_exit_something		(void);
@@ -1922,9 +1886,7 @@ extern void mark_block_as_eh_region		(void);
 extern void mark_block_as_not_eh_region		(void);
 extern int is_eh_region				(void);
 extern int conditional_context			(void);
-extern tree last_cleanup_this_contour		(void);
 extern int expand_dhc_cleanup			(tree);
-extern int expand_dcc_cleanup			(tree);
 extern void expand_start_case			(int, tree, tree,
 						       char *);
 extern void expand_end_case			(tree);
@@ -1934,8 +1896,6 @@ extern int pushcase				(tree,
 extern int pushcase_range			(tree, tree,
 						       tree (*) (tree, tree),
 						       tree, tree *);
-extern void using_eh_for_cleanups		(void);
-extern int stmt_loop_nest_empty			(void);
 
 /* In fold-const.c */
 
@@ -2023,8 +1983,6 @@ extern tree getdecls				(void);
 /* Function to return the chain of structure tags in the current scope level.  */
 extern tree gettags				(void);
 
-extern tree build_range_type (tree, tree, tree);
-
 /* Call when starting to parse a declaration:
    make expressions in the declaration last the length of the function.
    Returns an argument that should be passed to resume_momentary later.  */
@@ -2062,7 +2020,6 @@ extern int really_constant_p		(tree);
 extern void push_obstacks		(struct obstack *,
 						struct obstack *);
 extern void pop_momentary_nofree	(void);
-extern void preserve_momentary		(void);
 extern void saveable_allocation		(void);
 extern void temporary_allocation	(void);
 extern void resume_temporary_allocation	(void);
@@ -2071,27 +2028,19 @@ extern int int_fits_type_p		(tree, tree);
 extern int tree_log2			(tree);
 extern void preserve_initializer	(void);
 extern void preserve_data		(void);
-extern int object_permanent_p		(tree);
 extern int type_precision		(tree);
 extern int simple_cst_equal		(tree, tree);
 extern int type_list_equal		(tree, tree);
 extern int chain_member			(tree, tree);
-extern int chain_member_purpose		(tree, tree);
-extern int chain_member_value		(tree, tree);
-extern tree listify			(tree);
 extern tree type_hash_lookup		(int, tree);
 extern void type_hash_add		(int, tree);
 extern int type_hash_list		(tree);
 extern int simple_cst_list_equal	(tree, tree);
-extern void debug_obstack		(char *);
 extern void rtl_in_current_obstack	(void);
 extern void rtl_in_saveable_obstack	(void);
 extern void init_tree_codes		(void);
 extern void dump_tree_statistics	(void);
 extern void print_obstack_statistics	(char *, struct obstack *);
-#ifdef BUFSIZ
-extern void print_obstack_name		(char *, FILE *, char *);
-#endif
 extern void expand_function_end		(char *, int, int);
 extern void expand_function_start	(tree, int);
 extern int real_onep			(tree);
@@ -2114,7 +2063,6 @@ extern void assign_parms		(tree, int);
 extern void put_var_into_stack		(tree);
 extern void uninitialized_vars_warning	(tree);
 extern void setjmp_args_warning		(void);
-extern void mark_all_temps_used		(void);
 extern void init_temp_slots		(void);
 extern void combine_temp_slots		(void);
 extern void free_temp_slots		(void);
@@ -2126,28 +2074,13 @@ extern tree reorder_blocks		(tree *, tree,
 						struct rtx_def *);
 extern void free_temps_for_rtl_expr	(tree);
 extern void instantiate_virtual_regs	(tree, struct rtx_def *);
-extern int max_parm_reg_num		(void);
 extern void push_function_context	(void);
 extern void pop_function_context	(void);
 extern void push_function_context_to	(tree);
 extern void pop_function_context_from	(tree);
 
-/* In print-rtl.c */
-#ifdef BUFSIZ
-extern void print_rtl			(FILE *, struct rtx_def *);
-#endif
-
-/* In print-tree.c */
-extern void debug_tree			(tree);
-#ifdef BUFSIZ
-extern void print_node			(FILE *, char *, tree, int);
-extern void print_node_brief		(FILE *, char *, tree, int);
-extern void indent_to			(FILE *, int);
-#endif
-
 /* In expr.c */
 extern void emit_queue				(void);
-extern int apply_args_register_offset		(int);
 extern struct rtx_def *expand_builtin_return_addr
 	(enum built_in_function, int, struct rtx_def *);
 extern void do_pending_stack_adjust		(void);
@@ -2216,17 +2149,8 @@ extern int any_pending_cleanups		(int);
 extern void init_stmt			(void);
 extern void init_stmt_for_function	(void);
 extern void remember_end_note		(tree);
-extern int drop_through_at_end_p	(void);
-extern void expand_start_target_temps	(void);
-extern void expand_end_target_temps	(void);
-extern void expand_elseif		(tree);
 extern void expand_decl			(tree);
 extern int expand_decl_cleanup		(tree, tree);
-extern void expand_anon_union_decl	(tree, tree, tree);
-extern void move_cleanups_up		(void);
-extern void expand_start_case_dummy	(void);
-extern void expand_end_case_dummy	(void);
-extern tree case_index_expr_type	(void);
 extern int32_t all_cases_count	(tree, int *);
 extern void check_for_full_enumeration_handling (tree);
 extern void declare_nonlocal_label	(tree);

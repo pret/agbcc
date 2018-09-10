@@ -33,6 +33,3 @@ extern void dwarf2out_label		(rtx);
 extern void dwarf2out_decl		(tree);	
 extern void dwarf2out_line		(char *, unsigned);			
 
-extern void debug_dwarf			(void);
-struct die_struct;
-extern void debug_dwarf_die		(struct die_struct *);

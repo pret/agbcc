@@ -2793,23 +2793,6 @@ static void print_dwarf_line_table(FILE *outfile)
     fprintf(outfile, "\n\n");
 }
 
-/* Print the information collected for a given DIE.  */
-
-void debug_dwarf_die(dw_die_ref die)
-{
-    print_die(die, stderr);
-}
-
-/* Print all DWARF information collected for the compilation unit.
-   This routine is a debugging aid only.  */
-
-void debug_dwarf(void)
-{
-    print_indent = 0;
-    print_die(comp_unit_die, stderr);
-    print_dwarf_line_table(stderr);
-}
-
 /* Traverse the DIE, and add a sibling attribute if it may have the
    effect of speeding up access to siblings.  To save some space,
    avoid generating sibling attributes for DIE's without children.  */

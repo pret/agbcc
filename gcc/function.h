@@ -262,8 +262,6 @@ extern void restore_emit_status		(struct function *);
 extern void save_storage_status		(struct function *);
 extern void restore_storage_status	(struct function *);
 
-extern rtx get_first_block_beg		(void);
-
 #ifdef rtx
 #undef rtx
 #endif

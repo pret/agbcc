@@ -38,7 +38,7 @@ RTLANAL_OBJS := rtlanal.o
 PRINT_SRCS := print-rtl.c
 PRINT_OBJS := print-rtl.o
 
-SRCS := toplev.c version.c tree.c print-tree.c stor-layout.c fold-const.c \
+SRCS := toplev.c version.c tree.c stor-layout.c fold-const.c \
 function.c stmt.c except.c expr.c calls.c expmed.c explow.c optabs.c \
 varasm.c emit-rtl.c genrtl.c real.c regmove.c dwarf2out.c alias.c integrate.c \
 jump.c cse.c loop.c unroll.c flow.c stupid.c combine.c varray.c regclass.c \

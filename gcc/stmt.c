@@ -452,11 +452,6 @@ static void emit_case_nodes(rtx, case_node_ptr, rtx, tree);
 static int add_case_node(tree, tree, tree, tree *);
 static struct case_node *case_tree2list(case_node *, case_node *);
 
-void using_eh_for_cleanups(void)
-{
-    using_eh_for_cleanups_p = 1;
-}
-
 void init_stmt(void)
 {
     gcc_obstack_init(&stmt_obstack);
@@ -1851,19 +1846,6 @@ void expand_start_cond(tree cond, int exitflag)
     do_jump(cond, thiscond->data.cond.next_label, NULL_RTX);
 }
 
-/* Generate RTL between then-clause and the elseif-clause
-   of an if-then-elseif-....  */
-
-void expand_start_elseif(tree cond)
-{
-    if (cond_stack->data.cond.endif_label == 0)
-        cond_stack->data.cond.endif_label = gen_label_rtx();
-    emit_jump(cond_stack->data.cond.endif_label);
-    emit_label(cond_stack->data.cond.next_label);
-    cond_stack->data.cond.next_label = gen_label_rtx();
-    do_jump(cond, cond_stack->data.cond.next_label, NULL_RTX);
-}
-
 /* Generate RTL between the then-clause and the else-clause
    of an if-then-else.  */
 
@@ -1875,15 +1857,6 @@ void expand_start_else(void)
     emit_jump(cond_stack->data.cond.endif_label);
     emit_label(cond_stack->data.cond.next_label);
     cond_stack->data.cond.next_label = 0; /* No more _else or _elseif calls.  */
-}
-
-/* After calling expand_start_else, turn this "else" into an "else if"
-   by providing another condition.  */
-
-void expand_elseif(tree cond)
-{
-    cond_stack->data.cond.next_label = gen_label_rtx();
-    do_jump(cond, cond_stack->data.cond.next_label, NULL_RTX);
 }
 
 /* Generate RTL for the end of an if-then.
@@ -2204,20 +2177,6 @@ int expand_continue_loop(struct nesting *whichloop)
     return 1;
 }
 
-/* Generate a jump to exit the current loop.  If not currently inside a loop,
-   return 0 and do nothing; caller will print an error message.  */
-
-int expand_exit_loop(struct nesting *whichloop)
-{
-    last_expr_type = 0;
-    if (whichloop == 0)
-        whichloop = loop_stack;
-    if (whichloop == 0)
-        return 0;
-    expand_goto_internal(NULL_TREE, whichloop->data.loop.end_label, NULL_RTX);
-    return 1;
-}
-
 /* Generate a conditional jump to exit the current loop if COND
    evaluates to zero.  If not currently inside a loop,
    return 0 and do nothing; caller will print an error message.  */
@@ -2245,13 +2204,6 @@ int expand_exit_loop_if_false(struct nesting *whichloop, tree cond)
     emit_label(label);
 
     return 1;
-}
-
-/* Return nonzero if the loop nest is empty.  Else return zero.  */
-
-int stmt_loop_nest_empty(void)
-{
-    return (loop_stack == NULL);
 }
 
 /* Return non-zero if we should preserve sub-expressions as separate
@@ -2587,17 +2539,6 @@ void expand_return(tree retval)
     }
 }
 
-/* Return 1 if the end of the generated RTX is not a barrier.
-   This means code already compiled can drop through.  */
-
-int drop_through_at_end_p(void)
-{
-    rtx insn = get_last_insn();
-    while (insn && GET_CODE(insn) == NOTE)
-        insn = PREV_INSN(insn);
-    return insn && GET_CODE(insn) != BARRIER;
-}
-
 /* Test CALL_EXPR to determine if it is a potential tail recursion call
    and emit code to optimize the tail recursion.  LAST_INSN indicates where
    to place the jump to the tail recursion label.  Return TRUE if the
@@ -2744,34 +2685,6 @@ void expand_start_bindings(int exit_flag)
 
     /* Make a new level for allocating stack slots.  */
     push_temp_slots();
-}
-
-/* Specify the scope of temporaries created by TARGET_EXPRs.  Similar
-   to CLEANUP_POINT_EXPR, but handles cases when a series of calls to
-   expand_expr are made.  After we end the region, we know that all
-   space for all temporaries that were created by TARGET_EXPRs will be
-   destroyed and their space freed for reuse.  */
-
-void expand_start_target_temps(void)
-{
-    /* This is so that even if the result is preserved, the space
-       allocated will be freed, as we know that it is no longer in use.  */
-    push_temp_slots();
-
-    /* Start a new binding layer that will keep track of all cleanup
-       actions to be performed.  */
-    expand_start_bindings(0);
-
-    target_temp_slot_level = temp_slot_level;
-}
-
-void expand_end_target_temps(void)
-{
-    expand_end_bindings(NULL_TREE, 0, 0);
-
-    /* This is so that even if the result is preserved, the space
-       allocated will be freed, as we know that it is no longer in use.  */
-    pop_temp_slots();
 }
 
 /* Mark top block of block_stack as an implicit binding for an
@@ -3426,11 +3339,6 @@ int expand_decl_cleanup(tree decl, tree cleanup)
             start_sequence();
         }
 
-        /* If this was optimized so that there is no exception region for the
-       cleanup, then mark the TREE_LIST node, so that we can later tell
-       if we need to call expand_eh_region_end.  */
-        if (!using_eh_for_cleanups_p || expand_eh_region_start_tree(decl, cleanup))
-            TREE_ADDRESSABLE(t) = 1;
         /* If that started a new EH region, we're in a new block.  */
         thisblock = block_stack;
 
@@ -3448,59 +3356,6 @@ int expand_decl_cleanup(tree decl, tree cleanup)
             thisblock->data.block.cleanup_ptr = &thisblock->data.block.cleanups;
         }
     }
-    return 1;
-}
-
-/* Like expand_decl_cleanup, but suppress generating an exception handler
-   to perform the cleanup.  */
-
-int expand_decl_cleanup_no_eh(tree decl, tree cleanup)
-{
-    int save_eh = using_eh_for_cleanups_p;
-    int result;
-
-    using_eh_for_cleanups_p = 0;
-    result = expand_decl_cleanup(decl, cleanup);
-    using_eh_for_cleanups_p = save_eh;
-
-    return result;
-}
-
-/* Arrange for the top element of the dynamic cleanup chain to be
-   popped if we exit the current binding contour.  DECL is the
-   associated declaration, if any, otherwise NULL_TREE.  If the
-   current contour is left via an exception, then __sjthrow will pop
-   the top element off the dynamic cleanup chain.  The code that
-   avoids doing the action we push into the cleanup chain in the
-   exceptional case is contained in expand_cleanups.
-
-   This routine is only used by expand_eh_region_start, and that is
-   the only way in which an exception region should be started.  This
-   routine is only used when using the setjmp/longjmp codegen method
-   for exception handling.  */
-
-int expand_dcc_cleanup(tree decl)
-{
-    struct nesting *thisblock = block_stack;
-    tree cleanup;
-
-    /* Error if we are not in any block.  */
-    if (thisblock == 0)
-        return 0;
-
-    /* Record the cleanup for the dynamic handler chain.  */
-
-    /* All cleanups must be on the function_obstack.  */
-    push_obstacks_nochange();
-    resume_temporary_allocation();
-    cleanup = make_node(POPDCC_EXPR);
-    pop_obstacks();
-
-    /* Add the cleanup in a manner similar to expand_decl_cleanup.  */
-    thisblock->data.block.cleanups = temp_tree_cons(decl, cleanup, thisblock->data.block.cleanups);
-
-    /* If this block has a cleanup, it belongs in stack_block_stack.  */
-    stack_block_stack = thisblock;
     return 1;
 }
 
@@ -3540,68 +3395,6 @@ int expand_dhc_cleanup(tree decl)
     /* If this block has a cleanup, it belongs in stack_block_stack.  */
     stack_block_stack = thisblock;
     return 1;
-}
-
-/* DECL is an anonymous union.  CLEANUP is a cleanup for DECL.
-   DECL_ELTS is the list of elements that belong to DECL's type.
-   In each, the TREE_VALUE is a VAR_DECL, and the TREE_PURPOSE a cleanup.  */
-
-void expand_anon_union_decl(tree decl, tree cleanup, tree decl_elts)
-{
-    struct nesting *thisblock = block_stack;
-    rtx x;
-
-    expand_decl(decl);
-    expand_decl_cleanup(decl, cleanup);
-    x = DECL_RTL(decl);
-
-    while (decl_elts)
-    {
-        tree decl_elt = TREE_VALUE(decl_elts);
-        tree cleanup_elt = TREE_PURPOSE(decl_elts);
-        enum machine_mode mode = TYPE_MODE(TREE_TYPE(decl_elt));
-
-        /* Propagate the union's alignment to the elements.  */
-        DECL_ALIGN(decl_elt) = DECL_ALIGN(decl);
-
-        /* If the element has BLKmode and the union doesn't, the union is
-           aligned such that the element doesn't need to have BLKmode, so
-           change the element's mode to the appropriate one for its size.  */
-        if (mode == BLKmode && DECL_MODE(decl) != BLKmode)
-            DECL_MODE(decl_elt) = mode
-                = mode_for_size(TREE_INT_CST_LOW(DECL_SIZE(decl_elt)), MODE_INT, 1);
-
-        /* (SUBREG (MEM ...)) at RTL generation time is invalid, so we
-           instead create a new MEM rtx with the proper mode.  */
-        if (GET_CODE(x) == MEM)
-        {
-            if (mode == GET_MODE(x))
-                DECL_RTL(decl_elt) = x;
-            else
-            {
-                DECL_RTL(decl_elt) = gen_rtx_MEM(mode, copy_rtx(XEXP(x, 0)));
-                MEM_COPY_ATTRIBUTES(DECL_RTL(decl_elt), x);
-                RTX_UNCHANGING_P(DECL_RTL(decl_elt)) = RTX_UNCHANGING_P(x);
-            }
-        }
-        else if (GET_CODE(x) == REG)
-        {
-            if (mode == GET_MODE(x))
-                DECL_RTL(decl_elt) = x;
-            else
-                DECL_RTL(decl_elt) = gen_rtx_SUBREG(mode, x, 0);
-        }
-        else
-            abort();
-
-        /* Record the cleanup if there is one.  */
-
-        if (cleanup != 0)
-            thisblock->data.block.cleanups
-                = temp_tree_cons(decl_elt, cleanup_elt, thisblock->data.block.cleanups);
-
-        decl_elts = TREE_CHAIN(decl_elts);
-    }
 }
 
 /* Expand a list of cleanups LIST.
@@ -3696,29 +3489,6 @@ void end_cleanup_deferral(void)
         --block_stack->data.block.conditional_code;
 }
 
-/* Move all cleanups from the current block_stack
-   to the containing block_stack, where they are assumed to
-   have been created.  If anything can cause a temporary to
-   be created, but not expanded for more than one level of
-   block_stacks, then this code will have to change.  */
-
-void move_cleanups_up(void)
-{
-    struct nesting *block = block_stack;
-    struct nesting *outer = block->next;
-
-    outer->data.block.cleanups = chainon(block->data.block.cleanups, outer->data.block.cleanups);
-    block->data.block.cleanups = 0;
-}
-
-tree last_cleanup_this_contour(void)
-{
-    if (block_stack == 0)
-        return 0;
-
-    return block_stack->data.block.cleanups;
-}
-
 /* Return 1 if there are any pending cleanups at this point.
    If THIS_CONTOUR is nonzero, check the current contour as well.
    Otherwise, look only at the contours that enclose this one.  */
@@ -3784,50 +3554,6 @@ void expand_start_case(int exit_flag, tree expr, tree type, char *printname)
     thiscase->data.case_stmt.start = get_last_insn();
 
     start_cleanup_deferral();
-}
-
-
-/* Start a "dummy case statement" within which case labels are invalid
-   and are not connected to any larger real case statement.
-   This can be used if you don't want to let a case statement jump
-   into the middle of certain kinds of constructs.  */
-
-void expand_start_case_dummy(void)
-{
-    register struct nesting *thiscase = ALLOC_NESTING();
-
-    /* Make an entry on case_stack for the dummy.  */
-
-    thiscase->next = case_stack;
-    thiscase->all = nesting_stack;
-    thiscase->depth = ++nesting_depth;
-    thiscase->exit_label = 0;
-    thiscase->data.case_stmt.case_list = 0;
-    thiscase->data.case_stmt.start = 0;
-    thiscase->data.case_stmt.nominal_type = 0;
-    thiscase->data.case_stmt.default_label = 0;
-    thiscase->data.case_stmt.num_ranges = 0;
-    case_stack = thiscase;
-    nesting_stack = thiscase;
-    start_cleanup_deferral();
-}
-
-/* End a dummy case statement.  */
-
-void expand_end_case_dummy(void)
-{
-    end_cleanup_deferral();
-    POPSTACK(case_stack);
-}
-
-/* Return the data type of the index-expression
-   of the innermost case statement, or null if none.  */
-
-tree case_index_expr_type(void)
-{
-    if (case_stack)
-        return TREE_TYPE(case_stack->data.case_stmt.index_expr);
-    return 0;
 }
 
 static void check_seenlabel(void)

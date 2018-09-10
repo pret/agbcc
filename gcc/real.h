@@ -96,7 +96,6 @@ extern void ereal_to_decimal();
 extern int ereal_cmp();
 extern int ereal_isneg();
 extern REAL_VALUE_TYPE ereal_unto_float();
-extern REAL_VALUE_TYPE ereal_unto_double();
 extern REAL_VALUE_TYPE ereal_from_float();
 extern REAL_VALUE_TYPE ereal_from_double();
 
@@ -142,9 +141,6 @@ extern REAL_VALUE_TYPE real_value_truncate();
 
 /* IN is a REAL_VALUE_TYPE.  OUT is a long. */
 #define REAL_VALUE_TO_TARGET_SINGLE(IN, OUT) ((OUT) = etarsingle ((IN)))
-
-/* Inverse of REAL_VALUE_TO_TARGET_DOUBLE. */
-#define REAL_VALUE_UNTO_TARGET_DOUBLE(d)  (ereal_unto_double (d))
 
 /* Inverse of REAL_VALUE_TO_TARGET_SINGLE. */
 #define REAL_VALUE_UNTO_TARGET_SINGLE(f)  (ereal_unto_float (f))

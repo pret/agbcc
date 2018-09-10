@@ -112,25 +112,6 @@ void forget_protocol_qualifiers(void)
             wordlist[i].name = "";
 }
 
-void remember_protocol_qualifiers(void)
-{
-    int i, n = sizeof wordlist / sizeof(struct resword);
-
-    for (i = 0; i < n; i++)
-        if (wordlist[i].rid == RID_IN)
-            wordlist[i].name = "in";
-        else if (wordlist[i].rid == RID_OUT)
-            wordlist[i].name = "out";
-        else if (wordlist[i].rid == RID_INOUT)
-            wordlist[i].name = "inout";
-        else if (wordlist[i].rid == RID_BYCOPY)
-            wordlist[i].name = "bycopy";
-        else if (wordlist[i].rid == RID_BYREF)
-            wordlist[i].name = "byref";
-        else if (wordlist[i].rid == RID_ONEWAY)
-            wordlist[i].name = "oneway";
-}
-
 char *init_parse(char *filename)
 {
     /* Open input file.  */

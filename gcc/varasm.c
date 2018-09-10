@@ -193,14 +193,6 @@ void data_section(void)
         in_section = in_data;
     }
 }
-/* Tell assembler to ALWAYS switch to data section, in case
-   it's not sure where it it.  */
-
-void force_data_section(void)
-{
-    in_section = no_section;
-    data_section();
-}
 
 /* Tell assembler to switch to read-only data section.  This is normally
    the text section.  */
@@ -219,13 +211,6 @@ void readonly_data_section(void)
 int in_text_section(void)
 {
     return in_section == in_text;
-}
-
-/* Determine if we're in the data section.  */
-
-int in_data_section(void)
-{
-    return in_section == in_data;
 }
 
 /* Tell assembler to change to section NAME for DECL.
@@ -717,22 +702,6 @@ void make_var_volatile(tree var)
         abort();
 
     MEM_VOLATILE_P(DECL_RTL(var)) = 1;
-}
-
-/* Output alignment directive to align for constant expression EXP.  */
-
-void assemble_constant_align(tree exp)
-{
-    int align;
-
-    /* Align the location counter as required by EXP's data type.  */
-    align = TYPE_ALIGN(TREE_TYPE(exp));
-#ifdef CONSTANT_ALIGNMENT
-    align = CONSTANT_ALIGNMENT(exp, align);
-#endif
-
-    if (align > BITS_PER_UNIT)
-        ASM_OUTPUT_ALIGN(asm_out_file, floor_log2(align / BITS_PER_UNIT));
 }
 
 /* Output a string of literal assembler code
@@ -1334,13 +1303,6 @@ void assemble_external_libcall(rtx fun ATTRIBUTE_UNUSED)
 #endif
 }
 
-/* Declare the label NAME global.  */
-
-void assemble_global(char *name)
-{
-    ASM_GLOBALIZE_LABEL(asm_out_file, name);
-}
-
 /* Assemble a label named NAME.  */
 
 void assemble_label(char *name)
@@ -1371,28 +1333,6 @@ void assemble_name(FILE *file, char *name)
         fputs(&name[1], file);
     else
         ASM_OUTPUT_LABELREF(file, name);
-}
-
-/* Allocate SIZE bytes writable static space with a gensym name
-   and return an RTX to refer to its address.  */
-
-rtx assemble_static_space(int size)
-{
-    char name[12];
-    char *namestring;
-    rtx x;
-
-    ASM_GENERATE_INTERNAL_LABEL(name, "LF", const_labelno);
-    ++const_labelno;
-
-    namestring = (char *)obstack_alloc(saveable_obstack, strlen(name) + 2);
-    strcpy(namestring, name);
-
-    x = gen_rtx_SYMBOL_REF(Pmode, namestring);
-
-    ASM_OUTPUT_LOCAL(asm_out_file, name, size);
-
-    return x;
 }
 
 /* Assemble the static constant template for function entry trampolines.
@@ -3096,20 +3036,6 @@ rtx get_pool_constant(rtx addr)
 enum machine_mode get_pool_mode(rtx addr)
 {
     return (find_pool_constant(addr))->mode;
-}
-
-/* Similar, return the offset in the constant pool.  */
-
-int get_pool_offset(rtx addr)
-{
-    return (find_pool_constant(addr))->offset;
-}
-
-/* Return the size of the constant pool.  */
-
-int get_pool_size(void)
-{
-    return pool_offset;
 }
 
 /* Write all the constants in the constant pool.  */

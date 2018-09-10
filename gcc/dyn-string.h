@@ -27,6 +27,5 @@ typedef struct dyn_string
 }* dyn_string_t;
 
 extern dyn_string_t dyn_string_new      (int);
-extern void dyn_string_delete           (dyn_string_t);
 extern dyn_string_t dyn_string_append   (dyn_string_t, char*);
 extern dyn_string_t dyn_string_resize   (dyn_string_t, int);

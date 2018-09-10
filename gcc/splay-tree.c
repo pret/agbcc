@@ -29,7 +29,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "splay-tree.h"
 
-static void splay_tree_delete_helper(splay_tree, splay_tree_node);
 static void splay_tree_splay(splay_tree, splay_tree_key);
 static splay_tree_node splay_tree_splay_helper(splay_tree,
     splay_tree_key,
@@ -37,24 +36,6 @@ static splay_tree_node splay_tree_splay_helper(splay_tree,
     splay_tree_node *,
     splay_tree_node *);
 static int splay_tree_foreach_helper(splay_tree, splay_tree_node, splay_tree_foreach_fn, void *);
-
-/* Deallocate NODE (a member of SP), and all its sub-trees.  */
-
-static void splay_tree_delete_helper(splay_tree sp, splay_tree_node node)
-{
-    if (!node)
-        return;
-
-    splay_tree_delete_helper(sp, node->left);
-    splay_tree_delete_helper(sp, node->right);
-
-    if (sp->delete_key)
-        (*sp->delete_key)(node->key);
-    if (sp->delete_value)
-        (*sp->delete_value)(node->value);
-
-    free((char *)node);
-}
 
 /* Help splay SP around KEY.  PARENT and GRANDPARENT are the parent
    and grandparent, respectively, of NODE.  */
@@ -216,14 +197,6 @@ splay_tree splay_tree_new(splay_tree_compare_fn compare_fn, splay_tree_delete_ke
     sp->delete_value = delete_value_fn;
 
     return sp;
-}
-
-/* Deallocate SP.  */
-
-void splay_tree_delete(splay_tree sp)
-{
-    splay_tree_delete_helper(sp, sp->root);
-    free((char *)sp);
 }
 
 /* Insert a new node (associating KEY with DATA) into SP.  If a

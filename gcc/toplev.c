@@ -91,7 +91,6 @@ void pedwarn_with_decl(tree decl, char *s, ...);
 void pedwarn_with_file_and_line(char *file, int line, char *s, ...);
 void note(char *s, ...);
 void note_with_decl(tree decl, char *s, ...);
-void note_with_file_and_line(char *file, int line, char *s, ...);
 void sorry(char *s, ...);
 static void set_target_switch(char *);
 static char *decl_name(tree, int);
@@ -1538,14 +1537,6 @@ static void v_note_with_file_and_line(char *file, int line, char *s, va_list ap)
     v_message_with_file_and_line(file, line, CYAN("note"), s, ap);
 }
 
-void note_with_file_and_line(char *file, int line, char *s, ...)
-{
-    va_list ap;
-    va_start(ap, s);
-    v_note_with_file_and_line(file, line, s, ap);
-    va_end(ap);
-}
-
 /* Report a note at the declaration DECL.
    S is a format string which uses %s to substitute the declaration
    name; subsequent substitutions are a la printf.  */
@@ -1765,32 +1756,6 @@ void set_float_handler(jmp_buf handler)
         signal(SIGFPE, float_signal);
         float_handler_set = 1;
     }
-}
-
-/* Specify, in HANDLER, where to longjmp to when a floating arithmetic
-   error happens, pushing the previous specification into OLD_HANDLER.
-   Return an indication of whether there was a previous handler in effect.  */
-
-int push_float_handler(jmp_buf handler, jmp_buf old_handler)
-{
-    int was_handled = float_handled;
-
-    float_handled = 1;
-    if (was_handled)
-        memcpy((char *)old_handler, (char *)float_handler, sizeof(float_handler));
-
-    memcpy((char *)float_handler, (char *)handler, sizeof(float_handler));
-    return was_handled;
-}
-
-/* Restore the previous specification of whether and where to longjmp to
-   when a floating arithmetic error happens.  */
-
-void pop_float_handler(int handled, jmp_buf handler)
-{
-    float_handled = handled;
-    if (handled)
-        copy_memory((char *)handler, (char *)float_handler, sizeof(float_handler));
 }
 
 /* Handler for SIGPIPE.  */

@@ -44,14 +44,6 @@ dyn_string_t dyn_string_new(int space)
     return result;
 }
 
-/* Free the memory used by DS.  */
-
-void dyn_string_delete(dyn_string_t ds)
-{
-    free(ds->s);
-    free(ds);
-}
-
 /* Append the NUL-terminated string S to DS, resizing DS if
    necessary.  */
 

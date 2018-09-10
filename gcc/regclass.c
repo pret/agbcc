@@ -437,59 +437,6 @@ void init_regs(void)
 #endif
 }
 
-#ifdef HAVE_SECONDARY_RELOADS
-
-/* Compute extra cost of moving registers to/from memory due to reloads.
-   Only needed if secondary reloads are required for memory moves.  */
-
-int memory_move_secondary_cost(enum machine_mode mode, enum reg_class class, int in)
-{
-    enum reg_class altclass;
-    int partial_cost = 0;
-    /* We need a memory reference to feed to SECONDARY... macros.  */
-    rtx mem = top_of_stack[(int)mode];
-
-    if (in)
-    {
-#ifdef SECONDARY_INPUT_RELOAD_CLASS
-        altclass = SECONDARY_INPUT_RELOAD_CLASS(class, mode, mem);
-#else
-        altclass = NO_REGS;
-#endif
-    }
-    else
-    {
-#ifdef SECONDARY_OUTPUT_RELOAD_CLASS
-        altclass = SECONDARY_OUTPUT_RELOAD_CLASS(class, mode, mem);
-#else
-        altclass = NO_REGS;
-#endif
-    }
-
-    if (altclass == NO_REGS)
-        return 0;
-
-    if (in)
-        partial_cost = REGISTER_MOVE_COST(altclass, class);
-    else
-        partial_cost = REGISTER_MOVE_COST(class, altclass);
-
-    if (class == altclass)
-        /* This isn't simply a copy-to-temporary situation.  Can't guess
-           what it is, so MEMORY_MOVE_COST really ought not to be calling
-           here in that case.
-
-           I'm tempted to put in an abort here, but returning this will
-           probably only give poor estimates, which is what we would've
-           had before this code anyways.  */
-        return partial_cost;
-
-    /* Check if the secondary reload register will also need a
-       secondary reload.  */
-    return memory_move_secondary_cost(mode, altclass, in) + partial_cost;
-}
-#endif
-
 /* Return a machine mode that is legitimate for hard reg REGNO and large
    enough to save nregs.  If we can't find one, return VOIDmode.  */
 

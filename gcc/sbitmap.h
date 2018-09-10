@@ -89,10 +89,6 @@ do {									\
 #define sbitmap_free(map)		free(map)
 #define sbitmap_vector_free(vec)	free(vec)
 
-extern void dump_sbitmap (FILE *, sbitmap);
-extern void dump_sbitmap_vector (FILE *, char *, char *,
-					sbitmap *, int);
-
 extern sbitmap sbitmap_alloc (int);
 extern sbitmap *sbitmap_vector_alloc (int, int);
 

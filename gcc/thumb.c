@@ -456,11 +456,6 @@ void thumb_expand_movstrqi(rtx *operands)
 
 /* Routines for reloading */
 
-void thumb_reload_out_si(rtx operands)
-{
-    abort();
-}
-
 static int arm_naked_function_p(tree func)
 {
     tree a;

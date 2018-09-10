@@ -525,12 +525,6 @@ static int min_labelno, max_labelno;
 
 #define LABEL_TO_MAX_SKIP(LABEL) (label_align[CODE_LABEL_NUMBER(LABEL) - min_labelno].max_skip)
 
-/* For the benefit of port specific code do this also as a function.  */
-int label_to_alignment(rtx label)
-{
-    return LABEL_TO_ALIGNMENT(label);
-}
-
 #ifdef HAVE_ATTR_length
 /* The differences in addresses
    between a branch and its target might grow or shrink depending on
@@ -2694,76 +2688,6 @@ void asm_fprintf(FILE *file, char *p, ...)
         default:
             fputc(c, file);
         }
-}
-
-/* Split up a CONST_DOUBLE or integer constant rtx
-   into two rtx's for single words,
-   storing in *FIRST the word that comes first in memory in the target
-   and in *SECOND the other.  */
-
-void split_double(rtx value, rtx *first, rtx *second)
-{
-    if (GET_CODE(value) == CONST_INT)
-    {
-        if (32 >= (2 * BITS_PER_WORD))
-        {
-            /* In this case the CONST_INT holds both target words.
-               Extract the bits from it into two word-sized pieces.
-               Sign extend each half to int32_t.  */
-            rtx low, high;
-            /* On machines where 32 == BITS_PER_WORD
-               the shift below will cause a compiler warning, even though
-               this code won't be executed.  So put the shift amounts in
-               variables to avoid the warning.  */
-            int rshift = 32 - BITS_PER_WORD;
-            int lshift = 32 - 2 * BITS_PER_WORD;
-
-            low = GEN_INT((INTVAL(value) << rshift) >> rshift);
-            high = GEN_INT((INTVAL(value) << lshift) >> rshift);
-
-            *first = low;
-            *second = high;
-        }
-        else
-        {
-            /* The rule for using CONST_INT for a wider mode
-               is that we regard the value as signed.
-               So sign-extend it.  */
-            rtx high = (INTVAL(value) < 0 ? constm1_rtx : const0_rtx);
-
-            *first = value;
-            *second = high;
-        }
-    }
-    else if (GET_CODE(value) != CONST_DOUBLE)
-    {
-        *first = value;
-        *second = const0_rtx;
-    }
-    else if (GET_MODE(value) == VOIDmode
-        /* This is the old way we did CONST_DOUBLE integers.  */
-        || GET_MODE_CLASS(GET_MODE(value)) == MODE_INT)
-    {
-        /* In an integer, the words are defined as most and least significant.
-       So order them by the target's convention.  */
-        *first = GEN_INT(CONST_DOUBLE_LOW(value));
-        *second = GEN_INT(CONST_DOUBLE_HIGH(value));
-    }
-    else
-    {
-        REAL_VALUE_TYPE r;
-        long l[2];
-        REAL_VALUE_FROM_CONST_DOUBLE(r, value);
-
-        /* Note, this converts the REAL_VALUE_TYPE to the target's
-       format, splits up the floating point double and outputs
-       exactly 32 bits of it into each of l[0] and l[1] --
-       not necessarily BITS_PER_WORD bits.  */
-        REAL_VALUE_TO_TARGET_DOUBLE(r, l);
-
-        *first = GEN_INT((int32_t)l[0]);
-        *second = GEN_INT((int32_t)l[1]);
-    }
 }
 
 /* Return nonzero if this function has no function calls.  */

@@ -1022,14 +1022,6 @@ static int memrefs_conflict_p(int xsize, register rtx x, int ysize, register rtx
    generate aligned addresses from unaligned addresses, for instance, the
    alpha storeqi_unaligned pattern.  */
 
-/* Read dependence: X is read after read in MEM takes place.  There can
-   only be a dependence here if both reads are volatile.  */
-
-int read_dependence(rtx mem, rtx x)
-{
-    return MEM_VOLATILE_P(x) && MEM_VOLATILE_P(mem);
-}
-
 /* Returns MEM1 if and only if MEM1 is a scalar at a fixed address and
    MEM2 is a reference to a structure at a varying address, or returns
    MEM2 if vice versa.  Otherwise, returns NULL_RTX.  If a non-NULL

@@ -769,23 +769,6 @@ tree c_sizeof(tree type)
     return t;
 }
 
-tree c_sizeof_nowarn(tree type)
-{
-    enum tree_code code = TREE_CODE(type);
-    tree t;
-
-    if (code == FUNCTION_TYPE || code == VOID_TYPE || code == ERROR_MARK)
-        return size_int(1);
-    if (TYPE_SIZE(type) == 0)
-        return size_int(0);
-
-    /* Convert in case a char is more than one unit.  */
-    t = size_binop(CEIL_DIV_EXPR, TYPE_SIZE(type), size_int(TYPE_PRECISION(char_type_node)));
-    t = convert(sizetype, t);
-    force_fit_type(t, 0);
-    return t;
-}
-
 /* Compute the size to increment a pointer by.  */
 
 tree c_size_in_bytes(tree type)

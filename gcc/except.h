@@ -105,20 +105,6 @@ extern void expand_eh_region_start		(void);
 
 extern void expand_eh_region_start_for_decl	(tree);
 
-/* Start an exception handling region for the given cleanup action.
-   All instructions emitted after this point are considered to be part
-   of the region until expand_eh_region_end () is invoked.  CLEANUP is
-   the cleanup action to perform.  The return value is true if the
-   exception region was optimized away.  If that case,
-   expand_eh_region_end does not need to be called for this cleanup,
-   nor should it be.
-
-   This routine notices one particular common case in C++ code
-   generation, and optimizes it so as to not need the exception
-   region.  */
-
-extern int expand_eh_region_start_tree		(tree, tree);
-
 /* End an exception handling region.  The information about the region
    is found on the top of ehstack.
 
@@ -130,20 +116,6 @@ extern int expand_eh_region_start_tree		(tree, tree);
 
 extern void expand_eh_region_end		(tree);
 
-/* Push RLABEL or TLABEL onto LABELSTACK. Only one of RLABEL or TLABEL
-   should be set; the other must be NULL.  */
-
-extern void push_label_entry			(struct label_node **labelstack, rtx rlabel, tree tlabel);
-
-/* Pop the topmost entry from LABELSTACK and return its value as an
-   rtx node. If LABELSTACK is empty, return NULL.  */
-
-extern rtx pop_label_entry			(struct label_node **labelstack);
-
-/* Return the topmost entry of LABELSTACK as a tree node, or return
-   NULL_TREE if LABELSTACK is empty.  */
-
-extern tree top_label_entry			(struct label_node **labelstack);
 
 /* A set of insns for the catch clauses in the current function. They
    will be emitted at the end of the current function.  */
@@ -156,10 +128,6 @@ extern rtx catch_clauses;
 
 extern int doing_eh				       (int);
 
-/* Toplevel initialization for EH.  */
-
-void set_exception_lang_code                    (int);
-void set_exception_version_code                 (int);
 
 /* A list of handlers asocciated with an exception region. HANDLER_LABEL
    is the the label that control should be transfered to if the data
@@ -221,10 +189,6 @@ int eh_region_from_symbol                       (rtx);
 
 struct handler_info *get_first_handler          (int);
 
-/* Find all the runtime handlers type matches currently referenced */
-
-int find_all_handler_type_matches               (void ***);
-
 extern void init_eh				(void);
 
 /* Initialization for the per-function EH data.  */
@@ -240,20 +204,6 @@ extern rtx gen_exception_label                  (void);
 
 extern void add_eh_table_entry			(int n);
 
-/* Start a catch clause, triggered by runtime value paramter. */
-
-#ifdef TREE_CODE
-extern void start_catch_handler                 (tree);
-#endif
-
-/* End an individual catch clause. */
-
-extern void end_catch_handler                   (void);
-
-/* Returns a non-zero value if we need to output an exception table.  */
-
-extern int exception_table_p			(void);
-
 /* Outputs the exception table if we have one.  */
 
 extern void output_exception_table		(void);
@@ -262,33 +212,6 @@ extern void output_exception_table		(void);
    to find the corresponding EH region.  */
 
 extern rtx eh_outer_context			(rtx addr);
-
-/* Called at the start of a block of try statements for which there is
-   a supplied catch handler.  */
-
-extern void expand_start_try_stmts 		(void);
-
-/* Called at the start of a block of catch statements. It terminates the
-   previous set of try statements.  */
-
-extern void expand_start_all_catch		(void);
-
-/* Called at the end of a block of catch statements.  */
-
-extern void expand_end_all_catch		(void);
-
-#ifdef TREE_CODE
-/* Create a new exception region and add the handler for the region
-   onto a list. These regions will be ended (and their handlers
-   emitted) when end_protect_partials is invoked.  */
-
-extern void add_partial_entry			(tree handler);
-#endif
-
-/* End all of the pending exception regions that have handlers added with
-   push_protect_entry ().  */
-
-extern void end_protect_partials		(void);
 
 /* An internal throw.  */
 
@@ -309,10 +232,6 @@ extern void emit_eh_context			(void);
 
 extern void find_exception_handler_labels	(void);
 
-/* Determine if an arbitrary label is an exception label */
-
-extern int is_exception_handler_label           (int);
-
 /* Performs sanity checking on the check_exception_handler_labels
    list.  */
 
@@ -322,11 +241,6 @@ extern void check_exception_handler_labels	(void);
    flow out of the current exception handler region.  */
 
 extern struct label_node *caught_return_label_stack;
-
-/* Keeps track of the label used as the context of a throw to rethrow an
-   exception to the outer exception region.  */
-
-extern struct label_node *outer_context_label_stack;
 
 /* A random area used for purposes elsewhere.  */
 

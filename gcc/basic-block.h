@@ -207,9 +207,5 @@ extern void pre_lcm 			(int, int, int_list_ptr *,
 						int_list_ptr *,
 						sbitmap *, sbitmap *,
 						sbitmap *, sbitmap *);
-extern void pre_rev_lcm 		(int, int, int_list_ptr *,
-						int_list_ptr *,
-						sbitmap *, sbitmap *,
-						sbitmap *, sbitmap *);
 
 /* END CYGNUS LOCAL */

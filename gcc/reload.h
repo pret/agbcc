@@ -36,14 +36,8 @@ Boston, MA 02111-1307, USA.  */
 
 /* If MEMORY_MOVE_COST isn't defined, give it a default here.  */
 #ifndef MEMORY_MOVE_COST
-#ifdef HAVE_SECONDARY_RELOADS
-#define MEMORY_MOVE_COST(MODE,CLASS,IN) \
-  (4 + memory_move_secondary_cost ((MODE), (CLASS), (IN)))
-#else
 #define MEMORY_MOVE_COST(MODE,CLASS,IN) 4
 #endif
-#endif
-extern int memory_move_secondary_cost();
 
 /* See reload.c and reload1.c for comments on these variables.  */
 

@@ -77,8 +77,6 @@ extern void error_for_asm		(struct rtx_def *, char *, ...)
 extern void warning_for_asm		(struct rtx_def *, char *, ...)
 						ATTRIBUTE_PRINTF_2;
 extern void set_float_handler (jmp_buf);
-extern int push_float_handler (jmp_buf, jmp_buf);
-extern void pop_float_handler (int, jmp_buf);
 
 extern void fancy_abort			(void) ATTRIBUTE_NORETURN;
 extern void do_abort			(void) ATTRIBUTE_NORETURN;

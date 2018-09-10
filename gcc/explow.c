@@ -199,44 +199,6 @@ rtx eliminate_constant_term(rtx x, rtx *constptr)
     return x;
 }
 
-/* Returns the insn that next references REG after INSN, or 0
-   if REG is clobbered before next referenced or we cannot find
-   an insn that references REG in a straight-line piece of code.  */
-
-rtx find_next_ref(rtx reg, rtx insn)
-{
-    rtx next;
-
-    for (insn = NEXT_INSN(insn); insn; insn = next)
-    {
-        next = NEXT_INSN(insn);
-        if (GET_CODE(insn) == NOTE)
-            continue;
-        if (GET_CODE(insn) == CODE_LABEL || GET_CODE(insn) == BARRIER)
-            return 0;
-        if (GET_CODE(insn) == INSN || GET_CODE(insn) == JUMP_INSN || GET_CODE(insn) == CALL_INSN)
-        {
-            if (reg_set_p(reg, insn))
-                return 0;
-            if (reg_mentioned_p(reg, PATTERN(insn)))
-                return insn;
-            if (GET_CODE(insn) == JUMP_INSN)
-            {
-                if (simplejump_p(insn))
-                    next = JUMP_LABEL(insn);
-                else
-                    return 0;
-            }
-            if (GET_CODE(insn) == CALL_INSN && REGNO(reg) < FIRST_PSEUDO_REGISTER
-                && call_used_regs[REGNO(reg)])
-                return 0;
-        }
-        else
-            abort();
-    }
-    return 0;
-}
-
 /* Return an rtx for the size in bytes of the value of EXP.  */
 
 rtx expr_size(tree exp)
@@ -336,38 +298,6 @@ rtx convert_memory_address(enum machine_mode to_mode, rtx x)
     return convert_modes(to_mode, from_mode, x, POINTERS_EXTEND_UNSIGNED);
 }
 #endif
-
-/* Given a memory address or facsimile X, construct a new address,
-   currently equivalent, that is stable: future stores won't change it.
-
-   X must be composed of constants, register and memory references
-   combined with addition, subtraction and multiplication:
-   in other words, just what you can get from expand_expr if sum_ok is 1.
-
-   Works by making copies of all regs and memory locations used
-   by X and combining them the same way X does.
-   You could also stabilize the reference to this address
-   by copying the address to a register with copy_to_reg;
-   but then you wouldn't get indexed addressing in the reference.  */
-
-rtx copy_all_regs(register rtx x)
-{
-    if (GET_CODE(x) == REG)
-    {
-        if (REGNO(x) != FRAME_POINTER_REGNUM)
-            x = copy_to_reg(x);
-    }
-    else if (GET_CODE(x) == MEM)
-        x = copy_to_reg(x);
-    else if (GET_CODE(x) == PLUS || GET_CODE(x) == MINUS || GET_CODE(x) == MULT)
-    {
-        register rtx op0 = copy_all_regs(XEXP(x, 0));
-        register rtx op1 = copy_all_regs(XEXP(x, 1));
-        if (op0 != XEXP(x, 0) || op1 != XEXP(x, 1))
-            x = gen_rtx_fmt_ee(GET_CODE(x), Pmode, op0, op1);
-    }
-    return x;
-}
 
 /* Return something equivalent to X but valid as a memory address
    for something of mode MODE.  When X is not itself valid, this
@@ -522,45 +452,6 @@ rtx validize_mem(rtx ref)
     return change_address(ref, GET_MODE(ref), XEXP(ref, 0));
 }
 
-/* Return a modified copy of X with its memory address copied
-   into a temporary register to protect it from side effects.
-   If X is not a MEM, it is returned unchanged (and not copied).
-   Perhaps even if it is a MEM, if there is no need to change it.  */
-
-rtx stabilize(rtx x)
-{
-    register rtx addr;
-    if (GET_CODE(x) != MEM)
-        return x;
-    addr = XEXP(x, 0);
-    if (rtx_unstable_p(addr))
-    {
-        rtx temp = copy_all_regs(addr);
-        rtx mem;
-        if (GET_CODE(temp) != REG)
-            temp = copy_to_reg(temp);
-        mem = gen_rtx_MEM(GET_MODE(x), temp);
-
-        /* Mark returned memref with in_struct if it's in an array or
-       structure.  Copy const and volatile from original memref.  */
-
-        RTX_UNCHANGING_P(mem) = RTX_UNCHANGING_P(x);
-        MEM_COPY_ATTRIBUTES(mem, x);
-        if (GET_CODE(addr) == PLUS)
-            MEM_SET_IN_STRUCT_P(mem, 1);
-
-        /* Since the new MEM is just like the old X, it can alias only
-       the things that X could.  */
-        MEM_ALIAS_SET(mem) = MEM_ALIAS_SET(x);
-
-        /* CYGNUS LOCAL unaligned-pointers */
-        MEM_UNALIGNED_P(mem) = MEM_UNALIGNED_P(x);
-        /* END CYGNUS LOCAL */
-        return mem;
-    }
-    return x;
-}
-
 /* Copy the value or contents of X to a new temp reg and return that reg.  */
 
 rtx copy_to_reg(rtx x)
@@ -646,23 +537,6 @@ rtx force_not_mem(rtx x)
     if (GET_CODE(x) != MEM || GET_MODE(x) == BLKmode)
         return x;
     temp = gen_reg_rtx(GET_MODE(x));
-    emit_move_insn(temp, x);
-    return temp;
-}
-
-/* Copy X to TARGET (if it's nonzero and a reg)
-   or to a new temp reg and return that reg.
-   MODE is the mode to use for X in case it is a constant.  */
-
-rtx copy_to_suggested_reg(rtx x, rtx target, enum machine_mode mode)
-{
-    register rtx temp;
-
-    if (target && GET_CODE(target) == REG)
-        temp = target;
-    else
-        temp = gen_reg_rtx(mode);
-
     emit_move_insn(temp, x);
     return temp;
 }

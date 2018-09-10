@@ -906,14 +906,6 @@ static int can_combine_p(rtx insn ATTRIBUTE_UNUSED, rtx i3, rtx pred, rtx succ, 
         /* Don't substitute into an incremented register.  */
         || FIND_REG_INC_NOTE(i3, dest)
         || (succ && FIND_REG_INC_NOTE(succ, dest))
-#if 0
-      /* Don't combine the end of a libcall into anything.  */
-      /* ??? This gives worse code, and appears to be unnecessary, since no
-	 pass after flow uses REG_LIBCALL/REG_RETVAL notes.  Local-alloc does
-	 use REG_RETVAL notes for noconflict blocks, but other code here
-	 makes sure that those insns don't disappear.  */
-      || find_reg_note (insn, REG_RETVAL, NULL_RTX)
-#endif
         /* Make sure that DEST is not used after SUCC but before I3.  */
         || (succ && !all_adjacent && reg_used_between_p(dest, succ, i3))
         /* Make sure that the value that is to be substituted for the register
@@ -1145,39 +1137,11 @@ static int combinable_i3pat(
         rtx src = SET_SRC(set);
         rtx inner_dest = dest;
 
-#if 0
-      rtx inner_src = src;
-#endif
-
         SUBST(*loc, set);
 
         while (GET_CODE(inner_dest) == STRICT_LOW_PART || GET_CODE(inner_dest) == SUBREG
             || GET_CODE(inner_dest) == ZERO_EXTRACT)
             inner_dest = XEXP(inner_dest, 0);
-
-            /* We probably don't need this any more now that LIMIT_RELOAD_CLASS
-               was added.  */
-#if 0
-      while (GET_CODE (inner_src) == STRICT_LOW_PART
-	     || GET_CODE (inner_src) == SUBREG
-	     || GET_CODE (inner_src) == ZERO_EXTRACT)
-	inner_src = XEXP (inner_src, 0);
-
-      /* If it is better that two different modes keep two different pseudos,
-	 avoid combining them.  This avoids producing the following pattern
-	 on a 386:
-	  (set (subreg:SI (reg/v:QI 21) 0)
-	       (lshiftrt:SI (reg/v:SI 20)
-	           (const_int 24)))
-	 If that were made, reload could not handle the pair of
-	 reg 20/21, since it would try to get any GENERAL_REGS
-	 but some of them don't handle QImode.  */
-
-      if (rtx_equal_p (inner_src, i2dest)
-	  && GET_CODE (inner_dest) == REG
-	  && ! MODES_TIEABLE_P (GET_MODE (i2dest), GET_MODE (inner_dest)))
-	return 0;
-#endif
 
         /* Check for the case where I3 modifies its output, as
            discussed above.  */
@@ -1292,11 +1256,6 @@ static rtx try_combine(register rtx i3, register rtx i2, register rtx i1)
 
     if (GET_RTX_CLASS(GET_CODE(i3)) != 'i' || GET_RTX_CLASS(GET_CODE(i2)) != 'i'
         || (i1 && GET_RTX_CLASS(GET_CODE(i1)) != 'i')
-#if 0
-      /* ??? This gives worse code, and appears to be unnecessary, since no
-	 pass after flow uses REG_LIBCALL/REG_RETVAL notes.  */
-      || find_reg_note (i3, REG_LIBCALL, NULL_RTX)
-#endif
     )
         return 0;
 
@@ -1474,14 +1433,6 @@ static rtx try_combine(register rtx i3, register rtx i2, register rtx i1)
            which is a famous insn on the PDP-11 where the value of r3 used as the
            source was model-dependent.  Avoid this sort of thing.  */
 
-#if 0
-  if (!(GET_CODE (PATTERN (i3)) == SET
-	&& GET_CODE (SET_SRC (PATTERN (i3))) == REG
-	&& GET_CODE (SET_DEST (PATTERN (i3))) == MEM
-	&& (GET_CODE (XEXP (SET_DEST (PATTERN (i3)), 0)) == POST_INC
-	    || GET_CODE (XEXP (SET_DEST (PATTERN (i3)), 0)) == POST_DEC)))
-    /* It's not the exception.  */
-#endif
 #ifdef AUTO_INC_DEC
     for (link = REG_NOTES(i3); link; link = XEXP(link, 1))
         if (REG_NOTE_KIND(link) == REG_INC
@@ -6813,26 +6764,12 @@ static uint32_t nonzero_bits(rtx x, enum machine_mode mode)
         break;
 
     case NEG:
-#if 0
-      /* Disabled to avoid exponential mutual recursion between nonzero_bits
-	 and num_sign_bit_copies.  */
-      if (num_sign_bit_copies (XEXP (x, 0), GET_MODE (x))
-	  == GET_MODE_BITSIZE (GET_MODE (x)))
-	nonzero = 1;
-#endif
 
         if (GET_MODE_SIZE(GET_MODE(x)) < mode_width)
             nonzero |= (GET_MODE_MASK(mode) & ~GET_MODE_MASK(GET_MODE(x)));
         break;
 
     case ABS:
-#if 0
-      /* Disabled to avoid exponential mutual recursion between nonzero_bits
-	 and num_sign_bit_copies.  */
-      if (num_sign_bit_copies (XEXP (x, 0), GET_MODE (x))
-	  == GET_MODE_BITSIZE (GET_MODE (x)))
-	nonzero = 1;
-#endif
         break;
 
     case TRUNCATE:
@@ -7367,26 +7304,6 @@ static int num_sign_bit_copies(rtx x, enum machine_mode mode)
         nonzero & ((int32_t)1 << (bitwidth - 1)) ? 1 : bitwidth - floor_log2(nonzero) - 1);
 }
 
-/* Return the number of "extended" bits there are in X, when interpreted
-   as a quantity in MODE whose signedness is indicated by UNSIGNEDP.  For
-   unsigned quantities, this is the number of high-order zero bits.
-   For signed quantities, this is the number of copies of the sign bit
-   minus 1.  In both case, this function returns the number of "spare"
-   bits.  For example, if two quantities for which this function returns
-   at least 1 are added, the addition is known not to overflow.
-
-   This function will always return 0 unless called during combine, which
-   implies that it must be called from a define_split.  */
-
-int extended_count(rtx x, enum machine_mode mode, int unsignedp)
-{
-    if (nonzero_sign_valid == 0)
-        return 0;
-
-    return (unsignedp ? (GET_MODE_BITSIZE(mode) <= 32
-                            && (GET_MODE_BITSIZE(mode) - 1 - floor_log2(nonzero_bits(x, mode))))
-                      : num_sign_bit_copies(x, mode) - 1);
-}
 
 /* This function is called from `simplify_shift_const' to merge two
    outer operations.  Specifically, we have already found that we need
@@ -10786,14 +10703,6 @@ static int insn_cuid(rtx insn)
         abort();
 
     return INSN_CUID(insn);
-}
-
-void dump_combine_stats(FILE *file)
-{
-    fprintf(file,
-        ";; Combiner statistics: %d attempts, %d substitutions (%d "
-        "requiring new space),\n;; %d successes.\n\n",
-        combine_attempts, combine_merges, combine_extras, combine_successes);
 }
 
 void dump_combine_total_stats(FILE *file)

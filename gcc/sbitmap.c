@@ -401,35 +401,3 @@ void sbitmap_union_of_predsucc(sbitmap dst, sbitmap *src, int bb, int_list_ptr *
             *r++ |= *p++;
     }
 }
-
-void dump_sbitmap(FILE *file, sbitmap bmap)
-{
-    int i, j, n;
-    int set_size = bmap->size;
-    int total_bits = bmap->n_bits;
-
-    fprintf(file, "  ");
-    for (i = n = 0; i < set_size && n < total_bits; i++)
-    {
-        for (j = 0; j < SBITMAP_ELT_BITS && n < total_bits; j++, n++)
-        {
-            if (n != 0 && n % 10 == 0)
-                fprintf(file, " ");
-            fprintf(file, "%d", (bmap->elms[i] & (1L << j)) != 0);
-        }
-    }
-    fprintf(file, "\n");
-}
-
-void dump_sbitmap_vector(FILE *file, char *title, char *subtitle, sbitmap *bmaps, int n_maps)
-{
-    int bb;
-
-    fprintf(file, "%s\n", title);
-    for (bb = 0; bb < n_maps; bb++)
-    {
-        fprintf(file, "%s %d\n", subtitle, bb);
-        dump_sbitmap(file, bmaps[bb]);
-    }
-    fprintf(file, "\n");
-}

@@ -493,46 +493,6 @@ bitmap bitmap_initialize(bitmap head)
 
 /* Debugging function to print out the contents of a bitmap.  */
 
-void bitmap_debug_file(FILE *file, bitmap head)
-{
-    bitmap_element *ptr;
-
-    fprintf(file, "\nfirst = %p current = %p indx = %u\n", head->first, head->current, head->indx);
-
-    for (ptr = head->first; ptr; ptr = ptr->next)
-    {
-        int i, j, col = 26;
-
-        fprintf(file, "\t%p next = %p prev = %p indx = %u\n\t\tbits = {", ptr, ptr->next, ptr->prev,
-            ptr->indx);
-
-        for (i = 0; i < BITMAP_ELEMENT_WORDS; i++)
-            for (j = 0; j < 32; j++)
-                if ((ptr->bits[i] & (((uint32_t)1) << j)) != 0)
-                {
-                    if (col > 70)
-                    {
-                        fprintf(file, "\n\t\t\t");
-                        col = 24;
-                    }
-
-                    fprintf(file, " %u",
-                        (ptr->indx * BITMAP_ELEMENT_ALL_BITS + i * 32 + j));
-                    col += 4;
-                }
-
-        fprintf(file, " }\n");
-    }
-}
-
-/* Function to be called from the debugger to print the contents
-   of a bitmap.  */
-
-void debug_bitmap(bitmap head)
-{
-    bitmap_debug_file(stdout, head);
-}
-
 /* Function to print out the contents of a bitmap.  Unlike bitmap_debug_file,
    it does not print anything but the bits.  */
 

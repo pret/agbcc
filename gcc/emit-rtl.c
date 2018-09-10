@@ -1148,36 +1148,6 @@ rtx operand_subword_force(rtx op, int i, enum machine_mode mode)
     return result;
 }
 
-/* Given a compare instruction, swap the operands.
-   A test instruction is changed into a compare of 0 against the operand.  */
-
-void reverse_comparison(rtx insn)
-{
-    rtx body = PATTERN(insn);
-    rtx comp;
-
-    if (GET_CODE(body) == SET)
-        comp = SET_SRC(body);
-    else
-        comp = SET_SRC(XVECEXP(body, 0, 0));
-
-    if (GET_CODE(comp) == COMPARE)
-    {
-        rtx op0 = XEXP(comp, 0);
-        rtx op1 = XEXP(comp, 1);
-        XEXP(comp, 0) = op1;
-        XEXP(comp, 1) = op0;
-    }
-    else
-    {
-        rtx new = gen_rtx_COMPARE(VOIDmode, CONST0_RTX(GET_MODE(comp)), comp);
-        if (GET_CODE(body) == SET)
-            SET_SRC(body) = new;
-        else
-            SET_SRC(XVECEXP(body, 0, 0)) = new;
-    }
-}
-
 /* Return a memory reference like MEMREF, but with its mode changed
    to MODE and its address changed to ADDR.
    (VOIDmode means don't change the mode.
@@ -1532,37 +1502,6 @@ void reset_used_flags(rtx x)
     }
 }
 
-/* Copy X if necessary so that it won't be altered by changes in OTHER.
-   Return X or the rtx for the pseudo reg the value of X was copied into.
-   OTHER must be valid as a SET_DEST.  */
-
-rtx make_safe_from(rtx x, rtx other)
-{
-    while (1)
-        switch (GET_CODE(other))
-        {
-        case SUBREG:
-            other = SUBREG_REG(other);
-            break;
-        case STRICT_LOW_PART:
-        case SIGN_EXTEND:
-        case ZERO_EXTEND:
-            other = XEXP(other, 0);
-            break;
-        default:
-            goto done;
-        }
-done:
-    if ((GET_CODE(other) == MEM && !CONSTANT_P(x) && GET_CODE(x) != REG && GET_CODE(x) != SUBREG)
-        || (GET_CODE(other) == REG
-               && (REGNO(other) < FIRST_PSEUDO_REGISTER || reg_mentioned_p(other, x))))
-    {
-        rtx temp = gen_reg_rtx(GET_MODE(x));
-        emit_move_insn(temp, x);
-        return temp;
-    }
-    return x;
-}
 
 /* Emission of insns (adding them to the doubly-linked list).  */
 
@@ -1607,36 +1546,6 @@ rtx get_last_insn_anywhere(void)
 int get_max_uid(void)
 {
     return cur_insn_uid;
-}
-
-/* Return the next insn.  If it is a SEQUENCE, return the first insn
-   of the sequence.  */
-
-rtx next_insn(rtx insn)
-{
-    if (insn)
-    {
-        insn = NEXT_INSN(insn);
-        if (insn && GET_CODE(insn) == INSN && GET_CODE(PATTERN(insn)) == SEQUENCE)
-            insn = XVECEXP(PATTERN(insn), 0, 0);
-    }
-
-    return insn;
-}
-
-/* Return the previous insn.  If it is a SEQUENCE, return the last insn
-   of the sequence.  */
-
-rtx previous_insn(rtx insn)
-{
-    if (insn)
-    {
-        insn = PREV_INSN(insn);
-        if (insn && GET_CODE(insn) == INSN && GET_CODE(PATTERN(insn)) == SEQUENCE)
-            insn = XVECEXP(PATTERN(insn), 0, XVECLEN(PATTERN(insn), 0) - 1);
-    }
-
-    return insn;
 }
 
 /* Return the next insn after INSN that is not a NOTE.  This routine does not
@@ -1757,35 +1666,7 @@ rtx next_label(rtx insn)
     return insn;
 }
 
-/* Return the last CODE_LABEL before the insn INSN, or 0 if there is none.  */
-
-rtx prev_label(rtx insn)
-{
-    while (insn)
-    {
-        insn = PREV_INSN(insn);
-        if (insn == 0 || GET_CODE(insn) == CODE_LABEL)
-            break;
-    }
-
-    return insn;
-}
-
 #ifdef HAVE_cc0
-/* INSN uses CC0 and is being moved into a delay slot.  Set up REG_CC_SETTER
-   and REG_CC_USER notes so we can find it.  */
-
-void link_cc0_insns(rtx insn)
-{
-    rtx user = next_nonnote_insn(insn);
-
-    if (GET_CODE(user) == INSN && GET_CODE(PATTERN(user)) == SEQUENCE)
-        user = XVECEXP(PATTERN(user), 0, 0);
-
-    REG_NOTES(user) = gen_rtx_INSN_LIST(REG_CC_SETTER, insn, REG_NOTES(user));
-    REG_NOTES(insn) = gen_rtx_INSN_LIST(REG_CC_USER, user, REG_NOTES(insn));
-}
-
 /* Return the next insn that uses CC0 after INSN, which is assumed to
    set it.  This is the inverse of prev_cc0_setter (i.e., prev_cc0_setter
    applied to the result of this function should yield INSN).
@@ -2081,61 +1962,6 @@ void add_insn_before(rtx insn, rtx before)
         PREV_INSN(XVECEXP(PATTERN(before), 0, 0)) = insn;
 }
 
-/* Remove an insn from its doubly-linked list.  This function knows how
-   to handle sequences.  */
-void remove_insn(rtx insn)
-{
-    rtx next = NEXT_INSN(insn);
-    rtx prev = PREV_INSN(insn);
-    if (prev)
-    {
-        NEXT_INSN(prev) = next;
-        if (GET_CODE(prev) == INSN && GET_CODE(PATTERN(prev)) == SEQUENCE)
-        {
-            rtx sequence = PATTERN(prev);
-            NEXT_INSN(XVECEXP(sequence, 0, XVECLEN(sequence, 0) - 1)) = next;
-        }
-    }
-    else if (first_insn == insn)
-        first_insn = next;
-    else
-    {
-        struct sequence_stack *stack = sequence_stack;
-        /* Scan all pending sequences too.  */
-        for (; stack; stack = stack->next)
-            if (insn == stack->first)
-            {
-                stack->first = next;
-                break;
-            }
-
-        if (stack == 0)
-            abort();
-    }
-
-    if (next)
-    {
-        PREV_INSN(next) = prev;
-        if (GET_CODE(next) == INSN && GET_CODE(PATTERN(next)) == SEQUENCE)
-            PREV_INSN(XVECEXP(PATTERN(next), 0, 0)) = prev;
-    }
-    else if (last_insn == insn)
-        last_insn = prev;
-    else
-    {
-        struct sequence_stack *stack = sequence_stack;
-        /* Scan all pending sequences too.  */
-        for (; stack; stack = stack->next)
-            if (insn == stack->last)
-            {
-                stack->last = prev;
-                break;
-            }
-
-        if (stack == 0)
-            abort();
-    }
-}
 
 /* Delete all insns made since FROM.
    FROM becomes the new last instruction.  */
@@ -2194,26 +2020,6 @@ static rtx find_line_note(rtx insn)
             break;
 
     return insn;
-}
-
-/* Like reorder_insns, but inserts line notes to preserve the line numbers
-   of the moved insns when debugging.  This may insert a note between AFTER
-   and FROM, and another one after TO.  */
-
-void reorder_insns_with_line_notes(rtx from, rtx to, rtx after)
-{
-    rtx from_line = find_line_note(from);
-    rtx after_line = find_line_note(after);
-
-    reorder_insns(from, to, after);
-
-    if (from_line == after_line)
-        return;
-
-    if (from_line)
-        emit_line_note_after(NOTE_SOURCE_FILE(from_line), NOTE_LINE_NUMBER(from_line), after);
-    if (after_line)
-        emit_line_note_after(NOTE_SOURCE_FILE(after_line), NOTE_LINE_NUMBER(after_line), to);
 }
 
 /* Emit an insn of given code and pattern

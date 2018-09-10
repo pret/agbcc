@@ -80,17 +80,12 @@ extern int strict_memory_address_p();
 extern int validate_replace_rtx();
 extern void validate_replace_rtx_group();
 extern int validate_replace_src();
-#ifdef HAVE_cc0
-extern int next_insn_tests_no_inequality();
-#endif
 extern int reg_fits_class_p();
 extern rtx *find_single_use();
 
 extern int general_operand();
-extern int address_operand();
 extern int register_operand();
 extern int scratch_operand();
-extern int immediate_operand();
 extern int const_int_operand();
 extern int const_double_operand();
 extern int nonimmediate_operand();
@@ -98,7 +93,6 @@ extern int nonmemory_operand();
 extern int push_operand();
 extern int pop_operand();
 extern int memory_operand();
-extern int indirect_operand();
 extern int mode_independent_operand();
 extern int comparison_operator();
 
@@ -111,7 +105,6 @@ extern int recog();
 extern void add_clobbers();
 extern void insn_extract();
 extern void extract_insn();
-extern void preprocess_constraints();
 
 /* Nonzero means volatile operands are recognized.  */
 extern int volatile_ok;

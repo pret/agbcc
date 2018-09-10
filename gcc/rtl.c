@@ -255,13 +255,6 @@ rtx rtx_alloc(RTX_CODE code)
     return rt;
 }
 
-/* Free the rtx X and all RTL allocated since X.  */
-
-void rtx_free(rtx x)
-{
-    obstack_free(rtl_obstack, x);
-}
-
 /* Create a new copy of an rtx.
    Recursively copies the operands of the rtx,
    except for those few rtx codes that are sharable.  */

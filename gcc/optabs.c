@@ -3006,25 +3006,6 @@ int have_add2_insn(enum machine_mode mode)
     return add_optab->handlers[(int)mode].insn_code != CODE_FOR_nothing;
 }
 
-/* Generate and return an insn body to subtract Y from X.  */
-
-rtx gen_sub2_insn(rtx x, rtx y)
-{
-    int icode = (int)sub_optab->handlers[(int)GET_MODE(x)].insn_code;
-
-    if (!(*insn_operand_predicate[icode][0])(x, insn_operand_mode[icode][0])
-        || !(*insn_operand_predicate[icode][1])(x, insn_operand_mode[icode][1])
-        || !(*insn_operand_predicate[icode][2])(y, insn_operand_mode[icode][2]))
-        abort();
-
-    return (GEN_FCN(icode)(x, x, y));
-}
-
-int have_sub2_insn(enum machine_mode mode)
-{
-    return sub_optab->handlers[(int)mode].insn_code != CODE_FOR_nothing;
-}
-
 /* Generate the body of an instruction to copy Y into X.
    It may be a SEQUENCE, if one insn isn't enough.  */
 
@@ -3109,14 +3090,6 @@ rtx gen_move_insn(rtx x, rtx y)
 enum insn_code can_extend_p(enum machine_mode to_mode, enum machine_mode from_mode, int unsignedp)
 {
     return extendtab[(int)to_mode][(int)from_mode][unsignedp];
-}
-
-/* Generate the body of an insn to extend Y (with mode MFROM)
-   into X (with mode MTO).  Do zero-extension if UNSIGNEDP is nonzero.  */
-
-rtx gen_extend_insn(rtx x, rtx y, enum machine_mode mto, enum machine_mode mfrom, int unsignedp)
-{
-    return (GEN_FCN(extendtab[(int)mto][(int)mfrom][unsignedp])(x, y));
 }
 
 /* can_fix_p and can_float_p say whether the target machine
@@ -3984,28 +3957,3 @@ static void init_traps(void)
         trap_rtx = gen_rtx_fmt_ee(EQ, VOIDmode, NULL_RTX, NULL_RTX);
 }
 #endif
-
-/* Generate insns to trap with code TCODE if OP1 and OP2 satisfy condition
-   CODE.  Return 0 on failure.  */
-
-rtx gen_cond_trap(enum rtx_code code ATTRIBUTE_UNUSED, rtx op1 ATTRIBUTE_UNUSED, rtx op2 ATTRIBUTE_UNUSED, rtx tcode)
-{
-    enum machine_mode mode = GET_MODE(op1);
-
-    if (mode == VOIDmode)
-        return 0;
-
-#ifdef HAVE_conditional_trap
-    if (HAVE_conditional_trap && cmp_optab->handlers[(int)mode].insn_code != CODE_FOR_nothing)
-    {
-        rtx insn;
-        emit_insn(GEN_FCN(cmp_optab->handlers[(int)mode].insn_code)(op1, op2));
-        PUT_CODE(trap_rtx, code);
-        insn = gen_conditional_trap(trap_rtx, tcode);
-        if (insn)
-            return insn;
-    }
-#endif
-
-    return 0;
-}

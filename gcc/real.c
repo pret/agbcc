@@ -187,8 +187,7 @@ netlib.att.com: netlib/cephes.   */
 #define EXONE (0x3fff)
 
 extern int extra_warnings;
-extern uint16_t ezero[], ehalf[], eone[], etwo[];
-extern uint16_t elog2[], esqrt2[];
+extern uint16_t ezero[], eone[];
 
 static void endian(uint16_t *, long *, enum machine_mode);
 static void eclear(uint16_t *);
@@ -247,7 +246,6 @@ static void efloor(uint16_t *, uint16_t *);
 static void eldexp(uint16_t *, int, uint16_t *);
 static void eiremain(uint16_t *, uint16_t *);
 static void mtherr(char *, int);
-static void make_nan(uint16_t *, int, enum machine_mode);
 
 /* Copy 32-bit numbers obtained from array containing 16-bit numbers,
    swapping ends if required, into output array of longs.  The
@@ -803,18 +801,6 @@ int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
     return 1;
 }
 
-/* Used for debugging--print the value of R in human-readable format
-   on stderr.  */
-
-void debug_real(REAL_VALUE_TYPE r)
-{
-    char dstr[30];
-
-    REAL_VALUE_TO_DECIMAL(r, "%.20g", dstr);
-    fprintf(stderr, "%s", dstr);
-}
-
-
 /* The following routines convert REAL_VALUE_TYPE to the various floating
    point formats that are meaningful to supported computers.
 
@@ -1073,14 +1059,6 @@ uint16_t ezero[NE] = {
     0000000,
     0000000,
 };
-uint16_t ehalf[NE] = {
-    0,
-    0000000,
-    0000000,
-    0000000,
-    0100000,
-    0x3ffe,
-};
 uint16_t eone[NE] = {
     0,
     0000000,
@@ -1088,46 +1066,6 @@ uint16_t eone[NE] = {
     0000000,
     0100000,
     0x3fff,
-};
-uint16_t etwo[NE] = {
-    0,
-    0000000,
-    0000000,
-    0000000,
-    0100000,
-    0040000,
-};
-uint16_t e32[NE] = {
-    0,
-    0000000,
-    0000000,
-    0000000,
-    0100000,
-    0040004,
-};
-uint16_t elog2[NE] = {
-    0xc9e4,
-    0x79ab,
-    0150717,
-    0013767,
-    0130562,
-    0x3ffe,
-};
-uint16_t esqrt2[NE] = {
-    0x597e,
-    0x6484,
-    0174736,
-    0171463,
-    0132404,
-    0x3fff,
-};
-uint16_t epi[NE] = {
-    0xc4c6,
-    0xc234,
-    0020550,
-    0155242,
-    0144417,
-    0040000,
 };
 
 /* Control register for rounding precision.
@@ -2434,11 +2372,6 @@ static void etoe53(x, e) uint16_t *x, *e;
     int32_t exp;
     int rndsav;
 
-    if (eisnan(x))
-    {
-        make_nan(e, eisneg(x), DFmode);
-        return;
-    }
     emovi(x, xi);
     /* adjust exponent for offsets */
     exp = (int32_t)xi[E] - (EXONE - 0x3ff);
@@ -2461,11 +2394,6 @@ static void toe53(x, y) uint16_t *x, *y;
     uint16_t i;
     uint16_t *p;
 
-    if (eiisnan(x))
-    {
-        make_nan(y, eiisneg(x), DFmode);
-        return;
-    }
     p = &x[0];
     if (!REAL_WORDS_BIG_ENDIAN)
         y += 3;
@@ -2527,11 +2455,6 @@ static void etoe24(x, e) uint16_t *x, *e;
     uint16_t xi[NI];
     int rndsav;
 
-    if (eisnan(x))
-    {
-        make_nan(e, eisneg(x), SFmode);
-        return;
-    }
     emovi(x, xi);
     /* adjust exponent for offsets */
     exp = (int32_t)xi[E] - (EXONE - 0177);
@@ -2554,11 +2477,6 @@ static void toe24(x, y) uint16_t *x, *y;
     uint16_t i;
     uint16_t *p;
 
-    if (eiisnan(x))
-    {
-        make_nan(y, eiisneg(x), SFmode);
-        return;
-    }
     p = &x[0];
     if (!REAL_WORDS_BIG_ENDIAN)
         y += 1;
@@ -4089,116 +4007,6 @@ static void mtherr(char *name, int code)
     /* Set global error message word */
     merror = code + 1;
 }
-
-
-/* Output a binary NaN bit pattern in the target machine's format.  */
-
-uint16_t DFbignan[4] = { 0x7fff, 0xffff, 0xffff, 0xffff };
-uint16_t DFlittlenan[4] = { 0, 0, 0, 0xfff8 };
-
-uint16_t SFbignan[2] = { 0x7fff, 0xffff };
-uint16_t SFlittlenan[2] = { 0, 0xffc0 };
-
-
-static void make_nan(nan, sign, mode) uint16_t *nan;
-int sign;
-enum machine_mode mode;
-{
-    int n;
-    uint16_t *p;
-
-    switch (mode)
-    {
-    case DFmode:
-        n = 4;
-        if (REAL_WORDS_BIG_ENDIAN)
-            p = DFbignan;
-        else
-            p = DFlittlenan;
-        break;
-
-    case SFmode:
-        n = 2;
-        if (REAL_WORDS_BIG_ENDIAN)
-            p = SFbignan;
-        else
-            p = SFlittlenan;
-        break;
-
-    default:
-        abort();
-    }
-    if (REAL_WORDS_BIG_ENDIAN)
-        *nan++ = (sign << 15) | (*p++ & 0x7fff);
-    while (--n != 0)
-        *nan++ = *p++;
-    if (!REAL_WORDS_BIG_ENDIAN)
-        *nan = (sign << 15) | (*p & 0x7fff);
-}
-
-/* This is the inverse of the function `etarsingle' invoked by
-   REAL_VALUE_TO_TARGET_SINGLE.  */
-
-REAL_VALUE_TYPE
-ereal_unto_float(long f)
-{
-    REAL_VALUE_TYPE r;
-    uint16_t s[2];
-    uint16_t e[NE];
-
-    /* Convert 32 bit integer to array of 16 bit pieces in target machine order.
-     This is the inverse operation to what the function `endian' does.  */
-    if (REAL_WORDS_BIG_ENDIAN)
-    {
-        s[0] = (uint16_t)(f >> 16);
-        s[1] = (uint16_t)f;
-    }
-    else
-    {
-        s[0] = (uint16_t)f;
-        s[1] = (uint16_t)(f >> 16);
-    }
-    /* Convert and promote the target float to E-type. */
-    e24toe(s, e);
-    /* Output E-type to REAL_VALUE_TYPE. */
-    PUT_REAL(e, &r);
-    return r;
-}
-
-
-/* This is the inverse of the function `etardouble' invoked by
-   REAL_VALUE_TO_TARGET_DOUBLE.  */
-
-REAL_VALUE_TYPE
-ereal_unto_double(long d[])
-{
-    REAL_VALUE_TYPE r;
-    uint16_t s[4];
-    uint16_t e[NE];
-
-    /* Convert array of int32_t to equivalent array of 16-bit pieces.  */
-    if (REAL_WORDS_BIG_ENDIAN)
-    {
-        s[0] = (uint16_t)(d[0] >> 16);
-        s[1] = (uint16_t)d[0];
-        s[2] = (uint16_t)(d[1] >> 16);
-        s[3] = (uint16_t)d[1];
-    }
-    else
-    {
-        /* Target float words are little-endian.  */
-        s[0] = (uint16_t)d[0];
-        s[1] = (uint16_t)(d[0] >> 16);
-        s[2] = (uint16_t)d[1];
-        s[3] = (uint16_t)(d[1] >> 16);
-    }
-    /* Convert target double to E-type. */
-    e53toe(s, e);
-    /* Output E-type to REAL_VALUE_TYPE. */
-    PUT_REAL(e, &r);
-    return r;
-}
-
 
 /* Convert an SFmode target `float' value to a REAL_VALUE_TYPE.
    This is somewhat like ereal_unto_float, but the input types

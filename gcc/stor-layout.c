@@ -78,14 +78,6 @@ tree get_pending_sizes(void)
     return chain;
 }
 
-void put_pending_sizes(tree chain)
-{
-    if (pending_sizes)
-        abort();
-
-    pending_sizes = chain;
-}
-
 /* Given a size SIZE that may not be a constant, return a SAVE_EXPR
    to serve as the actual size-expression for a type or decl.  */
 

@@ -154,19 +154,13 @@ static struct pred_table
 #ifdef PREDICATE_CODES
     PREDICATE_CODES
 #endif
-    { "address_operand",
-        { CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF, LABEL_REF, SUBREG, REG, MEM, PLUS, MINUS,
-            MULT } },
     { "register_operand", { SUBREG, REG } }, { "scratch_operand", { SCRATCH, REG } },
-    { "immediate_operand", { CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF, LABEL_REF } },
-    { "const_int_operand", { CONST_INT } }, { "const_double_operand", { CONST_INT, CONST_DOUBLE } },
+    { "const_int_operand", { CONST_INT } },
     { "nonimmediate_operand", { SUBREG, REG, MEM } },
     { "nonmemory_operand", { CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF, LABEL_REF, SUBREG, REG } },
-    { "push_operand", { MEM } }, { "pop_operand", { MEM } }, { "memory_operand", { SUBREG, MEM } },
-    { "indirect_operand", { SUBREG, MEM } },
-    { "comparison_operator", { EQ, NE, LE, LT, GE, GT, LEU, LTU, GEU, GTU } },
-    { "mode_independent_operand",
-        { CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF, LABEL_REF, SUBREG, REG, MEM } } };
+    { "push_operand", { MEM } }, { "memory_operand", { SUBREG, MEM } },
+    { "comparison_operator", { EQ, NE, LE, LT, GE, GT, LEU, LTU, GEU, GTU } }
+};
 
 #define NUM_KNOWN_PREDS (sizeof preds / sizeof preds[0])
 

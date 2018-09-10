@@ -796,25 +796,6 @@ void c_decode_option(char *p)
     }
 }
 
-/* Hooks for print_node.  */
-
-void print_lang_decl(FILE *file ATTRIBUTE_UNUSED ATTRIBUTE_UNUSED, tree node ATTRIBUTE_UNUSED, int ident)
-{
-}
-
-void print_lang_type(FILE *file ATTRIBUTE_UNUSED ATTRIBUTE_UNUSED, tree node ATTRIBUTE_UNUSED, int indent)
-{
-}
-
-void print_lang_identifier(FILE *file, tree node, int indent)
-{
-    print_node(file, "global", IDENTIFIER_GLOBAL_VALUE(node), indent + 4);
-    print_node(file, "local", IDENTIFIER_LOCAL_VALUE(node), indent + 4);
-    print_node(file, "label", IDENTIFIER_LABEL_VALUE(node), indent + 4);
-    print_node(file, "implicit", IDENTIFIER_IMPLICIT_DECL(node), indent + 4);
-    print_node(file, "error locus", IDENTIFIER_ERROR_LOCUS(node), indent + 4);
-    print_node(file, "limbo value", IDENTIFIER_LIMBO_VALUE(node), indent + 4);
-}
 
 /* Hook called at end of compilation to assume 1 elt
    for a top-level array decl that wasn't complete before.  */
@@ -2319,19 +2300,6 @@ tree pushdecl(tree x)
     return x;
 }
 
-/* Like pushdecl, only it places X in GLOBAL_BINDING_LEVEL, if appropriate.  */
-
-tree pushdecl_top_level(tree x)
-{
-    register tree t;
-    register struct binding_level *b = current_binding_level;
-
-    current_binding_level = global_binding_level;
-    t = pushdecl(x);
-    current_binding_level = b;
-    return t;
-}
-
 /* Generate an implicit declaration for identifier FUNCTIONID
    as a function of type int ().  Print a warning if appropriate.  */
 
@@ -3297,15 +3265,6 @@ tree groktypename(tree type_name)
     if (TREE_CODE(type_name) != TREE_LIST)
         return type_name;
     return grokdeclarator(TREE_VALUE(type_name), TREE_PURPOSE(type_name), TYPENAME, 0);
-}
-
-/* Return a PARM_DECL node for a given pair of specs and declarator.  */
-
-tree groktypename_in_parm_context(tree type_name)
-{
-    if (TREE_CODE(type_name) != TREE_LIST)
-        return type_name;
-    return grokdeclarator(TREE_VALUE(type_name), TREE_PURPOSE(type_name), PARM, 0);
 }
 
 /* Decode a declarator in an ordinary declaration or data definition.
@@ -6371,143 +6330,6 @@ void store_parm_decls(void)
     if (DECL_NAME(fndecl) && strcmp(IDENTIFIER_POINTER(DECL_NAME(fndecl)), "main") == 0
         && DECL_CONTEXT(fndecl) == NULL_TREE)
         expand_main_function();
-}
-
-/* SPECPARMS is an identifier list--a chain of TREE_LIST nodes
-   each with a parm name as the TREE_VALUE.  A null pointer as TREE_VALUE
-   stands for an ellipsis in the identifier list.
-
-   PARMLIST is the data returned by get_parm_info for the
-   parmlist that follows the semicolon.
-
-   We return a value of the same sort that get_parm_info returns,
-   except that it describes the combination of identifiers and parmlist.  */
-
-tree combine_parm_decls(tree specparms, tree parmlist, int void_at_end)
-{
-    register tree fndecl = current_function_decl;
-    register tree parm;
-
-    tree parmdecls = TREE_PURPOSE(parmlist);
-
-    /* This is a chain of any other decls that came in among the parm
-       declarations.  They were separated already by get_parm_info,
-       so we just need to keep them separate.  */
-    tree nonparms = TREE_VALUE(parmlist);
-
-    tree types = 0;
-
-    for (parm = parmdecls; parm; parm = TREE_CHAIN(parm))
-        DECL_RESULT(parm) = 0;
-
-    for (parm = specparms; parm; parm = TREE_CHAIN(parm))
-    {
-        register tree tail, found = NULL;
-
-        /* See if any of the parmdecls specifies this parm by name.  */
-        for (tail = parmdecls; tail; tail = TREE_CHAIN(tail))
-            if (DECL_NAME(tail) == TREE_VALUE(parm))
-            {
-                found = tail;
-                break;
-            }
-
-        /* If declaration already marked, we have a duplicate name.
-       Complain, and don't use this decl twice.   */
-        if (found && DECL_RESULT(found) != 0)
-        {
-            error_with_decl(found, "multiple parameters named `%s'");
-            found = 0;
-        }
-
-        /* If the declaration says "void", complain and ignore it.  */
-        if (found && TYPE_MAIN_VARIANT(TREE_TYPE(found)) == void_type_node)
-        {
-            error_with_decl(found, "parameter `%s' declared void");
-            TREE_TYPE(found) = integer_type_node;
-            DECL_ARG_TYPE(found) = integer_type_node;
-            layout_decl(found, 0);
-        }
-
-        /* Traditionally, a parm declared float is actually a double.  */
-        if (found && flag_traditional && TYPE_MAIN_VARIANT(TREE_TYPE(found)) == float_type_node)
-        {
-            TREE_TYPE(found) = double_type_node;
-            DECL_ARG_TYPE(found) = double_type_node;
-            layout_decl(found, 0);
-        }
-
-        /* If no declaration found, default to int.  */
-        if (!found)
-        {
-            found = build_decl(PARM_DECL, TREE_VALUE(parm), integer_type_node);
-            DECL_ARG_TYPE(found) = TREE_TYPE(found);
-            DECL_SOURCE_LINE(found) = DECL_SOURCE_LINE(fndecl);
-            DECL_SOURCE_FILE(found) = DECL_SOURCE_FILE(fndecl);
-            error_with_decl(found, "type of parameter `%s' is not declared");
-            pushdecl(found);
-        }
-
-        TREE_PURPOSE(parm) = found;
-
-        /* Mark this decl as "already found" -- see test, above.
-       It is safe to use DECL_RESULT for this
-       since it is not used in PARM_DECLs or CONST_DECLs.  */
-        DECL_RESULT(found) = error_mark_node;
-    }
-
-    /* Complain about any actual PARM_DECLs not matched with any names.  */
-
-    for (parm = parmdecls; parm;)
-    {
-        tree next = TREE_CHAIN(parm);
-        TREE_CHAIN(parm) = 0;
-
-        /* Complain about args with incomplete types.  */
-        if (TYPE_SIZE(TREE_TYPE(parm)) == 0)
-        {
-            error_with_decl(parm, "parameter `%s' has incomplete type");
-            TREE_TYPE(parm) = error_mark_node;
-        }
-
-        if (DECL_RESULT(parm) == 0)
-        {
-            error_with_decl(parm, "declaration for parameter `%s' but no such parameter");
-            /* Pretend the parameter was not missing.
-               This gets us to a standard state and minimizes
-               further error messages.  */
-            specparms = chainon(specparms, tree_cons(parm, NULL_TREE, NULL_TREE));
-        }
-
-        parm = next;
-    }
-
-    /* Chain the declarations together in the order of the list of names.
-       At the same time, build up a list of their types, in reverse order.  */
-
-    parm = specparms;
-    parmdecls = 0;
-    {
-        register tree last;
-        for (last = 0; parm; parm = TREE_CHAIN(parm))
-            if (TREE_PURPOSE(parm))
-            {
-                if (last == 0)
-                    parmdecls = TREE_PURPOSE(parm);
-                else
-                    TREE_CHAIN(last) = TREE_PURPOSE(parm);
-                last = TREE_PURPOSE(parm);
-                TREE_CHAIN(last) = 0;
-
-                types = saveable_tree_cons(NULL_TREE, TREE_TYPE(parm), types);
-            }
-    }
-
-    if (void_at_end)
-        return saveable_tree_cons(
-            parmdecls, nonparms, nreverse(saveable_tree_cons(NULL_TREE, void_type_node, types)));
-
-    return saveable_tree_cons(parmdecls, nonparms, nreverse(types));
 }
 
 /* Finish up a function declaration and compile that function

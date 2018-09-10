@@ -649,17 +649,11 @@ int can_conditionally_move_p();
    Likewise for subtraction and for just copying.
    These do not call protect_from_queue; caller must do so.  */
 extern rtx gen_add2_insn();
-extern rtx gen_sub2_insn();
 extern rtx gen_move_insn();
 extern int have_add2_insn();
-extern int have_sub2_insn();
 
 /* Return the INSN_CODE to use for an extend operation.  */
 extern enum insn_code can_extend_p();
-
-/* Generate the body of an insn to extend Y (with mode MFROM)
-   into X (with mode MTO).  Do zero-extension if UNSIGNEDP is nonzero.  */
-extern rtx gen_extend_insn();
 
 /* Initialize the tables that control conversion between fixed and
    floating values.  */
@@ -696,9 +690,6 @@ extern rtx emit_store_flag_force();
 /* Given a JUMP_INSN, return a description of the test being made.  */
 extern rtx get_condition();
 
-/* Generate a conditional trap instruction.  */
-extern rtx gen_cond_trap();
-
 /* Functions from expr.c:  */
 
 /* This is run once per compilation to set up which modes can be used
@@ -894,14 +885,6 @@ extern rtx assemble_trampoline_template();
 /* Return 1 if two rtx's are equivalent in structure and elements.  */
 extern int rtx_equal_p();
 
-/* Given rtx, return new rtx whose address won't be affected by
-   any side effects.  It has been copied to a new temporary reg.  */
-extern rtx stabilize();
-
-/* Given an rtx, copy all regs it refers to into new temps
-   and return a modified copy that refers to the new temps.  */
-extern rtx copy_all_regs();
-
 /* Copy given rtx to a new temp reg and return that.  */
 extern rtx copy_to_reg();
 
@@ -910,9 +893,6 @@ extern rtx copy_addr_to_reg();
 
 /* Like copy_to_reg but always make the reg the specified mode MODE.  */
 extern rtx copy_to_mode_reg();
-
-/* Copy given rtx to given temp reg and return that.  */
-extern rtx copy_to_suggested_reg();
 
 /* Copy a value to a register if it isn't already a register.
    Args are mode (in case value is a constant) and the value.  */
@@ -965,8 +945,6 @@ extern rtx extract_bit_field();
 extern rtx expand_mult();
 extern rtx expand_mult_add();
 extern rtx expand_mult_highpart_adjust();
-
-extern rtx assemble_static_space();
 
 /* Hook called by expand_expr for language-specific tree codes.
    It is up to the language front end to install a hook
