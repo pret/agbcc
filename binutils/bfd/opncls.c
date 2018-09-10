@@ -214,12 +214,7 @@ bfd_fopen (const char *filename, const char *target, const char *mode, int fd)
       return NULL;
     }
 
-#ifdef HAVE_FDOPEN
-  if (fd != -1)
-    nbfd->iostream = fdopen (fd, mode);
-  else
-#endif
-    nbfd->iostream = _bfd_real_fopen (filename, mode);
+  nbfd->iostream = _bfd_real_fopen (filename, mode);
   if (nbfd->iostream == NULL)
     {
       bfd_set_error (bfd_error_system_call);
@@ -330,33 +325,8 @@ bfd *
 bfd_fdopenr (const char *filename, const char *target, int fd)
 {
   const char *mode;
-#if defined(HAVE_FCNTL) && defined(F_GETFL)
-  int fdflags;
-#endif
 
-#if ! defined(HAVE_FCNTL) || ! defined(F_GETFL)
   mode = FOPEN_RUB; /* Assume full access.  */
-#else
-  fdflags = fcntl (fd, F_GETFL, NULL);
-  if (fdflags == -1)
-    {
-      int save = errno;
-
-      close (fd);
-      errno = save;
-      bfd_set_error (bfd_error_system_call);
-      return NULL;
-    }
-
-  /* (O_ACCMODE) parens are to avoid Ultrix header file bug.  */
-  switch (fdflags & (O_ACCMODE))
-    {
-    case O_RDONLY: mode = FOPEN_RB; break;
-    case O_WRONLY: mode = FOPEN_RUB; break;
-    case O_RDWR:   mode = FOPEN_RUB; break;
-    default: abort ();
-    }
-#endif
 
   return bfd_fopen (filename, target, mode, fd);
 }

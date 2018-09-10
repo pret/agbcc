@@ -10,20 +10,12 @@
 /* Name of host specific core header file to include in elf.c. */
 #undef CORE_HEADER
 
-/* Define to 1 if you want to enable -z separate-code in ELF linker by
-   default. */
-#undef DEFAULT_LD_Z_SEPARATE_CODE
-
 /* Define to 1 if you have the <alloca.h> header file. */
 #undef HAVE_ALLOCA_H
 
 /* Define to 1 if you have the declaration of `asprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_ASPRINTF
-
-/* Define to 1 if you have the declaration of `basename', and to 0 if you
-   don't. */
-#undef HAVE_DECL_BASENAME
 
 /* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
 #undef HAVE_DECL_FFS
@@ -44,10 +36,6 @@
    don't. */
 #undef HAVE_DECL_FTELLO64
 
-/* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STPCPY
-
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_VASPRINTF
@@ -59,17 +47,8 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you have the `fcntl' function. */
-#undef HAVE_FCNTL
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
-
-/* Define to 1 if you have the `fdopen' function. */
-#undef HAVE_FDOPEN
-
-/* Define to 1 if you have the `fileno' function. */
-#undef HAVE_FILENO
 
 /* Define to 1 if you have the `fopen64' function. */
 #undef HAVE_FOPEN64
@@ -139,9 +118,6 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `strtoull' function. */
-#undef HAVE_STRTOULL
 
 /* Define to 1 if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
@@ -231,9 +207,6 @@
 
 /* Use mmap if it's available? */
 #undef USE_MMAP
-
-/* Define if we should default to creating read-only plt entries */
-#undef USE_SECUREPLT
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE

@@ -62,7 +62,7 @@ BFD32_LIBS = \
 	cache.o compress.o corefile.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o syms.o targets.o \
-	binary.o srec.o
+	binary.o
 
 BFD64_LIBS = archive64.o
 
@@ -71,7 +71,7 @@ BFD32_LIBS_CFILES = \
 	cache.c  compress.c corefile.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c syms.c targets.c \
-	binary.c srec.c
+	binary.c
 
 BFD64_LIBS_CFILES = archive64.c
 
@@ -158,7 +158,7 @@ SOURCE_HFILES = \
 	elf-bfd.h  \
 	elfcode.h elfcore.h \
 	genlink.h \
-	libaout.h libbfd.h \
+	libbfd.h \
 	version.h
 
 ## ... and all .h files which are in the build tree.

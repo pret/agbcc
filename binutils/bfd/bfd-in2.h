@@ -45,7 +45,6 @@ extern "C" {
 #include <stdarg.h>
 #include <sys/stat.h>
 
-#if defined (__STDC__) || defined (ALMOST_STDC) || defined (HAVE_STRINGIZE)
 #ifndef SABER
 /* This hack is to avoid a problem with some strict ANSI C preprocessors.
    The problem is, "32_" is not a valid preprocessing token, and we don't
@@ -54,7 +53,6 @@ extern "C" {
    still-valid pp-tokens.  Then the final concatenation can be done.  */
 #undef CONCAT4
 #define CONCAT4(a,b,c,d) XCONCAT2(CONCAT2(a,b),CONCAT2(c,d))
-#endif
 #endif
 
 /* This is a utility macro to handle the situation where the code
@@ -588,7 +586,6 @@ void bfd_putl16 (bfd_vma, void *);
 bfd_uint64_t bfd_get_bits (const void *, int, bfd_boolean);
 void bfd_put_bits (bfd_uint64_t, void *, int, bfd_boolean);
 
-#if defined(__STDC__) || defined(ALMOST_STDC)
 struct ecoff_debug_info;
 struct ecoff_debug_swap;
 struct ecoff_extr;
@@ -597,7 +594,6 @@ struct bfd_link_info;
 struct bfd_link_hash_entry;
 struct bfd_section_already_linked;
 struct bfd_elf_version_tree;
-#endif
 
 extern bfd_boolean bfd_section_already_linked_table_init (void);
 extern void bfd_section_already_linked_table_free (void);
@@ -834,55 +830,14 @@ extern bfd_boolean bfd_xcoff_ar_archive_set_magic
   (bfd *, char *);
 
 /* Externally visible COFF routines.  */
-
-#if defined(__STDC__) || defined(ALMOST_STDC)
 struct internal_syment;
 union internal_auxent;
-#endif
 
 extern bfd_boolean bfd_coff_set_symbol_class
   (bfd *, struct bfd_symbol *, unsigned int);
 
-/* ARM VFP11 erratum workaround support.  */
-typedef enum
-{
-  BFD_ARM_VFP11_FIX_DEFAULT,
-  BFD_ARM_VFP11_FIX_NONE,
-  BFD_ARM_VFP11_FIX_SCALAR,
-  BFD_ARM_VFP11_FIX_VECTOR
-} bfd_arm_vfp11_fix;
-
 extern void bfd_elf32_arm_init_maps
   (bfd *);
-
-extern void bfd_elf32_arm_set_vfp11_fix
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_set_cortex_a8_fix
-  (bfd *, struct bfd_link_info *);
-
-extern bfd_boolean bfd_elf32_arm_vfp11_erratum_scan
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_vfp11_fix_veneer_locations
-  (bfd *, struct bfd_link_info *);
-
-/* ARM STM STM32L4XX erratum workaround support.  */
-typedef enum
-{
-  BFD_ARM_STM32L4XX_FIX_NONE,
-  BFD_ARM_STM32L4XX_FIX_DEFAULT,
-  BFD_ARM_STM32L4XX_FIX_ALL
-} bfd_arm_stm32l4xx_fix;
-
-extern void bfd_elf32_arm_set_stm32l4xx_fix
-  (bfd *, struct bfd_link_info *);
-
-extern bfd_boolean bfd_elf32_arm_stm32l4xx_erratum_scan
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_stm32l4xx_fix_veneer_locations
-  (bfd *, struct bfd_link_info *);
 
 /* ARM Interworking support.  Called from linker.  */
 extern bfd_boolean bfd_arm_allocate_interworking_sections
@@ -918,8 +873,6 @@ struct elf32_arm_params {
   char * target2_type;
   int fix_v4bx;
   int use_blx;
-  bfd_arm_vfp11_fix vfp11_denorm_fix;
-  bfd_arm_stm32l4xx_fix stm32l4xx_fix;
   int no_enum_size_warning;
   int no_wchar_size_warning;
   int pic_veneer;
@@ -1847,13 +1800,8 @@ extern asection _bfd_std_section[4];
    traditional C does not permit us to initialize a union member while
    gcc warns if we don't initialize it.
    the_bfd, name, value, attr, section [, udata]  */
-#ifdef __STDC__
 #define GLOBAL_SYM_INIT(NAME, SECTION) \
   { 0, NAME, 0, BSF_SECTION_SYM, SECTION, { 0 }}
-#else
-#define GLOBAL_SYM_INIT(NAME, SECTION) \
-  { 0, NAME, 0, BSF_SECTION_SYM, SECTION }
-#endif
 
 void bfd_section_list_clear (bfd *);
 

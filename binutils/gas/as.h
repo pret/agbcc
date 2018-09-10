@@ -34,12 +34,11 @@
   	COMMON as "".
    If TEST is #defined, then we are testing a module: #define COMMON as "".  */
 
-#include "alloca-conf.h"
-
 /* Now, tend to the rest of the configuration.  */
 
 /* System include files first...  */
 #include <stdio.h>
+#include "config.h"
 
 #ifdef STRING_WITH_STRINGS
 #include <string.h>

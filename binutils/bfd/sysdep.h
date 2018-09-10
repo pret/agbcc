@@ -111,10 +111,6 @@ extern int errno;
 extern int ffs (int);
 #endif
 
-#if !HAVE_DECL_STPCPY
-extern char *stpcpy (char *__dest, const char *__src);
-#endif
-
 #ifdef HAVE_FTELLO
 #if !HAVE_DECL_FTELLO
 extern off_t ftello (FILE *stream);

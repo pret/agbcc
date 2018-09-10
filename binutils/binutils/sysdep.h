@@ -20,7 +20,7 @@
 #ifndef _BIN_SYSDEP_H
 #define _BIN_SYSDEP_H
 
-#include "alloca-conf.h"
+#include "config.h"
 #include "ansidecl.h"
 #include <stdio.h>
 #include <sys/types.h>

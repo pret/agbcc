@@ -58,8 +58,6 @@ extern const bfd_target arm_elf32_fdpic_le_vec;
 extern const bfd_target elf32_le_vec;
 
 /* These are always included.  */
-extern const bfd_target srec_vec;
-extern const bfd_target symbolsrec_vec;
 extern const bfd_target binary_vec;
 
 
@@ -68,9 +66,6 @@ static const bfd_target * const _bfd_target_vector[] =
 
 	SELECT_VECS,
 
-/* Always support S-records, for convenience.  */
-	&srec_vec,
-	&symbolsrec_vec,
 	&binary_vec,
 	NULL /* end of list marker */
 };

@@ -314,8 +314,6 @@ enum command_line_switch
   OPTION_REVERSE_BYTES,
   OPTION_SET_SECTION_FLAGS,
   OPTION_SET_START,
-  OPTION_SREC_FORCES3,
-  OPTION_SREC_LEN,
   OPTION_STRIP_DWO,
   OPTION_STRIP_SYMBOLS,
   OPTION_STRIP_UNNEEDED,
@@ -439,8 +437,6 @@ static struct option copy_options[] =
   {"reverse-bytes", required_argument, 0, OPTION_REVERSE_BYTES},
   {"set-section-flags", required_argument, 0, OPTION_SET_SECTION_FLAGS},
   {"set-start", required_argument, 0, OPTION_SET_START},
-  {"srec-forceS3", no_argument, 0, OPTION_SREC_FORCES3},
-  {"srec-len", required_argument, 0, OPTION_SREC_LEN},
   {"strip-all", no_argument, 0, 'S'},
   {"strip-debug", no_argument, 0, 'g'},
   {"strip-dwo", no_argument, 0, OPTION_STRIP_DWO},
@@ -468,15 +464,6 @@ extern char *program_name;
    1 means this is 'strip'; 0 means this is 'objcopy'.
    -1 means if we should use argv[0] to decide.  */
 extern int is_strip;
-
-/* The maximum length of an S record.  This variable is defined in srec.c
-   and can be modified by the --srec-len parameter.  */
-extern unsigned int _bfd_srec_len;
-
-/* Restrict the generation of Srecords to type S3 only.
-   This variable is defined in bfd/srec.c and can be toggled
-   on by the --srec-forceS3 command line switch.  */
-extern bfd_boolean _bfd_srec_forceS3;
 
 /* Forward declarations.  */
 static void setup_section (bfd *, asection *, void *);
@@ -575,8 +562,6 @@ copy_usage (FILE *stream, int exit_status)
      --redefine-sym <old>=<new>    Redefine symbol name <old> to <new>\n\
      --redefine-syms <file>        --redefine-sym for all symbol pairs \n\
                                      listed in <file>\n\
-     --srec-len <number>           Restrict the length of generated Srecords\n\
-     --srec-forceS3                Restrict the type of generated Srecords to S3\n\
      --strip-symbols <file>        -N for all symbols listed in <file>\n\
      --strip-unneeded-symbols <file>\n\
                                    --strip-unneeded-symbol for all symbols listed\n\
@@ -4864,14 +4849,6 @@ copy_main (int argc, char *argv[])
 	case OPTION_SET_START:
 	  set_start = parse_vma (optarg, "--set-start");
 	  set_start_set = TRUE;
-	  break;
-
-	case OPTION_SREC_LEN:
-	  _bfd_srec_len = parse_vma (optarg, "--srec-len");
-	  break;
-
-	case OPTION_SREC_FORCES3:
-	  _bfd_srec_forceS3 = TRUE;
 	  break;
 
 	case OPTION_STRIP_SYMBOLS:

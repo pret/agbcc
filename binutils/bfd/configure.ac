@@ -18,12 +18,11 @@ dnl <http://www.gnu.org/licenses/>.
 dnl
 
 m4_include([version.m4])
-AC_INIT([bfd], BFD_VERSION)
+AC_INIT([bfd], [BFD_VERSION])
 AC_CONFIG_SRCDIR([libbfd.c])
 m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
-AC_ISC_POSIX
 
 AM_INIT_AUTOMAKE
 
@@ -38,10 +37,7 @@ dnl configure option --enable-shared.
 #AC_DISABLE_SHARED
 
 AC_PROG_CC
-AC_GNU_SOURCE
 AC_USE_SYSTEM_EXTENSIONS
-
-#LT_INIT([dlopen])
 
 ACX_LARGEFILE
 
@@ -78,44 +74,6 @@ AC_ARG_WITH(mmap,
   no)   want_mmap=false ;;
   *)    AC_MSG_ERROR(bad value ${withval} for BFD with-mmap option) ;;
 esac],[want_mmap=false])dnl
-
-AC_ARG_ENABLE(secureplt,
-[  --enable-secureplt      Default to creating read-only plt entries],
-[case "${enableval}" in
-  yes)  use_secureplt=true  ;;
-  no)   use_secureplt=false ;;
-  *)    AC_MSG_ERROR(bad value ${enableval} for secureplt option) ;;
-esac],[use_secureplt=true])dnl
-if test $use_secureplt = true; then
-  AC_DEFINE(USE_SECUREPLT, 1,
-    [Define if we should default to creating read-only plt entries])
-fi
-
-# Decide if -z separate-code should be enabled in ELF linker by default.
-ac_default_ld_z_separate_code=unset
-AC_ARG_ENABLE(separate-code,
-	      AS_HELP_STRING([--enable-separate-code],
-	      [enable -z separate-code in ELF linker by default]),
-[case "${enableval}" in
-  yes) ac_default_ld_z_separate_code=1 ;;
-  no) ac_default_ld_z_separate_code=0 ;;
-esac])
-# Enable -z separate-code by default for Linux/x86.
-changequote(,)dnl
-case "${target}" in
-i[3-7]86-*-linux-* | x86_64-*-linux-*)
-changequote([,])dnl
-  if test ${ac_default_ld_z_separate_code} = unset; then
-    ac_default_ld_z_separate_code=1
-  fi
-  ;;
-esac
-if test "${ac_default_ld_z_separate_code}" = unset; then
-  ac_default_ld_z_separate_code=0
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_LD_Z_SEPARATE_CODE,
-  $ac_default_ld_z_separate_code,
-  [Define to 1 if you want to enable -z separate-code in ELF linker by default.])
 
 DEBUGDIR=${libdir}/debug
 AC_ARG_WITH(separate-debug-dir,
@@ -208,10 +166,9 @@ AC_CHECK_HEADERS(alloca.h strings.h unistd.h wchar.h wctype.h \
 AC_HEADER_DIRENT
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS(fcntl getpagesize setitimer sysconf fdopen getuid getgid fileno \
-               strtoull getrlimit)
+AC_CHECK_FUNCS(getpagesize setitimer sysconf getuid getgid \
+               getrlimit)
 
-AC_CHECK_DECLS(basename)
 AC_CHECK_DECLS(ftello)
 AC_CHECK_DECLS(ftello64)
 AC_CHECK_DECLS(fseeko)
@@ -219,7 +176,6 @@ AC_CHECK_DECLS(fseeko64)
 BFD_BINARY_FOPEN
 
 AC_CHECK_DECLS(ffs)
-AC_CHECK_DECLS(stpcpy)
 AC_CHECK_DECLS(asprintf)
 AC_CHECK_DECLS(vasprintf)
 
@@ -249,39 +205,6 @@ fi
 # code would insert text relocations into libbfd.
 SHARED_LIBADD=
 SHARED_LDFLAGS=
-if test "$enable_shared" = "yes"; then
-changequote(,)dnl
-  x=`sed -n -e 's/^[ 	]*PICFLAG[ 	]*=[ 	]*//p' < ../libiberty/Makefile | sed -n '$p'`
-changequote([,])dnl
-  if test -n "$x"; then
-    SHARED_LIBADD="-L`pwd`/../libiberty/pic -liberty"
-  fi
-
-# More hacks to build DLLs on Windows.
-  case "${host}" in
-  *-*-cygwin*)
-    SHARED_LDFLAGS="-no-undefined"
-    SHARED_LIBADD="-L`pwd`/../libiberty -liberty -L`pwd`/../intl -lintl -lcygwin -lkernel32"
-  ;;
-
-  # Hack to build or1k-src on OSX
-  or1k*-*-darwin*)
-    SHARED_LIBADD="-L`pwd`/../libiberty/pic -L`pwd`/../intl -liberty -lintl"
-  ;;
-  esac
-
-  if test -n "$SHARED_LIBADD"; then
-    if test -n "$LIBM"; then
-      if test x"$bfd_cv_ld_as_needed" = xyes; then
-	# Link against libm only when needed.  Put -lc, -lm inside -Wl
-	# to stop libtool reordering these options.
-	SHARED_LIBADD="$SHARED_LIBADD -Wl,-lc,--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
-      else
-	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
-      fi
-    fi
-  fi
-fi
 AC_SUBST(SHARED_LDFLAGS)
 AC_SUBST(SHARED_LIBADD)
 

@@ -1,17 +1,17 @@
 ifeq ($(prefix),)
-CHECK_PREFIX = @printf "\033[31;1m*******************************\nUse 'make install prefix=\"path\"\n*******************************\033[0m\n"; exit 1
+CHECK_PREFIX := @printf "\033[31;1m*******************************\nUse 'make install prefix=\"path\"\n*******************************\033[0m\n"; exit 1
 else
-CHECK_PREFIX = @:
-PREFIX = $(shell realpath $(prefix))
+CHECK_PREFIX := @:
+PREFIX := $(shell realpath $(prefix))
 endif
 
 
 MAKEFLAGS += --no-print-directory
 
 ifeq (Windows_NT,$(OS))
-EXE = .exe
+EXE := .exe
 else
-EXE =
+EXE :=
 endif
 
 all: binutils old_gcc gcc libc libgcc
@@ -58,7 +58,7 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-s" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
 
 binutils: binutils/Makefile
 	@$(MAKE) -C binutils

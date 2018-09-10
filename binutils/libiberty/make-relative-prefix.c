@@ -254,10 +254,7 @@ make_relative_prefix_1 (const char *progname, const char *bin_prefix,
 #ifdef HAVE_HOST_EXECUTABLE_SUFFIX
 	  len += strlen (HOST_EXECUTABLE_SUFFIX);
 #endif
-	  if (len < MAX_ALLOCA_SIZE)
-	    nstore = (char *) alloca (len);
-	  else
-	    alloc_ptr = nstore = (char *) malloc (len);
+	  alloc_ptr = nstore = (char *) malloc (len);
 
 	  startp = endp = temp;
 	  while (1)

@@ -89,1569 +89,1569 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
 	 0,			/* dst_mask */
 	 FALSE),		/* pcrel_offset */
 
-  HOWTO (R_ARM_PC24,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_PC24",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_PC24,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_PC24",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 TRUE),
 
   /* 32 bit absolute */
-  HOWTO (R_ARM_ABS32,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ABS32",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ABS32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ABS32",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
   /* standard 32bit pc-relative reloc */
-  HOWTO (R_ARM_REL32,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_REL32",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_REL32,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_REL32",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
   /* 8 bit absolute - R_ARM_LDR_PC_G0 in AAELF */
-  HOWTO (R_ARM_LDR_PC_G0,	/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_PC_G0",     /* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_PC_G0,
+	 0,
+	 0,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_PC_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
    /* 16 bit absolute */
-  HOWTO (R_ARM_ABS16,		/* type */
-	 0,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ABS16",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x0000ffff,		/* src_mask */
-	 0x0000ffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ABS16,
+	 0,
+	 1,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ABS16",
+	 FALSE,
+	 0x0000ffff,
+	 0x0000ffff,
+	 FALSE),
 
   /* 12 bit absolute */
-  HOWTO (R_ARM_ABS12,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ABS12",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ABS12,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ABS12",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_ABS5,	/* type */
-	 6,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 5,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_ABS5",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000007e0,		/* src_mask */
-	 0x000007e0,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_ABS5,
+	 6,
+	 1,
+	 5,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_ABS5",
+	 FALSE,
+	 0x000007e0,
+	 0x000007e0,
+	 FALSE),
 
   /* 8 bit absolute */
-  HOWTO (R_ARM_ABS8,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ABS8",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000000ff,		/* src_mask */
-	 0x000000ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ABS8,
+	 0,
+	 0,
+	 8,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ABS8",
+	 FALSE,
+	 0x000000ff,
+	 0x000000ff,
+	 FALSE),
 
-  HOWTO (R_ARM_SBREL32,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_SBREL32",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_SBREL32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_SBREL32",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_CALL,	/* type */
-	 1,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_CALL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x07ff2fff,		/* src_mask */
-	 0x07ff2fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_CALL,
+	 1,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_CALL",
+	 FALSE,
+	 0x07ff2fff,
+	 0x07ff2fff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_PC8,		/* type */
-	 1,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_PC8",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000000ff,		/* src_mask */
-	 0x000000ff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_PC8,
+	 1,
+	 1,
+	 8,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_PC8",
+	 FALSE,
+	 0x000000ff,
+	 0x000000ff,
+	 TRUE),
 
-  HOWTO (R_ARM_BREL_ADJ,	/* type */
-	 1,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_BREL_ADJ",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_BREL_ADJ,
+	 1,
+	 1,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_BREL_ADJ",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_DESC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_DESC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_DESC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_DESC",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_SWI8,	/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_SWI8",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000000,		/* src_mask */
-	 0x00000000,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_SWI8,
+	 0,
+	 0,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_SWI8",
+	 FALSE,
+	 0x00000000,
+	 0x00000000,
+	 FALSE),
 
   /* BLX instruction for the ARM.  */
-  HOWTO (R_ARM_XPC25,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_XPC25",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_XPC25,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_XPC25",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 TRUE),
 
   /* BLX instruction for the Thumb.  */
-  HOWTO (R_ARM_THM_XPC22,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_XPC22",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x07ff2fff,		/* src_mask */
-	 0x07ff2fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_XPC22,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_XPC22",
+	 FALSE,
+	 0x07ff2fff,
+	 0x07ff2fff,
+	 TRUE),
 
   /* Dynamic TLS relocations.  */
 
-  HOWTO (R_ARM_TLS_DTPMOD32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_TLS_DTPMOD32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_DTPMOD32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_DTPMOD32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_DTPOFF32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_TLS_DTPOFF32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_DTPOFF32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_DTPOFF32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_TPOFF32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_TLS_TPOFF32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_TPOFF32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_TPOFF32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
   /* Relocs used in ARM Linux */
 
-  HOWTO (R_ARM_COPY,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_COPY",		/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_COPY,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_COPY",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_GLOB_DAT,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_GLOB_DAT",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GLOB_DAT,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GLOB_DAT",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_JUMP_SLOT,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_JUMP_SLOT",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_JUMP_SLOT,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_JUMP_SLOT",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_RELATIVE,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_RELATIVE",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_RELATIVE,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_RELATIVE",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_GOTOFF32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_GOTOFF32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GOTOFF32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOTOFF32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_GOTPC,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_GOTPC",		/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_GOTPC,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOTPC",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_GOT32,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_GOT32",		/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GOT32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOT32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_PLT32,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_PLT32",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_PLT32,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_PLT32",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_CALL,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_CALL",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_CALL,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_CALL",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_JUMP24,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_JUMP24",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_JUMP24,
+	 2,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_JUMP24",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_JUMP24,	/* type */
-	 1,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_JUMP24",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x07ff2fff,		/* src_mask */
-	 0x07ff2fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_JUMP24,
+	 1,
+	 2,
+	 24,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_JUMP24",
+	 FALSE,
+	 0x07ff2fff,
+	 0x07ff2fff,
+	 TRUE),
 
-  HOWTO (R_ARM_BASE_ABS,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_BASE_ABS",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_BASE_ABS,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_BASE_ABS",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_ALU_PCREL7_0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PCREL_7_0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PCREL7_0,
+	 0,
+	 2,
+	 12,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PCREL_7_0",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PCREL15_8,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 8,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PCREL_15_8",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PCREL15_8,
+	 0,
+	 2,
+	 12,
+	 TRUE,
+	 8,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PCREL_15_8",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PCREL23_15,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 16,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PCREL_23_15",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PCREL23_15,
+	 0,
+	 2,
+	 12,
+	 TRUE,
+	 16,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PCREL_23_15",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_SBREL_11_0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_SBREL_11_0",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_LDR_SBREL_11_0,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_SBREL_11_0",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
-  HOWTO (R_ARM_ALU_SBREL_19_12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 12,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SBREL_19_12",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000ff000,		/* src_mask */
-	 0x000ff000,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SBREL_19_12,
+	 0,
+	 2,
+	 8,
+	 FALSE,
+	 12,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SBREL_19_12",
+	 FALSE,
+	 0x000ff000,
+	 0x000ff000,
+	 FALSE),
 
-  HOWTO (R_ARM_ALU_SBREL_27_20,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 20,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SBREL_27_20",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x0ff00000,		/* src_mask */
-	 0x0ff00000,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SBREL_27_20,
+	 0,
+	 2,
+	 8,
+	 FALSE,
+	 20,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SBREL_27_20",
+	 FALSE,
+	 0x0ff00000,
+	 0x0ff00000,
+	 FALSE),
 
-  HOWTO (R_ARM_TARGET1,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TARGET1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TARGET1,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TARGET1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_ROSEGREL32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ROSEGREL32",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ROSEGREL32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ROSEGREL32",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_V4BX,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_V4BX",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_V4BX,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_V4BX",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TARGET2,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TARGET2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_TARGET2,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TARGET2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_PREL31,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 31,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_PREL31",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x7fffffff,		/* src_mask */
-	 0x7fffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_PREL31,
+	 0,
+	 2,
+	 31,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_PREL31",
+	 FALSE,
+	 0x7fffffff,
+	 0x7fffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_MOVW_ABS_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVW_ABS_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000f0fff,		/* src_mask */
-	 0x000f0fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_MOVW_ABS_NC,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVW_ABS_NC",
+	 FALSE,
+	 0x000f0fff,
+	 0x000f0fff,
+	 FALSE),
 
-  HOWTO (R_ARM_MOVT_ABS,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVT_ABS",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000f0fff,		/* src_mask */
-	 0x000f0fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_MOVT_ABS,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVT_ABS",
+	 FALSE,
+	 0x000f0fff,
+	 0x000f0fff,
+	 FALSE),
 
-  HOWTO (R_ARM_MOVW_PREL_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVW_PREL_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000f0fff,		/* src_mask */
-	 0x000f0fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_MOVW_PREL_NC,
+	 0,
+	 2,
+	 16,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVW_PREL_NC",
+	 FALSE,
+	 0x000f0fff,
+	 0x000f0fff,
+	 TRUE),
 
-  HOWTO (R_ARM_MOVT_PREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVT_PREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000f0fff,		/* src_mask */
-	 0x000f0fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_MOVT_PREL,
+	 0,
+	 2,
+	 16,
+	 TRUE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVT_PREL",
+	 FALSE,
+	 0x000f0fff,
+	 0x000f0fff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_MOVW_ABS_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVW_ABS_NC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVW_ABS_NC,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVW_ABS_NC",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_MOVT_ABS,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVT_ABS",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVT_ABS,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVT_ABS",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_MOVW_PREL_NC,/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVW_PREL_NC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVW_PREL_NC,
+	 0,
+	 2,
+	 16,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVW_PREL_NC",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_MOVT_PREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVT_PREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVT_PREL,
+	 0,
+	 2,
+	 16,
+	 TRUE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVT_PREL",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_JUMP19,	/* type */
-	 1,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_THM_JUMP19",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x043f2fff,		/* src_mask */
-	 0x043f2fff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_JUMP19,
+	 1,
+	 2,
+	 19,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_JUMP19",
+	 FALSE,
+	 0x043f2fff,
+	 0x043f2fff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_JUMP6,	/* type */
-	 1,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 6,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_unsigned,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_JUMP6",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x02f8,		/* src_mask */
-	 0x02f8,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_JUMP6,
+	 1,
+	 1,
+	 6,
+	 TRUE,
+	 0,
+	 complain_overflow_unsigned,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_JUMP6",
+	 FALSE,
+	 0x02f8,
+	 0x02f8,
+	 TRUE),
 
   /* These are declared as 13-bit signed relocations because we can
      address -4095 .. 4095(base) by altering ADDW to SUBW or vice
      versa.  */
-  HOWTO (R_ARM_THM_ALU_PREL_11_0,/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 13,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_ALU_PREL_11_0",/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_ALU_PREL_11_0,
+	 0,
+	 2,
+	 13,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_ALU_PREL_11_0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_PC12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 13,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_PC12",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_PC12,
+	 0,
+	 2,
+	 13,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_PC12",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ABS32_NOI,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ABS32_NOI",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_ABS32_NOI,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ABS32_NOI",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_REL32_NOI,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_REL32_NOI",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_REL32_NOI,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_REL32_NOI",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
   /* Group relocations.  */
 
-  HOWTO (R_ARM_ALU_PC_G0_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PC_G0_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PC_G0_NC,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PC_G0_NC",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PC_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PC_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PC_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PC_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PC_G1_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PC_G1_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PC_G1_NC,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PC_G1_NC",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PC_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PC_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PC_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PC_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_PC_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_PC_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_PC_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_PC_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_PC_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_PC_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_PC_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_PC_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_PC_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_PC_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_PC_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_PC_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_PC_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_PC_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_PC_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_PC_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_PC_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_PC_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_PC_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_PC_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_PC_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_PC_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_PC_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_PC_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_PC_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_PC_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_PC_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_PC_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_PC_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_PC_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_PC_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_PC_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_PC_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_PC_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_PC_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_PC_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_SB_G0_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SB_G0_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SB_G0_NC,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SB_G0_NC",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_SB_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SB_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SB_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SB_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_SB_G1_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SB_G1_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SB_G1_NC,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SB_G1_NC",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_SB_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SB_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SB_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SB_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_ALU_SB_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_ALU_SB_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_ALU_SB_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_ALU_SB_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_SB_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_SB_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_SB_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_SB_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_SB_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_SB_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_SB_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_SB_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDR_SB_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDR_SB_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDR_SB_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDR_SB_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_SB_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_SB_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_SB_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_SB_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_SB_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_SB_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_SB_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_SB_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDRS_SB_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDRS_SB_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDRS_SB_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDRS_SB_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_SB_G0,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_SB_G0",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_SB_G0,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_SB_G0",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_SB_G1,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_SB_G1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_SB_G1,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_SB_G1",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_LDC_SB_G2,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_LDC_SB_G2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_LDC_SB_G2,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_LDC_SB_G2",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
   /* End of group relocations.  */
 
-  HOWTO (R_ARM_MOVW_BREL_NC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVW_BREL_NC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x0000ffff,		/* src_mask */
-	 0x0000ffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_MOVW_BREL_NC,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVW_BREL_NC",
+	 FALSE,
+	 0x0000ffff,
+	 0x0000ffff,
+	 FALSE),
 
-  HOWTO (R_ARM_MOVT_BREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVT_BREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x0000ffff,		/* src_mask */
-	 0x0000ffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_MOVT_BREL,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVT_BREL",
+	 FALSE,
+	 0x0000ffff,
+	 0x0000ffff,
+	 FALSE),
 
-  HOWTO (R_ARM_MOVW_BREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_MOVW_BREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x0000ffff,		/* src_mask */
-	 0x0000ffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_MOVW_BREL,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_MOVW_BREL",
+	 FALSE,
+	 0x0000ffff,
+	 0x0000ffff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_MOVW_BREL_NC,/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVW_BREL_NC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVW_BREL_NC,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVW_BREL_NC",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_MOVT_BREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVT_BREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVT_BREL,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVT_BREL",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_MOVW_BREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 16,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_MOVW_BREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x040f70ff,		/* src_mask */
-	 0x040f70ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_MOVW_BREL,
+	 0,
+	 2,
+	 16,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_MOVW_BREL",
+	 FALSE,
+	 0x040f70ff,
+	 0x040f70ff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_GOTDESC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 NULL,			/* special_function */
-	 "R_ARM_TLS_GOTDESC",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_GOTDESC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 NULL,
+	 "R_ARM_TLS_GOTDESC",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_CALL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_CALL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00ffffff,		/* src_mask */
-	 0x00ffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_CALL,
+	 0,
+	 2,
+	 24,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_CALL",
+	 FALSE,
+	 0x00ffffff,
+	 0x00ffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_DESCSEQ,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_DESCSEQ",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000000,		/* src_mask */
-	 0x00000000,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_DESCSEQ,
+	 0,
+	 2,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_DESCSEQ",
+	 FALSE,
+	 0x00000000,
+	 0x00000000,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_TLS_CALL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 24,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_TLS_CALL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x07ff07ff,		/* src_mask */
-	 0x07ff07ff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_TLS_CALL,
+	 0,
+	 2,
+	 24,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_TLS_CALL",
+	 FALSE,
+	 0x07ff07ff,
+	 0x07ff07ff,
+	 FALSE),
 
-  HOWTO (R_ARM_PLT32_ABS,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_PLT32_ABS",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_PLT32_ABS,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_PLT32_ABS",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_GOT_ABS,		/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOT_ABS",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),			/* pcrel_offset */
+  HOWTO (R_ARM_GOT_ABS,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOT_ABS",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_GOT_PREL,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,	/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOT_PREL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_GOT_PREL,
+	 0,
+	 2,
+	 32,
+	 TRUE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOT_PREL",
+	 FALSE,
+	 0xffffffff,
+	 0xffffffff,
+	 TRUE),
 
-  HOWTO (R_ARM_GOT_BREL12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOT_BREL12",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GOT_BREL12,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOT_BREL12",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
-  HOWTO (R_ARM_GOTOFF12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOTOFF12",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GOTOFF12,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOTOFF12",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
   EMPTY_HOWTO (R_ARM_GOTRELAX),	 /* reserved for future GOT-load optimizations */
 
   /* GNU extension to record C++ vtable member usage */
-  HOWTO (R_ARM_GNU_VTENTRY,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont, /* complain_on_overflow */
-	 _bfd_elf_rel_vtable_reloc_fn,	/* special_function */
-	 "R_ARM_GNU_VTENTRY",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GNU_VTENTRY,
+	 0,
+	 2,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 _bfd_elf_rel_vtable_reloc_fn,
+	 "R_ARM_GNU_VTENTRY",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE),
 
   /* GNU extension to record C++ vtable hierarchy */
-  HOWTO (R_ARM_GNU_VTINHERIT, /* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont, /* complain_on_overflow */
-	 NULL,			/* special_function */
-	 "R_ARM_GNU_VTINHERIT", /* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_GNU_VTINHERIT,
+	 0,
+	 2,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 NULL,
+	 "R_ARM_GNU_VTINHERIT",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE),
 
-  HOWTO (R_ARM_THM_JUMP11,	/* type */
-	 1,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 11,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,	/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_JUMP11",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000007ff,		/* src_mask */
-	 0x000007ff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_JUMP11,
+	 1,
+	 1,
+	 11,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_JUMP11",
+	 FALSE,
+	 0x000007ff,
+	 0x000007ff,
+	 TRUE),
 
-  HOWTO (R_ARM_THM_JUMP8,	/* type */
-	 1,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed,	/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_JUMP8",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x000000ff,		/* src_mask */
-	 0x000000ff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+  HOWTO (R_ARM_THM_JUMP8,
+	 1,
+	 1,
+	 8,
+	 TRUE,
+	 0,
+	 complain_overflow_signed,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_JUMP8",
+	 FALSE,
+	 0x000000ff,
+	 0x000000ff,
+	 TRUE),
 
   /* TLS relocations */
-  HOWTO (R_ARM_TLS_GD32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 NULL,			/* special_function */
-	 "R_ARM_TLS_GD32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_GD32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 NULL,
+	 "R_ARM_TLS_GD32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_LDM32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_TLS_LDM32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_LDM32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_LDM32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_LDO32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_TLS_LDO32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_LDO32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_LDO32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_IE32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			 /* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 NULL,			/* special_function */
-	 "R_ARM_TLS_IE32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_IE32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 NULL,
+	 "R_ARM_TLS_IE32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_LE32,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 NULL,			/* special_function */
-	 "R_ARM_TLS_LE32",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_LE32,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 NULL,
+	 "R_ARM_TLS_LE32",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_LDO12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_LDO12",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_LDO12,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_LDO12",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_LE12,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_LE12",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_LE12,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_LE12",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
-  HOWTO (R_ARM_TLS_IE12GP,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 12,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_IE12GP",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000fff,		/* src_mask */
-	 0x00000fff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_TLS_IE12GP,
+	 0,
+	 2,
+	 12,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_IE12GP",
+	 FALSE,
+	 0x00000fff,
+	 0x00000fff,
+	 FALSE),
 
   /* 112-127 private relocations.  */
   EMPTY_HOWTO (112),
@@ -1674,24 +1674,24 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
   /* R_ARM_ME_TOO, obsolete.  */
   EMPTY_HOWTO (128),
 
-  HOWTO (R_ARM_THM_TLS_DESCSEQ,	/* type */
-	 0,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_THM_TLS_DESCSEQ",/* name */
-	 FALSE,			/* partial_inplace */
-	 0x00000000,		/* src_mask */
-	 0x00000000,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_THM_TLS_DESCSEQ,
+	 0,
+	 1,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_THM_TLS_DESCSEQ",
+	 FALSE,
+	 0x00000000,
+	 0x00000000,
+	 FALSE),
   EMPTY_HOWTO (130),
   EMPTY_HOWTO (131),
   HOWTO (R_ARM_THM_ALU_ABS_G0_NC,/* type.  */
 	 0,			/* rightshift.  */
-	 1,			/* size (0 = byte, 1 = short, 2 = long).  */
+	 1,
 	 16,			/* bitsize.  */
 	 FALSE,			/* pc_relative.  */
 	 0,			/* bitpos.  */
@@ -1704,7 +1704,7 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
 	 FALSE),		/* pcrel_offset.  */
   HOWTO (R_ARM_THM_ALU_ABS_G1_NC,/* type.  */
 	 0,			/* rightshift.  */
-	 1,			/* size (0 = byte, 1 = short, 2 = long).  */
+	 1,
 	 16,			/* bitsize.  */
 	 FALSE,			/* pc_relative.  */
 	 0,			/* bitpos.  */
@@ -1717,7 +1717,7 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
 	 FALSE),		/* pcrel_offset.  */
   HOWTO (R_ARM_THM_ALU_ABS_G2_NC,/* type.  */
 	 0,			/* rightshift.  */
-	 1,			/* size (0 = byte, 1 = short, 2 = long).  */
+	 1,
 	 16,			/* bitsize.  */
 	 FALSE,			/* pc_relative.  */
 	 0,			/* bitpos.  */
@@ -1730,7 +1730,7 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
 	 FALSE),		/* pcrel_offset.  */
   HOWTO (R_ARM_THM_ALU_ABS_G3_NC,/* type.  */
 	 0,			/* rightshift.  */
-	 1,			/* size (0 = byte, 1 = short, 2 = long).  */
+	 1,
 	 16,			/* bitsize.  */
 	 FALSE,			/* pc_relative.  */
 	 0,			/* bitpos.  */
@@ -1746,170 +1746,170 @@ static reloc_howto_type elf32_arm_howto_table_1[] =
 /* 160 onwards: */
 static reloc_howto_type elf32_arm_howto_table_2[8] =
 {
-  HOWTO (R_ARM_IRELATIVE,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc, /* special_function */
-	 "R_ARM_IRELATIVE",	/* name */
-	 TRUE,			/* partial_inplace */
-	 0xffffffff,		/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_GOTFUNCDESC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOTFUNCDESC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_GOTOFFFUNCDESC, /* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_GOTOFFFUNCDESC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_FUNCDESC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_FUNCDESC",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_FUNCDESC_VALUE,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 64,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_FUNCDESC_VALUE",/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_TLS_GD32_FDPIC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_GD32_FDPIC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_TLS_LDM32_FDPIC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_LDM32_FDPIC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-  HOWTO (R_ARM_TLS_IE32_FDPIC,	/* type */
-	 0,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 32,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_TLS_IE32_FDPIC",/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xffffffff,		/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_IRELATIVE,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_IRELATIVE",
+	 TRUE,
+	 0xffffffff,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_GOTFUNCDESC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOTFUNCDESC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_GOTOFFFUNCDESC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_GOTOFFFUNCDESC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_FUNCDESC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_FUNCDESC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_FUNCDESC_VALUE,
+	 0,
+	 2,
+	 64,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_FUNCDESC_VALUE",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_TLS_GD32_FDPIC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_GD32_FDPIC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_TLS_LDM32_FDPIC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_LDM32_FDPIC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
+  HOWTO (R_ARM_TLS_IE32_FDPIC,
+	 0,
+	 2,
+	 32,
+	 FALSE,
+	 0,
+	 complain_overflow_bitfield,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_TLS_IE32_FDPIC",
+	 FALSE,
+	 0,
+	 0xffffffff,
+	 FALSE),
 };
 
 /* 249-255 extended, currently unused, relocations:  */
 static reloc_howto_type elf32_arm_howto_table_3[4] =
 {
-  HOWTO (R_ARM_RREL32,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_RREL32",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_RREL32,
+	 0,
+	 0,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_RREL32",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE),
 
-  HOWTO (R_ARM_RABS32,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_RABS32",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_RABS32,
+	 0,
+	 0,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_RABS32",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE),
 
-  HOWTO (R_ARM_RPC24,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_RPC24",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+  HOWTO (R_ARM_RPC24,
+	 0,
+	 0,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_RPC24",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE),
 
-  HOWTO (R_ARM_RBASE,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont,/* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_ARM_RBASE",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE)			/* pcrel_offset */
+  HOWTO (R_ARM_RBASE,
+	 0,
+	 0,
+	 0,
+	 FALSE,
+	 0,
+	 complain_overflow_dont,
+	 bfd_elf_generic_reloc,
+	 "R_ARM_RBASE",
+	 FALSE,
+	 0,
+	 0,
+	 FALSE)
 };
 
 static reloc_howto_type *
@@ -2822,36 +2822,6 @@ typedef struct elf32_vfp11_erratum_list
 }
 elf32_vfp11_erratum_list;
 
-/* Information about a STM32L4XX erratum veneer, or a branch to such a
-   veneer.  */
-typedef enum
-{
-  STM32L4XX_ERRATUM_BRANCH_TO_VENEER,
-  STM32L4XX_ERRATUM_VENEER
-}
-elf32_stm32l4xx_erratum_type;
-
-typedef struct elf32_stm32l4xx_erratum_list
-{
-  struct elf32_stm32l4xx_erratum_list *next;
-  bfd_vma vma;
-  union
-  {
-    struct
-    {
-      struct elf32_stm32l4xx_erratum_list *veneer;
-      unsigned int insn;
-    } b;
-    struct
-    {
-      struct elf32_stm32l4xx_erratum_list *branch;
-      unsigned int id;
-    } v;
-  } u;
-  elf32_stm32l4xx_erratum_type type;
-}
-elf32_stm32l4xx_erratum_list;
-
 typedef enum
 {
   DELETE_EXIDX_ENTRY,
@@ -2882,8 +2852,6 @@ typedef struct _arm_elf_section_data
   /* Information about CPU errata.  */
   unsigned int erratumcount;
   elf32_vfp11_erratum_list *erratumlist;
-  unsigned int stm32l4xx_erratumcount;
-  elf32_stm32l4xx_erratum_list *stm32l4xx_erratumlist;
   unsigned int additional_reloc_count;
   /* Information about unwind tables.  */
   union
@@ -2906,38 +2874,6 @@ _arm_elf_section_data;
 
 #define elf32_arm_section_data(sec) \
   ((_arm_elf_section_data *) elf_section_data (sec))
-
-/* A fix which might be required for Cortex-A8 Thumb-2 branch/TLB erratum.
-   These fixes are subject to a relaxation procedure (in elf32_arm_size_stubs),
-   so may be created multiple times: we use an array of these entries whilst
-   relaxing which we can refresh easily, then create stubs for each potentially
-   erratum-triggering instruction once we've settled on a solution.  */
-
-struct a8_erratum_fix
-{
-  bfd *input_bfd;
-  asection *section;
-  bfd_vma offset;
-  bfd_vma target_offset;
-  unsigned long orig_insn;
-  char *stub_name;
-  enum elf32_arm_stub_type stub_type;
-  enum arm_st_branch_type branch_type;
-};
-
-/* A table of relocs applied to branches which might trigger Cortex-A8
-   erratum.  */
-
-struct a8_erratum_reloc
-{
-  bfd_vma from;
-  bfd_vma destination;
-  struct elf32_arm_link_hash_entry *hash;
-  const char *sym_name;
-  unsigned int r_type;
-  enum arm_st_branch_type branch_type;
-  bfd_boolean non_a8_stub;
-};
 
 /* The size of the thread control block.  */
 #define TCB_SIZE	8
@@ -3143,16 +3079,6 @@ struct elf32_arm_link_hash_table
      veneers.  */
   bfd_size_type vfp11_erratum_glue_size;
 
- /* The size in bytes of the section containing glue for STM32L4XX erratum
-     veneers.  */
-  bfd_size_type stm32l4xx_erratum_glue_size;
-
-  /* A table of fix locations for Cortex-A8 Thumb-2 branch/TLB erratum.  This
-     holds Cortex-A8 erratum fix locations between elf32_arm_size_stubs() and
-     elf32_arm_write_section().  */
-  struct a8_erratum_fix *a8_erratum_fixes;
-  unsigned int num_a8_erratum_fixes;
-
   /* An arbitrary input BFD chosen to hold the glue sections.  */
   bfd * bfd_of_glue_owner;
 
@@ -3171,28 +3097,11 @@ struct elf32_arm_link_hash_table
      2 = Generate v4 interworing stubs.  */
   int fix_v4bx;
 
-  /* Whether we should fix the Cortex-A8 Thumb-2 branch/TLB erratum.  */
-  int fix_cortex_a8;
-
   /* Whether we should fix the ARM1176 BLX immediate issue.  */
   int fix_arm1176;
 
   /* Nonzero if the ARM/Thumb BLX instructions are available for use.  */
   int use_blx;
-
-  /* What sort of code sequences we should look for which may trigger the
-     VFP11 denorm erratum.  */
-  bfd_arm_vfp11_fix vfp11_fix;
-
-  /* Global counter for the number of fixes we have emitted.  */
-  int num_vfp11_fixes;
-
-  /* What sort of code sequences we should look for which may trigger the
-     STM32L4XX erratum.  */
-  bfd_arm_stm32l4xx_fix stm32l4xx_fix;
-
-  /* Global counter for the number of fixes we have emitted.  */
-  int num_stm32l4xx_fixes;
 
   /* Nonzero to force PIC branch veneers.  */
   int pic_veneer;
@@ -3299,43 +3208,6 @@ arm_elf_add_rofixup (bfd *output_bfd, asection *srofixup, bfd_vma offset)
   fixup_offset = srofixup->reloc_count++ * 4;
   BFD_ASSERT (fixup_offset < srofixup->size);
   bfd_put_32 (output_bfd, offset, srofixup->contents + fixup_offset);
-}
-
-static inline int
-ctz (unsigned int mask)
-{
-#if GCC_VERSION >= 3004
-  return __builtin_ctz (mask);
-#else
-  unsigned int i;
-
-  for (i = 0; i < 8 * sizeof (mask); i++)
-    {
-      if (mask & 0x1)
-	break;
-      mask = (mask >> 1);
-    }
-  return i;
-#endif
-}
-
-static inline int
-elf32_arm_popcount (unsigned int mask)
-{
-#if GCC_VERSION >= 3004
-  return __builtin_popcount (mask);
-#else
-  unsigned int i;
-  int sum = 0;
-
-  for (i = 0; i < 8 * sizeof (mask); i++)
-    {
-      if (mask & 0x1)
-	sum++;
-      mask = (mask >> 1);
-    }
-  return sum;
-#endif
 }
 
 static void elf32_arm_add_dynreloc (bfd *output_bfd, struct bfd_link_info *info,
@@ -3926,8 +3798,6 @@ elf32_arm_link_hash_table_create (bfd *abfd)
       return NULL;
     }
 
-  ret->vfp11_fix = BFD_ARM_VFP11_FIX_NONE;
-  ret->stm32l4xx_fix = BFD_ARM_STM32L4XX_FIX_NONE;
 #ifdef FOUR_WORD_PLT
   ret->plt_header_size = 16;
   ret->plt_entry_size = 16;
@@ -4653,7 +4523,7 @@ put_arm_insn (struct elf32_arm_link_hash_table * htab,
 
 static void
 put_thumb_insn (struct elf32_arm_link_hash_table * htab,
-		bfd * output_bfd, bfd_vma val, void * ptr)
+               bfd * output_bfd, bfd_vma val, void * ptr)
 {
   if (htab->byteswap_code != bfd_little_endian (output_bfd))
     bfd_putl16 (val, ptr);
@@ -4661,25 +4531,6 @@ put_thumb_insn (struct elf32_arm_link_hash_table * htab,
     bfd_putb16 (val, ptr);
 }
 
-/* Store a Thumb2 insn into an output section not processed by
-   elf32_arm_write_section.  */
-
-static void
-put_thumb2_insn (struct elf32_arm_link_hash_table * htab,
-		 bfd * output_bfd, bfd_vma val, bfd_byte * ptr)
-{
-  /* T2 instructions are 16-bit streamed.  */
-  if (htab->byteswap_code != bfd_little_endian (output_bfd))
-    {
-      bfd_putl16 ((val >> 16) & 0xffff, ptr);
-      bfd_putl16 ((val & 0xffff), ptr + 2);
-    }
-  else
-    {
-      bfd_putb16 ((val >> 16) & 0xffff, ptr);
-      bfd_putb16 ((val & 0xffff), ptr + 2);
-    }
-}
 
 /* If it's possible to change R_TYPE to a more efficient access
    model, return the new reloc type.  */
@@ -4842,8 +4693,7 @@ arm_build_one_stub (struct bfd_hash_entry *gen_entry,
 
   stub_sec = stub_entry->stub_sec;
 
-  if ((globals->fix_cortex_a8 < 0)
-      != (arm_stub_required_alignment (stub_entry->stub_type) == 2))
+  if (arm_stub_required_alignment (stub_entry->stub_type) == 2)
     /* We have to do less-strictly-aligned fixes last.  */
     return TRUE;
 
@@ -5273,336 +5123,8 @@ group_sections (struct elf32_arm_link_hash_table *htab,
 #undef NEXT_SEC
 }
 
-/* Comparison function for sorting/searching relocations relating to Cortex-A8
-   erratum fix.  */
-
-static int
-a8_reloc_compare (const void *a, const void *b)
-{
-  const struct a8_erratum_reloc *ra = (const struct a8_erratum_reloc *) a;
-  const struct a8_erratum_reloc *rb = (const struct a8_erratum_reloc *) b;
-
-  if (ra->from < rb->from)
-    return -1;
-  else if (ra->from > rb->from)
-    return 1;
-  else
-    return 0;
-}
-
 static struct elf_link_hash_entry *find_thumb_glue (struct bfd_link_info *,
 						    const char *, char **);
-
-/* Helper function to scan code for sequences which might trigger the Cortex-A8
-   branch/TLB erratum.  Fill in the table described by A8_FIXES_P,
-   NUM_A8_FIXES_P, A8_FIX_TABLE_SIZE_P.  Returns true if an error occurs, false
-   otherwise.  */
-
-static bfd_boolean
-cortex_a8_erratum_scan (bfd *input_bfd,
-			struct bfd_link_info *info,
-			struct a8_erratum_fix **a8_fixes_p,
-			unsigned int *num_a8_fixes_p,
-			unsigned int *a8_fix_table_size_p,
-			struct a8_erratum_reloc *a8_relocs,
-			unsigned int num_a8_relocs,
-			unsigned prev_num_a8_fixes,
-			bfd_boolean *stub_changed_p)
-{
-  asection *section;
-  struct elf32_arm_link_hash_table *htab = elf32_arm_hash_table (info);
-  struct a8_erratum_fix *a8_fixes = *a8_fixes_p;
-  unsigned int num_a8_fixes = *num_a8_fixes_p;
-  unsigned int a8_fix_table_size = *a8_fix_table_size_p;
-
-  if (htab == NULL)
-    return FALSE;
-
-  for (section = input_bfd->sections;
-       section != NULL;
-       section = section->next)
-    {
-      bfd_byte *contents = NULL;
-      struct _arm_elf_section_data *sec_data;
-      unsigned int span;
-      bfd_vma base_vma;
-
-      if (elf_section_type (section) != SHT_PROGBITS
-	  || (elf_section_flags (section) & SHF_EXECINSTR) == 0
-	  || (section->flags & SEC_EXCLUDE) != 0
-	  || (section->sec_info_type == SEC_INFO_TYPE_JUST_SYMS)
-	  || (section->output_section == bfd_abs_section_ptr))
-	continue;
-
-      base_vma = section->output_section->vma + section->output_offset;
-
-      if (elf_section_data (section)->this_hdr.contents != NULL)
-	contents = elf_section_data (section)->this_hdr.contents;
-      else if (! bfd_malloc_and_get_section (input_bfd, section, &contents))
-	return TRUE;
-
-      sec_data = elf32_arm_section_data (section);
-
-      for (span = 0; span < sec_data->mapcount; span++)
-	{
-	  unsigned int span_start = sec_data->map[span].vma;
-	  unsigned int span_end = (span == sec_data->mapcount - 1)
-	    ? section->size : sec_data->map[span + 1].vma;
-	  unsigned int i;
-	  char span_type = sec_data->map[span].type;
-	  bfd_boolean last_was_32bit = FALSE, last_was_branch = FALSE;
-
-	  if (span_type != 't')
-	    continue;
-
-	  /* Span is entirely within a single 4KB region: skip scanning.  */
-	  if (((base_vma + span_start) & ~0xfff)
-	      == ((base_vma + span_end) & ~0xfff))
-	    continue;
-
-	  /* Scan for 32-bit Thumb-2 branches which span two 4K regions, where:
-
-	       * The opcode is BLX.W, BL.W, B.W, Bcc.W
-	       * The branch target is in the same 4KB region as the
-		 first half of the branch.
-	       * The instruction before the branch is a 32-bit
-		 length non-branch instruction.  */
-	  for (i = span_start; i < span_end;)
-	    {
-	      unsigned int insn = bfd_getl16 (&contents[i]);
-	      bfd_boolean insn_32bit = FALSE, is_blx = FALSE, is_b = FALSE;
-	      bfd_boolean is_bl = FALSE, is_bcc = FALSE, is_32bit_branch;
-
-	      if ((insn & 0xe000) == 0xe000 && (insn & 0x1800) != 0x0000)
-		insn_32bit = TRUE;
-
-	      if (insn_32bit)
-		{
-		  /* Load the rest of the insn (in manual-friendly order).  */
-		  insn = (insn << 16) | bfd_getl16 (&contents[i + 2]);
-
-		  /* Encoding T4: B<c>.W.  */
-		  is_b = (insn & 0xf800d000) == 0xf0009000;
-		  /* Encoding T1: BL<c>.W.  */
-		  is_bl = (insn & 0xf800d000) == 0xf000d000;
-		  /* Encoding T2: BLX<c>.W.  */
-		  is_blx = (insn & 0xf800d000) == 0xf000c000;
-		  /* Encoding T3: B<c>.W (not permitted in IT block).  */
-		  is_bcc = (insn & 0xf800d000) == 0xf0008000
-			   && (insn & 0x07f00000) != 0x03800000;
-		}
-
-	      is_32bit_branch = is_b || is_bl || is_blx || is_bcc;
-
-	      if (((base_vma + i) & 0xfff) == 0xffe
-		  && insn_32bit
-		  && is_32bit_branch
-		  && last_was_32bit
-		  && ! last_was_branch)
-		{
-		  bfd_signed_vma offset = 0;
-		  bfd_boolean force_target_arm = FALSE;
-		  bfd_boolean force_target_thumb = FALSE;
-		  bfd_vma target;
-		  enum elf32_arm_stub_type stub_type = arm_stub_none;
-		  struct a8_erratum_reloc key, *found;
-		  bfd_boolean use_plt = FALSE;
-
-		  key.from = base_vma + i;
-		  found = (struct a8_erratum_reloc *)
-		      bsearch (&key, a8_relocs, num_a8_relocs,
-			       sizeof (struct a8_erratum_reloc),
-			       &a8_reloc_compare);
-
-		  if (found)
-		    {
-		      char *error_message = NULL;
-		      struct elf_link_hash_entry *entry;
-
-		      /* We don't care about the error returned from this
-			 function, only if there is glue or not.  */
-		      entry = find_thumb_glue (info, found->sym_name,
-					       &error_message);
-
-		      if (entry)
-			found->non_a8_stub = TRUE;
-
-		      /* Keep a simpler condition, for the sake of clarity.  */
-		      if (htab->root.splt != NULL && found->hash != NULL
-			  && found->hash->root.plt.offset != (bfd_vma) -1)
-			use_plt = TRUE;
-
-		      if (found->r_type == R_ARM_THM_CALL)
-			{
-			  if (found->branch_type == ST_BRANCH_TO_ARM
-			      || use_plt)
-			    force_target_arm = TRUE;
-			  else
-			    force_target_thumb = TRUE;
-			}
-		    }
-
-		  /* Check if we have an offending branch instruction.  */
-
-		  if (found && found->non_a8_stub)
-		    /* We've already made a stub for this instruction, e.g.
-		       it's a long branch or a Thumb->ARM stub.  Assume that
-		       stub will suffice to work around the A8 erratum (see
-		       setting of always_after_branch above).  */
-		    ;
-		  else if (is_bcc)
-		    {
-		      offset = (insn & 0x7ff) << 1;
-		      offset |= (insn & 0x3f0000) >> 4;
-		      offset |= (insn & 0x2000) ? 0x40000 : 0;
-		      offset |= (insn & 0x800) ? 0x80000 : 0;
-		      offset |= (insn & 0x4000000) ? 0x100000 : 0;
-		      if (offset & 0x100000)
-			offset |= ~ ((bfd_signed_vma) 0xfffff);
-		      stub_type = arm_stub_a8_veneer_b_cond;
-		    }
-		  else if (is_b || is_bl || is_blx)
-		    {
-		      int s = (insn & 0x4000000) != 0;
-		      int j1 = (insn & 0x2000) != 0;
-		      int j2 = (insn & 0x800) != 0;
-		      int i1 = !(j1 ^ s);
-		      int i2 = !(j2 ^ s);
-
-		      offset = (insn & 0x7ff) << 1;
-		      offset |= (insn & 0x3ff0000) >> 4;
-		      offset |= i2 << 22;
-		      offset |= i1 << 23;
-		      offset |= s << 24;
-		      if (offset & 0x1000000)
-			offset |= ~ ((bfd_signed_vma) 0xffffff);
-
-		      if (is_blx)
-			offset &= ~ ((bfd_signed_vma) 3);
-
-		      stub_type = is_blx ? arm_stub_a8_veneer_blx :
-			is_bl ? arm_stub_a8_veneer_bl : arm_stub_a8_veneer_b;
-		    }
-
-		  if (stub_type != arm_stub_none)
-		    {
-		      bfd_vma pc_for_insn = base_vma + i + 4;
-
-		      /* The original instruction is a BL, but the target is
-			 an ARM instruction.  If we were not making a stub,
-			 the BL would have been converted to a BLX.  Use the
-			 BLX stub instead in that case.  */
-		      if (htab->use_blx && force_target_arm
-			  && stub_type == arm_stub_a8_veneer_bl)
-			{
-			  stub_type = arm_stub_a8_veneer_blx;
-			  is_blx = TRUE;
-			  is_bl = FALSE;
-			}
-		      /* Conversely, if the original instruction was
-			 BLX but the target is Thumb mode, use the BL
-			 stub.  */
-		      else if (force_target_thumb
-			       && stub_type == arm_stub_a8_veneer_blx)
-			{
-			  stub_type = arm_stub_a8_veneer_bl;
-			  is_blx = FALSE;
-			  is_bl = TRUE;
-			}
-
-		      if (is_blx)
-			pc_for_insn &= ~ ((bfd_vma) 3);
-
-		      /* If we found a relocation, use the proper destination,
-			 not the offset in the (unrelocated) instruction.
-			 Note this is always done if we switched the stub type
-			 above.  */
-		      if (found)
-			offset =
-			  (bfd_signed_vma) (found->destination - pc_for_insn);
-
-		      /* If the stub will use a Thumb-mode branch to a
-			 PLT target, redirect it to the preceding Thumb
-			 entry point.  */
-		      if (stub_type != arm_stub_a8_veneer_blx && use_plt)
-			offset -= PLT_THUMB_STUB_SIZE;
-
-		      target = pc_for_insn + offset;
-
-		      /* The BLX stub is ARM-mode code.  Adjust the offset to
-			 take the different PC value (+8 instead of +4) into
-			 account.  */
-		      if (stub_type == arm_stub_a8_veneer_blx)
-			offset += 4;
-
-		      if (((base_vma + i) & ~0xfff) == (target & ~0xfff))
-			{
-			  char *stub_name = NULL;
-
-			  if (num_a8_fixes == a8_fix_table_size)
-			    {
-			      a8_fix_table_size *= 2;
-			      a8_fixes = (struct a8_erratum_fix *)
-				  bfd_realloc (a8_fixes,
-					       sizeof (struct a8_erratum_fix)
-					       * a8_fix_table_size);
-			    }
-
-			  if (num_a8_fixes < prev_num_a8_fixes)
-			    {
-			      /* If we're doing a subsequent scan,
-				 check if we've found the same fix as
-				 before, and try and reuse the stub
-				 name.  */
-			      stub_name = a8_fixes[num_a8_fixes].stub_name;
-			      if ((a8_fixes[num_a8_fixes].section != section)
-				  || (a8_fixes[num_a8_fixes].offset != i))
-				{
-				  free (stub_name);
-				  stub_name = NULL;
-				  *stub_changed_p = TRUE;
-				}
-			    }
-
-			  if (!stub_name)
-			    {
-			      stub_name = (char *) bfd_malloc (8 + 1 + 8 + 1);
-			      if (stub_name != NULL)
-				sprintf (stub_name, "%x:%x", section->id, i);
-			    }
-
-			  a8_fixes[num_a8_fixes].input_bfd = input_bfd;
-			  a8_fixes[num_a8_fixes].section = section;
-			  a8_fixes[num_a8_fixes].offset = i;
-			  a8_fixes[num_a8_fixes].target_offset =
-			    target - base_vma;
-			  a8_fixes[num_a8_fixes].orig_insn = insn;
-			  a8_fixes[num_a8_fixes].stub_name = stub_name;
-			  a8_fixes[num_a8_fixes].stub_type = stub_type;
-			  a8_fixes[num_a8_fixes].branch_type =
-			    is_blx ? ST_BRANCH_TO_ARM : ST_BRANCH_TO_THUMB;
-
-			  num_a8_fixes++;
-			}
-		    }
-		}
-
-	      i += insn_32bit ? 4 : 2;
-	      last_was_32bit = insn_32bit;
-	      last_was_branch = is_32bit_branch;
-	    }
-	}
-
-      if (elf_section_data (section)->this_hdr.contents == NULL)
-	free (contents);
-    }
-
-  *a8_fixes_p = a8_fixes;
-  *num_a8_fixes_p = num_a8_fixes;
-  *a8_fix_table_size_p = a8_fix_table_size;
-
-  return FALSE;
-}
 
 /* Create or update a stub entry depending on whether the stub can already be
    found in HTAB.  The stub is identified by:
@@ -6213,21 +5735,9 @@ elf32_arm_size_stubs (bfd *output_bfd,
   bfd_size_type stub_group_size;
   bfd_boolean m_profile, stubs_always_after_branch, first_veneer_scan = TRUE;
   struct elf32_arm_link_hash_table *htab = elf32_arm_hash_table (info);
-  struct a8_erratum_fix *a8_fixes = NULL;
-  unsigned int num_a8_fixes = 0, a8_fix_table_size = 10;
-  struct a8_erratum_reloc *a8_relocs = NULL;
-  unsigned int num_a8_relocs = 0, a8_reloc_table_size = 10, i;
 
   if (htab == NULL)
     return FALSE;
-
-  if (htab->fix_cortex_a8)
-    {
-      a8_fixes = (struct a8_erratum_fix *)
-	  bfd_zmalloc (sizeof (struct a8_erratum_fix) * a8_fix_table_size);
-      a8_relocs = (struct a8_erratum_reloc *)
-	  bfd_zmalloc (sizeof (struct a8_erratum_reloc) * a8_reloc_table_size);
-    }
 
   /* Propagate mach to stub bfd, because it may not have been
      finalized when we created stub_bfd.  */
@@ -6242,12 +5752,6 @@ elf32_arm_size_stubs (bfd *output_bfd,
 
   out_attr = elf_known_obj_attributes_proc (output_bfd);
   m_profile = out_attr[Tag_CPU_arch_profile].i == 'M';
-
-  /* The Cortex-A8 erratum fix depends on stubs not being in the same 4K page
-     as the first half of a 32-bit branch straddling two 4K pages.  This is a
-     crude way of enforcing that.  */
-  if (htab->fix_cortex_a8)
-    stubs_always_after_branch = 1;
 
   if (group_size < 0)
     stub_group_size = -group_size;
@@ -6270,16 +5774,6 @@ elf32_arm_size_stubs (bfd *output_bfd,
 
   group_sections (htab, stub_group_size, stubs_always_after_branch);
 
-  /* If we're applying the cortex A8 fix, we need to determine the
-     program header size now, because we cannot change it later --
-     that could alter section placements.  Notice the A8 erratum fix
-     ends up requiring the section addresses to remain unchanged
-     modulo the page size.  That's something we cannot represent
-     inside BFD, and we don't want to force the section alignment to
-     be the page size.  */
-  if (htab->fix_cortex_a8)
-    (*htab->layout_sections_again) ();
-
   while (1)
     {
       bfd *input_bfd;
@@ -6287,9 +5781,7 @@ elf32_arm_size_stubs (bfd *output_bfd,
       asection *stub_sec;
       enum elf32_arm_stub_type stub_type;
       bfd_boolean stub_changed = FALSE;
-      unsigned prev_num_a8_fixes = num_a8_fixes;
 
-      num_a8_fixes = 0;
       for (input_bfd = info->input_bfds, bfd_indx = 0;
 	   input_bfd != NULL;
 	   input_bfd = input_bfd->link.next, bfd_indx++)
@@ -6300,8 +5792,6 @@ elf32_arm_size_stubs (bfd *output_bfd,
 
 	  if (!is_arm_elf (input_bfd))
 	    continue;
-
-	  num_a8_relocs = 0;
 
 	  /* We'll need the symbol table in a second.  */
 	  symtab_hdr = &elf_tdata (input_bfd)->symtab_hdr;
@@ -6579,67 +6069,11 @@ elf32_arm_size_stubs (bfd *output_bfd,
 			stub_changed = TRUE;
 		    }
 		  while (0);
-
-		  /* Look for relocations which might trigger Cortex-A8
-		     erratum.  */
-		  if (htab->fix_cortex_a8
-		      && (r_type == (unsigned int) R_ARM_THM_JUMP24
-			  || r_type == (unsigned int) R_ARM_THM_JUMP19
-			  || r_type == (unsigned int) R_ARM_THM_CALL
-			  || r_type == (unsigned int) R_ARM_THM_XPC22))
-		    {
-		      bfd_vma from = section->output_section->vma
-				     + section->output_offset
-				     + irela->r_offset;
-
-		      if ((from & 0xfff) == 0xffe)
-			{
-			  /* Found a candidate.  Note we haven't checked the
-			     destination is within 4K here: if we do so (and
-			     don't create an entry in a8_relocs) we can't tell
-			     that a branch should have been relocated when
-			     scanning later.  */
-			  if (num_a8_relocs == a8_reloc_table_size)
-			    {
-			      a8_reloc_table_size *= 2;
-			      a8_relocs = (struct a8_erratum_reloc *)
-				  bfd_realloc (a8_relocs,
-					       sizeof (struct a8_erratum_reloc)
-					       * a8_reloc_table_size);
-			    }
-
-			  a8_relocs[num_a8_relocs].from = from;
-			  a8_relocs[num_a8_relocs].destination = destination;
-			  a8_relocs[num_a8_relocs].r_type = r_type;
-			  a8_relocs[num_a8_relocs].branch_type = branch_type;
-			  a8_relocs[num_a8_relocs].sym_name = sym_name;
-			  a8_relocs[num_a8_relocs].non_a8_stub = created_stub;
-			  a8_relocs[num_a8_relocs].hash = hash;
-
-			  num_a8_relocs++;
-			}
-		    }
 		}
 
 	      /* We're done with the internal relocs, free them.  */
 	      if (elf_section_data (section)->relocs == NULL)
 		free (internal_relocs);
-	    }
-
-	  if (htab->fix_cortex_a8)
-	    {
-	      /* Sort relocs which might apply to Cortex-A8 erratum.  */
-	      qsort (a8_relocs, num_a8_relocs,
-		     sizeof (struct a8_erratum_reloc),
-		     &a8_reloc_compare);
-
-	      /* Scan for branches which might trigger Cortex-A8 erratum.  */
-	      if (cortex_a8_erratum_scan (input_bfd, info, &a8_fixes,
-					  &num_a8_fixes, &a8_fix_table_size,
-					  a8_relocs, num_a8_relocs,
-					  prev_num_a8_fixes, &stub_changed)
-		  != 0)
-		goto error_ret_free_local;
 	    }
 
 	  if (local_syms != NULL
@@ -6656,9 +6090,6 @@ elf32_arm_size_stubs (bfd *output_bfd,
 	  && !set_cmse_veneer_addr_from_implib (info, htab,
 						&cmse_stub_created))
 	ret = FALSE;
-
-      if (prev_num_a8_fixes != num_a8_fixes)
-	stub_changed = TRUE;
 
       if (!stub_changed)
 	break;
@@ -6716,79 +6147,11 @@ elf32_arm_size_stubs (bfd *output_bfd,
 	  (*stub_sec_p)->size = size;
 	}
 
-      /* Add Cortex-A8 erratum veneers to stub section sizes too.  */
-      if (htab->fix_cortex_a8)
-	for (i = 0; i < num_a8_fixes; i++)
-	  {
-	    stub_sec = elf32_arm_create_or_find_stub_sec (NULL,
-			 a8_fixes[i].section, htab, a8_fixes[i].stub_type);
-
-	    if (stub_sec == NULL)
-	      return FALSE;
-
-	    stub_sec->size
-	      += find_stub_size_and_template (a8_fixes[i].stub_type, NULL,
-					      NULL);
-	  }
-
-
       /* Ask the linker to do its stuff.  */
       (*htab->layout_sections_again) ();
       first_veneer_scan = FALSE;
     }
 
-  /* Add stubs for Cortex-A8 erratum fixes now.  */
-  if (htab->fix_cortex_a8)
-    {
-      for (i = 0; i < num_a8_fixes; i++)
-	{
-	  struct elf32_arm_stub_hash_entry *stub_entry;
-	  char *stub_name = a8_fixes[i].stub_name;
-	  asection *section = a8_fixes[i].section;
-	  unsigned int section_id = a8_fixes[i].section->id;
-	  asection *link_sec = htab->stub_group[section_id].link_sec;
-	  asection *stub_sec = htab->stub_group[section_id].stub_sec;
-	  const insn_sequence *template_sequence;
-	  int template_size, size = 0;
-
-	  stub_entry = arm_stub_hash_lookup (&htab->stub_hash_table, stub_name,
-					     TRUE, FALSE);
-	  if (stub_entry == NULL)
-	    {
-	      _bfd_error_handler (_("%pB: cannot create stub entry %s"),
-				  section->owner, stub_name);
-	      return FALSE;
-	    }
-
-	  stub_entry->stub_sec = stub_sec;
-	  stub_entry->stub_offset = (bfd_vma) -1;
-	  stub_entry->id_sec = link_sec;
-	  stub_entry->stub_type = a8_fixes[i].stub_type;
-	  stub_entry->source_value = a8_fixes[i].offset;
-	  stub_entry->target_section = a8_fixes[i].section;
-	  stub_entry->target_value = a8_fixes[i].target_offset;
-	  stub_entry->orig_insn = a8_fixes[i].orig_insn;
-	  stub_entry->branch_type = a8_fixes[i].branch_type;
-
-	  size = find_stub_size_and_template (a8_fixes[i].stub_type,
-					      &template_sequence,
-					      &template_size);
-
-	  stub_entry->stub_size = size;
-	  stub_entry->stub_template = template_sequence;
-	  stub_entry->stub_template_size = template_size;
-	}
-
-      /* Stash the Cortex-A8 erratum fix array for use later in
-	 elf32_arm_write_section().  */
-      htab->a8_erratum_fixes = a8_fixes;
-      htab->num_a8_erratum_fixes = num_a8_fixes;
-    }
-  else
-    {
-      htab->a8_erratum_fixes = NULL;
-      htab->num_a8_erratum_fixes = 0;
-    }
   return ret;
 }
 
@@ -6851,12 +6214,6 @@ elf32_arm_build_stubs (struct bfd_link_info *info)
   /* Build the stubs as directed by the stub hash table.  */
   table = &htab->stub_hash_table;
   bfd_hash_traverse (table, arm_build_one_stub, info);
-  if (htab->fix_cortex_a8)
-    {
-      /* Place the cortex a8 stubs last.  */
-      htab->fix_cortex_a8 = -1;
-      bfd_hash_traverse (table, arm_build_one_stub, info);
-    }
 
   return TRUE;
 }
@@ -7052,9 +6409,9 @@ bfd_elf32_arm_allocate_interworking_sections (struct bfd_link_info * info)
 				   globals->vfp11_erratum_glue_size,
 				   VFP11_ERRATUM_VENEER_SECTION_NAME);
 
-  arm_allocate_glue_section_space (globals->bfd_of_glue_owner,
+/*  arm_allocate_glue_section_space (globals->bfd_of_glue_owner,
 				   globals->stm32l4xx_erratum_glue_size,
-				   STM32L4XX_ERRATUM_VENEER_SECTION_NAME);
+				   STM32L4XX_ERRATUM_VENEER_SECTION_NAME); */
 
   arm_allocate_glue_section_space (globals->bfd_of_glue_owner,
 				   globals->bx_glue_size,
@@ -7227,245 +6584,6 @@ elf32_arm_section_map_add (asection *sec, char type, bfd_vma vma)
     }
 }
 
-
-/* Record information about a VFP11 denorm-erratum veneer.  Only ARM-mode
-   veneers are handled for now.  */
-
-static bfd_vma
-record_vfp11_erratum_veneer (struct bfd_link_info *link_info,
-			     elf32_vfp11_erratum_list *branch,
-			     bfd *branch_bfd,
-			     asection *branch_sec,
-			     unsigned int offset)
-{
-  asection *s;
-  struct elf32_arm_link_hash_table *hash_table;
-  char *tmp_name;
-  struct elf_link_hash_entry *myh;
-  struct bfd_link_hash_entry *bh;
-  bfd_vma val;
-  struct _arm_elf_section_data *sec_data;
-  elf32_vfp11_erratum_list *newerr;
-
-  hash_table = elf32_arm_hash_table (link_info);
-  BFD_ASSERT (hash_table != NULL);
-  BFD_ASSERT (hash_table->bfd_of_glue_owner != NULL);
-
-  s = bfd_get_linker_section
-    (hash_table->bfd_of_glue_owner, VFP11_ERRATUM_VENEER_SECTION_NAME);
-
-  sec_data = elf32_arm_section_data (s);
-
-  BFD_ASSERT (s != NULL);
-
-  tmp_name = (char *) bfd_malloc ((bfd_size_type) strlen
-				  (VFP11_ERRATUM_VENEER_ENTRY_NAME) + 10);
-
-  BFD_ASSERT (tmp_name);
-
-  sprintf (tmp_name, VFP11_ERRATUM_VENEER_ENTRY_NAME,
-	   hash_table->num_vfp11_fixes);
-
-  myh = elf_link_hash_lookup
-    (&(hash_table)->root, tmp_name, FALSE, FALSE, FALSE);
-
-  BFD_ASSERT (myh == NULL);
-
-  bh = NULL;
-  val = hash_table->vfp11_erratum_glue_size;
-  _bfd_generic_link_add_one_symbol (link_info, hash_table->bfd_of_glue_owner,
-				    tmp_name, BSF_FUNCTION | BSF_LOCAL, s, val,
-				    NULL, TRUE, FALSE, &bh);
-
-  myh = (struct elf_link_hash_entry *) bh;
-  myh->type = ELF_ST_INFO (STB_LOCAL, STT_FUNC);
-  myh->forced_local = 1;
-
-  /* Link veneer back to calling location.  */
-  sec_data->erratumcount += 1;
-  newerr = (elf32_vfp11_erratum_list *)
-      bfd_zmalloc (sizeof (elf32_vfp11_erratum_list));
-
-  newerr->type = VFP11_ERRATUM_ARM_VENEER;
-  newerr->vma = -1;
-  newerr->u.v.branch = branch;
-  newerr->u.v.id = hash_table->num_vfp11_fixes;
-  branch->u.b.veneer = newerr;
-
-  newerr->next = sec_data->erratumlist;
-  sec_data->erratumlist = newerr;
-
-  /* A symbol for the return from the veneer.  */
-  sprintf (tmp_name, VFP11_ERRATUM_VENEER_ENTRY_NAME "_r",
-	   hash_table->num_vfp11_fixes);
-
-  myh = elf_link_hash_lookup
-    (&(hash_table)->root, tmp_name, FALSE, FALSE, FALSE);
-
-  if (myh != NULL)
-    abort ();
-
-  bh = NULL;
-  val = offset + 4;
-  _bfd_generic_link_add_one_symbol (link_info, branch_bfd, tmp_name, BSF_LOCAL,
-				    branch_sec, val, NULL, TRUE, FALSE, &bh);
-
-  myh = (struct elf_link_hash_entry *) bh;
-  myh->type = ELF_ST_INFO (STB_LOCAL, STT_FUNC);
-  myh->forced_local = 1;
-
-  free (tmp_name);
-
-  /* Generate a mapping symbol for the veneer section, and explicitly add an
-     entry for that symbol to the code/data map for the section.  */
-  if (hash_table->vfp11_erratum_glue_size == 0)
-    {
-      bh = NULL;
-      /* FIXME: Creates an ARM symbol.  Thumb mode will need attention if it
-	 ever requires this erratum fix.  */
-      _bfd_generic_link_add_one_symbol (link_info,
-					hash_table->bfd_of_glue_owner, "$a",
-					BSF_LOCAL, s, 0, NULL,
-					TRUE, FALSE, &bh);
-
-      myh = (struct elf_link_hash_entry *) bh;
-      myh->type = ELF_ST_INFO (STB_LOCAL, STT_NOTYPE);
-      myh->forced_local = 1;
-
-      /* The elf32_arm_init_maps function only cares about symbols from input
-	 BFDs.  We must make a note of this generated mapping symbol
-	 ourselves so that code byteswapping works properly in
-	 elf32_arm_write_section.  */
-      elf32_arm_section_map_add (s, 'a', 0);
-    }
-
-  s->size += VFP11_ERRATUM_VENEER_SIZE;
-  hash_table->vfp11_erratum_glue_size += VFP11_ERRATUM_VENEER_SIZE;
-  hash_table->num_vfp11_fixes++;
-
-  /* The offset of the veneer.  */
-  return val;
-}
-
-/* Record information about a STM32L4XX STM erratum veneer.  Only THUMB-mode
-   veneers need to be handled because used only in Cortex-M.  */
-
-static bfd_vma
-record_stm32l4xx_erratum_veneer (struct bfd_link_info *link_info,
-				 elf32_stm32l4xx_erratum_list *branch,
-				 bfd *branch_bfd,
-				 asection *branch_sec,
-				 unsigned int offset,
-				 bfd_size_type veneer_size)
-{
-  asection *s;
-  struct elf32_arm_link_hash_table *hash_table;
-  char *tmp_name;
-  struct elf_link_hash_entry *myh;
-  struct bfd_link_hash_entry *bh;
-  bfd_vma val;
-  struct _arm_elf_section_data *sec_data;
-  elf32_stm32l4xx_erratum_list *newerr;
-
-  hash_table = elf32_arm_hash_table (link_info);
-  BFD_ASSERT (hash_table != NULL);
-  BFD_ASSERT (hash_table->bfd_of_glue_owner != NULL);
-
-  s = bfd_get_linker_section
-    (hash_table->bfd_of_glue_owner, STM32L4XX_ERRATUM_VENEER_SECTION_NAME);
-
-  BFD_ASSERT (s != NULL);
-
-  sec_data = elf32_arm_section_data (s);
-
-  tmp_name = (char *) bfd_malloc ((bfd_size_type) strlen
-				  (STM32L4XX_ERRATUM_VENEER_ENTRY_NAME) + 10);
-
-  BFD_ASSERT (tmp_name);
-
-  sprintf (tmp_name, STM32L4XX_ERRATUM_VENEER_ENTRY_NAME,
-	   hash_table->num_stm32l4xx_fixes);
-
-  myh = elf_link_hash_lookup
-    (&(hash_table)->root, tmp_name, FALSE, FALSE, FALSE);
-
-  BFD_ASSERT (myh == NULL);
-
-  bh = NULL;
-  val = hash_table->stm32l4xx_erratum_glue_size;
-  _bfd_generic_link_add_one_symbol (link_info, hash_table->bfd_of_glue_owner,
-				    tmp_name, BSF_FUNCTION | BSF_LOCAL, s, val,
-				    NULL, TRUE, FALSE, &bh);
-
-  myh = (struct elf_link_hash_entry *) bh;
-  myh->type = ELF_ST_INFO (STB_LOCAL, STT_FUNC);
-  myh->forced_local = 1;
-
-  /* Link veneer back to calling location.  */
-  sec_data->stm32l4xx_erratumcount += 1;
-  newerr = (elf32_stm32l4xx_erratum_list *)
-      bfd_zmalloc (sizeof (elf32_stm32l4xx_erratum_list));
-
-  newerr->type = STM32L4XX_ERRATUM_VENEER;
-  newerr->vma = -1;
-  newerr->u.v.branch = branch;
-  newerr->u.v.id = hash_table->num_stm32l4xx_fixes;
-  branch->u.b.veneer = newerr;
-
-  newerr->next = sec_data->stm32l4xx_erratumlist;
-  sec_data->stm32l4xx_erratumlist = newerr;
-
-  /* A symbol for the return from the veneer.  */
-  sprintf (tmp_name, STM32L4XX_ERRATUM_VENEER_ENTRY_NAME "_r",
-	   hash_table->num_stm32l4xx_fixes);
-
-  myh = elf_link_hash_lookup
-    (&(hash_table)->root, tmp_name, FALSE, FALSE, FALSE);
-
-  if (myh != NULL)
-    abort ();
-
-  bh = NULL;
-  val = offset + 4;
-  _bfd_generic_link_add_one_symbol (link_info, branch_bfd, tmp_name, BSF_LOCAL,
-				    branch_sec, val, NULL, TRUE, FALSE, &bh);
-
-  myh = (struct elf_link_hash_entry *) bh;
-  myh->type = ELF_ST_INFO (STB_LOCAL, STT_FUNC);
-  myh->forced_local = 1;
-
-  free (tmp_name);
-
-  /* Generate a mapping symbol for the veneer section, and explicitly add an
-     entry for that symbol to the code/data map for the section.  */
-  if (hash_table->stm32l4xx_erratum_glue_size == 0)
-    {
-      bh = NULL;
-      /* Creates a THUMB symbol since there is no other choice.  */
-      _bfd_generic_link_add_one_symbol (link_info,
-					hash_table->bfd_of_glue_owner, "$t",
-					BSF_LOCAL, s, 0, NULL,
-					TRUE, FALSE, &bh);
-
-      myh = (struct elf_link_hash_entry *) bh;
-      myh->type = ELF_ST_INFO (STB_LOCAL, STT_NOTYPE);
-      myh->forced_local = 1;
-
-      /* The elf32_arm_init_maps function only cares about symbols from input
-	 BFDs.  We must make a note of this generated mapping symbol
-	 ourselves so that code byteswapping works properly in
-	 elf32_arm_write_section.  */
-      elf32_arm_section_map_add (s, 't', 0);
-    }
-
-  s->size += veneer_size;
-  hash_table->stm32l4xx_erratum_glue_size += veneer_size;
-  hash_table->num_stm32l4xx_fixes++;
-
-  /* The offset of the veneer.  */
-  return val;
-}
-
 #define ARM_GLUE_SECTION_FLAGS \
   (SEC_ALLOC | SEC_LOAD | SEC_HAS_CONTENTS | SEC_IN_MEMORY | SEC_CODE \
    | SEC_READONLY | SEC_LINKER_CREATED)
@@ -7511,9 +6629,6 @@ bfd_boolean
 bfd_elf32_arm_add_glue_sections_to_bfd (bfd *abfd,
 					struct bfd_link_info *info)
 {
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (info);
-  bfd_boolean dostm32l4xx = globals
-    && globals->stm32l4xx_fix != BFD_ARM_STM32L4XX_FIX_NONE;
   bfd_boolean addglue;
 
   /* If we are only performing a partial
@@ -7526,11 +6641,7 @@ bfd_elf32_arm_add_glue_sections_to_bfd (bfd *abfd,
     && arm_make_glue_section (abfd, VFP11_ERRATUM_VENEER_SECTION_NAME)
     && arm_make_glue_section (abfd, ARM_BX_GLUE_SECTION_NAME);
 
-  if (!dostm32l4xx)
-    return addglue;
-
-  return addglue
-    && arm_make_glue_section (abfd, STM32L4XX_ERRATUM_VENEER_SECTION_NAME);
+  return addglue;
 }
 
 /* Mark output sections of veneers needing a dedicated one with SEC_KEEP.  This
@@ -7824,84 +6935,6 @@ bfd_elf32_arm_init_maps (bfd *abfd)
     }
 }
 
-
-/* Auto-select enabling of Cortex-A8 erratum fix if the user didn't explicitly
-   say what they wanted.  */
-
-void
-bfd_elf32_arm_set_cortex_a8_fix (bfd *obfd, struct bfd_link_info *link_info)
-{
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
-  obj_attribute *out_attr = elf_known_obj_attributes_proc (obfd);
-
-  if (globals == NULL)
-    return;
-
-  if (globals->fix_cortex_a8 == -1)
-    {
-      /* Turn on Cortex-A8 erratum workaround for ARMv7-A.  */
-      if (out_attr[Tag_CPU_arch].i == TAG_CPU_ARCH_V7
-	  && (out_attr[Tag_CPU_arch_profile].i == 'A'
-	      || out_attr[Tag_CPU_arch_profile].i == 0))
-	globals->fix_cortex_a8 = 1;
-      else
-	globals->fix_cortex_a8 = 0;
-    }
-}
-
-
-void
-bfd_elf32_arm_set_vfp11_fix (bfd *obfd, struct bfd_link_info *link_info)
-{
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
-  obj_attribute *out_attr = elf_known_obj_attributes_proc (obfd);
-
-  if (globals == NULL)
-    return;
-  /* We assume that ARMv7+ does not need the VFP11 denorm erratum fix.  */
-  if (out_attr[Tag_CPU_arch].i >= TAG_CPU_ARCH_V7)
-    {
-      switch (globals->vfp11_fix)
-	{
-	case BFD_ARM_VFP11_FIX_DEFAULT:
-	case BFD_ARM_VFP11_FIX_NONE:
-	  globals->vfp11_fix = BFD_ARM_VFP11_FIX_NONE;
-	  break;
-
-	default:
-	  /* Give a warning, but do as the user requests anyway.  */
-	  _bfd_error_handler (_("%pB: warning: selected VFP11 erratum "
-	    "workaround is not necessary for target architecture"), obfd);
-	}
-    }
-  else if (globals->vfp11_fix == BFD_ARM_VFP11_FIX_DEFAULT)
-    /* For earlier architectures, we might need the workaround, but do not
-       enable it by default.  If users is running with broken hardware, they
-       must enable the erratum fix explicitly.  */
-    globals->vfp11_fix = BFD_ARM_VFP11_FIX_NONE;
-}
-
-void
-bfd_elf32_arm_set_stm32l4xx_fix (bfd *obfd, struct bfd_link_info *link_info)
-{
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
-  obj_attribute *out_attr = elf_known_obj_attributes_proc (obfd);
-
-  if (globals == NULL)
-    return;
-
-  /* We assume only Cortex-M4 may require the fix.  */
-  if (out_attr[Tag_CPU_arch].i != TAG_CPU_ARCH_V7E_M
-      || out_attr[Tag_CPU_arch_profile].i != 'M')
-    {
-      if (globals->stm32l4xx_fix != BFD_ARM_STM32L4XX_FIX_NONE)
-	/* Give a warning, but do as the user requests anyway.  */
-	_bfd_error_handler
-	  (_("%pB: warning: selected STM32L4XX erratum "
-	     "workaround is not necessary for target architecture"), obfd);
-    }
-}
-
 enum bfd_arm_vfp11_pipe
 {
   VFP11_FMAC,
@@ -7910,917 +6943,7 @@ enum bfd_arm_vfp11_pipe
   VFP11_BAD
 };
 
-/* Return a VFP register number.  This is encoded as RX:X for single-precision
-   registers, or X:RX for double-precision registers, where RX is the group of
-   four bits in the instruction encoding and X is the single extension bit.
-   RX and X fields are specified using their lowest (starting) bit.  The return
-   value is:
-
-     0...31: single-precision registers s0...s31
-     32...63: double-precision registers d0...d31.
-
-   Although X should be zero for VFP11 (encoding d0...d15 only), we might
-   encounter VFP3 instructions, so we allow the full range for DP registers.  */
-
-static unsigned int
-bfd_arm_vfp11_regno (unsigned int insn, bfd_boolean is_double, unsigned int rx,
-		     unsigned int x)
-{
-  if (is_double)
-    return (((insn >> rx) & 0xf) | (((insn >> x) & 1) << 4)) + 32;
-  else
-    return (((insn >> rx) & 0xf) << 1) | ((insn >> x) & 1);
-}
-
-/* Set bits in *WMASK according to a register number REG as encoded by
-   bfd_arm_vfp11_regno().  Ignore d16-d31.  */
-
-static void
-bfd_arm_vfp11_write_mask (unsigned int *wmask, unsigned int reg)
-{
-  if (reg < 32)
-    *wmask |= 1 << reg;
-  else if (reg < 48)
-    *wmask |= 3 << ((reg - 32) * 2);
-}
-
-/* Return TRUE if WMASK overwrites anything in REGS.  */
-
-static bfd_boolean
-bfd_arm_vfp11_antidependency (unsigned int wmask, int *regs, int numregs)
-{
-  int i;
-
-  for (i = 0; i < numregs; i++)
-    {
-      unsigned int reg = regs[i];
-
-      if (reg < 32 && (wmask & (1 << reg)) != 0)
-	return TRUE;
-
-      reg -= 32;
-
-      if (reg >= 16)
-	continue;
-
-      if ((wmask & (3 << (reg * 2))) != 0)
-	return TRUE;
-    }
-
-  return FALSE;
-}
-
-/* In this function, we're interested in two things: finding input registers
-   for VFP data-processing instructions, and finding the set of registers which
-   arbitrary VFP instructions may write to.  We use a 32-bit unsigned int to
-   hold the written set, so FLDM etc. are easy to deal with (we're only
-   interested in 32 SP registers or 16 dp registers, due to the VFP version
-   implemented by the chip in question).  DP registers are marked by setting
-   both SP registers in the write mask).  */
-
-static enum bfd_arm_vfp11_pipe
-bfd_arm_vfp11_insn_decode (unsigned int insn, unsigned int *destmask, int *regs,
-			   int *numregs)
-{
-  enum bfd_arm_vfp11_pipe vpipe = VFP11_BAD;
-  bfd_boolean is_double = ((insn & 0xf00) == 0xb00) ? 1 : 0;
-
-  if ((insn & 0x0f000e10) == 0x0e000a00)  /* A data-processing insn.  */
-    {
-      unsigned int pqrs;
-      unsigned int fd = bfd_arm_vfp11_regno (insn, is_double, 12, 22);
-      unsigned int fm = bfd_arm_vfp11_regno (insn, is_double, 0, 5);
-
-      pqrs = ((insn & 0x00800000) >> 20)
-	   | ((insn & 0x00300000) >> 19)
-	   | ((insn & 0x00000040) >> 6);
-
-      switch (pqrs)
-	{
-	case 0: /* fmac[sd].  */
-	case 1: /* fnmac[sd].  */
-	case 2: /* fmsc[sd].  */
-	case 3: /* fnmsc[sd].  */
-	  vpipe = VFP11_FMAC;
-	  bfd_arm_vfp11_write_mask (destmask, fd);
-	  regs[0] = fd;
-	  regs[1] = bfd_arm_vfp11_regno (insn, is_double, 16, 7);  /* Fn.  */
-	  regs[2] = fm;
-	  *numregs = 3;
-	  break;
-
-	case 4: /* fmul[sd].  */
-	case 5: /* fnmul[sd].  */
-	case 6: /* fadd[sd].  */
-	case 7: /* fsub[sd].  */
-	  vpipe = VFP11_FMAC;
-	  goto vfp_binop;
-
-	case 8: /* fdiv[sd].  */
-	  vpipe = VFP11_DS;
-	  vfp_binop:
-	  bfd_arm_vfp11_write_mask (destmask, fd);
-	  regs[0] = bfd_arm_vfp11_regno (insn, is_double, 16, 7);   /* Fn.  */
-	  regs[1] = fm;
-	  *numregs = 2;
-	  break;
-
-	case 15: /* extended opcode.  */
-	  {
-	    unsigned int extn = ((insn >> 15) & 0x1e)
-			      | ((insn >> 7) & 1);
-
-	    switch (extn)
-	      {
-	      case 0: /* fcpy[sd].  */
-	      case 1: /* fabs[sd].  */
-	      case 2: /* fneg[sd].  */
-	      case 8: /* fcmp[sd].  */
-	      case 9: /* fcmpe[sd].  */
-	      case 10: /* fcmpz[sd].  */
-	      case 11: /* fcmpez[sd].  */
-	      case 16: /* fuito[sd].  */
-	      case 17: /* fsito[sd].  */
-	      case 24: /* ftoui[sd].  */
-	      case 25: /* ftouiz[sd].  */
-	      case 26: /* ftosi[sd].  */
-	      case 27: /* ftosiz[sd].  */
-		/* These instructions will not bounce due to underflow.  */
-		*numregs = 0;
-		vpipe = VFP11_FMAC;
-		break;
-
-	      case 3: /* fsqrt[sd].  */
-		/* fsqrt cannot underflow, but it can (perhaps) overwrite
-		   registers to cause the erratum in previous instructions.  */
-		bfd_arm_vfp11_write_mask (destmask, fd);
-		vpipe = VFP11_DS;
-		break;
-
-	      case 15: /* fcvt{ds,sd}.  */
-		{
-		  int rnum = 0;
-
-		  bfd_arm_vfp11_write_mask (destmask, fd);
-
-		  /* Only FCVTSD can underflow.  */
-		  if ((insn & 0x100) != 0)
-		    regs[rnum++] = fm;
-
-		  *numregs = rnum;
-
-		  vpipe = VFP11_FMAC;
-		}
-		break;
-
-	      default:
-		return VFP11_BAD;
-	      }
-	  }
-	  break;
-
-	default:
-	  return VFP11_BAD;
-	}
-    }
-  /* Two-register transfer.  */
-  else if ((insn & 0x0fe00ed0) == 0x0c400a10)
-    {
-      unsigned int fm = bfd_arm_vfp11_regno (insn, is_double, 0, 5);
-
-      if ((insn & 0x100000) == 0)
-	{
-	  if (is_double)
-	    bfd_arm_vfp11_write_mask (destmask, fm);
-	  else
-	    {
-	      bfd_arm_vfp11_write_mask (destmask, fm);
-	      bfd_arm_vfp11_write_mask (destmask, fm + 1);
-	    }
-	}
-
-      vpipe = VFP11_LS;
-    }
-  else if ((insn & 0x0e100e00) == 0x0c100a00)  /* A load insn.  */
-    {
-      int fd = bfd_arm_vfp11_regno (insn, is_double, 12, 22);
-      unsigned int puw = ((insn >> 21) & 0x1) | (((insn >> 23) & 3) << 1);
-
-      switch (puw)
-	{
-	case 0: /* Two-reg transfer.  We should catch these above.  */
-	  abort ();
-
-	case 2: /* fldm[sdx].  */
-	case 3:
-	case 5:
-	  {
-	    unsigned int i, offset = insn & 0xff;
-
-	    if (is_double)
-	      offset >>= 1;
-
-	    for (i = fd; i < fd + offset; i++)
-	      bfd_arm_vfp11_write_mask (destmask, i);
-	  }
-	  break;
-
-	case 4: /* fld[sd].  */
-	case 6:
-	  bfd_arm_vfp11_write_mask (destmask, fd);
-	  break;
-
-	default:
-	  return VFP11_BAD;
-	}
-
-      vpipe = VFP11_LS;
-    }
-  /* Single-register transfer. Note L==0.  */
-  else if ((insn & 0x0f100e10) == 0x0e000a10)
-    {
-      unsigned int opcode = (insn >> 21) & 7;
-      unsigned int fn = bfd_arm_vfp11_regno (insn, is_double, 16, 7);
-
-      switch (opcode)
-	{
-	case 0: /* fmsr/fmdlr.  */
-	case 1: /* fmdhr.  */
-	  /* Mark fmdhr and fmdlr as writing to the whole of the DP
-	     destination register.  I don't know if this is exactly right,
-	     but it is the conservative choice.  */
-	  bfd_arm_vfp11_write_mask (destmask, fn);
-	  break;
-
-	case 7: /* fmxr.  */
-	  break;
-	}
-
-      vpipe = VFP11_LS;
-    }
-
-  return vpipe;
-}
-
-
 static int elf32_arm_compare_mapping (const void * a, const void * b);
-
-
-/* Look for potentially-troublesome code sequences which might trigger the
-   VFP11 denormal/antidependency erratum.  See, e.g., the ARM1136 errata sheet
-   (available from ARM) for details of the erratum.  A short version is
-   described in ld.texinfo.  */
-
-bfd_boolean
-bfd_elf32_arm_vfp11_erratum_scan (bfd *abfd, struct bfd_link_info *link_info)
-{
-  asection *sec;
-  bfd_byte *contents = NULL;
-  int state = 0;
-  int regs[3], numregs = 0;
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
-  int use_vector = (globals->vfp11_fix == BFD_ARM_VFP11_FIX_VECTOR);
-
-  if (globals == NULL)
-    return FALSE;
-
-  /* We use a simple FSM to match troublesome VFP11 instruction sequences.
-     The states transition as follows:
-
-       0 -> 1 (vector) or 0 -> 2 (scalar)
-	   A VFP FMAC-pipeline instruction has been seen. Fill
-	   regs[0]..regs[numregs-1] with its input operands. Remember this
-	   instruction in 'first_fmac'.
-
-       1 -> 2
-	   Any instruction, except for a VFP instruction which overwrites
-	   regs[*].
-
-       1 -> 3 [ -> 0 ]  or
-       2 -> 3 [ -> 0 ]
-	   A VFP instruction has been seen which overwrites any of regs[*].
-	   We must make a veneer!  Reset state to 0 before examining next
-	   instruction.
-
-       2 -> 0
-	   If we fail to match anything in state 2, reset to state 0 and reset
-	   the instruction pointer to the instruction after 'first_fmac'.
-
-     If the VFP11 vector mode is in use, there must be at least two unrelated
-     instructions between anti-dependent VFP11 instructions to properly avoid
-     triggering the erratum, hence the use of the extra state 1.  */
-
-  /* If we are only performing a partial link do not bother
-     to construct any glue.  */
-  if (bfd_link_relocatable (link_info))
-    return TRUE;
-
-  /* Skip if this bfd does not correspond to an ELF image.  */
-  if (! is_arm_elf (abfd))
-    return TRUE;
-
-  /* We should have chosen a fix type by the time we get here.  */
-  BFD_ASSERT (globals->vfp11_fix != BFD_ARM_VFP11_FIX_DEFAULT);
-
-  if (globals->vfp11_fix == BFD_ARM_VFP11_FIX_NONE)
-    return TRUE;
-
-  /* Skip this BFD if it corresponds to an executable or dynamic object.  */
-  if ((abfd->flags & (EXEC_P | DYNAMIC)) != 0)
-    return TRUE;
-
-  for (sec = abfd->sections; sec != NULL; sec = sec->next)
-    {
-      unsigned int i, span, first_fmac = 0, veneer_of_insn = 0;
-      struct _arm_elf_section_data *sec_data;
-
-      /* If we don't have executable progbits, we're not interested in this
-	 section.  Also skip if section is to be excluded.  */
-      if (elf_section_type (sec) != SHT_PROGBITS
-	  || (elf_section_flags (sec) & SHF_EXECINSTR) == 0
-	  || (sec->flags & SEC_EXCLUDE) != 0
-	  || sec->sec_info_type == SEC_INFO_TYPE_JUST_SYMS
-	  || sec->output_section == bfd_abs_section_ptr
-	  || strcmp (sec->name, VFP11_ERRATUM_VENEER_SECTION_NAME) == 0)
-	continue;
-
-      sec_data = elf32_arm_section_data (sec);
-
-      if (sec_data->mapcount == 0)
-	continue;
-
-      if (elf_section_data (sec)->this_hdr.contents != NULL)
-	contents = elf_section_data (sec)->this_hdr.contents;
-      else if (! bfd_malloc_and_get_section (abfd, sec, &contents))
-	goto error_return;
-
-      qsort (sec_data->map, sec_data->mapcount, sizeof (elf32_arm_section_map),
-	     elf32_arm_compare_mapping);
-
-      for (span = 0; span < sec_data->mapcount; span++)
-	{
-	  unsigned int span_start = sec_data->map[span].vma;
-	  unsigned int span_end = (span == sec_data->mapcount - 1)
-				  ? sec->size : sec_data->map[span + 1].vma;
-	  char span_type = sec_data->map[span].type;
-
-	  /* FIXME: Only ARM mode is supported at present.  We may need to
-	     support Thumb-2 mode also at some point.  */
-	  if (span_type != 'a')
-	    continue;
-
-	  for (i = span_start; i < span_end;)
-	    {
-	      unsigned int next_i = i + 4;
-	      unsigned int insn = bfd_big_endian (abfd)
-		? (contents[i] << 24)
-		  | (contents[i + 1] << 16)
-		  | (contents[i + 2] << 8)
-		  | contents[i + 3]
-		: (contents[i + 3] << 24)
-		  | (contents[i + 2] << 16)
-		  | (contents[i + 1] << 8)
-		  | contents[i];
-	      unsigned int writemask = 0;
-	      enum bfd_arm_vfp11_pipe vpipe;
-
-	      switch (state)
-		{
-		case 0:
-		  vpipe = bfd_arm_vfp11_insn_decode (insn, &writemask, regs,
-						    &numregs);
-		  /* I'm assuming the VFP11 erratum can trigger with denorm
-		     operands on either the FMAC or the DS pipeline. This might
-		     lead to slightly overenthusiastic veneer insertion.  */
-		  if (vpipe == VFP11_FMAC || vpipe == VFP11_DS)
-		    {
-		      state = use_vector ? 1 : 2;
-		      first_fmac = i;
-		      veneer_of_insn = insn;
-		    }
-		  break;
-
-		case 1:
-		  {
-		    int other_regs[3], other_numregs;
-		    vpipe = bfd_arm_vfp11_insn_decode (insn, &writemask,
-						      other_regs,
-						      &other_numregs);
-		    if (vpipe != VFP11_BAD
-			&& bfd_arm_vfp11_antidependency (writemask, regs,
-							 numregs))
-		      state = 3;
-		    else
-		      state = 2;
-		  }
-		  break;
-
-		case 2:
-		  {
-		    int other_regs[3], other_numregs;
-		    vpipe = bfd_arm_vfp11_insn_decode (insn, &writemask,
-						      other_regs,
-						      &other_numregs);
-		    if (vpipe != VFP11_BAD
-			&& bfd_arm_vfp11_antidependency (writemask, regs,
-							 numregs))
-		      state = 3;
-		    else
-		      {
-			state = 0;
-			next_i = first_fmac + 4;
-		      }
-		  }
-		  break;
-
-		case 3:
-		  abort ();  /* Should be unreachable.  */
-		}
-
-	      if (state == 3)
-		{
-		  elf32_vfp11_erratum_list *newerr =(elf32_vfp11_erratum_list *)
-		      bfd_zmalloc (sizeof (elf32_vfp11_erratum_list));
-
-		  elf32_arm_section_data (sec)->erratumcount += 1;
-
-		  newerr->u.b.vfp_insn = veneer_of_insn;
-
-		  switch (span_type)
-		    {
-		    case 'a':
-		      newerr->type = VFP11_ERRATUM_BRANCH_TO_ARM_VENEER;
-		      break;
-
-		    default:
-		      abort ();
-		    }
-
-		  record_vfp11_erratum_veneer (link_info, newerr, abfd, sec,
-					       first_fmac);
-
-		  newerr->vma = -1;
-
-		  newerr->next = sec_data->erratumlist;
-		  sec_data->erratumlist = newerr;
-
-		  state = 0;
-		}
-
-	      i = next_i;
-	    }
-	}
-
-      if (contents != NULL
-	  && elf_section_data (sec)->this_hdr.contents != contents)
-	free (contents);
-      contents = NULL;
-    }
-
-  return TRUE;
-
-error_return:
-  if (contents != NULL
-      && elf_section_data (sec)->this_hdr.contents != contents)
-    free (contents);
-
-  return FALSE;
-}
-
-/* Find virtual-memory addresses for VFP11 erratum veneers and return locations
-   after sections have been laid out, using specially-named symbols.  */
-
-void
-bfd_elf32_arm_vfp11_fix_veneer_locations (bfd *abfd,
-					  struct bfd_link_info *link_info)
-{
-  asection *sec;
-  struct elf32_arm_link_hash_table *globals;
-  char *tmp_name;
-
-  if (bfd_link_relocatable (link_info))
-    return;
-
-  /* Skip if this bfd does not correspond to an ELF image.  */
-  if (! is_arm_elf (abfd))
-    return;
-
-  globals = elf32_arm_hash_table (link_info);
-  if (globals == NULL)
-    return;
-
-  tmp_name = (char *) bfd_malloc ((bfd_size_type) strlen
-				  (VFP11_ERRATUM_VENEER_ENTRY_NAME) + 10);
-
-  for (sec = abfd->sections; sec != NULL; sec = sec->next)
-    {
-      struct _arm_elf_section_data *sec_data = elf32_arm_section_data (sec);
-      elf32_vfp11_erratum_list *errnode = sec_data->erratumlist;
-
-      for (; errnode != NULL; errnode = errnode->next)
-	{
-	  struct elf_link_hash_entry *myh;
-	  bfd_vma vma;
-
-	  switch (errnode->type)
-	    {
-	    case VFP11_ERRATUM_BRANCH_TO_ARM_VENEER:
-	    case VFP11_ERRATUM_BRANCH_TO_THUMB_VENEER:
-	      /* Find veneer symbol.  */
-	      sprintf (tmp_name, VFP11_ERRATUM_VENEER_ENTRY_NAME,
-		       errnode->u.b.veneer->u.v.id);
-
-	      myh = elf_link_hash_lookup
-		(&(globals)->root, tmp_name, FALSE, FALSE, TRUE);
-
-	      if (myh == NULL)
-		_bfd_error_handler (_("%pB: unable to find %s veneer `%s'"),
-				    abfd, "VFP11", tmp_name);
-
-	      vma = myh->root.u.def.section->output_section->vma
-		    + myh->root.u.def.section->output_offset
-		    + myh->root.u.def.value;
-
-	      errnode->u.b.veneer->vma = vma;
-	      break;
-
-	    case VFP11_ERRATUM_ARM_VENEER:
-	    case VFP11_ERRATUM_THUMB_VENEER:
-	      /* Find return location.  */
-	      sprintf (tmp_name, VFP11_ERRATUM_VENEER_ENTRY_NAME "_r",
-		       errnode->u.v.id);
-
-	      myh = elf_link_hash_lookup
-		(&(globals)->root, tmp_name, FALSE, FALSE, TRUE);
-
-	      if (myh == NULL)
-		_bfd_error_handler (_("%pB: unable to find %s veneer `%s'"),
-				    abfd, "VFP11", tmp_name);
-
-	      vma = myh->root.u.def.section->output_section->vma
-		    + myh->root.u.def.section->output_offset
-		    + myh->root.u.def.value;
-
-	      errnode->u.v.branch->vma = vma;
-	      break;
-
-	    default:
-	      abort ();
-	    }
-	}
-    }
-
-  free (tmp_name);
-}
-
-/* Find virtual-memory addresses for STM32L4XX erratum veneers and
-   return locations after sections have been laid out, using
-   specially-named symbols.  */
-
-void
-bfd_elf32_arm_stm32l4xx_fix_veneer_locations (bfd *abfd,
-					      struct bfd_link_info *link_info)
-{
-  asection *sec;
-  struct elf32_arm_link_hash_table *globals;
-  char *tmp_name;
-
-  if (bfd_link_relocatable (link_info))
-    return;
-
-  /* Skip if this bfd does not correspond to an ELF image.  */
-  if (! is_arm_elf (abfd))
-    return;
-
-  globals = elf32_arm_hash_table (link_info);
-  if (globals == NULL)
-    return;
-
-  tmp_name = (char *) bfd_malloc ((bfd_size_type) strlen
-				  (STM32L4XX_ERRATUM_VENEER_ENTRY_NAME) + 10);
-
-  for (sec = abfd->sections; sec != NULL; sec = sec->next)
-    {
-      struct _arm_elf_section_data *sec_data = elf32_arm_section_data (sec);
-      elf32_stm32l4xx_erratum_list *errnode = sec_data->stm32l4xx_erratumlist;
-
-      for (; errnode != NULL; errnode = errnode->next)
-	{
-	  struct elf_link_hash_entry *myh;
-	  bfd_vma vma;
-
-	  switch (errnode->type)
-	    {
-	    case STM32L4XX_ERRATUM_BRANCH_TO_VENEER:
-	      /* Find veneer symbol.  */
-	      sprintf (tmp_name, STM32L4XX_ERRATUM_VENEER_ENTRY_NAME,
-		       errnode->u.b.veneer->u.v.id);
-
-	      myh = elf_link_hash_lookup
-		(&(globals)->root, tmp_name, FALSE, FALSE, TRUE);
-
-	      if (myh == NULL)
-		_bfd_error_handler (_("%pB: unable to find %s veneer `%s'"),
-				    abfd, "STM32L4XX", tmp_name);
-
-	      vma = myh->root.u.def.section->output_section->vma
-		+ myh->root.u.def.section->output_offset
-		+ myh->root.u.def.value;
-
-	      errnode->u.b.veneer->vma = vma;
-	      break;
-
-	    case STM32L4XX_ERRATUM_VENEER:
-	      /* Find return location.  */
-	      sprintf (tmp_name, STM32L4XX_ERRATUM_VENEER_ENTRY_NAME "_r",
-		       errnode->u.v.id);
-
-	      myh = elf_link_hash_lookup
-		(&(globals)->root, tmp_name, FALSE, FALSE, TRUE);
-
-	      if (myh == NULL)
-		_bfd_error_handler (_("%pB: unable to find %s veneer `%s'"),
-				    abfd, "STM32L4XX", tmp_name);
-
-	      vma = myh->root.u.def.section->output_section->vma
-		+ myh->root.u.def.section->output_offset
-		+ myh->root.u.def.value;
-
-	      errnode->u.v.branch->vma = vma;
-	      break;
-
-	    default:
-	      abort ();
-	    }
-	}
-    }
-
-  free (tmp_name);
-}
-
-static inline bfd_boolean
-is_thumb2_ldmia (const insn32 insn)
-{
-  /* Encoding T2: LDM<c>.W <Rn>{!},<registers>
-     1110 - 1000 - 10W1 - rrrr - PM (0) l - llll - llll - llll.  */
-  return (insn & 0xffd02000) == 0xe8900000;
-}
-
-static inline bfd_boolean
-is_thumb2_ldmdb (const insn32 insn)
-{
-  /* Encoding T1: LDMDB<c> <Rn>{!},<registers>
-     1110 - 1001 - 00W1 - rrrr - PM (0) l - llll - llll - llll.  */
-  return (insn & 0xffd02000) == 0xe9100000;
-}
-
-static inline bfd_boolean
-is_thumb2_vldm (const insn32 insn)
-{
-  /* A6.5 Extension register load or store instruction
-     A7.7.229
-     We look for SP 32-bit and DP 64-bit registers.
-     Encoding T1 VLDM{mode}<c> <Rn>{!}, <list>
-     <list> is consecutive 64-bit registers
-     1110 - 110P - UDW1 - rrrr - vvvv - 1011 - iiii - iiii
-     Encoding T2 VLDM{mode}<c> <Rn>{!}, <list>
-     <list> is consecutive 32-bit registers
-     1110 - 110P - UDW1 - rrrr - vvvv - 1010 - iiii - iiii
-     if P==0 && U==1 && W==1 && Rn=1101 VPOP
-     if PUW=010 || PUW=011 || PUW=101 VLDM.  */
-  return
-    (((insn & 0xfe100f00) == 0xec100b00) ||
-     ((insn & 0xfe100f00) == 0xec100a00))
-    && /* (IA without !).  */
-    (((((insn << 7) >> 28) & 0xd) == 0x4)
-     /* (IA with !), includes VPOP (when reg number is SP).  */
-     || ((((insn << 7) >> 28) & 0xd) == 0x5)
-     /* (DB with !).  */
-     || ((((insn << 7) >> 28) & 0xd) == 0x9));
-}
-
-/* STM STM32L4XX erratum : This function assumes that it receives an LDM or
-   VLDM opcode and:
- - computes the number and the mode of memory accesses
- - decides if the replacement should be done:
-   . replaces only if > 8-word accesses
-   . or (testing purposes only) replaces all accesses.  */
-
-static bfd_boolean
-stm32l4xx_need_create_replacing_stub (const insn32 insn,
-				      bfd_arm_stm32l4xx_fix stm32l4xx_fix)
-{
-  int nb_words = 0;
-
-  /* The field encoding the register list is the same for both LDMIA
-     and LDMDB encodings.  */
-  if (is_thumb2_ldmia (insn) || is_thumb2_ldmdb (insn))
-    nb_words = elf32_arm_popcount (insn & 0x0000ffff);
-  else if (is_thumb2_vldm (insn))
-   nb_words = (insn & 0xff);
-
-  /* DEFAULT mode accounts for the real bug condition situation,
-     ALL mode inserts stubs for each LDM/VLDM instruction (testing).  */
-  return
-    (stm32l4xx_fix == BFD_ARM_STM32L4XX_FIX_DEFAULT) ? nb_words > 8 :
-    (stm32l4xx_fix == BFD_ARM_STM32L4XX_FIX_ALL) ? TRUE : FALSE;
-}
-
-/* Look for potentially-troublesome code sequences which might trigger
-   the STM STM32L4XX erratum.  */
-
-bfd_boolean
-bfd_elf32_arm_stm32l4xx_erratum_scan (bfd *abfd,
-				      struct bfd_link_info *link_info)
-{
-  asection *sec;
-  bfd_byte *contents = NULL;
-  struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
-
-  if (globals == NULL)
-    return FALSE;
-
-  /* If we are only performing a partial link do not bother
-     to construct any glue.  */
-  if (bfd_link_relocatable (link_info))
-    return TRUE;
-
-  /* Skip if this bfd does not correspond to an ELF image.  */
-  if (! is_arm_elf (abfd))
-    return TRUE;
-
-  if (globals->stm32l4xx_fix == BFD_ARM_STM32L4XX_FIX_NONE)
-    return TRUE;
-
-  /* Skip this BFD if it corresponds to an executable or dynamic object.  */
-  if ((abfd->flags & (EXEC_P | DYNAMIC)) != 0)
-    return TRUE;
-
-  for (sec = abfd->sections; sec != NULL; sec = sec->next)
-    {
-      unsigned int i, span;
-      struct _arm_elf_section_data *sec_data;
-
-      /* If we don't have executable progbits, we're not interested in this
-	 section.  Also skip if section is to be excluded.  */
-      if (elf_section_type (sec) != SHT_PROGBITS
-	  || (elf_section_flags (sec) & SHF_EXECINSTR) == 0
-	  || (sec->flags & SEC_EXCLUDE) != 0
-	  || sec->sec_info_type == SEC_INFO_TYPE_JUST_SYMS
-	  || sec->output_section == bfd_abs_section_ptr
-	  || strcmp (sec->name, STM32L4XX_ERRATUM_VENEER_SECTION_NAME) == 0)
-	continue;
-
-      sec_data = elf32_arm_section_data (sec);
-
-      if (sec_data->mapcount == 0)
-	continue;
-
-      if (elf_section_data (sec)->this_hdr.contents != NULL)
-	contents = elf_section_data (sec)->this_hdr.contents;
-      else if (! bfd_malloc_and_get_section (abfd, sec, &contents))
-	goto error_return;
-
-      qsort (sec_data->map, sec_data->mapcount, sizeof (elf32_arm_section_map),
-	     elf32_arm_compare_mapping);
-
-      for (span = 0; span < sec_data->mapcount; span++)
-	{
-	  unsigned int span_start = sec_data->map[span].vma;
-	  unsigned int span_end = (span == sec_data->mapcount - 1)
-	    ? sec->size : sec_data->map[span + 1].vma;
-	  char span_type = sec_data->map[span].type;
-	  int itblock_current_pos = 0;
-
-	  /* Only Thumb2 mode need be supported with this CM4 specific
-	     code, we should not encounter any arm mode eg span_type
-	     != 'a'.  */
-	  if (span_type != 't')
-	    continue;
-
-	  for (i = span_start; i < span_end;)
-	    {
-	      unsigned int insn = bfd_get_16 (abfd, &contents[i]);
-	      bfd_boolean insn_32bit = FALSE;
-	      bfd_boolean is_ldm = FALSE;
-	      bfd_boolean is_vldm = FALSE;
-	      bfd_boolean is_not_last_in_it_block = FALSE;
-
-	      /* The first 16-bits of all 32-bit thumb2 instructions start
-		 with opcode[15..13]=0b111 and the encoded op1 can be anything
-		 except opcode[12..11]!=0b00.
-		 See 32-bit Thumb instruction encoding.  */
-	      if ((insn & 0xe000) == 0xe000 && (insn & 0x1800) != 0x0000)
-		insn_32bit = TRUE;
-
-	      /* Compute the predicate that tells if the instruction
-		 is concerned by the IT block
-		 - Creates an error if there is a ldm that is not
-		   last in the IT block thus cannot be replaced
-		 - Otherwise we can create a branch at the end of the
-		   IT block, it will be controlled naturally by IT
-		   with the proper pseudo-predicate
-		 - So the only interesting predicate is the one that
-		   tells that we are not on the last item of an IT
-		   block.  */
-	      if (itblock_current_pos != 0)
-		  is_not_last_in_it_block = !!--itblock_current_pos;
-
-	      if (insn_32bit)
-		{
-		  /* Load the rest of the insn (in manual-friendly order).  */
-		  insn = (insn << 16) | bfd_get_16 (abfd, &contents[i + 2]);
-		  is_ldm = is_thumb2_ldmia (insn) || is_thumb2_ldmdb (insn);
-		  is_vldm = is_thumb2_vldm (insn);
-
-		  /* Veneers are created for (v)ldm depending on
-		     option flags and memory accesses conditions; but
-		     if the instruction is not the last instruction of
-		     an IT block, we cannot create a jump there, so we
-		     bail out.  */
-		    if ((is_ldm || is_vldm)
-			&& stm32l4xx_need_create_replacing_stub
-			(insn, globals->stm32l4xx_fix))
-		      {
-			if (is_not_last_in_it_block)
-			  {
-			    _bfd_error_handler
-			      /* xgettext:c-format */
-			      (_("%pB(%pA+%#x): error: multiple load detected"
-				 " in non-last IT block instruction:"
-				 " STM32L4XX veneer cannot be generated; "
-				 "use gcc option -mrestrict-it to generate"
-				 " only one instruction per IT block"),
-			       abfd, sec, i);
-			  }
-			else
-			  {
-			    elf32_stm32l4xx_erratum_list *newerr =
-			      (elf32_stm32l4xx_erratum_list *)
-			      bfd_zmalloc
-			      (sizeof (elf32_stm32l4xx_erratum_list));
-
-			    elf32_arm_section_data (sec)
-			      ->stm32l4xx_erratumcount += 1;
-			    newerr->u.b.insn = insn;
-			    /* We create only thumb branches.  */
-			    newerr->type =
-			      STM32L4XX_ERRATUM_BRANCH_TO_VENEER;
-			    record_stm32l4xx_erratum_veneer
-			      (link_info, newerr, abfd, sec,
-			       i,
-			       is_ldm ?
-			       STM32L4XX_ERRATUM_LDM_VENEER_SIZE:
-			       STM32L4XX_ERRATUM_VLDM_VENEER_SIZE);
-			    newerr->vma = -1;
-			    newerr->next = sec_data->stm32l4xx_erratumlist;
-			    sec_data->stm32l4xx_erratumlist = newerr;
-			  }
-		      }
-		}
-	      else
-		{
-		  /* A7.7.37 IT p208
-		     IT blocks are only encoded in T1
-		     Encoding T1: IT{x{y{z}}} <firstcond>
-		     1 0 1 1 - 1 1 1 1 - firstcond - mask
-		     if mask = '0000' then see 'related encodings'
-		     We don't deal with UNPREDICTABLE, just ignore these.
-		     There can be no nested IT blocks so an IT block
-		     is naturally a new one for which it is worth
-		     computing its size.  */
-		  bfd_boolean is_newitblock = ((insn & 0xff00) == 0xbf00)
-		    && ((insn & 0x000f) != 0x0000);
-		  /* If we have a new IT block we compute its size.  */
-		  if (is_newitblock)
-		    {
-		      /* Compute the number of instructions controlled
-			 by the IT block, it will be used to decide
-			 whether we are inside an IT block or not.  */
-		      unsigned int mask = insn & 0x000f;
-		      itblock_current_pos = 4 - ctz (mask);
-		    }
-		}
-
-	      i += insn_32bit ? 4 : 2;
-	    }
-	}
-
-      if (contents != NULL
-	  && elf_section_data (sec)->this_hdr.contents != contents)
-	free (contents);
-      contents = NULL;
-    }
-
-  return TRUE;
-
-error_return:
-  if (contents != NULL
-      && elf_section_data (sec)->this_hdr.contents != contents)
-    free (contents);
-
-  return FALSE;
-}
 
 /* Set target relocation values needed during linking.  */
 
@@ -8851,13 +6974,10 @@ bfd_elf32_arm_set_target_params (struct bfd *output_bfd,
     }
   globals->fix_v4bx = params->fix_v4bx;
   globals->use_blx |= params->use_blx;
-  globals->vfp11_fix = params->vfp11_denorm_fix;
-  globals->stm32l4xx_fix = params->stm32l4xx_fix;
   if (globals->fdpic_p)
     globals->pic_veneer = 1;
   else
     globals->pic_veneer = params->pic_veneer;
-  globals->fix_cortex_a8 = params->fix_cortex_a8;
   globals->fix_arm1176 = params->fix_arm1176;
   globals->cmse_implib = params->cmse_implib;
   globals->in_implib_bfd = params->in_implib_bfd;
@@ -13289,12 +11409,12 @@ elf32_arm_final_link (bfd *abfd, struct bfd_link_info *info)
 					   globals->bfd_of_glue_owner,
 					   VFP11_ERRATUM_VENEER_SECTION_NAME))
 	return FALSE;
-
+/*
       if (! elf32_arm_output_glue_section (info, abfd,
 					   globals->bfd_of_glue_owner,
 					   STM32L4XX_ERRATUM_VENEER_SECTION_NAME))
 	return FALSE;
-
+*/
       if (! elf32_arm_output_glue_section (info, abfd,
 					   globals->bfd_of_glue_owner,
 					   ARM_BX_GLUE_SECTION_NAME))
@@ -16418,9 +14538,7 @@ elf32_arm_size_dynamic_sections (bfd * output_bfd ATTRIBUTE_UNUSED,
       /* Initialise mapping tables for code/data.  */
       bfd_elf32_arm_init_maps (ibfd);
 
-      if (!bfd_elf32_arm_process_before_allocation (ibfd, info)
-	  || !bfd_elf32_arm_vfp11_erratum_scan (ibfd, info)
-	  || !bfd_elf32_arm_stm32l4xx_erratum_scan (ibfd, info))
+      if (!bfd_elf32_arm_process_before_allocation (ibfd, info))
 	_bfd_error_handler (_("errors encountered processing file %pB"), ibfd);
     }
 
@@ -16796,8 +14914,6 @@ elf32_arm_finish_dynamic_sections (bfd * output_bfd, struct bfd_link_info * info
 
 	  switch (dyn.d_tag)
 	    {
-	      unsigned int type;
-
 	    default:
 	      break;
 
@@ -17831,860 +15947,11 @@ copy_exidx_entry (bfd *output_bfd, bfd_byte *to, bfd_byte *from, bfd_vma offset)
   /* If the high bit of the first word is clear, and the bit pattern is not 0x1
      (EXIDX_CANTUNWIND), this is an offset to an .ARM.extab entry.  */
   if ((second_word != 0x1) && ((second_word & 0x80000000ul) == 0))
-    second_word = offset_prel31 (second_word, offset);
+   second_word = offset_prel31 (second_word, offset);
 
   bfd_put_32 (output_bfd, first_word, to);
   bfd_put_32 (output_bfd, second_word, to + 4);
 }
-
-/* Data for make_branch_to_a8_stub().  */
-
-struct a8_branch_to_stub_data
-{
-  asection *writing_section;
-  bfd_byte *contents;
-};
-
-
-/* Helper to insert branches to Cortex-A8 erratum stubs in the right
-   places for a particular section.  */
-
-static bfd_boolean
-make_branch_to_a8_stub (struct bfd_hash_entry *gen_entry,
-		       void *in_arg)
-{
-  struct elf32_arm_stub_hash_entry *stub_entry;
-  struct a8_branch_to_stub_data *data;
-  bfd_byte *contents;
-  unsigned long branch_insn;
-  bfd_vma veneered_insn_loc, veneer_entry_loc;
-  bfd_signed_vma branch_offset;
-  bfd *abfd;
-  unsigned int loc;
-
-  stub_entry = (struct elf32_arm_stub_hash_entry *) gen_entry;
-  data = (struct a8_branch_to_stub_data *) in_arg;
-
-  if (stub_entry->target_section != data->writing_section
-      || stub_entry->stub_type < arm_stub_a8_veneer_lwm)
-    return TRUE;
-
-  contents = data->contents;
-
-  /* We use target_section as Cortex-A8 erratum workaround stubs are only
-     generated when both source and target are in the same section.  */
-  veneered_insn_loc = stub_entry->target_section->output_section->vma
-		      + stub_entry->target_section->output_offset
-		      + stub_entry->source_value;
-
-  veneer_entry_loc = stub_entry->stub_sec->output_section->vma
-		     + stub_entry->stub_sec->output_offset
-		     + stub_entry->stub_offset;
-
-  if (stub_entry->stub_type == arm_stub_a8_veneer_blx)
-    veneered_insn_loc &= ~3u;
-
-  branch_offset = veneer_entry_loc - veneered_insn_loc - 4;
-
-  abfd = stub_entry->target_section->owner;
-  loc = stub_entry->source_value;
-
-  /* We attempt to avoid this condition by setting stubs_always_after_branch
-     in elf32_arm_size_stubs if we've enabled the Cortex-A8 erratum workaround.
-     This check is just to be on the safe side...  */
-  if ((veneered_insn_loc & ~0xfff) == (veneer_entry_loc & ~0xfff))
-    {
-      _bfd_error_handler (_("%pB: error: Cortex-A8 erratum stub is "
-			    "allocated in unsafe location"), abfd);
-      return FALSE;
-    }
-
-  switch (stub_entry->stub_type)
-    {
-    case arm_stub_a8_veneer_b:
-    case arm_stub_a8_veneer_b_cond:
-      branch_insn = 0xf0009000;
-      goto jump24;
-
-    case arm_stub_a8_veneer_blx:
-      branch_insn = 0xf000e800;
-      goto jump24;
-
-    case arm_stub_a8_veneer_bl:
-      {
-	unsigned int i1, j1, i2, j2, s;
-
-	branch_insn = 0xf000d000;
-
-      jump24:
-	if (branch_offset < -16777216 || branch_offset > 16777214)
-	  {
-	    /* There's not much we can do apart from complain if this
-	       happens.  */
-	    _bfd_error_handler (_("%pB: error: Cortex-A8 erratum stub out "
-				  "of range (input file too large)"), abfd);
-	    return FALSE;
-	  }
-
-	/* i1 = not(j1 eor s), so:
-	   not i1 = j1 eor s
-	   j1 = (not i1) eor s.  */
-
-	branch_insn |= (branch_offset >> 1) & 0x7ff;
-	branch_insn |= ((branch_offset >> 12) & 0x3ff) << 16;
-	i2 = (branch_offset >> 22) & 1;
-	i1 = (branch_offset >> 23) & 1;
-	s = (branch_offset >> 24) & 1;
-	j1 = (!i1) ^ s;
-	j2 = (!i2) ^ s;
-	branch_insn |= j2 << 11;
-	branch_insn |= j1 << 13;
-	branch_insn |= s << 26;
-      }
-      break;
-
-    default:
-      BFD_FAIL ();
-      return FALSE;
-    }
-
-  bfd_put_16 (abfd, (branch_insn >> 16) & 0xffff, &contents[loc]);
-  bfd_put_16 (abfd, branch_insn & 0xffff, &contents[loc + 2]);
-
-  return TRUE;
-}
-
-/* Beginning of stm32l4xx work-around.  */
-
-/* Functions encoding instructions necessary for the emission of the
-   fix-stm32l4xx-629360.
-   Encoding is extracted from the
-   ARM (C) Architecture Reference Manual
-   ARMv7-A and ARMv7-R edition
-   ARM DDI 0406C.b (ID072512).  */
-
-static inline bfd_vma
-create_instruction_branch_absolute (int branch_offset)
-{
-  /* A8.8.18 B (A8-334)
-     B target_address (Encoding T4).  */
-  /* 1111 - 0Sii - iiii - iiii - 10J1 - Jiii - iiii - iiii.  */
-  /* jump offset is:  S:I1:I2:imm10:imm11:0.  */
-  /* with : I1 = NOT (J1 EOR S) I2 = NOT (J2 EOR S).  */
-
-  int s = ((branch_offset & 0x1000000) >> 24);
-  int j1 = s ^ !((branch_offset & 0x800000) >> 23);
-  int j2 = s ^ !((branch_offset & 0x400000) >> 22);
-
-  if (branch_offset < -(1 << 24) || branch_offset >= (1 << 24))
-    BFD_ASSERT (0 && "Error: branch out of range.  Cannot create branch.");
-
-  bfd_vma patched_inst = 0xf0009000
-    | s << 26 /* S.  */
-    | (((unsigned long) (branch_offset) >> 12) & 0x3ff) << 16 /* imm10.  */
-    | j1 << 13 /* J1.  */
-    | j2 << 11 /* J2.  */
-    | (((unsigned long) (branch_offset) >> 1) & 0x7ff); /* imm11.  */
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_ldmia (int base_reg, int wback, int reg_mask)
-{
-  /* A8.8.57 LDM/LDMIA/LDMFD (A8-396)
-     LDMIA Rn!, {Ra, Rb, Rc, ...} (Encoding T2).  */
-  bfd_vma patched_inst = 0xe8900000
-    | (/*W=*/wback << 21)
-    | (base_reg << 16)
-    | (reg_mask & 0x0000ffff);
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_ldmdb (int base_reg, int wback, int reg_mask)
-{
-  /* A8.8.60 LDMDB/LDMEA (A8-402)
-     LDMDB Rn!, {Ra, Rb, Rc, ...} (Encoding T1).  */
-  bfd_vma patched_inst = 0xe9100000
-    | (/*W=*/wback << 21)
-    | (base_reg << 16)
-    | (reg_mask & 0x0000ffff);
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_mov (int target_reg, int source_reg)
-{
-  /* A8.8.103 MOV (register) (A8-486)
-     MOV Rd, Rm (Encoding T1).  */
-  bfd_vma patched_inst = 0x4600
-    | (target_reg & 0x7)
-    | ((target_reg & 0x8) >> 3) << 7
-    | (source_reg << 3);
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_sub (int target_reg, int source_reg, int value)
-{
-  /* A8.8.221 SUB (immediate) (A8-708)
-     SUB Rd, Rn, #value (Encoding T3).  */
-  bfd_vma patched_inst = 0xf1a00000
-    | (target_reg << 8)
-    | (source_reg << 16)
-    | (/*S=*/0 << 20)
-    | ((value & 0x800) >> 11) << 26
-    | ((value & 0x700) >>  8) << 12
-    | (value & 0x0ff);
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_vldmia (int base_reg, int is_dp, int wback, int num_words,
-			   int first_reg)
-{
-  /* A8.8.332 VLDM (A8-922)
-     VLMD{MODE} Rn{!}, {list} (Encoding T1 or T2).  */
-  bfd_vma patched_inst = (is_dp ? 0xec900b00 : 0xec900a00)
-    | (/*W=*/wback << 21)
-    | (base_reg << 16)
-    | (num_words & 0x000000ff)
-    | (((unsigned)first_reg >> 1) & 0x0000000f) << 12
-    | (first_reg & 0x00000001) << 22;
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_vldmdb (int base_reg, int is_dp, int num_words,
-			   int first_reg)
-{
-  /* A8.8.332 VLDM (A8-922)
-     VLMD{MODE} Rn!, {} (Encoding T1 or T2).  */
-  bfd_vma patched_inst = (is_dp ? 0xed300b00 : 0xed300a00)
-    | (base_reg << 16)
-    | (num_words & 0x000000ff)
-    | (((unsigned)first_reg >>1 ) & 0x0000000f) << 12
-    | (first_reg & 0x00000001) << 22;
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_udf_w (int value)
-{
-  /* A8.8.247 UDF (A8-758)
-     Undefined (Encoding T2).  */
-  bfd_vma patched_inst = 0xf7f0a000
-    | (value & 0x00000fff)
-    | (value & 0x000f0000) << 16;
-
-  return patched_inst;
-}
-
-static inline bfd_vma
-create_instruction_udf (int value)
-{
-  /* A8.8.247 UDF (A8-758)
-     Undefined (Encoding T1).  */
-  bfd_vma patched_inst = 0xde00
-    | (value & 0xff);
-
-  return patched_inst;
-}
-
-/* Functions writing an instruction in memory, returning the next
-   memory position to write to.  */
-
-static inline bfd_byte *
-push_thumb2_insn32 (struct elf32_arm_link_hash_table * htab,
-		    bfd * output_bfd, bfd_byte *pt, insn32 insn)
-{
-  put_thumb2_insn (htab, output_bfd, insn, pt);
-  return pt + 4;
-}
-
-static inline bfd_byte *
-push_thumb2_insn16 (struct elf32_arm_link_hash_table * htab,
-		    bfd * output_bfd, bfd_byte *pt, insn32 insn)
-{
-  put_thumb_insn (htab, output_bfd, insn, pt);
-  return pt + 2;
-}
-
-/* Function filling up a region in memory with T1 and T2 UDFs taking
-   care of alignment.  */
-
-static bfd_byte *
-stm32l4xx_fill_stub_udf (struct elf32_arm_link_hash_table * htab,
-			 bfd *			 output_bfd,
-			 const bfd_byte * const	 base_stub_contents,
-			 bfd_byte * const	 from_stub_contents,
-			 const bfd_byte * const	 end_stub_contents)
-{
-  bfd_byte *current_stub_contents = from_stub_contents;
-
-  /* Fill the remaining of the stub with deterministic contents : UDF
-     instructions.
-     Check if realignment is needed on modulo 4 frontier using T1, to
-     further use T2.  */
-  if ((current_stub_contents < end_stub_contents)
-      && !((current_stub_contents - base_stub_contents) % 2)
-      && ((current_stub_contents - base_stub_contents) % 4))
-    current_stub_contents =
-      push_thumb2_insn16 (htab, output_bfd, current_stub_contents,
-			  create_instruction_udf (0));
-
-  for (; current_stub_contents < end_stub_contents;)
-    current_stub_contents =
-      push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			  create_instruction_udf_w (0));
-
-  return current_stub_contents;
-}
-
-/* Functions writing the stream of instructions equivalent to the
-   derived sequence for ldmia, ldmdb, vldm respectively.  */
-
-static void
-stm32l4xx_create_replacing_stub_ldmia (struct elf32_arm_link_hash_table * htab,
-				       bfd * output_bfd,
-				       const insn32 initial_insn,
-				       const bfd_byte *const initial_insn_addr,
-				       bfd_byte *const base_stub_contents)
-{
-  int wback = (initial_insn & 0x00200000) >> 21;
-  int ri, rn = (initial_insn & 0x000F0000) >> 16;
-  int insn_all_registers = initial_insn & 0x0000ffff;
-  int insn_low_registers, insn_high_registers;
-  int usable_register_mask;
-  int nb_registers = elf32_arm_popcount (insn_all_registers);
-  int restore_pc = (insn_all_registers & (1 << 15)) ? 1 : 0;
-  int restore_rn = (insn_all_registers & (1 << rn)) ? 1 : 0;
-  bfd_byte *current_stub_contents = base_stub_contents;
-
-  BFD_ASSERT (is_thumb2_ldmia (initial_insn));
-
-  /* In BFD_ARM_STM32L4XX_FIX_ALL mode we may have to deal with
-     smaller than 8 registers load sequences that do not cause the
-     hardware issue.  */
-  if (nb_registers <= 8)
-    {
-      /* UNTOUCHED : LDMIA Rn{!}, {R-all-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    initial_insn);
-
-      /* B initial_insn_addr+4.  */
-      if (!restore_pc)
-	current_stub_contents =
-	  push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			      create_instruction_branch_absolute
-			      (initial_insn_addr - current_stub_contents));
-
-      /* Fill the remaining of the stub with deterministic contents.  */
-      current_stub_contents =
-	stm32l4xx_fill_stub_udf (htab, output_bfd,
-				 base_stub_contents, current_stub_contents,
-				 base_stub_contents +
-				 STM32L4XX_ERRATUM_LDM_VENEER_SIZE);
-
-      return;
-    }
-
-  /* - reg_list[13] == 0.  */
-  BFD_ASSERT ((insn_all_registers & (1 << 13))==0);
-
-  /* - reg_list[14] & reg_list[15] != 1.  */
-  BFD_ASSERT ((insn_all_registers & 0xC000) != 0xC000);
-
-  /* - if (wback==1) reg_list[rn] == 0.  */
-  BFD_ASSERT (!wback || !restore_rn);
-
-  /* - nb_registers > 8.  */
-  BFD_ASSERT (elf32_arm_popcount (insn_all_registers) > 8);
-
-  /* At this point, LDMxx initial insn loads between 9 and 14 registers.  */
-
-  /* In the following algorithm, we split this wide LDM using 2 LDM insns:
-    - One with the 7 lowest registers (register mask 0x007F)
-      This LDM will finally contain between 2 and 7 registers
-    - One with the 7 highest registers (register mask 0xDF80)
-      This ldm will finally contain between 2 and 7 registers.  */
-  insn_low_registers = insn_all_registers & 0x007F;
-  insn_high_registers = insn_all_registers & 0xDF80;
-
-  /* A spare register may be needed during this veneer to temporarily
-     handle the base register.  This register will be restored with the
-     last LDM operation.
-     The usable register may be any general purpose register (that
-     excludes PC, SP, LR : register mask is 0x1FFF).  */
-  usable_register_mask = 0x1FFF;
-
-  /* Generate the stub function.  */
-  if (wback)
-    {
-      /* LDMIA Rn!, {R-low-register-list} : (Encoding T2).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (rn, /*wback=*/1, insn_low_registers));
-
-      /* LDMIA Rn!, {R-high-register-list} : (Encoding T2).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (rn, /*wback=*/1, insn_high_registers));
-      if (!restore_pc)
-	{
-	  /* B initial_insn_addr+4.  */
-	  current_stub_contents =
-	    push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-				create_instruction_branch_absolute
-				(initial_insn_addr - current_stub_contents));
-       }
-    }
-  else /* if (!wback).  */
-    {
-      ri = rn;
-
-      /* If Rn is not part of the high-register-list, move it there.  */
-      if (!(insn_high_registers & (1 << rn)))
-	{
-	  /* Choose a Ri in the high-register-list that will be restored.  */
-	  ri = ctz (insn_high_registers & usable_register_mask & ~(1 << rn));
-
-	  /* MOV Ri, Rn.  */
-	  current_stub_contents =
-	    push_thumb2_insn16 (htab, output_bfd, current_stub_contents,
-				create_instruction_mov (ri, rn));
-	}
-
-      /* LDMIA Ri!, {R-low-register-list} : (Encoding T2).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/1, insn_low_registers));
-
-      /* LDMIA Ri, {R-high-register-list} : (Encoding T2).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/0, insn_high_registers));
-
-      if (!restore_pc)
-	{
-	  /* B initial_insn_addr+4.  */
-	  current_stub_contents =
-	    push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-				create_instruction_branch_absolute
-				(initial_insn_addr - current_stub_contents));
-	}
-    }
-
-  /* Fill the remaining of the stub with deterministic contents.  */
-  current_stub_contents =
-    stm32l4xx_fill_stub_udf (htab, output_bfd,
-			     base_stub_contents, current_stub_contents,
-			     base_stub_contents +
-			     STM32L4XX_ERRATUM_LDM_VENEER_SIZE);
-}
-
-static void
-stm32l4xx_create_replacing_stub_ldmdb (struct elf32_arm_link_hash_table * htab,
-				       bfd * output_bfd,
-				       const insn32 initial_insn,
-				       const bfd_byte *const initial_insn_addr,
-				       bfd_byte *const base_stub_contents)
-{
-  int wback = (initial_insn & 0x00200000) >> 21;
-  int ri, rn = (initial_insn & 0x000f0000) >> 16;
-  int insn_all_registers = initial_insn & 0x0000ffff;
-  int insn_low_registers, insn_high_registers;
-  int usable_register_mask;
-  int restore_pc = (insn_all_registers & (1 << 15)) ? 1 : 0;
-  int restore_rn = (insn_all_registers & (1 << rn)) ? 1 : 0;
-  int nb_registers = elf32_arm_popcount (insn_all_registers);
-  bfd_byte *current_stub_contents = base_stub_contents;
-
-  BFD_ASSERT (is_thumb2_ldmdb (initial_insn));
-
-  /* In BFD_ARM_STM32L4XX_FIX_ALL mode we may have to deal with
-     smaller than 8 registers load sequences that do not cause the
-     hardware issue.  */
-  if (nb_registers <= 8)
-    {
-      /* UNTOUCHED : LDMIA Rn{!}, {R-all-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    initial_insn);
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-
-      /* Fill the remaining of the stub with deterministic contents.  */
-      current_stub_contents =
-	stm32l4xx_fill_stub_udf (htab, output_bfd,
-				 base_stub_contents, current_stub_contents,
-				 base_stub_contents +
-				 STM32L4XX_ERRATUM_LDM_VENEER_SIZE);
-
-      return;
-    }
-
-  /* - reg_list[13] == 0.  */
-  BFD_ASSERT ((insn_all_registers & (1 << 13)) == 0);
-
-  /* - reg_list[14] & reg_list[15] != 1.  */
-  BFD_ASSERT ((insn_all_registers & 0xC000) != 0xC000);
-
-  /* - if (wback==1) reg_list[rn] == 0.  */
-  BFD_ASSERT (!wback || !restore_rn);
-
-  /* - nb_registers > 8.  */
-  BFD_ASSERT (elf32_arm_popcount (insn_all_registers) > 8);
-
-  /* At this point, LDMxx initial insn loads between 9 and 14 registers.  */
-
-  /* In the following algorithm, we split this wide LDM using 2 LDM insn:
-    - One with the 7 lowest registers (register mask 0x007F)
-      This LDM will finally contain between 2 and 7 registers
-    - One with the 7 highest registers (register mask 0xDF80)
-      This ldm will finally contain between 2 and 7 registers.  */
-  insn_low_registers = insn_all_registers & 0x007F;
-  insn_high_registers = insn_all_registers & 0xDF80;
-
-  /* A spare register may be needed during this veneer to temporarily
-     handle the base register.  This register will be restored with
-     the last LDM operation.
-     The usable register may be any general purpose register (that excludes
-     PC, SP, LR : register mask is 0x1FFF).  */
-  usable_register_mask = 0x1FFF;
-
-  /* Generate the stub function.  */
-  if (!wback && !restore_pc && !restore_rn)
-    {
-      /* Choose a Ri in the low-register-list that will be restored.  */
-      ri = ctz (insn_low_registers & usable_register_mask & ~(1 << rn));
-
-      /* MOV Ri, Rn.  */
-      current_stub_contents =
-	push_thumb2_insn16 (htab, output_bfd, current_stub_contents,
-			    create_instruction_mov (ri, rn));
-
-      /* LDMDB Ri!, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (ri, /*wback=*/1, insn_high_registers));
-
-      /* LDMDB Ri, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (ri, /*wback=*/0, insn_low_registers));
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-    }
-  else if (wback && !restore_pc && !restore_rn)
-    {
-      /* LDMDB Rn!, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (rn, /*wback=*/1, insn_high_registers));
-
-      /* LDMDB Rn!, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (rn, /*wback=*/1, insn_low_registers));
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-    }
-  else if (!wback && restore_pc && !restore_rn)
-    {
-      /* Choose a Ri in the high-register-list that will be restored.  */
-      ri = ctz (insn_high_registers & usable_register_mask & ~(1 << rn));
-
-      /* SUB Ri, Rn, #(4*nb_registers).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_sub (ri, rn, (4 * nb_registers)));
-
-      /* LDMIA Ri!, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/1, insn_low_registers));
-
-      /* LDMIA Ri, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/0, insn_high_registers));
-    }
-  else if (wback && restore_pc && !restore_rn)
-    {
-      /* Choose a Ri in the high-register-list that will be restored.  */
-      ri = ctz (insn_high_registers & usable_register_mask & ~(1 << rn));
-
-      /* SUB Rn, Rn, #(4*nb_registers)  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_sub (rn, rn, (4 * nb_registers)));
-
-      /* MOV Ri, Rn.  */
-      current_stub_contents =
-	push_thumb2_insn16 (htab, output_bfd, current_stub_contents,
-			    create_instruction_mov (ri, rn));
-
-      /* LDMIA Ri!, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/1, insn_low_registers));
-
-      /* LDMIA Ri, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/0, insn_high_registers));
-    }
-  else if (!wback && !restore_pc && restore_rn)
-    {
-      ri = rn;
-      if (!(insn_low_registers & (1 << rn)))
-	{
-	  /* Choose a Ri in the low-register-list that will be restored.  */
-	  ri = ctz (insn_low_registers & usable_register_mask & ~(1 << rn));
-
-	  /* MOV Ri, Rn.  */
-	  current_stub_contents =
-	    push_thumb2_insn16 (htab, output_bfd, current_stub_contents,
-				create_instruction_mov (ri, rn));
-	}
-
-      /* LDMDB Ri!, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (ri, /*wback=*/1, insn_high_registers));
-
-      /* LDMDB Ri, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmdb
-			    (ri, /*wback=*/0, insn_low_registers));
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-    }
-  else if (!wback && restore_pc && restore_rn)
-    {
-      ri = rn;
-      if (!(insn_high_registers & (1 << rn)))
-	{
-	  /* Choose a Ri in the high-register-list that will be restored.  */
-	  ri = ctz (insn_high_registers & usable_register_mask & ~(1 << rn));
-	}
-
-      /* SUB Ri, Rn, #(4*nb_registers).  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_sub (ri, rn, (4 * nb_registers)));
-
-      /* LDMIA Ri!, {R-low-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/1, insn_low_registers));
-
-      /* LDMIA Ri, {R-high-register-list}.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_ldmia
-			    (ri, /*wback=*/0, insn_high_registers));
-    }
-  else if (wback && restore_rn)
-    {
-      /* The assembler should not have accepted to encode this.  */
-      BFD_ASSERT (0 && "Cannot patch an instruction that has an "
-	"undefined behavior.\n");
-    }
-
-  /* Fill the remaining of the stub with deterministic contents.  */
-  current_stub_contents =
-    stm32l4xx_fill_stub_udf (htab, output_bfd,
-			     base_stub_contents, current_stub_contents,
-			     base_stub_contents +
-			     STM32L4XX_ERRATUM_LDM_VENEER_SIZE);
-
-}
-
-static void
-stm32l4xx_create_replacing_stub_vldm (struct elf32_arm_link_hash_table * htab,
-				      bfd * output_bfd,
-				      const insn32 initial_insn,
-				      const bfd_byte *const initial_insn_addr,
-				      bfd_byte *const base_stub_contents)
-{
-  int num_words = ((unsigned int) initial_insn << 24) >> 24;
-  bfd_byte *current_stub_contents = base_stub_contents;
-
-  BFD_ASSERT (is_thumb2_vldm (initial_insn));
-
-  /* In BFD_ARM_STM32L4XX_FIX_ALL mode we may have to deal with
-     smaller than 8 words load sequences that do not cause the
-     hardware issue.  */
-  if (num_words <= 8)
-    {
-      /* Untouched instruction.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    initial_insn);
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-    }
-  else
-    {
-      bfd_boolean is_dp = /* DP encoding.  */
-	(initial_insn & 0xfe100f00) == 0xec100b00;
-      bfd_boolean is_ia_nobang = /* (IA without !).  */
-	(((initial_insn << 7) >> 28) & 0xd) == 0x4;
-      bfd_boolean is_ia_bang = /* (IA with !) - includes VPOP.  */
-	(((initial_insn << 7) >> 28) & 0xd) == 0x5;
-      bfd_boolean is_db_bang = /* (DB with !).  */
-	(((initial_insn << 7) >> 28) & 0xd) == 0x9;
-      int base_reg = ((unsigned int) initial_insn << 12) >> 28;
-      /* d = UInt (Vd:D);.  */
-      int first_reg = ((((unsigned int) initial_insn << 16) >> 28) << 1)
-	| (((unsigned int)initial_insn << 9) >> 31);
-
-      /* Compute the number of 8-words chunks needed to split.  */
-      int chunks = (num_words % 8) ? (num_words / 8 + 1) : (num_words / 8);
-      int chunk;
-
-      /* The test coverage has been done assuming the following
-	 hypothesis that exactly one of the previous is_ predicates is
-	 true.  */
-      BFD_ASSERT (    (is_ia_nobang ^ is_ia_bang ^ is_db_bang)
-		  && !(is_ia_nobang & is_ia_bang & is_db_bang));
-
-      /* We treat the cutting of the words in one pass for all
-	 cases, then we emit the adjustments:
-
-	 vldm rx, {...}
-	 -> vldm rx!, {8_words_or_less} for each needed 8_word
-	 -> sub rx, rx, #size (list)
-
-	 vldm rx!, {...}
-	 -> vldm rx!, {8_words_or_less} for each needed 8_word
-	 This also handles vpop instruction (when rx is sp)
-
-	 vldmd rx!, {...}
-	 -> vldmb rx!, {8_words_or_less} for each needed 8_word.  */
-      for (chunk = 0; chunk < chunks; ++chunk)
-	{
-	  bfd_vma new_insn = 0;
-
-	  if (is_ia_nobang || is_ia_bang)
-	    {
-	      new_insn = create_instruction_vldmia
-		(base_reg,
-		 is_dp,
-		 /*wback= .  */1,
-		 chunks - (chunk + 1) ?
-		 8 : num_words - chunk * 8,
-		 first_reg + chunk * 8);
-	    }
-	  else if (is_db_bang)
-	    {
-	      new_insn = create_instruction_vldmdb
-		(base_reg,
-		 is_dp,
-		 chunks - (chunk + 1) ?
-		 8 : num_words - chunk * 8,
-		 first_reg + chunk * 8);
-	    }
-
-	  if (new_insn)
-	    current_stub_contents =
-	      push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-				  new_insn);
-	}
-
-      /* Only this case requires the base register compensation
-	 subtract.  */
-      if (is_ia_nobang)
-	{
-	  current_stub_contents =
-	    push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-				create_instruction_sub
-				(base_reg, base_reg, 4*num_words));
-	}
-
-      /* B initial_insn_addr+4.  */
-      current_stub_contents =
-	push_thumb2_insn32 (htab, output_bfd, current_stub_contents,
-			    create_instruction_branch_absolute
-			    (initial_insn_addr - current_stub_contents));
-    }
-
-  /* Fill the remaining of the stub with deterministic contents.  */
-  current_stub_contents =
-    stm32l4xx_fill_stub_udf (htab, output_bfd,
-			     base_stub_contents, current_stub_contents,
-			     base_stub_contents +
-			     STM32L4XX_ERRATUM_VLDM_VENEER_SIZE);
-}
-
-static void
-stm32l4xx_create_replacing_stub (struct elf32_arm_link_hash_table * htab,
-				 bfd * output_bfd,
-				 const insn32 wrong_insn,
-				 const bfd_byte *const wrong_insn_addr,
-				 bfd_byte *const stub_contents)
-{
-  if (is_thumb2_ldmia (wrong_insn))
-    stm32l4xx_create_replacing_stub_ldmia (htab, output_bfd,
-					   wrong_insn, wrong_insn_addr,
-					   stub_contents);
-  else if (is_thumb2_ldmdb (wrong_insn))
-    stm32l4xx_create_replacing_stub_ldmdb (htab, output_bfd,
-					   wrong_insn, wrong_insn_addr,
-					   stub_contents);
-  else if (is_thumb2_vldm (wrong_insn))
-    stm32l4xx_create_replacing_stub_vldm (htab, output_bfd,
-					  wrong_insn, wrong_insn_addr,
-					  stub_contents);
-}
-
-/* End of stm32l4xx work-around.  */
-
 
 /* Do code byteswapping.  Return FALSE afterwards so that the section is
    written out as normal.  */
@@ -18700,7 +15967,6 @@ elf32_arm_write_section (bfd *output_bfd,
   struct elf32_arm_link_hash_table *globals = elf32_arm_hash_table (link_info);
   elf32_arm_section_map *map;
   elf32_vfp11_erratum_list *errnode;
-  elf32_stm32l4xx_erratum_list *stm32l4xx_errnode;
   bfd_vma ptr;
   bfd_vma end;
   bfd_vma offset = sec->output_section->vma + sec->output_offset;
@@ -18786,90 +16052,6 @@ elf32_arm_write_section (bfd *output_bfd,
 		contents[endianflip ^ (target + 5)] = (insn >> 8) & 0xff;
 		contents[endianflip ^ (target + 6)] = (insn >> 16) & 0xff;
 		contents[endianflip ^ (target + 7)] = (insn >> 24) & 0xff;
-	      }
-	      break;
-
-	    default:
-	      abort ();
-	    }
-	}
-    }
-
-  if (arm_data->stm32l4xx_erratumcount != 0)
-    {
-      for (stm32l4xx_errnode = arm_data->stm32l4xx_erratumlist;
-	   stm32l4xx_errnode != 0;
-	   stm32l4xx_errnode = stm32l4xx_errnode->next)
-	{
-	  bfd_vma target = stm32l4xx_errnode->vma - offset;
-
-	  switch (stm32l4xx_errnode->type)
-	    {
-	    case STM32L4XX_ERRATUM_BRANCH_TO_VENEER:
-	      {
-		unsigned int insn;
-		bfd_vma branch_to_veneer =
-		  stm32l4xx_errnode->u.b.veneer->vma - stm32l4xx_errnode->vma;
-
-		if ((signed) branch_to_veneer < -(1 << 24)
-		    || (signed) branch_to_veneer >= (1 << 24))
-		  {
-		    bfd_vma out_of_range =
-		      ((signed) branch_to_veneer < -(1 << 24)) ?
-		      - branch_to_veneer - (1 << 24) :
-		      ((signed) branch_to_veneer >= (1 << 24)) ?
-		      branch_to_veneer - (1 << 24) : 0;
-
-		    _bfd_error_handler
-		      (_("%pB(%#" PRIx64 "): error: "
-			 "cannot create STM32L4XX veneer; "
-			 "jump out of range by %" PRId64 " bytes; "
-			 "cannot encode branch instruction"),
-		       output_bfd,
-		       (uint64_t) (stm32l4xx_errnode->vma - 4),
-		       (int64_t) out_of_range);
-		    continue;
-		  }
-
-		insn = create_instruction_branch_absolute
-		  (stm32l4xx_errnode->u.b.veneer->vma - stm32l4xx_errnode->vma);
-
-		/* The instruction is before the label.  */
-		target -= 4;
-
-		put_thumb2_insn (globals, output_bfd,
-				 (bfd_vma) insn, contents + target);
-	      }
-	      break;
-
-	    case STM32L4XX_ERRATUM_VENEER:
-	      {
-		bfd_byte * veneer;
-		bfd_byte * veneer_r;
-		unsigned int insn;
-
-		veneer = contents + target;
-		veneer_r = veneer
-		  + stm32l4xx_errnode->u.b.veneer->vma
-		  - stm32l4xx_errnode->vma - 4;
-
-		if ((signed) (veneer_r - veneer -
-			      STM32L4XX_ERRATUM_VLDM_VENEER_SIZE >
-			      STM32L4XX_ERRATUM_LDM_VENEER_SIZE ?
-			      STM32L4XX_ERRATUM_VLDM_VENEER_SIZE :
-			      STM32L4XX_ERRATUM_LDM_VENEER_SIZE) < -(1 << 24)
-		    || (signed) (veneer_r - veneer) >= (1 << 24))
-		  {
-		    _bfd_error_handler (_("%pB: error: cannot create STM32L4XX "
-					  "veneer"), output_bfd);
-		     continue;
-		  }
-
-		/* Original instruction.  */
-		insn = stm32l4xx_errnode->u.v.branch->u.b.insn;
-
-		stm32l4xx_create_replacing_stub
-		  (globals, output_bfd, insn, (void*)veneer_r, (void*)veneer);
 	      }
 	      break;
 
@@ -18973,18 +16155,6 @@ elf32_arm_write_section (bfd *output_bfd,
 				  (file_ptr) sec->output_offset, sec->size);
 
       return TRUE;
-    }
-
-  /* Fix code to point to Cortex-A8 erratum stubs.  */
-  if (globals->fix_cortex_a8)
-    {
-      struct a8_branch_to_stub_data data;
-
-      data.writing_section = sec;
-      data.contents = contents;
-
-      bfd_hash_traverse (& globals->stub_hash_table, make_branch_to_a8_stub,
-			 & data);
     }
 
   if (mapcount == 0)

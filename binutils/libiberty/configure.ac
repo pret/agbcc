@@ -180,11 +180,9 @@ funcs="$funcs gettimeofday"
 funcs="$funcs index"
 funcs="$funcs insque"
 funcs="$funcs mkstemps"
-funcs="$funcs putenv"
 funcs="$funcs random"
 funcs="$funcs rename"
 funcs="$funcs rindex"
-funcs="$funcs setenv"
 funcs="$funcs sigsetmask"
 funcs="$funcs stpcpy"
 funcs="$funcs stpncpy"
@@ -217,9 +215,9 @@ if test "x" = "y"; then
     index insque \
      mkstemps \
     on_exit \
-    psignal pstat_getdynamic pstat_getstatic putenv \
+    psignal pstat_getdynamic pstat_getstatic \
     random realpath rename rindex \
-    setenv setproctitle setrlimit sigsetmask spawnve spawnvpe \
+    setproctitle setrlimit sigsetmask spawnve spawnvpe \
      stpcpy stpncpy strdup \
        strndup strsignal \
     strverscmp sysconf sysctl sysmp \
@@ -323,7 +321,7 @@ if test -n "${with_target_subdir}"; then
     for f in atexit basename bcmp bcopy bsearch bzero ffs \
              getcwd getpagesize getrusage gettimeofday \
              index insque psignal \
-             putenv random rename rindex setenv stpcpy \
+             random rename rindex stpcpy \
              strdup  sysconf times tmpnamf \
              waitpid
     do

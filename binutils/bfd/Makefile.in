@@ -143,8 +143,7 @@ am__objects_1 = archive.$(OBJEXT) archures.$(OBJEXT) bfd.$(OBJEXT) \
 	hash.$(OBJEXT) init.$(OBJEXT) libbfd.$(OBJEXT) \
 	linker.$(OBJEXT) merge.$(OBJEXT) opncls.$(OBJEXT) \
 	reloc.$(OBJEXT) section.$(OBJEXT) simple.$(OBJEXT) \
-	syms.$(OBJEXT) targets.$(OBJEXT) binary.$(OBJEXT) \
-	srec.$(OBJEXT)
+	syms.$(OBJEXT) targets.$(OBJEXT) binary.$(OBJEXT)
 am_libbfd_a_OBJECTS = $(am__objects_1)
 libbfd_a_OBJECTS = $(am_libbfd_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -177,7 +176,7 @@ am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
 	./$(DEPDIR)/linker.Po ./$(DEPDIR)/merge.Po \
 	./$(DEPDIR)/opncls.Po ./$(DEPDIR)/reloc.Po \
 	./$(DEPDIR)/reloc16.Po ./$(DEPDIR)/section.Po \
-	./$(DEPDIR)/simple.Po ./$(DEPDIR)/srec.Po ./$(DEPDIR)/syms.Po \
+	./$(DEPDIR)/simple.Po ./$(DEPDIR)/syms.Po \
 	./$(DEPDIR)/targets.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -425,7 +424,7 @@ BFD32_LIBS = \
 	cache.o compress.o corefile.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o syms.o targets.o \
-	binary.o srec.o
+	binary.o
 
 BFD64_LIBS = archive64.o
 BFD32_LIBS_CFILES = \
@@ -433,7 +432,7 @@ BFD32_LIBS_CFILES = \
 	cache.c  compress.c corefile.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c syms.c targets.c \
-	binary.c srec.c
+	binary.c
 
 BFD64_LIBS_CFILES = archive64.c
 
@@ -517,7 +516,7 @@ SOURCE_HFILES = \
 	elf-bfd.h  \
 	elfcode.h elfcore.h \
 	genlink.h \
-	libaout.h libbfd.h \
+	libbfd.h \
 	version.h
 
 BUILD_HFILES = \
@@ -661,7 +660,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reloc16.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/section.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/srec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syms.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/targets.Po@am__quote@ # am--include-marker
 
@@ -845,7 +843,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/reloc16.Po
 	-rm -f ./$(DEPDIR)/section.Po
 	-rm -f ./$(DEPDIR)/simple.Po
-	-rm -f ./$(DEPDIR)/srec.Po
 	-rm -f ./$(DEPDIR)/syms.Po
 	-rm -f ./$(DEPDIR)/targets.Po
 	-rm -f Makefile
@@ -927,7 +924,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/reloc16.Po
 	-rm -f ./$(DEPDIR)/section.Po
 	-rm -f ./$(DEPDIR)/simple.Po
-	-rm -f ./$(DEPDIR)/srec.Po
 	-rm -f ./$(DEPDIR)/syms.Po
 	-rm -f ./$(DEPDIR)/targets.Po
 	-rm -f Makefile

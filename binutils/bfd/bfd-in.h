@@ -830,47 +830,6 @@ union internal_auxent;
 extern bfd_boolean bfd_coff_set_symbol_class
   (bfd *, struct bfd_symbol *, unsigned int);
 
-/* ARM VFP11 erratum workaround support.  */
-typedef enum
-{
-  BFD_ARM_VFP11_FIX_DEFAULT,
-  BFD_ARM_VFP11_FIX_NONE,
-  BFD_ARM_VFP11_FIX_SCALAR,
-  BFD_ARM_VFP11_FIX_VECTOR
-} bfd_arm_vfp11_fix;
-
-extern void bfd_elf32_arm_init_maps
-  (bfd *);
-
-extern void bfd_elf32_arm_set_vfp11_fix
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_set_cortex_a8_fix
-  (bfd *, struct bfd_link_info *);
-
-extern bfd_boolean bfd_elf32_arm_vfp11_erratum_scan
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_vfp11_fix_veneer_locations
-  (bfd *, struct bfd_link_info *);
-
-/* ARM STM STM32L4XX erratum workaround support.  */
-typedef enum
-{
-  BFD_ARM_STM32L4XX_FIX_NONE,
-  BFD_ARM_STM32L4XX_FIX_DEFAULT,
-  BFD_ARM_STM32L4XX_FIX_ALL
-} bfd_arm_stm32l4xx_fix;
-
-extern void bfd_elf32_arm_set_stm32l4xx_fix
-  (bfd *, struct bfd_link_info *);
-
-extern bfd_boolean bfd_elf32_arm_stm32l4xx_erratum_scan
-  (bfd *, struct bfd_link_info *);
-
-extern void bfd_elf32_arm_stm32l4xx_fix_veneer_locations
-  (bfd *, struct bfd_link_info *);
-
 /* ARM Interworking support.  Called from linker.  */
 extern bfd_boolean bfd_arm_allocate_interworking_sections
   (struct bfd_link_info *);
@@ -905,8 +864,6 @@ struct elf32_arm_params {
   char * target2_type;
   int fix_v4bx;
   int use_blx;
-  bfd_arm_vfp11_fix vfp11_denorm_fix;
-  bfd_arm_stm32l4xx_fix stm32l4xx_fix;
   int no_enum_size_warning;
   int no_wchar_size_warning;
   int pic_veneer;

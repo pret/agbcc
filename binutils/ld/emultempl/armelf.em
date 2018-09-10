@@ -36,8 +36,6 @@ static struct elf32_arm_params params =
   "${TARGET2_TYPE}",		/* target2_type */
   0,				/* fix_v4bx */
   0,				/* use_blx */
-  BFD_ARM_VFP11_FIX_DEFAULT,	/* vfp11_denorm_fix */
-  BFD_ARM_STM32L4XX_FIX_NONE,	/* stm32l4xx_fix */
   0,				/* no_enum_size_warning */
   0,				/* no_wchar_size_warning */
   0,				/* pic_veneer */
@@ -80,17 +78,6 @@ arm_elf_before_allocation (void)
 {
   bfd_elf32_arm_set_byteswap_code (&link_info, params.byteswap_code);
 
-  /* Choose type of VFP11 erratum fix, or warn if specified fix is unnecessary
-     due to architecture version.  */
-  bfd_elf32_arm_set_vfp11_fix (link_info.output_bfd, &link_info);
-
-  /* Choose type of STM32L4XX erratum fix, or warn if specified fix is
-     unnecessary due to architecture version.  */
-  bfd_elf32_arm_set_stm32l4xx_fix (link_info.output_bfd, &link_info);
-
-  /* Auto-select Cortex-A8 erratum fix if it wasn't explicitly specified.  */
-  bfd_elf32_arm_set_cortex_a8_fix (link_info.output_bfd, &link_info);
-
   /* Ensure the output sections of veneers needing a dedicated one is not
      removed.  */
   bfd_elf32_arm_keep_private_stub_output_sections (&link_info);
@@ -106,9 +93,6 @@ arm_elf_before_allocation (void)
 	  bfd_elf32_arm_init_maps (is->the_bfd);
 
 	  if (!bfd_elf32_arm_process_before_allocation (is->the_bfd,
-							&link_info)
-	      || !bfd_elf32_arm_vfp11_erratum_scan (is->the_bfd, &link_info)
-	      || !bfd_elf32_arm_stm32l4xx_erratum_scan (is->the_bfd,
 							&link_info))
 	    /* xgettext:c-format */
 	    einfo (_("%P: errors encountered processing file %s\n"),
@@ -421,19 +405,6 @@ gld${EMULATION_NAME}_finish (void)
 {
   struct bfd_link_hash_entry * h;
 
-  {
-    LANG_FOR_EACH_INPUT_STATEMENT (is)
-      {
-	/* Figure out where VFP11 erratum veneers (and the labels returning
-	   from same) have been placed.  */
-	bfd_elf32_arm_vfp11_fix_veneer_locations (is->the_bfd, &link_info);
-
-	 /* Figure out where STM32L4XX erratum veneers (and the labels returning
-	   from them) have been placed.  */
-	bfd_elf32_arm_stm32l4xx_fix_veneer_locations (is->the_bfd, &link_info);
-      }
-  }
-
   if (!bfd_link_relocatable (&link_info))
     {
       /* Now build the linker stubs.  */
@@ -615,8 +586,6 @@ PARSE_AND_LIST_LONGOPTS='
   { "fix-v4bx", no_argument, NULL, OPTION_FIX_V4BX},
   { "fix-v4bx-interworking", no_argument, NULL, OPTION_FIX_V4BX_INTERWORKING},
   { "use-blx", no_argument, NULL, OPTION_USE_BLX},
-  { "vfp11-denorm-fix", required_argument, NULL, OPTION_VFP11_DENORM_FIX},
-  { "fix-stm32l4xx-629360", optional_argument, NULL, OPTION_STM32L4XX_FIX},
   { "no-enum-size-warning", no_argument, NULL, OPTION_NO_ENUM_SIZE_WARNING},
   { "pic-veneer", no_argument, NULL, OPTION_PIC_VENEER},
   { "stub-group-size", required_argument, NULL, OPTION_STUBGROUP_SIZE },
@@ -641,7 +610,6 @@ PARSE_AND_LIST_OPTIONS='
   fprintf (file, _("  --fix-v4bx-interworking     Rewrite BX rn branch to ARMv4 interworking veneer\n"));
   fprintf (file, _("  --use-blx                   Enable use of BLX instructions\n"));
   fprintf (file, _("  --vfp11-denorm-fix          Specify how to fix VFP11 denorm erratum\n"));
-  fprintf (file, _("  --fix-stm32l4xx-629360      Specify how to fix STM32L4XX 629360 erratum\n"));
   fprintf (file, _("  --no-enum-size-warning      Don'\''t warn about objects with incompatible\n"
 		   "                                enum sizes\n"));
   fprintf (file, _("  --no-wchar-size-warning     Don'\''t warn about objects with incompatible\n"
@@ -702,30 +670,6 @@ PARSE_AND_LIST_ARGS_CASES='
 
     case OPTION_USE_BLX:
       params.use_blx = 1;
-      break;
-
-    case OPTION_VFP11_DENORM_FIX:
-      if (strcmp (optarg, "none") == 0)
-	params.vfp11_denorm_fix = BFD_ARM_VFP11_FIX_NONE;
-      else if (strcmp (optarg, "scalar") == 0)
-	params.vfp11_denorm_fix = BFD_ARM_VFP11_FIX_SCALAR;
-      else if (strcmp (optarg, "vector") == 0)
-	params.vfp11_denorm_fix = BFD_ARM_VFP11_FIX_VECTOR;
-      else
-	einfo (_("%P: unrecognized VFP11 fix type '\''%s'\''\n"), optarg);
-      break;
-
-    case OPTION_STM32L4XX_FIX:
-      if (!optarg)
-	params.stm32l4xx_fix = BFD_ARM_STM32L4XX_FIX_DEFAULT;
-      else if (strcmp (optarg, "none") == 0)
-	params.stm32l4xx_fix = BFD_ARM_STM32L4XX_FIX_NONE;
-      else if (strcmp (optarg, "default") == 0)
-	params.stm32l4xx_fix = BFD_ARM_STM32L4XX_FIX_DEFAULT;
-      else if (strcmp (optarg, "all") == 0)
-	params.stm32l4xx_fix = BFD_ARM_STM32L4XX_FIX_ALL;
-      else
-	einfo (_("%P: unrecognized STM32L4XX fix type '\''%s'\''\n"), optarg);
       break;
 
     case OPTION_NO_ENUM_SIZE_WARNING:

@@ -18,27 +18,27 @@
 #the Free Software Foundation, 59 Temple Place - Suite 330,
 #Boston MA 02111-1307, USA.
 
-VERSION = 1
+VERSION := 1
 
 # Directory where sources are, from where we are.
-srcdir = .
-VPATH = $(srcdir)
+srcdir := .
+VPATH := $(srcdir)
 
-CC = gcc
+CC := gcc
 
-BASE_CFLAGS = -O3 -std=gnu11 -w
-INCLUDES = -I. -I$(srcdir)
+BASE_CFLAGS := -O3 -std=gnu11 -w
+INCLUDES := -I. -I$(srcdir)
 
-md_file=$(srcdir)/thumb.md
+md_file := $(srcdir)/thumb.md
 
-RTL_SRCS = rtl.c bitmap.c obstack.c
-RTL_OBJS = rtl.o bitmap.o obstack.o
-RTLANAL_SRCS = rtlanal.c
-RTLANAL_OBJS = rtlanal.o
-PRINT_SRCS = print-rtl.c
-PRINT_OBJS = print-rtl.o
+RTL_SRCS := rtl.c bitmap.c obstack.c
+RTL_OBJS := rtl.o bitmap.o obstack.o
+RTLANAL_SRCS := rtlanal.c
+RTLANAL_OBJS := rtlanal.o
+PRINT_SRCS := print-rtl.c
+PRINT_OBJS := print-rtl.o
 
-SRCS = toplev.c version.c tree.c print-tree.c stor-layout.c fold-const.c \
+SRCS := toplev.c version.c tree.c print-tree.c stor-layout.c fold-const.c \
 function.c stmt.c except.c expr.c calls.c expmed.c explow.c optabs.c \
 varasm.c emit-rtl.c genrtl.c real.c regmove.c dwarf2out.c alias.c integrate.c \
 jump.c cse.c loop.c unroll.c flow.c stupid.c combine.c varray.c regclass.c \
@@ -48,9 +48,9 @@ insn-emit.c lcm.c insn-attrtab.c thumb.c getpwd.c convert.c dyn-string.c \
 splay-tree.c graph.c sbitmap.c c-parse.c c-lex.c c-decl.c \
 c-typeck.c c-convert.c c-aux-info.c c-common.c c-iterate.c
 
-OBJS = $(SRCS:.c=.o)
+OBJS := $(SRCS:.c=.o)
 
-GENERATED = genrtl.c genrtl.h \
+GENERATED := genrtl.c genrtl.h \
  insn-peep.c insn-opinit.c insn-recog.c insn-extract.c insn-output.c \
  insn-emit.c insn-attrtab.c \
  tree-check.h \
@@ -59,12 +59,12 @@ GENERATED = genrtl.c genrtl.h \
 .PHONY: normal old clean tidy
 
 # The usual compiler.
-normal: CFLAGS = $(BASE_CFLAGS) -DAGBCC_VERSION=$(VERSION)
+normal: CFLAGS := $(BASE_CFLAGS) -DAGBCC_VERSION=$(VERSION)
 normal: $(OBJS)
 	$(CC) $(CFLAGS)  -o agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
 
 # The old version of the compiler, used for building libgcc.
-old: CFLAGS = $(BASE_CFLAGS) -DOLD_COMPILER -DAGBCC_VERSION=$(VERSION)
+old: CFLAGS := $(BASE_CFLAGS) -DOLD_COMPILER -DAGBCC_VERSION=$(VERSION)
 old: $(OBJS)
 	$(CC) $(CFLAGS) -o old_agbcc $(OBJS) $(RTL_OBJS) $(PRINT_OBJS) $(RTLANAL_OBJS)
 
@@ -84,7 +84,7 @@ $(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c | genrtl.h rtl.h tree-check.
 	$(COMPILE) $<
 
 
-GEN = genemit genoutput genrecog genextract genflags gencodes genconfig \
+GEN := genemit genoutput genrecog genextract genflags gencodes genconfig \
 genpeep gengenrtl gencheck genattr genattrtab genopinit
 
 
@@ -103,14 +103,14 @@ s-attr s-attrtab s-output s-genrtl s-check
 # That may or may not be what one wants to do.
 # If it is, rm *.o is an easy way to do it.
 # CONFIG_H = $(xm_file) $(tm_file)
-CONFIG_H =
-RTL_BASE_H = rtl.h rtl.def machmode.h machmode.def
-RTL_H = $(RTL_BASE_H) genrtl.h
-TREE_H = tree.h real.h tree.def machmode.h machmode.def tree-check.h
-BASIC_BLOCK_H = basic-block.h bitmap.h sbitmap.h
-RECOG_H = recog.h
-EXPR_H = expr.h insn-codes.h
-REGS_H = regs.h varray.h machmode.h machmode.def
+CONFIG_H :=
+RTL_BASE_H := rtl.h rtl.def machmode.h machmode.def
+RTL_H := $(RTL_BASE_H) genrtl.h
+TREE_H := tree.h real.h tree.def machmode.h machmode.def tree-check.h
+BASIC_BLOCK_H := basic-block.h bitmap.h sbitmap.h
+RECOG_H := recog.h
+EXPR_H := expr.h insn-codes.h
+REGS_H := regs.h varray.h machmode.h machmode.def
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<

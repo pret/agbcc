@@ -134,9 +134,9 @@ CFILES = argv.c asprintf.c atexit.c				\
 	make-temp-file.c md5.c mkstemps.c			\
 	objalloc.c obstack.c						\
 	partition.c 						\
-         physmem.c putenv.c						\
+         physmem.c 					\
 	random.c rename.c rindex.c				\
-	safe-ctype.c setenv.c setproctitle.c sha1.c sigsetmask.c        \
+	safe-ctype.c setproctitle.c sha1.c sigsetmask.c        \
 	 simple-object.c simple-object-elf.c	\
          sort.c						\
 	 spaces.c stack-limit.c 	\
@@ -193,9 +193,7 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	./getcwd.$(objext) ./getpagesize.$(objext)			\
 	./index.$(objext) ./insque.$(objext)				\
 	 ./mkstemps.$(objext)	\
-	 ./putenv.$(objext)						\
 	./random.$(objext) ./rename.$(objext) ./rindex.$(objext)	\
-	./setenv.$(objext) 						\
 	 ./setproctitle.$(objext)					\
 	 ./sigsetmask.$(objext)			\
 	 ./stpcpy.$(objext)	\
@@ -599,9 +597,6 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/physmem.c $(OUTPUT_OPTION)
 
-./putenv.$(objext): $(srcdir)/putenv.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/putenv.c $(OUTPUT_OPTION)
-
 ./random.$(objext): $(srcdir)/random.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/random.c $(OUTPUT_OPTION)
 
@@ -614,9 +609,6 @@ $(CONFIGURED_OFILES):
 ./safe-ctype.$(objext): $(srcdir)/safe-ctype.c $(INCDIR)/ansidecl.h \
 	$(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/safe-ctype.c $(OUTPUT_OPTION)
-
-./setenv.$(objext): $(srcdir)/setenv.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/setenv.c $(OUTPUT_OPTION)
 
 ./setproctitle.$(objext): $(srcdir)/setproctitle.c config.h $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/setproctitle.c $(OUTPUT_OPTION)
