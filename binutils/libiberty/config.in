@@ -30,9 +30,6 @@
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
-/* Define to 1 if you have the `clock' function. */
-#undef HAVE_CLOCK
-
 /* Define to 1 if you have the declaration of `asprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_ASPRINTF
@@ -128,9 +125,6 @@
 /* Define to 1 if you have the `pstat_getstatic' function. */
 #undef HAVE_PSTAT_GETSTATIC
 
-/* Define to 1 if you have the `putenv' function. */
-#undef HAVE_PUTENV
-
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
 
@@ -142,9 +136,6 @@
 
 /* Define to 1 if you have the `rindex' function. */
 #undef HAVE_RINDEX
-
-/* Define to 1 if you have the `setenv' function. */
-#undef HAVE_SETENV
 
 /* Define to 1 if you have the `setproctitle' function. */
 #undef HAVE_SETPROCTITLE

@@ -298,7 +298,7 @@ struct arm_segment_info_type
 # define tc_fix_adjustable(FIX) 		arm_fix_adjustable (FIX)
 
 /* Values passed to md_apply_fix don't include the symbol value.  */
-# define MD_APPLY_SYM_VALUE(FIX) 		arm_apply_sym_value (FIX, this_segment)
+# define MD_APPLY_SYM_VALUE(FIX) 		/*return */0
 
 
 #ifdef OBJ_COFF
@@ -333,7 +333,6 @@ extern void tc_arm_frame_initial_instructions (void);
 
 #define CONVERT_SYMBOLIC_ATTRIBUTE(name) arm_convert_symbolic_attribute (name)
 extern int arm_convert_symbolic_attribute (const char *);
-extern int arm_apply_sym_value (struct fix *, segT);
 
 #define tc_comment_chars arm_comment_chars
 extern char arm_comment_chars[];

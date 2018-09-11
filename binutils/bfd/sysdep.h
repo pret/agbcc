@@ -142,7 +142,7 @@ extern int fseeko64 (FILE *stream, off64_t offset, int whence);
 #endif
 
 #ifdef ENABLE_NLS
-# include <libintl.h>
+. include <libintl.h>
 /* Note the redefinition of gettext and ngettext here to use PACKAGE.
 
    This is because the code in this directory is used to build a

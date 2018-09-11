@@ -5,7 +5,16 @@ CHECK_PREFIX := @:
 PREFIX := $(shell realpath $(prefix))
 endif
 
-
+# The dash shell (/bin/sh on ubuntu) does not support $LINENO and messes up configure scripts.
+DASH_LINENO_CHECK := $(shell $(SHELL) -c 'echo $$LINENO')
+ifeq (,$(DASH_LINENO_CHECK))
+  ifneq (,$(shell command -v mksh))
+    override SHELL := $(shell command -v mksh)
+  else
+    override SHELL := $(shell command -v bash)
+  endif
+endif
+export SHELL := $(SHELL)
 MAKEFLAGS += --no-print-directory
 
 ifeq (Windows_NT,$(OS))
@@ -31,7 +40,7 @@ install: binutils old_gcc gcc libc libgcc
 	cp ginclude/* $(PREFIX)/tools/agbcc/include/
 	cp libgcc.a $(PREFIX)/tools/agbcc/lib/
 	cp libc.a $(PREFIX)/tools/agbcc/lib/
-	@$(MAKE) -C binutils install-strip prefix="$(PREFIX)/tools/binutils"
+	@$(MAKE) -C binutils install-strip SHELL="$(SHELL)" prefix="$(PREFIX)/tools/binutils"
 
 
 
@@ -58,13 +67,13 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && touch **/* && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && touch **/* && $(SHELL) ./configure SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
 
 binutils: binutils/Makefile
-	@$(MAKE) -C binutils
+	@$(MAKE) -C binutils SHELL="$(SHELL)"
 
 binutils_clean:
-	@[ ! -f binutils/Makefile ] || $(MAKE) -C binutils clean
+	@[ ! -f binutils/Makefile ] || $(MAKE) -C binutils clean SHELL="$(SHELL)"
 	find binutils -name "Makefile" -o -name "config.cache" -exec rm -rf {} \;
 
 libc.a: old_gcc binutils
