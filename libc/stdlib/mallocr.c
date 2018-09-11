@@ -350,6 +350,9 @@ extern void __malloc_unlock(struct _reent *);
 #define DEFINE_MALLOC_USABLE_SIZE
 #define DEFINE_MALLOPT
 
+#define STATIC static
+#else
+#define STATIC
 #endif
 
 /*
@@ -1524,7 +1527,7 @@ typedef struct malloc_chunk *mbinptr;
 #define IAV(i) bin_at(i), bin_at(i)
 
 #ifdef DEFINE_MALLOC
-static mbinptr av_[NAV * 2 + 2] = { 0, 0, IAV(0), IAV(1), IAV(2), IAV(3), IAV(4), IAV(5), IAV(6),
+STATIC mbinptr av_[NAV * 2 + 2] = { 0, 0, IAV(0), IAV(1), IAV(2), IAV(3), IAV(4), IAV(5), IAV(6),
     IAV(7), IAV(8), IAV(9), IAV(10), IAV(11), IAV(12), IAV(13), IAV(14), IAV(15), IAV(16), IAV(17),
     IAV(18), IAV(19), IAV(20), IAV(21), IAV(22), IAV(23), IAV(24), IAV(25), IAV(26), IAV(27),
     IAV(28), IAV(29), IAV(30), IAV(31), IAV(32), IAV(33), IAV(34), IAV(35), IAV(36), IAV(37),
@@ -1625,33 +1628,33 @@ extern mbinptr av_[NAV * 2 + 2];
 
 #ifdef DEFINE_MALLOC
 
-static unsigned long trim_threshold = DEFAULT_TRIM_THRESHOLD;
-static unsigned long top_pad = DEFAULT_TOP_PAD;
+STATIC unsigned long trim_threshold = DEFAULT_TRIM_THRESHOLD;
+STATIC unsigned long top_pad = DEFAULT_TOP_PAD;
 #if HAVE_MMAP
-static unsigned int n_mmaps_max = DEFAULT_MMAP_MAX;
-static unsigned long mmap_threshold = DEFAULT_MMAP_THRESHOLD;
+STATIC unsigned int n_mmaps_max = DEFAULT_MMAP_MAX;
+STATIC unsigned long mmap_threshold = DEFAULT_MMAP_THRESHOLD;
 #endif
 
 /* The first value returned from sbrk */
-static char *sbrk_base = (char *)(-1);
+STATIC char *sbrk_base = (char *)(-1);
 
 /* The maximum memory obtained from system via sbrk */
-static unsigned long max_sbrked_mem = 0;
+STATIC unsigned long max_sbrked_mem = 0;
 
 /* The maximum via either sbrk or mmap */
-static unsigned long max_total_mem = 0;
+STATIC unsigned long max_total_mem = 0;
 
 /* internal working copy of mallinfo */
-static struct mallinfo current_mallinfo = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+STATIC struct mallinfo current_mallinfo = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #if HAVE_MMAP
 
 /* Tracking mmaps */
 
-static unsigned int n_mmaps = 0;
-static unsigned int max_n_mmaps = 0;
-static unsigned long mmapped_mem = 0;
-static unsigned long max_mmapped_mem = 0;
+STATIC unsigned int n_mmaps = 0;
+STATIC unsigned int max_n_mmaps = 0;
+STATIC unsigned long mmapped_mem = 0;
+STATIC unsigned long max_mmapped_mem = 0;
 
 #endif
 
@@ -1939,7 +1942,7 @@ static mchunkptr mmap_chunk(size_t size)
 
 #ifdef DEFINE_FREE
 
-static void munmap_chunk(mchunkptr p)
+STATIC void munmap_chunk(mchunkptr p)
 {
     INTERNAL_SIZE_T size = chunksize(p);
     int ret;
@@ -3199,7 +3202,7 @@ size_t malloc_usable_size(struct _reent *reent_ptr, void *mem)
 
 /* Utility to update current_mallinfo for malloc_stats and mallinfo() */
 
-static void malloc_update_mallinfo()
+STATIC void malloc_update_mallinfo()
 {
     int i;
     mbinptr b;

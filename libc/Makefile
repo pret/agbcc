@@ -41,7 +41,7 @@ stdio/vfiprintf.o
 S_SRCS := arm/setjmp.s arm/trap.s
 S_OBJS := $(S_SRCS:%.s=%.o)
 
-OBJS := $(C_OBJS) $(S_OBJS) $(MALLOC_OBJS)
+OBJS := $(C_OBJS) $(MALLOC_OBJS) $(S_OBJS)
 
 all: libc.a
 	@:
@@ -57,7 +57,7 @@ PREPROCESS := $(CPP) $(CPPFLAGS)
 stdlib/mallocr.o: PREPROCESS += -DDEFINE_MALLOC
 stdlib/freer.o: PREPROCESS += -DDEFINE_FREE
 stdlib/reallocr.o: PREPROCESS += -DDEFINE_REALLOC
-stdlib/callocr.i: PREPROCESS += -DDEFINE_CALLOC
+stdlib/callocr.o: PREPROCESS += -DDEFINE_CALLOC
 stdlib/cfreer.o:  PREPROCESS += -DDEFINE_CFREE
 stdlib/malignr.o: PREPROCESS += -DDEFINE_MEMALIGN
 stdlib/vallocr.o: PREPROCESS += -DDEFINE_VALLOC
