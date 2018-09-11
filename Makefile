@@ -58,7 +58,7 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && touch **/* && $(SHELL) ./configure CONFIG_SHELL="$(SHELL)" SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
 
 binutils: binutils/Makefile
 	@$(MAKE) -C binutils
