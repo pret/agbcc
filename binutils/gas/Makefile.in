@@ -151,11 +151,10 @@ am_as_new_OBJECTS = $(am__objects_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 as_new_OBJECTS = $(am_as_new_OBJECTS)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = ../bfd/libbfd.a ../libiberty/libiberty.a
 am_itbl_test_OBJECTS = itbl-parse.$(OBJEXT) itbl-lex.$(OBJEXT)
 itbl_test_OBJECTS = $(am_itbl_test_OBJECTS)
 itbl_test_DEPENDENCIES = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ \
-	$(am__DEPENDENCIES_2)
+	$(GASLIBS)
 SCRIPTS = $(noinst_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -522,7 +521,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
 
 # How to link with both our special library facilities
 # and the system's installed libraries.
-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.a ../libiberty/libiberty.a
+GASLIBS = ../bfd/libbfd.a ../libiberty/libiberty.a
 
 # Files to be copied away after each stage in building.
 STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
@@ -542,9 +541,6 @@ RUNTEST = runtest
 RUNTESTFLAGS = 
 itbl_test_SOURCES = itbl-parse.c itbl-lex.c
 itbl_test_LDADD = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ $(GASLIBS) @LEXLIB@
-
-# CGEN interface.
-CGEN_CPU_PREFIX = @cgen_cpu_prefix@
 
 # Remake the info files.
 MOSTLYCLEANFILES = $(STAGESTUFF) core \
@@ -1080,11 +1076,6 @@ itbl-test.@OBJEXT@: $(srcdir)/testsuite/gas/all/itbl-test.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='itbl-test.c' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c -DSTAND_ALONE $(srcdir)/testsuite/gas/all/itbl-test.c
-
-cgen.@OBJEXT@: cgen.c cgen.h cgen-desc.h subsegs.h \
-	$(INCDIR)/obstack.h $(INCDIR)/opcode/cgen.h \
-	$(srcdir)/../opcodes/$(CGEN_CPU_PREFIX)-desc.h \
-	$(srcdir)/../opcodes/$(CGEN_CPU_PREFIX)-opc.h
 
 .PHONY: install-exec-local install-data-local
 .PHONY: install-exec-bindir install-exec-tooldir

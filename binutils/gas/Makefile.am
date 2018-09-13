@@ -190,7 +190,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
 # How to link with both our special library facilities
 # and the system's installed libraries.
 
-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.a ../libiberty/libiberty.a
+GASLIBS = ../bfd/libbfd.a ../libiberty/libiberty.a
 
 # Files to be copied away after each stage in building.
 STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
@@ -291,15 +291,6 @@ if AMDEP
 endif
 	$(COMPILE) -c -DSTAND_ALONE $(srcdir)/testsuite/gas/all/itbl-test.c
 endif
-
-# CGEN interface.
-
-CGEN_CPU_PREFIX = @cgen_cpu_prefix@
-
-cgen.@OBJEXT@: cgen.c cgen.h cgen-desc.h subsegs.h \
-	$(INCDIR)/obstack.h $(INCDIR)/opcode/cgen.h \
-	$(srcdir)/../opcodes/$(CGEN_CPU_PREFIX)-desc.h \
-	$(srcdir)/../opcodes/$(CGEN_CPU_PREFIX)-opc.h
 
 # Remake the info files.
 

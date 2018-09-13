@@ -137,9 +137,10 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libbfd_a_AR = $(AR) $(ARFLAGS)
 am__DEPENDENCIES_1 =
-am__objects_1 = archive.$(OBJEXT) archures.$(OBJEXT) bfd.$(OBJEXT) \
-	bfdio.$(OBJEXT) bfdwin.$(OBJEXT) cache.$(OBJEXT) \
-	compress.$(OBJEXT) corefile.$(OBJEXT) format.$(OBJEXT) \
+am__objects_1 = arm-dis.$(OBJEXT) archive.$(OBJEXT) archures.$(OBJEXT) \
+	bfd.$(OBJEXT) bfdio.$(OBJEXT) bfdwin.$(OBJEXT) cache.$(OBJEXT) \
+	compress.$(OBJEXT) corefile.$(OBJEXT) disassemble.$(OBJEXT) \
+	dis-buf.$(OBJEXT) dis-init.$(OBJEXT) format.$(OBJEXT) \
 	hash.$(OBJEXT) init.$(OBJEXT) libbfd.$(OBJEXT) \
 	linker.$(OBJEXT) merge.$(OBJEXT) opncls.$(OBJEXT) \
 	reloc.$(OBJEXT) section.$(OBJEXT) simple.$(OBJEXT) \
@@ -162,22 +163,23 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
-	./$(DEPDIR)/archures.Po ./$(DEPDIR)/bfd.Po \
-	./$(DEPDIR)/bfdio.Po ./$(DEPDIR)/bfdwin.Po \
+	./$(DEPDIR)/archures.Po ./$(DEPDIR)/arm-dis.Po \
+	./$(DEPDIR)/bfd.Po ./$(DEPDIR)/bfdio.Po ./$(DEPDIR)/bfdwin.Po \
 	./$(DEPDIR)/binary.Po ./$(DEPDIR)/cache.Po \
 	./$(DEPDIR)/compress.Po ./$(DEPDIR)/corefile.Po \
-	./$(DEPDIR)/cpu-arm.Po ./$(DEPDIR)/dwarf1.Po \
-	./$(DEPDIR)/dwarf2.Po ./$(DEPDIR)/elf-attrs.Po \
-	./$(DEPDIR)/elf-eh-frame.Po ./$(DEPDIR)/elf-properties.Po \
-	./$(DEPDIR)/elf-strtab.Po ./$(DEPDIR)/elf.Po \
-	./$(DEPDIR)/elf32-arm.Po ./$(DEPDIR)/elf32.Po \
-	./$(DEPDIR)/elflink.Po ./$(DEPDIR)/format.Po \
-	./$(DEPDIR)/hash.Po ./$(DEPDIR)/init.Po ./$(DEPDIR)/libbfd.Po \
-	./$(DEPDIR)/linker.Po ./$(DEPDIR)/merge.Po \
-	./$(DEPDIR)/opncls.Po ./$(DEPDIR)/reloc.Po \
-	./$(DEPDIR)/reloc16.Po ./$(DEPDIR)/section.Po \
-	./$(DEPDIR)/simple.Po ./$(DEPDIR)/syms.Po \
-	./$(DEPDIR)/targets.Po
+	./$(DEPDIR)/cpu-arm.Po ./$(DEPDIR)/dis-buf.Po \
+	./$(DEPDIR)/dis-init.Po ./$(DEPDIR)/disassemble.Po \
+	./$(DEPDIR)/dwarf1.Po ./$(DEPDIR)/dwarf2.Po \
+	./$(DEPDIR)/elf-attrs.Po ./$(DEPDIR)/elf-eh-frame.Po \
+	./$(DEPDIR)/elf-properties.Po ./$(DEPDIR)/elf-strtab.Po \
+	./$(DEPDIR)/elf.Po ./$(DEPDIR)/elf32-arm.Po \
+	./$(DEPDIR)/elf32.Po ./$(DEPDIR)/elflink.Po \
+	./$(DEPDIR)/format.Po ./$(DEPDIR)/hash.Po ./$(DEPDIR)/init.Po \
+	./$(DEPDIR)/libbfd.Po ./$(DEPDIR)/linker.Po \
+	./$(DEPDIR)/merge.Po ./$(DEPDIR)/opncls.Po \
+	./$(DEPDIR)/reloc.Po ./$(DEPDIR)/reloc16.Po \
+	./$(DEPDIR)/section.Po ./$(DEPDIR)/simple.Po \
+	./$(DEPDIR)/syms.Po ./$(DEPDIR)/targets.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -419,16 +421,18 @@ BFD_H = bfd.h
 # need two copies of the executable, one to download and one for the
 # debugger).
 BFD32_LIBS = \
-	archive.o archures.o bfd.o bfdio.o bfdwin.o \
-	cache.o compress.o corefile.o format.o hash.o \
+	arm-dis.o archive.o archures.o bfd.o bfdio.o bfdwin.o \
+	cache.o compress.o corefile.o disassemble.o \
+	dis-buf.o dis-init.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o syms.o targets.o \
 	binary.o
 
 BFD64_LIBS = archive64.o
 BFD32_LIBS_CFILES = \
-	archive.c archures.c bfd.c bfdio.c bfdwin.c \
-	cache.c  compress.c corefile.c format.c hash.c \
+	arm-dis.c archive.c archures.c bfd.c bfdio.c bfdwin.c \
+	cache.c  compress.c corefile.c disassemble.c \
+	dis-buf.c dis-init.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c syms.c targets.c \
 	binary.c
@@ -461,6 +465,7 @@ BFD32_BACKENDS = \
 	reloc16.o
 
 BFD32_BACKENDS_CFILES = \
+	arm-dis.c \
 	dwarf1.c \
 	dwarf2.c \
 	elf-attrs.c \
@@ -516,6 +521,7 @@ SOURCE_HFILES = \
 	elfcode.h elfcore.h \
 	genlink.h \
 	libbfd.h \
+	opintl.h \
 	version.h
 
 BUILD_HFILES = \
@@ -630,6 +636,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archures.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm-dis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfdio.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfdwin.Po@am__quote@ # am--include-marker
@@ -638,6 +645,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compress.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/corefile.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-arm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-buf.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dis-init.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disassemble.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarf2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf-attrs.Po@am__quote@ # am--include-marker
@@ -813,6 +823,7 @@ distclean: distclean-am
 		-rm -f ./$(DEPDIR)/archive.Po
 	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
+	-rm -f ./$(DEPDIR)/arm-dis.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
 	-rm -f ./$(DEPDIR)/bfdio.Po
 	-rm -f ./$(DEPDIR)/bfdwin.Po
@@ -821,6 +832,9 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/compress.Po
 	-rm -f ./$(DEPDIR)/corefile.Po
 	-rm -f ./$(DEPDIR)/cpu-arm.Po
+	-rm -f ./$(DEPDIR)/dis-buf.Po
+	-rm -f ./$(DEPDIR)/dis-init.Po
+	-rm -f ./$(DEPDIR)/disassemble.Po
 	-rm -f ./$(DEPDIR)/dwarf1.Po
 	-rm -f ./$(DEPDIR)/dwarf2.Po
 	-rm -f ./$(DEPDIR)/elf-attrs.Po
@@ -894,6 +908,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/archive.Po
 	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
+	-rm -f ./$(DEPDIR)/arm-dis.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
 	-rm -f ./$(DEPDIR)/bfdio.Po
 	-rm -f ./$(DEPDIR)/bfdwin.Po
@@ -902,6 +917,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/compress.Po
 	-rm -f ./$(DEPDIR)/corefile.Po
 	-rm -f ./$(DEPDIR)/cpu-arm.Po
+	-rm -f ./$(DEPDIR)/dis-buf.Po
+	-rm -f ./$(DEPDIR)/dis-init.Po
+	-rm -f ./$(DEPDIR)/disassemble.Po
 	-rm -f ./$(DEPDIR)/dwarf1.Po
 	-rm -f ./$(DEPDIR)/dwarf2.Po
 	-rm -f ./$(DEPDIR)/elf-attrs.Po

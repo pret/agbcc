@@ -30,7 +30,6 @@ build_modules= { module= libcpp;
                  extra_configure_flags='--disable-nls am_cv_func_iconv=no';};
 
 host_modules= { module= bfd; bootstrap=true; };
-host_modules= { module= opcodes; bootstrap=true; };
 host_modules= { module= binutils; bootstrap=true; };
 host_modules= { module= etc; };
 host_modules= { module= fixincludes; bootstrap=true;
@@ -155,38 +154,23 @@ dependencies = { module=all-utils; on=all-libiberty; };
 // Host modules specific to binutils.
 dependencies = { module=configure-bfd; on=configure-libiberty; hard=true; };
 dependencies = { module=all-bfd; on=all-libiberty; };
-dependencies = { module=configure-opcodes; on=configure-libiberty; hard=true; };
-dependencies = { module=all-opcodes; on=all-libiberty; };
 
 // We must build gas before binutils, gprof, ld and gold to avoid race
 // condition in the prev-gcc/as script during bootstrap of combined tree
 // with GCC and binutils.  See PR gas/14899 for details.
 dependencies = { module=all-binutils; on=all-libiberty; };
-dependencies = { module=all-binutils; on=all-opcodes; };
 dependencies = { module=all-binutils; on=all-bfd; };
 dependencies = { module=all-binutils; on=all-gas; };
 
-// We put install-opcodes before install-binutils because the installed
-// binutils might be on PATH, and they might need the shared opcodes
-// library.
-dependencies = { module=install-binutils; on=install-opcodes; };
-dependencies = { module=install-strip-binutils; on=install-strip-opcodes; };
-
-// libopcodes depends on libbfd
-dependencies = { module=install-opcodes; on=install-bfd; };
-dependencies = { module=install-strip-opcodes; on=install-strip-bfd; };
+// dependencies = { module=install-binutils; };
+// dependencies = { module=install-strip-binutils; };
 
 dependencies = { module=all-gas; on=all-libiberty; };
-dependencies = { module=all-gas; on=all-opcodes; };
 dependencies = { module=all-gas; on=all-bfd; };
 dependencies = { module=all-ld; on=all-libiberty; };
 dependencies = { module=all-ld; on=all-bfd; };
-dependencies = { module=all-ld; on=all-opcodes; };
 dependencies = { module=all-ld; on=all-gas; };
 dependencies = { module=all-ld; on=all-binutils; };
-
-dependencies = { module=all-opcodes; on=all-bfd; };
-dependencies = { module=all-opcodes; on=all-libiberty; };
 
 // Other host modules in the 'src' repository.
 

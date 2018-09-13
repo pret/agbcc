@@ -132,7 +132,7 @@ build_tools="build-m4"
 
 # these libraries are used by various programs built for the host environment
 #f
-host_libs="libiberty opcodes bfd libcpp  libelf"
+host_libs="libiberty bfd libcpp  libelf"
 
 # these tools are built for the host environment
 # Note, the powerpc-eabi build depends on sim occurring before gdb in order to

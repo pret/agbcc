@@ -636,11 +636,19 @@ TARGET_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_TARGET_FLAGS)
 # The BUILD_* variables are a special case, which are used for the gcc
 # cross-building scheme.
 .PHONY: configure-host
-configure-host: # \
-#   maybe-configure-
+configure-host:  \
+    maybe-configure-bfd \
+    maybe-configure-binutils \
+    maybe-configure-etc \
+    maybe-configure-fixincludes \
+    maybe-configure-gas \
+    maybe-configure-ld \
+    maybe-configure-libcpp \
+    maybe-configure-libiberty \
+    maybe-configure-libiberty-linker-plugin \
+    maybe-configure-m4
 .PHONY: configure-target
-configure-target: # \
-#    maybe-configure-target-
+configure-target: 
 
 # The target built for a native non-bootstrap build.
 .PHONY: all
@@ -662,9 +670,6 @@ all-build: maybe-all-build-libcpp
 @if bfd-no-bootstrap
 all-host: maybe-all-bfd
 @endif bfd-no-bootstrap
-@if opcodes-no-bootstrap
-all-host: maybe-all-opcodes
-@endif opcodes-no-bootstrap
 @if binutils-no-bootstrap
 all-host: maybe-all-binutils
 @endif binutils-no-bootstrap
@@ -709,7 +714,6 @@ do-mostlyclean:
 .PHONY: mostlyclean-host
 
 mostlyclean-host: maybe-mostlyclean-bfd
-mostlyclean-host: maybe-mostlyclean-opcodes
 mostlyclean-host: maybe-mostlyclean-binutils
 mostlyclean-host: maybe-mostlyclean-etc
 mostlyclean-host: maybe-mostlyclean-fixincludes
@@ -735,7 +739,6 @@ do-clean:
 .PHONY: clean-host
 
 clean-host: maybe-clean-bfd
-clean-host: maybe-clean-opcodes
 clean-host: maybe-clean-binutils
 clean-host: maybe-clean-etc
 clean-host: maybe-clean-fixincludes
@@ -761,7 +764,6 @@ do-distclean:
 .PHONY: distclean-host
 
 distclean-host: maybe-distclean-bfd
-distclean-host: maybe-distclean-opcodes
 distclean-host: maybe-distclean-binutils
 distclean-host: maybe-distclean-etc
 distclean-host: maybe-distclean-fixincludes
@@ -787,7 +789,6 @@ do-maintainer-clean:
 .PHONY: maintainer-clean-host
 
 maintainer-clean-host: maybe-maintainer-clean-bfd
-maintainer-clean-host: maybe-maintainer-clean-opcodes
 maintainer-clean-host: maybe-maintainer-clean-binutils
 maintainer-clean-host: maybe-maintainer-clean-etc
 maintainer-clean-host: maybe-maintainer-clean-fixincludes
@@ -868,7 +869,6 @@ check: do-check
 .PHONY: check-host
 check-host:  \
     maybe-check-bfd \
-    maybe-check-opcodes \
     maybe-check-binutils \
     maybe-check-etc \
     maybe-check-fixincludes \
@@ -942,7 +942,6 @@ install:
 .PHONY: install-host-nogcc
 install-host-nogcc:  \
     maybe-install-bfd \
-    maybe-install-opcodes \
     maybe-install-binutils \
     maybe-install-etc \
     maybe-install-fixincludes \
@@ -956,7 +955,6 @@ install-host-nogcc:  \
 .PHONY: install-host
 install-host:  \
     maybe-install-bfd \
-    maybe-install-opcodes \
     maybe-install-binutils \
     maybe-install-etc \
     maybe-install-fixincludes \
@@ -1002,7 +1000,6 @@ install-strip:
 .PHONY: install-strip-host
 install-strip-host:  \
     maybe-install-strip-bfd \
-    maybe-install-strip-opcodes \
     maybe-install-strip-binutils \
     maybe-install-strip-etc \
     maybe-install-strip-fixincludes \
@@ -1057,13 +1054,39 @@ TAGS: do-TAGS
 
 # --------------------------------------
 # Modules which run on the build machine
-
-#[#+ configure prefix="build-" subdir="$(BUILD_SUBDIR)" exports="$(BUILD_EXPORTS)"
-#	     host_alias=(get "host" "${build_alias}")
-#	     target_alias=(get "target" "${target_alias}")
-#	     args="$(BUILD_CONFIGARGS)" no-config-site=true +]
-
 # --------------------------------------
+
+
+.PHONY: configure-build-libiberty maybe-configure-build-libiberty
+maybe-configure-build-libiberty:
+@if build-libiberty
+maybe-configure-build-libiberty: configure-build-libiberty
+configure-build-libiberty: 
+	@: $(MAKE); $(unstage)
+	@r=`${PWD_COMMAND}`; export r; \
+	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+	test ! -f $(BUILD_SUBDIR)/libiberty/Makefile || exit 0; \
+	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/libiberty; \
+	$(BUILD_EXPORTS)  \
+	echo Configuring in $(BUILD_SUBDIR)/libiberty; \
+	cd "$(BUILD_SUBDIR)/libiberty" || exit 1; \
+	case $(srcdir) in \
+	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
+	  *) topdir=`echo $(BUILD_SUBDIR)/libiberty/ | \
+		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
+	esac; \
+	module_srcdir=libiberty; \
+	rm -f no-such-file || : ; \
+	CONFIG_SITE=no-such-file $(SHELL) \
+	  $$s/$$module_srcdir/configure \
+	  --srcdir=$${topdir}/$$module_srcdir \
+	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
+	  --target=${target_alias}  \
+	  || exit 1
+@endif build-libiberty
+
+
+
 
 
 .PHONY: all-build-libiberty maybe-all-build-libiberty
@@ -1085,6 +1108,38 @@ all-build-libiberty: configure-build-libiberty
 
 
 
+.PHONY: configure-build-m4 maybe-configure-build-m4
+maybe-configure-build-m4:
+@if build-m4
+maybe-configure-build-m4: configure-build-m4
+configure-build-m4: 
+	@: $(MAKE); $(unstage)
+	@r=`${PWD_COMMAND}`; export r; \
+	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+	test ! -f $(BUILD_SUBDIR)/m4/Makefile || exit 0; \
+	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/m4; \
+	$(BUILD_EXPORTS)  \
+	echo Configuring in $(BUILD_SUBDIR)/m4; \
+	cd "$(BUILD_SUBDIR)/m4" || exit 1; \
+	case $(srcdir) in \
+	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
+	  *) topdir=`echo $(BUILD_SUBDIR)/m4/ | \
+		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
+	esac; \
+	module_srcdir=m4; \
+	rm -f no-such-file || : ; \
+	CONFIG_SITE=no-such-file $(SHELL) \
+	  $$s/$$module_srcdir/configure \
+	  --srcdir=$${topdir}/$$module_srcdir \
+	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
+	  --target=${target_alias}  \
+	  || exit 1
+@endif build-m4
+
+
+
+
+
 .PHONY: all-build-m4 maybe-all-build-m4
 maybe-all-build-m4:
 @if build-m4
@@ -1099,6 +1154,38 @@ all-build-m4: configure-build-m4
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_BUILD_FLAGS)   \
 		$(TARGET-build-m4))
 @endif build-m4
+
+
+
+
+
+.PHONY: configure-build-libcpp maybe-configure-build-libcpp
+maybe-configure-build-libcpp:
+@if build-libcpp
+maybe-configure-build-libcpp: configure-build-libcpp
+configure-build-libcpp: 
+	@: $(MAKE); $(unstage)
+	@r=`${PWD_COMMAND}`; export r; \
+	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+	test ! -f $(BUILD_SUBDIR)/libcpp/Makefile || exit 0; \
+	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/libcpp; \
+	$(BUILD_EXPORTS)  \
+	echo Configuring in $(BUILD_SUBDIR)/libcpp; \
+	cd "$(BUILD_SUBDIR)/libcpp" || exit 1; \
+	case $(srcdir) in \
+	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
+	  *) topdir=`echo $(BUILD_SUBDIR)/libcpp/ | \
+		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
+	esac; \
+	module_srcdir=libcpp; \
+	rm -f no-such-file || : ; \
+	CONFIG_SITE=no-such-file $(SHELL) \
+	  $$s/$$module_srcdir/configure \
+	  --srcdir=$${topdir}/$$module_srcdir \
+	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
+	  --target=${target_alias} --disable-nls am_cv_func_iconv=no \
+	  || exit 1
+@endif build-libcpp
 
 
 
@@ -1773,654 +1860,6 @@ maintainer-clean-bfd:
 	  || exit 1
 
 @endif bfd
-
-
-
-.PHONY: configure-opcodes maybe-configure-opcodes
-maybe-configure-opcodes:
-@if opcodes
-maybe-configure-opcodes: configure-opcodes
-configure-opcodes: 
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	$(HOST_EXPORTS)  \
-	echo Configuring in $(HOST_SUBDIR)/opcodes; \
-	cd "$(HOST_SUBDIR)/opcodes" || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) \
-	  $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias}  \
-	  || exit 1
-@endif opcodes
-
-
-
-.PHONY: configure-stage1-opcodes maybe-configure-stage1-opcodes
-maybe-configure-stage1-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stage1-opcodes: configure-stage1-opcodes
-configure-stage1-opcodes:
-	@[ $(current_stage) = stage1 ] || $(MAKE) stage1-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE1_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGE1_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage 1 in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	   \
-	  $(STAGE1_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-.PHONY: configure-stage2-opcodes maybe-configure-stage2-opcodes
-maybe-configure-stage2-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stage2-opcodes: configure-stage2-opcodes
-configure-stage2-opcodes:
-	@[ $(current_stage) = stage2 ] || $(MAKE) stage2-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE2_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-		$(POSTSTAGE1_HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGE2_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage 2 in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	  --with-build-libsubdir=$(HOST_SUBDIR) \
-	  $(STAGE2_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-.PHONY: configure-stage3-opcodes maybe-configure-stage3-opcodes
-maybe-configure-stage3-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stage3-opcodes: configure-stage3-opcodes
-configure-stage3-opcodes:
-	@[ $(current_stage) = stage3 ] || $(MAKE) stage3-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE3_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-		$(POSTSTAGE1_HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGE3_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage 3 in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	  --with-build-libsubdir=$(HOST_SUBDIR) \
-	  $(STAGE3_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-.PHONY: configure-stage4-opcodes maybe-configure-stage4-opcodes
-maybe-configure-stage4-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stage4-opcodes: configure-stage4-opcodes
-configure-stage4-opcodes:
-	@[ $(current_stage) = stage4 ] || $(MAKE) stage4-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE4_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-		$(POSTSTAGE1_HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGE4_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage 4 in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	  --with-build-libsubdir=$(HOST_SUBDIR) \
-	  $(STAGE4_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-.PHONY: configure-stageprofile-opcodes maybe-configure-stageprofile-opcodes
-maybe-configure-stageprofile-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stageprofile-opcodes: configure-stageprofile-opcodes
-configure-stageprofile-opcodes:
-	@[ $(current_stage) = stageprofile ] || $(MAKE) stageprofile-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEprofile_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-		$(POSTSTAGE1_HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGEprofile_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage profile in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	  --with-build-libsubdir=$(HOST_SUBDIR) \
-	  $(STAGEprofile_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-.PHONY: configure-stagefeedback-opcodes maybe-configure-stagefeedback-opcodes
-maybe-configure-stagefeedback-opcodes:
-@if opcodes-bootstrap
-maybe-configure-stagefeedback-opcodes: configure-stagefeedback-opcodes
-configure-stagefeedback-opcodes:
-	@[ $(current_stage) = stagefeedback ] || $(MAKE) stagefeedback-start
-	@$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
-	test ! -f $(HOST_SUBDIR)/opcodes/Makefile || exit 0; \
-	$(HOST_EXPORTS) \
-		$(POSTSTAGE1_HOST_EXPORTS) \
-	CFLAGS="$(CFLAGS_FOR_TARGET)"; export CFLAGS; \
-	LIBCFLAGS="$(LIBCFLAGS_FOR_TARGET)"; export LIBCFLAGS;\
-	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)" export LIBCFLAGS; \
-	  \
-	echo Configuring stage feedback in $(HOST_SUBDIR)/opcodes; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/opcodes; \
-	cd $(HOST_SUBDIR)/opcodes || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/opcodes/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=opcodes; \
-	$(SHELL) $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias} \
-	  --with-build-libsubdir=$(HOST_SUBDIR) \
-	  $(STAGEfeedback_CONFIGURE_FLAGS)
-@endif opcodes-bootstrap
-
-
-
-
-
-.PHONY: all-opcodes maybe-all-opcodes
-maybe-all-opcodes:
-@if opcodes
-TARGET-opcodes=all
-maybe-all-opcodes: all-opcodes
-all-opcodes: configure-opcodes
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS)  \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS)  \
-		$(TARGET-opcodes))
-@endif opcodes
-
-
-
-.PHONY: all-stage1-opcodes maybe-all-stage1-opcodes
-.PHONY: clean-stage1-opcodes maybe-clean-stage1-opcodes
-maybe-all-stage1-opcodes:
-maybe-clean-stage1-opcodes:
-@if opcodes-bootstrap
-maybe-all-stage1-opcodes: all-stage1-opcodes
-all-stage1: all-stage1-opcodes
-TARGET-stage1-opcodes = $(TARGET-opcodes)
-all-stage1-opcodes: configure-stage1-opcodes
-	@[ $(current_stage) = stage1 ] || $(MAKE) stage1-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE1_TFLAGS)"; \
-	$(HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGE1_CFLAGS)" \
-		LIBCFLAGS="$(STAGE1_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS)  \
-		$(STAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGE1_TFLAGS)"  \
-		$(TARGET-stage1-opcodes)
-
-maybe-clean-stage1-opcodes: clean-stage1-opcodes
-clean-stage1: clean-stage1-opcodes
-clean-stage1-opcodes:
-	@if [ $(current_stage) = stage1 ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stage1-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stage1-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS)  \
-	$(STAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-.PHONY: all-stage2-opcodes maybe-all-stage2-opcodes
-.PHONY: clean-stage2-opcodes maybe-clean-stage2-opcodes
-maybe-all-stage2-opcodes:
-maybe-clean-stage2-opcodes:
-@if opcodes-bootstrap
-maybe-all-stage2-opcodes: all-stage2-opcodes
-all-stage2: all-stage2-opcodes
-TARGET-stage2-opcodes = $(TARGET-opcodes)
-all-stage2-opcodes: configure-stage2-opcodes
-	@[ $(current_stage) = stage2 ] || $(MAKE) stage2-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE2_TFLAGS)"; \
-	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGE2_CFLAGS)" \
-		LIBCFLAGS="$(STAGE2_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGE2_TFLAGS)"  \
-		$(TARGET-stage2-opcodes)
-
-maybe-clean-stage2-opcodes: clean-stage2-opcodes
-clean-stage2: clean-stage2-opcodes
-clean-stage2-opcodes:
-	@if [ $(current_stage) = stage2 ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stage2-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stage2-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-.PHONY: all-stage3-opcodes maybe-all-stage3-opcodes
-.PHONY: clean-stage3-opcodes maybe-clean-stage3-opcodes
-maybe-all-stage3-opcodes:
-maybe-clean-stage3-opcodes:
-@if opcodes-bootstrap
-maybe-all-stage3-opcodes: all-stage3-opcodes
-all-stage3: all-stage3-opcodes
-TARGET-stage3-opcodes = $(TARGET-opcodes)
-all-stage3-opcodes: configure-stage3-opcodes
-	@[ $(current_stage) = stage3 ] || $(MAKE) stage3-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE3_TFLAGS)"; \
-	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGE3_CFLAGS)" \
-		LIBCFLAGS="$(STAGE3_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGE3_TFLAGS)"  \
-		$(TARGET-stage3-opcodes)
-
-maybe-clean-stage3-opcodes: clean-stage3-opcodes
-clean-stage3: clean-stage3-opcodes
-clean-stage3-opcodes:
-	@if [ $(current_stage) = stage3 ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stage3-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stage3-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-.PHONY: all-stage4-opcodes maybe-all-stage4-opcodes
-.PHONY: clean-stage4-opcodes maybe-clean-stage4-opcodes
-maybe-all-stage4-opcodes:
-maybe-clean-stage4-opcodes:
-@if opcodes-bootstrap
-maybe-all-stage4-opcodes: all-stage4-opcodes
-all-stage4: all-stage4-opcodes
-TARGET-stage4-opcodes = $(TARGET-opcodes)
-all-stage4-opcodes: configure-stage4-opcodes
-	@[ $(current_stage) = stage4 ] || $(MAKE) stage4-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGE4_TFLAGS)"; \
-	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGE4_CFLAGS)" \
-		LIBCFLAGS="$(STAGE4_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGE4_TFLAGS)"  \
-		$(TARGET-stage4-opcodes)
-
-maybe-clean-stage4-opcodes: clean-stage4-opcodes
-clean-stage4: clean-stage4-opcodes
-clean-stage4-opcodes:
-	@if [ $(current_stage) = stage4 ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stage4-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stage4-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-.PHONY: all-stageprofile-opcodes maybe-all-stageprofile-opcodes
-.PHONY: clean-stageprofile-opcodes maybe-clean-stageprofile-opcodes
-maybe-all-stageprofile-opcodes:
-maybe-clean-stageprofile-opcodes:
-@if opcodes-bootstrap
-maybe-all-stageprofile-opcodes: all-stageprofile-opcodes
-all-stageprofile: all-stageprofile-opcodes
-TARGET-stageprofile-opcodes = $(TARGET-opcodes)
-all-stageprofile-opcodes: configure-stageprofile-opcodes
-	@[ $(current_stage) = stageprofile ] || $(MAKE) stageprofile-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEprofile_TFLAGS)"; \
-	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGEprofile_CFLAGS)" \
-		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGEprofile_TFLAGS)"  \
-		$(TARGET-stageprofile-opcodes)
-
-maybe-clean-stageprofile-opcodes: clean-stageprofile-opcodes
-clean-stageprofile: clean-stageprofile-opcodes
-clean-stageprofile-opcodes:
-	@if [ $(current_stage) = stageprofile ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stageprofile-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stageprofile-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-.PHONY: all-stagefeedback-opcodes maybe-all-stagefeedback-opcodes
-.PHONY: clean-stagefeedback-opcodes maybe-clean-stagefeedback-opcodes
-maybe-all-stagefeedback-opcodes:
-maybe-clean-stagefeedback-opcodes:
-@if opcodes-bootstrap
-maybe-all-stagefeedback-opcodes: all-stagefeedback-opcodes
-all-stagefeedback: all-stagefeedback-opcodes
-TARGET-stagefeedback-opcodes = $(TARGET-opcodes)
-all-stagefeedback-opcodes: configure-stagefeedback-opcodes
-	@[ $(current_stage) = stagefeedback ] || $(MAKE) stagefeedback-start
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	TFLAGS="$(STAGEfeedback_TFLAGS)"; \
-	$(HOST_EXPORTS) \
-	$(POSTSTAGE1_HOST_EXPORTS)  \
-	cd $(HOST_SUBDIR)/opcodes && \
-	 \
-	$(MAKE) $(BASE_FLAGS_TO_PASS) \
-		CFLAGS="$(STAGEfeedback_CFLAGS)" \
-		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
-		LIBCFLAGS="$(LIBCFLAGS)" \
-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
-		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
-		$(TARGET-stagefeedback-opcodes)
-
-maybe-clean-stagefeedback-opcodes: clean-stagefeedback-opcodes
-clean-stagefeedback: clean-stagefeedback-opcodes
-clean-stagefeedback-opcodes:
-	@if [ $(current_stage) = stagefeedback ]; then \
-	  [ -f $(HOST_SUBDIR)/opcodes/Makefile ] || exit 0; \
-	else \
-	  [ -f $(HOST_SUBDIR)/stagefeedback-opcodes/Makefile ] || exit 0; \
-	  $(MAKE) stagefeedback-start; \
-	fi; \
-	cd $(HOST_SUBDIR)/opcodes && \
-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  clean
-@endif opcodes-bootstrap
-
-
-
-
-
-.PHONY: check-opcodes maybe-check-opcodes
-maybe-check-opcodes:
-@if opcodes
-maybe-check-opcodes: check-opcodes
-
-check-opcodes:
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) $(EXTRA_HOST_EXPORTS) \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(FLAGS_TO_PASS)  $(EXTRA_BOOTSTRAP_FLAGS) check)
-
-@endif opcodes
-
-.PHONY: install-opcodes maybe-install-opcodes
-maybe-install-opcodes:
-@if opcodes
-maybe-install-opcodes: install-opcodes
-
-install-opcodes: installdirs
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(FLAGS_TO_PASS)  install)
-
-@endif opcodes
-
-.PHONY: install-strip-opcodes maybe-install-strip-opcodes
-maybe-install-strip-opcodes:
-@if opcodes
-maybe-install-strip-opcodes: install-strip-opcodes
-
-install-strip-opcodes: installdirs
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(FLAGS_TO_PASS)  install-strip)
-
-@endif opcodes
-
-# Other targets (info, dvi, pdf, etc.)
-
-.PHONY: maybe-mostlyclean-opcodes mostlyclean-opcodes
-maybe-mostlyclean-opcodes:
-@if opcodes
-maybe-mostlyclean-opcodes: mostlyclean-opcodes
-
-mostlyclean-opcodes: 
-	@[ -f ./opcodes/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing mostlyclean in opcodes"; \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          mostlyclean) \
-	  || exit 1
-
-@endif opcodes
-
-.PHONY: maybe-clean-opcodes clean-opcodes
-maybe-clean-opcodes:
-@if opcodes
-maybe-clean-opcodes: clean-opcodes
-
-clean-opcodes: 
-	@[ -f ./opcodes/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing clean in opcodes"; \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          clean) \
-	  || exit 1
-
-@endif opcodes
-
-.PHONY: maybe-distclean-opcodes distclean-opcodes
-maybe-distclean-opcodes:
-@if opcodes
-maybe-distclean-opcodes: distclean-opcodes
-
-distclean-opcodes: 
-	@[ -f ./opcodes/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing distclean in opcodes"; \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          distclean) \
-	  || exit 1
-
-@endif opcodes
-
-.PHONY: maybe-maintainer-clean-opcodes maintainer-clean-opcodes
-maybe-maintainer-clean-opcodes:
-@if opcodes
-maybe-maintainer-clean-opcodes: maintainer-clean-opcodes
-
-maintainer-clean-opcodes: 
-	@[ -f ./opcodes/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing maintainer-clean in opcodes"; \
-	(cd $(HOST_SUBDIR)/opcodes && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          maintainer-clean) \
-	  || exit 1
-
-@endif opcodes
 
 
 
@@ -7422,11 +6861,6 @@ stage1-start::
 	  mkdir stage1-bfd; \
 	mv stage1-bfd bfd
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stage1-opcodes ] || \
-	  mkdir stage1-opcodes; \
-	mv stage1-opcodes opcodes
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stage1-binutils ] || \
 	  mkdir stage1-binutils; \
@@ -7472,11 +6906,6 @@ stage1-end::
 	  cd $(HOST_SUBDIR); mv bfd stage1-bfd; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stage1-opcodes; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stage1-binutils; \
@@ -7551,12 +6980,6 @@ stage2-start::
 	mv stage2-bfd bfd; \
 	mv stage1-bfd prev-bfd || test -f stage1-lean 
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stage2-opcodes ] || \
-	  mkdir stage2-opcodes; \
-	mv stage2-opcodes opcodes; \
-	mv stage1-opcodes prev-opcodes || test -f stage1-lean 
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stage2-binutils ] || \
 	  mkdir stage2-binutils; \
@@ -7611,12 +7034,6 @@ stage2-end::
 	  mv prev-bfd stage1-bfd; : ; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stage2-opcodes; \
-	  mv prev-opcodes stage1-opcodes; : ; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stage2-binutils; \
@@ -7699,12 +7116,6 @@ stage3-start::
 	mv stage3-bfd bfd; \
 	mv stage2-bfd prev-bfd || test -f stage2-lean 
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stage3-opcodes ] || \
-	  mkdir stage3-opcodes; \
-	mv stage3-opcodes opcodes; \
-	mv stage2-opcodes prev-opcodes || test -f stage2-lean 
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stage3-binutils ] || \
 	  mkdir stage3-binutils; \
@@ -7759,12 +7170,6 @@ stage3-end::
 	  mv prev-bfd stage2-bfd; : ; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stage3-opcodes; \
-	  mv prev-opcodes stage2-opcodes; : ; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stage3-binutils; \
@@ -7852,12 +7257,6 @@ stage4-start::
 	mv stage4-bfd bfd; \
 	mv stage3-bfd prev-bfd || test -f stage3-lean 
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stage4-opcodes ] || \
-	  mkdir stage4-opcodes; \
-	mv stage4-opcodes opcodes; \
-	mv stage3-opcodes prev-opcodes || test -f stage3-lean 
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stage4-binutils ] || \
 	  mkdir stage4-binutils; \
@@ -7912,12 +7311,6 @@ stage4-end::
 	  mv prev-bfd stage3-bfd; : ; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stage4-opcodes; \
-	  mv prev-opcodes stage3-opcodes; : ; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stage4-binutils; \
@@ -8005,12 +7398,6 @@ stageprofile-start::
 	mv stageprofile-bfd bfd; \
 	mv stage1-bfd prev-bfd || test -f stage1-lean 
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stageprofile-opcodes ] || \
-	  mkdir stageprofile-opcodes; \
-	mv stageprofile-opcodes opcodes; \
-	mv stage1-opcodes prev-opcodes || test -f stage1-lean 
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stageprofile-binutils ] || \
 	  mkdir stageprofile-binutils; \
@@ -8065,12 +7452,6 @@ stageprofile-end::
 	  mv prev-bfd stage1-bfd; : ; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stageprofile-opcodes; \
-	  mv prev-opcodes stage1-opcodes; : ; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stageprofile-binutils; \
@@ -8153,12 +7534,6 @@ stagefeedback-start::
 	mv stagefeedback-bfd bfd; \
 	mv stageprofile-bfd prev-bfd || test -f stageprofile-lean 
 @endif bfd
-@if opcodes
-	@cd $(HOST_SUBDIR); [ -d stagefeedback-opcodes ] || \
-	  mkdir stagefeedback-opcodes; \
-	mv stagefeedback-opcodes opcodes; \
-	mv stageprofile-opcodes prev-opcodes || test -f stageprofile-lean 
-@endif opcodes
 @if binutils
 	@cd $(HOST_SUBDIR); [ -d stagefeedback-binutils ] || \
 	  mkdir stagefeedback-binutils; \
@@ -8213,12 +7588,6 @@ stagefeedback-end::
 	  mv prev-bfd stageprofile-bfd; : ; \
 	fi
 @endif bfd
-@if opcodes
-	@if test -d $(HOST_SUBDIR)/opcodes; then \
-	  cd $(HOST_SUBDIR); mv opcodes stagefeedback-opcodes; \
-	  mv prev-opcodes stageprofile-opcodes; : ; \
-	fi
-@endif opcodes
 @if binutils
 	@if test -d $(HOST_SUBDIR)/binutils; then \
 	  cd $(HOST_SUBDIR); mv binutils stagefeedback-binutils; \
@@ -8329,6 +7698,14 @@ stagefeedback-start::
 # a hash table.
 all-build-libiberty: maybe-all-build-texinfo
 all-build-libcpp: maybe-all-build-libiberty
+configure-libcpp: configure-libiberty
+
+configure-stage1-libcpp: configure-stage1-libiberty
+configure-stage2-libcpp: configure-stage2-libiberty
+configure-stage3-libcpp: configure-stage3-libiberty
+configure-stage4-libcpp: configure-stage4-libiberty
+configure-stageprofile-libcpp: configure-stageprofile-libiberty
+configure-stagefeedback-libcpp: configure-stagefeedback-libiberty
 all-libcpp: all-libiberty
 
 all-stage1-libcpp: all-stage1-libiberty
@@ -8346,6 +7723,14 @@ all-stage4-fixincludes: maybe-all-stage4-libiberty
 all-stageprofile-fixincludes: maybe-all-stageprofile-libiberty
 all-stagefeedback-fixincludes: maybe-all-stagefeedback-libiberty
 all-utils: maybe-all-libiberty
+configure-bfd: configure-libiberty
+
+configure-stage1-bfd: configure-stage1-libiberty
+configure-stage2-bfd: configure-stage2-libiberty
+configure-stage3-bfd: configure-stage3-libiberty
+configure-stage4-bfd: configure-stage4-libiberty
+configure-stageprofile-bfd: configure-stageprofile-libiberty
+configure-stagefeedback-bfd: configure-stagefeedback-libiberty
 all-bfd: maybe-all-libiberty
 
 all-stage1-bfd: maybe-all-stage1-libiberty
@@ -8354,14 +7739,6 @@ all-stage3-bfd: maybe-all-stage3-libiberty
 all-stage4-bfd: maybe-all-stage4-libiberty
 all-stageprofile-bfd: maybe-all-stageprofile-libiberty
 all-stagefeedback-bfd: maybe-all-stagefeedback-libiberty
-all-opcodes: maybe-all-libiberty
-
-all-stage1-opcodes: maybe-all-stage1-libiberty
-all-stage2-opcodes: maybe-all-stage2-libiberty
-all-stage3-opcodes: maybe-all-stage3-libiberty
-all-stage4-opcodes: maybe-all-stage4-libiberty
-all-stageprofile-opcodes: maybe-all-stageprofile-libiberty
-all-stagefeedback-opcodes: maybe-all-stagefeedback-libiberty
 all-binutils: maybe-all-libiberty
 
 all-stage1-binutils: maybe-all-stage1-libiberty
@@ -8370,14 +7747,6 @@ all-stage3-binutils: maybe-all-stage3-libiberty
 all-stage4-binutils: maybe-all-stage4-libiberty
 all-stageprofile-binutils: maybe-all-stageprofile-libiberty
 all-stagefeedback-binutils: maybe-all-stagefeedback-libiberty
-all-binutils: maybe-all-opcodes
-
-all-stage1-binutils: maybe-all-stage1-opcodes
-all-stage2-binutils: maybe-all-stage2-opcodes
-all-stage3-binutils: maybe-all-stage3-opcodes
-all-stage4-binutils: maybe-all-stage4-opcodes
-all-stageprofile-binutils: maybe-all-stageprofile-opcodes
-all-stagefeedback-binutils: maybe-all-stagefeedback-opcodes
 all-binutils: maybe-all-bfd
 
 all-stage1-binutils: maybe-all-stage1-bfd
@@ -8394,10 +7763,6 @@ all-stage3-binutils: maybe-all-stage3-gas
 all-stage4-binutils: maybe-all-stage4-gas
 all-stageprofile-binutils: maybe-all-stageprofile-gas
 all-stagefeedback-binutils: maybe-all-stagefeedback-gas
-install-binutils: maybe-install-opcodes
-install-strip-binutils: maybe-install-strip-opcodes
-install-opcodes: maybe-install-bfd
-install-strip-opcodes: maybe-install-strip-bfd
 all-gas: maybe-all-libiberty
 
 all-stage1-gas: maybe-all-stage1-libiberty
@@ -8406,14 +7771,6 @@ all-stage3-gas: maybe-all-stage3-libiberty
 all-stage4-gas: maybe-all-stage4-libiberty
 all-stageprofile-gas: maybe-all-stageprofile-libiberty
 all-stagefeedback-gas: maybe-all-stagefeedback-libiberty
-all-gas: maybe-all-opcodes
-
-all-stage1-gas: maybe-all-stage1-opcodes
-all-stage2-gas: maybe-all-stage2-opcodes
-all-stage3-gas: maybe-all-stage3-opcodes
-all-stage4-gas: maybe-all-stage4-opcodes
-all-stageprofile-gas: maybe-all-stageprofile-opcodes
-all-stagefeedback-gas: maybe-all-stagefeedback-opcodes
 all-gas: maybe-all-bfd
 
 all-stage1-gas: maybe-all-stage1-bfd
@@ -8438,14 +7795,6 @@ all-stage3-ld: maybe-all-stage3-bfd
 all-stage4-ld: maybe-all-stage4-bfd
 all-stageprofile-ld: maybe-all-stageprofile-bfd
 all-stagefeedback-ld: maybe-all-stagefeedback-bfd
-all-ld: maybe-all-opcodes
-
-all-stage1-ld: maybe-all-stage1-opcodes
-all-stage2-ld: maybe-all-stage2-opcodes
-all-stage3-ld: maybe-all-stage3-opcodes
-all-stage4-ld: maybe-all-stage4-opcodes
-all-stageprofile-ld: maybe-all-stageprofile-opcodes
-all-stagefeedback-ld: maybe-all-stagefeedback-opcodes
 all-ld: maybe-all-gas
 
 all-stage1-ld: maybe-all-stage1-gas
@@ -8462,22 +7811,6 @@ all-stage3-ld: maybe-all-stage3-binutils
 all-stage4-ld: maybe-all-stage4-binutils
 all-stageprofile-ld: maybe-all-stageprofile-binutils
 all-stagefeedback-ld: maybe-all-stagefeedback-binutils
-all-opcodes: maybe-all-bfd
-
-all-stage1-opcodes: maybe-all-stage1-bfd
-all-stage2-opcodes: maybe-all-stage2-bfd
-all-stage3-opcodes: maybe-all-stage3-bfd
-all-stage4-opcodes: maybe-all-stage4-bfd
-all-stageprofile-opcodes: maybe-all-stageprofile-bfd
-all-stagefeedback-opcodes: maybe-all-stagefeedback-bfd
-all-opcodes: maybe-all-libiberty
-
-all-stage1-opcodes: maybe-all-stage1-libiberty
-all-stage2-opcodes: maybe-all-stage2-libiberty
-all-stage3-opcodes: maybe-all-stage3-libiberty
-all-stage4-opcodes: maybe-all-stage4-libiberty
-all-stageprofile-opcodes: maybe-all-stageprofile-libiberty
-all-stagefeedback-opcodes: maybe-all-stagefeedback-libiberty
 all-m4: maybe-all-build-texinfo
 
 

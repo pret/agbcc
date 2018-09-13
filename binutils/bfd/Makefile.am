@@ -56,8 +56,9 @@ BFD_H = bfd.h
 # need two copies of the executable, one to download and one for the
 # debugger).
 BFD32_LIBS = \
-	archive.o archures.o bfd.o bfdio.o bfdwin.o \
-	cache.o compress.o corefile.o format.o hash.o \
+	arm-dis.o archive.o archures.o bfd.o bfdio.o bfdwin.o \
+	cache.o compress.o corefile.o disassemble.o \
+	dis-buf.o dis-init.o format.o hash.o \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o syms.o targets.o \
 	binary.o
@@ -65,8 +66,9 @@ BFD32_LIBS = \
 BFD64_LIBS = archive64.o
 
 BFD32_LIBS_CFILES = \
-	archive.c archures.c bfd.c bfdio.c bfdwin.c \
-	cache.c  compress.c corefile.c format.c hash.c \
+	arm-dis.c archive.c archures.c bfd.c bfdio.c bfdwin.c \
+	cache.c  compress.c corefile.c disassemble.c \
+	dis-buf.c dis-init.c format.c hash.c \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c syms.c targets.c \
 	binary.c
@@ -97,6 +99,7 @@ BFD32_BACKENDS = \
 	reloc16.o
 
 BFD32_BACKENDS_CFILES = \
+	arm-dis.c \
 	dwarf1.c \
 	dwarf2.c \
 	elf-attrs.c \
@@ -157,6 +160,7 @@ SOURCE_HFILES = \
 	elfcode.h elfcore.h \
 	genlink.h \
 	libbfd.h \
+	opintl.h \
 	version.h
 
 ## ... and all .h files which are in the build tree.

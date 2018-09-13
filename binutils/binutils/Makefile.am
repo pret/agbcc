@@ -109,8 +109,6 @@ ELFLIBS = elfcomm.c
 
 BFDLIB = ../bfd/libbfd.a
 
-OPCODES = ../opcodes/libopcodes.a
-
 LIBIBERTY = ../libiberty/libiberty.a
 
 POTFILES = $(CFILES) $(DEBUG_SRCS) $(HFILES)
@@ -156,7 +154,7 @@ installcheck-local:
 # There's no global DEPENDENCIES.  So, we must explicitly list everything
 # which depends on libintl, since we don't know whether LIBINTL_DEP will be
 # non-empty until configure time.  Ugh!
-objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
+objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OBJDUMP_PRIVATE_OFILES)
 ar_DEPENDENCIES =        $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
 objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
@@ -167,7 +165,7 @@ objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
 
 objdump_SOURCES = objdump.c dwarf.c  $(DEBUG_SRCS) $(BULIBS) $(ELFLIBS)
 EXTRA_objdump_SOURCES = od-xcoff.c
-objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(OPCODES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
+objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
 
 objdump.@OBJEXT@:objdump.c
 if am__fastdepCC

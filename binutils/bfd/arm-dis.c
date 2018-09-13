@@ -38,7 +38,7 @@
 #ifndef strneq
 #define strneq(a,b,n)	(strncmp ((a), (b), (n)) == 0)
 #endif
-
+#define opcodes_error_handler _bfd_error_handler
 /* Cached mapping symbol state.  */
 enum map_type
 {
