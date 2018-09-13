@@ -52,7 +52,6 @@ fragment <<EOF
 #include "ldlang.h"
 #include "ldfile.h"
 #include "ldemul.h"
-#include "ldbuildid.h"
 #include <ldgram.h>
 #include "elf/common.h"
 #include "elf-bfd.h"
@@ -188,9 +187,6 @@ static bfd_boolean global_vercheck_failed;
 
 static char *audit; /* colon (typically) separated list of libs */
 static char *depaudit; /* colon (typically) separated list of libs */
-
-/* Style of .note.gnu.build-id section.  */
-static const char *emit_note_gnu_build_id;
 
 /* On Linux, it's possible to have different versions of the same
    shared library linked against different versions of libc.  The
@@ -1112,111 +1108,6 @@ EOF
 if test x"$LDEMUL_AFTER_OPEN" != xgld"$EMULATION_NAME"_after_open; then
 fragment <<EOF
 
-static bfd_size_type
-id_note_section_size (bfd *abfd ATTRIBUTE_UNUSED)
-{
-  const char *style = emit_note_gnu_build_id;
-  bfd_size_type size;
-  bfd_size_type build_id_size;
-
-  size = offsetof (Elf_External_Note, name[sizeof "GNU"]);
-  size = (size + 3) & -(bfd_size_type) 4;
-
-  build_id_size = compute_build_id_size (style);
-  if (build_id_size)
-    size += build_id_size;
-  else
-    size = 0;
-
-  return size;
-}
-
-static bfd_boolean
-write_build_id (bfd *abfd)
-{
-  const struct elf_backend_data *bed = get_elf_backend_data (abfd);
-  struct elf_obj_tdata *t = elf_tdata (abfd);
-  const char *style;
-  asection *asec;
-  Elf_Internal_Shdr *i_shdr;
-  unsigned char *contents, *id_bits;
-  bfd_size_type size;
-  file_ptr position;
-  Elf_External_Note *e_note;
-
-  style = t->o->build_id.style;
-  asec = t->o->build_id.sec;
-  if (bfd_is_abs_section (asec->output_section))
-    {
-      einfo (_("%P: warning: .note.gnu.build-id section discarded,"
-	       " --build-id ignored\n"));
-      return TRUE;
-    }
-  i_shdr = &elf_section_data (asec->output_section)->this_hdr;
-
-  if (i_shdr->contents == NULL)
-    {
-      if (asec->contents == NULL)
-	asec->contents = (unsigned char *) malloc (asec->size);
-      contents = asec->contents;
-    }
-  else
-    contents = i_shdr->contents + asec->output_offset;
-
-  e_note = (Elf_External_Note *) contents;
-  size = offsetof (Elf_External_Note, name[sizeof "GNU"]);
-  size = (size + 3) & -(bfd_size_type) 4;
-  id_bits = contents + size;
-  size = asec->size - size;
-
-  bfd_h_put_32 (abfd, sizeof "GNU", &e_note->namesz);
-  bfd_h_put_32 (abfd, size, &e_note->descsz);
-  bfd_h_put_32 (abfd, NT_GNU_BUILD_ID, &e_note->type);
-  memcpy (e_note->name, "GNU", sizeof "GNU");
-
-  generate_build_id (abfd, style, bed->s->checksum_contents, id_bits, size);
-
-  position = i_shdr->sh_offset + asec->output_offset;
-  size = asec->size;
-  return (bfd_seek (abfd, position, SEEK_SET) == 0
-	  && bfd_bwrite (contents, size, abfd) == size);
-}
-
-/* Make .note.gnu.build-id section, and set up elf_tdata->build_id.  */
-
-static bfd_boolean
-setup_build_id (bfd *ibfd)
-{
-  asection *s;
-  bfd_size_type size;
-  flagword flags;
-
-  size = id_note_section_size (ibfd);
-  if (size == 0)
-    {
-      einfo (_("%P: warning: unrecognized --build-id style ignored\n"));
-      return FALSE;
-    }
-
-  flags = (SEC_ALLOC | SEC_LOAD | SEC_IN_MEMORY
-	   | SEC_LINKER_CREATED | SEC_READONLY | SEC_DATA);
-  s = bfd_make_section_with_flags (ibfd, ".note.gnu.build-id", flags);
-  if (s != NULL && bfd_set_section_alignment (ibfd, s, 2))
-    {
-      struct elf_obj_tdata *t = elf_tdata (link_info.output_bfd);
-      t->o->build_id.after_write_object_contents = &write_build_id;
-      t->o->build_id.style = emit_note_gnu_build_id;
-      t->o->build_id.sec = s;
-      elf_section_type (s) = SHT_NOTE;
-      s->size = size;
-      return TRUE;
-    }
-
-  einfo (_("%P: warning: cannot create .note.gnu.build-id section,"
-	   " --build-id ignored\n"));
-  return FALSE;
-}
-
 /* This is called after all the input files have been opened.  */
 
 static void
@@ -1244,26 +1135,6 @@ gld${EMULATION_NAME}_after_open (void)
 	{
 	  einfo (_("%F%P: %s: can't open for writing: %E\n"),
 		 command_line.out_implib_filename);
-	}
-    }
-
-  if (emit_note_gnu_build_id != NULL)
-    {
-      /* Find an ELF input.  */
-      for (abfd = link_info.input_bfds;
-	   abfd != (bfd *) NULL; abfd = abfd->link.next)
-	if (bfd_get_flavour (abfd) == bfd_target_elf_flavour
-	    && bfd_count_sections (abfd) != 0
-	    && !((lang_input_statement_type *) abfd->usrdata)->flags.just_syms)
-	  break;
-
-      /* PR 10555: If there are no ELF input files do not try to
-	 create a .note.gnu-build-id section.  */
-      if (abfd == NULL
-	  || !setup_build_id (abfd))
-	{
-	  free ((char *) emit_note_gnu_build_id);
-	  emit_note_gnu_build_id = NULL;
 	}
     }
 
@@ -2601,7 +2472,7 @@ fragment <<EOF
 EOF
 fi
 fragment <<EOF
-    {"build-id", optional_argument, NULL, OPTION_BUILD_ID},
+//    {"build-id", optional_argument, NULL, OPTION_BUILD_ID},
     {"compress-debug-sections", required_argument, NULL, OPTION_COMPRESS_DEBUG},
 EOF
 if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
@@ -2640,7 +2511,7 @@ gld${EMULATION_NAME}_handle_option (int optc)
     {
     default:
       return FALSE;
-
+#if 0
     case OPTION_BUILD_ID:
       if (emit_note_gnu_build_id != NULL)
 	{
@@ -2652,7 +2523,7 @@ gld${EMULATION_NAME}_handle_option (int optc)
       if (strcmp (optarg, "none"))
 	emit_note_gnu_build_id = strdup (optarg);
       break;
-
+#endif
     case OPTION_COMPRESS_DEBUG:
       if (strcasecmp (optarg, "none") == 0)
 	link_info.compress_debug = COMPRESS_DEBUG_NONE;

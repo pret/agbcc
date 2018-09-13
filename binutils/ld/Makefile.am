@@ -19,7 +19,6 @@
 
 AUTOMAKE_OPTIONS = dejagnu no-texinfo.tex no-dist foreign info-in-builddir
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
-TEXINFO_TEX = ../texinfo/texinfo.tex
 
 tooldir = $(exec_prefix)/$(target_alias)
 
@@ -61,14 +60,6 @@ INCDIR	= $(BASEDIR)/include
 # What version of the manual to build
 DOCVER = gen
 
-# Options to extract the man page from ld.texi
-MANCONF = -Dman
-
-TEXI2POD = perl $(BASEDIR)/etc/texi2pod.pl $(AM_MAKEINFOFLAGS)
-
-POD2MAN = pod2man --center="GNU Development Tools" \
-	--release="binutils-$(VERSION)" --section=1
-
 # Setup the testing framework, if you have one
 EXPECT = expect
 RUNTEST = runtest
@@ -95,14 +86,10 @@ CFLAGS_FOR_TARGET = `echo $(CFLAGS) | sed -e 's/-fsanitize=address//g' -e 's/-fs
 transform = s/^ld-new$$/$(installed_linker)/;@program_transform_name@
 bin_PROGRAMS = ld-new
 info_TEXINFOS =
-ld_TEXINFOS = configdoc.texi
-noinst_TEXINFOS = ldint.texi
 man_MANS =
 
 AM_MAKEINFOFLAGS = -I $(srcdir) -I $(BFDDIR)/doc -I ../bfd/doc \
 		   -I $(top_srcdir)/../libiberty
-TEXI2DVI = texi2dvi -I $(srcdir) -I $(BFDDIR)/doc -I ../bfd/doc \
-		    -I $(top_srcdir)/../libiberty
 
 AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 	$(HDEFINES) $(CFLAGS) $(PLUGIN_CFLAGS) \
@@ -132,12 +119,12 @@ ALL_64_EMUL_EXTRA_OFILES = \
 CFILES = ldctor.c ldemul.c ldexp.c ldfile.c ldlang.c \
 	ldmain.c ldmisc.c ldver.c ldwrite.c lexsup.c \
 	mri.c ldcref.c pe-dll.c pep-dll.c ldlex-wrapper.c \
-	$(PLUGIN_C) ldbuildid.c
+	$(PLUGIN_C)
 
 HFILES = ld.h ldctor.h ldemul.h ldexp.h ldfile.h \
 	ldlang.h ldlex.h ldmain.h ldmisc.h ldver.h \
 	ldwrite.h mri.h deffile.h pe-dll.h pep-dll.h \
-	elf-hints-local.h $(PLUGIN_H) ldbuildid.h
+	elf-hints-local.h $(PLUGIN_H)
 
 GENERATED_CFILES = ldgram.c ldlex.c deffilep.c
 GENERATED_HFILES = ldgram.h ldemul-list.h deffilep.h
@@ -149,8 +136,7 @@ BUILT_SOURCES = $(GENERATED_HFILES)
 OFILES = ldgram.@OBJEXT@ ldlex-wrapper.@OBJEXT@ lexsup.@OBJEXT@ ldlang.@OBJEXT@ \
 	mri.@OBJEXT@ ldctor.@OBJEXT@ ldmain.@OBJEXT@ $(PLUGIN_OBJECT) \
 	ldwrite.@OBJEXT@ ldexp.@OBJEXT@  ldemul.@OBJEXT@ ldver.@OBJEXT@ ldmisc.@OBJEXT@ \
-	ldfile.@OBJEXT@ ldcref.@OBJEXT@ ${EMULATION_OFILES} ${EMUL_EXTRA_OFILES} \
-	ldbuildid.@OBJEXT@
+	ldfile.@OBJEXT@ ldcref.@OBJEXT@ ${EMULATION_OFILES} ${EMUL_EXTRA_OFILES}
 
 STAGESTUFF = *.@OBJEXT@ ldscripts/* e*.c
 
@@ -310,8 +296,8 @@ EXTRA_ld_new_SOURCES = deffilep.c ldlex.c
 EXTRA_ld_new_SOURCES += pep-dll.c pe-dll.c
 
 ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmain.c \
-	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
-	ldbuildid.c
+	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C)
+
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
 		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
 ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
@@ -342,26 +328,6 @@ check-DEJAGNU: site.exp
 #
 # Build a dummy plugin using libtool.
 #
-
-# DOCUMENTATION TARGETS
-# Manual configuration file; not usually attached to normal configuration,
-# because almost all configs use "gen" version of manual.
-#  Set DOCVER above to change.
-configdoc.texi:	${DOCVER}-doc.texi
-	cp ${srcdir}/${DOCVER}-doc.texi ./configdoc.texi
-	chmod u+w ./configdoc.texi
-
-# Build the man page from the texinfo file
-# The sed command removes the no-adjust Nroff command so that
-# the man output looks standard.
-ld.1: $(srcdir)/ld.texi configdoc.texi
-	touch $@
-	-$(TEXI2POD) $(MANCONF) < $(srcdir)/ld.texi > ld.pod
-	-($(POD2MAN) ld.pod | \
-		sed -e '/^.if n .na/d' > $@.T$$$$ && \
-		mv -f $@.T$$$$ $@) || \
-		(rm -f $@.T$$$$ && exit 1)
-	rm -f ld.pod
 
 # We want to reconfigure if configure.host or configure.tgt changes.
 # development.sh is used to determine -Werror default.

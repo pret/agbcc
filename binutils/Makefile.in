@@ -639,7 +639,6 @@ TARGET_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_TARGET_FLAGS)
 configure-host:  \
     maybe-configure-bfd \
     maybe-configure-binutils \
-    maybe-configure-etc \
     maybe-configure-fixincludes \
     maybe-configure-gas \
     maybe-configure-ld \
@@ -673,7 +672,6 @@ all-host: maybe-all-bfd
 @if binutils-no-bootstrap
 all-host: maybe-all-binutils
 @endif binutils-no-bootstrap
-all-host: maybe-all-etc
 @if fixincludes-no-bootstrap
 all-host: maybe-all-fixincludes
 @endif fixincludes-no-bootstrap
@@ -715,7 +713,6 @@ do-mostlyclean:
 
 mostlyclean-host: maybe-mostlyclean-bfd
 mostlyclean-host: maybe-mostlyclean-binutils
-mostlyclean-host: maybe-mostlyclean-etc
 mostlyclean-host: maybe-mostlyclean-fixincludes
 mostlyclean-host: maybe-mostlyclean-gas
 mostlyclean-host: maybe-mostlyclean-ld
@@ -740,7 +737,6 @@ do-clean:
 
 clean-host: maybe-clean-bfd
 clean-host: maybe-clean-binutils
-clean-host: maybe-clean-etc
 clean-host: maybe-clean-fixincludes
 clean-host: maybe-clean-gas
 clean-host: maybe-clean-ld
@@ -765,7 +761,6 @@ do-distclean:
 
 distclean-host: maybe-distclean-bfd
 distclean-host: maybe-distclean-binutils
-distclean-host: maybe-distclean-etc
 distclean-host: maybe-distclean-fixincludes
 distclean-host: maybe-distclean-gas
 distclean-host: maybe-distclean-ld
@@ -790,7 +785,6 @@ do-maintainer-clean:
 
 maintainer-clean-host: maybe-maintainer-clean-bfd
 maintainer-clean-host: maybe-maintainer-clean-binutils
-maintainer-clean-host: maybe-maintainer-clean-etc
 maintainer-clean-host: maybe-maintainer-clean-fixincludes
 maintainer-clean-host: maybe-maintainer-clean-gas
 maintainer-clean-host: maybe-maintainer-clean-ld
@@ -870,7 +864,6 @@ check: do-check
 check-host:  \
     maybe-check-bfd \
     maybe-check-binutils \
-    maybe-check-etc \
     maybe-check-fixincludes \
     maybe-check-gas \
     maybe-check-ld \
@@ -943,7 +936,6 @@ install:
 install-host-nogcc:  \
     maybe-install-bfd \
     maybe-install-binutils \
-    maybe-install-etc \
     maybe-install-fixincludes \
     maybe-install-gas \
     maybe-install-ld \
@@ -956,7 +948,6 @@ install-host-nogcc:  \
 install-host:  \
     maybe-install-bfd \
     maybe-install-binutils \
-    maybe-install-etc \
     maybe-install-fixincludes \
     maybe-install-gas \
     maybe-install-ld \
@@ -1001,7 +992,6 @@ install-strip:
 install-strip-host:  \
     maybe-install-strip-bfd \
     maybe-install-strip-binutils \
-    maybe-install-strip-etc \
     maybe-install-strip-fixincludes \
     maybe-install-strip-gas \
     maybe-install-strip-ld \
@@ -2508,200 +2498,6 @@ maintainer-clean-binutils:
 	  || exit 1
 
 @endif binutils
-
-
-
-.PHONY: configure-etc maybe-configure-etc
-maybe-configure-etc:
-@if etc
-maybe-configure-etc: configure-etc
-configure-etc: 
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	test ! -f $(HOST_SUBDIR)/etc/Makefile || exit 0; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/etc; \
-	$(HOST_EXPORTS)  \
-	echo Configuring in $(HOST_SUBDIR)/etc; \
-	cd "$(HOST_SUBDIR)/etc" || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(HOST_SUBDIR)/etc/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=etc; \
-	$(SHELL) \
-	  $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
-	  --target=${target_alias}  \
-	  || exit 1
-@endif etc
-
-
-
-
-
-.PHONY: all-etc maybe-all-etc
-maybe-all-etc:
-@if etc
-TARGET-etc=all
-maybe-all-etc: all-etc
-all-etc: configure-etc
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS)  \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS)  \
-		$(TARGET-etc))
-@endif etc
-
-
-
-
-.PHONY: check-etc maybe-check-etc
-maybe-check-etc:
-@if etc
-maybe-check-etc: check-etc
-
-check-etc:
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS)  \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(FLAGS_TO_PASS)  check)
-
-@endif etc
-
-.PHONY: install-etc maybe-install-etc
-maybe-install-etc:
-@if etc
-maybe-install-etc: install-etc
-
-install-etc: installdirs
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(FLAGS_TO_PASS)  install)
-
-@endif etc
-
-.PHONY: install-strip-etc maybe-install-strip-etc
-maybe-install-strip-etc:
-@if etc
-maybe-install-strip-etc: install-strip-etc
-
-install-strip-etc: installdirs
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(FLAGS_TO_PASS)  install-strip)
-
-@endif etc
-
-# Other targets (info, dvi, pdf, etc.)
-
-.PHONY: maybe-mostlyclean-etc mostlyclean-etc
-maybe-mostlyclean-etc:
-@if etc
-maybe-mostlyclean-etc: mostlyclean-etc
-
-mostlyclean-etc: 
-	@: $(MAKE); $(unstage)
-	@[ -f ./etc/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing mostlyclean in etc"; \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          mostlyclean) \
-	  || exit 1
-
-@endif etc
-
-.PHONY: maybe-clean-etc clean-etc
-maybe-clean-etc:
-@if etc
-maybe-clean-etc: clean-etc
-
-clean-etc: 
-	@: $(MAKE); $(unstage)
-	@[ -f ./etc/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing clean in etc"; \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          clean) \
-	  || exit 1
-
-@endif etc
-
-.PHONY: maybe-distclean-etc distclean-etc
-maybe-distclean-etc:
-@if etc
-maybe-distclean-etc: distclean-etc
-
-distclean-etc: 
-	@: $(MAKE); $(unstage)
-	@[ -f ./etc/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing distclean in etc"; \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          distclean) \
-	  || exit 1
-
-@endif etc
-
-.PHONY: maybe-maintainer-clean-etc maintainer-clean-etc
-maybe-maintainer-clean-etc:
-@if etc
-maybe-maintainer-clean-etc: maintainer-clean-etc
-
-maintainer-clean-etc: 
-	@: $(MAKE); $(unstage)
-	@[ -f ./etc/Makefile ] || exit 0; \
-	r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	$(HOST_EXPORTS) \
-	for flag in $(EXTRA_HOST_FLAGS) ; do \
-	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
-	done; \
-	echo "Doing maintainer-clean in etc"; \
-	(cd $(HOST_SUBDIR)/etc && \
-	  $(MAKE) $(BASE_FLAGS_TO_PASS) "AR=$${AR}" "AS=$${AS}" \
-	          "CC=$${CC}" "LD=$${LD}" "NM=$${NM}" \
-	          "RANLIB=$${RANLIB}" \
-	          maintainer-clean) \
-	  || exit 1
-
-@endif etc
 
 
 

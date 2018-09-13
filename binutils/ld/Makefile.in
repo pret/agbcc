@@ -137,7 +137,7 @@ am_ld_new_OBJECTS = ldgram.$(OBJEXT) ldlex-wrapper.$(OBJEXT) \
 	ldctor.$(OBJEXT) ldmain.$(OBJEXT) ldwrite.$(OBJEXT) \
 	ldexp.$(OBJEXT) ldemul.$(OBJEXT) ldver.$(OBJEXT) \
 	ldmisc.$(OBJEXT) ldfile.$(OBJEXT) ldcref.$(OBJEXT) \
-	$(am__objects_1) ldbuildid.$(OBJEXT)
+	$(am__objects_1)
 ld_new_OBJECTS = $(am_ld_new_OBJECTS)
 am__DEPENDENCIES_1 =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -157,14 +157,14 @@ depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/deffilep.Po ./$(DEPDIR)/earmelf.Po \
 	./$(DEPDIR)/emmo.Po ./$(DEPDIR)/evanilla.Po \
-	./$(DEPDIR)/ldbuildid.Po ./$(DEPDIR)/ldcref.Po \
-	./$(DEPDIR)/ldctor.Po ./$(DEPDIR)/ldemul.Po \
-	./$(DEPDIR)/ldexp.Po ./$(DEPDIR)/ldfile.Po \
-	./$(DEPDIR)/ldgram.Po ./$(DEPDIR)/ldlang.Po \
-	./$(DEPDIR)/ldlex-wrapper.Po ./$(DEPDIR)/ldlex.Po \
-	./$(DEPDIR)/ldmain.Po ./$(DEPDIR)/ldmisc.Po \
-	./$(DEPDIR)/ldver.Po ./$(DEPDIR)/ldwrite.Po \
-	./$(DEPDIR)/lexsup.Po ./$(DEPDIR)/mri.Po ./$(DEPDIR)/pe-dll.Po \
+	./$(DEPDIR)/ldcref.Po ./$(DEPDIR)/ldctor.Po \
+	./$(DEPDIR)/ldemul.Po ./$(DEPDIR)/ldexp.Po \
+	./$(DEPDIR)/ldfile.Po ./$(DEPDIR)/ldgram.Po \
+	./$(DEPDIR)/ldlang.Po ./$(DEPDIR)/ldlex-wrapper.Po \
+	./$(DEPDIR)/ldlex.Po ./$(DEPDIR)/ldmain.Po \
+	./$(DEPDIR)/ldmisc.Po ./$(DEPDIR)/ldver.Po \
+	./$(DEPDIR)/ldwrite.Po ./$(DEPDIR)/lexsup.Po \
+	./$(DEPDIR)/mri.Po ./$(DEPDIR)/pe-dll.Po \
 	./$(DEPDIR)/pep-dll.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -208,12 +208,13 @@ AM_V_texidevnull = $(am__v_texidevnull_@AM_V@)
 am__v_texidevnull_ = $(am__v_texidevnull_@AM_DEFAULT_V@)
 am__v_texidevnull_0 = > /dev/null
 am__v_texidevnull_1 = 
-am__TEXINFO_TEX_DIR = $(srcdir)/../texinfo
+am__TEXINFO_TEX_DIR = $(srcdir)
 DVIS =
 PDFS =
 PSS =
 HTMLS =
 TEXINFOS =
+TEXI2DVI = texi2dvi
 TEXI2PDF = $(TEXI2DVI) --pdf --batch
 MAKEINFOHTML = $(MAKEINFO) --html
 AM_MAKEINFOHTMLFLAGS = $(AM_MAKEINFOFLAGS)
@@ -409,7 +410,6 @@ top_srcdir = @top_srcdir@
 use_sysroot = @use_sysroot@
 AUTOMAKE_OPTIONS = dejagnu no-texinfo.tex no-dist foreign info-in-builddir
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
-TEXINFO_TEX = ../texinfo/texinfo.tex
 tooldir = $(exec_prefix)/$(target_alias)
 ELF_CLFAGS = -DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
@@ -431,13 +431,6 @@ INCDIR = $(BASEDIR)/include
 
 # What version of the manual to build
 DOCVER = gen
-
-# Options to extract the man page from ld.texi
-MANCONF = -Dman
-TEXI2POD = perl $(BASEDIR)/etc/texi2pod.pl $(AM_MAKEINFOFLAGS)
-POD2MAN = pod2man --center="GNU Development Tools" \
-	--release="binutils-$(VERSION)" --section=1
-
 
 # Setup the testing framework, if you have one
 EXPECT = expect
@@ -462,14 +455,9 @@ CC_FOR_TARGET = ` \
 # Strip out sanitization options as we want to test building binaries without any extra paraphernalia
 CFLAGS_FOR_TARGET = `echo $(CFLAGS) | sed -e 's/-fsanitize=address//g' -e 's/-fsanitize=undefined//g'`
 info_TEXINFOS = 
-ld_TEXINFOS = configdoc.texi
-noinst_TEXINFOS = ldint.texi
 man_MANS = 
 AM_MAKEINFOFLAGS = -I $(srcdir) -I $(BFDDIR)/doc -I ../bfd/doc \
 		   -I $(top_srcdir)/../libiberty
-
-TEXI2DVI = texi2dvi -I $(srcdir) -I $(BFDDIR)/doc -I ../bfd/doc \
-		    -I $(top_srcdir)/../libiberty
 
 AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) \
 	$(HDEFINES) $(CFLAGS) $(PLUGIN_CFLAGS) \
@@ -496,12 +484,12 @@ ALL_64_EMUL_EXTRA_OFILES = \
 CFILES = ldctor.c ldemul.c ldexp.c ldfile.c ldlang.c \
 	ldmain.c ldmisc.c ldver.c ldwrite.c lexsup.c \
 	mri.c ldcref.c pe-dll.c pep-dll.c ldlex-wrapper.c \
-	$(PLUGIN_C) ldbuildid.c
+	$(PLUGIN_C)
 
 HFILES = ld.h ldctor.h ldemul.h ldexp.h ldfile.h \
 	ldlang.h ldlex.h ldmain.h ldmisc.h ldver.h \
 	ldwrite.h mri.h deffile.h pe-dll.h pep-dll.h \
-	elf-hints-local.h $(PLUGIN_H) ldbuildid.h
+	elf-hints-local.h $(PLUGIN_H)
 
 GENERATED_CFILES = ldgram.c ldlex.c deffilep.c
 GENERATED_HFILES = ldgram.h ldemul-list.h deffilep.h
@@ -512,8 +500,7 @@ BUILT_SOURCES = $(GENERATED_HFILES)
 OFILES = ldgram.@OBJEXT@ ldlex-wrapper.@OBJEXT@ lexsup.@OBJEXT@ ldlang.@OBJEXT@ \
 	mri.@OBJEXT@ ldctor.@OBJEXT@ ldmain.@OBJEXT@ $(PLUGIN_OBJECT) \
 	ldwrite.@OBJEXT@ ldexp.@OBJEXT@  ldemul.@OBJEXT@ ldver.@OBJEXT@ ldmisc.@OBJEXT@ \
-	ldfile.@OBJEXT@ ldcref.@OBJEXT@ ${EMULATION_OFILES} ${EMUL_EXTRA_OFILES} \
-	ldbuildid.@OBJEXT@
+	ldfile.@OBJEXT@ ldcref.@OBJEXT@ ${EMULATION_OFILES} ${EMUL_EXTRA_OFILES}
 
 STAGESTUFF = *.@OBJEXT@ ldscripts/* e*.c
 SRC_POTFILES = $(CFILES) $(HFILES)
@@ -539,13 +526,16 @@ ELF_X86_DEPS = $(ELF_DEPS) $(srcdir)/emulparams/plt_unwind.sh \
 EXTRA_ld_new_SOURCES = deffilep.c ldlex.c pep-dll.c pe-dll.c \
 	$(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
 ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmain.c \
-	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
-	ldbuildid.c
+	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C)
 
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
 		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
 
 ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
+
+#
+# Build a dummy plugin using libtool.
+#
 
 # We want to reconfigure if configure.host or configure.tgt changes.
 # development.sh is used to determine -Werror default.
@@ -673,7 +663,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emmo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/evanilla.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldbuildid.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldcref.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldctor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldemul.Po@am__quote@ # am--include-marker
@@ -947,7 +936,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/earmelf.Po
 	-rm -f ./$(DEPDIR)/emmo.Po
 	-rm -f ./$(DEPDIR)/evanilla.Po
-	-rm -f ./$(DEPDIR)/ldbuildid.Po
 	-rm -f ./$(DEPDIR)/ldcref.Po
 	-rm -f ./$(DEPDIR)/ldctor.Po
 	-rm -f ./$(DEPDIR)/ldemul.Po
@@ -1107,7 +1095,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/earmelf.Po
 	-rm -f ./$(DEPDIR)/emmo.Po
 	-rm -f ./$(DEPDIR)/evanilla.Po
-	-rm -f ./$(DEPDIR)/ldbuildid.Po
 	-rm -f ./$(DEPDIR)/ldcref.Po
 	-rm -f ./$(DEPDIR)/ldctor.Po
 	-rm -f ./$(DEPDIR)/ldemul.Po
@@ -1288,30 +1275,6 @@ check-DEJAGNU: site.exp
 		$(RUNTESTFLAGS); \
 	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
 	fi
-
-#
-# Build a dummy plugin using libtool.
-#
-
-# DOCUMENTATION TARGETS
-# Manual configuration file; not usually attached to normal configuration,
-# because almost all configs use "gen" version of manual.
-#  Set DOCVER above to change.
-configdoc.texi:	${DOCVER}-doc.texi
-	cp ${srcdir}/${DOCVER}-doc.texi ./configdoc.texi
-	chmod u+w ./configdoc.texi
-
-# Build the man page from the texinfo file
-# The sed command removes the no-adjust Nroff command so that
-# the man output looks standard.
-ld.1: $(srcdir)/ld.texi configdoc.texi
-	touch $@
-	-$(TEXI2POD) $(MANCONF) < $(srcdir)/ld.texi > ld.pod
-	-($(POD2MAN) ld.pod | \
-		sed -e '/^.if n .na/d' > $@.T$$$$ && \
-		mv -f $@.T$$$$ $@) || \
-		(rm -f $@.T$$$$ && exit 1)
-	rm -f ld.pod
 mostlyclean-local:
 	-rm -rf tmpdir
 

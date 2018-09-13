@@ -31,7 +31,6 @@ build_modules= { module= libcpp;
 
 host_modules= { module= bfd; bootstrap=true; };
 host_modules= { module= binutils; bootstrap=true; };
-host_modules= { module= etc; };
 host_modules= { module= fixincludes; bootstrap=true;
 		missing= TAGS; };
 host_modules= { module= gas; bootstrap=true; };

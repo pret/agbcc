@@ -140,7 +140,7 @@ host_libs="libiberty bfd libcpp  libelf"
 # binutils, gas and ld appear in that order because it makes sense to run
 # "make check" in that particular order.
 # If --enable-gold is used, "gold" may replace "ld".
-host_tools="binutils gas ld etc m4"
+host_tools="binutils gas ld m4"
 
 # these libraries are built for the target environment, and are built after
 # the host libraries and the host tools (which may be a cross compiler)
@@ -1335,66 +1335,12 @@ extra_arflags_for_target=
 extra_nmflags_for_target=
 extra_ranlibflags_for_target=
 target_makefile_frag=/dev/null
-case "${target}" in
-  spu-*-*)
-    target_makefile_frag="config/mt-spu"
-    ;;
-  mips*-sde-elf* | mips*-mti-elf* | mips*-img-elf*)
-    target_makefile_frag="config/mt-sde"
-    ;;
-  mipsisa*-*-elfoabi*)
-    target_makefile_frag="config/mt-mips-elfoabi"
-    ;;
-  mips*-*-*linux* | mips*-*-gnu*)
-    target_makefile_frag="config/mt-mips-gnu"
-    ;;
-  nios2-*-elf*)
-    target_makefile_frag="config/mt-nios2-elf"
-    ;;
-  *-*-linux-android*)
-    target_makefile_frag="config/mt-android"
-    ;;
-  *-*-linux* | *-*-gnu* | *-*-k*bsd*-gnu | *-*-kopensolaris*-gnu)
-    target_makefile_frag="config/mt-gnu"
-    ;;
-  *-*-aix4.[[3456789]]* | *-*-aix[[56789]].*)
-    # nm and ar from AIX 4.3 and above require -X32_64 flag to all ar and nm 
-    # commands to handle both 32-bit and 64-bit objects.  These flags are
-    # harmless if we're using GNU nm or ar.
-    extra_arflags_for_target=" -X32_64"
-    extra_nmflags_for_target=" -B -X32_64"
-    ;;
-esac
-
 alphaieee_frag=/dev/null
-case $target in
-  alpha*-*-*)
-    # This just makes sure to use the -mieee option to build target libs.
-    # This should probably be set individually by each library.
-    alphaieee_frag="config/mt-alphaieee"
-    ;;
-esac
 
 # If --enable-target-optspace always use -Os instead of -O2 to build
 # the target libraries, similarly if it is not specified, use -Os
 # on selected platforms.
 ospace_frag=/dev/null
-case "${enable_target_optspace}:${target}" in
-  yes:*)
-    ospace_frag="config/mt-ospace"
-    ;;
-  :d30v-*)
-    ospace_frag="config/mt-d30v"
-    ;;
-  :m32r-* | :d10v-* | :fr30-* | :i?86*-*-elfiamcu)
-    ospace_frag="config/mt-ospace"
-    ;;
-  no:* | :*)
-    ;;
-  *)
-    echo "*** bad value \"${enable_target_optspace}\" for --enable-target-optspace flag; ignored" 1>&2
-    ;;
-esac
 
 # Some systems (e.g., one of the i386-aix systems the gas testers are
 # using) don't handle "\$" correctly, so don't use it here.
