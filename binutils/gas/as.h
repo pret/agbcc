@@ -107,11 +107,6 @@ void *mempcpy(void *, const void *, size_t);
 #define unlink remove
 #endif
 
-/* Hack to make "gcc -Wall" not complain about obstack macros.  */
-#if !defined (memcpy) && !defined (bcopy)
-#define bcopy(src,dest,size)	memcpy (dest, src, size)
-#endif
-
 #ifndef __LINE__
 #define __LINE__ "unknown"
 #endif /* __LINE__ */

@@ -619,6 +619,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
+ac_func_list=
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -2349,6 +2350,20 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
 
+as_fn_append ac_func_list " getpagesize"
+as_fn_append ac_func_list " setitimer"
+as_fn_append ac_func_list " sysconf"
+as_fn_append ac_func_list " getuid"
+as_fn_append ac_func_list " getgid"
+as_fn_append ac_func_list " getrlimit"
+as_fn_append ac_func_list " ftello"
+as_fn_append ac_func_list " ftello64"
+as_fn_append ac_func_list " fseeko"
+as_fn_append ac_func_list " fseeko64"
+as_fn_append ac_func_list " fopen64"
+as_fn_append ac_func_list " madvise"
+as_fn_append ac_func_list " mprotect"
+as_fn_append ac_func_list " mmap"
 # Check that the precious variables saved in the cache have kept the same
 # value.
 ac_cache_corrupted=false
@@ -5840,8 +5855,10 @@ $as_echo "#define STRING_WITH_STRINGS 1" >>confdefs.h
 
 fi
 
-for ac_func in getpagesize setitimer sysconf getuid getgid \
-               getrlimit
+
+
+
+  for ac_func in $ac_func_list
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -5852,6 +5869,19 @@ _ACEOF
 
 fi
 done
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ac_fn_c_check_decl "$LINENO" "ftello" "ac_cv_have_decl_ftello" "$ac_includes_default"
@@ -6252,17 +6282,16 @@ fi
 # fseeko, long.  This assumes that sizeof off_t is .ge. sizeof long.
 # Hopefully a reasonable assumption since fseeko et.al. should be
 # upward compatible.
-for ac_func in ftello ftello64 fseeko fseeko64 fopen64
-do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
 
-fi
-done
+
+
+
+
+
+
+
+
+
 
 if test x"$ac_cv_func_ftello" = xyes -a x"$ac_cv_func_fseeko" = xyes; then
 
@@ -6316,17 +6345,12 @@ $as_echo "$bfd_file_ptr" >&6; }
 
 
 
-for ac_func in madvise mprotect mmap
-do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
 
-fi
-done
+
+
+
+
+
 
 if test x"$ac_cv_func_mmap" = xyes; then
 

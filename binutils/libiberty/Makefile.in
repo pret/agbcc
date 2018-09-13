@@ -57,7 +57,6 @@ CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 RANLIB = @RANLIB@
 MAKEINFO = @MAKEINFO@
-PERL = @PERL@
 
 PICFLAG = @PICFLAG@
 
@@ -119,7 +118,7 @@ COMPILE.c = $(CC) -c @DEFS@ $(PICFLAG) $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) \
 # CONFIGURED_OFILES and funcs in configure.ac.  Also run "make maint-deps"
 # to build the new rules.
 CFILES = argv.c asprintf.c atexit.c				\
-	basename.c bcmp.c bcopy.c bsearch.c bzero.c			\
+	basename.c  bzero.c			\
 	choose-temp.c clock.c concat.c 		\
 	crc32.c				\
 	dwarfnames.c 			\
@@ -145,10 +144,10 @@ CFILES = argv.c asprintf.c atexit.c				\
 	 sstrndup.c             \
 	 strverscmp.c tmpnam.c				\
 	unlink-if-ordinary.c						\
-	vasprintf.c vfork.c vprintf-support.c	\
+	vasprintf.c vprintf-support.c	\
 	waitpid.c							\
-	xasprintf.c xatexit.c xexit.c xmemdup.c 	\
-	 xstrerror.c xstrndup.c xvasprintf.c
+	xatexit.c xexit.c xmemdup.c 	\
+	 xstrerror.c xstrndup.c
 
 # These are always included in the library.  The first four are listed
 # first and by compile time to optimize parallel builds.
@@ -176,17 +175,16 @@ REQUIRED_OFILES =							\
 	./stack-limit.$(objext)			\
 	./strsignal.$(objext)			\
 	./unlink-if-ordinary.$(objext)	\
-	./xasprintf.$(objext) ./xatexit.$(objext) ./xexit.$(objext)	\
+	./xatexit.$(objext) ./xexit.$(objext)	\
 	./xmemdup.$(objext) \
-	./xstrerror.$(objext) ./xstrndup.$(objext)			\
-	./xvasprintf.$(objext)
+	./xstrerror.$(objext) ./xstrndup.$(objext)
 
 # These are all the objects that configure may add to the library via
 # $funcs or EXTRA_OFILES.  This list exists here only for "make
 # maint-missing" and "make check".
 CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
-	./basename.$(objext) ./bcmp.$(objext) ./bcopy.$(objext)		\
-	./bsearch.$(objext) ./bzero.$(objext)				\
+	./basename.$(objext)		\
+	./bzero.$(objext)				\
 	./clock.$(objext) ./copysign.$(objext)	\
 	./_doprnt.$(objext)						\
 	 ./ffs.$(objext)						\
@@ -200,8 +198,7 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	 ./strdup.$(objext)	\
 	 ./strndup.$(objext)	\
 	./tmpnam.$(objext) ./strverscmp.$(objext)	\
-	./vasprintf.$(objext) ./vfork.$(objext)	\
-	./waitpid.$(objext)
+	./vasprintf.$(objext) ./waitpid.$(objext)
 
 # These files are installed if the library has been configured to do so.
 INSTALLED_HEADERS =                                                     \
@@ -307,7 +304,7 @@ libiberty.html : $(srcdir)/libiberty.texi $(TEXISRC)
 @MAINT@	@true
 
 @MAINT@stamp-functions : $(CFILES:%=$(srcdir)/%) $(TEXIFILES:%=$(srcdir)/%) $(srcdir)/gather-docs Makefile
-@MAINT@@HAVE_PERL@	$(PERL) $(srcdir)/gather-docs $(srcdir) $(srcdir)/functions.texi $(CFILES) $(TEXIFILES)
+#@MAINT@@HAVE_PERL@	$(PERL) $(srcdir)/gather-docs $(srcdir) $(srcdir)/functions.texi $(CFILES) $(TEXIFILES)
 @MAINT@	echo stamp > stamp-functions
 
 INSTALL_DEST = @INSTALL_DEST@
@@ -360,17 +357,17 @@ ls:
 
 # Various targets for maintainers.
 
-maint-missing :
-	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) missing $(CFILES) $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
+#maint-missing :
+#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) missing $(CFILES) $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
 
-maint-buildall : $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
-	@true
+#maint-buildall : $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
+#	@true
 
-maint-undoc : $(srcdir)/functions.texi
-	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) undoc
+#maint-undoc : $(srcdir)/functions.texi
+#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) undoc
 
-maint-deps :
-	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) deps $(INCDIR)
+#maint-deps :
+#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) deps $(INCDIR)
 
 # Need to deal with profiled libraries, too.
 
@@ -465,15 +462,6 @@ $(CONFIGURED_OFILES):
 ./basename.$(objext): $(srcdir)/basename.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h $(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/basename.c $(OUTPUT_OPTION)
-
-./bcmp.$(objext): $(srcdir)/bcmp.c
-	$(COMPILE.c) $(srcdir)/bcmp.c $(OUTPUT_OPTION)
-
-./bcopy.$(objext): $(srcdir)/bcopy.c
-	$(COMPILE.c) $(srcdir)/bcopy.c $(OUTPUT_OPTION)
-
-./bsearch.$(objext): $(srcdir)/bsearch.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/bsearch.c $(OUTPUT_OPTION)
 
 ./bzero.$(objext): $(srcdir)/bzero.c
 	$(COMPILE.c) $(srcdir)/bzero.c $(OUTPUT_OPTION)
@@ -671,20 +659,12 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/libiberty.h $(srcdir)/vprintf-support.h
 	$(COMPILE.c) $(srcdir)/vasprintf.c $(OUTPUT_OPTION)
 
-./vfork.$(objext): $(srcdir)/vfork.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/vfork.c $(OUTPUT_OPTION)
-
-
 ./vprintf-support.$(objext): $(srcdir)/vprintf-support.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/vprintf-support.c $(OUTPUT_OPTION)
 
 ./waitpid.$(objext): $(srcdir)/waitpid.c config.h $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/waitpid.c $(OUTPUT_OPTION)
-
-./xasprintf.$(objext): $(srcdir)/xasprintf.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/xasprintf.c $(OUTPUT_OPTION)
 
 ./xatexit.$(objext): $(srcdir)/xatexit.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
@@ -705,7 +685,3 @@ $(CONFIGURED_OFILES):
 ./xstrndup.$(objext): $(srcdir)/xstrndup.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/xstrndup.c $(OUTPUT_OPTION)
-
-./xvasprintf.$(objext): $(srcdir)/xvasprintf.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(srcdir)/vprintf-support.h
-	$(COMPILE.c) $(srcdir)/xvasprintf.c $(OUTPUT_OPTION)

@@ -166,7 +166,7 @@ AC_CHECK_HEADERS(alloca.h strings.h unistd.h wchar.h wctype.h \
 AC_HEADER_DIRENT
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS(getpagesize setitimer sysconf getuid getgid \
+AC_CHECK_FUNCS_ONCE(getpagesize setitimer sysconf getuid getgid \
                getrlimit)
 
 AC_CHECK_DECLS(ftello)
@@ -432,7 +432,7 @@ AC_SUBST(lt_cv_dlopen_libs)
 # fseeko, long.  This assumes that sizeof off_t is .ge. sizeof long.
 # Hopefully a reasonable assumption since fseeko et.al. should be
 # upward compatible.
-AC_CHECK_FUNCS(ftello ftello64 fseeko fseeko64 fopen64)
+AC_CHECK_FUNCS_ONCE(ftello ftello64 fseeko fseeko64 fopen64)
 if test x"$ac_cv_func_ftello" = xyes -a x"$ac_cv_func_fseeko" = xyes; then
     AC_CHECK_SIZEOF(off_t)
 fi
@@ -450,7 +450,7 @@ AC_SUBST(bfd_ufile_ptr)
 
 dnl AC_CHECK_HEADERS(sys/mman.h)
 
-AC_CHECK_FUNCS(madvise mprotect mmap)
+AC_CHECK_FUNCS_ONCE(madvise mprotect mmap)
 if test x"$ac_cv_func_mmap" = xyes; then
   AC_DEFINE(USE_MMAP, 1, [Use mmap if it's available?])
 fi

@@ -144,10 +144,9 @@ am__objects_1 = app.$(OBJEXT) as.$(OBJEXT) atof-generic.$(OBJEXT) \
 	expr.$(OBJEXT) flonum-copy.$(OBJEXT) flonum-konst.$(OBJEXT) \
 	flonum-mult.$(OBJEXT) frags.$(OBJEXT) hash.$(OBJEXT) \
 	input-file.$(OBJEXT) input-scrub.$(OBJEXT) listing.$(OBJEXT) \
-	literal.$(OBJEXT) macro.$(OBJEXT) messages.$(OBJEXT) \
-	output-file.$(OBJEXT) read.$(OBJEXT) remap.$(OBJEXT) \
-	sb.$(OBJEXT) subsegs.$(OBJEXT) symbols.$(OBJEXT) \
-	write.$(OBJEXT)
+	macro.$(OBJEXT) messages.$(OBJEXT) output-file.$(OBJEXT) \
+	read.$(OBJEXT) remap.$(OBJEXT) sb.$(OBJEXT) subsegs.$(OBJEXT) \
+	symbols.$(OBJEXT) write.$(OBJEXT)
 am_as_new_OBJECTS = $(am__objects_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 as_new_OBJECTS = $(am_as_new_OBJECTS)
@@ -184,15 +183,15 @@ am__depfiles_remade = ./$(DEPDIR)/app.Po ./$(DEPDIR)/as.Po \
 	./$(DEPDIR)/input-file.Po ./$(DEPDIR)/input-scrub.Po \
 	./$(DEPDIR)/itbl-lex.Po ./$(DEPDIR)/itbl-ops.Po \
 	./$(DEPDIR)/itbl-parse.Po ./$(DEPDIR)/listing.Po \
-	./$(DEPDIR)/literal.Po ./$(DEPDIR)/macro.Po \
-	./$(DEPDIR)/messages.Po ./$(DEPDIR)/output-file.Po \
-	./$(DEPDIR)/read.Po ./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po \
-	./$(DEPDIR)/subsegs.Po ./$(DEPDIR)/symbols.Po \
-	./$(DEPDIR)/write.Po config/$(DEPDIR)/atof-ieee.Po \
-	config/$(DEPDIR)/e-crisaout.Po config/$(DEPDIR)/e-criself.Po \
-	config/$(DEPDIR)/e-i386aout.Po config/$(DEPDIR)/e-i386elf.Po \
-	config/$(DEPDIR)/e-mipself.Po config/$(DEPDIR)/obj-elf.Po \
-	config/$(DEPDIR)/tc-arm.Po config/$(DEPDIR)/te-vms.Po
+	./$(DEPDIR)/macro.Po ./$(DEPDIR)/messages.Po \
+	./$(DEPDIR)/output-file.Po ./$(DEPDIR)/read.Po \
+	./$(DEPDIR)/remap.Po ./$(DEPDIR)/sb.Po ./$(DEPDIR)/subsegs.Po \
+	./$(DEPDIR)/symbols.Po ./$(DEPDIR)/write.Po \
+	config/$(DEPDIR)/atof-ieee.Po config/$(DEPDIR)/e-crisaout.Po \
+	config/$(DEPDIR)/e-criself.Po config/$(DEPDIR)/e-i386aout.Po \
+	config/$(DEPDIR)/e-i386elf.Po config/$(DEPDIR)/e-mipself.Po \
+	config/$(DEPDIR)/obj-elf.Po config/$(DEPDIR)/tc-arm.Po \
+	config/$(DEPDIR)/te-vms.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -418,7 +417,6 @@ GAS_CFILES = \
 	input-file.c \
 	input-scrub.c \
 	listing.c \
-	literal.c \
 	macro.c \
 	messages.c \
 	output-file.c \
@@ -680,7 +678,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/itbl-ops.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/itbl-parse.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/listing.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/literal.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/macro.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/output-file.Po@am__quote@ # am--include-marker
@@ -879,7 +876,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/itbl-ops.Po
 	-rm -f ./$(DEPDIR)/itbl-parse.Po
 	-rm -f ./$(DEPDIR)/listing.Po
-	-rm -f ./$(DEPDIR)/literal.Po
 	-rm -f ./$(DEPDIR)/macro.Po
 	-rm -f ./$(DEPDIR)/messages.Po
 	-rm -f ./$(DEPDIR)/output-file.Po
@@ -967,7 +963,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/itbl-ops.Po
 	-rm -f ./$(DEPDIR)/itbl-parse.Po
 	-rm -f ./$(DEPDIR)/listing.Po
-	-rm -f ./$(DEPDIR)/literal.Po
 	-rm -f ./$(DEPDIR)/macro.Po
 	-rm -f ./$(DEPDIR)/messages.Po
 	-rm -f ./$(DEPDIR)/output-file.Po
@@ -1110,7 +1105,7 @@ install-exec-tooldir: install-exec-bindir $(noinst_PROGRAMS)
 	n=`echo as | sed '$(transform)'`; \
 	if [ "$(bindir)/$$n$(EXEEXT)" != "$(tooldir)/bin/as$(EXEEXT)" ]; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
-	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
 	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	else \
 	  true ; \

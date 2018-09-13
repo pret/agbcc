@@ -338,7 +338,7 @@ rm conftest.c
 # If we do not find a suitable binary, then try the user's path.
 
 AC_DEFUN([ACX_CHECK_INSTALLED_TARGET_TOOL], [
-AC_REQUIRE([ACX_TOOL_DIRS])
+#AC_REQUIRE([ACX_TOOL_DIRS])
 AC_REQUIRE([ACX_HAVE_GCC_FOR_TARGET])
 if test -z "$ac_cv_path_$1" ; then
   if test -n "$with_build_time_tools"; then

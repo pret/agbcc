@@ -27,13 +27,11 @@ noinst_LIBRARIES = libbfd.a
 
 bfddocdir =
 
-libbfd_a_LDFLAGS =
 # Empty these so that the respective installation directories will not be created.
 bfdlibdir =
 bfdincludedir =
 bfdinclude_HEADERS =
 rpath_bfdlibdir = @bfdlibdir@
-libbfd_a_LDFLAGS += -rpath $(rpath_bfdlibdir)
 
 # This is where we get zlib from.  zlibdir is -L../zlib and zlibinc is
 # -I../zlib, unless we were configured with --with-system-zlib, in which
@@ -202,7 +200,6 @@ libbfd_a_SOURCES = $(BFD32_LIBS_CFILES)
 EXTRA_libbfd_a_SOURCES = $(CFILES)
 libbfd_a_DEPENDENCIES = $(OFILES) ofiles
 libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL) $(ZLIB)
-libbfd_a_LDFLAGS += -release `cat libtool-soversion` @SHARED_LDFLAGS@
 
 # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
 # directory so that we don't have to convert all the programs that use

@@ -73,7 +73,6 @@ GAS_CFILES = \
 	input-file.c \
 	input-scrub.c \
 	listing.c \
-	literal.c \
 	macro.c \
 	messages.c \
 	output-file.c \
@@ -327,7 +326,7 @@ install-exec-tooldir: install-exec-bindir $(noinst_PROGRAMS)
 	n=`echo as | sed '$(transform)'`; \
 	if [ "$(bindir)/$$n$(EXEEXT)" != "$(tooldir)/bin/as$(EXEEXT)" ]; then \
 	  rm -f $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
-	  ln $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT) >/dev/null 2>/dev/null \
 	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) as-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/as$(EXEEXT); \
 	else \
 	  true ; \

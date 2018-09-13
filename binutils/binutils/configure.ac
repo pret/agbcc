@@ -56,18 +56,6 @@ fi], [default_ar_deterministic=0])
 AC_DEFINE_UNQUOTED(DEFAULT_AR_DETERMINISTIC, $default_ar_deterministic,
 		   [Should ar and ranlib use -D behavior by default?])
 
-AC_ARG_ENABLE(default-strings-all,
-[AS_HELP_STRING([--disable-default-strings-all],
-		[strings defaults to --data behavior])], [
-if test "${enableval}" = no; then
-  default_strings_all=0
-else
-  default_strings_all=1
-fi], [default_strings_all=1])
-
-AC_DEFINE_UNQUOTED(DEFAULT_STRINGS_ALL, $default_strings_all,
-		   [Should strings use -a behavior by default?])
-
 AM_BINUTILS_WARNINGS
 
 AC_CONFIG_HEADERS(config.h:config.in)
@@ -86,10 +74,6 @@ fi
 if test -z "$host" ; then
     AC_MSG_ERROR(Unrecognized host system type; please check config.sub.)
 fi
-
-ALL_LINGUAS="bg ca da es fi fr hr id it ja pt ro ru rw sk sr sv tr uk vi zh_CN zh_TW"
-ZW_GNU_GETTEXT_SISTER_DIR
-AM_PO_SUBDIRS
 
 AM_MAINTAINER_MODE
 AM_CONDITIONAL(GENINSRC_NEVER, false)
@@ -121,7 +105,6 @@ AC_CHECK_TYPES([long long], [AC_CHECK_SIZEOF(long long)])
 AC_CHECK_HEADERS(strings.h unistd.h fcntl.h sys/file.h  locale.h sys/param.h wchar.h)
 AC_HEADER_SYS_WAIT
 ACX_HEADER_STRING
-AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(utimes setmode getc_unlocked strcoll setlocale)
 AC_CHECK_FUNC([mkstemp],
 	      AC_DEFINE([HAVE_MKSTEMP], 1,
@@ -229,157 +212,6 @@ OBJDUMP_DEFS=
 OBJDUMP_PRIVATE_VECTORS=
 OBJDUMP_PRIVATE_OFILES=
 od_vectors=
-
-for targ in $target $canon_targets
-do
-    if test "x$targ" = "xall"; then
-        all_targets=true
-	BUILD_SRCONV='$(SRCONV_PROG)'
-	BUILD_MISC="${BUILD_MISC} "'bin2c$(EXEEXT_FOR_BUILD)'
-	BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	if test -z "$DLLTOOL_DEFAULT"; then
-	  DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_I386"
-	fi
-	DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_I386"
-	BUILD_DLLWRAP='$(DLLWRAP_PROG)$(EXEEXT)'
-	od_vectors="$od_vectors objdump_private_desc_xcoff"
-    else
-	case $targ in
-	*-*-hms*) BUILD_SRCONV='$(SRCONV_PROG)' ;;
-	esac
-
-	case $targ in
-	arm-wince-pe* | arm-*-wince | arm*-*-cegcc* | arm*-*-mingw32ce*)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_ARM_WINCE"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_ARM_WINCE -DDLLTOOL_ARM"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	arm-*-pe*)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_ARM"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_ARM"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	x86_64-*-mingw* | x86_64-*-cygwin*)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_MX86_64"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_MX86_64"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  BUILD_DLLWRAP='$(DLLWRAP_PROG)$(EXEEXT)'
-	  ;;
-changequote(,)dnl
-	i[3-7]86-*-pe* | i[3-7]86-*-cygwin* | i[3-7]86-*-mingw32** | i[3-7]86-*-netbsdpe*)
-changequote([,])dnl
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_I386"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_I386"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  BUILD_DLLWRAP='$(DLLWRAP_PROG)$(EXEEXT)'
-	  ;;
-changequote(,)dnl
-	i[3-7]86-*-interix)
-changequote([,])dnl
-	  BUILD_DLLTOOL='$(DLLTOOL_PROG)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_I386"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_I386"
-	  ;;
-changequote(,)dnl
-	powerpc*-aix5.[01])
-changequote([,])dnl
-	  ;;
-changequote(,)dnl
-	powerpc*-aix[5-9].*)
-changequote([,])dnl
-	  OBJDUMP_DEFS="-DAIX_WEAK_SUPPORT"
-	  ;;
-	powerpc*-*-pe* | powerpc*-*-cygwin*)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_PPC"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_PPC"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	powerpc*-*-linux* | powerpc*-*-elf* | powerpc*-*-eabi*)
-	  case "$BUILD_INSTALL_MISC" in
-	    *embedspu*) ;;
-	    *) BUILD_INSTALL_MISC="${BUILD_INSTALL_MISC} embedspu"
-	  esac
-	  ;;
-	sh*-*-pe)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_SH"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_SH"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	spu-*-*)
-	  BUILD_MISC="${BUILD_MISC} "'bin2c$(EXEEXT_FOR_BUILD)'
-	  ;;
-	mips*-*-pe)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_MIPS"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_MIPS"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	mcore-*-pe)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_MCORE"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_MCORE"
-	  BUILD_WINDRES='$(WINDRES_PROG)$(EXEEXT)'
-	  BUILD_WINDMC='$(WINDMC_PROG)$(EXEEXT)'
-	  ;;
-	mcore-*-elf)
-  	  BUILD_DLLTOOL='$(DLLTOOL_PROG)$(EXEEXT)'
-	  if test -z "$DLLTOOL_DEFAULT"; then
-	    DLLTOOL_DEFAULT="-DDLLTOOL_DEFAULT_MCORE_ELF"
-	  fi
-	  DLLTOOL_DEFS="$DLLTOOL_DEFS -DDLLTOOL_MCORE_ELF"
-	  ;;
-  	mep-*)
-	  OBJDUMP_DEFS="-DSKIP_ZEROES=256 -DSKIP_ZEROES_AT_END=0"
-	  ;;
-	esac
-
-	# Add objdump private vectors.
-	case $targ in
-	avr-*-*)
-	  od_vectors="$od_vectors objdump_private_desc_elf32_avr"
-	  ;;
-	powerpc*-*-aix* | rs6000-*-aix*)
-	  od_vectors="$od_vectors objdump_private_desc_xcoff"
-	  ;;
-        *-*-darwin*)
-	  od_vectors="$od_vectors objdump_private_desc_mach_o"
-	  ;;
-	esac
-    fi
-done
 
 # Uniq objdump private vector, build objdump target ofiles.
 od_files=

@@ -24,10 +24,13 @@ m4_include(config/override.m4)
 m4_include(config/proginstall.m4)
 m4_include(config/elf.m4)
 m4_include([config/isl.m4])
-
-AC_INIT(move-if-change)
+m4_include([bfd/version.m4])
+AC_INIT([move-if-change], [BFD_VERSION])
+#AC_INIT(move-if-change)
 m4_include([config/lean.m4])
 
+ACX_LEAN_FORCE_CACHE
+#AC_CONFIG_SUBDIRS([bfd])
 AC_DISABLE_OPTION_CHECKING
 
 progname=$0
@@ -73,6 +76,7 @@ test "$host_noncanonical" = "$target_noncanonical" &&
   program_transform_name=s,y,y,
 
 AC_CANONICAL_SYSTEM
+
 AC_ARG_PROGRAM
 
 m4_pattern_allow([^AS_FOR_TARGET$])dnl
@@ -232,29 +236,12 @@ case $is_cross_compiler in
   no) skipdirs="${skipdirs} ${cross_only}" ;;
 esac
 
-# If both --with-headers and --with-libs are specified, default to
-# --without-newlib.
-if test x"${with_headers}" != x && test x"${with_headers}" != xno \
-   && test x"${with_libs}" != x && test x"${with_libs}" != xno ; then
-fi
 
-skipdirs="${skipdirs} target-newlib" ;;
+skipdirs="${skipdirs} target-newlib"
 
-AC_ARG_ENABLE(as-accelerator-for,
-[AS_HELP_STRING([--enable-as-accelerator-for=ARG],
-		[build as offload target compiler.
-		Specify offload host triple by ARG])])
+with_as_accelerator_for=
 
-AC_ARG_ENABLE(offload-targets,
-[AS_HELP_STRING([--enable-offload-targets=LIST],
-		[enable offloading to devices from comma-separated LIST of
-		TARGET[=DIR]. Use optional path to find offload target compiler
-		during the build])],
-[
-  if test x"$enable_offload_targets" = x; then
-    AC_MSG_ERROR([no offload targets specified])
-  fi
-], [enable_offload_targets=])
+enable_offload_targets=
 
 # Handle --enable-gold, --enable-ld.
 # --disable-gold [--enable-ld]
@@ -335,178 +322,18 @@ esac
 
 
 
-AC_ARG_ENABLE(libssp,
-[AS_HELP_STRING([--enable-libssp], [build libssp directory])],
-ENABLE_LIBSSP=$enableval,
-ENABLE_LIBSSP=yes)
+ENABLE_LIBSSP=no
 
 
 # If this is accelerator compiler and its target is intelmic we enable
 # target liboffloadmic by default.  If this is compiler with offloading
 # for intelmic we enable host liboffloadmic by default.  Otherwise
 # liboffloadmic is disabled by default.
-AC_ARG_ENABLE([liboffloadmic],
-AC_HELP_STRING([[--enable-liboffloadmic[=ARG]]],
-	       [build liboffloadmic @<:@ARG={no,host,target}@:>@]),
-[case "$enableval" in
-  no | host | target)
-    enable_liboffloadmic=$enableval ;;
-  *)
-    AC_MSG_ERROR([--enable-liboffloadmic=no/host/target]) ;;
-esac],
-[if test x"$enable_as_accelerator_for" != x; then
-  case "${target}" in
-    *-intelmic-* | *-intelmicemul-*)
-      enable_liboffloadmic=target
-      extra_liboffloadmic_configure_flags="--enable-liboffloadmic=target"
-      ;;
-    *)
-      enable_liboffloadmic=no
-      ;;
-  esac
-else
-  case "${enable_offload_targets}" in
-    *-intelmic-* | *-intelmicemul-*)
-      enable_liboffloadmic=host
-      extra_liboffloadmic_configure_flags="--enable-liboffloadmic=host"
-      ;;
-    *)
-      enable_liboffloadmic=no
-      ;;
-    esac
-fi])
+enable_liboffloadmic=
 AC_SUBST(extra_liboffloadmic_configure_flags)
 
-# Enable libgomp by default on hosted POSIX systems, and a few others.
-if test x$enable_libgomp = x ; then
-    case "${target}" in
-    *-*-linux* | *-*-gnu* | *-*-k*bsd*-gnu | *-*-kopensolaris*-gnu)
-	;;
-    *-*-netbsd* | *-*-freebsd* | *-*-openbsd* | *-*-dragonfly*)
-	;;
-    *-*-solaris2* | *-*-hpux11*)
-	;;
-    *-*-darwin* | *-*-aix*)
-	;;
-    nvptx*-*-*)
-	;;
-    *)
-	noconfigdirs="$noconfigdirs target-libgomp"
-	;;
-    esac
-fi
+noconfigdirs="$noconfigdirs target-libgomp"
 
-# Disable libatomic on unsupported systems.
-if test -d ${srcdir}/libatomic; then
-    if test x$enable_libatomic = x; then
-	AC_MSG_CHECKING([for libatomic support])
-	if (srcdir=${srcdir}/libatomic; \
-		. ${srcdir}/configure.tgt; \
-		test -n "$UNSUPPORTED")
-	then
-	    AC_MSG_RESULT([no])
-	    noconfigdirs="$noconfigdirs target-libatomic"
-	else
-	    AC_MSG_RESULT([yes])
-	fi
-    fi
-fi
-
-# Disable liboffloadmic on unsupported systems.
-if test -d ${srcdir}/liboffloadmic; then
-    if test x$enable_liboffloadmic != xno; then
-	AC_MSG_CHECKING([for liboffloadmic support])
-	if (srcdir=${srcdir}/liboffloadmic; \
-		. ${srcdir}/configure.tgt; \
-		test -n "$UNSUPPORTED")
-	then
-	    AC_MSG_RESULT([no])
-	    noconfigdirs="$noconfigdirs target-liboffloadmic"
-	else
-	    AC_MSG_RESULT([yes])
-	fi
-    fi
-fi
-
-# Disable libitm on unsupported systems.
-if test -d ${srcdir}/libitm; then
-    if test x$enable_libitm = x; then
-	AC_MSG_CHECKING([for libitm support])
-	if (srcdir=${srcdir}/libitm; \
-		. ${srcdir}/configure.tgt; \
-		test -n "$UNSUPPORTED")
-	then
-	    AC_MSG_RESULT([no])
-	    noconfigdirs="$noconfigdirs target-libitm"
-	else
-	    AC_MSG_RESULT([yes])
-	fi
-    fi
-fi
-
-# Disable libsanitizer on unsupported systems.
-if test -d ${srcdir}/libsanitizer; then
-    if test x$enable_libsanitizer = x; then
-	AC_MSG_CHECKING([for libsanitizer support])
-	if (srcdir=${srcdir}/libsanitizer; \
-		. ${srcdir}/configure.tgt; \
-		test -n "$UNSUPPORTED")
-	then
-	    AC_MSG_RESULT([no])
-	    noconfigdirs="$noconfigdirs target-libsanitizer"
-	else
-	    AC_MSG_RESULT([yes])
-	fi
-    fi
-fi
-
-# Disable libvtv on unsupported systems.
-if test -d ${srcdir}/libvtv; then
-    if test x$enable_libvtv = x; then
-	AC_MSG_CHECKING([for libvtv support])
-	if (srcdir=${srcdir}/libvtv; \
-		. ${srcdir}/configure.tgt; \
-		test "$VTV_SUPPORTED" != "yes")
-	then
-	    AC_MSG_RESULT([no])
-	    noconfigdirs="$noconfigdirs target-libvtv"
-	else
-	    AC_MSG_RESULT([yes])
-	fi
-    fi
-fi
-
-
-# Disable libhsail-rt on unsupported systems.
-if test -d ${srcdir}/libhsail-rt; then
-    if test x$enable_libhsail_rt = x; then
-        AC_MSG_CHECKING([for libhsail-rt support])
-        if (srcdir=${srcdir}/libhsail-rt; \
-                . ${srcdir}/configure.tgt; \
-                test -n "$UNSUPPORTED")
-        then
-            AC_MSG_RESULT([no])
-            unsupported_languages="$unsupported_languages brig"
-            # This implicitly disables also target-libhsail-rt as it won't
-            # get added to the build without BRIG FE.
-        else
-            AC_MSG_RESULT([yes])
-        fi
-    fi
-fi
-
-
-# Disable libquadmath for some systems.
-case "${target}" in
-  avr-*-*)
-    noconfigdirs="$noconfigdirs target-libquadmath"
-    ;;
-  # libquadmath is unused on AIX and libquadmath build process use of
-  # LD_LIBRARY_PATH can break AIX bootstrap.
-  powerpc-*-aix* | rs6000-*-aix*)
-    noconfigdirs="$noconfigdirs target-libquadmath"
-    ;;
-esac
 
 # Disable libssp for some systems.
 case "${target}" in
@@ -616,19 +443,13 @@ if test -z "$LD"; then
   fi
 fi
 
-ACX_PROG_CMP_IGNORE_INITIAL
-
 AC_ARG_ENABLE([bootstrap],
 [AS_HELP_STRING([--enable-bootstrap],
 		[enable bootstrapping @<:@yes if native build@:>@])],,
 enable_bootstrap=default)
 
 # Issue errors and warnings for invalid/strange bootstrap combinations.
-if test -r $srcdir/gcc/configure; then
-  have_compiler=yes
-else
   have_compiler=no
-fi
 
 case "$have_compiler:$host:$target:$enable_bootstrap" in
   *:*:*:no) ;;
@@ -668,223 +489,19 @@ have_gmp=no
 
 # Specify a location for mpc
 # check for this first so it ends up on the link line before mpfr.
-AC_ARG_WITH(mpc,
-[AS_HELP_STRING([--with-mpc=PATH],
-		[specify prefix directory for installed MPC package.
-		 Equivalent to --with-mpc-include=PATH/include
-		 plus --with-mpc-lib=PATH/lib])])
-AC_ARG_WITH(mpc-include,
-[AS_HELP_STRING([--with-mpc-include=PATH],
-		[specify directory for installed MPC include files])])
-AC_ARG_WITH(mpc-lib,
-[AS_HELP_STRING([--with-mpc-lib=PATH],
-		[specify directory for the installed MPC library])])
-
-if test "x$with_mpc" != x; then
-  gmplibs="-L$with_mpc/lib $gmplibs"
-  gmpinc="-I$with_mpc/include $gmpinc"
-fi
-if test "x$with_mpc_include" != x; then
-  gmpinc="-I$with_mpc_include $gmpinc"
-fi
-if test "x$with_mpc_lib" != x; then
-  gmplibs="-L$with_mpc_lib $gmplibs"
-fi
-if test "x$with_mpc$with_mpc_include$with_mpc_lib" = x && test -d ${srcdir}/mpc; then
-  gmplibs='-L$$r/$(HOST_SUBDIR)/mpc/src/'"$lt_cv_objdir $gmplibs"
-  gmpinc='-I$$s/mpc/src '"$gmpinc"
-  # Do not test the mpc version.  Assume that it is sufficient, since
-  # it is in the source tree, and the library has not been built yet
-  # but it would be included on the link line in the version check below
-  # hence making the test fail.
-  have_gmp=yes
-fi
+with_mpc=
+with_mpc_include=
+with_mpc_lib=
 
 # Specify a location for mpfr
 # check for this first so it ends up on the link line before gmp.
-AC_ARG_WITH(mpfr-dir,
-[AS_HELP_STRING([--with-mpfr-dir=PATH], [this option has been REMOVED])],
-[AC_MSG_ERROR([The --with-mpfr-dir=PATH option has been removed.
-Use --with-mpfr=PATH or --with-mpfr-include=PATH plus --with-mpfr-lib=PATH])])
+with_mpfr=
+with_mpfr_include=
+with_mpfr_lib=
 
-AC_ARG_WITH(mpfr,
-[AS_HELP_STRING([--with-mpfr=PATH],
-		[specify prefix directory for installed MPFR package.
-		 Equivalent to --with-mpfr-include=PATH/include
-		 plus --with-mpfr-lib=PATH/lib])])
-AC_ARG_WITH(mpfr-include,
-[AS_HELP_STRING([--with-mpfr-include=PATH],
-		[specify directory for installed MPFR include files])])
-AC_ARG_WITH(mpfr-lib,
-[AS_HELP_STRING([--with-mpfr-lib=PATH],
-		[specify directory for the installed MPFR library])])
-
-if test "x$with_mpfr" != x; then
-  gmplibs="-L$with_mpfr/lib $gmplibs"
-  gmpinc="-I$with_mpfr/include $gmpinc"
-fi
-if test "x$with_mpfr_include" != x; then
-  gmpinc="-I$with_mpfr_include $gmpinc"
-fi
-if test "x$with_mpfr_lib" != x; then
-  gmplibs="-L$with_mpfr_lib $gmplibs"
-fi
-if test "x$with_mpfr$with_mpfr_include$with_mpfr_lib" = x && test -d ${srcdir}/mpfr; then
-  # MPFR v3.1.0 moved the sources into a src sub-directory.
-  if ! test -d ${srcdir}/mpfr/src; then
-    AC_MSG_ERROR([dnl
-Building GCC with MPFR in the source tree is only handled for MPFR 3.1.0+.])
-  fi
-  gmplibs='-L$$r/$(HOST_SUBDIR)/mpfr/src/'"$lt_cv_objdir $gmplibs"
-  gmpinc='-I$$r/$(HOST_SUBDIR)/mpfr/src -I$$s/mpfr/src '"$gmpinc"
-  extra_mpc_mpfr_configure_flags='--with-mpfr-include=$$s/mpfr/src --with-mpfr-lib=$$r/$(HOST_SUBDIR)/mpfr/src/'"$lt_cv_objdir"
-  # Do not test the mpfr version.  Assume that it is sufficient, since
-  # it is in the source tree, and the library has not been built yet
-  # but it would be included on the link line in the version check below
-  # hence making the test fail.
-  have_gmp=yes
-fi
-
-# Specify a location for gmp
-AC_ARG_WITH(gmp-dir,
-[AS_HELP_STRING([--with-gmp-dir=PATH], [this option has been REMOVED])],
-[AC_MSG_ERROR([The --with-gmp-dir=PATH option has been removed.
-Use --with-gmp=PATH or --with-gmp-include=PATH plus --with-gmp-lib=PATH])])
-
-AC_ARG_WITH(gmp,
-[AS_HELP_STRING([--with-gmp=PATH],
-		[specify prefix directory for the installed GMP package.
-		 Equivalent to --with-gmp-include=PATH/include
-		 plus --with-gmp-lib=PATH/lib])])
-AC_ARG_WITH(gmp-include,
-[AS_HELP_STRING([--with-gmp-include=PATH],
-		[specify directory for installed GMP include files])])
-AC_ARG_WITH(gmp-lib,
-[AS_HELP_STRING([--with-gmp-lib=PATH],
-		[specify directory for the installed GMP library])])
-
-
-if test "x$with_gmp" != x; then
-  gmplibs="-L$with_gmp/lib $gmplibs"
-  gmpinc="-I$with_gmp/include $gmpinc"
-fi
-if test "x$with_gmp_include" != x; then
-  gmpinc="-I$with_gmp_include $gmpinc"
-fi
-if test "x$with_gmp_lib" != x; then
-  gmplibs="-L$with_gmp_lib $gmplibs"
-fi
-if test "x$with_gmp$with_gmp_include$with_gmp_lib" = x && test -d ${srcdir}/gmp; then
-  gmplibs='-L$$r/$(HOST_SUBDIR)/gmp/'"$lt_cv_objdir $gmplibs"
-  gmpinc='-I$$r/$(HOST_SUBDIR)/gmp -I$$s/gmp '"$gmpinc"
-  extra_mpfr_configure_flags='--with-gmp-include=$$r/$(HOST_SUBDIR)/gmp --with-gmp-lib=$$r/$(HOST_SUBDIR)/gmp/'"$lt_cv_objdir"
-  extra_mpc_gmp_configure_flags='--with-gmp-include=$$r/$(HOST_SUBDIR)/gmp --with-gmp-lib=$$r/$(HOST_SUBDIR)/gmp/'"$lt_cv_objdir"
-  extra_isl_gmp_configure_flags='--with-gmp-builddir=$$r/$(HOST_SUBDIR)/gmp'
-  # Do not test the gmp version.  Assume that it is sufficient, since
-  # it is in the source tree, and the library has not been built yet
-  # but it would be included on the link line in the version check below
-  # hence making the test fail.
-  have_gmp=yes
-fi
-
-if test -d ${srcdir}/gcc && test "x$have_gmp" = xno; then
-  have_gmp=yes
-  saved_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS $gmpinc"
-  # Check for the recommended and required versions of GMP.
-  AC_MSG_CHECKING([for the correct version of gmp.h])
-  AC_TRY_COMPILE([#include "gmp.h"],[
-  #define GCC_GMP_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
-  #define GCC_GMP_VERSION GCC_GMP_VERSION_NUM(__GNU_MP_VERSION,__GNU_MP_VERSION_MINOR,__GNU_MP_VERSION_PATCHLEVEL)
-  #if GCC_GMP_VERSION < GCC_GMP_VERSION_NUM(4,2,3)
-  choke me
-  #endif
-  ], [AC_TRY_COMPILE([#include <gmp.h>],[
-  #define GCC_GMP_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
-  #define GCC_GMP_VERSION GCC_GMP_VERSION_NUM(__GNU_MP_VERSION,__GNU_MP_VERSION_MINOR,__GNU_MP_VERSION_PATCHLEVEL)
-  #if GCC_GMP_VERSION < GCC_GMP_VERSION_NUM(4,3,2)
-  choke me
-  #endif
-  ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([buggy but acceptable])])],
-   [AC_MSG_RESULT([no]); have_gmp=no])
-
-  # If we have GMP, check the MPFR version.
-  if test x"$have_gmp" = xyes; then
-    # Check for the recommended and required versions of MPFR.
-    AC_MSG_CHECKING([for the correct version of mpfr.h])
-    AC_TRY_COMPILE([#include <gmp.h>
-    #include <mpfr.h>],[
-    #if MPFR_VERSION < MPFR_VERSION_NUM(2,4,0)
-    choke me
-    #endif
-    ], [AC_TRY_COMPILE([#include <gmp.h>
-    #include <mpfr.h>],[
-    #if MPFR_VERSION < MPFR_VERSION_NUM(2,4,2)
-    choke me
-    #endif
-    ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([buggy but acceptable])])],
-     [AC_MSG_RESULT([no]); have_gmp=no])
-  fi
-
-  # Check for the MPC header version.
-  if test x"$have_gmp" = xyes ; then
-    # Check for the recommended and required versions of MPC.
-    AC_MSG_CHECKING([for the correct version of mpc.h])
-    AC_TRY_COMPILE([#include <mpc.h>],[
-    #if MPC_VERSION < MPC_VERSION_NUM(0,8,0)
-    choke me
-    #endif
-    ], [AC_TRY_COMPILE([#include <mpc.h>],[
-    #if MPC_VERSION < MPC_VERSION_NUM(0,8,1)
-    choke me
-    #endif
-    ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([buggy but acceptable])])],
-     [AC_MSG_RESULT([no]); have_gmp=no])
-  fi
-
-  # Now check the MPFR library.
-  if test x"$have_gmp" = xyes; then
-    saved_LIBS="$LIBS"
-    LIBS="$LIBS $gmplibs"
-    AC_MSG_CHECKING([for the correct version of the gmp/mpfr/mpc libraries])
-    AC_TRY_LINK([#include <mpc.h>],[
-    mpfr_t n;
-    mpfr_t x;
-    mpc_t c;
-    int t;
-    mpfr_init (n);
-    mpfr_init (x);
-    mpfr_atan2 (n, n, x, GMP_RNDN);
-    mpfr_erfc (n, x, GMP_RNDN);
-    mpfr_subnormalize (x, t, GMP_RNDN);
-    mpfr_clear(n);
-    mpfr_clear(x);
-    mpc_init2 (c, 53);
-    mpc_set_ui_ui (c, 1, 1, MPC_RNDNN);
-    mpc_cosh (c, c, MPC_RNDNN);
-    mpc_pow (c, c, c, MPC_RNDNN);
-    mpc_acosh (c, c, MPC_RNDNN);
-    mpc_clear (c);
-    ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); have_gmp=no])
-    LIBS="$saved_LIBS"
-  fi
-
-  CFLAGS="$saved_CFLAGS"
-
-# The library versions listed in the error message below should match
-# the HARD-minimums enforced above.
-  if test x$have_gmp != xyes; then
-    AC_MSG_ERROR([Building GCC requires GMP 4.2+, MPFR 2.4.0+ and MPC 0.8.0+.
-Try the --with-gmp, --with-mpfr and/or --with-mpc options to specify
-their locations.  Source code for these libraries can be found at
-their respective hosting sites as well as at
-ftp://gcc.gnu.org/pub/gcc/infrastructure/.  See also
-http://gcc.gnu.org/install/prerequisites.html for additional info.  If
-you obtained GMP, MPFR and/or MPC from a vendor distribution package,
-make sure that you have installed both the libraries and the header
-files.  They may be located in separate packages.])
-  fi
-fi
+with_gmp=
+with_gmp_include=
+with_gmp_lib=
 
 # Flags needed for both GMP, MPFR and/or MPC.
 AC_SUBST(gmplibs)
@@ -1552,7 +1169,7 @@ case "$host" in
 esac
 
 # To find our prefix, in gcc_cv_tool_prefix.
-ACX_TOOL_DIRS
+#ACX_TOOL_DIRS
 
 copy_dirs=
 

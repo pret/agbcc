@@ -248,12 +248,11 @@ AC_SUBST(NATIVE_LIB_DIRS)
 AC_CHECK_HEADERS(strings.h unistd.h elf-hints.h locale.h sys/param.h)
 AC_CHECK_HEADERS(fcntl.h sys/file.h sys/time.h sys/stat.h)
 ACX_HEADER_STRING
-AC_CHECK_FUNCS(glob mkstemp realpath setlocale waitpid)
-AC_CHECK_FUNCS(open lseek close)
+AC_CHECK_FUNCS_ONCE(glob mkstemp realpath setlocale waitpid open lseek close)
 AC_HEADER_DIRENT
 
 dnl AC_CHECK_HEADERS(sys/mman.h)
-AC_CHECK_FUNC(mmap)
+AC_CHECK_FUNCS_ONCE(mmap)
 
 AC_SEARCH_LIBS([dlopen], [dl])
 AM_CONDITIONAL([ENABLE_PLUGINS], [test x$plugins = xyes])

@@ -40,16 +40,8 @@
    don't. */
 #undef HAVE_DECL_ENVIRON
 
-/* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
-   */
-#undef HAVE_DECL_GETENV
-
 /* Is the prototype for getopt in <unistd.h> in the expected format? */
 #undef HAVE_DECL_GETOPT
-
-/* Define to 1 if you have the declaration of `strstr', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STRSTR
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */

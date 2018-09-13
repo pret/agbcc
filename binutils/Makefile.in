@@ -636,20 +636,11 @@ TARGET_FLAGS_TO_PASS = $(BASE_FLAGS_TO_PASS) $(EXTRA_TARGET_FLAGS)
 # The BUILD_* variables are a special case, which are used for the gcc
 # cross-building scheme.
 .PHONY: configure-host
-configure-host:  \
-    maybe-configure-bfd \
-    maybe-configure-opcodes \
-    maybe-configure-binutils \
-    maybe-configure-etc \
-    maybe-configure-fixincludes \
-    maybe-configure-gas \
-    maybe-configure-ld \
-    maybe-configure-libcpp \
-    maybe-configure-libiberty \
-    maybe-configure-libiberty-linker-plugin \
-    maybe-configure-m4
+configure-host: # \
+#   maybe-configure-
 .PHONY: configure-target
-configure-target: 
+configure-target: # \
+#    maybe-configure-target-
 
 # The target built for a native non-bootstrap build.
 .PHONY: all
@@ -1066,39 +1057,13 @@ TAGS: do-TAGS
 
 # --------------------------------------
 # Modules which run on the build machine
+
+#[#+ configure prefix="build-" subdir="$(BUILD_SUBDIR)" exports="$(BUILD_EXPORTS)"
+#	     host_alias=(get "host" "${build_alias}")
+#	     target_alias=(get "target" "${target_alias}")
+#	     args="$(BUILD_CONFIGARGS)" no-config-site=true +]
+
 # --------------------------------------
-
-
-.PHONY: configure-build-libiberty maybe-configure-build-libiberty
-maybe-configure-build-libiberty:
-@if build-libiberty
-maybe-configure-build-libiberty: configure-build-libiberty
-configure-build-libiberty: 
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	test ! -f $(BUILD_SUBDIR)/libiberty/Makefile || exit 0; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/libiberty; \
-	$(BUILD_EXPORTS)  \
-	echo Configuring in $(BUILD_SUBDIR)/libiberty; \
-	cd "$(BUILD_SUBDIR)/libiberty" || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(BUILD_SUBDIR)/libiberty/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=libiberty; \
-	rm -f no-such-file || : ; \
-	CONFIG_SITE=no-such-file $(SHELL) \
-	  $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
-	  --target=${target_alias}  \
-	  || exit 1
-@endif build-libiberty
-
-
-
 
 
 .PHONY: all-build-libiberty maybe-all-build-libiberty
@@ -1120,38 +1085,6 @@ all-build-libiberty: configure-build-libiberty
 
 
 
-.PHONY: configure-build-m4 maybe-configure-build-m4
-maybe-configure-build-m4:
-@if build-m4
-maybe-configure-build-m4: configure-build-m4
-configure-build-m4: 
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	test ! -f $(BUILD_SUBDIR)/m4/Makefile || exit 0; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/m4; \
-	$(BUILD_EXPORTS)  \
-	echo Configuring in $(BUILD_SUBDIR)/m4; \
-	cd "$(BUILD_SUBDIR)/m4" || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(BUILD_SUBDIR)/m4/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=m4; \
-	rm -f no-such-file || : ; \
-	CONFIG_SITE=no-such-file $(SHELL) \
-	  $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
-	  --target=${target_alias}  \
-	  || exit 1
-@endif build-m4
-
-
-
-
-
 .PHONY: all-build-m4 maybe-all-build-m4
 maybe-all-build-m4:
 @if build-m4
@@ -1166,38 +1099,6 @@ all-build-m4: configure-build-m4
 	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_BUILD_FLAGS)   \
 		$(TARGET-build-m4))
 @endif build-m4
-
-
-
-
-
-.PHONY: configure-build-libcpp maybe-configure-build-libcpp
-maybe-configure-build-libcpp:
-@if build-libcpp
-maybe-configure-build-libcpp: configure-build-libcpp
-configure-build-libcpp: 
-	@: $(MAKE); $(unstage)
-	@r=`${PWD_COMMAND}`; export r; \
-	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
-	test ! -f $(BUILD_SUBDIR)/libcpp/Makefile || exit 0; \
-	$(SHELL) $(srcdir)/mkinstalldirs $(BUILD_SUBDIR)/libcpp; \
-	$(BUILD_EXPORTS)  \
-	echo Configuring in $(BUILD_SUBDIR)/libcpp; \
-	cd "$(BUILD_SUBDIR)/libcpp" || exit 1; \
-	case $(srcdir) in \
-	  /* | [A-Za-z]:[\\/]*) topdir=$(srcdir) ;; \
-	  *) topdir=`echo $(BUILD_SUBDIR)/libcpp/ | \
-		sed -e 's,\./,,g' -e 's,[^/]*/,../,g' `$(srcdir) ;; \
-	esac; \
-	module_srcdir=libcpp; \
-	rm -f no-such-file || : ; \
-	CONFIG_SITE=no-such-file $(SHELL) \
-	  $$s/$$module_srcdir/configure \
-	  --srcdir=$${topdir}/$$module_srcdir \
-	  $(BUILD_CONFIGARGS) --build=${build_alias} --host=${build_alias} \
-	  --target=${target_alias} --disable-nls am_cv_func_iconv=no \
-	  || exit 1
-@endif build-libcpp
 
 
 
@@ -8428,14 +8329,6 @@ stagefeedback-start::
 # a hash table.
 all-build-libiberty: maybe-all-build-texinfo
 all-build-libcpp: maybe-all-build-libiberty
-configure-libcpp: configure-libiberty
-
-configure-stage1-libcpp: configure-stage1-libiberty
-configure-stage2-libcpp: configure-stage2-libiberty
-configure-stage3-libcpp: configure-stage3-libiberty
-configure-stage4-libcpp: configure-stage4-libiberty
-configure-stageprofile-libcpp: configure-stageprofile-libiberty
-configure-stagefeedback-libcpp: configure-stagefeedback-libiberty
 all-libcpp: all-libiberty
 
 all-stage1-libcpp: all-stage1-libiberty
@@ -8453,14 +8346,6 @@ all-stage4-fixincludes: maybe-all-stage4-libiberty
 all-stageprofile-fixincludes: maybe-all-stageprofile-libiberty
 all-stagefeedback-fixincludes: maybe-all-stagefeedback-libiberty
 all-utils: maybe-all-libiberty
-configure-bfd: configure-libiberty
-
-configure-stage1-bfd: configure-stage1-libiberty
-configure-stage2-bfd: configure-stage2-libiberty
-configure-stage3-bfd: configure-stage3-libiberty
-configure-stage4-bfd: configure-stage4-libiberty
-configure-stageprofile-bfd: configure-stageprofile-libiberty
-configure-stagefeedback-bfd: configure-stagefeedback-libiberty
 all-bfd: maybe-all-libiberty
 
 all-stage1-bfd: maybe-all-stage1-libiberty
@@ -8469,14 +8354,6 @@ all-stage3-bfd: maybe-all-stage3-libiberty
 all-stage4-bfd: maybe-all-stage4-libiberty
 all-stageprofile-bfd: maybe-all-stageprofile-libiberty
 all-stagefeedback-bfd: maybe-all-stagefeedback-libiberty
-configure-opcodes: configure-libiberty
-
-configure-stage1-opcodes: configure-stage1-libiberty
-configure-stage2-opcodes: configure-stage2-libiberty
-configure-stage3-opcodes: configure-stage3-libiberty
-configure-stage4-opcodes: configure-stage4-libiberty
-configure-stageprofile-opcodes: configure-stageprofile-libiberty
-configure-stagefeedback-opcodes: configure-stagefeedback-libiberty
 all-opcodes: maybe-all-libiberty
 
 all-stage1-opcodes: maybe-all-stage1-libiberty

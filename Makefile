@@ -8,10 +8,10 @@ endif
 # The dash shell (/bin/sh on ubuntu) does not support $LINENO and messes up configure scripts.
 DASH_LINENO_CHECK := $(shell $(SHELL) -c 'echo $$LINENO')
 ifeq (,$(DASH_LINENO_CHECK))
-  ifneq (,$(shell command -v mksh))
-    override SHELL := $(shell command -v mksh)
+  ifneq (,$(shell which mksh))
+    override SHELL := $(shell which mksh)
   else
-    override SHELL := $(shell command -v bash)
+    override SHELL := $(shell which bash)
   endif
 endif
 export SHELL := $(SHELL)
@@ -67,7 +67,7 @@ agbcc$(EXE):
 
 # Careful with these ./configure flags, they are very touchy.
 binutils/Makefile:
-	cd binutils && touch **/* && $(SHELL) ./configure SHELL="$(SHELL)" LDFLAGS="-g" CFLAGS="-O2 -g3" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl
+	cd binutils && touch **/* && $(SHELL) ./configure SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE
 
 binutils: binutils/Makefile
 	@$(MAKE) -C binutils SHELL="$(SHELL)"
