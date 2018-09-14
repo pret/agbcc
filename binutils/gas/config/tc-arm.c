@@ -377,9 +377,7 @@ LITTLENUM_TYPE fp_values[NUM_FLOAT_VALS][MAX_LITTLENUMS];
 #define SUCCESS (0)
 
 #define SUFF_S 1
-#define SUFF_D 2
 #define SUFF_E 3
-#define SUFF_P 4
 
 #define CP_T_X	 0x00008000
 #define CP_T_Y	 0x00400000
@@ -561,7 +559,6 @@ struct asm_opcode
 #define LITERAL_MASK	0xf000f000
 #define OPCODE_MASK	0xfe1fffff
 #define V4_STR_BIT	0x00000020
-#define VLDR_VMOV_SAME	0x0040f000
 
 #define T2_SUBS_PC_LR	0xf3de8f00
 
@@ -674,7 +671,6 @@ struct asm_opcode
 #define BAD_OVERLAP	_("registers may not be the same")
 #define BAD_HIREG	_("lo register required")
 #define BAD_THUMB32	_("instruction not supported in Thumb16 mode")
-#define BAD_ADDR_MODE   _("instruction does not accept this addressing mode");
 #define BAD_BRANCH	_("branch must be last instruction in IT block")
 #define BAD_NOT_IT	_("instruction not allowed in IT block")
 #define BAD_FPU		_("selected FPU does not support instruction")
@@ -687,7 +683,6 @@ struct asm_opcode
 #define BAD_PC_WRITEBACK \
 	_("cannot use writeback with PC-relative addressing")
 #define BAD_RANGE	_("branch out of range")
-#define BAD_FP16	_("selected processor does not support fp16 instruction")
 #define UNPRED_REG(R)	_("using " R " results in unpredictable behaviour")
 #define THUMB1_RELOC_ONLY  _("relocation valid in thumb1 code only")
 
@@ -695,7 +690,6 @@ static struct hash_control * arm_ops_hsh;
 static struct hash_control * arm_cond_hsh;
 static struct hash_control * arm_shift_hsh;
 static struct hash_control * arm_psr_hsh;
-static struct hash_control * arm_v7m_psr_hsh;
 static struct hash_control * arm_reg_hsh;
 static struct hash_control * arm_reloc_hsh;
 static struct hash_control * arm_barrier_opt_hsh;
@@ -1452,9 +1446,6 @@ arm_typed_reg_parse (char **ccp, enum arm_reg_type type,
 
   return reg;
 }
-
-#define NEON_SCALAR_REG(X)	((X) >> 4)
-#define NEON_SCALAR_INDEX(X)	((X) & 15)
 
 /* Parse a Neon scalar. Most of the time when we're parsing a scalar, we don't
    have enough information to be able to do a good job bounds-checking. So, we
@@ -5535,13 +5526,12 @@ parse_half (char **str)
 /* Parse a PSR flag operand.  The value returned is FAIL on syntax error,
    or a bitmask suitable to be or-ed into the ARM msr instruction.  */
 static int
-parse_psr (char **str, bfd_boolean lhs)
+parse_psr (char **str, bfd_boolean lhs ATTRIBUTE_UNUSED)
 {
   char *p;
   unsigned long psr_field;
   const struct asm_psr *psr;
   char *start;
-  bfd_boolean is_apsr = FALSE;
   bfd_boolean m_profile = FALSE;
 
   /* PR gas/12698:  If the user has specified -march=all then m_profile will
@@ -5567,53 +5557,11 @@ parse_psr (char **str, bfd_boolean lhs)
 
       psr_field = 0;
     }
-  else if (strncasecmp (p, "APSR", 4) == 0)
-    {
-      /* APSR[_<bits>] can be used as a synonym for CPSR[_<flags>] on ARMv7-A
-	 and ARMv7-R architecture CPUs.  */
-      is_apsr = TRUE;
-      psr_field = 0;
-    }
-  else if (m_profile)
-    {
-      start = p;
-      do
-	p++;
-      while (ISALNUM (*p) || *p == '_');
-
-      if (strncasecmp (start, "iapsr", 5) == 0
-	  || strncasecmp (start, "eapsr", 5) == 0
-	  || strncasecmp (start, "xpsr", 4) == 0
-	  || strncasecmp (start, "psr", 3) == 0)
-	p = start + strcspn (start, "rR") + 1;
-
-      psr = (const struct asm_psr *) hash_find_n (arm_v7m_psr_hsh, start,
-						  p - start);
-
-      if (!psr)
-	return FAIL;
-
-      /* If APSR is being written, a bitfield may be specified.  Note that
-	 APSR itself is handled above.  */
-      if (psr->field <= 3)
-	{
-	  psr_field = psr->field;
-	  is_apsr = TRUE;
-	  goto check_suffix;
-	}
-
-      *str = p;
-      /* M-profile MSR instructions have the mask field set to "10", except
-	 *PSR variants which modify APSR, which may use a different mask (and
-	 have been handled already).  Do that by setting the PSR_f field
-	 here.  */
-      return psr->field | (lhs ? PSR_f : 0);
-    }
   else
     goto unsupported_psr;
 
   p += 4;
-check_suffix:
+
   if (*p == '_')
     {
       /* A suffix follows.  */
@@ -5624,66 +5572,6 @@ check_suffix:
 	p++;
       while (ISALNUM (*p) || *p == '_');
 
-      if (is_apsr)
-	{
-	  /* APSR uses a notation for bits, rather than fields.  */
-	  unsigned int nzcvq_bits = 0;
-	  unsigned int g_bit = 0;
-	  char *bit;
-
-	  for (bit = start; bit != p; bit++)
-	    {
-	      switch (TOLOWER (*bit))
-		{
-		case 'n':
-		  nzcvq_bits |= (nzcvq_bits & 0x01) ? 0x20 : 0x01;
-		  break;
-
-		case 'z':
-		  nzcvq_bits |= (nzcvq_bits & 0x02) ? 0x20 : 0x02;
-		  break;
-
-		case 'c':
-		  nzcvq_bits |= (nzcvq_bits & 0x04) ? 0x20 : 0x04;
-		  break;
-
-		case 'v':
-		  nzcvq_bits |= (nzcvq_bits & 0x08) ? 0x20 : 0x08;
-		  break;
-
-		case 'q':
-		  nzcvq_bits |= (nzcvq_bits & 0x10) ? 0x20 : 0x10;
-		  break;
-
-		case 'g':
-		  g_bit |= (g_bit & 0x1) ? 0x2 : 0x1;
-		  break;
-
-		default:
-		  inst.error = _("unexpected bit specified after APSR");
-		  return FAIL;
-		}
-	    }
-
-	  if (nzcvq_bits == 0x1f)
-	    psr_field |= PSR_f;
-
-	  if (g_bit == 0x1)
-	    {
-		  inst.error = _("selected processor does not "
-				 "support DSP extension");
-		  return FAIL;
-	    }
-
-	  if ((nzcvq_bits & 0x20) != 0
-	      || (nzcvq_bits != 0x1f && nzcvq_bits != 0)
-	      || (g_bit & 0x2) != 0)
-	    {
-	      inst.error = _("bad bitmask specified after APSR");
-	      return FAIL;
-	    }
-	}
-      else
 	{
 	  psr = (const struct asm_psr *) hash_find_n (arm_psr_hsh, start,
 						      p - start);
@@ -5698,15 +5586,7 @@ check_suffix:
       if (ISALNUM (*p))
 	goto error;    /* Garbage after "[CS]PSR".  */
 
-      /* Unadorned APSR is equivalent to APSR_nzcvq/CPSR_f (for writes).  This
-	 is deprecated, but allow it anyway.  */
-      if (is_apsr && lhs)
-	{
-	  psr_field |= PSR_f;
-	  as_tsktsk (_("writing to APSR without specifying a bitmask is "
-		       "deprecated"));
-	}
-      else if (!m_profile)
+      if (!m_profile)
 	/* These bits are never right for M-profile devices: don't set them
 	   (only code paths which read/write APSR reach here).  */
 	psr_field |= (PSR_c | PSR_f);
@@ -10153,118 +10033,6 @@ do_t_udf (void)
 
 /* Encodings for the different types for various Neon opcodes.  */
 
-/* An "invalid" code for the following tables.  */
-#define N_INV -1u
-
-struct neon_tab_entry
-{
-  unsigned integer;
-  unsigned float_or_poly;
-  unsigned scalar_or_imm;
-};
-
-/* Map overloaded Neon opcodes to their respective encodings.  */
-#define NEON_ENC_TAB					\
-  X(vabd,	0x0000700, 0x1200d00, N_INV),		\
-  X(vmax,	0x0000600, 0x0000f00, N_INV),		\
-  X(vmin,	0x0000610, 0x0200f00, N_INV),		\
-  X(vpadd,	0x0000b10, 0x1000d00, N_INV),		\
-  X(vpmax,	0x0000a00, 0x1000f00, N_INV),		\
-  X(vpmin,	0x0000a10, 0x1200f00, N_INV),		\
-  X(vadd,	0x0000800, 0x0000d00, N_INV),		\
-  X(vsub,	0x1000800, 0x0200d00, N_INV),		\
-  X(vceq,	0x1000810, 0x0000e00, 0x1b10100),	\
-  X(vcge,	0x0000310, 0x1000e00, 0x1b10080),	\
-  X(vcgt,	0x0000300, 0x1200e00, 0x1b10000),	\
-  /* Register variants of the following two instructions are encoded as
-     vcge / vcgt with the operands reversed.  */  	\
-  X(vclt,	0x0000300, 0x1200e00, 0x1b10200),	\
-  X(vcle,	0x0000310, 0x1000e00, 0x1b10180),	\
-  X(vfma,	N_INV, 0x0000c10, N_INV),		\
-  X(vfms,	N_INV, 0x0200c10, N_INV),		\
-  X(vmla,	0x0000900, 0x0000d10, 0x0800040),	\
-  X(vmls,	0x1000900, 0x0200d10, 0x0800440),	\
-  X(vmul,	0x0000910, 0x1000d10, 0x0800840),	\
-  X(vmull,	0x0800c00, 0x0800e00, 0x0800a40), /* polynomial not float.  */ \
-  X(vmlal,	0x0800800, N_INV,     0x0800240),	\
-  X(vmlsl,	0x0800a00, N_INV,     0x0800640),	\
-  X(vqdmlal,	0x0800900, N_INV,     0x0800340),	\
-  X(vqdmlsl,	0x0800b00, N_INV,     0x0800740),	\
-  X(vqdmull,	0x0800d00, N_INV,     0x0800b40),	\
-  X(vqdmulh,    0x0000b00, N_INV,     0x0800c40),	\
-  X(vqrdmulh,   0x1000b00, N_INV,     0x0800d40),	\
-  X(vqrdmlah,   0x3000b10, N_INV,     0x0800e40),	\
-  X(vqrdmlsh,   0x3000c10, N_INV,     0x0800f40),	\
-  X(vshl,	0x0000400, N_INV,     0x0800510),	\
-  X(vqshl,	0x0000410, N_INV,     0x0800710),	\
-  X(vand,	0x0000110, N_INV,     0x0800030),	\
-  X(vbic,	0x0100110, N_INV,     0x0800030),	\
-  X(veor,	0x1000110, N_INV,     N_INV),		\
-  X(vorn,	0x0300110, N_INV,     0x0800010),	\
-  X(vorr,	0x0200110, N_INV,     0x0800010),	\
-  X(vmvn,	0x1b00580, N_INV,     0x0800030),	\
-  X(vshll,	0x1b20300, N_INV,     0x0800a10), /* max shift, immediate.  */ \
-  X(vcvt,       0x1b30600, N_INV,     0x0800e10), /* integer, fixed-point.  */ \
-  X(vdup,       0xe800b10, N_INV,     0x1b00c00), /* arm, scalar.  */ \
-  X(vld1,       0x0200000, 0x0a00000, 0x0a00c00), /* interlv, lane, dup.  */ \
-  X(vst1,	0x0000000, 0x0800000, N_INV),		\
-  X(vld2,	0x0200100, 0x0a00100, 0x0a00d00),	\
-  X(vst2,	0x0000100, 0x0800100, N_INV),		\
-  X(vld3,	0x0200200, 0x0a00200, 0x0a00e00),	\
-  X(vst3,	0x0000200, 0x0800200, N_INV),		\
-  X(vld4,	0x0200300, 0x0a00300, 0x0a00f00),	\
-  X(vst4,	0x0000300, 0x0800300, N_INV),		\
-  X(vmovn,	0x1b20200, N_INV,     N_INV),		\
-  X(vtrn,	0x1b20080, N_INV,     N_INV),		\
-  X(vqmovn,	0x1b20200, N_INV,     N_INV),		\
-  X(vqmovun,	0x1b20240, N_INV,     N_INV),		\
-  X(vnmul,      0xe200a40, 0xe200b40, N_INV),		\
-  X(vnmla,      0xe100a40, 0xe100b40, N_INV),		\
-  X(vnmls,      0xe100a00, 0xe100b00, N_INV),		\
-  X(vfnma,      0xe900a40, 0xe900b40, N_INV),		\
-  X(vfnms,      0xe900a00, 0xe900b00, N_INV),		\
-  X(vcmp,	0xeb40a40, 0xeb40b40, N_INV),		\
-  X(vcmpz,	0xeb50a40, 0xeb50b40, N_INV),		\
-  X(vcmpe,	0xeb40ac0, 0xeb40bc0, N_INV),		\
-  X(vcmpez,     0xeb50ac0, 0xeb50bc0, N_INV),		\
-  X(vseleq,	0xe000a00, N_INV,     N_INV),		\
-  X(vselvs,	0xe100a00, N_INV,     N_INV),		\
-  X(vselge,	0xe200a00, N_INV,     N_INV),		\
-  X(vselgt,	0xe300a00, N_INV,     N_INV),		\
-  X(vmaxnm,	0xe800a00, 0x3000f10, N_INV),		\
-  X(vminnm,	0xe800a40, 0x3200f10, N_INV),		\
-  X(vcvta,	0xebc0a40, 0x3bb0000, N_INV),		\
-  X(vrintr,	0xeb60a40, 0x3ba0400, N_INV),		\
-  X(vrinta,	0xeb80a40, 0x3ba0400, N_INV),		\
-  X(aes,	0x3b00300, N_INV,     N_INV),		\
-  X(sha3op,	0x2000c00, N_INV,     N_INV),		\
-  X(sha1h,	0x3b902c0, N_INV,     N_INV),           \
-  X(sha2op,     0x3ba0380, N_INV,     N_INV)
-
-enum neon_opc
-{
-#define X(OPC,I,F,S) N_MNEM_##OPC
-NEON_ENC_TAB
-#undef X
-};
-
-/* Do not use these macros; instead, use NEON_ENCODE defined below.  */
-#define NEON_ENC_INTEGER_(X) (neon_enc_tab[(X) & 0x0fffffff].integer)
-#define NEON_ENC_FLOAT_(X)   (neon_enc_tab[(X) & 0x0fffffff].float_or_poly)
-#define NEON_ENC_SCALAR_(X)  (neon_enc_tab[(X) & 0x0fffffff].scalar_or_imm)
-#define NEON_ENC_SINGLE_(X) \
-  ((neon_enc_tab[(X) & 0x0fffffff].integer) | ((X) & 0xf0000000))
-#define NEON_ENC_DOUBLE_(X) \
-  ((neon_enc_tab[(X) & 0x0fffffff].float_or_poly) | ((X) & 0xf0000000))
-
-#define NEON_ENCODE(type, inst)					\
-  do								\
-    {								\
-      inst.instruction = NEON_ENC_##type##_ (inst.instruction);	\
-      inst.is_neon = 1;						\
-    }								\
-  while (0)
-
 #define check_neon_suffixes						\
   do									\
     {									\
@@ -10275,181 +10043,6 @@ NEON_ENC_TAB
 	}								\
     }									\
   while (0)
-
-/* Define shapes for instruction operands. The following mnemonic characters
-   are used in this table:
-
-     F - VFP S<n> register
-     D - Neon D<n> register
-     Q - Neon Q<n> register
-     I - Immediate
-     S - Scalar
-     R - ARM register
-     L - D<n> register list
-
-   This table is used to generate various data:
-     - enumerations of the form NS_DDR to be used as arguments to
-       neon_select_shape.
-     - a table classifying shapes into single, double, quad, mixed.
-     - a table used to drive neon_select_shape.  */
-
-#define NEON_SHAPE_DEF			\
-  X(3, (D, D, D), DOUBLE),		\
-  X(3, (Q, Q, Q), QUAD),		\
-  X(3, (D, D, I), DOUBLE),		\
-  X(3, (Q, Q, I), QUAD),		\
-  X(3, (D, D, S), DOUBLE),		\
-  X(3, (Q, Q, S), QUAD),		\
-  X(2, (D, D), DOUBLE),			\
-  X(2, (Q, Q), QUAD),			\
-  X(2, (D, S), DOUBLE),			\
-  X(2, (Q, S), QUAD),			\
-  X(2, (D, R), DOUBLE),			\
-  X(2, (Q, R), QUAD),			\
-  X(2, (D, I), DOUBLE),			\
-  X(2, (Q, I), QUAD),			\
-  X(3, (D, L, D), DOUBLE),		\
-  X(2, (D, Q), MIXED),			\
-  X(2, (Q, D), MIXED),			\
-  X(3, (D, Q, I), MIXED),		\
-  X(3, (Q, D, I), MIXED),		\
-  X(3, (Q, D, D), MIXED),		\
-  X(3, (D, Q, Q), MIXED),		\
-  X(3, (Q, Q, D), MIXED),		\
-  X(3, (Q, D, S), MIXED),		\
-  X(3, (D, Q, S), MIXED),		\
-  X(4, (D, D, D, I), DOUBLE),		\
-  X(4, (Q, Q, Q, I), QUAD),		\
-  X(4, (D, D, S, I), DOUBLE),		\
-  X(4, (Q, Q, S, I), QUAD),		\
-  X(2, (F, F), SINGLE),			\
-  X(3, (F, F, F), SINGLE),		\
-  X(2, (F, I), SINGLE),			\
-  X(2, (F, D), MIXED),			\
-  X(2, (D, F), MIXED),			\
-  X(3, (F, F, I), MIXED),		\
-  X(4, (R, R, F, F), SINGLE),		\
-  X(4, (F, F, R, R), SINGLE),		\
-  X(3, (D, R, R), DOUBLE),		\
-  X(3, (R, R, D), DOUBLE),		\
-  X(2, (S, R), SINGLE),			\
-  X(2, (R, S), SINGLE),			\
-  X(2, (F, R), SINGLE),			\
-  X(2, (R, F), SINGLE),			\
-/* Half float shape supported so far.  */\
-  X (2, (H, D), MIXED),			\
-  X (2, (D, H), MIXED),			\
-  X (2, (H, F), MIXED),			\
-  X (2, (F, H), MIXED),			\
-  X (2, (H, H), HALF),			\
-  X (2, (H, R), HALF),			\
-  X (2, (R, H), HALF),			\
-  X (2, (H, I), HALF),			\
-  X (3, (H, H, H), HALF),		\
-  X (3, (H, F, I), MIXED),		\
-  X (3, (F, H, I), MIXED),		\
-  X (3, (D, H, H), MIXED),		\
-  X (3, (D, H, S), MIXED)
-
-#define S2(A,B)		NS_##A##B
-#define S3(A,B,C)	NS_##A##B##C
-#define S4(A,B,C,D)	NS_##A##B##C##D
-
-#define X(N, L, C) S##N L
-
-enum neon_shape
-{
-  NEON_SHAPE_DEF,
-  NS_NULL
-};
-
-#undef X
-#undef S2
-#undef S3
-#undef S4
-
-enum neon_shape_class
-{
-  SC_HALF,
-  SC_SINGLE,
-  SC_DOUBLE,
-  SC_QUAD,
-  SC_MIXED
-};
-
-enum neon_shape_el
-{
-  SE_H,
-  SE_F,
-  SE_D,
-  SE_Q,
-  SE_I,
-  SE_S,
-  SE_R,
-  SE_L
-};
-
-struct neon_shape_info
-{
-  unsigned els;
-  enum neon_shape_el el[NEON_MAX_TYPE_ELS];
-};
-
-/* Bit masks used in type checking given instructions.
-  'N_EQK' means the type must be the same as (or based on in some way) the key
-   type, which itself is marked with the 'N_KEY' bit. If the 'N_EQK' bit is
-   set, various other bits can be set as well in order to modify the meaning of
-   the type constraint.  */
-
-enum neon_type_mask
-{
-  N_S8   = 0x0000001,
-  N_S16  = 0x0000002,
-  N_S32  = 0x0000004,
-  N_S64  = 0x0000008,
-  N_U8   = 0x0000010,
-  N_U16  = 0x0000020,
-  N_U32  = 0x0000040,
-  N_U64  = 0x0000080,
-  N_I8   = 0x0000100,
-  N_I16  = 0x0000200,
-  N_I32  = 0x0000400,
-  N_I64  = 0x0000800,
-  N_8    = 0x0001000,
-  N_16   = 0x0002000,
-  N_32   = 0x0004000,
-  N_64   = 0x0008000,
-  N_P8   = 0x0010000,
-  N_P16  = 0x0020000,
-  N_F16  = 0x0040000,
-  N_F32  = 0x0080000,
-  N_F64  = 0x0100000,
-  N_P64	 = 0x0200000,
-  N_KEY  = 0x1000000, /* Key element (main type specifier).  */
-  N_EQK  = 0x2000000, /* Given operand has the same type & size as the key.  */
-  N_VFP  = 0x4000000, /* VFP mode: operand size must match register width.  */
-  N_UNT  = 0x8000000, /* Must be explicitly untyped.  */
-  N_DBL  = 0x0000001, /* If N_EQK, this operand is twice the size.  */
-  N_HLF  = 0x0000002, /* If N_EQK, this operand is half the size.  */
-  N_SGN  = 0x0000004, /* If N_EQK, this operand is forced to be signed.  */
-  N_UNS  = 0x0000008, /* If N_EQK, this operand is forced to be unsigned.  */
-  N_INT  = 0x0000010, /* If N_EQK, this operand is forced to be integer.  */
-  N_FLT  = 0x0000020, /* If N_EQK, this operand is forced to be float.  */
-  N_SIZ  = 0x0000040, /* If N_EQK, this operand is forced to be size-only.  */
-  N_UTYP = 0,
-  N_MAX_NONSPECIAL = N_P64
-};
-
-#define N_SU_ALL   (N_S8 | N_S16 | N_S32 | N_S64 | N_U8 | N_U16 | N_U32 | N_U64)
-#define N_S_32     (N_S8 | N_S16 | N_S32)
-#define N_F_16_32  (N_F16 | N_F32)
-#define N_IF_32    (N_I8 | N_I16 | N_I32 | N_F16 | N_F32)
-#define N_F_ALL    (N_F16 | N_F32 | N_F64)
-
-/* Pass this as the first type argument to neon_check_type to ignore types
-   altogether.  */
-#define N_IGNORE_TYPE (N_KEY | N_EQK)
-
 
 /* Look up and encode a simple mnemonic, for use as a helper function for the
    Neon-style VFP syntax.  This avoids duplication of bits of the insns table,
@@ -11762,37 +11355,6 @@ static const struct asm_psr psrs[] =
   {"cxsf", PSR_c | PSR_x | PSR_s | PSR_f},
 };
 
-/* Table of V7M psr names.  */
-static const struct asm_psr v7m_psrs[] =
-{
-  {"apsr",	   0x0 }, {"APSR",	   0x0 },
-  {"iapsr",	   0x1 }, {"IAPSR",	   0x1 },
-  {"eapsr",	   0x2 }, {"EAPSR",	   0x2 },
-  {"psr",	   0x3 }, {"PSR",	   0x3 },
-  {"xpsr",	   0x3 }, {"XPSR",	   0x3 }, {"xPSR",	  3 },
-  {"ipsr",	   0x5 }, {"IPSR",	   0x5 },
-  {"epsr",	   0x6 }, {"EPSR",	   0x6 },
-  {"iepsr",	   0x7 }, {"IEPSR",	   0x7 },
-  {"msp",	   0x8 }, {"MSP",	   0x8 },
-  {"psp",	   0x9 }, {"PSP",	   0x9 },
-  {"msplim",	   0xa }, {"MSPLIM",	   0xa },
-  {"psplim",	   0xb }, {"PSPLIM",	   0xb },
-  {"primask",	   0x10}, {"PRIMASK",	   0x10},
-  {"basepri",	   0x11}, {"BASEPRI",	   0x11},
-  {"basepri_max",  0x12}, {"BASEPRI_MAX",  0x12},
-  {"faultmask",	   0x13}, {"FAULTMASK",	   0x13},
-  {"control",	   0x14}, {"CONTROL",	   0x14},
-  {"msp_ns",	   0x88}, {"MSP_NS",	   0x88},
-  {"psp_ns",	   0x89}, {"PSP_NS",	   0x89},
-  {"msplim_ns",	   0x8a}, {"MSPLIM_NS",	   0x8a},
-  {"psplim_ns",	   0x8b}, {"PSPLIM_NS",	   0x8b},
-  {"primask_ns",   0x90}, {"PRIMASK_NS",   0x90},
-  {"basepri_ns",   0x91}, {"BASEPRI_NS",   0x91},
-  {"faultmask_ns", 0x93}, {"FAULTMASK_NS", 0x93},
-  {"control_ns",   0x94}, {"CONTROL_NS",   0x94},
-  {"sp_ns",	   0x98}, {"SP_NS",	   0x98 }
-};
-
 /* Table of all shift-in-operand names.	 */
 static const struct asm_shift_name shift_names [] =
 {
@@ -11935,19 +11497,6 @@ static struct asm_barrier_opt barrier_opt_names[] =
 #define tC3w(mnem, aop, top, nops, ops, ae, te) \
       TxC3w (mnem, aop, T_MNEM##top, nops, ops, ae, te)
 
-/* Mnemonic that cannot be conditionalized.  The ARM condition-code
-   field is still 0xE.  Many of the Thumb variants can be executed
-   conditionally, so this is checked separately.  */
-#define TUE(mnem, op, top, nops, ops, ae, te)				\
-  { mnem, OPS##nops ops, OT_unconditional, 0x##op, 0x##top, ARM_VARIANT, \
-    THUMB_VARIANT, do_##ae, do_##te }
-
-/* Mnemonic that cannot be conditionalized, and bears 0xF in its ARM
-   condition code field.  */
-#define TUF(mnem, op, top, nops, ops, ae, te)				\
-  { mnem, OPS##nops ops, OT_unconditionalF, 0x##op, 0x##top, ARM_VARIANT, \
-    THUMB_VARIANT, do_##ae, do_##te }
-
 /* ARM-only variants of all the above.  */
 #define CE(mnem,  op, nops, ops, ae)	\
   { mnem, OPS##nops ops, OT_csuffix, 0x##op, 0x0, ARM_VARIANT, 0, do_##ae, NULL }
@@ -11960,23 +11509,6 @@ static struct asm_barrier_opt barrier_opt_names[] =
 #define CL(mnem, op, nops, ops, ae)	\
   { mnem, OPS##nops ops, OT_cinfix3_legacy, \
     0x##op, 0x0, ARM_VARIANT, 0, do_##ae, NULL }
-
-/* Coprocessor instructions.  Isomorphic between Arm and Thumb-2.  */
-#define cCE(mnem,  op, nops, ops, ae)	\
-  { mnem, OPS##nops ops, OT_csuffix, 0x##op, 0xe##op, ARM_VARIANT, ARM_VARIANT, do_##ae, do_##ae }
-
-/* Legacy coprocessor instructions where conditional infix and conditional
-   suffix are ambiguous.  For consistency this includes all FPA instructions,
-   not just the potentially ambiguous ones.  */
-#define cCL(mnem, op, nops, ops, ae)	\
-  { mnem, OPS##nops ops, OT_cinfix3_legacy, \
-    0x##op, 0xe##op, ARM_VARIANT, ARM_VARIANT, do_##ae, do_##ae }
-
-/* Coprocessor, takes either a suffix or a position-3 infix
-   (for an FPA corner case). */
-#define C3E(mnem, op, nops, ops, ae) \
-  { mnem, OPS##nops ops, OT_csuf_or_in3, \
-    0x##op, 0xe##op, ARM_VARIANT, ARM_VARIANT, do_##ae, do_##ae }
 
 #define xCM_(m1, m2, m3, op, nops, ops, ae)	\
   { m1 #m2 m3, OPS##nops ops, \
@@ -12003,43 +11535,6 @@ static struct asm_barrier_opt barrier_opt_names[] =
   xCM_ (m1, gt, m2, op, nops, ops, ae),	\
   xCM_ (m1, le, m2, op, nops, ops, ae),	\
   xCM_ (m1, al, m2, op, nops, ops, ae)
-
-/* Neon data-processing. ARM versions are unconditional with cond=0xf.
-   The Thumb and ARM variants are mostly the same (bits 0-23 and 24/28), so we
-   use the same encoding function for each.  */
-#define NUF(mnem, op, nops, ops, enc)					\
-  { #mnem, OPS##nops ops, OT_unconditionalF, 0x##op, 0x##op,		\
-    ARM_VARIANT, THUMB_VARIANT, do_##enc, do_##enc }
-
-/* Neon data processing, version which indirects through neon_enc_tab for
-   the various overloaded versions of opcodes.  */
-#define nUF(mnem, op, nops, ops, enc)					\
-  { #mnem, OPS##nops ops, OT_unconditionalF, N_MNEM##op, N_MNEM##op,	\
-    ARM_VARIANT, THUMB_VARIANT, do_##enc, do_##enc }
-
-/* Neon insn with conditional suffix for the ARM version, non-overloaded
-   version.  */
-#define NCE_tag(mnem, op, nops, ops, enc, tag)				\
-  { #mnem, OPS##nops ops, tag, 0x##op, 0x##op, ARM_VARIANT,		\
-    THUMB_VARIANT, do_##enc, do_##enc }
-
-#define NCE(mnem, op, nops, ops, enc)					\
-   NCE_tag (mnem, op, nops, ops, enc, OT_csuffix)
-
-#define NCEF(mnem, op, nops, ops, enc)					\
-    NCE_tag (mnem, op, nops, ops, enc, OT_csuffixF)
-
-/* Neon insn with conditional suffix for the ARM version, overloaded types.  */
-#define nCE_tag(mnem, op, nops, ops, enc, tag)				\
-  { #mnem, OPS##nops ops, tag, N_MNEM##op, N_MNEM##op,		\
-    ARM_VARIANT, THUMB_VARIANT, do_##enc, do_##enc }
-
-#define nCE(mnem, op, nops, ops, enc)					\
-   nCE_tag (mnem, op, nops, ops, enc, OT_csuffix)
-
-#define nCEF(mnem, op, nops, ops, enc)					\
-    nCE_tag (mnem, op, nops, ops, enc, OT_csuffixF)
-
 #define do_0 0
 
 static const struct asm_opcode insns[] =
@@ -15755,7 +15250,6 @@ md_begin (void)
       || (arm_cond_hsh = hash_new ()) == NULL
       || (arm_shift_hsh = hash_new ()) == NULL
       || (arm_psr_hsh = hash_new ()) == NULL
-      || (arm_v7m_psr_hsh = hash_new ()) == NULL
       || (arm_reg_hsh = hash_new ()) == NULL
       || (arm_reloc_hsh = hash_new ()) == NULL
       || (arm_barrier_opt_hsh = hash_new ()) == NULL)
@@ -15769,9 +15263,6 @@ md_begin (void)
     hash_insert (arm_shift_hsh, shift_names[i].name, (void *) (shift_names + i));
   for (i = 0; i < sizeof (psrs) / sizeof (struct asm_psr); i++)
     hash_insert (arm_psr_hsh, psrs[i].template_name, (void *) (psrs + i));
-  for (i = 0; i < sizeof (v7m_psrs) / sizeof (struct asm_psr); i++)
-    hash_insert (arm_v7m_psr_hsh, v7m_psrs[i].template_name,
-		 (void *) (v7m_psrs + i));
   for (i = 0; i < sizeof (reg_names) / sizeof (struct reg_entry); i++)
     hash_insert (arm_reg_hsh, reg_names[i].name, (void *) (reg_names + i));
   for (i = 0; i < ARRAY_SIZE (reloc_names); i++)
@@ -16128,8 +15619,6 @@ struct arm_option_extension_value_table
 
 /* The following table must be in alphabetical order with a NULL last entry.  */
 
-#define ARM_EXT_OPT(N, M, C, AA) { N, sizeof (N) - 1, M, C, { AA, ARM_ANY } }
-
 static const struct arm_option_extension_value_table arm_extensions[] =
 {
   /* Duplicate entry for the purpose of allowing ARMv7 to match in presence of
@@ -16138,7 +15627,6 @@ static const struct arm_option_extension_value_table arm_extensions[] =
      only considered by build attribute selection code.  */
   { NULL, 0, ARM_ARCH_NONE, ARM_ARCH_NONE, { ARM_ARCH_NONE, ARM_ARCH_NONE } }
 };
-#undef ARM_EXT_OPT
 
 /* ISA floating-point and Advanced SIMD extensions.  */
 struct arm_option_fpu_value_table
@@ -16167,14 +15655,6 @@ struct arm_option_value_table
 {
   const char *name;
   long value;
-};
-
-static const struct arm_option_value_table arm_float_abis[] =
-{
-  {"hard",	ARM_FLOAT_ABI_HARD},
-  {"softfp",	ARM_FLOAT_ABI_SOFTFP},
-  {"soft",	ARM_FLOAT_ABI_SOFT},
-  {NULL,	0}
 };
 
 /* We only know how to output GNU and ver 4/5 (AAELF) formats.  */
@@ -16418,38 +15898,6 @@ arm_parse_arch (const char *str)
 }
 
 static bfd_boolean
-arm_parse_fpu (const char * str)
-{
-  const struct arm_option_fpu_value_table * opt;
-
-  for (opt = arm_fpus; opt->name != NULL; opt++)
-    if (streq (opt->name, str))
-      {
-	mfpu_opt = &opt->value;
-	return TRUE;
-      }
-
-  as_bad (_("unknown floating point format `%s'\n"), str);
-  return FALSE;
-}
-
-static bfd_boolean
-arm_parse_float_abi (const char * str)
-{
-  const struct arm_option_value_table * opt;
-
-  for (opt = arm_float_abis; opt->name != NULL; opt++)
-    if (streq (opt->name, str))
-      {
-	mfloat_abi_opt = opt->value;
-	return TRUE;
-      }
-
-  as_bad (_("unknown floating point abi `%s'\n"), str);
-  return FALSE;
-}
-
-static bfd_boolean
 arm_parse_eabi (const char * str)
 {
   const struct arm_option_value_table *opt;
@@ -16502,10 +15950,6 @@ struct arm_long_option_table arm_long_opts[] =
    arm_parse_cpu, NULL},
   {"march=", N_("<arch name>\t  assemble for architecture <arch name>"),
    arm_parse_arch, NULL},
-  {"mfpu=", N_("<fpu name>\t  assemble for FPU architecture <fpu name>"),
-   arm_parse_fpu, NULL},
-  {"mfloat-abi=", N_("<abi>\t  assemble for floating point ABI <abi>"),
-   arm_parse_float_abi, NULL},
   {"meabi=", N_("<ver>\t\t  assemble for eabi version <ver>"),
    arm_parse_eabi, NULL},
   {"mimplicit-it=", N_("<mode>\t  controls implicit insertion of IT instructions"),
@@ -16728,16 +16172,6 @@ get_aeabi_cpu_arch_from_fset (const arm_feature_set *arch_ext_fset,
   arm_feature_set arch_fset;
   const cpu_arch_ver_table *p_ver, *p_ver_ret = NULL;
 
-  /* Select most featureful architecture with all its extensions if building
-     for -march=all as the feature sets used to set build attributes.  */
-  if (ARM_FEATURE_EQUAL (*arch_ext_fset, arm_arch_any))
-    {
-      /* Force revisiting of decision for each new architecture.  */
-      gas_assert (MAX_TAG_CPU_ARCH <= TAG_CPU_ARCH_V8M_MAIN);
-      *profile = 'A';
-      return TAG_CPU_ARCH_V8;
-    }
-
   ARM_CLEAR_FEATURE (arch_fset, *arch_ext_fset, *ext_fset);
 
   for (p_ver = cpu_arch_ver; p_ver->val != -1; p_ver++)
@@ -16915,7 +16349,7 @@ aeabi_set_public_attributes (void)
       aeabi_set_attribute_int (Tag_THUMB_ISA_use, thumb_isa_use);
     }
 
-  gas_assert (arch <= TAG_CPU_ARCH_V8M_MAIN);
+  gas_assert (arch <= MAX_TAG_CPU_ARCH);
 
   if (virt_sec != 0)
     aeabi_set_attribute_int (Tag_Virtualization_use, virt_sec);

@@ -1967,10 +1967,7 @@ out_debug_abbrev (segT abbrev_seg,
   out_uleb128 (1);
   out_uleb128 (DW_TAG_compile_unit);
   out_byte (DW_CHILDREN_no);
-  if (DWARF2_FORMAT (line_seg) == dwarf2_format_32bit)
-    out_abbrev (DW_AT_stmt_list, DW_FORM_data4);
-  else
-    out_abbrev (DW_AT_stmt_list, DW_FORM_data8);
+  out_abbrev (DW_AT_stmt_list, DW_FORM_data4);
   if (all_segs->next == NULL)
     {
       out_abbrev (DW_AT_low_pc, DW_FORM_addr);
@@ -1982,10 +1979,7 @@ out_debug_abbrev (segT abbrev_seg,
     }
   else
     {
-      if (DWARF2_FORMAT (info_seg) == dwarf2_format_32bit)
-	out_abbrev (DW_AT_ranges, DW_FORM_data4);
-      else
-	out_abbrev (DW_AT_ranges, DW_FORM_data8);
+      out_abbrev (DW_AT_ranges, DW_FORM_data4);
     }
   out_abbrev (DW_AT_name, DW_FORM_strp);
   out_abbrev (DW_AT_comp_dir, DW_FORM_strp);
@@ -2023,9 +2017,7 @@ out_debug_info (segT info_seg, segT abbrev_seg, segT line_seg, segT ranges_seg,
   out_uleb128 (1);
 
   /* DW_AT_stmt_list */
-  TC_DWARF2_EMIT_OFFSET (section_symbol (line_seg),
-			 (DWARF2_FORMAT (line_seg) == dwarf2_format_32bit
-			  ? 4 : 8));
+  TC_DWARF2_EMIT_OFFSET (section_symbol (line_seg), 4);
 
   /* These two attributes are emitted if all of the code is contiguous.  */
   if (all_segs->next == NULL)

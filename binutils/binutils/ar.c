@@ -900,13 +900,11 @@ open_inarch (const char *archive_filename, const char *file)
 	{
 	  fatal (_("Cannot convert existing library %s to thin format"),
 		 bfd_get_filename (arch));
-	  goto bloser;
 	}
       else if (! make_thin_archive && bfd_is_thin_archive (arch))
 	{
 	  fatal (_("Cannot convert existing thin library %s to normal format"),
 		 bfd_get_filename (arch));
-	  goto bloser;
 	}
     }
 

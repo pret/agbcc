@@ -10353,7 +10353,8 @@ elf_link_input_bfd (struct elf_final_link_info *flinfo, bfd *input_bfd)
 			(*flinfo->info->callbacks->einfo)
 			  /* xgettext:c-format */
 			  (_("%X`%s' referenced in section `%pA' of %pB: "
-			     "defined in discarded section `%pA' of %pB\n"),
+			     "defined in discarded section `%pA' of %pB\n"
+			     "did you remember to add it to ld_script.txt?\n"),
 			   sym_name, o, input_bfd, sec, sec->owner);
 
 		      /* Try to do the best we can to support buggy old

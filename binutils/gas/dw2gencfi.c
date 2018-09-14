@@ -1916,8 +1916,6 @@ output_cie (struct cie_entry *cie, bfd_boolean eh_frame, int align)
     {
       for (i = cie->first; i != cie->last; i = i->next)
 	{
-	  if (CUR_SEG (i) != CUR_SEG (cie))
-	    continue;
 	  output_cfi_insn (i);
 	}
     }
@@ -2041,8 +2039,6 @@ select_cie_for_fde (struct fde_entry *fde, bfd_boolean eh_frame,
 
   for (cie = cie_root; cie; cie = cie->next)
     {
-      if (CUR_SEG (cie) != CUR_SEG (fde))
-	continue;
       if (cie->return_column != fde->return_column
 	  || cie->signal_frame != fde->signal_frame
 	  || cie->per_encoding != fde->per_encoding

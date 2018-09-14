@@ -1939,24 +1939,10 @@ create_ifunc_sections (struct bfd_link_info *info)
 static bfd_boolean
 using_thumb_only (struct elf32_arm_link_hash_table *globals)
 {
-  int arch;
   int profile = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC,
 					  Tag_CPU_arch_profile);
-
   if (profile)
     return profile == 'M';
-
-  arch = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC, Tag_CPU_arch);
-
-  /* Force return logic to be reviewed for each new architecture.  */
-  BFD_ASSERT (arch <= TAG_CPU_ARCH_V8M_MAIN);
-
-  if (arch == TAG_CPU_ARCH_V6_M
-      || arch == TAG_CPU_ARCH_V6S_M
-      || arch == TAG_CPU_ARCH_V7E_M
-      || arch == TAG_CPU_ARCH_V8M_BASE
-      || arch == TAG_CPU_ARCH_V8M_MAIN)
-    return TRUE;
 
   return FALSE;
 }
@@ -1966,40 +1952,13 @@ using_thumb_only (struct elf32_arm_link_hash_table *globals)
 static bfd_boolean
 using_thumb2 (struct elf32_arm_link_hash_table *globals)
 {
-  int arch;
   int thumb_isa = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC,
 					    Tag_THUMB_ISA_use);
 
   if (thumb_isa)
     return thumb_isa == 2;
 
-  arch = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC, Tag_CPU_arch);
-
-  /* Force return logic to be reviewed for each new architecture.  */
-  BFD_ASSERT (arch <= TAG_CPU_ARCH_V8M_MAIN);
-
-  return (arch == TAG_CPU_ARCH_V6T2
-	  || arch == TAG_CPU_ARCH_V7
-	  || arch == TAG_CPU_ARCH_V7E_M
-	  || arch == TAG_CPU_ARCH_V8
-	  || arch == TAG_CPU_ARCH_V8R
-	  || arch == TAG_CPU_ARCH_V8M_MAIN);
-}
-
-/* Determine whether Thumb-2 BL instruction is available.  */
-
-static bfd_boolean
-using_thumb2_bl (struct elf32_arm_link_hash_table *globals)
-{
-  int arch =
-    bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC, Tag_CPU_arch);
-
-  /* Force return logic to be reviewed for each new architecture.  */
-  BFD_ASSERT (arch <= TAG_CPU_ARCH_V8M_MAIN);
-
-  /* Architecture was introduced after ARMv6T2 (eg. ARMv6-M).  */
-  return (arch == TAG_CPU_ARCH_V6T2
-	  || arch >= TAG_CPU_ARCH_V7);
+  return FALSE;
 }
 
 /* Create .plt, .rel(a).plt, .got, .got.plt, .rel(a).got, .dynbss, and
@@ -2174,24 +2133,6 @@ elf32_arm_link_hash_table_create (bfd *abfd)
   return &ret->root.root;
 }
 
-/* Determine what kind of NOPs are available.  */
-
-static bfd_boolean
-arch_has_arm_nop (struct elf32_arm_link_hash_table *globals)
-{
-  const int arch = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC,
-					     Tag_CPU_arch);
-
-  /* Force return logic to be reviewed for each new architecture.  */
-  BFD_ASSERT (arch <= TAG_CPU_ARCH_V8M_MAIN);
-
-  return (arch == TAG_CPU_ARCH_V6T2
-	  || arch == TAG_CPU_ARCH_V6K
-	  || arch == TAG_CPU_ARCH_V7
-	  || arch == TAG_CPU_ARCH_V8
-	  || arch == TAG_CPU_ARCH_V8R);
-}
-
 static bfd_boolean
 arm_stub_is_thumb (enum elf32_arm_stub_type stub_type)
 {
@@ -2252,12 +2193,12 @@ arm_type_of_stub (struct bfd_link_info *info,
 
   thumb_only = using_thumb_only (globals);
   thumb2 = using_thumb2 (globals);
-  thumb2_bl = using_thumb2_bl (globals);
+  thumb2_bl = FALSE;
 
   arch = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC, Tag_CPU_arch);
 
   /* True for architectures that implement the thumb2 movw instruction.  */
-  thumb2_movw = thumb2 || (arch  == TAG_CPU_ARCH_V8M_BASE);
+  thumb2_movw = thumb2;
 
   /* Determine where the call point is.  */
   location = (input_sec->output_offset
@@ -3615,7 +3556,7 @@ elf32_arm_create_stub (struct elf32_arm_link_hash_table *htab,
 
 static bfd_boolean
 cmse_scan (bfd *input_bfd, struct elf32_arm_link_hash_table *htab,
-	   obj_attribute *out_attr, struct elf_link_hash_entry **sym_hashes,
+	   obj_attribute *out_attr ATTRIBUTE_UNUSED, struct elf_link_hash_entry **sym_hashes,
 	   int *cmse_stub_created)
 {
   const struct elf_backend_data *bed;
@@ -3634,8 +3575,7 @@ cmse_scan (bfd *input_bfd, struct elf32_arm_link_hash_table *htab,
   symtab_hdr = &elf_tdata (input_bfd)->symtab_hdr;
   sym_count = symtab_hdr->sh_size / bed->s->sizeof_sym;
   ext_start = symtab_hdr->sh_info;
-  is_v8m = (out_attr[Tag_CPU_arch].i >= TAG_CPU_ARCH_V8M_BASE
-	    && out_attr[Tag_CPU_arch_profile].i == 'M');
+  is_v8m = FALSE;
 
   local_syms = (Elf_Internal_Sym *) symtab_hdr->contents;
   if (local_syms == NULL)
@@ -5049,26 +4989,6 @@ bfd_elf32_arm_get_bfd_for_interworking (bfd *abfd, struct bfd_link_info *info)
   return TRUE;
 }
 
-static void
-check_use_blx (struct elf32_arm_link_hash_table *globals)
-{
-  int cpu_arch;
-
-  cpu_arch = bfd_elf_get_obj_attr_int (globals->obfd, OBJ_ATTR_PROC,
-				       Tag_CPU_arch);
-
-  if (globals->fix_arm1176)
-    {
-      if (cpu_arch == TAG_CPU_ARCH_V6T2 || cpu_arch > TAG_CPU_ARCH_V6K)
-	globals->use_blx = 1;
-    }
-  else
-    {
-      if (cpu_arch > TAG_CPU_ARCH_V4T)
-	globals->use_blx = 1;
-    }
-}
-
 bfd_boolean
 bfd_elf32_arm_process_before_allocation (bfd *abfd,
 					 struct bfd_link_info *link_info)
@@ -5090,8 +5010,6 @@ bfd_elf32_arm_process_before_allocation (bfd *abfd,
      hook to do reloc rummaging, before section sizes are nailed down.  */
   globals = elf32_arm_hash_table (link_info);
   BFD_ASSERT (globals != NULL);
-
-  check_use_blx (globals);
 
   if (globals->byteswap_code && !bfd_big_endian (abfd))
     {
@@ -6876,9 +6794,6 @@ elf32_arm_final_link_relocate (reloc_howto_type *	    howto,
 	    {
 	      value = (bfd_get_32 (input_bfd, hit_data) & 0xf0000000);
 
-	      if (arch_has_arm_nop (globals))
-		value |= 0x0320f000;
-	      else
 		value |= 0x01a00000; /* Using pre-UAL nop: mov r0, r0.  */
 	    }
 	  else
@@ -7142,7 +7057,7 @@ elf32_arm_final_link_relocate (reloc_howto_type *	    howto,
 	bfd_signed_vma signed_check;
 	int bitsize;
 	const int thumb2 = using_thumb2 (globals);
-	const int thumb2_bl = using_thumb2_bl (globals);
+	const int thumb2_bl = FALSE;
 
 	/* A branch to an undefined weak symbol is turned into a jump to
 	   the next instruction unless a PLT entry will be created.
@@ -9767,41 +9682,6 @@ bfd_arm_get_mach_from_attributes (bfd * abfd)
     {
     case TAG_CPU_ARCH_V4: return bfd_mach_arm_4;
     case TAG_CPU_ARCH_V4T: return bfd_mach_arm_4T;
-    case TAG_CPU_ARCH_V5T: return bfd_mach_arm_5T;
-
-    case TAG_CPU_ARCH_V5TE:
-      {
-	char * name;
-
-	BFD_ASSERT (Tag_CPU_name < NUM_KNOWN_OBJ_ATTRIBUTES);
-	name = elf_known_obj_attributes (abfd) [OBJ_ATTR_PROC][Tag_CPU_name].s;
-
-	if (name)
-	  {
-	    if (strcmp (name, "IWMMXT2") == 0)
-	      return bfd_mach_arm_iWMMXt2;
-
-	    if (strcmp (name, "IWMMXT") == 0)
-	      return bfd_mach_arm_iWMMXt;
-
-	    if (strcmp (name, "XSCALE") == 0)
-	      {
-		int wmmx;
-
-		BFD_ASSERT (Tag_WMMX_arch < NUM_KNOWN_OBJ_ATTRIBUTES);
-		wmmx = elf_known_obj_attributes (abfd) [OBJ_ATTR_PROC][Tag_WMMX_arch].i;
-		switch (wmmx)
-		  {
-		  case 1: return bfd_mach_arm_iWMMXt;
-		  case 2: return bfd_mach_arm_iWMMXt2;
-		  default: return bfd_mach_arm_XScale;
-		  }
-	      }
-	  }
-
-	return bfd_mach_arm_5TE;
-      }
-
     default:
       return bfd_mach_arm_unknown;
     }
@@ -10039,213 +9919,11 @@ set_secondary_compatible_arch (bfd *abfd, int arch)
    into account.  */
 
 static int
-tag_cpu_arch_combine (bfd *ibfd, int oldtag, int *secondary_compat_out,
-		      int newtag, int secondary_compat)
+tag_cpu_arch_combine (bfd *ibfd, int oldtag, int *secondary_compat_out ATTRIBUTE_UNUSED,
+		      int newtag, int secondary_compat ATTRIBUTE_UNUSED)
 {
 #define T(X) TAG_CPU_ARCH_##X
   int tagl, tagh, result;
-  const int v6t2[] =
-    {
-      T(V6T2),   /* PRE_V4.  */
-      T(V6T2),   /* V4.  */
-      T(V6T2),   /* V4T.  */
-      T(V6T2),   /* V5T.  */
-      T(V6T2),   /* V5TE.  */
-      T(V6T2),   /* V5TEJ.  */
-      T(V6T2),   /* V6.  */
-      T(V7),     /* V6KZ.  */
-      T(V6T2)    /* V6T2.  */
-    };
-  const int v6k[] =
-    {
-      T(V6K),    /* PRE_V4.  */
-      T(V6K),    /* V4.  */
-      T(V6K),    /* V4T.  */
-      T(V6K),    /* V5T.  */
-      T(V6K),    /* V5TE.  */
-      T(V6K),    /* V5TEJ.  */
-      T(V6K),    /* V6.  */
-      T(V6KZ),   /* V6KZ.  */
-      T(V7),     /* V6T2.  */
-      T(V6K)     /* V6K.  */
-    };
-  const int v7[] =
-    {
-      T(V7),     /* PRE_V4.  */
-      T(V7),     /* V4.  */
-      T(V7),     /* V4T.  */
-      T(V7),     /* V5T.  */
-      T(V7),     /* V5TE.  */
-      T(V7),     /* V5TEJ.  */
-      T(V7),     /* V6.  */
-      T(V7),     /* V6KZ.  */
-      T(V7),     /* V6T2.  */
-      T(V7),     /* V6K.  */
-      T(V7)      /* V7.  */
-    };
-  const int v6_m[] =
-    {
-      -1,	 /* PRE_V4.  */
-      -1,	 /* V4.  */
-      T(V6K),    /* V4T.  */
-      T(V6K),    /* V5T.  */
-      T(V6K),    /* V5TE.  */
-      T(V6K),    /* V5TEJ.  */
-      T(V6K),    /* V6.  */
-      T(V6KZ),   /* V6KZ.  */
-      T(V7),     /* V6T2.  */
-      T(V6K),    /* V6K.  */
-      T(V7),     /* V7.  */
-      T(V6_M)    /* V6_M.  */
-    };
-  const int v6s_m[] =
-    {
-      -1,	 /* PRE_V4.  */
-      -1,	 /* V4.  */
-      T(V6K),    /* V4T.  */
-      T(V6K),    /* V5T.  */
-      T(V6K),    /* V5TE.  */
-      T(V6K),    /* V5TEJ.  */
-      T(V6K),    /* V6.  */
-      T(V6KZ),   /* V6KZ.  */
-      T(V7),     /* V6T2.  */
-      T(V6K),    /* V6K.  */
-      T(V7),     /* V7.  */
-      T(V6S_M),  /* V6_M.  */
-      T(V6S_M)   /* V6S_M.  */
-    };
-  const int v7e_m[] =
-    {
-      -1,	 /* PRE_V4.  */
-      -1,	 /* V4.  */
-      T(V7E_M),  /* V4T.  */
-      T(V7E_M),  /* V5T.  */
-      T(V7E_M),  /* V5TE.  */
-      T(V7E_M),  /* V5TEJ.  */
-      T(V7E_M),  /* V6.  */
-      T(V7E_M),  /* V6KZ.  */
-      T(V7E_M),  /* V6T2.  */
-      T(V7E_M),  /* V6K.  */
-      T(V7E_M),  /* V7.  */
-      T(V7E_M),  /* V6_M.  */
-      T(V7E_M),  /* V6S_M.  */
-      T(V7E_M)   /* V7E_M.  */
-    };
-  const int v8[] =
-    {
-      T(V8),		/* PRE_V4.  */
-      T(V8),		/* V4.  */
-      T(V8),		/* V4T.  */
-      T(V8),		/* V5T.  */
-      T(V8),		/* V5TE.  */
-      T(V8),		/* V5TEJ.  */
-      T(V8),		/* V6.  */
-      T(V8),		/* V6KZ.  */
-      T(V8),		/* V6T2.  */
-      T(V8),		/* V6K.  */
-      T(V8),		/* V7.  */
-      T(V8),		/* V6_M.  */
-      T(V8),		/* V6S_M.  */
-      T(V8),		/* V7E_M.  */
-      T(V8)		/* V8.  */
-    };
-  const int v8r[] =
-    {
-      T(V8R),		/* PRE_V4.  */
-      T(V8R),		/* V4.  */
-      T(V8R),		/* V4T.  */
-      T(V8R),		/* V5T.  */
-      T(V8R),		/* V5TE.  */
-      T(V8R),		/* V5TEJ.  */
-      T(V8R),		/* V6.  */
-      T(V8R),		/* V6KZ.  */
-      T(V8R),		/* V6T2.  */
-      T(V8R),		/* V6K.  */
-      T(V8R),		/* V7.  */
-      T(V8R),		/* V6_M.  */
-      T(V8R),		/* V6S_M.  */
-      T(V8R),		/* V7E_M.  */
-      T(V8),		/* V8.  */
-      T(V8R),		/* V8R.  */
-    };
-  const int v8m_baseline[] =
-    {
-      -1,		/* PRE_V4.  */
-      -1,		/* V4.  */
-      -1,		/* V4T.  */
-      -1,		/* V5T.  */
-      -1,		/* V5TE.  */
-      -1,		/* V5TEJ.  */
-      -1,		/* V6.  */
-      -1,		/* V6KZ.  */
-      -1,		/* V6T2.  */
-      -1,		/* V6K.  */
-      -1,		/* V7.  */
-      T(V8M_BASE),	/* V6_M.  */
-      T(V8M_BASE),	/* V6S_M.  */
-      -1,		/* V7E_M.  */
-      -1,		/* V8.  */
-      -1,		/* V8R.  */
-      T(V8M_BASE)	/* V8-M BASELINE.  */
-    };
-  const int v8m_mainline[] =
-    {
-      -1,		/* PRE_V4.  */
-      -1,		/* V4.  */
-      -1,		/* V4T.  */
-      -1,		/* V5T.  */
-      -1,		/* V5TE.  */
-      -1,		/* V5TEJ.  */
-      -1,		/* V6.  */
-      -1,		/* V6KZ.  */
-      -1,		/* V6T2.  */
-      -1,		/* V6K.  */
-      T(V8M_MAIN),	/* V7.  */
-      T(V8M_MAIN),	/* V6_M.  */
-      T(V8M_MAIN),	/* V6S_M.  */
-      T(V8M_MAIN),	/* V7E_M.  */
-      -1,		/* V8.  */
-      -1,		/* V8R.  */
-      T(V8M_MAIN),	/* V8-M BASELINE.  */
-      T(V8M_MAIN)	/* V8-M MAINLINE.  */
-    };
-  const int v4t_plus_v6_m[] =
-    {
-      -1,		/* PRE_V4.  */
-      -1,		/* V4.  */
-      T(V4T),		/* V4T.  */
-      T(V5T),		/* V5T.  */
-      T(V5TE),		/* V5TE.  */
-      T(V5TEJ),		/* V5TEJ.  */
-      T(V6),		/* V6.  */
-      T(V6KZ),		/* V6KZ.  */
-      T(V6T2),		/* V6T2.  */
-      T(V6K),		/* V6K.  */
-      T(V7),		/* V7.  */
-      T(V6_M),		/* V6_M.  */
-      T(V6S_M),		/* V6S_M.  */
-      T(V7E_M),		/* V7E_M.  */
-      T(V8),		/* V8.  */
-      -1,		/* V8R.  */
-      T(V8M_BASE),	/* V8-M BASELINE.  */
-      T(V8M_MAIN),	/* V8-M MAINLINE.  */
-      T(V4T_PLUS_V6_M)	/* V4T plus V6_M.  */
-    };
-  const int *comb[] =
-    {
-      v6t2,
-      v6k,
-      v7,
-      v6_m,
-      v6s_m,
-      v7e_m,
-      v8,
-      v8r,
-      v8m_baseline,
-      v8m_mainline,
-      /* Pseudo-architecture.  */
-      v4t_plus_v6_m
-    };
 
   /* Check we've not got a higher architecture than we know about.  */
 
@@ -10257,44 +9935,21 @@ tag_cpu_arch_combine (bfd *ibfd, int oldtag, int *secondary_compat_out,
 
   /* Override old tag if we have a Tag_also_compatible_with on the output.  */
 
-  if ((oldtag == T(V6_M) && *secondary_compat_out == T(V4T))
-      || (oldtag == T(V4T) && *secondary_compat_out == T(V6_M)))
+  if (oldtag == T(V4T))
     oldtag = T(V4T_PLUS_V6_M);
 
   /* And override the new tag if we have a Tag_also_compatible_with on the
      input.  */
 
-  if ((newtag == T(V6_M) && secondary_compat == T(V4T))
-      || (newtag == T(V4T) && secondary_compat == T(V6_M)))
+  if (newtag == T(V4T))
     newtag = T(V4T_PLUS_V6_M);
 
   tagl = (oldtag < newtag) ? oldtag : newtag;
   result = tagh = (oldtag > newtag) ? oldtag : newtag;
 
   /* Architectures before V6KZ add features monotonically.  */
-  if (tagh <= TAG_CPU_ARCH_V6KZ)
-    return result;
-
-  result = comb[tagh - T(V6T2)] ? comb[tagh - T(V6T2)][tagl] : -1;
-
-  /* Use Tag_CPU_arch == V4T and Tag_also_compatible_with (Tag_CPU_arch V6_M)
-     as the canonical version.  */
-  if (result == T(V4T_PLUS_V6_M))
-    {
-      result = T(V4T);
-      *secondary_compat_out = T(V6_M);
-    }
-  else
-    *secondary_compat_out = -1;
-
-  if (result == -1)
-    {
-      _bfd_error_handler (_("error: %pB: conflicting CPU architectures %d/%d"),
-			  ibfd, oldtag, newtag);
-      return -1;
-    }
-
   return result;
+
 #undef T
 }
 
@@ -10303,18 +9958,10 @@ tag_cpu_arch_combine (bfd *ibfd, int oldtag, int *secondary_compat_out,
 static bfd_boolean
 elf32_arm_attributes_accept_div (const obj_attribute *attr)
 {
-  int arch = attr[Tag_CPU_arch].i;
-  int profile = attr[Tag_CPU_arch_profile].i;
-
   switch (attr[Tag_DIV_use].i)
     {
     case 0:
       /* Integer divide allowed if instruction contained in archetecture.  */
-      if (arch == TAG_CPU_ARCH_V7 && (profile == 'R' || profile == 'M'))
-	return TRUE;
-      else if (arch >= TAG_CPU_ARCH_V7E_M)
-	return TRUE;
-      else
 	return FALSE;
 
     case 1:
@@ -11764,8 +11411,7 @@ elf32_arm_gc_mark_extra_sections (struct bfd_link_info *info,
   _bfd_elf_gc_mark_extra_sections (info, gc_mark_hook);
 
   out_attr = elf_known_obj_attributes_proc (info->output_bfd);
-  is_v8m = out_attr[Tag_CPU_arch].i >= TAG_CPU_ARCH_V8M_BASE
-	   && out_attr[Tag_CPU_arch_profile].i == 'M';
+  is_v8m = FALSE;
 
   /* Marking EH data may cause additional code sections to be marked,
      requiring multiple passes.  */
@@ -12627,7 +12273,6 @@ elf32_arm_size_dynamic_sections (bfd * output_bfd ATTRIBUTE_UNUSED,
 
   dynobj = elf_hash_table (info)->dynobj;
   BFD_ASSERT (dynobj != NULL);
-  check_use_blx (htab);
 
   if (elf_hash_table (info)->dynamic_sections_created)
     {
@@ -13914,8 +13559,6 @@ elf32_arm_output_arch_local_syms (bfd *output_bfd,
   htab = elf32_arm_hash_table (info);
   if (htab == NULL)
     return FALSE;
-
-  check_use_blx (htab);
 
   osi.flaginfo = flaginfo;
   osi.info = info;

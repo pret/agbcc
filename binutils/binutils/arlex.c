@@ -1173,11 +1173,6 @@ case YY_STATE_EOF(INITIAL):
 					goto do_action;
 					}
 
-				else
-					{
-					if ( ! (yy_did_buffer_switch_on_eof) )
-						YY_NEW_FILE;
-					}
 				break;
 				}
 

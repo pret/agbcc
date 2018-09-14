@@ -94,22 +94,7 @@
 #define TAG_CPU_ARCH_PRE_V4	0
 #define TAG_CPU_ARCH_V4		1
 #define TAG_CPU_ARCH_V4T	2
-#define TAG_CPU_ARCH_V5T	3
-#define TAG_CPU_ARCH_V5TE	4
-#define TAG_CPU_ARCH_V5TEJ	5
-#define TAG_CPU_ARCH_V6		6
-#define TAG_CPU_ARCH_V6KZ	7
-#define TAG_CPU_ARCH_V6T2	8
-#define TAG_CPU_ARCH_V6K	9
-#define TAG_CPU_ARCH_V7		10
-#define TAG_CPU_ARCH_V6_M	11
-#define TAG_CPU_ARCH_V6S_M	12
-#define TAG_CPU_ARCH_V7E_M	13
-#define TAG_CPU_ARCH_V8		14
-#define TAG_CPU_ARCH_V8R	15
-#define TAG_CPU_ARCH_V8M_BASE	16
-#define TAG_CPU_ARCH_V8M_MAIN	17
-#define MAX_TAG_CPU_ARCH	TAG_CPU_ARCH_V8M_MAIN
+#define MAX_TAG_CPU_ARCH	TAG_CPU_ARCH_V4T
 /* Pseudo-architecture to allow objects to be compatible with the subset of
    armv4t and armv6-m.  This value should never be stored in object files.  */
 #define TAG_CPU_ARCH_V4T_PLUS_V6_M (MAX_TAG_CPU_ARCH + 1)
@@ -400,3 +385,4 @@ enum arm_st_branch_type {
   (SYM_TARGET_INTERNAL) |= 4
 
 #endif /* _ELF_ARM_H */
+
