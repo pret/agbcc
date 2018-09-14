@@ -39,16 +39,13 @@
 /* Define to 1 if you have the declaration of `ntf', and to 0 if you don't. */
 #undef HAVE_DECL_NTF
 
-/* Define to 1 if you have the declaration of `strverscmp', and to 0 if you
-   don't. */
-#undef HAVE_DECL_STRVERSCMP
+/* Define to 1 if you have the declaration of `strverscmp
+   canonicalize_file_name', and to 0 if you don't. */
+#undef HAVE_DECL_STRVERSCMP_CANONICALIZE_FILE_NAME
 
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_VASPRINTF
-
-/* Define to 1 if you have the `dup3' function. */
-#undef HAVE_DUP3
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
@@ -253,9 +250,6 @@
 
 /* Define to 1 if you have the `__fsetlocking' function. */
 #undef HAVE___FSETLOCKING
-
-/* Define if canonicalize_file_name is not declared in system header files. */
-#undef NEED_DECLARATION_CANONICALIZE_FILE_NAME
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O

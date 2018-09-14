@@ -582,6 +582,7 @@ PACKAGE_STRING='move-if-change 2.31'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
+ac_unique_file="move-if-change"
 enable_option_checking=no
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
@@ -2069,7 +2070,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-#AC_INIT(move-if-change)
+
+
 # autotools lean macros
 
 # Copyright (c) 2012 Gregor Richards
@@ -2170,7 +2172,6 @@ GCC_DEFAULT_CFLAGS="-g -O2"
         touch config.cache
     fi
 
-#AC_CONFIG_SUBDIRS([bfd])
 
 
 
@@ -2369,7 +2370,6 @@ test -n "$target_alias" &&
   test "$program_prefix$program_suffix$program_transform_name" = \
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
-
 
 test "$program_prefix" != NONE &&
   program_transform_name="s&^&$program_prefix&;$program_transform_name"

@@ -17,7 +17,7 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-AUTOMAKE_OPTIONS = dejagnu foreign no-dist subdir-objects
+AUTOMAKE_OPTIONS = foreign no-dist subdir-objects
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
 
 tooldir = $(exec_prefix)/$(target_alias)
@@ -26,9 +26,6 @@ tooldir = $(exec_prefix)/$(target_alias)
 # -I../zlib, unless we were configured with --with-system-zlib, in which
 # case both are empty.
 ZLIBINC = @zlibinc@
-
-YACC = `if [ -f ../bison/bison ] ; then echo ../bison/bison -y -L../bison/bison ; else echo @YACC@ ; fi`
-LEX = `if [ -f ../flex/flex ] ; then echo ../flex/flex ; else echo @LEX@ ; fi`
 
 WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
 NO_WERROR = @NO_WERROR@
@@ -203,30 +200,6 @@ as_new_DEPENDENCIES = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 EXTRA_as_new_SOURCES = $(CFILES) $(HFILES) $(TARGET_CPU_CFILES) \
 	$(TARGET_CPU_HFILES) $(OBJ_FORMAT_CFILES) $(OBJ_FORMAT_HFILES) \
 	$(TARG_ENV_CFILES) $(CONFIG_ATOF_CFILES) $(MULTI_CFILES)
-
-EXPECT = expect
-RUNTEST = runtest
-RUNTESTFLAGS=
-
-check-DEJAGNU: site.exp
-	if [ -d testsuite ]; then \
-	  true; \
-	else \
-	  mkdir testsuite; \
-	fi
-	rm -f testsuite/site.exp
-	cp site.exp testsuite/site.exp
-	rootme=`pwd`; export rootme; \
-	srcdir=`cd ${srcdir}; pwd` ; export srcdir ; \
-	LC_ALL=C; export LC_ALL; \
-	EXPECT=${EXPECT} ; export EXPECT ; \
-	runtest=$(RUNTEST); \
-	cd testsuite; \
-	if $(SHELL) -c "$$runtest --version" > /dev/null 2>&1; then \
-	  $$runtest --tool $(DEJATOOL) --srcdir $${srcdir}/testsuite \
-		$(RUNTESTFLAGS); \
-	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
-	fi
 
 # The instruction table specification lexical analyzer and parser.
 

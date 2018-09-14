@@ -639,7 +639,6 @@ ENABLE_PLUGINS_FALSE
 ENABLE_PLUGINS_TRUE
 NATIVE_LIB_DIRS
 HDEFINES
-do_compare
 GENINSRC_NEVER_FALSE
 GENINSRC_NEVER_TRUE
 WARN_WRITE_STRINGS
@@ -2366,9 +2365,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-
 
 
 
@@ -5058,9 +5054,6 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
 
 
-
-#LT_INIT
-
 # The tests for host and target for $enable_largefile require
 # canonical names.
 
@@ -5799,36 +5792,6 @@ else
   GENINSRC_NEVER_TRUE='#'
   GENINSRC_NEVER_FALSE=
 fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking how to compare bootstrapped objects" >&5
-$as_echo_n "checking how to compare bootstrapped objects... " >&6; }
-if ${gcc_cv_prog_cmp_skip+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-   echo abfoo >t1
-  echo cdfoo >t2
-  gcc_cv_prog_cmp_skip='tail -c +17 $$f1 > tmp-foo1; tail -c +17 $$f2 > tmp-foo2; cmp tmp-foo1 tmp-foo2'
-  if cmp t1 t2 2 2 > /dev/null 2>&1; then
-    if cmp t1 t2 1 1 > /dev/null 2>&1; then
-      :
-    else
-      gcc_cv_prog_cmp_skip='cmp $$f1 $$f2 16 16'
-    fi
-  fi
-  if cmp --ignore-initial=2 t1 t2 > /dev/null 2>&1; then
-    if cmp --ignore-initial=1 t1 t2 > /dev/null 2>&1; then
-      :
-    else
-      gcc_cv_prog_cmp_skip='cmp --ignore-initial=16 $$f1 $$f2'
-    fi
-  fi
-  rm t1 t2
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_prog_cmp_skip" >&5
-$as_echo "$gcc_cv_prog_cmp_skip" >&6; }
-do_compare="$gcc_cv_prog_cmp_skip"
-
 
 
 . ${srcdir}/configure.host

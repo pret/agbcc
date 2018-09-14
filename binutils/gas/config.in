@@ -10,9 +10,6 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define if using AIX 5.2 value for C_WEAKEXT. */
-#undef AIX_WEAK_SUPPORT
-
 /* assert broken? */
 #undef BROKEN_ASSERT
 
@@ -26,9 +23,6 @@
 
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
-
-/* Default architecture. */
-#undef DEFAULT_ARCH
 
 /* Default CRIS architecture. */
 #undef DEFAULT_CRIS_ARCH
@@ -55,10 +49,6 @@
 
 /* Define if you want run-time sanity checks. */
 #undef ENABLE_CHECKING
-
-/* Define to 1 if translation of program messages to the user's native
-   language is requested. */
-#undef ENABLE_NLS
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
@@ -155,33 +145,6 @@
 /* Using i386 COFF? */
 #undef I386COFF
 
-/* Default CPU for MIPS targets. */
-#undef MIPS_CPU_STRING_DEFAULT
-
-/* Generate 64-bit code by default on MIPS targets. */
-#undef MIPS_DEFAULT_64BIT
-
-/* Choose a default ABI for MIPS targets. */
-#undef MIPS_DEFAULT_ABI
-
-/* Define value for nds32_arch_name */
-#undef NDS32_DEFAULT_ARCH_NAME
-
-/* Define default value for nds32_audio_ext */
-#undef NDS32_DEFAULT_AUDIO_EXT
-
-/* Define default value for nds32_dx_regs */
-#undef NDS32_DEFAULT_DX_REGS
-
-/* Define default value for nds32_perf_ext */
-#undef NDS32_DEFAULT_PERF_EXT
-
-/* Define default value for nds32_perf_ext2 */
-#undef NDS32_DEFAULT_PERF_EXT2
-
-/* Define default value for nds32_string_ext */
-#undef NDS32_DEFAULT_STRING_EXT
-
 /* Define if environ is not declared in system header files. */
 #undef NEED_DECLARATION_ENVIRON
 
@@ -262,9 +225,6 @@
 /* Target OS. */
 #undef TARGET_OS
 
-/* Define if default target is PowerPC Solaris. */
-#undef TARGET_SOLARIS_COMMENT
-
 /* Target vendor. */
 #undef TARGET_VENDOR
 
@@ -276,9 +236,6 @@
 
 /* Use emulation support? */
 #undef USE_EMULATIONS
-
-/* Allow use of E_MIPS_ABI_O32 on MIPS targets. */
-#undef USE_E_MIPS_ABI_O32
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE

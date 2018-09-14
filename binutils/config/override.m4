@@ -22,9 +22,9 @@ m4_ifndef([m4_rename_force],
 [m4_ifdef([$2], [m4_undefine([$2])])m4_rename($@)])])
 
 dnl AC_DEFUN a commonly used macro so this file is picked up.
-m4_copy([AC_PREREQ], [_AC_PREREQ])
-AC_DEFUN([AC_PREREQ], [frob])
-m4_copy_force([_AC_PREREQ], [AC_PREREQ])
+m4_copy([AC_PREREQ([2.69])], [_AC_PREREQ])
+AC_DEFUN([AC_PREREQ([2.69])], [frob])
+m4_copy_force([_AC_PREREQ], [AC_PREREQ([2.69])])
 
 
 dnl Ensure exactly this Autoconf version is used

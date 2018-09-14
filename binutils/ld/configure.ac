@@ -18,23 +18,21 @@ dnl <http://www.gnu.org/licenses/>.
 dnl
 
 m4_include([../bfd/version.m4])
-AC_INIT([ld], BFD_VERSION)
+AC_INIT([ld],[BFD_VERSION])
 AC_CONFIG_SRCDIR(ldmain.c)
 m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 AC_CANONICAL_BUILD
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
 AC_PROG_GREP
-AC_GNU_SOURCE
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_INSTALL
 
-#LT_INIT
 ACX_LARGEFILE
 
 AC_ARG_WITH(lib-path, [  --with-lib-path=dir1:dir2...  set default LIB_PATH],LIB_PATH=$withval)
@@ -238,7 +236,6 @@ fi
 AC_EXEEXT
 
 AM_CONDITIONAL(GENINSRC_NEVER, false)
-ACX_PROG_CMP_IGNORE_INITIAL
 
 . ${srcdir}/configure.host
 
@@ -251,7 +248,6 @@ ACX_HEADER_STRING
 AC_CHECK_FUNCS_ONCE(glob mkstemp realpath setlocale waitpid open lseek close)
 AC_HEADER_DIRENT
 
-dnl AC_CHECK_HEADERS(sys/mman.h)
 AC_CHECK_FUNCS_ONCE(mmap)
 
 AC_SEARCH_LIBS([dlopen], [dl])

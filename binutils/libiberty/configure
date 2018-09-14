@@ -1559,35 +1559,6 @@ fi
 
 } # ac_fn_c_try_run
 
-# ac_fn_c_check_header_preproc LINENO HEADER VAR
-# ----------------------------------------------
-# Tests whether HEADER is present, setting the cache variable VAR accordingly.
-ac_fn_c_check_header_preproc ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <$2>
-_ACEOF
-if ac_fn_c_try_cpp "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_header_preproc
-
 # ac_fn_c_compute_int LINENO EXPR VAR INCLUDES
 # --------------------------------------------
 # Tries to find the compile-time value of EXPR in a program that includes
@@ -2303,9 +2274,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-
-
-
 # autotools lean macros
 
 # Copyright (c) 2012 Gregor Richards
@@ -2532,6 +2500,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+## dnl These must be called before libtool because it may want
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ar", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ar; ac_word=$2
@@ -3853,7 +3822,6 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
   $as_echo "#define _TANDEM_SOURCE 1" >>confdefs.h
 
 
-
 # Check whether --enable-largefile was given.
 if test "${enable_largefile+set}" = set; then :
   enableval=$enable_largefile;
@@ -4053,7 +4021,6 @@ rm -rf conftest*
 
 
 fi
-
 
 ac_c_preproc_warn_flag=yes
 
@@ -4460,7 +4427,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
-
 ac_config_headers="$ac_config_headers config.h:config.in"
 
 
@@ -4603,14 +4569,18 @@ host_makefile_frag=${frag}
 
     for ac_header in $ac_header_list
 do :
-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_preproc "$LINENO" "$ac_header" "$as_ac_Header"
+
+    as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "
+"
 if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
 
 fi
+
+
 done
 
 
@@ -4733,6 +4703,7 @@ $as_echo "#define TIME_WITH_SYS_TIME 1" >>confdefs.h
 fi
 
 
+## libiberty_AC_DECLARE_ERRNO
 
 # Determine sizes of some types.
 
@@ -4803,7 +4774,6 @@ $as_echo "$ac_cv_sizeof_size_t" >&6; }
 cat >>confdefs.h <<_ACEOF
 #define SIZEOF_SIZE_T $ac_cv_sizeof_size_t
 _ACEOF
-
 
 
 
@@ -5333,63 +5303,16 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_GETOPT $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "strverscmp" "ac_cv_have_decl_strverscmp" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strverscmp" = xyes; then :
+ac_fn_c_check_decl "$LINENO" "strverscmp canonicalize_file_name" "ac_cv_have_decl_strverscmp_canonicalize_file_name" "$ac_includes_default"
+if test "x$ac_cv_have_decl_strverscmp_canonicalize_file_name" = xyes; then :
   ac_have_decl=1
 else
   ac_have_decl=0
 fi
 
 cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRVERSCMP $ac_have_decl
+#define HAVE_DECL_STRVERSCMP_CANONICALIZE_FILE_NAME $ac_have_decl
 _ACEOF
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether canonicalize_file_name must be declared" >&5
-$as_echo_n "checking whether canonicalize_file_name must be declared... " >&6; }
-if ${libiberty_cv_decl_needed_canonicalize_file_name+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include "confdefs.h"
-#include <stdio.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#else
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
-#endif
-#endif
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-int
-main ()
-{
-char *(*pfn) = (char *(*)) canonicalize_file_name
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  libiberty_cv_decl_needed_canonicalize_file_name=no
-else
-  libiberty_cv_decl_needed_canonicalize_file_name=yes
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libiberty_cv_decl_needed_canonicalize_file_name" >&5
-$as_echo "$libiberty_cv_decl_needed_canonicalize_file_name" >&6; }
-if test $libiberty_cv_decl_needed_canonicalize_file_name = yes; then
-
-$as_echo "#define NEED_DECLARATION_CANONICALIZE_FILE_NAME 1" >>confdefs.h
-
-fi
 
 fi
 

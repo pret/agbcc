@@ -21,7 +21,7 @@ dnl <http://www.gnu.org/licenses/>.
 dnl
 dnl v2.5 needed for --bindir et al
 m4_include([../bfd/version.m4])
-AC_INIT([gas], BFD_VERSION)
+AC_INIT([gas],[BFD_VERSION])
 AC_CONFIG_SRCDIR(as.h)
 m4_include([../config/lean.m4])
 
@@ -30,15 +30,14 @@ dnl we specify this explicitly, automake-1.7 will assume that ylwrap is in
 dnl gas/ instead of gas/../.
 AC_CONFIG_AUX_DIR(..)
 AC_CANONICAL_TARGET
-AC_ISC_POSIX
-
+## AC_SEARCH_LIBS([strerror],[cposix])
+AC_CONFIG_MACRO_DIRS([../config])
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AC_USE_SYSTEM_EXTENSIONS
 
-#LT_INIT
 ACX_LARGEFILE
 ACX_PROG_CMP_IGNORE_INITIAL
 
@@ -458,10 +457,6 @@ AC_DEFINE_UNQUOTED(TARGET_CPU,		"${target_cpu}",   [Target CPU.])
 AC_DEFINE_UNQUOTED(TARGET_VENDOR,	"${target_vendor}", [Target vendor.])
 AC_DEFINE_UNQUOTED(TARGET_OS,		"${target_os}",    [Target OS.])
 
-ALL_LINGUAS="es fi fr id ja ru rw sv tr uk zh_CN"
-ZW_GNU_GETTEXT_SISTER_DIR
-AM_PO_SUBDIRS
-
 AM_MAINTAINER_MODE
 AM_CONDITIONAL(GENINSRC_NEVER, false)
 AC_EXEEXT
@@ -490,14 +485,6 @@ AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(strsignal)
 
 AM_LC_MESSAGES
-
-# do we need the math library?
-case "${need_libm}" in
-yes)
-  LT_LIB_M
-  AC_SUBST(LIBM)
-  ;;
-esac
 
 # Some non-ANSI preprocessors botch requoting inside strings.  That's bad
 # enough, but on some of those systems, the assert macro relies on requoting

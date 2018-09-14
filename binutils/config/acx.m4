@@ -107,9 +107,9 @@ AC_SUBST([target_subdir]) []dnl
 
 
 ####
-# _NCN_TOOL_PREFIXES:  Some stuff that oughtta be done in AC_CANONICAL_SYSTEM 
+# _NCN_TOOL_PREFIXES:  Some stuff that oughtta be done in AC_CANONICAL_TARGET 
 # or AC_INIT.
-# These demand that AC_CANONICAL_SYSTEM be called beforehand.
+# These demand that AC_CANONICAL_TARGET be called beforehand.
 AC_DEFUN([_NCN_TOOL_PREFIXES],
 [ncn_tool_prefix=
 test -n "$host_alias" && ncn_tool_prefix=$host_alias-
@@ -389,7 +389,7 @@ ac_c_preproc_warn_flag=yes])# AC_PROG_CPP_WERROR
 # Sets the shell variable have_gnat to yes or no as appropriate, and
 # substitutes GNATBIND and GNATMAKE.
 AC_DEFUN([ACX_PROG_GNAT],
-[AC_REQUIRE([AC_CHECK_TOOL_PREFIX])
+[AC_REQUIRE([])
 AC_REQUIRE([AC_PROG_CC])
 AC_CHECK_TOOL(GNATBIND, gnatbind, no)
 AC_CHECK_TOOL(GNATMAKE, gnatmake, no)
@@ -455,8 +455,8 @@ dnl See whether we can include both string.h and strings.h.
 AC_DEFUN([ACX_HEADER_STRING],
 [AC_CACHE_CHECK([whether string.h and strings.h may both be included],
   gcc_cv_header_string,
-[AC_TRY_COMPILE([#include <string.h>
-#include <strings.h>], , gcc_cv_header_string=yes, gcc_cv_header_string=no)])
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <string.h>
+#include <strings.h>]], [[]])],[gcc_cv_header_string=yes],[gcc_cv_header_string=no])])
 if test $gcc_cv_header_string = yes; then
   AC_DEFINE(STRING_WITH_STRINGS, 1, [Define if you can safely include both <string.h> and <strings.h>.])
 fi
@@ -467,17 +467,13 @@ dnl Check whether _Bool is built-in.
 AC_DEFUN([ACX_HEADER_STDBOOL],
 [AC_CACHE_CHECK([for working stdbool.h],
   ac_cv_header_stdbool_h,
-[AC_TRY_COMPILE([#include <stdbool.h>],
-[bool foo = false;],
-ac_cv_header_stdbool_h=yes, ac_cv_header_stdbool_h=no)])
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdbool.h>]], [[bool foo = false;]])],[ac_cv_header_stdbool_h=yes],[ac_cv_header_stdbool_h=no])])
 if test $ac_cv_header_stdbool_h = yes; then
   AC_DEFINE(HAVE_STDBOOL_H, 1,
   [Define if you have a working <stdbool.h> header file.])
 fi
 AC_CACHE_CHECK(for built-in _Bool, gcc_cv_c__bool,
-[AC_TRY_COMPILE(,
-[_Bool foo;],
-gcc_cv_c__bool=yes, gcc_cv_c__bool=no)
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[_Bool foo;]])],[gcc_cv_c__bool=yes],[gcc_cv_c__bool=no])
 ])
 if test $gcc_cv_c__bool = yes; then
   AC_DEFINE(HAVE__BOOL, 1, [Define if the \`_Bool' type is built-in.])

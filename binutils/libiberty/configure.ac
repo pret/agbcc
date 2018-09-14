@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script
 
-
+m4_include([../config/warnings.m4])
 AC_INIT
 AC_CONFIG_SRCDIR([vprintf-support.c])
 m4_include([../config/lean.m4])
@@ -49,14 +49,14 @@ AC_CANONICAL_HOST
 dnl When we start using automake:
 dnl AM_INIT_AUTOMAKE(libiberty, 1.0)
 
-dnl These must be called before AM_PROG_LIBTOOL, because it may want
+## dnl These must be called before libtool because it may want
 dnl to call AC_CHECK_PROG.
 AC_CHECK_TOOL(AR, ar)
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 
 dnl GCC_NO_EXECUTABLES
 AC_PROG_CC
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 AC_PROG_CPP_WERROR
 
@@ -73,24 +73,13 @@ AC_SUBST(NO_MINUS_C_MINUS_O)
 AC_SUBST(OUTPUT_OPTION)
 AC_C_BIGENDIAN
 
-dnl When we start using libtool:
-dnl Default to a non shared library.  This may be overridden by the
-dnl configure option --enable-shared.
-dnl AM_DISABLE_SHARED
-
-dnl When we start using libtool:
-dnl AM_PROG_LIBTOOL
 
 dnl When we start using automake:
-dnl AM_CONFIG_HEADER(config.h:config.in)
 AC_CONFIG_HEADER(config.h:config.in)
 
-dnl When we start using automake:
-dnl AM_MAINTAINER_MODE
 dnl AC_EXEEXT
 
 dnl When we start using automake:
-dnl AM_PROG_INSTALL
 AC_PROG_INSTALL
 
 # Don't build the shared library for build.
@@ -136,14 +125,11 @@ AC_CHECK_HEADERS_ONCE(sys/file.h sys/param.h malloc.h unistd.h strings.h sys/tim
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 
-dnl libiberty_AC_DECLARE_ERRNO
+## libiberty_AC_DECLARE_ERRNO
 
 # Determine sizes of some types.
 AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([size_t])
-
-dnl AC_TYPE_SSIZE_T
-dnl AC_TYPE_PID_T
 
 # This is the list of functions which libiberty will provide if they
 # are not available on the host.
@@ -295,7 +281,7 @@ if test -z "${setobjs}"; then
 
   # We haven't set the list of objects yet.  Use the standard autoconf
   # tests.  This will only work if the compiler works.
-  AC_ISC_POSIX
+  AC_SEARCH_LIBS([strerror],[cposix])
   AC_REPLACE_FUNCS($funcs)
 
     AC_CHECK_FUNCS(_doprnt)
@@ -326,8 +312,7 @@ if test -z "${setobjs}"; then
     [AC_MSG_RESULT([no])])
 
   AC_CHECK_FUNCS($checkfuncs)
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, strverscmp])
-  libiberty_NEED_DECLARATION(canonicalize_file_name)
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, strverscmp canonicalize_file_name])
 fi
 
   INSTALL_DEST=libdir
