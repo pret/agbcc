@@ -99,12 +99,9 @@ binutils/Makefile:
 	cd binutils && $(SHELL) ./configure SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE
 
 binutils: binutils/Makefile
-	@$(MAKE) -C binutils SHELL="$(SHELL)" $(SUBMAKE) || \
-	    { echo 'You may need to run "make autoreconf"'; exit 1; }
-.AFTER:
-	ifeq ($(.SHELLSTATUS),127)
-	echo "try make autoreconf" >&2
-	endif
+	@$(MAKE) -C binutils configure-bfd
+	@$(MAKE) -C binutils/bfd bfd.h
+	@$(MAKE) -C binutils SHELL="$(SHELL)" $(SUBMAKE)
 
 binutils_clean:
 	@[ ! -f binutils/Makefile ] || $(MAKE) -C binutils clean SHELL="$(SHELL)" $(SUBMAKE)

@@ -9919,19 +9919,11 @@ set_secondary_compatible_arch (bfd *abfd, int arch)
    into account.  */
 
 static int
-tag_cpu_arch_combine (bfd *ibfd, int oldtag, int *secondary_compat_out ATTRIBUTE_UNUSED,
+tag_cpu_arch_combine (bfd *ibfd ATTRIBUTE_UNUSED, int oldtag, int *secondary_compat_out ATTRIBUTE_UNUSED,
 		      int newtag, int secondary_compat ATTRIBUTE_UNUSED)
 {
 #define T(X) TAG_CPU_ARCH_##X
   int tagl, tagh, result;
-
-  /* Check we've not got a higher architecture than we know about.  */
-
-  if (oldtag > MAX_TAG_CPU_ARCH || newtag > MAX_TAG_CPU_ARCH)
-    {
-      _bfd_error_handler (_("error: %pB: unknown CPU architecture"), ibfd);
-      return -1;
-    }
 
   /* Override old tag if we have a Tag_also_compatible_with on the output.  */
 
