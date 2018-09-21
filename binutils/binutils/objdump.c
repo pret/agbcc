@@ -2654,46 +2654,6 @@ dump_dwarf (bfd *abfd)
       return;
     }
 
-  switch (bfd_get_arch (abfd))
-    {
-    case bfd_arch_i386:
-      switch (bfd_get_mach (abfd))
-	{
-	case bfd_mach_x86_64:
-	case bfd_mach_x86_64_intel_syntax:
-	case bfd_mach_x86_64_nacl:
-	case bfd_mach_x64_32:
-	case bfd_mach_x64_32_intel_syntax:
-	case bfd_mach_x64_32_nacl:
-	  init_dwarf_regnames_x86_64 ();
-	  break;
-
-	default:
-	  init_dwarf_regnames_i386 ();
-	  break;
-	}
-      break;
-
-    case bfd_arch_iamcu:
-      init_dwarf_regnames_iamcu ();
-      break;
-
-    case bfd_arch_aarch64:
-      init_dwarf_regnames_aarch64();
-      break;
-
-    case bfd_arch_s390:
-      init_dwarf_regnames_s390 ();
-      break;
-
-    case bfd_arch_riscv:
-      init_dwarf_regnames_riscv ();
-      break;
-
-    default:
-      break;
-    }
-
   separates = load_separate_debug_file (abfd, bfd_get_filename (abfd));
 
   bfd_map_over_sections (abfd, dump_dwarf_section, NULL);

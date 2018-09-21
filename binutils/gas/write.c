@@ -280,9 +280,6 @@ fix_new_exp (fragS *frag,		/* Which frag?  */
       }
 
     case O_symbol_rva:
-      add = exp->X_add_symbol;
-      off = exp->X_add_number;
-      r_type = BFD_RELOC_RVA;
       break;
 
     case O_uminus:
@@ -1960,14 +1957,6 @@ maybe_generate_build_notes (void)
       desc_size = 8; /* Two 4-byte offsets.  */
       desc2_offset = 24;
 
-      /* FIXME: The BFD backend for the CRX target does not support the
-	 BFD_RELOC_32, even though it really should.  Likewise for the
-	 CR16 target.  So we have special case code here...  */
-      if (strstr (bfd_get_target (stdoutput), "-crx") != NULL)
-	desc_reloc = BFD_RELOC_CRX_NUM32;
-      else if (strstr (bfd_get_target (stdoutput), "-cr16") != NULL)
-	desc_reloc = BFD_RELOC_CR16_NUM32;
-      else
 	desc_reloc = BFD_RELOC_32;
     }
   else
@@ -1975,15 +1964,6 @@ maybe_generate_build_notes (void)
       note_size = 36;
       desc_size = 16; /* Two  8-byte offsets.  */
       desc2_offset = 28;
-      /* FIXME: The BFD backend for the IA64 target does not support the
-	 BFD_RELOC_64, even though it really should.  The HPPA backend
-	 has a similar issue, although it does not support BFD_RELOCs at
-	 all!  So we have special case code to handle these targets.  */
-      if (strstr (bfd_get_target (stdoutput), "-ia64") != NULL)
-	desc_reloc = target_big_endian ? BFD_RELOC_IA64_DIR32MSB : BFD_RELOC_IA64_DIR32LSB;
-      else if (strstr (bfd_get_target (stdoutput), "-hppa") != NULL)
-	desc_reloc = 80; /* R_PARISC_DIR64.  */
-      else
 	desc_reloc = BFD_RELOC_64;
     }
   

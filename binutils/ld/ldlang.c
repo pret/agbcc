@@ -2434,13 +2434,6 @@ lang_add_section (lang_statement_list_type *ptr,
 	output->bfd_section->entsize = section->entsize;
     }
 
-  if ((flags & SEC_TIC54X_BLOCK) != 0
-      && bfd_get_arch (section->owner) == bfd_arch_tic54x)
-    {
-      /* FIXME: This value should really be obtained from the bfd...  */
-      output->block_value = 128;
-    }
-
   if (section->alignment_power > output->bfd_section->alignment_power)
     output->bfd_section->alignment_power = section->alignment_power;
 

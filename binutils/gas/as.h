@@ -37,8 +37,8 @@
 /* Now, tend to the rest of the configuration.  */
 
 /* System include files first...  */
-#include <stdio.h>
 #include "config.h"
+#include <stdio.h>
 
 #ifdef STRING_WITH_STRINGS
 #include <string.h>
