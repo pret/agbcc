@@ -19,12 +19,11 @@ export AUTOMAKE := touch Makefile.in;:
 export AUTOCONF := touch configure;:
 export AUTOHEADER := touch config.h.in;:
 export ACLOCAL := touch aclocal.m4;:
-
-SUBMAKE := MAKE="$(MAKE) --no-print-directory \
-	AUTOMAKE='$(AUTOMAKE)' \
+SUBSUBMAKEFLAGS := 	AUTOMAKE='$(AUTOMAKE)' \
 	AUTOCONF='$(AUTOCONF)' \
 	AUTOHEADER='$(AUTOHEADER)' \
-	ACLOCAL='$(ACLOCAL)' "
+	ACLOCAL='$(ACLOCAL)'
+SUBMAKE := MAKE="$(MAKE) --no-print-directory $(SUBSUBMAKEFLAGS) "
 else
 SUBMAKE :=
 endif
@@ -99,8 +98,8 @@ binutils/Makefile:
 	cd binutils && $(SHELL) ./configure SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O2" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE
 
 binutils: binutils/Makefile
-	@$(MAKE) -C binutils configure-bfd
-	@$(MAKE) -C binutils/bfd bfd.h
+	@$(MAKE) -C binutils configure-bfd $(SUBMAKE)
+	@$(MAKE) -C binutils/bfd bfd.h $(SUBSUBMAKEFLAGS)
 	@$(MAKE) -C binutils SHELL="$(SHELL)" $(SUBMAKE)
 
 binutils_clean:
