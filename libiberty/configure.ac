@@ -113,7 +113,7 @@ fi
 echo enable_shared = no >> temp-frag
 
 frag=xhost-mkfrag
-${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/move-if-change temp-frag xhost-mkfrag
+${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/aux/move-if-change temp-frag xhost-mkfrag
 
 host_makefile_frag=${frag}
 AC_SUBST_FILE(host_makefile_frag)
@@ -121,7 +121,7 @@ AC_SUBST_FILE(host_makefile_frag)
 # It's OK to check for header files.  Although the compiler may not be
 # able to link anything, it had better be able to at least compile
 # something.
-AC_CHECK_HEADERS([fcntl.h float.h libintl.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h float.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h])
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 
@@ -260,16 +260,6 @@ if test -z "${setobjs}"; then
     fi
   done
 
-  # special check for _system_configuration because AIX <4.3.2 do not
-  # contain the `physmem' member.
-  AC_MSG_CHECKING([for external symbol _system_configuration])
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/systemcfg.h>]],
-			[[double x = _system_configuration.physmem;]])],
-    [AC_MSG_RESULT([yes])
-    AC_DEFINE(HAVE__SYSTEM_CONFIGURATION, 1,
-	      [Define if you have the _system_configuration variable.])],
-    [AC_MSG_RESULT([no])])
-
   AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, strverscmp canonicalize_file_name])
 fi
 
@@ -285,11 +275,6 @@ for l in x $LIBOBJS; do
   esac
 done
 LIBOBJS="$L"
-
-dnl Required by html and install-html
-AC_SUBST(datarootdir)
-AC_SUBST(docdir)
-AC_SUBST(htmldir)
 
 # We need multilib support, but only if configuring for the target.
 AC_CONFIG_FILES([Makefile])

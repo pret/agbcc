@@ -33,13 +33,6 @@
 #include "ansidecl.h"
 #include "md5.h"
 
-#ifdef _LIBC
-# include <endian.h>
-# if __BYTE_ORDER == __BIG_ENDIAN
-#  define WORDS_BIGENDIAN 1
-# endif
-#endif
-
 #ifdef WORDS_BIGENDIAN
 # define SWAP(n)							\
     (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))

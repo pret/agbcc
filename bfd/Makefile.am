@@ -195,7 +195,7 @@ ofiles: stamp-ofiles ; @true
 libbfd_a_SOURCES = $(BFD32_LIBS_CFILES)
 EXTRA_libbfd_a_SOURCES = $(CFILES)
 libbfd_a_DEPENDENCIES = $(OFILES) ofiles
-libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL) -lz
+libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL)
 
 # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
 # directory so that we don't have to convert all the programs that use
@@ -291,13 +291,7 @@ BFD64_H_FILES = archive64.c
 LIBBFD_H_FILES = libbfd-in.h libbfd.c bfdio.c bfdwin.c \
 	cache.c reloc.c archures.c linker.c
 
-# Could really use a "copy-if-change"...
-headers:
-	(cd $(bfddocdir); $(MAKE) protos $(FLAGS_TO_PASS))
-	cp $(bfddocdir)/bfd.h bfd-in2.h-new
-	$(SHELL) $(srcdir)/../aux/move-if-change bfd-in2.h-new $(srcdir)/bfd-in2.h
-	cp $(bfddocdir)/libbfd.h libbfd.h-new
-	$(SHELL) $(srcdir)/../aux/move-if-change libbfd.h-new $(srcdir)/libbfd.h
+headers: $(BUILD_HFILES)
 
 MOSTLYCLEANFILES = ofiles stamp-ofiles
 
@@ -327,5 +321,5 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	echo "$${bfd_soversion}" > libtool-soversion
 
 # A helper that only builds the object files, without linking.
-objs: ofiles $(OFILES) $(BFD32_LIBS) $(BFD64_LIBS) $(BFD_BACKENDS) $(BFD_MACHINES)
+objs: headers $(OFILES) ofiles $(libbfd_a_OBJECTS)
 .PHONY: objs

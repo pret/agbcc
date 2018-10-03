@@ -172,7 +172,7 @@ ld-configure:
 	    echo "Configuring in ld...";			\
 	    cd ld && $(CONFIGURE);				\
 	fi
-ld-objs: ld-configure bfd/bfd.h
+ld-objs: ld-configure bfd-headers
 	@$(MAKE) -C ld objs
 ld-all: ld-objs bfd-all libiberty-all
 	@$(MAKE) -C ld
@@ -188,7 +188,7 @@ binutils-configure:
 	    echo "Configuring in binutils...";			\
 	    cd binutils && $(CONFIGURE); 			\
 	fi
-binutils-objs: binutils-configure bfd/bfd.h
+binutils-objs: binutils-configure bfd-headers
 	@$(MAKE) -C binutils objs
 binutils-all: binutils-objs bfd-all libiberty-all
 	@$(MAKE) -C binutils
@@ -204,7 +204,7 @@ gas-configure:
 	    echo "Configuring in gas...";			\
 	    cd gas && $(CONFIGURE);				\
 	fi
-gas-objs: gas-configure bfd/bfd.h
+gas-objs: gas-configure bfd-headers
 	@$(MAKE) -C gas objs
 gas-all: gas-objs bfd-all libiberty-all
 	@$(MAKE) -C gas
@@ -222,14 +222,15 @@ bfd-configure:
 	fi
 bfd-objs: bfd-configure
 	@$(MAKE) -C bfd objs
-bfd-all: bfd-objs libiberty-all
+bfd-all: bfd-objs
 	@$(MAKE) -C bfd
 bfd-clean: bfd-configure
 	@$(MAKE) -C bfd clean
 
 # All subdirs (aside from bfd and libiberty) need bfd.h to build.
-bfd/bfd.h: bfd-configure
-	@$(MAKE) -C bfd bfd.h
+bfd-headers: bfd-configure
+	@$(MAKE) -C bfd headers
+.PHONY: bfd-headers
 
 libiberty-configure:
 	@if [ ! -f libiberty/Makefile ]; then 			\

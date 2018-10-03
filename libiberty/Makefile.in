@@ -119,7 +119,7 @@ COMPILE.c = $(CC) -c @DEFS@ $(PICFLAG) $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) \
 # to build the new rules.
 CFILES = argv.c asprintf.c atexit.c				\
 	basename.c  bzero.c			\
-	choose-temp.c clock.c concat.c 		\
+	clock.c concat.c 		\
 	crc32.c				\
 	dwarfnames.c 			\
 	fdmatch.c ffs.c filename_cmp.c floatformat.c		\
@@ -133,12 +133,10 @@ CFILES = argv.c asprintf.c atexit.c				\
 	make-temp-file.c md5.c mkstemps.c			\
 	objalloc.c obstack.c						\
 	partition.c 						\
-         physmem.c 					\
 	random.c rename.c rindex.c				\
 	safe-ctype.c setproctitle.c sha1.c sigsetmask.c        \
 	 simple-object.c simple-object-elf.c	\
          sort.c						\
-	 spaces.c stack-limit.c 	\
 	 strdup.c	\
 	 strsignal.c	\
 	 sstrndup.c             \
@@ -154,7 +152,7 @@ CFILES = argv.c asprintf.c atexit.c				\
 REQUIRED_OFILES =							\
 	./md5.$(objext) ./sha1.$(objext) 		\
 	./argv.$(objext)						\
-	./choose-temp.$(objext) ./concat.$(objext)			\
+	./concat.$(objext)			\
 	 ./crc32.$(objext) 	\
 	./dwarfnames.$(objext) 			\
 	./fdmatch.$(objext)				\
@@ -166,13 +164,12 @@ REQUIRED_OFILES =							\
 	./make-relative-prefix.$(objext) ./make-temp-file.$(objext)	\
 	./objalloc.$(objext)						\
 	./obstack.$(objext)						\
-	./partition.$(objext) ./physmem.$(objext)	\
+	./partition.$(objext)	\
 	./vprintf-support.$(objext)		\
 	./safe-ctype.$(objext)						\
 	./simple-object.$(objext)	\
 	./simple-object-elf.$(objext) \
-	./sort.$(objext) ./spaces.$(objext)				\
-	./stack-limit.$(objext)			\
+	./sort.$(objext)			\
 	./strsignal.$(objext)			\
 	./unlink-if-ordinary.$(objext)	\
 	./xatexit.$(objext) ./xexit.$(objext)	\
@@ -185,7 +182,7 @@ REQUIRED_OFILES =							\
 CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	./basename.$(objext)		\
 	./bzero.$(objext)				\
-	./clock.$(objext) ./copysign.$(objext)	\
+	./clock.$(objext)	\
 	./_doprnt.$(objext)						\
 	 ./ffs.$(objext)						\
 	./getcwd.$(objext) ./getpagesize.$(objext)			\
@@ -289,24 +286,6 @@ TEXISRC = \
 # elsewhere.  Others represent headers in ../include.
 TEXIFILES = fnmatch.txh simple-object.txh
 
-libiberty.info : $(srcdir)/libiberty.texi $(TEXISRC)
-	$(MAKEINFO) -I$(srcdir) $(srcdir)/libiberty.texi
-
-libiberty.dvi : $(srcdir)/libiberty.texi $(TEXISRC)
-	texi2dvi $(srcdir)/libiberty.texi
-
-libiberty.pdf : $(srcdir)/libiberty.texi $(TEXISRC)
-	texi2pdf $(srcdir)/libiberty.texi
-
-libiberty.html : $(srcdir)/libiberty.texi $(TEXISRC)
-	$(MAKEINFO) --no-split --html -I$(srcdir) -o $@ $<
-
-@MAINT@$(srcdir)/functions.texi : stamp-functions
-@MAINT@	@true
-
-@MAINT@stamp-functions : $(CFILES:%=$(srcdir)/%) $(TEXIFILES:%=$(srcdir)/%) $(srcdir)/gather-docs Makefile
-#@MAINT@@HAVE_PERL@	$(PERL) $(srcdir)/gather-docs $(srcdir) $(srcdir)/functions.texi $(CFILES) $(TEXIFILES)
-@MAINT@	echo stamp > stamp-functions
 
 INSTALL_DEST = @INSTALL_DEST@
 install: install_to_$(INSTALL_DEST) install-subdir
@@ -358,17 +337,6 @@ ls:
 
 # Various targets for maintainers.
 
-#maint-missing :
-#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) missing $(CFILES) $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
-
-#maint-buildall : $(REQUIRED_OFILES) $(CONFIGURED_OFILES)
-#	@true
-
-#maint-undoc : $(srcdir)/functions.texi
-#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) undoc
-
-#maint-deps :
-#	@$(PERL) $(srcdir)/maint-tool -s $(srcdir) deps $(INCDIR)
 
 # Need to deal with profiled libraries, too.
 
@@ -465,10 +433,6 @@ $(CONFIGURED_OFILES):
 ./bzero.$(objext): $(srcdir)/bzero.c
 	$(COMPILE.c) $(srcdir)/bzero.c $(OUTPUT_OPTION)
 
-./choose-temp.$(objext): $(srcdir)/choose-temp.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/choose-temp.c $(OUTPUT_OPTION)
-
 ./clock.$(objext): $(srcdir)/clock.c config.h
 	$(COMPILE.c) $(srcdir)/clock.c $(OUTPUT_OPTION)
 
@@ -476,8 +440,6 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/concat.c $(OUTPUT_OPTION)
 
-./copysign.$(objext): $(srcdir)/copysign.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/copysign.c $(OUTPUT_OPTION)
 
 ./crc32.$(objext): $(srcdir)/crc32.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
@@ -580,10 +542,6 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/libiberty.h $(INCDIR)/partition.h
 	$(COMPILE.c) $(srcdir)/partition.c $(OUTPUT_OPTION)
 
-./physmem.$(objext): $(srcdir)/physmem.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/physmem.c $(OUTPUT_OPTION)
-
 ./random.$(objext): $(srcdir)/random.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/random.c $(OUTPUT_OPTION)
 
@@ -619,13 +577,6 @@ $(CONFIGURED_OFILES):
 ./sort.$(objext): $(srcdir)/sort.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h $(INCDIR)/sort.h
 	$(COMPILE.c) $(srcdir)/sort.c $(OUTPUT_OPTION)
-
-./spaces.$(objext): $(srcdir)/spaces.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/spaces.c $(OUTPUT_OPTION)
-
-./stack-limit.$(objext): $(srcdir)/stack-limit.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/stack-limit.c $(OUTPUT_OPTION)
 
 ./stpcpy.$(objext): $(srcdir)/stpcpy.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/stpcpy.c $(OUTPUT_OPTION)

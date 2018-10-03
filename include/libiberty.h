@@ -45,7 +45,7 @@ extern "C" {
 #include <stddef.h>
 /* Get a definition for va_list.  */
 #include <stdarg.h>
-
+#include <stdlib.h>
 #include <stdio.h>
 
 /* If the OS supports it, ensure that the supplied stream is setup to
@@ -231,10 +231,6 @@ extern char *make_relative_prefix_ignore_links (const char *, const char *,
 
 extern const char *choose_tmpdir (void) ATTRIBUTE_RETURNS_NONNULL;
 
-/* Choose a temporary directory to use for scratch files.  */
-
-extern char *choose_temp_base (void) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
-
 /* Return a temporary file name or NULL if unable to create one.  */
 
 extern char *make_temp_file (const char *) ATTRIBUTE_MALLOC;
@@ -242,10 +238,6 @@ extern char *make_temp_file (const char *) ATTRIBUTE_MALLOC;
 /* Remove a link to a file unless it is special. */
 
 extern int unlink_if_ordinary (const char *);
-
-/* Allocate memory filled with spaces.  Allocates using malloc.  */
-
-extern const char *spaces (int count);
 
 /* Return the maximum error number for which strerror will return a
    string.  */
@@ -300,23 +292,6 @@ extern void malloc_set_program_name (const char *);
 
 /* Report an allocation failure.  */
 extern void malloc_failed (size_t) ATTRIBUTE_NORETURN;
-
-/* Allocate memory without fail.  If malloc fails, this will print a
-   message to stderr (using the name set by malloc_set_program_name,
-   if any) and then call xexit.  */
-
-extern void *malloc (size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
-
-/* Reallocate memory without fail.  This works like malloc.  Note,
-   realloc type functions are not suitable for attribute malloc since
-   they may return the same address across multiple calls. */
-
-extern void *realloc (void *, size_t) ATTRIBUTE_RETURNS_NONNULL;
-
-/* Allocate memory without fail and set it to zero.  This works like
-   malloc.  */
-
-extern void *calloc (size_t, size_t) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL;
 
 /* Copy at most N characters from string into a buffer without fail.  */
 
@@ -676,9 +651,6 @@ extern int strverscmp (const char *, const char *);
 
 /* Set the title of a process */
 extern void setproctitle (const char *name, ...);
-
-/* Increase stack limit if possible.  */
-extern void stack_limit_increase (unsigned long);
 
 #define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
 

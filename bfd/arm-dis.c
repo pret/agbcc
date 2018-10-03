@@ -27,7 +27,7 @@
 #include "opintl.h"
 #include "safe-ctype.h"
 #include "libiberty.h"
-#include "floatformat.h"
+//#include "floatformat.h"
 
 /* FIXME: This shouldn't be done here.  */
 #include "elf-bfd.h"

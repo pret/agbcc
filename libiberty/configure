@@ -4551,7 +4551,7 @@ fi
 echo enable_shared = no >> temp-frag
 
 frag=xhost-mkfrag
-${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/move-if-change temp-frag xhost-mkfrag
+${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/aux/move-if-change temp-frag xhost-mkfrag
 
 host_makefile_frag=${frag}
 
@@ -4559,7 +4559,7 @@ host_makefile_frag=${frag}
 # It's OK to check for header files.  Although the compiler may not be
 # able to link anything, it had better be able to at least compile
 # something.
-for ac_header in fcntl.h float.h libintl.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h
+for ac_header in fcntl.h float.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h
 do :
 
     as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -5260,10 +5260,6 @@ for l in x $LIBOBJS; do
   esac
 done
 LIBOBJS="$L"
-
-
-
-
 
 # We need multilib support, but only if configuring for the target.
 ac_config_files="$ac_config_files Makefile"

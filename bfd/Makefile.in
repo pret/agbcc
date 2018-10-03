@@ -534,7 +534,7 @@ OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
 libbfd_a_SOURCES = $(BFD32_LIBS_CFILES)
 EXTRA_libbfd_a_SOURCES = $(CFILES)
 libbfd_a_DEPENDENCIES = $(OFILES) ofiles
-libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL) -lz
+libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL)
 BFD_H_DEPS = $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h
 LOCAL_H_DEPS = libbfd.h sysdep.h config.h
 BFD_H_FILES = bfd-in.h init.c opncls.c libbfd.c \
@@ -1052,13 +1052,7 @@ stmp-bfd-h: bfd-in3.h
 	rm -f bfd-tmp.h
 	touch stmp-bfd-h
 
-# Could really use a "copy-if-change"...
-headers:
-	(cd $(bfddocdir); $(MAKE) protos $(FLAGS_TO_PASS))
-	cp $(bfddocdir)/bfd.h bfd-in2.h-new
-	$(SHELL) $(srcdir)/../aux/move-if-change bfd-in2.h-new $(srcdir)/bfd-in2.h
-	cp $(bfddocdir)/libbfd.h libbfd.h-new
-	$(SHELL) $(srcdir)/../aux/move-if-change libbfd.h-new $(srcdir)/libbfd.h
+headers: $(BUILD_HFILES)
 
 bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	@echo "creating $@"
@@ -1081,7 +1075,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	echo "$${bfd_soversion}" > libtool-soversion
 
 # A helper that only builds the object files, without linking.
-objs: ofiles $(OFILES) $(BFD32_LIBS) $(BFD64_LIBS) $(BFD_BACKENDS) $(BFD_MACHINES)
+objs: headers $(OFILES) ofiles $(libbfd_a_OBJECTS)
 .PHONY: objs
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

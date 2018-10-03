@@ -17,12 +17,8 @@
    <http://www.gnu.org/licenses/>.  */
 
 
-#ifdef _LIBC
-# include <obstack.h>
-#else
 # include <config.h>
 # include "obstack.h"
-#endif
 
 /* NOTE BEFORE MODIFYING THIS FILE: _OBSTACK_INTERFACE_VERSION in
    obstack.h must be incremented whenever callers compiled using an old
@@ -312,25 +308,14 @@ _obstack_memory_used (struct obstack *h)
 #  include <stdio.h>
 
 /* Exit value used when 'print_and_abort' is used.  */
-#  ifdef _LIBC
-int obstack_exit_failure = EXIT_FAILURE;
-#  else
 #   ifndef EXIT_FAILURE
 #    define EXIT_FAILURE 1
 #   endif
 #   define obstack_exit_failure EXIT_FAILURE
-#  endif
 
-#  if defined _LIBC || (HAVE_LIBINTL_H && ENABLE_NLS)
-#   include <libintl.h>
-#   ifndef _
-#    define _(msgid) gettext (msgid)
-#   endif
-#  else
 #   ifndef _
 #    define _(msgid) (msgid)
 #   endif
-#  endif
 
 #  if !(defined _Noreturn						      \
         || (defined __STDC_VERSION__ && __STDC_VERSION__ >= 201112))
@@ -345,10 +330,6 @@ int obstack_exit_failure = EXIT_FAILURE;
 #   endif
 #  endif
 
-#  ifdef _LIBC
-#   include <libio/iolibio.h>
-#  endif
-
 static _Noreturn void
 print_and_abort (void)
 {
@@ -357,11 +338,7 @@ print_and_abort (void)
      happen because the "memory exhausted" message appears in other places
      like this and the translation should be reused instead of creating
      a very similar string which requires a separate translation.  */
-#  ifdef _LIBC
-  (void) __fxprintf (NULL, "%s\n", _("memory exhausted"));
-#  else
   fprintf (stderr, "%s\n", _("memory exhausted"));
-#  endif
   exit (obstack_exit_failure);
 }
 

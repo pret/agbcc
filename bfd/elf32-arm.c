@@ -977,40 +977,6 @@ static const insn_sequence elf32_arm_stub_cmse_branch_thumb_only[] =
   THUMB32_B_INSN (0xf000b800, -4),	/* b.w original_branch_dest.  */
 };
 
-
-/* Cortex-A8 erratum-workaround stubs.  */
-
-/* Stub used for conditional branches (which may be beyond +/-1MB away, so we
-   can't use a conditional branch to reach this stub).  */
-
-static const insn_sequence elf32_arm_stub_a8_veneer_b_cond[] =
-{
-  THUMB16_BCOND_INSN (0xd001),	       /* b<cond>.n true.  */
-  THUMB32_B_INSN (0xf000b800, -4),     /* b.w insn_after_original_branch.  */
-  THUMB32_B_INSN (0xf000b800, -4)      /* true: b.w original_branch_dest.  */
-};
-
-/* Stub used for b.w and bl.w instructions.  */
-
-static const insn_sequence elf32_arm_stub_a8_veneer_b[] =
-{
-  THUMB32_B_INSN (0xf000b800, -4)	/* b.w original_branch_dest.  */
-};
-
-static const insn_sequence elf32_arm_stub_a8_veneer_bl[] =
-{
-  THUMB32_B_INSN (0xf000b800, -4)	/* b.w original_branch_dest.  */
-};
-
-/* Stub used for Thumb-2 blx.w instructions.  We modified the original blx.w
-   instruction (which switches to ARM mode) to point to this stub.  Jump to the
-   real destination using an ARM-mode branch.  */
-
-static const insn_sequence elf32_arm_stub_a8_veneer_blx[] =
-{
-  ARM_REL_INSN (0xea000000, -8)	/* b original_branch_dest.  */
-};
-
 /* For each section group there can be a specially created linker section
    to hold the stubs for that group.  The name of the stub section is based
    upon the name of another section within that group with the suffix below
@@ -1055,10 +1021,6 @@ static const insn_sequence elf32_arm_stub_a8_veneer_blx[] =
   DEF_STUB(long_branch_any_tls_pic) \
   DEF_STUB(long_branch_v4t_thumb_tls_pic) \
   DEF_STUB(cmse_branch_thumb_only) \
-  DEF_STUB(a8_veneer_b_cond) \
-  DEF_STUB(a8_veneer_b) \
-  DEF_STUB(a8_veneer_bl) \
-  DEF_STUB(a8_veneer_blx) \
   DEF_STUB(long_branch_thumb2_only) \
   DEF_STUB(long_branch_thumb2_only_pure)
 
@@ -1071,8 +1033,6 @@ enum elf32_arm_stub_type
 };
 #undef DEF_STUB
 
-/* Note the first a8_veneer type.  */
-const unsigned arm_stub_a8_veneer_lwm = arm_stub_a8_veneer_b_cond;
 
 typedef struct
 {
@@ -1148,40 +1108,6 @@ typedef struct elf32_elf_section_map
   char type;
 }
 elf32_arm_section_map;
-#if 0
-/* Information about a VFP11 erratum veneer, or a branch to such a veneer.  */
-
-typedef enum
-{
-  VFP11_ERRATUM_BRANCH_TO_ARM_VENEER,
-  VFP11_ERRATUM_BRANCH_TO_THUMB_VENEER,
-  VFP11_ERRATUM_ARM_VENEER,
-  VFP11_ERRATUM_THUMB_VENEER
-}
-elf32_vfp11_erratum_type;
-
-typedef struct elf32_vfp11_erratum_list
-{
-  struct elf32_vfp11_erratum_list *next;
-  bfd_vma vma;
-  union
-  {
-    struct
-    {
-      struct elf32_vfp11_erratum_list *veneer;
-      unsigned int vfp_insn;
-    } b;
-    struct
-    {
-      struct elf32_vfp11_erratum_list *branch;
-      unsigned int id;
-    } v;
-  } u;
-  elf32_vfp11_erratum_type type;
-}
-elf32_vfp11_erratum_list;
-#endif
-
 
 typedef enum
 {
@@ -1435,10 +1361,6 @@ struct elf32_arm_link_hash_table
   /* Offsets of ARMv4 BX veneers.  Bit1 set if present, and Bit0 set when
      veneer has been populated.  */
   bfd_vma bx_glue_offset[15];
-
-  /* The size in bytes of the section containing glue for VFP11 erratum
-     veneers.  */
-//  bfd_size_type vfp11_erratum_glue_size;
 
   /* An arbitrary input BFD chosen to hold the glue sections.  */
   bfd * bfd_of_glue_owner;
@@ -2867,11 +2789,6 @@ arm_stub_required_alignment (enum elf32_arm_stub_type stub_type)
 {
   switch (stub_type)
     {
-    case arm_stub_a8_veneer_b_cond:
-    case arm_stub_a8_veneer_b:
-    case arm_stub_a8_veneer_bl:
-      return 2;
-
     case arm_stub_long_branch_any_any:
     case arm_stub_long_branch_v4t_arm_thumb:
     case arm_stub_long_branch_thumb_only:
@@ -2889,7 +2806,6 @@ arm_stub_required_alignment (enum elf32_arm_stub_type stub_type)
     case arm_stub_long_branch_any_tls_pic:
     case arm_stub_long_branch_v4t_thumb_tls_pic:
     case arm_stub_cmse_branch_thumb_only:
-    case arm_stub_a8_veneer_blx:
       return 4;
 
     default:
@@ -3102,16 +3018,6 @@ arm_build_one_stub (struct bfd_hash_entry *gen_entry,
       rel.r_info = ELF32_R_INFO (0,
 				 template_sequence[stub_reloc_idx[i]].r_type);
       rel.r_addend = 0;
-
-      if (stub_entry->stub_type == arm_stub_a8_veneer_b_cond && i == 0)
-	/* The first relocation in the elf32_arm_stub_a8_veneer_b_cond[]
-	   template should refer back to the instruction after the original
-	   branch.  We use target_section as Cortex-A8 erratum workaround stubs
-	   are only generated when both source and target are in the same
-	   section.  */
-	points_to = stub_entry->target_section->output_section->vma
-		    + stub_entry->target_section->output_offset
-		    + stub_entry->source_value;
 
       elf32_arm_final_link_relocate (elf32_arm_howto_from_type
 	  (template_sequence[stub_reloc_idx[i]].r_type),

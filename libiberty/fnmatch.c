@@ -46,12 +46,6 @@ Boston, MA 02110-1301, USA.  */
    program understand `configure --with-gnu-libc' and omit the object files,
    it is simpler to just do this in the source for each such file.  */
 
-#if defined (_LIBC) || !defined (__GNU_LIBRARY__)
-
-
-#if !defined(__GNU_LIBRARY__) && !defined(STDC_HEADERS)
-extern int errno;
-#endif
 
 /* Match STRING against the filename pattern PATTERN, returning zero if
    it matches, nonzero if not.  */
@@ -207,5 +201,3 @@ fnmatch (const char *pattern, const char *string, int flags)
 
   return FNM_NOMATCH;
 }
-
-#endif	/* _LIBC or not __GNU_LIBRARY__.  */
