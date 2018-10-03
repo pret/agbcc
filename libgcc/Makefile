@@ -10,8 +10,8 @@ SHELL := bash -o pipefail
 endif
 
 CC1 := ../old_agbcc
-AR := ../binutils/binutils/ar
-AS := ../binutils/gas/as-new
+AR := ../binutils/ar
+AS := ../gas/as-new
 CPP := $(CC) -E
 CPPFLAGS := -undef -nostdinc
 

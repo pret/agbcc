@@ -13,8 +13,8 @@ ASFLAGS := -mcpu=arm7tdmi
 
 CC1    := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
-AR     := ../binutils/binutils/ar
-AS     := ../binutils/gas/as-new
+AR     := ../binutils/ar
+AS     := ../gas/as-new
 CPP    := $(CC) -E
 
 CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
