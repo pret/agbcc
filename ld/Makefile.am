@@ -296,8 +296,8 @@ ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
 	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C)
 
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
-		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
+		      $(BFDLIB) $(LIBIBERTY)
+ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) -lz
 
 # Dependency tracking for the generated emulation files.
 EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
@@ -305,10 +305,9 @@ EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
 # This is the real libbfd.a created by libtool.
 TESTBFDLIB = @TESTBFDLIB@
 
-# We want to reconfigure if configure.host or configure.tgt changes.
+# We want to reconfigure if configure.host changes.
 # development.sh is used to determine -Werror default.
-CONFIG_STATUS_DEPENDENCIES = $(srcdir)/configure.host $(srcdir)/configure.tgt \
-	$(BFDDIR)/development.sh
+CONFIG_STATUS_DEPENDENCIES = $(srcdir)/configure.host $(BFDDIR)/development.sh
 
 MOSTLYCLEANFILES = $(STAGESTUFF) ld1$(EXEEXT) ld2$(EXEEXT) ld3$(EXEEXT) \
 	ldemul-list.h crtbegin.@OBJEXT@ crtend.@OBJEXT@ ld.log ld.sum

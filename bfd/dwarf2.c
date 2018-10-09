@@ -250,7 +250,7 @@ struct comp_unit
   bfd_byte *info_ptr_unit;
 
   /* The offset into .debug_line of the line number table.  */
-  unsigned long line_offset;
+  off_t line_offset;
 
   /* Pointer to the first child die for the comp unit.  */
   bfd_byte *first_child_die_ptr;
@@ -2078,8 +2078,8 @@ decode_line_info (struct comp_unit *unit, struct dwarf2_debug *stash)
       _bfd_error_handler
 	/* xgettext: c-format */
 	(_("DWARF error: line info data is bigger (%#" PRIx64 ")"
-	   " than the space remaining in the section (%#lx)"),
-	 (uint64_t) lh.total_length, (unsigned long) (line_end - line_ptr));
+	   " than the space remaining in the section (%#x)"),
+	 (uint64_t) lh.total_length, (uint32_t) (line_end - line_ptr));
       bfd_set_error (bfd_error_bad_value);
       return NULL;
     }

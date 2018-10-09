@@ -113,7 +113,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/warning.m4 \
 	$(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/depstand.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lcmessage.m4 \
 	$(top_srcdir)/../config/lead-dot.m4 \
 	$(top_srcdir)/../config/plugins.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
@@ -521,15 +520,13 @@ ld_new_SOURCES = ldgram.c ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
 	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C)
 
 ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
-		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
+		      $(BFDLIB) $(LIBIBERTY)
 
-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL) -lz
+ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) -lz
 
-# We want to reconfigure if configure.host or configure.tgt changes.
+# We want to reconfigure if configure.host changes.
 # development.sh is used to determine -Werror default.
-CONFIG_STATUS_DEPENDENCIES = $(srcdir)/configure.host $(srcdir)/configure.tgt \
-	$(BFDDIR)/development.sh
-
+CONFIG_STATUS_DEPENDENCIES = $(srcdir)/configure.host $(BFDDIR)/development.sh
 MOSTLYCLEANFILES = $(STAGESTUFF) ld1$(EXEEXT) ld2$(EXEEXT) ld3$(EXEEXT) \
 	ldemul-list.h crtbegin.@OBJEXT@ crtend.@OBJEXT@ ld.log ld.sum
 

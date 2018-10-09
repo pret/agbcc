@@ -184,12 +184,7 @@ AS_HELP_STRING([--enable-default-hash-style={sysv,gnu,both}],
   sysv | gnu | both) ;;
   *) AC_MSG_ERROR([bad value ${enable_default_hash_style} for enable-default-hash-style option]) ;;
 esac],
-[case "${target}" in
-  # Enable gnu hash only on GNU targets, but not mips
-  mips*-*-*) enable_default_hash_style=sysv ;;
-  *-*-gnu* | *-*-linux* | *-*-nacl*) enable_default_hash_style=both ;;
-  *) enable_default_hash_style=sysv ;;
-esac])
+[enable_default_hash_style=sysv])
 
 case "${enable_default_hash_style}" in
   sysv | both) ac_default_emit_sysv_hash=1 ;;
@@ -203,13 +198,8 @@ esac
 
 AM_BINUTILS_WARNINGS
 
-AM_LC_MESSAGES
-
 AC_CONFIG_HEADERS([config.h:config.in])
 
-if test -z "$target" ; then
-    AC_MSG_ERROR(Unrecognized target system type; please check config.sub.)
-fi
 if test -z "$host" ; then
     AC_MSG_ERROR(Unrecognized host system type; please check config.sub.)
 fi
@@ -225,7 +215,7 @@ AM_CONDITIONAL(GENINSRC_NEVER, false)
 AC_SUBST(HDEFINES)
 AC_SUBST(NATIVE_LIB_DIRS)
 
-AC_CHECK_HEADERS_ONCE([fcntl.h libintl.h locale.h malloc.h strings.h sys/file.h unistd.h])
+AC_CHECK_HEADERS_ONCE([fcntl.h locale.h malloc.h strings.h sys/file.h unistd.h])
 
 ACX_HEADER_STRING
 AC_CHECK_FUNCS_ONCE([mmap setlocale glob strcasecmp strcspn])
@@ -243,16 +233,6 @@ AC_SUBST(enable_initfini_array)
 if test $enable_initfini_array = yes; then
   AC_DEFINE(HAVE_INITFINI_ARRAY, 1,
     [Define .init_array/.fini_array sections are available and working.])
-fi
-
-AC_MSG_CHECKING(for a known getopt prototype in unistd.h)
-AC_CACHE_VAL(ld_cv_decl_getopt_unistd_h,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <unistd.h>], [extern int getopt (int, char *const*, const char *);])],
-ld_cv_decl_getopt_unistd_h=yes, ld_cv_decl_getopt_unistd_h=no)])
-AC_MSG_RESULT($ld_cv_decl_getopt_unistd_h)
-if test $ld_cv_decl_getopt_unistd_h = yes; then
-  AC_DEFINE([HAVE_DECL_GETOPT], 1,
-	    [Is the prototype for getopt in <unistd.h> in the expected format?])
 fi
 
 AC_CHECK_DECLS([environ])

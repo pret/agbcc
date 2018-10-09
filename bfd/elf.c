@@ -213,7 +213,7 @@ bfd_elf_hash (const char *namearg)
 	  h ^= g;
 	}
     }
-  return h & 0xffffffff;
+  return h;
 }
 
 /* DT_GNU_HASH hash function.  Do not change this function; you will
@@ -228,7 +228,7 @@ bfd_elf_gnu_hash (const char *namearg)
 
   while ((ch = *name++) != '\0')
     h = (h << 5) + h + ch;
-  return h & 0xffffffff;
+  return h;
 }
 
 /* Create a tdata field OBJECT_SIZE bytes in length, zeroed out and with

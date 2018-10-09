@@ -19,4 +19,14 @@ gcc/genoutput
 gcc/genpeep
 gcc/genrecog
 
+*.status
+*.log
 *.cache
+binutils/objcopy
+binutils/objdump
+binutils/ar
+binutils/ranlib
+gas/as-new
+ld/ld-new
+ld/ldscripts/*
+

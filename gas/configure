@@ -5515,38 +5515,6 @@ $as_echo "#define NEED_DECLARATION_ERRNO 1" >>confdefs.h
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for a known getopt prototype in unistd.h" >&5
-$as_echo_n "checking for a known getopt prototype in unistd.h... " >&6; }
-if ${gas_cv_decl_getopt_unistd_h+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <unistd.h>
-int
-main ()
-{
-extern int getopt (int, char *const*, const char *);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  gas_cv_decl_getopt_unistd_h=yes
-else
-  gas_cv_decl_getopt_unistd_h=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gas_cv_decl_getopt_unistd_h" >&5
-$as_echo "$gas_cv_decl_getopt_unistd_h" >&6; }
-if test $gas_cv_decl_getopt_unistd_h = yes; then
-
-$as_echo "#define HAVE_DECL_GETOPT 1" >>confdefs.h
-
-fi
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether declaration is required for environ" >&5
 $as_echo_n "checking whether declaration is required for environ... " >&6; }
@@ -5622,26 +5590,6 @@ $as_echo "#define NEED_DECLARATION_FFS 1" >>confdefs.h
 fi
 
 
-ac_fn_c_check_decl "$LINENO" "mempcpy" "ac_cv_have_decl_mempcpy" "$ac_includes_default"
-if test "x$ac_cv_have_decl_mempcpy" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_MEMPCPY $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "stpcpy" "ac_cv_have_decl_stpcpy" "$ac_includes_default"
-if test "x$ac_cv_have_decl_stpcpy" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STPCPY $ac_have_decl
-_ACEOF
 ac_fn_c_check_decl "$LINENO" "asprintf" "ac_cv_have_decl_asprintf" "$ac_includes_default"
 if test "x$ac_cv_have_decl_asprintf" = xyes; then :
   ac_have_decl=1
@@ -5653,46 +5601,6 @@ cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_ASPRINTF $ac_have_decl
 _ACEOF
 
-
-# Support for VMS timestamps via cross compile
-
-if test "$ac_cv_header_time_h" = yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for struct tm.tm_gmtoff in time.h" >&5
-$as_echo_n "checking for struct tm.tm_gmtoff in time.h... " >&6; }
- if ${gas_cv_have_time_type_member_tm_gmtoff+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#define _BSD_SOURCE 1
-#include <time.h>
-int
-main ()
-{
-struct tm avar; void* aref = (void*) &avar.tm_gmtoff
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  gas_cv_have_time_type_member_tm_gmtoff=yes
-else
-  gas_cv_have_time_type_member_tm_gmtoff=no
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
- if test $gas_cv_have_time_type_member_tm_gmtoff = yes; then
-
-$as_echo "#define HAVE_TM_GMTOFF 1" >>confdefs.h
-
- fi
- { $as_echo "$as_me:${as_lineno-$LINENO}: result: $gas_cv_have_time_type_member_tm_gmtoff" >&5
-$as_echo "$gas_cv_have_time_type_member_tm_gmtoff" >&6; }
-
-fi
 
 
 

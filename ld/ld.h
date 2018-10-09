@@ -31,27 +31,9 @@
 #endif
 
 #ifdef HAVE_LOCALE_H
-# ifndef ENABLE_NLS
-   /* The Solaris version of locale.h always includes libintl.h.  If we have
-      been configured with --disable-nls then ENABLE_NLS will not be defined
-      and the dummy definitions of bindtextdomain (et al) below will conflict
-      with the defintions in libintl.h.  So we define these values to prevent
-      the bogus inclusion of libintl.h.  */
-#  define _LIBINTL_H
-#  define _LIBGETTEXT_H
-# endif
 # include <locale.h>
 #endif
 
-#ifdef ENABLE_NLS
-# include <libintl.h>
-# define _(String) gettext (String)
-# ifdef gettext_noop
-#  define N_(String) gettext_noop (String)
-# else
-#  define N_(String) (String)
-# endif
-#else
 # define gettext(Msgid) (Msgid)
 # define dgettext(Domainname, Msgid) (Msgid)
 # define dcgettext(Domainname, Msgid, Category) (Msgid)
@@ -65,7 +47,6 @@
 # define bindtextdomain(Domainname, Dirname) do {} while (0)
 # define _(String) (String)
 # define N_(String) (String)
-#endif
 
 /* Look in this environment name for the linker to pretend to be */
 #define EMULATION_ENVIRON "LDEMULATION"

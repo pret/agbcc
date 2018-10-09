@@ -186,9 +186,6 @@ main (int argc, char **argv)
   char *emulation;
   long start_time = get_run_time ();
 
-#if defined (HAVE_SETLOCALE) && defined (HAVE_LC_MESSAGES)
-  setlocale (LC_MESSAGES, "");
-#endif
 #if defined (HAVE_SETLOCALE)
   setlocale (LC_CTYPE, "");
 #endif

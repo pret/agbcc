@@ -93,22 +93,10 @@ extern char **environ;
 extern int ffs (int);
 #endif
 
-#if !HAVE_DECL_MEMPCPY
-void *mempcpy(void *, const void *, size_t);
-#endif
-
 /* This is needed for VMS.  */
 #if ! defined (HAVE_UNLINK) && defined (HAVE_REMOVE)
 #define unlink remove
 #endif
-
-#ifndef __LINE__
-#define __LINE__ "unknown"
-#endif /* __LINE__ */
-
-#ifndef __FILE__
-#define __FILE__ "unknown"
-#endif /* __FILE__ */
 
 #ifndef FOPEN_WB
 #include "fopen-bin.h"

@@ -2290,7 +2290,6 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
 fi
 
 as_fn_append ac_header_list " fcntl.h"
-as_fn_append ac_header_list " libintl.h"
 as_fn_append ac_header_list " locale.h"
 as_fn_append ac_header_list " malloc.h"
 as_fn_append ac_header_list " strings.h"
@@ -5555,12 +5554,7 @@ if test "${enable_default_hash_style+set}" = set; then :
   *) as_fn_error $? "bad value ${enable_default_hash_style} for enable-default-hash-style option" "$LINENO" 5 ;;
 esac
 else
-  case "${target}" in
-  # Enable gnu hash only on GNU targets, but not mips
-  mips*-*-*) enable_default_hash_style=sysv ;;
-  *-*-gnu* | *-*-linux* | *-*-nacl*) enable_default_hash_style=both ;;
-  *) enable_default_hash_style=sysv ;;
-esac
+  enable_default_hash_style=sysv
 fi
 
 
@@ -5727,46 +5721,9 @@ fi
 
 
 
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for LC_MESSAGES" >&5
-$as_echo_n "checking for LC_MESSAGES... " >&6; }
-if ${am_cv_val_LC_MESSAGES+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <locale.h>
-int
-main ()
-{
-return LC_MESSAGES
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  am_cv_val_LC_MESSAGES=yes
-else
-  am_cv_val_LC_MESSAGES=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_val_LC_MESSAGES" >&5
-$as_echo "$am_cv_val_LC_MESSAGES" >&6; }
-  if test $am_cv_val_LC_MESSAGES = yes; then
-
-$as_echo "#define HAVE_LC_MESSAGES 1" >>confdefs.h
-
-  fi
-
-
 ac_config_headers="$ac_config_headers config.h:config.in"
 
 
-if test -z "$target" ; then
-    as_fn_error $? "Unrecognized target system type; please check config.sub." "$LINENO" 5
-fi
 if test -z "$host" ; then
     as_fn_error $? "Unrecognized host system type; please check config.sub." "$LINENO" 5
 fi
@@ -5807,8 +5764,6 @@ fi
 
 
 done
-
-
 
 
 
@@ -5962,38 +5917,6 @@ fi
 if test $enable_initfini_array = yes; then
 
 $as_echo "#define HAVE_INITFINI_ARRAY 1" >>confdefs.h
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for a known getopt prototype in unistd.h" >&5
-$as_echo_n "checking for a known getopt prototype in unistd.h... " >&6; }
-if ${ld_cv_decl_getopt_unistd_h+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <unistd.h>
-int
-main ()
-{
-extern int getopt (int, char *const*, const char *);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ld_cv_decl_getopt_unistd_h=yes
-else
-  ld_cv_decl_getopt_unistd_h=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ld_cv_decl_getopt_unistd_h" >&5
-$as_echo "$ld_cv_decl_getopt_unistd_h" >&6; }
-if test $ld_cv_decl_getopt_unistd_h = yes; then
-
-$as_echo "#define HAVE_DECL_GETOPT 1" >>confdefs.h
 
 fi
 

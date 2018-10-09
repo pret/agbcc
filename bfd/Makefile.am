@@ -291,7 +291,7 @@ BFD64_H_FILES = archive64.c
 LIBBFD_H_FILES = libbfd-in.h libbfd.c bfdio.c bfdwin.c \
 	cache.c reloc.c archures.c linker.c
 
-headers: $(BUILD_HFILES)
+headers: $(BUILD_HFILES) bfd.h
 
 MOSTLYCLEANFILES = ofiles stamp-ofiles
 

@@ -1613,7 +1613,7 @@ bfd_sprintf_vma (bfd *abfd ATTRIBUTE_UNUSED, char *buf, bfd_vma value)
 #ifdef BFD64
   if (is32bit (abfd))
     {
-      sprintf (buf, "%08x", (uint32_t) value & 0xffffffff);
+      sprintf (buf, "%08x", (uint32_t) value);
       return;
     }
 #endif
@@ -1626,7 +1626,7 @@ bfd_fprintf_vma (bfd *abfd ATTRIBUTE_UNUSED, void *stream, bfd_vma value)
 #ifdef BFD64
   if (is32bit (abfd))
     {
-      fprintf ((FILE *) stream, "%08x", (uint32_t) value & 0xffffffff);
+      fprintf ((FILE *) stream, "%08x", (uint32_t) value);
       return;
     }
 #endif

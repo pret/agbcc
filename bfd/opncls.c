@@ -1109,10 +1109,10 @@ bfd_calc_gnu_debuglink_crc32 (uint32_t crc,
     };
   const unsigned char *end;
 
-  crc = ~crc & 0xffffffff;
+  crc = ~crc;
   for (end = buf + len; buf < end; ++ buf)
     crc = crc32_table[(crc ^ *buf) & 0xff] ^ (crc >> 8);
-  return ~crc & 0xffffffff;
+  return ~crc;
 }
 
 

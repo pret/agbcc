@@ -25,17 +25,6 @@
    don't. */
 #undef HAVE_DECL_ASPRINTF
 
-/* Is the prototype for getopt in <unistd.h> in the expected format? */
-#undef HAVE_DECL_GETOPT
-
-/* Define to 1 if you have the declaration of `mempcpy', and to 0 if you
-   don't. */
-#undef HAVE_DECL_MEMPCPY
-
-/* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STPCPY
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -77,9 +66,6 @@
 
 /* Define to 1 if you have the <time.h> header file. */
 #undef HAVE_TIME_H
-
-/* Define if <time.h> has struct tm.tm_gmtoff. */
-#undef HAVE_TM_GMTOFF
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

@@ -917,7 +917,7 @@ bfd_get_next_section_by_name (bfd *ibfd, asection *sec)
 {
   struct section_hash_entry *sh;
   const char *name;
-  unsigned long hash;
+  uint32_t hash;
 
   sh = ((struct section_hash_entry *)
 	((char *) sec - offsetof (struct section_hash_entry, section)));

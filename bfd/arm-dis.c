@@ -67,8 +67,8 @@ struct arm_private_data
 struct opcode32
 {
   arm_feature_set arch;		/* Architecture defining this insn.  */
-  unsigned long value;		/* If arch is 0 then value is a sentinel.  */
-  unsigned long mask;		/* Recognise insn if (op & mask) == value.  */
+  uint32_t value;		/* If arch is 0 then value is a sentinel.  */
+  uint32_t mask;		/* Recognise insn if (op & mask) == value.  */
   const char *  assembler;	/* How to disassemble this insn.  */
 };
 
@@ -821,11 +821,11 @@ static bfd_vma ifthen_address;
 
 static const char *
 arm_decode_bitfield (const char *ptr,
-		     unsigned long insn,
-		     unsigned long *valuep,
+		     uint32_t insn,
+		     uint32_t *valuep,
 		     int *widthp)
 {
-  unsigned long value = 0;
+  uint32_t value = 0;
   int width = 0;
 
   do
@@ -915,8 +915,8 @@ print_insn_coprocessor (bfd_vma pc,
   const struct opcode32 *insn;
   void *stream = info->stream;
   fprintf_ftype func = info->fprintf_func;
-  unsigned long mask;
-  unsigned long value = 0;
+  uint32_t mask;
+  uint32_t value = 0;
   int cond;
   int cp_num;
   struct arm_private_data *private_data = info->private_data;
@@ -926,7 +926,7 @@ print_insn_coprocessor (bfd_vma pc,
 
   for (insn = coprocessor_opcodes; insn->assembler; insn++)
     {
-      unsigned long u_reg = 16;
+      uint32_t u_reg = 16;
       bfd_boolean is_unpredictable = FALSE;
       signed long value_in_comment = 0;
       const char *c;
@@ -1235,17 +1235,17 @@ print_insn_coprocessor (bfd_vma pc,
 			  goto Q;
 			/* FALLTHROUGH */
 		      case 'D':
-			func (stream, "d%ld", value);
+			func (stream, "d%d", value);
 			break;
 		      case 'Q':
 		      Q:
 			if (value & 1)
-			  func (stream, "<illegal reg q%ld.5>", value >> 1);
+			  func (stream, "<illegal reg q%d.5>", value >> 1);
 			else
-			  func (stream, "q%ld", value >> 1);
+			  func (stream, "q%d", value >> 1);
 			break;
 		      case 'd':
-			func (stream, "%ld", value);
+			func (stream, "%d", value);
 			value_in_comment = value;
 			break;
 		      case 'E':
@@ -1263,17 +1263,17 @@ print_insn_coprocessor (bfd_vma pc,
 			    (16 + (value & 0xF));
 
 			  if (!(decVal % 1000000))
-			    func (stream, "%ld\t; 0x%08x %c%u.%01u", value,
+			    func (stream, "%d\t; 0x%08x %c%u.%01u", value,
 				  floatVal, value & 0x80 ? '-' : ' ',
 				  decVal / 10000000,
 				  decVal % 10000000 / 1000000);
 			  else if (!(decVal % 10000))
-			    func (stream, "%ld\t; 0x%08x %c%u.%03u", value,
+			    func (stream, "%d\t; 0x%08x %c%u.%03u", value,
 				  floatVal, value & 0x80 ? '-' : ' ',
 				  decVal / 10000000,
 				  decVal % 10000000 / 10000);
 			  else
-			    func (stream, "%ld\t; 0x%08x %c%u.%07u", value,
+			    func (stream, "%d\t; 0x%08x %c%u.%07u", value,
 				  floatVal, value & 0x80 ? '-' : ' ',
 				  decVal / 10000000, decVal % 10000000);
 			  break;
@@ -1281,7 +1281,7 @@ print_insn_coprocessor (bfd_vma pc,
 		      case 'k':
 			{
 			  int from = (given & (1 << 7)) ? 32 : 16;
-			  func (stream, "%ld", from - value);
+			  func (stream, "%d", from - value);
 			}
 			break;
 
@@ -1289,7 +1289,7 @@ print_insn_coprocessor (bfd_vma pc,
 			if (value > 7)
 			  func (stream, "#%s", arm_fp_const[value & 7]);
 			else
-			  func (stream, "f%ld", value);
+			  func (stream, "f%d", value);
 			break;
 
 		      case 'w':
@@ -1307,7 +1307,7 @@ print_insn_coprocessor (bfd_vma pc,
 			break;
 
 		      case 'x':
-			func (stream, "0x%lx", (value & 0xffffffffUL));
+			func (stream, "0x%x", (value));
 			break;
 
 		      case 'c':
@@ -1529,7 +1529,7 @@ print_insn_coprocessor (bfd_vma pc,
 		    {
 		      long imm5;
 		      imm5 = ((given & 0x100) >> 4) | (given & 0xf);
-		      func (stream, "%ld", (imm5 == 0) ? 32 : imm5);
+		      func (stream, "%d", (imm5 == 0) ? 32 : imm5);
 		    }
 		    break;
 
@@ -1543,7 +1543,7 @@ print_insn_coprocessor (bfd_vma pc,
 	}
 
       if (value_in_comment > 32 || value_in_comment < -16)
-	func (stream, "\t; 0x%lx", (value_in_comment & 0xffffffffUL));
+	func (stream, "\t; 0x%x", value_in_comment);
 
       if (is_unpredictable)
 	func (stream, UNPREDICTABLE_INSTRUCTION);
@@ -1744,8 +1744,8 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 	  || (insn->mask & 0xF0000000) == 0xF0000000
 	  || (insn->mask == 0 && insn->value == 0))
 	{
-	  unsigned long u_reg = 16;
-	  unsigned long U_reg = 16;
+	  uint32_t u_reg = 16;
+	  uint32_t U_reg = 16;
 	  bfd_boolean is_unpredictable = FALSE;
 	  signed long value_in_comment = 0;
 	  const char *c;
@@ -2030,7 +2030,7 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			  if (name != NULL)
 			    func (stream, "%s", name);
 			  else
-			    func (stream, "(UNDEF: %lu)", (unsigned long) sysm);
+			    func (stream, "(UNDEF: %u)", (uint32_t) sysm);
 			}
 		      else
 			{
@@ -2072,7 +2072,7 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 		    case '5': case '6': case '7': case '8': case '9':
 		      {
 			int width;
-			unsigned long value;
+			uint32_t value;
 
 			c = arm_decode_bitfield (c, given, &value, &width);
 
@@ -2109,19 +2109,19 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			    func (stream, "%s", arm_regnames[value]);
 			    break;
 			  case 'd':
-			    func (stream, "%ld", value);
+			    func (stream, "%d", value);
 			    value_in_comment = value;
 			    break;
 			  case 'b':
-			    func (stream, "%ld", value * 8);
+			    func (stream, "%d", value * 8);
 			    value_in_comment = value * 8;
 			    break;
 			  case 'W':
-			    func (stream, "%ld", value + 1);
+			    func (stream, "%d", value + 1);
 			    value_in_comment = value + 1;
 			    break;
 			  case 'x':
-			    func (stream, "0x%08lx", value);
+			    func (stream, "0x%08x", value);
 
 			    /* Some SWI instructions have special
 			       meanings.  */
@@ -2131,7 +2131,7 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			      func (stream, "\t; IMBRange");
 			    break;
 			  case 'X':
-			    func (stream, "%01lx", value & 0xf);
+			    func (stream, "%01x", value & 0xf);
 			    value_in_comment = value;
 			    break;
 			  case '`':
@@ -2167,14 +2167,14 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			/* LSB and WIDTH fields of BFI or BFC.  The machine-
 			   language instruction encodes LSB and MSB.  */
 			{
-			  long msb = (given & 0x001f0000) >> 16;
-			  long lsb = (given & 0x00000f80) >> 7;
-			  long w = msb - lsb + 1;
+			  int32_t msb = (given & 0x001f0000) >> 16;
+			  int32_t lsb = (given & 0x00000f80) >> 7;
+			  int32_t w = msb - lsb + 1;
 
 			  if (w > 0)
-			    func (stream, "#%lu, #%lu", lsb, w);
+			    func (stream, "#%u, #%u", lsb, w);
 			  else
-			    func (stream, "(invalid: %lu:%lu)", lsb, msb);
+			    func (stream, "(invalid: %u:%u)", lsb, msb);
 			}
 			break;
 
@@ -2190,7 +2190,7 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			  if (name != NULL)
 			    func (stream, "%s", name);
 			  else
-			    func (stream, "(UNDEF: %lu)", (unsigned long) sysm);
+			    func (stream, "(UNDEF: %u)", (uint32_t) sysm);
 			}
 			break;
 
@@ -2198,11 +2198,11 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 			/* 16-bit unsigned immediate from a MOVT or MOVW
 			   instruction, encoded in bits 0:11 and 15:19.  */
 			{
-			  long hi = (given & 0x000f0000) >> 4;
-			  long lo = (given & 0x00000fff);
-			  long imm16 = hi | lo;
+			  int32_t hi = (given & 0x000f0000) >> 4;
+			  int32_t lo = (given & 0x00000fff);
+			  int32_t imm16 = hi | lo;
 
-			  func (stream, "#%lu", imm16);
+			  func (stream, "#%u", imm16);
 			  value_in_comment = imm16;
 			}
 			break;
@@ -2217,7 +2217,7 @@ print_insn_arm (bfd_vma pc, struct disassemble_info *info, long given)
 	    }
 
 	  if (value_in_comment > 32 || value_in_comment < -16)
-	    func (stream, "\t; 0x%lx", (value_in_comment & 0xffffffffUL));
+	    func (stream, "\t; 0x%lx", value_in_comment);
 
 	  if (is_unpredictable)
 	    func (stream, UNPREDICTABLE_INSTRUCTION);
@@ -2388,7 +2388,7 @@ print_insn_thumb16 (bfd_vma pc, struct disassemble_info *info, long given)
 		  long imm = (given & 0x07c0) >> 6;
 		  if (imm == 0)
 		    imm = 32;
-		  func (stream, "#%ld", imm);
+		  func (stream, "#%d", imm);
 		}
 		break;
 
@@ -2422,17 +2422,17 @@ print_insn_thumb16 (bfd_vma pc, struct disassemble_info *info, long given)
 			    break;
 
 			  case 'd':
-			    func (stream, "%ld", (long) reg);
+			    func (stream, "%d", (int32_t) reg);
 			    value_in_comment = reg;
 			    break;
 
 			  case 'H':
-			    func (stream, "%ld", (long) (reg << 1));
+			    func (stream, "%d", (int32_t) (reg << 1));
 			    value_in_comment = reg << 1;
 			    break;
 
 			  case 'W':
-			    func (stream, "%ld", (long) (reg << 2));
+			    func (stream, "%d", (int32_t) (reg << 2));
 			    value_in_comment = reg << 2;
 			    break;
 
@@ -2446,7 +2446,7 @@ print_insn_thumb16 (bfd_vma pc, struct disassemble_info *info, long given)
 			    break;
 
 			  case 'x':
-			    func (stream, "0x%04lx", (long) reg);
+			    func (stream, "0x%04x", (int32_t) reg);
 			    break;
 
 			  case 'B':
@@ -2491,7 +2491,7 @@ print_insn_thumb16 (bfd_vma pc, struct disassemble_info *info, long given)
 	  }
 
 	if (value_in_comment > 32 || value_in_comment < -16)
-	  func (stream, "\t; 0x%lx", value_in_comment);
+	  func (stream, "\t; 0x%x", value_in_comment);
 	return;
       }
 
@@ -2995,7 +2995,7 @@ print_insn_thumb32 (bfd_vma pc, struct disassemble_info *info, long given)
 		    if (name != NULL)
 		      func (stream, "%s", name);
 		    else
-		      func (stream, "(UNDEF: %lu)", (unsigned long) sysm);
+		      func (stream, "(UNDEF: %u)", (uint32_t) sysm);
 		  }
 		else
 		  {
@@ -3017,7 +3017,7 @@ print_insn_thumb32 (bfd_vma pc, struct disassemble_info *info, long given)
 		    if (name != NULL)
 		      func (stream, "%s", name);
 		    else
-		      func (stream, "(UNDEF: %lu)", (unsigned long) sm);
+		      func (stream, "(UNDEF: %u)", (uint32_t) sm);
 		  }
 		else
 		  func (stream, "%s", psr_name (given & 0xff));
@@ -3027,24 +3027,24 @@ print_insn_thumb32 (bfd_vma pc, struct disassemble_info *info, long given)
 	      case '5': case '6': case '7': case '8': case '9':
 		{
 		  int width;
-		  unsigned long val;
+		  uint32_t val;
 
 		  c = arm_decode_bitfield (c, given, &val, &width);
 
 		  switch (*c)
 		    {
 		    case 'd':
-		      func (stream, "%lu", val);
+		      func (stream, "%u", val);
 		      value_in_comment = val;
 		      break;
 
 		    case 'D':
-		      func (stream, "%lu", val + 1);
+		      func (stream, "%u", val + 1);
 		      value_in_comment = val + 1;
 		      break;
 
 		    case 'W':
-		      func (stream, "%lu", val * 4);
+		      func (stream, "%u", val * 4);
 		      value_in_comment = val * 4;
 		      break;
 
@@ -3078,7 +3078,7 @@ print_insn_thumb32 (bfd_vma pc, struct disassemble_info *info, long given)
 		      break;
 
 		    case 'x':
-		      func (stream, "0x%lx", val & 0xffffffffUL);
+		      func (stream, "0x%x", val);
 		      break;
 
 		    default:
@@ -3108,7 +3108,7 @@ print_insn_thumb32 (bfd_vma pc, struct disassemble_info *info, long given)
 	  }
 
 	if (value_in_comment > 32 || value_in_comment < -16)
-	  func (stream, "\t; 0x%lx", value_in_comment);
+	  func (stream, "\t; 0x%x", value_in_comment);
 
 	if (is_unpredictable)
 	  func (stream, UNPREDICTABLE_INSTRUCTION);
@@ -3431,7 +3431,7 @@ mapping_symbol_for_insn (bfd_vma pc, struct disassemble_info *info,
    although it would also be less robust.  */
 
 static void
-select_arm_features (unsigned long mach,
+select_arm_features (uint32_t mach,
 		     arm_feature_set * features)
 {
 #undef ARM_SET_FEATURES

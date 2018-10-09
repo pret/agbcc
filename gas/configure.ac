@@ -161,26 +161,10 @@ GAS_CHECK_DECL_NEEDED(errno, f, int f, [
 #endif
 ])
 
-AC_MSG_CHECKING(for a known getopt prototype in unistd.h)
-AC_CACHE_VAL(gas_cv_decl_getopt_unistd_h,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <unistd.h>], [extern int getopt (int, char *const*, const char *);])],
-gas_cv_decl_getopt_unistd_h=yes, gas_cv_decl_getopt_unistd_h=no)])
-AC_MSG_RESULT($gas_cv_decl_getopt_unistd_h)
-if test $gas_cv_decl_getopt_unistd_h = yes; then
-  AC_DEFINE([HAVE_DECL_GETOPT], 1,
-	    [Is the prototype for getopt in <unistd.h> in the expected format?])
-fi
-
 GAS_CHECK_DECL_NEEDED(environ, f, char **f, $gas_test_headers)
 GAS_CHECK_DECL_NEEDED(ffs, f, int (*f)(int), $gas_test_headers)
 
-AC_CHECK_DECLS([mempcpy, stpcpy, asprintf])
-
-# Support for VMS timestamps via cross compile
-
-if test "$ac_cv_header_time_h" = yes; then
-  GAS_HAVE_TIME_TYPE_MEMBER(struct tm, tm_gmtoff)
-fi
+AC_CHECK_DECLS([asprintf])
 
 dnl This must come last.
 

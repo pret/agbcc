@@ -137,7 +137,7 @@ sec_merge_hash_lookup (struct sec_merge_hash *table, const char *string,
 		       unsigned int alignment, bfd_boolean create)
 {
   const unsigned char *s;
-  unsigned long hash;
+  uint32_t hash;
   unsigned int c;
   struct sec_merge_hash_entry *hashp;
   unsigned int len, i;
