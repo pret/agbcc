@@ -215,7 +215,7 @@ tree integer_one_node;
 
 tree pending_invalid_xref;
 /* File and line to appear in the eventual error message.  */
-char *pending_invalid_xref_file;
+const char *pending_invalid_xref_file;
 int pending_invalid_xref_line;
 
 /* While defining an enum type, this is 1 plus the last enumerator
@@ -251,7 +251,7 @@ static tree current_function_parm_tags;
 
 /* Similar, for the file and line that the prototype came from if this is
    an old-style definition.  */
-static char *current_function_prototype_file;
+static const char *current_function_prototype_file;
 static int current_function_prototype_line;
 
 /* A list (chain of TREE_LIST nodes) of all LABEL_DECLs in the function
@@ -412,7 +412,7 @@ static struct binding_level *label_level_chain;
 static struct binding_level *make_binding_level(void);
 static void clear_limbo_values(tree);
 static int duplicate_decls(tree, tree, int);
-static char *redeclaration_error_message(tree, tree);
+static const char *redeclaration_error_message(tree, tree);
 static void storedecls(tree);
 static void storetags(tree);
 static tree lookup_tag(enum tree_code, tree, struct binding_level *, int);
@@ -571,6 +571,8 @@ int warn_multichar = 1;
 
 void c_decode_option(char *p)
 {
+    const char *argstart = (strlen(p) >= 5) ? &p[5] : NULL;
+
     if (!strcmp(p, "-ftraditional") || !strcmp(p, "-traditional"))
     {
         flag_traditional = 1;
@@ -605,7 +607,6 @@ void c_decode_option(char *p)
        -std=gnu89		default, iso9899:1990 + gnu extensions
        -std=gnu9x		iso9899:199x + gnu extensions
         */
-        const char *argstart = &p[5];
 
         if (!strcmp(argstart, "iso9899:1990") || !strcmp(argstart, "c89"))
         {
@@ -869,7 +870,7 @@ int in_parm_level_p(void)
 
 void pushlevel(int tag_transparent)
 {
-    register struct binding_level *newlevel = NULL_BINDING_LEVEL;
+    struct binding_level *newlevel = NULL_BINDING_LEVEL;
 
     /* If this is the top level of a function,
        just make sure that NAMED_LABELS is 0.  */
@@ -936,7 +937,7 @@ static void clear_limbo_values(tree block)
 
 tree poplevel(int keep, int reverse, int functionbody)
 {
-    register tree link;
+    tree link;
     /* The chain of decls was accumulated in reverse order.
        Put it into forward order, just for cleanliness.  */
     tree decls;
@@ -1078,7 +1079,7 @@ tree poplevel(int keep, int reverse, int functionbody)
 
         for (link = named_labels; link; link = TREE_CHAIN(link))
         {
-            register tree label = TREE_VALUE(link);
+            tree label = TREE_VALUE(link);
 
             if (DECL_INITIAL(label) == 0)
             {
@@ -1100,7 +1101,7 @@ tree poplevel(int keep, int reverse, int functionbody)
     /* Pop the current level, and free the structure for reuse.  */
 
     {
-        register struct binding_level *level = current_binding_level;
+        struct binding_level *level = current_binding_level;
         current_binding_level = current_binding_level->level_chain;
 
         level->level_chain = free_binding_level;
@@ -1185,14 +1186,14 @@ void insert_block(tree block)
 /* Set the BLOCK node for the innermost scope
    (the one we are currently in).  */
 
-void set_block(register tree block)
+void set_block(tree block)
 {
     current_binding_level->this_block = block;
 }
 
 void push_label_level(void)
 {
-    register struct binding_level *newlevel;
+    struct binding_level *newlevel;
 
     /* Reuse or create a struct for this binding level.  */
 
@@ -1219,7 +1220,7 @@ void push_label_level(void)
 
 void pop_label_level(void)
 {
-    register struct binding_level *level = label_level_chain;
+    struct binding_level *level = label_level_chain;
     tree link, prev;
 
     /* Clear out the definitions of the declared labels in this level.
@@ -1275,7 +1276,7 @@ void pop_label_level(void)
 
 void pushtag(tree name, tree type)
 {
-    register struct binding_level *b;
+    struct binding_level *b;
 
     /* Find the proper binding level for this type tag.  */
 
@@ -1321,13 +1322,13 @@ void pushtag(tree name, tree type)
    and OLDDECL is in an outer binding level and should thus not be changed.  */
 
 static int duplicate_decls(
-    register tree newdecl, register tree olddecl, int different_binding_level)
+    tree newdecl, tree olddecl, int different_binding_level)
 {
     int types_match = comptypes(TREE_TYPE(newdecl), TREE_TYPE(olddecl));
     int new_is_definition = (TREE_CODE(newdecl) == FUNCTION_DECL && DECL_INITIAL(newdecl) != 0);
     tree oldtype = TREE_TYPE(olddecl);
     tree newtype = TREE_TYPE(newdecl);
-    char *errmsg = 0;
+    const char *errmsg = NULL;
 
     if (TREE_CODE_CLASS(TREE_CODE(olddecl)) == 'd')
         DECL_MACHINE_ATTRIBUTES(newdecl) = merge_machine_decl_attributes(olddecl, newdecl);
@@ -1519,12 +1520,12 @@ static int duplicate_decls(
                    || (TYPE_ARG_TYPES(newtype) == 0 && DECL_INITIAL(newdecl) == 0)))
         {
             /* Classify the problem further.  */
-            register tree t = TYPE_ARG_TYPES(oldtype);
+            tree t = TYPE_ARG_TYPES(oldtype);
             if (t == 0)
                 t = TYPE_ARG_TYPES(newtype);
             for (; t; t = TREE_CHAIN(t))
             {
-                register tree type = TREE_VALUE(t);
+                tree type = TREE_VALUE(t);
 
                 if (TREE_CHAIN(t) == 0 && TYPE_MAIN_VARIANT(type) != void_type_node)
                 {
@@ -1567,8 +1568,8 @@ static int duplicate_decls(
             && TYPE_ARG_TYPES(oldtype) == 0 && TYPE_ARG_TYPES(newtype) != 0
             && TYPE_ACTUAL_ARG_TYPES(oldtype) != 0)
         {
-            register tree type, parm;
-            register int nargs;
+            tree type, parm;
+            int nargs;
             /* Prototype decl follows defn w/o prototype.  */
 
             for (parm = TYPE_ACTUAL_ARG_TYPES(oldtype), type = TYPE_ARG_TYPES(newtype), nargs = 1;
@@ -1862,7 +1863,7 @@ static int duplicate_decls(
     /* Copy most of the decl-specific fields of NEWDECL into OLDDECL.
        But preserve OLDDECL's DECL_UID.  */
     {
-        register unsigned olddecl_uid = DECL_UID(olddecl);
+        unsigned olddecl_uid = DECL_UID(olddecl);
 
         copy_memory((char *)newdecl + sizeof(struct tree_common),
             (char *)olddecl + sizeof(struct tree_common),
@@ -1887,9 +1888,9 @@ static int duplicate_decls(
 
 tree pushdecl(tree x)
 {
-    register tree t;
-    register tree name = DECL_NAME(x);
-    register struct binding_level *b = current_binding_level;
+    tree t;
+    tree name = DECL_NAME(x);
+    struct binding_level *b = current_binding_level;
 
     DECL_CONTEXT(x) = current_function_decl;
     /* A local extern declaration for a function doesn't constitute nesting.
@@ -1906,7 +1907,7 @@ tree pushdecl(tree x)
 
     if (name)
     {
-        char *file;
+        const char *file;
         int line;
         int different_binding_level = 0;
 
@@ -2260,7 +2261,7 @@ tree pushdecl(tree x)
                 /* No shadow warnings for vars made for inlining.  */
                 && !DECL_FROM_INLINE(x))
             {
-                char *warnstring = 0;
+                const char *warnstring = 0;
 
                 if (TREE_CODE(x) == PARM_DECL && current_binding_level->level_chain->parm_flag)
                     /* Don't warn about the parm names in function declarator
@@ -2305,7 +2306,7 @@ tree pushdecl(tree x)
 
 tree implicitly_declare(tree functionid)
 {
-    register tree decl;
+    tree decl;
     int traditional_warning = 0;
     /* Only one "implicit declaration" warning per identifier.  */
     int implicit_warning;
@@ -2370,7 +2371,7 @@ tree implicitly_declare(tree functionid)
    Otherwise return an error message format string with a %s
    where the identifier should go.  */
 
-static char *redeclaration_error_message(tree newdecl, tree olddecl)
+static const char *redeclaration_error_message(tree newdecl, tree olddecl)
 {
     if (TREE_CODE(newdecl) == TYPE_DECL)
     {
@@ -2440,7 +2441,7 @@ static char *redeclaration_error_message(tree newdecl, tree olddecl)
 
 tree lookup_label(tree id)
 {
-    register tree decl = IDENTIFIER_LABEL_VALUE(id);
+    tree decl = IDENTIFIER_LABEL_VALUE(id);
 
     if (current_function_decl == 0)
     {
@@ -2489,11 +2490,11 @@ tree lookup_label(tree id)
 
 tree shadow_label(tree name)
 {
-    register tree decl = IDENTIFIER_LABEL_VALUE(name);
+    tree decl = IDENTIFIER_LABEL_VALUE(name);
 
     if (decl != 0)
     {
-        register tree dup;
+        tree dup;
 
         /* Check to make sure that the label hasn't already been declared
        at this label scope */
@@ -2517,7 +2518,7 @@ tree shadow_label(tree name)
    Return the LABEL_DECL node for the label, if the definition is valid.
    Otherwise return 0.  */
 
-tree define_label(char *filename, int line, tree name)
+tree define_label(const char *filename, int line, tree name)
 {
     tree decl = lookup_label(name);
 
@@ -2591,11 +2592,11 @@ static void storetags(tree tags)
 static tree lookup_tag(
     enum tree_code code, tree name, struct binding_level *binding_level, int thislevel_only)
 {
-    register struct binding_level *level;
+    struct binding_level *level;
 
     for (level = binding_level; level; level = level->level_chain)
     {
-        register tree tail;
+        tree tail;
         for (tail = level->tags; tail; tail = TREE_CHAIN(tail))
         {
             if (TREE_PURPOSE(tail) == name)
@@ -2636,11 +2637,11 @@ void pending_xref_error(void)
 
 static tree lookup_tag_reverse(tree type)
 {
-    register struct binding_level *level;
+    struct binding_level *level;
 
     for (level = current_binding_level; level; level = level->level_chain)
     {
-        register tree tail;
+        tree tail;
         for (tail = level->tags; tail; tail = TREE_CHAIN(tail))
         {
             if (TREE_VALUE(tail) == type)
@@ -2657,7 +2658,7 @@ static tree lookup_tag_reverse(tree type)
 
 tree lookup_name(tree name)
 {
-    register tree val;
+    tree val;
     if (current_binding_level != global_binding_level && IDENTIFIER_LOCAL_VALUE(name))
         val = IDENTIFIER_LOCAL_VALUE(name);
     else
@@ -2669,7 +2670,7 @@ tree lookup_name(tree name)
 
 tree lookup_name_current_level(tree name)
 {
-    register tree t;
+    tree t;
 
     if (current_binding_level == global_binding_level)
         return IDENTIFIER_GLOBAL_VALUE(name);
@@ -2691,7 +2692,7 @@ tree lookup_name_current_level(tree name)
 
 void init_decl_processing(void)
 {
-    register tree endlink;
+    tree endlink;
     /* Either char* or void*.  */
     tree traditional_ptr_type_node;
     /* Data types of memcpy and strlen.  */
@@ -3150,7 +3151,7 @@ void init_decl_processing(void)
    the name to be called if we can't opencode the function.  */
 
 tree builtin_function(
-    char *name, tree type, enum built_in_function function_code, char *library_name)
+    const char *name, tree type, enum built_in_function function_code, const char *library_name)
 {
     tree decl = build_decl(FUNCTION_DECL, get_identifier(name), type);
     DECL_EXTERNAL(decl) = 1;
@@ -3195,7 +3196,7 @@ void shadow_tag_warned(tree declspecs, int warned)
 no pedwarn.  */
 {
     int found_tag = 0;
-    register tree link;
+    tree link;
     tree specs, attrs;
 
     pending_invalid_xref = 0;
@@ -3206,15 +3207,15 @@ no pedwarn.  */
 
     for (link = specs; link; link = TREE_CHAIN(link))
     {
-        register tree value = TREE_VALUE(link);
-        register enum tree_code code = TREE_CODE(value);
+        tree value = TREE_VALUE(link);
+        enum tree_code code = TREE_CODE(value);
 
         if (code == RECORD_TYPE || code == UNION_TYPE || code == ENUMERAL_TYPE)
         /* Used to test also that TYPE_SIZE (value) != 0.
            That caused warning for `struct foo;' at top level in the file.  */
         {
-            register tree name = lookup_tag_reverse(value);
-            register tree t;
+            tree name = lookup_tag_reverse(value);
+            tree t;
 
             found_tag++;
 
@@ -3289,8 +3290,8 @@ int debug_temp_inits = 1;
 tree start_decl(
     tree declarator, tree declspecs, int initialized, tree attributes, tree prefix_attributes)
 {
-    register tree decl = grokdeclarator(declarator, declspecs, NORMAL, initialized);
-    register tree tem;
+    tree decl = grokdeclarator(declarator, declspecs, NORMAL, initialized);
+    tree tem;
     int init_written = initialized;
 
     /* The corresponding pop_obstacks is in finish_decl.  */
@@ -3428,7 +3429,7 @@ tree start_decl(
 
 void finish_decl(tree decl, tree init, tree asmspec_tree)
 {
-    register tree type = TREE_TYPE(decl);
+    tree type = TREE_TYPE(decl);
     int was_incomplete = (DECL_SIZE(decl) == 0);
     int temporary = allocation_temporary_p();
     char *asmspec = 0;
@@ -3653,7 +3654,7 @@ void finish_decl(tree decl, tree init, tree asmspec_tree)
     if (warn_larger_than && (TREE_CODE(decl) == VAR_DECL || TREE_CODE(decl) == PARM_DECL)
         && !DECL_EXTERNAL(decl))
     {
-        register tree decl_size = DECL_SIZE(decl);
+        tree decl_size = DECL_SIZE(decl);
 
         if (decl_size && TREE_CODE(decl_size) == INTEGER_CST)
         {
@@ -3747,7 +3748,7 @@ void clear_parm_order(void)
 
 int complete_array_type(tree type, tree initial_value, int do_default)
 {
-    register tree maxindex = NULL_TREE;
+    tree maxindex = NULL_TREE;
     int value = 0;
 
     if (initial_value)
@@ -3849,7 +3850,7 @@ static tree grokdeclarator(
     int explicit_char = 0;
     int defaulted_int = 0;
     tree typedef_decl = 0;
-    char *name;
+    const char *name;
     tree typedef_type = 0;
     int funcdef_flag = 0;
     enum tree_code innermost_code = ERROR_MARK;
@@ -3871,7 +3872,7 @@ static tree grokdeclarator(
     /* Look inside a declarator for the name being declared
        and get it as a string, for an error message.  */
     {
-        register tree decl = declarator;
+        tree decl = declarator;
         name = 0;
 
         while (decl)
@@ -3928,8 +3929,8 @@ static tree grokdeclarator(
 
     for (spec = declspecs; spec; spec = TREE_CHAIN(spec))
     {
-        register int i;
-        register tree id = TREE_VALUE(spec);
+        int i;
+        tree id = TREE_VALUE(spec);
 
         if (id == ridpointers[(int)RID_INT])
             explicit_int = 1;
@@ -3970,7 +3971,7 @@ static tree grokdeclarator(
         /* Built-in types come as identifiers.  */
         else if (TREE_CODE(id) == IDENTIFIER_NODE)
         {
-            register tree t = lookup_name(id);
+            tree t = lookup_name(id);
             if (TREE_TYPE(t) == error_mark_node)
                 ;
             else if (!t || TREE_CODE(t) != TYPE_DECL)
@@ -4270,8 +4271,8 @@ static tree grokdeclarator(
 
         if (TREE_CODE(declarator) == ARRAY_REF)
         {
-            register tree itype = NULL_TREE;
-            register tree size = TREE_OPERAND(declarator, 1);
+            tree itype = NULL_TREE;
+            tree size = TREE_OPERAND(declarator, 1);
             /* An uninitialized decl with `extern' is a reference.  */
             int extern_ref = !initialized && (specbits & (1 << (int)RID_EXTERN));
             /* The index is a signed object `sizetype' bits wide.  */
@@ -4480,7 +4481,7 @@ static tree grokdeclarator(
                the FUNCTION_TYPE node itself.  */
 
             {
-                register tree link;
+                tree link;
 
                 for (link = last_function_parm_tags; link; link = TREE_CHAIN(link))
                     TYPE_CONTEXT(TREE_VALUE(link)) = type;
@@ -4505,7 +4506,7 @@ static tree grokdeclarator(
 
             if (TREE_TYPE(declarator))
             {
-                register tree typemodlist;
+                tree typemodlist;
                 int erred = 0;
 
                 constp = 0;
@@ -4621,7 +4622,7 @@ static tree grokdeclarator(
        or a FUNCTION_DECL, depending on DECL_CONTEXT and TYPE.  */
 
     {
-        register tree decl;
+        tree decl;
 
         if (decl_context == PARM)
         {
@@ -4957,8 +4958,8 @@ static tree grokparms(tree parms_info, int funcdef_flag)
 
 tree get_parm_info(int void_at_end)
 {
-    register tree decl, t;
-    register tree types = 0;
+    tree decl, t;
+    tree types = 0;
     int erred = 0;
     tree tags = gettags();
     tree parms = getdecls();
@@ -5083,7 +5084,7 @@ tree xref_tag(enum tree_code code, tree name)
     /* If a cross reference is requested, look up the type
        already defined for this tag and return it.  */
 
-    register tree ref = lookup_tag(code, name, current_binding_level, 0);
+    tree ref = lookup_tag(code, name, current_binding_level, 0);
     /* Even if this is the wrong type of tag, return what we found.
        There will be an error message anyway, from pending_xref_error.
        If we create an empty xref just for an invalid use of the type,
@@ -5136,7 +5137,7 @@ tree start_struct(enum tree_code code, tree name)
     /* If there is already a tag defined at this binding level
        (as a forward reference), just return it.  */
 
-    register tree ref = 0;
+    tree ref = 0;
 
     push_obstacks_nochange();
     if (current_binding_level == global_binding_level)
@@ -5173,7 +5174,7 @@ tree start_struct(enum tree_code code, tree name)
    The FIELD_DECL nodes are chained together and the lot of them
    are ultimately passed to `build_struct' to make the RECORD_TYPE node.  */
 
-tree grokfield(char *filename, int line, tree declarator, tree declspecs, tree width)
+tree grokfield(const char *filename, int line, tree declarator, tree declspecs, tree width)
 {
     tree value;
 
@@ -5192,7 +5193,7 @@ tree grokfield(char *filename, int line, tree declarator, tree declspecs, tree w
 
 static int field_decl_cmp(const void *xp, const void *yp)
 {
-    tree *x = (tree *)xp, *y = (tree *)yp;
+    const tree *x = (const tree *)xp, *y = (const tree *)yp;
 
     if (DECL_NAME(*x) == DECL_NAME(*y))
         return 0;
@@ -5213,7 +5214,7 @@ static int field_decl_cmp(const void *xp, const void *yp)
 
 tree finish_struct(tree t, tree fieldlist, tree attributes)
 {
-    register tree x;
+    tree x;
     int old_momentary;
     int toplevel = global_binding_level == current_binding_level;
 
@@ -5345,7 +5346,7 @@ tree finish_struct(tree t, tree fieldlist, tree attributes)
         /* Process valid field width.  */
         if (DECL_INITIAL(x))
         {
-            register int width = TREE_INT_CST_LOW(DECL_INITIAL(x));
+            int width = TREE_INT_CST_LOW(DECL_INITIAL(x));
 
             if (TREE_CODE(TREE_TYPE(x)) == ENUMERAL_TYPE
                 && (width < min_precision(TYPE_MIN_VALUE(TREE_TYPE(x)), TREE_UNSIGNED(TREE_TYPE(x)))
@@ -5387,7 +5388,7 @@ tree finish_struct(tree t, tree fieldlist, tree attributes)
             x = TREE_CHAIN(x);
         else
         {
-            register tree y = fieldlist;
+            tree y = fieldlist;
 
             while (1)
             {
@@ -5538,7 +5539,7 @@ static void layout_array_type(tree t)
 
 tree start_enum(tree name)
 {
-    register tree enumtype = 0;
+    tree enumtype = 0;
 
     /* If this is the real definition for a previous forward reference,
        fill in the contents in the same object that used to be the
@@ -5588,7 +5589,7 @@ tree start_enum(tree name)
 
 tree finish_enum(tree enumtype, tree values, tree attributes)
 {
-    register tree pair, tem;
+    tree pair, tem;
     tree minnode = 0, maxnode = 0;
     int lowprec, highprec, precision;
     int toplevel = global_binding_level == current_binding_level;
@@ -5698,7 +5699,7 @@ tree finish_enum(tree enumtype, tree values, tree attributes)
 
 tree build_enumerator(tree name, tree value)
 {
-    register tree decl, type;
+    tree decl, type;
 
     /* Validate and default VALUE.  */
 
@@ -5940,8 +5941,8 @@ void c_mark_varargs(void)
 
 void store_parm_decls(void)
 {
-    register tree fndecl = current_function_decl;
-    register tree parm;
+    tree fndecl = current_function_decl;
+    tree parm;
 
     /* This is either a chain of PARM_DECLs (if a prototype was used)
        or a list of IDENTIFIER_NODEs (for an old-fashioned C definition).  */
@@ -5951,7 +5952,7 @@ void store_parm_decls(void)
     tree parmtags = current_function_parm_tags;
 
     /* This is a chain of PARM_DECLs from old-style parm declarations.  */
-    register tree parmdecls = getdecls();
+    tree parmdecls = getdecls();
 
     /* This is a chain of any other decls that came in among the parm
        declarations.  If a parm is declared with  enum {foo, bar} x;
@@ -5968,7 +5969,7 @@ void store_parm_decls(void)
        except record them as in effect
        and complain if any redundant old-style parm decls were written.  */
 
-        register tree next;
+        tree next;
         tree others = 0;
 
         prototype = 1;
@@ -6069,7 +6070,7 @@ void store_parm_decls(void)
 
         for (parm = specparms; parm; parm = TREE_CHAIN(parm))
         {
-            register tree tail, found = NULL;
+            tree tail, found = NULL;
 
             if (TREE_VALUE(parm) == 0)
             {
@@ -6173,7 +6174,7 @@ void store_parm_decls(void)
         parm = specparms;
         DECL_ARGUMENTS(fndecl) = 0;
         {
-            register tree last;
+            tree last;
             for (last = 0; parm; parm = TREE_CHAIN(parm))
                 if (TREE_PURPOSE(parm))
                 {
@@ -6192,7 +6193,7 @@ void store_parm_decls(void)
 
         if (TYPE_ARG_TYPES(TREE_TYPE(fndecl)))
         {
-            register tree type;
+            tree type;
             for (parm = DECL_ARGUMENTS(fndecl), type = TYPE_ARG_TYPES(TREE_TYPE(fndecl));
                  parm || (type && (TYPE_MAIN_VARIANT(TREE_VALUE(type)) != void_type_node));
                  parm = TREE_CHAIN(parm), type = TREE_CHAIN(type))
@@ -6342,7 +6343,7 @@ void store_parm_decls(void)
 
 void finish_function(int nested)
 {
-    register tree fndecl = current_function_decl;
+    tree fndecl = current_function_decl;
 
     /*  TREE_READONLY (fndecl) = 1;
         This caused &foo to be of type ptr-to-const-function
@@ -6399,11 +6400,11 @@ void finish_function(int nested)
 
     if (warn_larger_than && !DECL_EXTERNAL(fndecl) && TREE_TYPE(fndecl))
     {
-        register tree ret_type = TREE_TYPE(TREE_TYPE(fndecl));
+        tree ret_type = TREE_TYPE(TREE_TYPE(fndecl));
 
         if (ret_type)
         {
-            register tree ret_type_size = TYPE_SIZE(ret_type);
+            tree ret_type_size = TYPE_SIZE(ret_type);
 
             if (TREE_CODE(ret_type_size) == INTEGER_CST)
             {

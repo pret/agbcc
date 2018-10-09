@@ -100,14 +100,14 @@ static void walk_rtx(rtx, const char *);
 static void print_path(char *);
 static void fatal(const char *, ...) ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
 static char *copystr(const char *);
-static void mybzero();
+static void mybzero(void *, unsigned);
 void fancy_abort(void) ATTRIBUTE_NORETURN;
 
 static void gen_insn(rtx insn)
 {
-    register int i;
-    register struct extraction *p;
-    register struct code_ptr *link;
+    int i;
+    struct extraction *p;
+    struct code_ptr *link;
 
     op_count = 0;
     dup_count = 0;
@@ -181,10 +181,10 @@ static void gen_insn(rtx insn)
 
 static void walk_rtx(rtx x, const char *path)
 {
-    register RTX_CODE code;
-    register int i;
-    register int len;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    int len;
+    const char *fmt;
     int depth = strlen(path);
     char *newpath;
 
@@ -299,8 +299,8 @@ static void walk_rtx(rtx x, const char *path)
 
 static void print_path(char *path)
 {
-    register int len = strlen(path);
-    register int i;
+    int len = strlen(path);
+    int i;
 
     if (len == 0)
     {
@@ -336,19 +336,18 @@ static void print_path(char *path)
     }
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -382,7 +381,7 @@ void fancy_abort(void)
 
 static char *copystr(const char *s1)
 {
-    register char *tem;
+    char *tem;
 
     if (s1 == 0)
         return 0;
@@ -393,17 +392,18 @@ static char *copystr(const char *s1)
     return tem;
 }
 
-static void mybzero(register char *b, register unsigned length)
+static void mybzero(void *b, unsigned length)
 {
+    char *buf = (char *)b;
     while (length-- > 0)
-        *b++ = 0;
+        *buf++ = 0;
 }
 
 int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c, i;
+    int c, i;
     struct extraction *p;
     struct code_ptr *link;
 
@@ -440,11 +440,10 @@ from the machine description file `md'.  */\n\n");
        of any missing operand whose numbers are skipped by a given pattern.  */
     printf("static rtx junk ATTRIBUTE_UNUSED;\n");
 
-    printf("void\ninsn_extract (insn)\n");
-    printf("     rtx insn;\n");
+    printf("void\ninsn_extract (rtx insn)\n");
     printf("{\n");
-    printf("  register rtx *ro = recog_operand;\n");
-    printf("  register rtx **ro_loc = recog_operand_loc;\n");
+    printf("  rtx *ro = recog_operand;\n");
+    printf("  rtx **ro_loc = recog_operand_loc;\n");
     printf("  rtx pat = PATTERN (insn);\n");
     printf("  int i ATTRIBUTE_UNUSED;\n\n");
     printf("  switch (INSN_CODE (insn))\n");

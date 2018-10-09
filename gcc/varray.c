@@ -30,9 +30,7 @@
 
 /* Allocate a virtual array with NUM_ELEMENT elements, each of which is
    ELEMENT_SIZE bytes long, named NAME.  Array elements are zeroed.  */
-varray_type varray_init(num_elements, element_size, name) size_t num_elements;
-size_t element_size;
-const char *name;
+varray_type varray_init(size_t num_elements, size_t element_size, const char *name)
 {
     size_t data_size = num_elements * element_size;
     varray_type ptr = (varray_type)xcalloc(VARRAY_HDR_SIZE + data_size, 1);
@@ -45,8 +43,7 @@ const char *name;
 
 /* Grow/shrink the virtual array VA to N elements.  Zero any new elements
    allocated.  */
-varray_type varray_grow(va, n) varray_type va;
-size_t n;
+varray_type varray_grow(varray_type va, size_t n)
 {
     size_t old_elements = va->num_elements;
 

@@ -172,7 +172,7 @@ static rtx find_insert_position(rtx, rtx);
 
 void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
 {
-    register rtx insn, next;
+    rtx insn, next;
     int changed;
     int old_max_reg;
     int first = 1;
@@ -658,7 +658,7 @@ void jump_optimize(rtx f, int cross_jump, int noop_moves, int after_regscan)
                 /* ??? This code and analogous code below is
                    experimental.  It is necessary to make sure that
                    there is no deoptimizations in some cases.  If the
-                   register is larger than a word, possibly many
+                   is larger than a word, possibly many
                    instructions might be generated to move it. */
                 && GET_MODE_SIZE(GET_MODE(temp2)) <= UNITS_PER_WORD
                 /* END CYGNUS LOCAL -- meissner/nortel */
@@ -1759,7 +1759,7 @@ static void delete_noop_moves(rtx f)
 
         if (GET_CODE(insn) == INSN)
         {
-            register rtx body = PATTERN(insn);
+            rtx body = PATTERN(insn);
 
             /* Combine stack_adjusts with following push_insns.  */
 
@@ -1788,7 +1788,7 @@ static void delete_noop_moves(rtx f)
                 {
                     rtx trial;
                     rtx tem = find_equiv_reg(
-                        NULL_RTX, insn, 0, sreg, NULL, dreg, GET_MODE(SET_SRC(body)));
+                        NULL_RTX, insn, (enum reg_class)0, sreg, NULL, dreg, GET_MODE(SET_SRC(body)));
 
                     if (tem != 0 && GET_MODE(tem) == GET_MODE(SET_DEST(body)))
                     {
@@ -1823,7 +1823,7 @@ static void delete_noop_moves(rtx f)
                 }
                 else if (dreg >= 0 && CONSTANT_P(SET_SRC(body))
                     && find_equiv_reg(
-                           SET_SRC(body), insn, 0, dreg, NULL, 0, GET_MODE(SET_DEST(body))))
+                           SET_SRC(body), insn, (enum reg_class)0, dreg, NULL, 0, GET_MODE(SET_DEST(body))))
                 {
                     /* This handles the case where we have two consecutive
                        assignments of the same constant to pseudos that didn't
@@ -2196,8 +2196,8 @@ rtx squeeze_notes(rtx start, rtx end)
 
 static void find_cross_jump(rtx e1, rtx e2, int minimum, rtx *f1, rtx *f2)
 {
-    register rtx i1 = e1, i2 = e2;
-    register rtx p1, p2;
+    rtx i1 = e1, i2 = e2;
+    rtx p1, p2;
     int lose = 0;
 
     rtx last1 = 0, last2 = 0;
@@ -2335,7 +2335,7 @@ static void do_cross_jump(rtx insn, rtx newjpos, rtx newlpos)
 {
     /* Find an existing label at this point
        or make a new one if there is none.  */
-    register rtx label = get_label_before(newlpos);
+    rtx label = get_label_before(newlpos);
 
     /* Make the same jump insn jump to the new point.  */
     if (GET_CODE(PATTERN(insn)) == RETURN)
@@ -2714,7 +2714,7 @@ int simplejump_p(rtx insn)
 
 int condjump_p(rtx insn)
 {
-    register rtx x = PATTERN(insn);
+    rtx x = PATTERN(insn);
     if (GET_CODE(x) != SET)
         return 0;
     if (GET_CODE(SET_DEST(x)) != PC)
@@ -2737,7 +2737,7 @@ int condjump_p(rtx insn)
 
 int condjump_in_parallel_p(rtx insn)
 {
-    register rtx x = PATTERN(insn);
+    rtx x = PATTERN(insn);
 
     if (GET_CODE(x) != PARALLEL)
         return 0;
@@ -2765,7 +2765,7 @@ int condjump_in_parallel_p(rtx insn)
 
 rtx condjump_label(rtx insn)
 {
-    register rtx x = PATTERN(insn);
+    rtx x = PATTERN(insn);
 
     if (GET_CODE(x) == PARALLEL)
         x = XVECEXP(x, 0, 0);
@@ -2825,10 +2825,10 @@ int sets_cc0_p(rtx x ATTRIBUTE_UNUSED)
 
 rtx follow_jumps(rtx label)
 {
-    register rtx insn;
-    register rtx next;
-    register rtx value = label;
-    register int depth;
+    rtx insn;
+    rtx next;
+    rtx value = label;
+    int depth;
 
     for (depth = 0;
          (depth < 10 && (insn = next_active_insn(value)) != 0 && GET_CODE(insn) == JUMP_INSN
@@ -2866,14 +2866,14 @@ rtx follow_jumps(rtx label)
    Return nonzero if a change is made.
    If IGNORE_LOOPS is 0, we do not chain across a NOTE_INSN_LOOP_BEG.  */
 
-static int tension_vector_labels(register rtx x, register int idx)
+static int tension_vector_labels(rtx x, int idx)
 {
     int changed = 0;
-    register int i;
+    int i;
     for (i = XVECLEN(x, idx) - 1; i >= 0; i--)
     {
-        register rtx olabel = XEXP(XVECEXP(x, idx, i), 0);
-        register rtx nlabel = follow_jumps(olabel);
+        rtx olabel = XEXP(XVECEXP(x, idx, i), 0);
+        rtx nlabel = follow_jumps(olabel);
         if (nlabel && nlabel != olabel)
         {
             XEXP(XVECEXP(x, idx, i), 0) = nlabel;
@@ -2902,11 +2902,11 @@ static int tension_vector_labels(register rtx x, register int idx)
    Once reload has completed (CROSS_JUMP non-zero), we need not consider
    two labels distinct if they are separated by only USE or CLOBBER insns.  */
 
-static void mark_jump_label(register rtx x, rtx insn, int cross_jump)
+static void mark_jump_label(rtx x, rtx insn, int cross_jump)
 {
-    register RTX_CODE code = GET_CODE(x);
-    register int i;
-    register char *fmt;
+    RTX_CODE code = GET_CODE(x);
+    int i;
+    const char *fmt;
 
     switch (code)
     {
@@ -3019,7 +3019,7 @@ static void mark_jump_label(register rtx x, rtx insn, int cross_jump)
             mark_jump_label(XEXP(x, i), insn, cross_jump);
         else if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 mark_jump_label(XVECEXP(x, i, j), insn, cross_jump);
         }
@@ -3032,7 +3032,7 @@ static void mark_jump_label(register rtx x, rtx insn, int cross_jump)
 
 void delete_jump(rtx insn)
 {
-    register rtx set = single_set(insn);
+    rtx set = single_set(insn);
 
     if (set && GET_CODE(SET_DEST(set)) == PC)
         delete_computation(insn);
@@ -3155,12 +3155,12 @@ static void delete_computation(rtx insn)
 
    Returns the first insn after INSN that was not deleted.  */
 
-rtx delete_insn(register rtx insn)
+rtx delete_insn(rtx insn)
 {
-    register rtx next = NEXT_INSN(insn);
-    register rtx prev = PREV_INSN(insn);
-    register int was_code_label = (GET_CODE(insn) == CODE_LABEL);
-    register int dont_really_delete = 0;
+    rtx next = NEXT_INSN(insn);
+    rtx prev = PREV_INSN(insn);
+    int was_code_label = (GET_CODE(insn) == CODE_LABEL);
+    int dont_really_delete = 0;
 
     while (next && INSN_DELETED_P(next))
         next = NEXT_INSN(next);
@@ -3269,7 +3269,7 @@ rtx delete_insn(register rtx insn)
 
     if (was_code_label && prev && GET_CODE(prev) == BARRIER)
     {
-        register RTX_CODE code;
+        RTX_CODE code;
         while (next != 0
             && (GET_RTX_CLASS(code = GET_CODE(next)) == 'i' || code == NOTE || code == BARRIER
                    || (code == CODE_LABEL && INSN_DELETED_P(next))))
@@ -3296,14 +3296,14 @@ rtx delete_insn(register rtx insn)
    that whatever these insns do will still be done by a new
    peephole insn that will replace them.  */
 
-void delete_for_peephole(register rtx from, register rtx to)
+void delete_for_peephole(rtx from, rtx to)
 {
-    register rtx insn = from;
+    rtx insn = from;
 
     while (1)
     {
-        register rtx next = NEXT_INSN(insn);
-        register rtx prev = PREV_INSN(insn);
+        rtx next = NEXT_INSN(insn);
+        rtx prev = PREV_INSN(insn);
 
         if (GET_CODE(insn) != NOTE)
         {
@@ -3362,16 +3362,16 @@ int invert_jump(rtx jump, rtx nlabel)
 
 int invert_exp(rtx x, rtx insn)
 {
-    register RTX_CODE code;
-    register int i;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    const char *fmt;
 
     code = GET_CODE(x);
 
     if (code == IF_THEN_ELSE)
     {
-        register rtx comp = XEXP(x, 0);
-        register rtx tem;
+        rtx comp = XEXP(x, 0);
+        rtx tem;
 
         /* We can do this in two ways:  The preferable way, which can only
            be done if this is not an integer comparison, is to reverse
@@ -3399,7 +3399,7 @@ int invert_exp(rtx x, rtx insn)
                 return 0;
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 if (!invert_exp(XVECEXP(x, i, j), insn))
                     return 0;
@@ -3421,7 +3421,7 @@ int invert_exp(rtx x, rtx insn)
 
 int redirect_jump(rtx jump, rtx nlabel)
 {
-    register rtx olabel = JUMP_LABEL(jump);
+    rtx olabel = JUMP_LABEL(jump);
 
     if (nlabel == olabel)
         return 1;
@@ -3498,10 +3498,10 @@ static void delete_from_jump_chain(rtx jump)
 
 int redirect_exp(rtx *loc, rtx olabel, rtx nlabel, rtx insn)
 {
-    register rtx x = *loc;
-    register RTX_CODE code = GET_CODE(x);
-    register int i;
-    register char *fmt;
+    rtx x = *loc;
+    RTX_CODE code = GET_CODE(x);
+    int i;
+    const char *fmt;
 
     if (code == LABEL_REF)
     {
@@ -3534,7 +3534,7 @@ int redirect_exp(rtx *loc, rtx olabel, rtx nlabel, rtx insn)
                 return 0;
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 if (!redirect_exp(&XVECEXP(x, i, j), olabel, nlabel, insn))
                     return 0;
@@ -3553,7 +3553,7 @@ int redirect_exp(rtx *loc, rtx olabel, rtx nlabel, rtx insn)
 
 static void redirect_tablejump(rtx jump, rtx nlabel)
 {
-    register rtx olabel = JUMP_LABEL(jump);
+    rtx olabel = JUMP_LABEL(jump);
 
     /* Add this jump to the jump_chain of NLABEL.  */
     if (jump_chain && INSN_UID(nlabel) < max_jump_chain && INSN_UID(jump) < max_jump_chain)
@@ -3624,9 +3624,9 @@ static int delete_labelref_insn(rtx insn, rtx label, int delete_this)
 
 int rtx_renumbered_equal_p(rtx x, rtx y)
 {
-    register int i;
-    register RTX_CODE code = GET_CODE(x);
-    register char *fmt;
+    int i;
+    RTX_CODE code = GET_CODE(x);
+    const char *fmt;
 
     if (x == y)
         return 1;
@@ -3744,7 +3744,7 @@ int rtx_renumbered_equal_p(rtx x, rtx y)
     fmt = GET_RTX_FORMAT(code);
     for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
     {
-        register int j;
+        int j;
         switch (fmt[i])
         {
         case 'w':
@@ -4055,10 +4055,10 @@ void thread_jumps(rtx f, int max_reg, int flag_before_loop)
 
 int rtx_equal_for_thread_p(rtx x, rtx y, rtx yinsn)
 {
-    register int i;
-    register int j;
-    register enum rtx_code code;
-    register char *fmt;
+    int i;
+    int j;
+    enum rtx_code code;
+    const char *fmt;
 
     code = GET_CODE(x);
     /* Rtx's of different codes cannot be equal.  */
@@ -4266,13 +4266,13 @@ static rtx find_insert_position(rtx insn, rtx new)
 
 int condjump_expect_p(rtx insn)
 {
-    register rtx x;
-    register rtx src;
-    register rtx cond;
-    register rtx lab1;
-    register rtx lab2;
-    register rtx expect;
-    register rtx cmp_const;
+    rtx x;
+    rtx src;
+    rtx cond;
+    rtx lab1;
+    rtx lab2;
+    rtx expect;
+    rtx cmp_const;
     int retval;
     int32_t exp_value;
     int32_t cmp_value;

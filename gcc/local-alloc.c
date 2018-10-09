@@ -260,7 +260,7 @@ static int find_free_reg(enum reg_class, enum machine_mode, int, int, int, int, 
 static void mark_life(int, enum machine_mode, int);
 static void post_mark_life(int, enum machine_mode, int, int, int);
 static int no_conflict_p(rtx, rtx, rtx);
-static int requires_inout(char *);
+static int requires_inout(const char *);
 
 /* Allocate a new quantity (new within current basic block)
    for register number REGNO which is born at index BIRTH
@@ -268,7 +268,7 @@ static int requires_inout(char *);
 
 static void alloc_qty(int regno, enum machine_mode mode, int size, int birth)
 {
-    register int qty = next_qty++;
+    int qty = next_qty++;
 
     reg_qty[regno] = qty;
     reg_offset[regno] = 0;
@@ -289,7 +289,7 @@ static void alloc_qty(int regno, enum machine_mode mode, int size, int birth)
 
 void local_alloc(void)
 {
-    register int b, i;
+    int b, i;
     int max_qty;
 
     /* Leaf functions and non-leaf functions have different needs.
@@ -473,7 +473,7 @@ static int validate_equiv_mem(rtx start, rtx reg, rtx memref)
 static int contains_replace_regs(rtx x, char *reg_equiv_replace)
 {
     int i, j;
-    char *fmt;
+    const char *fmt;
     enum rtx_code code = GET_CODE(x);
 
     switch (code)
@@ -520,7 +520,7 @@ static int contains_replace_regs(rtx x, char *reg_equiv_replace)
 static int memref_referenced_p(rtx memref, rtx x)
 {
     int i, j;
-    char *fmt;
+    const char *fmt;
     enum rtx_code code = GET_CODE(x);
 
     switch (code)
@@ -949,8 +949,8 @@ static void no_equiv(rtx reg, rtx store)
 
 static void block_alloc(int b)
 {
-    register int i, q;
-    register rtx insn;
+    int i, q;
+    rtx insn;
     rtx note;
     int insn_number = 0;
     int insn_count = 0;
@@ -987,16 +987,16 @@ static void block_alloc(int b)
     insn = BLOCK_HEAD(b);
     while (1)
     {
-        register rtx body = PATTERN(insn);
+        rtx body = PATTERN(insn);
 
         if (GET_CODE(insn) != NOTE)
             insn_number++;
 
         if (GET_RTX_CLASS(GET_CODE(insn)) == 'i')
         {
-            register rtx link, set;
-            register int win = 0;
-            register rtx r0, r1;
+            rtx link, set;
+            int win = 0;
+            rtx r0, r1;
             int combined_regno = -1;
             int i;
 
@@ -1043,7 +1043,7 @@ static void block_alloc(int b)
 
                 for (i = 1; i < recog_n_operands; i++)
                 {
-                    char *p = recog_constraints[i];
+                    const char *p = recog_constraints[i];
                     int this_match = (requires_inout(p));
 
                     n_matching_alts += this_match;
@@ -1376,8 +1376,8 @@ static int qty_compare(int q1, int q2)
 
 static int qty_compare_1(const void *q1p, const void *q2p)
 {
-    register int q1 = *(int *)q1p, q2 = *(int *)q2p;
-    register int tem = QTY_CMP_PRI(q2) - QTY_CMP_PRI(q1);
+    const int q1 = *(const int *)q1p, q2 = *(const int *)q2p;
+    int tem = QTY_CMP_PRI(q2) - QTY_CMP_PRI(q1);
 
     if (tem != 0)
         return tem;
@@ -1400,7 +1400,7 @@ static int qty_compare_1(const void *q1p, const void *q2p)
 
 static int qty_sugg_compare(int q1, int q2)
 {
-    register int tem = QTY_CMP_SUGG(q1) - QTY_CMP_SUGG(q2);
+    int tem = QTY_CMP_SUGG(q1) - QTY_CMP_SUGG(q2);
 
     if (tem != 0)
         return tem;
@@ -1410,8 +1410,8 @@ static int qty_sugg_compare(int q1, int q2)
 
 static int qty_sugg_compare_1(const void *q1p, const void *q2p)
 {
-    register int q1 = *(int *)q1p, q2 = *(int *)q2p;
-    register int tem = QTY_CMP_SUGG(q1) - QTY_CMP_SUGG(q2);
+    const int q1 = *(const int *)q1p, q2 = *(const int *)q2p;
+    int tem = QTY_CMP_SUGG(q1) - QTY_CMP_SUGG(q2);
 
     if (tem != 0)
         return tem;
@@ -1454,10 +1454,10 @@ static int qty_sugg_compare_1(const void *q1p, const void *q2p)
 static int combine_regs(
     rtx usedreg, rtx setreg, int may_save_copy, int insn_number, rtx insn, int already_dead)
 {
-    register int ureg, sreg;
-    register int offset = 0;
+    int ureg, sreg;
+    int offset = 0;
     int usize, ssize;
-    register int sqty;
+    int sqty;
 
     /* Determine the numbers and sizes of registers being used.  If a subreg
        is present that does not change the entire register, don't consider
@@ -1593,7 +1593,7 @@ static int combine_regs(
         qty_n_refs[sqty] += REG_N_REFS(sreg);
         if (usize < ssize)
         {
-            register int i;
+            int i;
 
             for (i = qty_first_reg[sqty]; i >= 0; i = reg_next_in_qty[i])
                 reg_offset[i] -= offset;
@@ -1612,10 +1612,10 @@ static int combine_regs(
    to a quantity or register whose class is CLASS.
    True if REG's reg class either contains or is contained in CLASS.  */
 
-static int reg_meets_class_p(int reg, enum reg_class class)
+static int reg_meets_class_p(int reg, enum reg_class rclass)
 {
-    register enum reg_class rclass = reg_preferred_class(reg);
-    return (reg_class_subset_p(rclass, class) || reg_class_subset_p(class, rclass));
+    enum reg_class rclass2 = reg_preferred_class(reg);
+    return (reg_class_subset_p(rclass2, rclass) || reg_class_subset_p(rclass, rclass2));
 }
 
 /* Update the class of QTY assuming that REG is being tied to it.  */
@@ -1663,7 +1663,7 @@ static void reg_is_set(rtx reg, rtx setter)
 
 static void reg_is_born(rtx reg, int birth)
 {
-    register int regno;
+    int regno;
 
     if (GET_CODE(reg) == SUBREG)
         regno = REGNO(SUBREG_REG(reg)) + SUBREG_WORD(reg);
@@ -1695,9 +1695,9 @@ static void reg_is_born(rtx reg, int birth)
    is an input (the normal case).
    If OUTPUT_P is 1, then we extend the life past the end of this insn.  */
 
-static void wipe_dead_reg(register rtx reg, int output_p)
+static void wipe_dead_reg(rtx reg, int output_p)
 {
-    register int regno = REGNO(reg);
+    int regno = REGNO(reg);
 
     /* If this insn has multiple results,
        and the dead reg is used in one of the results,
@@ -1755,15 +1755,11 @@ static void wipe_dead_reg(register rtx reg, int output_p)
    If JUST_TRY_SUGGESTED is non-zero, only try to see if the suggested
    register is available.  If not, return -1.  */
 
-static int find_free_reg(enum reg_class class, enum machine_mode mode, int qty,
+static int find_free_reg(enum reg_class rclass, enum machine_mode mode, int qty,
     int accept_call_clobbered, int just_try_suggested, int born_index, int dead_index)
 {
-    register int i, ins;
-#ifdef HARD_REG_SET
-    register /* Declare it register if it's a scalar.  */
-#endif
-        HARD_REG_SET used,
-        first_used;
+    int i, ins;
+    HARD_REG_SET used, first_used;
 #ifdef ELIMINABLE_REGS
     static struct
     {
@@ -1793,7 +1789,7 @@ static int find_free_reg(enum reg_class class, enum machine_mode mode, int qty,
     for (ins = born_index; ins < dead_index; ins++)
         IOR_HARD_REG_SET(used, regs_live_at[ins]);
 
-    IOR_COMPL_HARD_REG_SET(used, reg_class_contents[(int)class]);
+    IOR_COMPL_HARD_REG_SET(used, reg_class_contents[(int)rclass]);
 
     /* Don't use the frame pointer reg in local-alloc even if
        we may omit the frame pointer, because if we do that and then we
@@ -1837,8 +1833,8 @@ static int find_free_reg(enum reg_class class, enum machine_mode mode, int qty,
             && (qty_n_calls_crossed[qty] == 0 || accept_call_clobbered
                    || !HARD_REGNO_CALL_PART_CLOBBERED(regno, mode)))
         {
-            register int j;
-            register int size1 = HARD_REGNO_NREGS(regno, mode);
+            int j;
+            int size1 = HARD_REGNO_NREGS(regno, mode);
             for (j = 1; j < size1 && !TEST_HARD_REG_BIT(used, regno + j); j++)
                 ;
             if (j == size1)
@@ -1864,7 +1860,7 @@ fail:
     {
         /* Don't try the copy-suggested regs again.  */
         qty_phys_num_copy_sugg[qty] = 0;
-        return find_free_reg(class, mode, qty, accept_call_clobbered, 1, born_index, dead_index);
+        return find_free_reg(rclass, mode, qty, accept_call_clobbered, 1, born_index, dead_index);
     }
 
     /* We need not check to see if the current function has nonlocal
@@ -1875,7 +1871,7 @@ fail:
         && qty_n_calls_crossed[qty] != 0
         && CALLER_SAVE_PROFITABLE(qty_n_refs[qty], qty_n_calls_crossed[qty]))
     {
-        i = find_free_reg(class, mode, qty, 1, 0, born_index, dead_index);
+        i = find_free_reg(rclass, mode, qty, 1, 0, born_index, dead_index);
         if (i >= 0)
             caller_save_needed = 1;
         return i;
@@ -1887,9 +1883,9 @@ fail:
    insn (if LIFE is non-zero) or dead starting at the current insn (if LIFE
    is zero).  */
 
-static void mark_life(register int regno, enum machine_mode mode, int life)
+static void mark_life(int regno, enum machine_mode mode, int life)
 {
-    register int j = HARD_REGNO_NREGS(regno, mode);
+    int j = HARD_REGNO_NREGS(regno, mode);
     if (life)
         while (--j >= 0)
             SET_HARD_REG_BIT(regs_live, regno + j);
@@ -1904,11 +1900,8 @@ static void mark_life(register int regno, enum machine_mode mode, int life)
 
 static void post_mark_life(int regno, enum machine_mode mode, int life, int birth, int death)
 {
-    register int j = HARD_REGNO_NREGS(regno, mode);
-#ifdef HARD_REG_SET
-    register /* Declare it register if it's a scalar.  */
-#endif
-        HARD_REG_SET this_reg;
+    int j = HARD_REGNO_NREGS(regno, mode);
+    HARD_REG_SET this_reg;
 
     CLEAR_HARD_REG_SET(this_reg);
     while (--j >= 0)
@@ -1977,7 +1970,7 @@ static int no_conflict_p(rtx insn, rtx r0, rtx r1)
    indicates that the operand must be equal to operand 0 and that no register
    is acceptable.  */
 
-static int requires_inout(char *p)
+static int requires_inout(const char *p)
 {
     char c;
     int found_zero = 0;
@@ -2058,7 +2051,7 @@ static int requires_inout(char *p)
 
 void dump_local_alloc(FILE *file)
 {
-    register int i;
+    int i;
     for (i = FIRST_PSEUDO_REGISTER; i < max_regno; i++)
         if (reg_renumber[i] != -1)
             fprintf(file, ";; Register %d in %d.\n", i, reg_renumber[i]);

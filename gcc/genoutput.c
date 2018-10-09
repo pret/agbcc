@@ -110,12 +110,12 @@ struct obstack *rtl_obstack = &obstack;
 static void fatal(const char *, ...) ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
 void fancy_abort(void) ATTRIBUTE_NORETURN;
 static void error(const char *, ...) ATTRIBUTE_PRINTF_1;
-static void mybcopy();
-static void mybzero();
-static int n_occurrences(int, char *);
+static void mybcopy(void *, void *, unsigned);
+static void mybzero(void *, unsigned);
+static int n_occurrences(int, const char *);
 
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
-char **insn_name_ptr = 0;
+const char **insn_name_ptr = 0;
 
 /* insns in the machine description are assigned sequential code numbers
    that are used by insn-recog.c (produced by genrecog) to communicate
@@ -135,16 +135,16 @@ struct data
 {
     int code_number;
     int index_number;
-    char *name;
-    char *template;     /* string such as "movl %1,%0" */
+    const char *name;
+    const char *templ;        /* string such as "movl %1,%0" */
     int n_operands;     /* Number of operands this insn recognizes */
     int n_dups;         /* Number times match_dup appears in pattern */
     int n_alternatives; /* Number of alternatives in each constraint */
     struct data *next;
-    char *constraints[MAX_MAX_OPERANDS];
+    const char *constraints[MAX_MAX_OPERANDS];
     /* Number of alternatives in constraints of operand N.  */
     int op_n_alternatives[MAX_MAX_OPERANDS];
-    char *predicates[MAX_MAX_OPERANDS];
+    const char *predicates[MAX_MAX_OPERANDS];
     char address_p[MAX_MAX_OPERANDS];
     enum machine_mode modes[MAX_MAX_OPERANDS];
     char strict_low[MAX_MAX_OPERANDS];
@@ -171,19 +171,18 @@ int have_constraints;
 
 static int have_error;
 
-static char *name_for_index(int);
+static const char *name_for_index(int);
 static void output_prologue(void);
 static void output_epilogue(void);
 static void scan_operands(rtx, int, int);
-static void process_template(struct data *, char *);
+static void process_template(struct data *, const char *);
 static void validate_insn_alternatives(struct data *);
 static void gen_insn(rtx);
 static void gen_peephole(rtx);
 static void gen_expand(rtx);
 static void gen_split(rtx);
-static int n_occurrences(int, char *);
 
-static char *name_for_index(index) int index;
+static const char *name_for_index(int index)
 {
     static char buf[100];
 
@@ -224,49 +223,50 @@ from the machine description file `md'.  */\n\n");
     printf("#include \"recog.h\"\n\n");
     printf("#include \"tree.h\"\n");
     printf("#include \"output.h\"\n");
+    printf("#include \"expr.h\"\n");
 }
 
 static void output_epilogue(void)
 {
-    register struct data *d;
+    struct data *d;
 
-    printf("\nchar * const insn_template[] =\n  {\n");
+    printf("\nconst char * const insn_template[] =\n  {\n");
     for (d = insn_data; d; d = d->next)
     {
-        if (d->template)
-            printf("    \"%s\",\n", d->template);
+        if (d->templ)
+            printf("    \"%s\",\n", d->templ);
         else
-            printf("    0,\n");
+            printf("    NULL,\n");
     }
     printf("  };\n");
 
-    printf("\nchar *(*const insn_outfun[])() =\n  {\n");
+    printf("\nconst char *(*const insn_outfun[])(rtx *, rtx) =\n  {\n");
     for (d = insn_data; d; d = d->next)
     {
         if (d->outfun)
-            printf("    output_%d,\n", d->code_number);
+            printf("    output_%s,\n", d->name + (d->name[0] == '*'));
         else
-            printf("    0,\n");
+            printf("    NULL,\n");
     }
     printf("  };\n");
 
-    printf("\nrtx (*const insn_gen_function[]) () =\n  {\n");
+    printf("\nrtx (*const insn_gen_function[]) (rtx, ...) =\n  {\n");
     for (d = insn_data; d; d = d->next)
     {
         if (d->name && d->name[0] != '*')
-            printf("    gen_%s,\n", d->name);
+            printf("    (rtx (*const)(rtx, ...))gen_%s,\n", d->name);
         else
-            printf("    0,\n");
+            printf("    NULL,\n");
     }
     printf("  };\n");
 
-    printf("\nchar *insn_name[] =\n  {\n");
+    printf("\nconst char *insn_name[] =\n  {\n");
     {
         int offset = 0;
         int next;
-        char *last_name = 0;
-        char *next_name = 0;
-        register struct data *n;
+        const char *last_name = 0;
+        const char *next_name = 0;
+        struct data *n;
 
         for (n = insn_data, next = 1; n; n = n->next, next++)
             if (n->name)
@@ -301,7 +301,7 @@ static void output_epilogue(void)
         }
     }
     printf("  };\n");
-    printf("char **insn_name_ptr = insn_name;\n");
+    printf("const char **insn_name_ptr = (const char **)insn_name;\n");
 
     printf("\nconst int insn_n_operands[] =\n  {\n");
     for (d = insn_data; d; d = d->next)
@@ -315,10 +315,10 @@ static void output_epilogue(void)
 
     if (have_constraints)
     {
-        printf("\nchar *const insn_operand_constraint[][MAX_RECOG_OPERANDS] =\n  {\n");
+        printf("\nconst char *const insn_operand_constraint[][MAX_RECOG_OPERANDS] =\n  {\n");
         for (d = insn_data; d; d = d->next)
         {
-            register int i;
+            int i;
             printf("    {");
             for (i = 0; i < d->n_operands; i++)
             {
@@ -328,17 +328,17 @@ static void output_epilogue(void)
                     printf(" \"%s\",", d->constraints[i]);
             }
             if (d->n_operands == 0)
-                printf(" 0");
+                printf(" NULL");
             printf(" },\n");
         }
         printf("  };\n");
     }
     else
     {
-        printf("\nconst char insn_operand_address_p[][MAX_RECOG_OPERANDS] =\n  {\n");
+        printf("\nconst char *insn_operand_address_p[MAX_RECOG_OPERANDS] =\n  {\n");
         for (d = insn_data; d; d = d->next)
         {
-            register int i;
+            int i;
             printf("    {");
             for (i = 0; i < d->n_operands; i++)
                 printf(" %d,", d->address_p[i]);
@@ -352,7 +352,7 @@ static void output_epilogue(void)
     printf("\nconst enum machine_mode insn_operand_mode[][MAX_RECOG_OPERANDS] =\n  {\n");
     for (d = insn_data; d; d = d->next)
     {
-        register int i;
+        int i;
         printf("    {");
         for (i = 0; i < d->n_operands; i++)
             printf(" %smode,", GET_MODE_NAME(d->modes[i]));
@@ -365,7 +365,7 @@ static void output_epilogue(void)
     printf("\nconst char insn_operand_strict_low[][MAX_RECOG_OPERANDS] =\n  {\n");
     for (d = insn_data; d; d = d->next)
     {
-        register int i;
+        int i;
         printf("    {");
         for (i = 0; i < d->n_operands; i++)
             printf(" %d,", d->strict_low[i]);
@@ -381,7 +381,7 @@ static void output_epilogue(void)
            so a linked list should be fast enough.  */
         struct predicate
         {
-            char *name;
+            const char *name;
             struct predicate *next;
         } *predicates = 0;
         struct predicate *p;
@@ -398,7 +398,7 @@ static void output_epilogue(void)
 
                     if (p == 0)
                     {
-                        printf("extern int %s ();\n", d->predicates[i]);
+                        printf("extern int %s(rtx, enum machine_mode);\n", d->predicates[i]);
                         p = (struct predicate *)alloca(sizeof(struct predicate));
                         p->name = d->predicates[i];
                         p->next = predicates;
@@ -406,7 +406,7 @@ static void output_epilogue(void)
                     }
                 }
 
-        printf("\nint (*const insn_operand_predicate[][MAX_RECOG_OPERANDS])() =\n  {\n");
+        printf("\nint (*const insn_operand_predicate[][MAX_RECOG_OPERANDS])(rtx, enum machine_mode) =\n  {\n");
         for (d = insn_data; d; d = d->next)
         {
             printf("    {");
@@ -436,7 +436,7 @@ static void output_epilogue(void)
 
 static int max_opno;
 static int num_dups;
-static char *constraints[MAX_MAX_OPERANDS];
+static const char *constraints[MAX_MAX_OPERANDS];
 static int op_n_alternatives[MAX_MAX_OPERANDS];
 static const char *predicates[MAX_MAX_OPERANDS];
 static char address_p[MAX_MAX_OPERANDS];
@@ -446,8 +446,8 @@ static char seen[MAX_MAX_OPERANDS];
 
 static void scan_operands(rtx part, int this_address_p, int this_strict_low)
 {
-    register int i, j;
-    register char *format_ptr;
+    int i, j;
+    const char *format_ptr;
     int opno;
 
     if (part == 0)
@@ -570,37 +570,37 @@ static void scan_operands(rtx part, int this_address_p, int this_strict_low)
    It is either the assembler code template, a list of assembler code
    templates, or C code to generate the assembler code template.  */
 
-static void process_template(struct data *d, char *template)
+static void process_template(struct data *d, const char *templ)
 {
-    register char *cp;
-    register int i;
+    const char *cp;
+    int i;
 
     /* We need to consider only the instructions whose assembler code template
        starts with a * or @.  These are the ones where C code is run to decide
        on a template to use.  So for all others just return now.  */
 
-    if (template[0] != '*' && template[0] != '@')
+    if (templ[0] != '*' && templ[0] != '@')
     {
-        d->template = template;
+        d->templ = templ;
         d->outfun = 0;
         return;
     }
 
-    d->template = 0;
+    d->templ = 0;
     d->outfun = 1;
 
-    printf("\nstatic char *output_%d (rtx *operands ATTRIBUTE_UNUSED, rtx insn ATTRIBUTE_UNUSED)\n", d->code_number);
+    printf("\nstatic const char *output_%s (rtx *operands ATTRIBUTE_UNUSED, rtx insn ATTRIBUTE_UNUSED)\n", d->name + (d->name[0] == '*'));
     printf("{\n");
 
     /* If the assembler code template starts with a @ it is a newline-separated
        list of assembler code templates, one for each alternative.  So produce
        a routine to select the correct one.  */
 
-    if (template[0] == '@')
+    if (templ[0] == '@')
     {
-        printf("  static /*const*/ char *const strings_%d[] = {\n", d->code_number);
+        printf("  static const char *const strings_%s[] = {\n", d->name + (d->name[0] == '*'));
 
-        for (i = 0, cp = &template[1]; *cp;)
+        for (i = 0, cp = &templ[1]; *cp;)
         {
             while (*cp == '\n' || *cp == ' ' || *cp == '\t')
                 cp++;
@@ -617,7 +617,7 @@ static void process_template(struct data *d, char *template)
         }
 
         printf("  };\n");
-        printf("  return strings_%d[which_alternative];\n", d->code_number);
+        printf("  return strings_%s[which_alternative];\n", d->name + (d->name[0] == '*'));
 
         if (i != d->n_alternatives)
             fatal("Insn pattern %d has %d alternatives but %d assembler choices", d->index_number,
@@ -628,7 +628,7 @@ static void process_template(struct data *d, char *template)
         /* The following is done in a funny way to get around problems in
        VAX-11 "C" on VMS.  It is the equivalent of:
          printf ("%s\n", &template[1])); */
-        cp = &template[1];
+        cp = &templ[1];
         while (*cp)
         {
             putchar(*cp);
@@ -644,7 +644,7 @@ static void process_template(struct data *d, char *template)
 
 static void validate_insn_alternatives(struct data *d)
 {
-    register int n = 0, start;
+    int n = 0, start;
     /* Make sure all the operands have the same number of
        alternatives in their constraints.
        Let N be that number.  */
@@ -667,8 +667,8 @@ static void validate_insn_alternatives(struct data *d)
 
 static void gen_insn(rtx insn)
 {
-    register struct data *d = (struct data *)xmalloc(sizeof(struct data));
-    register int i;
+    struct data *d = (struct data *)xmalloc(sizeof(struct data));
+    int i;
 
     d->code_number = next_code_number++;
     d->index_number = next_index_number;
@@ -721,8 +721,8 @@ static void gen_insn(rtx insn)
 
 static void gen_peephole(rtx peep)
 {
-    register struct data *d = (struct data *)xmalloc(sizeof(struct data));
-    register int i;
+    struct data *d = (struct data *)xmalloc(sizeof(struct data));
+    int i;
 
     d->code_number = next_code_number++;
     d->index_number = next_index_number;
@@ -772,8 +772,8 @@ static void gen_peephole(rtx peep)
 
 static void gen_expand(rtx insn)
 {
-    register struct data *d = (struct data *)xmalloc(sizeof(struct data));
-    register int i;
+    struct data *d = (struct data *)xmalloc(sizeof(struct data));
+    int i;
 
     d->code_number = next_code_number++;
     d->index_number = next_index_number;
@@ -820,7 +820,7 @@ static void gen_expand(rtx insn)
     mybcopy(modes, d->modes, sizeof modes);
     mybcopy(strict_low, d->strict_low, sizeof strict_low);
 
-    d->template = 0;
+    d->templ = 0;
     d->outfun = 0;
     validate_insn_alternatives(d);
 }
@@ -831,8 +831,8 @@ static void gen_expand(rtx insn)
 
 static void gen_split(rtx split)
 {
-    register struct data *d = (struct data *)xmalloc(sizeof(struct data));
-    register int i;
+    struct data *d = (struct data *)xmalloc(sizeof(struct data));
+    int i;
 
     d->code_number = next_code_number++;
     d->index_number = next_index_number;
@@ -876,23 +876,22 @@ static void gen_split(rtx split)
 
     d->n_dups = 0;
     d->n_alternatives = 0;
-    d->template = 0;
+    d->templ = 0;
     d->outfun = 0;
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -902,16 +901,19 @@ size_t size;
     return ptr;
 }
 
-static void mybzero(register char *b, register unsigned length)
+static void mybzero(void *b, unsigned length)
 {
+    char *buf = (char *)b;
     while (length-- > 0)
-        *b++ = 0;
+        *buf++ = 0;
 }
 
-static void mybcopy(register char *b1, register char *b2, register unsigned length)
+static void mybcopy(void *b1, void *b2, unsigned length)
 {
+    char *buf1 = (char *)b1;
+    char *buf2 = (char *)b2;
     while (length-- > 0)
-        *b2++ = *b1++;
+        *buf2++ = *buf1++;
 }
 
 static void fatal(const char *format, ...)
@@ -955,7 +957,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
 
@@ -1006,7 +1008,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-static int n_occurrences(int c, char *s)
+static int n_occurrences(int c, const char *s)
 {
     int n = 0;
     while (*s)

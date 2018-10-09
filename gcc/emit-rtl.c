@@ -127,10 +127,10 @@ rtx const_tiny_rtx[3][(int)MAX_MACHINE_MODE];
 
 rtx const_true_rtx;
 
-REAL_VALUE_TYPE dconst0;
-REAL_VALUE_TYPE dconst1;
-REAL_VALUE_TYPE dconst2;
-REAL_VALUE_TYPE dconstm1;
+double dconst0;
+double dconst1;
+double dconst2;
+double dconstm1;
 
 /* All references to the following fixed hard registers go through
    these unique rtl objects.  On machines where the frame-pointer and
@@ -183,7 +183,7 @@ static int cur_insn_uid = 1;
    This is used to avoid generating duplicates.  */
 
 static int last_linenum = 0;
-static char *last_filename = 0;
+static const char *last_filename = 0;
 
 /* A vector indexed by pseudo reg number.  The allocated length
    of this vector is regno_pointer_flag_length.  Since this
@@ -238,7 +238,7 @@ extern int rtx_equal_function_value_matters;
 
 /* Filename and line number of last line-number note,
    whether we actually emitted it or not.  */
-extern char *emit_filename;
+extern const char *emit_filename;
 extern int emit_lineno;
 
 static rtx make_jump_insn_raw(rtx);
@@ -332,9 +332,9 @@ rtx gen_rtx_MEM(enum machine_mode mode, rtx addr)
 rtx gen_rtx(enum rtx_code code, enum machine_mode mode, ...)
 {
     va_list p;
-    register int i;      /* Array indices...			*/
-    register char *fmt;  /* Current rtx's format...		*/
-    register rtx rt_val; /* RTX to return to caller...		*/
+    int i;            /* Array indices...			*/
+    const char *fmt;  /* Current rtx's format...		*/
+    rtx rt_val;       /* RTX to return to caller...		*/
 
     va_start(p, mode);
 
@@ -426,8 +426,8 @@ rtvec gen_rtvec(int n, ...)
 
 rtvec gen_rtvec_v(int n, rtx *argp)
 {
-    register int i;
-    register rtvec rt_val;
+    int i;
+    rtvec rt_val;
 
     if (n == 0)
         return NULL_RTVEC; /* Don't allocate an empty rtvec...	*/
@@ -442,8 +442,8 @@ rtvec gen_rtvec_v(int n, rtx *argp)
 
 rtvec gen_rtvec_vv(int n, rtunion *argp)
 {
-    register int i;
-    register rtvec rt_val;
+    int i;
+    rtvec rt_val;
 
     if (n == 0)
         return NULL_RTVEC; /* Don't allocate an empty rtvec...	*/
@@ -461,7 +461,7 @@ rtvec gen_rtvec_vv(int n, rtunion *argp)
 
 rtx gen_reg_rtx(enum machine_mode mode)
 {
-    register rtx val;
+    rtx val;
 
     /* Don't let anything called after initial flow analysis create new
        registers.  */
@@ -492,15 +492,15 @@ rtx gen_reg_rtx(enum machine_mode mode)
     if (reg_rtx_no == regno_pointer_flag_length)
     {
         rtx *new1;
-        char *new = (char *)savealloc(regno_pointer_flag_length * 2);
-        copy_memory(regno_pointer_flag, new, regno_pointer_flag_length);
-        zero_memory(&new[regno_pointer_flag_length], regno_pointer_flag_length);
-        regno_pointer_flag = new;
+        char *new_flag = (char *)savealloc(regno_pointer_flag_length * 2);
+        copy_memory(regno_pointer_flag, new_flag, regno_pointer_flag_length);
+        zero_memory(&new_flag[regno_pointer_flag_length], regno_pointer_flag_length);
+        regno_pointer_flag = new_flag;
 
-        new = (char *)savealloc(regno_pointer_flag_length * 2);
-        copy_memory(regno_pointer_align, new, regno_pointer_flag_length);
-        zero_memory(&new[regno_pointer_flag_length], regno_pointer_flag_length);
-        regno_pointer_align = new;
+        new_flag = (char *)savealloc(regno_pointer_flag_length * 2);
+        copy_memory(regno_pointer_align, new_flag, regno_pointer_flag_length);
+        zero_memory(&new_flag[regno_pointer_flag_length], regno_pointer_flag_length);
+        regno_pointer_align = new_flag;
 
         new1 = (rtx *)savealloc(regno_pointer_flag_length * 2 * sizeof(rtx));
         copy_memory((char *)regno_reg_rtx, (char *)new1, regno_pointer_flag_length * sizeof(rtx));
@@ -576,7 +576,7 @@ int get_first_label_num(void)
 
    If this is not a case we can handle, return 0.  */
 
-rtx gen_lowpart_common(enum machine_mode mode, register rtx x)
+rtx gen_lowpart_common(enum machine_mode mode, rtx x)
 {
     int word = 0;
 
@@ -692,7 +692,7 @@ rtx gen_lowpart_common(enum machine_mode mode, register rtx x)
         && GET_CODE(x) == CONST_INT && sizeof(float) * HOST_BITS_PER_CHAR == 32)
 #ifdef REAL_ARITHMETIC
     {
-        REAL_VALUE_TYPE r;
+        double r;
         int32_t i;
 
         i = INTVAL(x);
@@ -716,7 +716,7 @@ rtx gen_lowpart_common(enum machine_mode mode, register rtx x)
         && (GET_CODE(x) == CONST_INT || GET_CODE(x) == CONST_DOUBLE) && GET_MODE(x) == VOIDmode
         && (sizeof(double) * HOST_BITS_PER_CHAR == 2 * 32))
     {
-        REAL_VALUE_TYPE r;
+        double r;
         int32_t i[2];
         int32_t low, high;
 
@@ -739,7 +739,7 @@ rtx gen_lowpart_common(enum machine_mode mode, register rtx x)
 #ifdef REAL_ARITHMETIC
     else if (mode == SFmode && GET_CODE(x) == CONST_INT)
     {
-        REAL_VALUE_TYPE r;
+        double r;
         int32_t i;
 
         i = INTVAL(x);
@@ -783,7 +783,7 @@ rtx gen_lowpart_common(enum machine_mode mode, register rtx x)
 /* Return the real part (which has mode MODE) of a complex value X.
    This always comes at the low address in memory.  */
 
-rtx gen_realpart(enum machine_mode mode, register rtx x)
+rtx gen_realpart(enum machine_mode mode, rtx x)
 {
     if (GET_CODE(x) == CONCAT && GET_MODE(XEXP(x, 0)) == mode)
         return XEXP(x, 0);
@@ -794,7 +794,7 @@ rtx gen_realpart(enum machine_mode mode, register rtx x)
 /* Return the imaginary part (which has mode MODE) of a complex value X.
    This always comes at the high address in memory.  */
 
-rtx gen_imagpart(enum machine_mode mode, register rtx x)
+rtx gen_imagpart(enum machine_mode mode, rtx x)
 {
     if (GET_CODE(x) == CONCAT && GET_MODE(XEXP(x, 0)) == mode)
         return XEXP(x, 1);
@@ -822,7 +822,7 @@ int subreg_realpart_p(rtx x)
    it usually should not be larger than a word.
    If X is a MEM whose address is a QUEUED, the value may be so also.  */
 
-rtx gen_lowpart(enum machine_mode mode, register rtx x)
+rtx gen_lowpart(enum machine_mode mode, rtx x)
 {
     rtx result = gen_lowpart_common(mode, x);
 
@@ -839,7 +839,7 @@ rtx gen_lowpart(enum machine_mode mode, register rtx x)
     else if (GET_CODE(x) == MEM)
     {
         /* The only additional case we can do is MEM.  */
-        register int offset = 0;
+        int offset = 0;
 
         return change_address(x, mode, plus_constant(XEXP(x, 0), offset));
     }
@@ -852,7 +852,7 @@ rtx gen_lowpart(enum machine_mode mode, register rtx x)
 /* Like `gen_lowpart', but refer to the most significant part.
    This is used to access the imaginary part of a complex number.  */
 
-rtx gen_highpart(enum machine_mode mode, register rtx x)
+rtx gen_highpart(enum machine_mode mode, rtx x)
 {
     /* This case loses if X is a subreg.  To catch bugs early,
        complain if an invalid MODE is used even in other cases.  */
@@ -873,7 +873,7 @@ rtx gen_highpart(enum machine_mode mode, register rtx x)
     }
     else if (GET_CODE(x) == MEM)
     {
-        register int offset = 0;
+        int offset = 0;
 
         offset = (MAX(GET_MODE_SIZE(GET_MODE(x)), UNITS_PER_WORD)
             - MAX(GET_MODE_SIZE(mode), UNITS_PER_WORD));
@@ -1007,7 +1007,7 @@ rtx operand_subword(rtx op, int i, int validate_address, enum machine_mode mode)
     if (GET_CODE(op) == MEM)
     {
         rtx addr = plus_constant(XEXP(op, 0), i * UNITS_PER_WORD);
-        rtx new;
+        rtx new_addr;
 
         if (validate_address)
         {
@@ -1020,15 +1020,15 @@ rtx operand_subword(rtx op, int i, int validate_address, enum machine_mode mode)
                 addr = memory_address(word_mode, addr);
         }
 
-        new = gen_rtx_MEM(word_mode, addr);
+        new_addr = gen_rtx_MEM(word_mode, addr);
 
-        MEM_COPY_ATTRIBUTES(new, op);
-        RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(op);
+        MEM_COPY_ATTRIBUTES(new_addr, op);
+        RTX_UNCHANGING_P(new_addr) = RTX_UNCHANGING_P(op);
         /* CYGNUS LOCAL unaligned-pointers */
-        MEM_UNALIGNED_P(new) = MEM_UNALIGNED_P(op);
+        MEM_UNALIGNED_P(new_addr) = MEM_UNALIGNED_P(op);
         /* END CYGNUS LOCAL */
 
-        return new;
+        return new_addr;
     }
 
     /* The only remaining cases are when OP is a constant.  If the host and
@@ -1043,8 +1043,8 @@ rtx operand_subword(rtx op, int i, int validate_address, enum machine_mode mode)
     if (32 >= BITS_PER_WORD && GET_MODE_CLASS(mode) == MODE_FLOAT
         && GET_MODE_BITSIZE(mode) == 64 && GET_CODE(op) == CONST_DOUBLE)
     {
-        long k[2];
-        REAL_VALUE_TYPE rv;
+        int32_t k[2];
+        double rv;
 
         REAL_VALUE_FROM_CONST_DOUBLE(rv, op);
         REAL_VALUE_TO_TARGET_DOUBLE(rv, k);
@@ -1058,8 +1058,8 @@ rtx operand_subword(rtx op, int i, int validate_address, enum machine_mode mode)
     if (GET_MODE_CLASS(mode) == MODE_FLOAT && GET_MODE_BITSIZE(mode) == 32
         && GET_CODE(op) == CONST_DOUBLE)
     {
-        long l;
-        REAL_VALUE_TYPE rv;
+        int32_t l;
+        double rv;
 
         REAL_VALUE_FROM_CONST_DOUBLE(rv, op);
         REAL_VALUE_TO_TARGET_SINGLE(rv, l);
@@ -1155,7 +1155,7 @@ rtx operand_subword_force(rtx op, int i, enum machine_mode mode)
 
 rtx change_address(rtx memref, enum machine_mode mode, rtx addr)
 {
-    rtx new;
+    rtx new_addr;
 
     if (GET_CODE(memref) != MEM)
         abort();
@@ -1177,20 +1177,20 @@ rtx change_address(rtx memref, enum machine_mode mode, rtx addr)
     if (rtx_equal_p(addr, XEXP(memref, 0)) && mode == GET_MODE(memref))
         return memref;
 
-    new = gen_rtx_MEM(mode, addr);
-    RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(memref);
-    MEM_COPY_ATTRIBUTES(new, memref);
+    new_addr = gen_rtx_MEM(mode, addr);
+    RTX_UNCHANGING_P(new_addr) = RTX_UNCHANGING_P(memref);
+    MEM_COPY_ATTRIBUTES(new_addr, memref);
     /* CYGNUS LOCAL unaligned-pointers */
-    MEM_UNALIGNED_P(new) = MEM_UNALIGNED_P(memref);
+    MEM_UNALIGNED_P(new_addr) = MEM_UNALIGNED_P(memref);
     /* END CYGNUS LOCAL */
-    return new;
+    return new_addr;
 }
 
 /* Return a newly created CODE_LABEL rtx with a unique label number.  */
 
 rtx gen_label_rtx(void)
 {
-    register rtx label;
+    rtx label;
 
     label = gen_rtx_CODE_LABEL(VOIDmode, 0, NULL_RTX, NULL_RTX, label_num++, NULL);
 
@@ -1203,7 +1203,8 @@ rtx gen_label_rtx(void)
 /* Return a newly created INLINE_HEADER rtx.  Should allocate this
    from a permanent obstack when the opportunity arises.  */
 
-rtx gen_inline_header_rtx(rtx first_insn, rtx first_parm_insn, int first_labelno, int last_labelno,
+rtx gen_inline_header_rtx(
+    rtx first_insn, rtx first_parm_insn, int first_labelno, int last_labelno,
     int max_parm_regnum, int max_regnum, int args_size, int pops_args, rtx stack_slots,
     rtx forced_labels, int function_flags, int outgoing_args_size, rtvec original_arg_vector,
     rtx original_decl_initial, rtvec regno_rtx, char *regno_flag, char *regno_align,
@@ -1300,7 +1301,7 @@ void restore_emit_status(struct function *p)
    It does not work to do this twice, because the mark bits set here
    are not cleared afterwards.  */
 
-void unshare_all_rtl(register rtx insn)
+void unshare_all_rtl(rtx insn)
 {
     for (; insn; insn = NEXT_INSN(insn))
         if (GET_CODE(insn) == INSN || GET_CODE(insn) == JUMP_INSN || GET_CODE(insn) == CALL_INSN)
@@ -1326,10 +1327,10 @@ void unshare_all_rtl(register rtx insn)
 
 rtx copy_rtx_if_shared(rtx orig)
 {
-    register rtx x = orig;
-    register int i;
-    register enum rtx_code code;
-    register char *format_ptr;
+    rtx x = orig;
+    int i;
+    enum rtx_code code;
+    const char *format_ptr;
     int copied = 0;
 
     if (x == 0)
@@ -1399,7 +1400,7 @@ rtx copy_rtx_if_shared(rtx orig)
 
     if (x->used)
     {
-        register rtx copy;
+        rtx copy;
 
         copy = rtx_alloc(code);
         copy_memory((char *)x, (char *)copy,
@@ -1427,7 +1428,7 @@ rtx copy_rtx_if_shared(rtx orig)
         case 'E':
             if (XVEC(x, i) != NULL)
             {
-                register int j;
+                int j;
                 int len = XVECLEN(x, i);
 
                 if (copied && len > 0)
@@ -1446,9 +1447,9 @@ rtx copy_rtx_if_shared(rtx orig)
 
 void reset_used_flags(rtx x)
 {
-    register int i, j;
-    register enum rtx_code code;
-    register char *format_ptr;
+    int i, j;
+    enum rtx_code code;
+    const char *format_ptr;
 
     if (x == 0)
         return;
@@ -1796,7 +1797,7 @@ rtx try_split(rtx pat, rtx trial, int last)
 
 rtx make_insn_raw(rtx pattern)
 {
-    register rtx insn;
+    rtx insn;
 
     /* If in RTL generation phase, see if FREE_INSN can be used.  */
     if (free_insn != 0 && rtx_equal_function_value_matters)
@@ -1821,7 +1822,7 @@ rtx make_insn_raw(rtx pattern)
 
 static rtx make_jump_insn_raw(rtx pattern)
 {
-    register rtx insn;
+    rtx insn;
 
     insn = rtx_alloc(JUMP_INSN);
     INSN_UID(insn) = cur_insn_uid++;
@@ -1839,7 +1840,7 @@ static rtx make_jump_insn_raw(rtx pattern)
 
 static rtx make_call_insn_raw(rtx pattern)
 {
-    register rtx insn;
+    rtx insn;
 
     insn = rtx_alloc(CALL_INSN);
     INSN_UID(insn) = cur_insn_uid++;
@@ -1856,7 +1857,7 @@ static rtx make_call_insn_raw(rtx pattern)
 /* Add INSN to the end of the doubly-linked list.
    INSN may be an INSN, JUMP_INSN, CALL_INSN, CODE_LABEL, BARRIER or NOTE.  */
 
-void add_insn(register rtx insn)
+void add_insn(rtx insn)
 {
     PREV_INSN(insn) = last_insn;
     NEXT_INSN(insn) = 0;
@@ -2028,13 +2029,13 @@ static rtx find_line_note(rtx insn)
 /* Make an instruction with body PATTERN
    and output it before the instruction BEFORE.  */
 
-rtx emit_insn_before(register rtx pattern, register rtx before)
+rtx emit_insn_before(rtx pattern, rtx before)
 {
-    register rtx insn = before;
+    rtx insn = before;
 
     if (GET_CODE(pattern) == SEQUENCE)
     {
-        register int i;
+        int i;
 
         for (i = 0; i < XVECLEN(pattern, 0); i++)
         {
@@ -2056,9 +2057,9 @@ rtx emit_insn_before(register rtx pattern, register rtx before)
 /* Make an instruction with body PATTERN and code JUMP_INSN
    and output it before the instruction BEFORE.  */
 
-rtx emit_jump_insn_before(register rtx pattern, register rtx before)
+rtx emit_jump_insn_before(rtx pattern, rtx before)
 {
-    register rtx insn;
+    rtx insn;
 
     if (GET_CODE(pattern) == SEQUENCE)
         insn = emit_insn_before(pattern, before);
@@ -2074,9 +2075,9 @@ rtx emit_jump_insn_before(register rtx pattern, register rtx before)
 /* Make an instruction with body PATTERN and code CALL_INSN
    and output it before the instruction BEFORE.  */
 
-rtx emit_call_insn_before(register rtx pattern, register rtx before)
+rtx emit_call_insn_before(rtx pattern, rtx before)
 {
-    register rtx insn;
+    rtx insn;
 
     if (GET_CODE(pattern) == SEQUENCE)
         insn = emit_insn_before(pattern, before);
@@ -2093,9 +2094,9 @@ rtx emit_call_insn_before(register rtx pattern, register rtx before)
 /* Make an insn of code BARRIER
    and output it before the insn AFTER.  */
 
-rtx emit_barrier_before(register rtx before)
+rtx emit_barrier_before(rtx before)
 {
-    register rtx insn = rtx_alloc(BARRIER);
+    rtx insn = rtx_alloc(BARRIER);
 
     INSN_UID(insn) = cur_insn_uid++;
 
@@ -2107,7 +2108,7 @@ rtx emit_barrier_before(register rtx before)
 
 rtx emit_note_before(int subtype, rtx before)
 {
-    register rtx note = rtx_alloc(NOTE);
+    rtx note = rtx_alloc(NOTE);
     INSN_UID(note) = cur_insn_uid++;
     NOTE_SOURCE_FILE(note) = 0;
     NOTE_LINE_NUMBER(note) = subtype;
@@ -2119,13 +2120,13 @@ rtx emit_note_before(int subtype, rtx before)
 /* Make an insn of code INSN with body PATTERN
    and output it after the insn AFTER.  */
 
-rtx emit_insn_after(register rtx pattern, register rtx after)
+rtx emit_insn_after(rtx pattern, rtx after)
 {
-    register rtx insn = after;
+    rtx insn = after;
 
     if (GET_CODE(pattern) == SEQUENCE)
     {
-        register int i;
+        int i;
 
         for (i = 0; i < XVECLEN(pattern, 0); i++)
         {
@@ -2164,9 +2165,9 @@ void emit_insn_after_with_line_notes(rtx pattern, rtx after, rtx from)
 /* Make an insn of code JUMP_INSN with body PATTERN
    and output it after the insn AFTER.  */
 
-rtx emit_jump_insn_after(register rtx pattern, register rtx after)
+rtx emit_jump_insn_after(rtx pattern, rtx after)
 {
-    register rtx insn;
+    rtx insn;
 
     if (GET_CODE(pattern) == SEQUENCE)
         insn = emit_insn_after(pattern, after);
@@ -2182,9 +2183,9 @@ rtx emit_jump_insn_after(register rtx pattern, register rtx after)
 /* Make an insn of code BARRIER
    and output it after the insn AFTER.  */
 
-rtx emit_barrier_after(register rtx after)
+rtx emit_barrier_after(rtx after)
 {
-    register rtx insn = rtx_alloc(BARRIER);
+    rtx insn = rtx_alloc(BARRIER);
 
     INSN_UID(insn) = cur_insn_uid++;
 
@@ -2212,7 +2213,7 @@ rtx emit_label_after(rtx label, rtx after)
 
 rtx emit_note_after(int subtype, rtx after)
 {
-    register rtx note = rtx_alloc(NOTE);
+    rtx note = rtx_alloc(NOTE);
     INSN_UID(note) = cur_insn_uid++;
     NOTE_SOURCE_FILE(note) = 0;
     NOTE_LINE_NUMBER(note) = subtype;
@@ -2222,9 +2223,9 @@ rtx emit_note_after(int subtype, rtx after)
 
 /* Emit a line note for FILE and LINE after the insn AFTER.  */
 
-rtx emit_line_note_after(char *file, int line, rtx after)
+rtx emit_line_note_after(const char *file, int line, rtx after)
 {
-    register rtx note;
+    rtx note;
 
     if (no_line_numbers && line > 0)
     {
@@ -2253,7 +2254,7 @@ rtx emit_insn(rtx pattern)
 
     if (GET_CODE(pattern) == SEQUENCE)
     {
-        register int i;
+        int i;
 
         for (i = 0; i < XVECLEN(pattern, 0); i++)
         {
@@ -2311,10 +2312,10 @@ rtx emit_insns_before(rtx insn, rtx before)
 /* Emit the insns in a chain starting with FIRST and place them in back of
    the insn AFTER.  Return the last insn emitted.  */
 
-rtx emit_insns_after(register rtx first, register rtx after)
+rtx emit_insns_after(rtx first, rtx after)
 {
-    register rtx last;
-    register rtx after_after;
+    rtx last;
+    rtx after_after;
 
     if (!after)
         abort();
@@ -2347,7 +2348,7 @@ rtx emit_jump_insn(rtx pattern)
         return emit_insn(pattern);
     else
     {
-        register rtx insn = make_jump_insn_raw(pattern);
+        rtx insn = make_jump_insn_raw(pattern);
         add_insn(insn);
         return insn;
     }
@@ -2362,7 +2363,7 @@ rtx emit_call_insn(rtx pattern)
         return emit_insn(pattern);
     else
     {
-        register rtx insn = make_call_insn_raw(pattern);
+        rtx insn = make_call_insn_raw(pattern);
         add_insn(insn);
         PUT_CODE(insn, CALL_INSN);
         return insn;
@@ -2389,7 +2390,7 @@ rtx emit_label(rtx label)
 
 rtx emit_barrier(void)
 {
-    register rtx barrier = rtx_alloc(BARRIER);
+    rtx barrier = rtx_alloc(BARRIER);
     INSN_UID(barrier) = cur_insn_uid++;
     add_insn(barrier);
     return barrier;
@@ -2400,7 +2401,7 @@ rtx emit_barrier(void)
    and add it to the end of the doubly-linked list,
    but only if line-numbers are desired for debugging info.  */
 
-rtx emit_line_note(char *file, int line)
+rtx emit_line_note(const char *file, int line)
 {
     emit_filename = file;
     emit_lineno = line;
@@ -2418,9 +2419,9 @@ rtx emit_line_note(char *file, int line)
    and add it to the end of the doubly-linked list.
    If it is a line-number NOTE, omit it if it matches the previous one.  */
 
-rtx emit_note(char *file, int line)
+rtx emit_note(const char *file, int line)
 {
-    register rtx note;
+    rtx note;
 
     if (line > 0)
     {
@@ -2446,7 +2447,7 @@ rtx emit_note(char *file, int line)
 
 /* Emit a NOTE, and don't omit it even if LINE is the previous note.  */
 
-rtx emit_line_note_force(char *file, int line)
+rtx emit_line_note_force(const char *file, int line)
 {
     last_linenum = -1;
     return emit_line_note(file, line);
@@ -2482,7 +2483,7 @@ enum rtx_code classify_insn(rtx x)
     }
     if (GET_CODE(x) == PARALLEL)
     {
-        register int j;
+        int j;
         for (j = XVECLEN(x, 0) - 1; j >= 0; j--)
             if (GET_CODE(XVECEXP(x, 0, j)) == CALL)
                 return CALL_INSN;
@@ -2508,7 +2509,7 @@ rtx emit(rtx x)
         return emit_insn(x);
     else if (code == JUMP_INSN)
     {
-        register rtx insn = emit_jump_insn(x);
+        rtx insn = emit_jump_insn(x);
         if (simplejump_p(insn) || GET_CODE(x) == RETURN)
             return emit_barrier();
         return insn;
@@ -2731,7 +2732,7 @@ void init_emit(void)
     regno_reg_rtx = (rtx *)savealloc(regno_pointer_flag_length * sizeof(rtx));
     zero_memory((char *)regno_reg_rtx, regno_pointer_flag_length * sizeof(rtx));
 
-    /* Put copies of all the virtual register rtx into regno_reg_rtx.  */
+    /* Put copies of all the virtual rtx into regno_reg_rtx.  */
     init_virtual_regs();
 
     /* Indicate that the virtual registers and stack locations are
@@ -2835,7 +2836,7 @@ void init_emit_once(int line_numbers)
             zero_memory((char *)&u, sizeof u); /* Zero any holes in a structure.  */
             u.d = i == 0 ? dconst0 : i == 1 ? dconst1 : dconst2;
 
-            for (int j = 0; j < sizeof(REAL_VALUE_TYPE) / sizeof(int32_t); j++)
+            for (int j = 0; j < sizeof(double) / sizeof(int32_t); j++)
                 XWINT(tem, 2 + j) = u.i[j];
 
             CONST_DOUBLE_MEM(tem) = cc0_rtx;
@@ -2856,7 +2857,7 @@ void init_emit_once(int line_numbers)
         const_tiny_rtx[0][(int)mode] = const0_rtx;
 
 
-    /* Assign register numbers to the globally defined register rtx.
+    /* Assign register numbers to the globally defined rtx.
        This must be done at runtime because the register number field
        is in a union and some compilers can't initialize unions.  */
 

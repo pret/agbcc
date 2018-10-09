@@ -37,7 +37,7 @@ static void fatal(const char *, ...) ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
 void fancy_abort(void) ATTRIBUTE_NORETURN;
 
 /* Names for patterns.  Need to allow linking with print-rtl.  */
-char **insn_name_ptr;
+const char **insn_name_ptr;
 
 /* Obstacks to remember normal, and call insns.  */
 static struct obstack call_obstack, normal_obstack;
@@ -58,7 +58,7 @@ static int num_operands(rtx x)
     int count = 0;
     int i, j;
     enum rtx_code code = GET_CODE(x);
-    char *format_ptr = GET_RTX_FORMAT(code);
+    const char *format_ptr = GET_RTX_FORMAT(code);
 
     if (code == MATCH_OPERAND)
         return 1;
@@ -116,8 +116,8 @@ static void gen_nonproto(rtx insn)
 
 static void gen_insn(rtx insn)
 {
-    char *name = XSTR(insn, 0);
-    char *p;
+    const char *name = XSTR(insn, 0);
+    const char *p;
     struct obstack *obstack_ptr;
     int len;
 
@@ -165,9 +165,9 @@ static void gen_insn(rtx insn)
     obstack_grow(obstack_ptr, &insn, sizeof(rtx));
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
@@ -175,10 +175,9 @@ void *xmalloc(size) size_t size;
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -218,7 +217,7 @@ int main(int argc, char **argv)
     rtx *normal_insns;
     rtx *insn_ptr;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
     obstack_init(&call_obstack);
@@ -261,27 +260,11 @@ from the machine description file `md'.  */\n\n");
     obstack_grow(&normal_obstack, &dummy, sizeof(rtx));
     normal_insns = (rtx *)obstack_finish(&normal_obstack);
 
-    printf("\n#ifndef NO_MD_PROTOTYPES\n");
     for (insn_ptr = normal_insns; *insn_ptr; insn_ptr++)
         gen_proto(*insn_ptr);
 
-    printf("\n#ifdef MD_CALL_PROTOTYPES\n");
     for (insn_ptr = call_insns; *insn_ptr; insn_ptr++)
         gen_proto(*insn_ptr);
-
-    printf("\n#else /* !MD_CALL_PROTOTYPES */\n");
-    for (insn_ptr = call_insns; *insn_ptr; insn_ptr++)
-        gen_nonproto(*insn_ptr);
-
-    printf("#endif /* !MD_CALL_PROTOTYPES */\n");
-    printf("\n#else  /* NO_MD_PROTOTYPES */\n");
-    for (insn_ptr = normal_insns; *insn_ptr; insn_ptr++)
-        gen_nonproto(*insn_ptr);
-
-    for (insn_ptr = call_insns; *insn_ptr; insn_ptr++)
-        gen_nonproto(*insn_ptr);
-
-    printf("#endif  /* NO_MD_PROTOTYPES */\n");
 
     fflush(stdout);
     exit(ferror(stdout) != 0 ? EXIT_FAILURE : EXIT_SUCCESS);

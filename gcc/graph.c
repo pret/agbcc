@@ -155,15 +155,15 @@ darkgrey\n  shape: ellipse"
     return result;
 }
 
-static void draw_edge(FILE *fp, int from, int to, int bb_edge, int class)
+static void draw_edge(FILE *fp, int from, int to, int bb_edge, int class_)
 {
     switch (graph_dump_format)
     {
     case vcg:
         fprintf(fp, "edge: { sourcename: \"%s.%d\" targetname: \"%s.%d\" %s", current_function_name,
-            from, current_function_name, to, bb_edge ? "color: blue " : class ? "color: red " : "");
-        if (class)
-            fprintf(fp, "class: %d ", class);
+            from, current_function_name, to, bb_edge ? "color: blue " : class_ ? "color: red " : "");
+        if (class_)
+            fprintf(fp, "class: %d ", class_);
         fputs("}\n", fp);
         break;
     case no_graph:
@@ -199,7 +199,7 @@ static void end_fct(FILE *fp)
    basic block.  */
 void print_rtl_graph_with_bb(const char *base, const char *suffix, rtx rtx_first)
 {
-    register rtx tmp_rtx;
+    rtx tmp_rtx;
     size_t namelen = strlen(base);
     size_t suffixlen = strlen(suffix);
     size_t extlen = strlen(graph_ext[graph_dump_format]) + 1;

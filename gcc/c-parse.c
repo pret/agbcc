@@ -207,7 +207,7 @@ enum yytokentype
 
 /* Since parsers are distinct for each language, put the language string
    definition here.  */
-char *language_string = "GNU C";
+const char *language_string = "GNU C";
 
 /* Like YYERROR but do call yyerror.  */
 #define YYERROR1                                                                                   \
@@ -245,7 +245,7 @@ typedef union YYSTYPE
     long itype;
     tree ttype;
     enum tree_code code;
-    char *filename;
+    const char *filename;
     int lineno;
     int ends_in_label;
 }
@@ -268,7 +268,7 @@ static int compstmt_count;
 
 /* Input file and line number of the end of the body of last simple_if;
    used by the stmt-rule immediately after simple_if returns.  */
-static char *if_stmt_file;
+static const char *if_stmt_file;
 static int if_stmt_line;
 
 /* List of types and structure classes of the current declaration.  */
@@ -2250,7 +2250,7 @@ yyreduce:
     case 62:
 
     {
-        char *name;
+        const char *name;
         tree result = pop_init_level(0);
         tree type = (yyvsp[(2) - (7)].ttype);
         finish_init();
@@ -2609,8 +2609,8 @@ yyreduce:
     case 90:
 
     {
-        char class = TREE_CODE_CLASS(TREE_CODE((yyvsp[(2) - (3)].ttype)));
-        if (class == 'e' || class == '1' || class == '2' || class == '<')
+        char cclass = TREE_CODE_CLASS(TREE_CODE((yyvsp[(2) - (3)].ttype)));
+        if (cclass == 'e' || cclass == '1' || cclass == '2' || cclass == '<')
             C_SET_EXP_ORIGINAL_CODE((yyvsp[(2) - (3)].ttype), ERROR_MARK);
         (yyval.ttype) = (yyvsp[(2) - (3)].ttype);
         ;
@@ -4666,8 +4666,8 @@ yyreduce:
     case 364:
 
     {
-        register tree value = check_case_value((yyvsp[(2) - (3)].ttype));
-        register tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
+        tree value = check_case_value((yyvsp[(2) - (3)].ttype));
+        tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
 
         stmt_count++;
 
@@ -4701,9 +4701,9 @@ yyreduce:
     case 365:
 
     {
-        register tree value1 = check_case_value((yyvsp[(2) - (5)].ttype));
-        register tree value2 = check_case_value((yyvsp[(4) - (5)].ttype));
-        register tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
+        tree value1 = check_case_value((yyvsp[(2) - (5)].ttype));
+        tree value2 = check_case_value((yyvsp[(4) - (5)].ttype));
+        tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
 
         if (pedantic)
             pedwarn("ANSI C forbids case ranges");
@@ -4736,7 +4736,7 @@ yyreduce:
 
     {
         tree duplicate;
-        register tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
+        tree label = build_decl(LABEL_DECL, NULL_TREE, NULL_TREE);
         int success = pushcase(NULL_TREE, 0, label, &duplicate);
         stmt_count++;
         if (success == 1)

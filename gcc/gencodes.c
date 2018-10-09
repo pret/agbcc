@@ -52,19 +52,18 @@ static void gen_insn(rtx insn)
         printf("  CODE_FOR_%s = %d,\n", XSTR(insn, 0), insn_code_number);
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -100,7 +99,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
 

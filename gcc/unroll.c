@@ -757,7 +757,7 @@ void unroll_loop(rtx loop_end, int insn_count, rtx loop_start, rtx end_insert_be
 
     splittable_regs = (rtx *)alloca(maxregnum * sizeof(rtx));
     zero_memory((char *)splittable_regs, maxregnum * sizeof(rtx));
-    derived_regs = alloca(maxregnum);
+    derived_regs = (char *)alloca(maxregnum);
     zero_memory(derived_regs, maxregnum);
     splittable_regs_updates = (int *)alloca(maxregnum * sizeof(int));
     zero_memory((char *)splittable_regs_updates, maxregnum * sizeof(int));
@@ -856,7 +856,7 @@ void unroll_loop(rtx loop_end, int insn_count, rtx loop_start, rtx end_insert_be
         if (precondition_loop_p(
                 loop_start, loop_info, &initial_value, &final_value, &increment, &mode))
         {
-            register rtx diff;
+            rtx diff;
             rtx *labels;
             int abs_inc, neg_inc;
 
@@ -3732,9 +3732,9 @@ loop_iterations(rtx loop_start, rtx loop_end, struct loop_info *loop_info)
 
 static rtx remap_split_bivs(rtx x)
 {
-    register enum rtx_code code;
-    register int i;
-    register char *fmt;
+    enum rtx_code code;
+    int i;
+    const char *fmt;
 
     if (x == 0)
         return x;
@@ -3772,7 +3772,7 @@ static rtx remap_split_bivs(rtx x)
             XEXP(x, i) = remap_split_bivs(XEXP(x, i));
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 XVECEXP(x, i, j) = remap_split_bivs(XVECEXP(x, i, j));
         }

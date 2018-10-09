@@ -34,10 +34,10 @@ struct obstack *rtl_obstack = &obstack;
 /* Define this so we can link with print-rtl.o to get debug_rtx function.  */
 char **insn_name_ptr = 0;
 
-static void write_upcase(char *);
+static void write_upcase(const char *);
 static void gen_attr(rtx);
 
-static void write_upcase(char *str)
+static void write_upcase(const char *str)
 {
     for (; *str; str++)
         if (*str >= 'a' && *str <= 'z')
@@ -48,13 +48,13 @@ static void write_upcase(char *str)
 
 static void gen_attr(rtx attr)
 {
-    char *p;
+    const char *p;
 
     printf("#define HAVE_ATTR_%s\n", XSTR(attr, 0));
 
     /* If numeric attribute, don't need to write an enum.  */
     if (*XSTR(attr, 1) == '\0')
-        printf("extern int get_attr_%s ();\n", XSTR(attr, 0));
+        printf("extern int get_attr_%s(rtx);\n", XSTR(attr, 0));
     else
     {
         printf("enum attr_%s {", XSTR(attr, 0));
@@ -76,14 +76,13 @@ static void gen_attr(rtx attr)
         }
 
         printf("};\n");
-        printf("extern enum attr_%s get_attr_%s ();\n\n", XSTR(attr, 0), XSTR(attr, 0));
+        printf("extern enum attr_%s get_attr_%s(rtx);\n\n", XSTR(attr, 0), XSTR(attr, 0));
     }
 
     /* If `length' attribute, write additional function definitions and define
        variables used by `insn_current_length'.  */
     if (!strcmp(XSTR(attr, 0), "length"))
     {
-        printf("extern void init_lengths ();\n");
         printf("extern void shorten_branches (rtx);\n");
         printf("extern int insn_default_length (rtx);\n");
         printf("extern int insn_variable_length_p (rtx);\n");

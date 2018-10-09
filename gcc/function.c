@@ -198,7 +198,7 @@ CUMULATIVE_ARGS current_function_args_info;
 
 /* Name of function now being compiled.  */
 
-char *current_function_name;
+const char *current_function_name;
 
 /* If non-zero, an RTL expression for the location at which the current
    function returns its result.  If the current function returns its
@@ -426,8 +426,8 @@ int target_temp_slot_level;
 
 struct fixup_replacement
 {
-    rtx old;
-    rtx new;
+    rtx old_rtx;
+    rtx new_rtx;
     struct fixup_replacement *next;
 };
 
@@ -435,8 +435,7 @@ struct fixup_replacement
 
 static rtx assign_outer_stack_local(enum machine_mode, int32_t, int, struct function *);
 static struct temp_slot *find_temp_slot_from_address(rtx);
-static void put_reg_into_stack(
-    struct function *, rtx, tree, enum machine_mode, enum machine_mode, int, int, int);
+static void put_reg_into_stack(struct function *, rtx, tree, enum machine_mode, enum machine_mode, int, int, int);
 static void fixup_var_refs(rtx, enum machine_mode, int);
 static struct fixup_replacement *find_fixup_replacement(struct fixup_replacement **, rtx);
 static void fixup_var_refs_insns(rtx, enum machine_mode, int, rtx, int);
@@ -462,7 +461,6 @@ static tree blocks_nreverse(tree);
 static int all_blocks(tree, tree *);
 #if defined(HAVE_prologue) || defined(HAVE_epilogue)
 static int *record_insns(rtx);
-static int contains(rtx, int *);
 #endif /* HAVE_prologue || HAVE_epilogue */
 static void put_addressof_into_stack(rtx);
 static void purge_addressof_1(rtx *, rtx, int, int);
@@ -687,7 +685,7 @@ get_frame_size(void)
 
 rtx assign_stack_local(enum machine_mode mode, int32_t size, int align)
 {
-    register rtx x, addr;
+    rtx x, addr;
     int bigend_correction = 0;
     int alignment;
 
@@ -746,7 +744,7 @@ rtx assign_stack_local(enum machine_mode mode, int32_t size, int align)
 static rtx assign_outer_stack_local(
     enum machine_mode mode, int32_t size, int align, struct function *function)
 {
-    register rtx x, addr;
+    rtx x, addr;
     int bigend_correction = 0;
     int alignment;
 
@@ -1062,21 +1060,21 @@ static struct temp_slot *find_temp_slot_from_address(rtx x)
 /* Indicate that NEW is an alternate way of referring to the temp slot
    that previously was known by OLD.  */
 
-void update_temp_slot_address(rtx old, rtx new)
+void update_temp_slot_address(rtx old_addr, rtx new_addr)
 {
-    struct temp_slot *p = find_temp_slot_from_address(old);
+    struct temp_slot *p = find_temp_slot_from_address(old_addr);
 
     /* If none, return.  Else add NEW as an alias.  */
     if (p == 0)
         return;
     else if (p->address == 0)
-        p->address = new;
+        p->address = new_addr;
     else
     {
         if (GET_CODE(p->address) != EXPR_LIST)
             p->address = gen_rtx_EXPR_LIST(VOIDmode, p->address, NULL_RTX);
 
-        p->address = gen_rtx_EXPR_LIST(VOIDmode, new, p->address);
+        p->address = gen_rtx_EXPR_LIST(VOIDmode, new_addr, p->address);
     }
 }
 
@@ -1267,7 +1265,7 @@ void init_temp_slots(void)
 
 void put_var_into_stack(tree decl)
 {
-    register rtx reg;
+    rtx reg;
     enum machine_mode promoted_mode, decl_mode;
     struct function *function = 0;
     tree context;
@@ -1383,7 +1381,7 @@ static void put_reg_into_stack(struct function *function, rtx reg, tree type,
     enum machine_mode promoted_mode, enum machine_mode decl_mode, int volatile_p,
     int original_regno, int used_p)
 {
-    rtx new = 0;
+    rtx new_reg = 0;
     int regno = original_regno;
 
     if (regno == 0)
@@ -1392,21 +1390,21 @@ static void put_reg_into_stack(struct function *function, rtx reg, tree type,
     if (function)
     {
         if (regno < function->max_parm_reg)
-            new = function->parm_reg_stack_loc[regno];
-        if (new == 0)
-            new = assign_outer_stack_local(decl_mode, GET_MODE_SIZE(decl_mode), 0, function);
+            new_reg = function->parm_reg_stack_loc[regno];
+        if (new_reg == 0)
+            new_reg = assign_outer_stack_local(decl_mode, GET_MODE_SIZE(decl_mode), 0, function);
     }
     else
     {
         if (regno < max_parm_reg)
-            new = parm_reg_stack_loc[regno];
-        if (new == 0)
-            new = assign_stack_local(decl_mode, GET_MODE_SIZE(decl_mode), 0);
+            new_reg = parm_reg_stack_loc[regno];
+        if (new_reg == 0)
+            new_reg = assign_stack_local(decl_mode, GET_MODE_SIZE(decl_mode), 0);
     }
 
     PUT_MODE(reg, decl_mode);
-    XEXP(reg, 0) = XEXP(new, 0);
-    /* `volatil' bit means one thing for MEMs, another entirely for REGs.  */
+    XEXP(reg, 0) = XEXP(new_reg, 0);
+    /* `volatile' bit means one thing for MEMs, another entirely for REGs.  */
     MEM_VOLATILE_P(reg) = volatile_p;
     PUT_CODE(reg, MEM);
 
@@ -1415,7 +1413,7 @@ static void put_reg_into_stack(struct function *function, rtx reg, tree type,
        previously generated stack slot, then we need to copy the bit in
        case it was set for other reasons.  For instance, it is set for
        __builtin_va_alist.  */
-    MEM_SET_IN_STRUCT_P(reg, AGGREGATE_TYPE_P(type) || MEM_IN_STRUCT_P(new));
+    MEM_SET_IN_STRUCT_P(reg, AGGREGATE_TYPE_P(type) || MEM_IN_STRUCT_P(new_reg));
     MEM_ALIAS_SET(reg) = get_alias_set(type);
 
     /* Now make sure that all refs to the variable, previously made
@@ -1492,14 +1490,14 @@ static struct fixup_replacement *find_fixup_replacement(
     struct fixup_replacement *p;
 
     /* See if we have already replaced this.  */
-    for (p = *replacements; p && p->old != x; p = p->next)
+    for (p = *replacements; p && p->old_rtx != x; p = p->next)
         ;
 
     if (p == 0)
     {
         p = (struct fixup_replacement *)oballoc(sizeof(struct fixup_replacement));
-        p->old = x;
-        p->new = 0;
+        p->old_rtx = x;
+        p->new_rtx = 0;
         p->next = *replacements;
         *replacements = p;
     }
@@ -1632,16 +1630,16 @@ static void fixup_var_refs_insns(
 
                 while (replacements)
                 {
-                    if (GET_CODE(replacements->new) == REG)
+                    if (GET_CODE(replacements->new_rtx) == REG)
                     {
                         rtx insert_before;
                         rtx seq;
 
                         /* OLD might be a (subreg (mem)).  */
-                        if (GET_CODE(replacements->old) == SUBREG)
-                            replacements->old = fixup_memory_subreg(replacements->old, insn, 0);
+                        if (GET_CODE(replacements->old_rtx) == SUBREG)
+                            replacements->old_rtx = fixup_memory_subreg(replacements->old_rtx, insn, 0);
                         else
-                            replacements->old = fixup_stack_1(replacements->old, insn);
+                            replacements->old_rtx = fixup_stack_1(replacements->old_rtx, insn);
 
                         insert_before = insn;
 
@@ -1649,15 +1647,15 @@ static void fixup_var_refs_insns(
                        This might be wasteful, but combine.c will
                        eliminate much of the waste.  */
 
-                        if (GET_MODE(replacements->new) != GET_MODE(replacements->old))
+                        if (GET_MODE(replacements->new_rtx) != GET_MODE(replacements->old_rtx))
                         {
                             start_sequence();
-                            convert_move(replacements->new, replacements->old, unsignedp);
+                            convert_move(replacements->new_rtx, replacements->old_rtx, unsignedp);
                             seq = gen_sequence();
                             end_sequence();
                         }
                         else
-                            seq = gen_move_insn(replacements->new, replacements->old);
+                            seq = gen_move_insn(replacements->new_rtx, replacements->old_rtx);
 
                         emit_insn_before(seq, insert_before);
                     }
@@ -1688,14 +1686,14 @@ static void fixup_var_refs_insns(
    we allocate it and update the list.  fixup_var_refs_insns will copy VAR
    or the SUBREG, as appropriate, to the pseudo.  */
 
-static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, register rtx *loc,
+static void fixup_var_refs_1(rtx var, enum machine_mode promoted_mode, rtx *loc,
     rtx insn, struct fixup_replacement **replacements)
 {
-    register int i;
-    register rtx x = *loc;
+    int i;
+    rtx x = *loc;
     RTX_CODE code = GET_CODE(x);
-    register char *fmt;
-    register rtx tem, tem1;
+    const char *fmt;
+    rtx tem, tem1;
     struct fixup_replacement *replacement;
 
     switch (code)
@@ -1728,13 +1726,13 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
                try to fix up this address in case it is invalid.  */
 
             replacement = find_fixup_replacement(replacements, var);
-            if (replacement->new)
+            if (replacement->new_rtx)
             {
-                *loc = replacement->new;
+                *loc = replacement->new_rtx;
                 return;
             }
 
-            *loc = replacement->new = x = fixup_stack_1(x, insn);
+            *loc = replacement->new_rtx = x = fixup_stack_1(x, insn);
 
             /* Unless we are forcing memory to register or we changed the mode,
                we can leave things the way they are if the insn is valid.  */
@@ -1743,7 +1741,7 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
             if (!flag_force_mem && GET_MODE(x) == promoted_mode && recog_memoized(insn) >= 0)
                 return;
 
-            *loc = replacement->new = gen_reg_rtx(promoted_mode);
+            *loc = replacement->new_rtx = gen_reg_rtx(promoted_mode);
             return;
         }
 
@@ -1755,10 +1753,10 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
         if (reg_mentioned_p(var, x))
         {
             replacement = find_fixup_replacement(replacements, x);
-            if (replacement->new == 0)
-                replacement->new = copy_most_rtx(x, var);
+            if (replacement->new_rtx == 0)
+                replacement->new_rtx = copy_most_rtx(x, var);
 
-            *loc = x = replacement->new;
+            *loc = x = replacement->new_rtx;
         }
         break;
 
@@ -1789,9 +1787,9 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
                 if (GET_MODE_BITSIZE(GET_MODE(tem)) > GET_MODE_BITSIZE(GET_MODE(var)))
                 {
                     replacement = find_fixup_replacement(replacements, var);
-                    if (replacement->new == 0)
-                        replacement->new = gen_reg_rtx(GET_MODE(var));
-                    SUBREG_REG(tem) = replacement->new;
+                    if (replacement->new_rtx == 0)
+                        replacement->new_rtx = gen_reg_rtx(GET_MODE(var));
+                    SUBREG_REG(tem) = replacement->new_rtx;
                 }
                 else
                     tem = fixup_memory_subreg(tem, insn, 0);
@@ -1877,9 +1875,9 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
             if (GET_MODE_SIZE(GET_MODE(x)) > GET_MODE_SIZE(GET_MODE(var)))
             {
                 replacement = find_fixup_replacement(replacements, var);
-                if (replacement->new == 0)
-                    replacement->new = gen_reg_rtx(GET_MODE(var));
-                SUBREG_REG(x) = replacement->new;
+                if (replacement->new_rtx == 0)
+                    replacement->new_rtx = gen_reg_rtx(GET_MODE(var));
+                SUBREG_REG(x) = replacement->new_rtx;
                 return;
             }
 
@@ -1888,19 +1886,19 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
                is recognized.  If not, or if we should force MEM into a register,
                make a pseudo for this SUBREG.  */
             replacement = find_fixup_replacement(replacements, x);
-            if (replacement->new)
+            if (replacement->new_rtx)
             {
-                *loc = replacement->new;
+                *loc = replacement->new_rtx;
                 return;
             }
 
-            replacement->new = *loc = fixup_memory_subreg(x, insn, 0);
+            replacement->new_rtx = *loc = fixup_memory_subreg(x, insn, 0);
 
             INSN_CODE(insn) = -1;
             if (!flag_force_mem && recog_memoized(insn) >= 0)
                 return;
 
-            *loc = replacement->new = gen_reg_rtx(GET_MODE(x));
+            *loc = replacement->new_rtx = gen_reg_rtx(GET_MODE(x));
             return;
         }
         break;
@@ -1919,11 +1917,11 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
             && (GET_MODE_SIZE(GET_MODE(XEXP(SET_DEST(x), 0))) > GET_MODE_SIZE(GET_MODE(var))))
         {
             replacement = find_fixup_replacement(replacements, var);
-            if (replacement->new == 0)
-                replacement->new = gen_reg_rtx(GET_MODE(var));
+            if (replacement->new_rtx == 0)
+                replacement->new_rtx = gen_reg_rtx(GET_MODE(var));
 
-            SUBREG_REG(XEXP(SET_DEST(x), 0)) = replacement->new;
-            emit_insn_after(gen_move_insn(var, replacement->new), insn);
+            SUBREG_REG(XEXP(SET_DEST(x), 0)) = replacement->new_rtx;
+            emit_insn_after(gen_move_insn(var, replacement->new_rtx), insn);
         }
 
         /* If SET_DEST is now a paradoxical SUBREG, put the result of this
@@ -1985,12 +1983,12 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
                 rtx pat;
 
                 replacement = find_fixup_replacement(replacements, SET_SRC(x));
-                if (replacement->new)
-                    SET_SRC(x) = replacement->new;
+                if (replacement->new_rtx)
+                    SET_SRC(x) = replacement->new_rtx;
                 else if (GET_CODE(SET_SRC(x)) == SUBREG)
-                    SET_SRC(x) = replacement->new = fixup_memory_subreg(SET_SRC(x), insn, 0);
+                    SET_SRC(x) = replacement->new_rtx = fixup_memory_subreg(SET_SRC(x), insn, 0);
                 else
-                    SET_SRC(x) = replacement->new = fixup_stack_1(SET_SRC(x), insn);
+                    SET_SRC(x) = replacement->new_rtx = fixup_stack_1(SET_SRC(x), insn);
 
                 if (recog_memoized(insn) >= 0)
                     return;
@@ -2097,7 +2095,7 @@ static void fixup_var_refs_1(register rtx var, enum machine_mode promoted_mode, 
             fixup_var_refs_1(var, promoted_mode, &XEXP(x, i), insn, replacements);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 fixup_var_refs_1(var, promoted_mode, &XVECEXP(x, i, j), insn, replacements);
         }
@@ -2142,11 +2140,11 @@ static rtx fixup_memory_subreg(rtx x, rtx insn, int uncritical)
 
    UNCRITICAL is as in fixup_memory_subreg.  */
 
-static rtx walk_fixup_memory_subreg(register rtx x, rtx insn, int uncritical)
+static rtx walk_fixup_memory_subreg(rtx x, rtx insn, int uncritical)
 {
-    register enum rtx_code code;
-    register char *fmt;
-    register int i;
+    enum rtx_code code;
+    const char *fmt;
+    int i;
 
     if (x == 0)
         return 0;
@@ -2165,7 +2163,7 @@ static rtx walk_fixup_memory_subreg(register rtx x, rtx insn, int uncritical)
             XEXP(x, i) = walk_fixup_memory_subreg(XEXP(x, i), insn, uncritical);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 XVECEXP(x, i, j) = walk_fixup_memory_subreg(XVECEXP(x, i, j), insn, uncritical);
         }
@@ -2181,13 +2179,13 @@ static rtx walk_fixup_memory_subreg(register rtx x, rtx insn, int uncritical)
 
 static rtx fixup_stack_1(rtx x, rtx insn)
 {
-    register int i;
-    register RTX_CODE code = GET_CODE(x);
-    register char *fmt;
+    int i;
+    RTX_CODE code = GET_CODE(x);
+    const char *fmt;
 
     if (code == MEM)
     {
-        register rtx ad = XEXP(x, 0);
+        rtx ad = XEXP(x, 0);
         /* If we have address of a stack slot but it's not valid
        (displacement is too large), compute the sum in a register.  */
         if (GET_CODE(ad) == PLUS && GET_CODE(XEXP(ad, 0)) == REG
@@ -2220,7 +2218,7 @@ static rtx fixup_stack_1(rtx x, rtx insn)
             XEXP(x, i) = fixup_stack_1(XEXP(x, i), insn);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 XVECEXP(x, i, j) = fixup_stack_1(XVECEXP(x, i, j), insn);
         }
@@ -2241,7 +2239,7 @@ static rtx fixup_stack_1(rtx x, rtx insn)
 
 static void optimize_bit_field(rtx body, rtx insn, rtx *equiv_mem)
 {
-    register rtx bitfield;
+    rtx bitfield;
     int destflag;
     rtx seq = 0;
     enum machine_mode mode;
@@ -2258,7 +2256,7 @@ static void optimize_bit_field(rtx body, rtx insn, rtx *equiv_mem)
         && ((mode = mode_for_size(INTVAL(XEXP(bitfield, 1)), MODE_INT, 1)) != BLKmode)
         && INTVAL(XEXP(bitfield, 2)) % INTVAL(XEXP(bitfield, 1)) == 0)
     {
-        register rtx memref = 0;
+        rtx memref = 0;
 
         /* Now check that the containing word is memory, not a register,
        and that it is safe to change the machine mode.  */
@@ -2471,7 +2469,7 @@ static void purge_addressof_1(rtx *loc, rtx insn, int force, int store)
     rtx x;
     RTX_CODE code;
     int i, j;
-    char *fmt;
+    const char *fmt;
 
     /* Re-start here to avoid recursion in common cases.  */
 restart:
@@ -2887,12 +2885,12 @@ static int instantiate_virtual_regs_1(rtx *loc, rtx object, int extra_insns)
 {
     rtx x;
     RTX_CODE code;
-    rtx new = 0;
+    rtx new_reg = NULL;
     int32_t offset;
     rtx temp;
     rtx seq;
     int i, j;
-    char *fmt;
+    const char *fmt;
 
     /* Re-start here to avoid recursion in common cases.  */
 restart:
@@ -2925,17 +2923,17 @@ restart:
        appropriate offset.  This is used, for example, in the handling
        of non-local gotos.  */
         if (SET_DEST(x) == virtual_incoming_args_rtx)
-            new = arg_pointer_rtx, offset = -in_arg_offset;
+            new_reg = arg_pointer_rtx, offset = -in_arg_offset;
         else if (SET_DEST(x) == virtual_stack_vars_rtx)
-            new = frame_pointer_rtx, offset = -var_offset;
+            new_reg = frame_pointer_rtx, offset = -var_offset;
         else if (SET_DEST(x) == virtual_stack_dynamic_rtx)
-            new = stack_pointer_rtx, offset = -dynamic_offset;
+            new_reg = stack_pointer_rtx, offset = -dynamic_offset;
         else if (SET_DEST(x) == virtual_outgoing_args_rtx)
-            new = stack_pointer_rtx, offset = -out_arg_offset;
+            new_reg = stack_pointer_rtx, offset = -out_arg_offset;
         else if (SET_DEST(x) == virtual_cfa_rtx)
-            new = arg_pointer_rtx, offset = -cfa_offset;
+            new_reg = arg_pointer_rtx, offset = -cfa_offset;
 
-        if (new)
+        if (new_reg)
         {
             /* The only valid sources here are PLUS or REG.  Just do
                the simplest possible thing to handle them.  */
@@ -2952,7 +2950,7 @@ restart:
             end_sequence();
 
             emit_insns_before(seq, object);
-            SET_DEST(x) = new;
+            SET_DEST(x) = new_reg;
 
             if (!validate_change(object, &SET_SRC(x), temp, 0) || !extra_insns)
                 abort();
@@ -2976,15 +2974,15 @@ restart:
                 rtx inner = XEXP(XEXP(x, 0), 0);
 
                 if (inner == virtual_incoming_args_rtx)
-                    new = arg_pointer_rtx, offset = in_arg_offset;
+                    new_reg = arg_pointer_rtx, offset = in_arg_offset;
                 else if (inner == virtual_stack_vars_rtx)
-                    new = frame_pointer_rtx, offset = var_offset;
+                    new_reg = frame_pointer_rtx, offset = var_offset;
                 else if (inner == virtual_stack_dynamic_rtx)
-                    new = stack_pointer_rtx, offset = dynamic_offset;
+                    new_reg = stack_pointer_rtx, offset = dynamic_offset;
                 else if (inner == virtual_outgoing_args_rtx)
-                    new = stack_pointer_rtx, offset = out_arg_offset;
+                    new_reg = stack_pointer_rtx, offset = out_arg_offset;
                 else if (inner == virtual_cfa_rtx)
-                    new = arg_pointer_rtx, offset = cfa_offset;
+                    new_reg = arg_pointer_rtx, offset = cfa_offset;
                 else
                 {
                     loc = &XEXP(x, 0);
@@ -2992,19 +2990,19 @@ restart:
                 }
 
                 instantiate_virtual_regs_1(&XEXP(XEXP(x, 0), 1), object, extra_insns);
-                new = gen_rtx_PLUS(Pmode, new, XEXP(XEXP(x, 0), 1));
+                new_reg = gen_rtx_PLUS(Pmode, new_reg, XEXP(XEXP(x, 0), 1));
             }
 
             else if (XEXP(x, 0) == virtual_incoming_args_rtx)
-                new = arg_pointer_rtx, offset = in_arg_offset;
+                new_reg = arg_pointer_rtx, offset = in_arg_offset;
             else if (XEXP(x, 0) == virtual_stack_vars_rtx)
-                new = frame_pointer_rtx, offset = var_offset;
+                new_reg = frame_pointer_rtx, offset = var_offset;
             else if (XEXP(x, 0) == virtual_stack_dynamic_rtx)
-                new = stack_pointer_rtx, offset = dynamic_offset;
+                new_reg = stack_pointer_rtx, offset = dynamic_offset;
             else if (XEXP(x, 0) == virtual_outgoing_args_rtx)
-                new = stack_pointer_rtx, offset = out_arg_offset;
+                new_reg = stack_pointer_rtx, offset = out_arg_offset;
             else if (XEXP(x, 0) == virtual_cfa_rtx)
-                new = arg_pointer_rtx, offset = cfa_offset;
+                new_reg = arg_pointer_rtx, offset = cfa_offset;
             else
             {
                 /* We know the second operand is a constant.  Unless the
@@ -3022,7 +3020,7 @@ restart:
 
             /* If the new constant is zero, try to replace the sum with just
                the register.  */
-            if (new_offset == const0_rtx && validate_change(object, loc, new, 0))
+            if (new_offset == const0_rtx && validate_change(object, loc, new_reg, 0))
                 return 1;
 
             /* Next try to replace the register and new offset.
@@ -3034,8 +3032,8 @@ restart:
 
             old = XEXP(x, 0);
             if (offset == 0
-                    ? !validate_change(object, &XEXP(x, 0), new, 0)
-                    : (XEXP(x, 0) = new, !validate_change(object, &XEXP(x, 1), new_offset, 0)))
+                    ? !validate_change(object, &XEXP(x, 0), new_reg, 0)
+                    : (XEXP(x, 0) = new_reg, !validate_change(object, &XEXP(x, 1), new_offset, 0)))
             {
                 if (!extra_insns)
                 {
@@ -3046,7 +3044,7 @@ restart:
                 /* Otherwise copy the new constant into a register and replace
                constant with that register.  */
                 temp = gen_reg_rtx(Pmode);
-                XEXP(x, 0) = new;
+                XEXP(x, 0) = new_reg;
                 if (validate_change(object, &XEXP(x, 1), temp, 0))
                     emit_insn_before(gen_move_insn(temp, new_offset), object);
                 else
@@ -3055,10 +3053,10 @@ restart:
                        register containing the sum.  */
 
                     XEXP(x, 0) = old;
-                    new = gen_rtx_PLUS(Pmode, new, new_offset);
+                    new_reg = gen_rtx_PLUS(Pmode, new_reg, new_offset);
 
                     start_sequence();
-                    temp = force_operand(new, NULL_RTX);
+                    temp = force_operand(new_reg, NULL_RTX);
                     seq = get_insns();
                     end_sequence();
 
@@ -3206,19 +3204,19 @@ restart:
         /* Try to replace with a PLUS.  If that doesn't work, compute the sum
        in front of this insn and substitute the temporary.  */
         if (x == virtual_incoming_args_rtx)
-            new = arg_pointer_rtx, offset = in_arg_offset;
+            new_reg = arg_pointer_rtx, offset = in_arg_offset;
         else if (x == virtual_stack_vars_rtx)
-            new = frame_pointer_rtx, offset = var_offset;
+            new_reg = frame_pointer_rtx, offset = var_offset;
         else if (x == virtual_stack_dynamic_rtx)
-            new = stack_pointer_rtx, offset = dynamic_offset;
+            new_reg = stack_pointer_rtx, offset = dynamic_offset;
         else if (x == virtual_outgoing_args_rtx)
-            new = stack_pointer_rtx, offset = out_arg_offset;
+            new_reg = stack_pointer_rtx, offset = out_arg_offset;
         else if (x == virtual_cfa_rtx)
-            new = arg_pointer_rtx, offset = cfa_offset;
+            new_reg = arg_pointer_rtx, offset = cfa_offset;
 
-        if (new)
+        if (new_reg)
         {
-            temp = plus_constant(new, offset);
+            temp = plus_constant(new_reg, offset);
             if (!validate_change(object, loc, temp, 0))
             {
                 if (!extra_insns)
@@ -3431,9 +3429,9 @@ int aggregate_value_p(tree exp)
 
 void assign_parms(tree fndecl, int second_time)
 {
-    register tree parm;
-    register rtx entry_parm = 0;
-    register rtx stack_parm = 0;
+    tree parm;
+    rtx entry_parm = NULL;
+    rtx stack_parm = NULL;
     CUMULATIVE_ARGS args_so_far;
     enum machine_mode promoted_mode, passed_mode;
     enum machine_mode nominal_mode, promoted_nominal_mode;
@@ -3836,7 +3834,7 @@ void assign_parms(tree fndecl, int second_time)
             /* Store the parm in a pseudoregister during the function, but we
                may need to do it in a wider mode.  */
 
-            register rtx parmreg;
+            rtx parmreg;
             int regno, regnoi = 0, regnor = 0;
 
             unsignedp = TREE_UNSIGNED(TREE_TYPE(parm));
@@ -3980,19 +3978,19 @@ void assign_parms(tree fndecl, int second_time)
 
             if (regno >= max_parm_reg)
             {
-                rtx *new;
+                rtx *new_regs;
                 int old_max_parm_reg = max_parm_reg;
 
                 /* It's slow to expand this one register at a time,
                but it's also rare and we need max_parm_reg to be
                precisely correct.  */
                 max_parm_reg = regno + 1;
-                new = (rtx *)savealloc(max_parm_reg * sizeof(rtx));
+                new_regs = (rtx *)savealloc(max_parm_reg * sizeof(rtx));
                 copy_memory(
-                    (char *)parm_reg_stack_loc, (char *)new, old_max_parm_reg * sizeof(rtx));
-                zero_memory((char *)(new + old_max_parm_reg),
+                    (char *)parm_reg_stack_loc, (char *)new_regs, old_max_parm_reg * sizeof(rtx));
+                zero_memory((char *)(new_regs + old_max_parm_reg),
                     (max_parm_reg - old_max_parm_reg) * sizeof(rtx));
-                parm_reg_stack_loc = new;
+                parm_reg_stack_loc = new_regs;
             }
 
             if (GET_CODE(parmreg) == CONCAT)
@@ -4400,7 +4398,7 @@ static tree round_down(tree value, int divisor)
 
 void uninitialized_vars_warning(tree block)
 {
-    register tree decl, sub;
+    tree decl, sub;
     for (decl = BLOCK_VARS(block); decl; decl = TREE_CHAIN(decl))
     {
         if (TREE_CODE(decl) == VAR_DECL
@@ -4432,7 +4430,7 @@ void uninitialized_vars_warning(tree block)
 
 void setjmp_args_warning(void)
 {
-    register tree decl;
+    tree decl;
     for (decl = DECL_ARGUMENTS(current_function_decl); decl; decl = TREE_CHAIN(decl))
         if (DECL_RTL(decl) != 0 && GET_CODE(DECL_RTL(decl)) == REG
             && regno_clobbered_at_setjmp(REGNO(DECL_RTL(decl))))
@@ -4444,7 +4442,7 @@ void setjmp_args_warning(void)
 
 void setjmp_protect(tree block)
 {
-    register tree decl, sub;
+    tree decl, sub;
     for (decl = BLOCK_VARS(block); decl; decl = TREE_CHAIN(decl))
         if ((TREE_CODE(decl) == VAR_DECL || TREE_CODE(decl) == PARM_DECL) && DECL_RTL(decl) != 0
             && (GET_CODE(DECL_RTL(decl)) == REG
@@ -4472,7 +4470,7 @@ void setjmp_protect(tree block)
 
 void setjmp_protect_args(void)
 {
-    register tree decl;
+    tree decl;
     for (decl = DECL_ARGUMENTS(current_function_decl); decl; decl = TREE_CHAIN(decl))
         if ((TREE_CODE(decl) == VAR_DECL || TREE_CODE(decl) == PARM_DECL) && DECL_RTL(decl) != 0
             && (GET_CODE(DECL_RTL(decl)) == REG
@@ -4841,7 +4839,7 @@ tree reorder_blocks(tree *block_vector, tree block, rtx insns)
 
 static tree blocks_nreverse(tree t)
 {
-    register tree prev = 0, decl, next;
+    tree prev = 0, decl, next;
     for (decl = t; decl; decl = next)
     {
         next = BLOCK_CHAIN(decl);
@@ -4881,7 +4879,7 @@ static int all_blocks(tree block, tree *vector)
    and initialize static variables for generating RTL for the statements
    of the function.  */
 
-void init_function_start(tree subr, char *filename, int line)
+void init_function_start(tree subr, const char *filename, int line)
 {
     init_stmt_for_function();
 
@@ -5049,7 +5047,7 @@ extern struct obstack permanent_obstack;
 
 void expand_function_start(tree subr, int parms_have_cleanups)
 {
-    register int i;
+    int i;
     tree tem;
     rtx last_ptr = NULL_RTX;
 
@@ -5097,7 +5095,7 @@ void expand_function_start(tree subr, int parms_have_cleanups)
     if (aggregate_value_p(DECL_RESULT(subr)))
     {
         /* Returning something that won't go in a register.  */
-        register rtx value_address = 0;
+        rtx value_address = 0;
 
 
         /* Expect to be passed the address of a place to store the value.
@@ -5326,9 +5324,9 @@ static void use_return_register(void)
    It is up to language-specific callers to do cleanups for parameters--
    or else, supply 1 for END_BINDINGS and we will call expand_end_bindings.  */
 
-void expand_function_end(char *filename, int line, int end_bindings)
+void expand_function_end(const char *filename, int line, int end_bindings)
 {
-    register int i;
+    int i;
     tree link;
 
 #ifdef TRAMPOLINE_TEMPLATE
@@ -5628,30 +5626,6 @@ static int *record_insns(rtx insns)
         vec[1] = 0;
     }
     return vec;
-}
-
-/* Determine how many INSN_UIDs in VEC are part of INSN.  */
-
-static int contains(rtx insn, int *vec)
-{
-    register int i, j;
-
-    if (GET_CODE(insn) == INSN && GET_CODE(PATTERN(insn)) == SEQUENCE)
-    {
-        int count = 0;
-        for (i = XVECLEN(PATTERN(insn), 0) - 1; i >= 0; i--)
-            for (j = 0; vec[j]; j++)
-                if (INSN_UID(XVECEXP(PATTERN(insn), 0, i)) == vec[j])
-                    count++;
-        return count;
-    }
-    else
-    {
-        for (j = 0; vec[j]; j++)
-            if (INSN_UID(insn) == vec[j])
-                return 1;
-    }
-    return 0;
 }
 #endif /* HAVE_prologue || HAVE_epilogue */
 

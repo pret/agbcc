@@ -113,12 +113,12 @@ struct constant_descriptor;
 struct rtx_const;
 struct pool_constant;
 
-static char *strip_reg_name(char *);
+static const char *strip_reg_name(const char *);
 static int contains_pointers_p(tree);
 static void decode_addr_const(tree, struct addr_const *);
 static int const_hash(tree);
 static int compare_constant(tree, struct constant_descriptor *);
-static char *compare_constant_1(tree, char *);
+static const char *compare_constant_1(tree, const char *);
 static struct constant_descriptor *record_constant(tree);
 static void record_constant_1(tree);
 static tree copy_constant(tree);
@@ -134,11 +134,11 @@ static int output_addressed_constants(tree);
 static void output_after_function_constants(void);
 static void output_constructor(tree, int);
 #ifdef ASM_OUTPUT_BSS
-static void asm_output_bss(FILE *, tree, char *, int, int);
+static void asm_output_bss(FILE *, tree, const char *, int, int);
 #endif
 #ifdef BSS_SECTION_ASM_OP
 #ifdef ASM_OUTPUT_ALIGNED_BSS
-static void asm_output_aligned_bss(FILE *, tree, char *, int, int);
+static void asm_output_aligned_bss(FILE *, tree, const char *, int, int);
 #endif
 #endif /* BSS_SECTION_ASM_OP */
 
@@ -218,7 +218,7 @@ int in_text_section(void)
    If NAME is NULL, get the name from DECL.
    If RELOC is 1, the initializer for DECL contains relocs.  */
 
-void named_section(tree decl, char *name, int reloc)
+void named_section(tree decl, const char *name, int reloc)
 {
     if (decl != NULL_TREE && TREE_CODE_CLASS(TREE_CODE(decl)) != 'd')
         abort();
@@ -236,7 +236,7 @@ void named_section(tree decl, char *name, int reloc)
         abort();
 #endif
 
-        in_named_name = obstack_alloc(&permanent_obstack, strlen(name) + 1);
+        in_named_name = (char *)obstack_alloc(&permanent_obstack, strlen(name) + 1);
         strcpy(in_named_name, name);
         in_section = in_named;
     }
@@ -287,7 +287,7 @@ void bss_section(void)
    ??? It is believed that this function will work in most cases so such
    support is localized here.  */
 
-static void asm_output_bss(FILE *file, tree decl, char *name, int size, int rounded)
+static void asm_output_bss(FILE *file, tree decl, const char *name, int size, int rounded)
 {
     ASM_GLOBALIZE_LABEL(file, name);
     bss_section();
@@ -310,7 +310,7 @@ static void asm_output_bss(FILE *file, tree decl, char *name, int size, int roun
    ??? It is believed that this function will work in most cases so such
    support is localized here.  */
 
-static void asm_output_aligned_bss(FILE *file, tree decl, char *name, int size, int align)
+static void asm_output_aligned_bss(FILE *file, tree decl, const char *name, int size, int align)
 {
     ASM_GLOBALIZE_LABEL(file, name);
     bss_section();
@@ -399,8 +399,8 @@ void exception_section(void)
 
 void make_function_rtl(tree decl)
 {
-    char *name = IDENTIFIER_POINTER(DECL_ASSEMBLER_NAME(decl));
-    char *new_name = name;
+    const char *name = IDENTIFIER_POINTER(DECL_ASSEMBLER_NAME(decl));
+    const char *new_name = name;
 
     /* Rename a nested function to avoid conflicts.  */
     if (decl_function_context(decl) != 0 && DECL_INITIAL(decl) != 0 && DECL_RTL(decl) == 0)
@@ -409,7 +409,7 @@ void make_function_rtl(tree decl)
 
         name = IDENTIFIER_POINTER(DECL_NAME(decl));
         ASM_FORMAT_PRIVATE_NAME(label, name, var_labelno);
-        name = obstack_copy0(saveable_obstack, label, strlen(label));
+        name = (const char *)obstack_copy0(saveable_obstack, label, strlen(label));
         var_labelno++;
     }
     else
@@ -420,10 +420,11 @@ void make_function_rtl(tree decl)
            is not prefixed.  */
         if (flag_prefix_function_name)
         {
-            new_name = (char *)alloca(strlen(name) + CHKR_PREFIX_SIZE + 1);
-            strcpy(new_name, CHKR_PREFIX);
-            strcpy(new_name + CHKR_PREFIX_SIZE, name);
-            name = obstack_copy0(saveable_obstack, new_name, strlen(new_name));
+            char *tmp_name = (char *)alloca(strlen(name) + CHKR_PREFIX_SIZE + 1);
+            strcpy(tmp_name, CHKR_PREFIX);
+            strcpy(tmp_name + CHKR_PREFIX_SIZE, name);
+            new_name = tmp_name;
+            name = (const char *)obstack_copy0(saveable_obstack, new_name, strlen(new_name));
         }
     }
 
@@ -459,7 +460,7 @@ void make_function_rtl(tree decl)
 
 /* Given NAME, a putative register name, discard any customary prefixes.  */
 
-static char *strip_reg_name(char *name)
+static const char *strip_reg_name(const char *name)
 {
 #ifdef REGISTER_PREFIX
     if (!strncmp(name, REGISTER_PREFIX, strlen(REGISTER_PREFIX)))
@@ -478,7 +479,7 @@ static char *strip_reg_name(char *name)
    Accept an exact spelling or a decimal number.
    Prefixes such as % are optional.  */
 
-int decode_reg_name(char *asmspec)
+int decode_reg_name(const char *asmspec)
 {
     if (asmspec != 0)
     {
@@ -508,7 +509,7 @@ int decode_reg_name(char *asmspec)
         {
             static struct
             {
-                char *name;
+                const char *name;
                 int number;
             } table[] = ADDITIONAL_REGISTER_NAMES;
 
@@ -538,9 +539,9 @@ int decode_reg_name(char *asmspec)
 
    This is never called for PARM_DECL nodes.  */
 
-void make_decl_rtl(tree decl, char *asmspec, int top_level)
+void make_decl_rtl(tree decl, const char *asmspec, int top_level)
 {
-    register char *name = 0;
+    char *name = 0;
     int reg_number;
 
     reg_number = decode_reg_name(asmspec);
@@ -626,7 +627,7 @@ void make_decl_rtl(tree decl, char *asmspec, int top_level)
                 char *label;
 
                 ASM_FORMAT_PRIVATE_NAME(label, name, var_labelno);
-                name = obstack_copy0(saveable_obstack, label, strlen(label));
+                name = (char *)obstack_copy0(saveable_obstack, label, strlen(label));
                 var_labelno++;
             }
 
@@ -642,7 +643,7 @@ void make_decl_rtl(tree decl, char *asmspec, int top_level)
                 new_name = (char *)alloca(strlen(name) + CHKR_PREFIX_SIZE + 1);
                 strcpy(new_name, CHKR_PREFIX);
                 strcpy(new_name + CHKR_PREFIX_SIZE, name);
-                name = obstack_copy0(saveable_obstack, new_name, strlen(new_name));
+                name = (char *)obstack_copy0(saveable_obstack, new_name, strlen(new_name));
             }
 
             DECL_RTL(decl) = gen_rtx_MEM(DECL_MODE(decl), gen_rtx_SYMBOL_REF(Pmode, name));
@@ -732,7 +733,7 @@ void assemble_asm(tree string)
    NAME is the function's name.  For the constant pool, we use the current
    constant pool data.  */
 
-void assemble_start_function(tree decl, char *fnname)
+void assemble_start_function(tree decl, const char *fnname)
 {
     int align;
 
@@ -790,7 +791,7 @@ void assemble_start_function(tree decl, char *fnname)
 /* Output assembler code associated with defining the size of the
    function.  DECL describes the function.  NAME is the function's name.  */
 
-void assemble_end_function(tree decl, char *fnname)
+void assemble_end_function(tree decl, const char *fnname)
 {
 #ifdef ASM_DECLARE_FUNCTION_SIZE
     ASM_DECLARE_FUNCTION_SIZE(asm_out_file, fnname, decl);
@@ -896,7 +897,7 @@ void assemble_string(char *p, int size)
     ASM_OUTPUT_COMMON(asm_out_file, name, size, rounded)
 #endif
 
-static void asm_emit_uninitialised(tree decl, char *name, int size, int rounded)
+static void asm_emit_uninitialised(tree decl, const char *name, int size, int rounded)
 {
     enum
     {
@@ -972,7 +973,7 @@ static void asm_emit_uninitialised(tree decl, char *name, int size, int rounded)
 void assemble_variable(
     tree decl, int top_level ATTRIBUTE_UNUSED, int at_end ATTRIBUTE_UNUSED, int dont_output_data)
 {
-    register char *name;
+    const char *name;
     unsigned int align;
     tree size_tree = 0;
     int reloc = 0;
@@ -1305,7 +1306,7 @@ void assemble_external_libcall(rtx fun ATTRIBUTE_UNUSED)
 
 /* Assemble a label named NAME.  */
 
-void assemble_label(char *name)
+void assemble_label(const char *name)
 {
     ASM_OUTPUT_LABEL(asm_out_file, name);
 }
@@ -1316,9 +1317,9 @@ void assemble_label(char *name)
    (usually by the addition of an underscore).
    Many macros in the tm file are defined to call this function.  */
 
-void assemble_name(FILE *file, char *name)
+void assemble_name(FILE *file, const char *name)
 {
-    char *real_name;
+    const char *real_name;
     tree id;
 
     STRIP_NAME_ENCODING(real_name, name);
@@ -1461,7 +1462,7 @@ int assemble_integer(rtx x, int size, int force)
 
 /* Assemble the floating-point constant D into an object of size MODE.  */
 
-void assemble_real(REAL_VALUE_TYPE d, enum machine_mode mode)
+void assemble_real(double d, enum machine_mode mode)
 {
     jmp_buf output_constant_handler;
 
@@ -1514,7 +1515,7 @@ static rtx const_double_chain;
 
 rtx immed_double_const(int32_t i0, int32_t i1, enum machine_mode mode)
 {
-    register rtx r;
+    rtx r;
 
     if (GET_MODE_CLASS(mode) == MODE_INT)
     {
@@ -1612,10 +1613,10 @@ rtx immed_double_const(int32_t i0, int32_t i1, enum machine_mode mode)
 /* Return a CONST_DOUBLE for a specified `double' value
    and machine mode.  */
 
-rtx immed_real_const_1(REAL_VALUE_TYPE d, enum machine_mode mode)
+rtx immed_real_const_1(double d, enum machine_mode mode)
 {
     union real_extract u;
-    register rtx r;
+    rtx r;
 
     /* Get the desired `double' value as a sequence of ints
        since that is how they are stored in a CONST_DOUBLE.  */
@@ -1647,7 +1648,7 @@ rtx immed_real_const_1(REAL_VALUE_TYPE d, enum machine_mode mode)
 
     for (r = const_double_chain; r; r = CONST_DOUBLE_CHAIN(r))
     {
-        for (int i = 0; i < sizeof(REAL_VALUE_TYPE) / sizeof(int32_t); i++)
+        for (int i = 0; i < 2; i++)
             if (u.i[i] != XWINT(r, 2 + i))
                 goto not_match;
         if (GET_MODE(r) == mode)
@@ -1667,7 +1668,7 @@ rtx immed_real_const_1(REAL_VALUE_TYPE d, enum machine_mode mode)
     rtl_in_saveable_obstack();
     r = rtx_alloc(CONST_DOUBLE);
     PUT_MODE(r, mode);
-    for (int i = 0; i < sizeof(REAL_VALUE_TYPE) / sizeof(int32_t); i++)
+    for (int i = 0; i < 2; i++)
         XWINT(r, 2 + i) = u.i[i];
     pop_obstacks();
 
@@ -1702,7 +1703,7 @@ rtx immed_real_const(tree exp)
 
 void clear_const_double_mem(void)
 {
-    register rtx r, next;
+    rtx r, next;
 
     /* Don't touch CONST_DOUBLE_MEM for nested functions.
        See force_const_mem for explanation.  */
@@ -1731,9 +1732,9 @@ struct addr_const
 
 static void decode_addr_const(tree exp, struct addr_const *value)
 {
-    register tree target = TREE_OPERAND(exp, 0);
-    register int offset = 0;
-    register rtx x;
+    tree target = TREE_OPERAND(exp, 0);
+    int offset = 0;
+    rtx x;
 
     while (1)
     {
@@ -1813,9 +1814,9 @@ static struct constant_descriptor *const_hash_table[MAX_HASH_TABLE];
 
 static int const_hash(tree exp)
 {
-    register char *p;
-    register int len = 0, hi = 0, i = 0;
-    register enum tree_code code = TREE_CODE(exp);
+    const char *p;
+    int len = 0, hi = 0, i = 0;
+    enum tree_code code = TREE_CODE(exp);
 
     /* Either set P and LEN to the address and len of something to hash and
        exit the switch or return a value.  */
@@ -1823,12 +1824,12 @@ static int const_hash(tree exp)
     switch (code)
     {
     case INTEGER_CST:
-        p = (char *)&TREE_INT_CST_LOW(exp);
+        p = (const char *)&TREE_INT_CST_LOW(exp);
         len = 2 * sizeof TREE_INT_CST_LOW(exp);
         break;
 
     case REAL_CST:
-        p = (char *)&TREE_REAL_CST(exp);
+        p = (const char *)&TREE_REAL_CST(exp);
         len = sizeof TREE_REAL_CST(exp);
         break;
 
@@ -1844,13 +1845,14 @@ static int const_hash(tree exp)
         if (TREE_CODE(TREE_TYPE(exp)) == SET_TYPE)
         {
             len = int_size_in_bytes(TREE_TYPE(exp));
-            p = (char *)alloca(len);
-            get_set_constructor_bytes(exp, (unsigned char *)p, len);
+            char *tmp = (char *)alloca(len);
+            get_set_constructor_bytes(exp, (unsigned char *)tmp, len);
+            p = tmp;
             break;
         }
         else
         {
-            register tree link;
+            tree link;
 
             /* For record type, include the type in the hashing.
                We do not do so for array types
@@ -1859,7 +1861,7 @@ static int const_hash(tree exp)
                Instead, we include the array size because the constructor could
                be shorter.  */
             if (TREE_CODE(TREE_TYPE(exp)) == RECORD_TYPE)
-                hi = ((unsigned long)TREE_TYPE(exp) & ((1 << HASHBITS) - 1)) % MAX_HASH_TABLE;
+                hi = ((uint32_t)TREE_TYPE(exp) & ((1 << HASHBITS) - 1)) % MAX_HASH_TABLE;
             else
                 hi = ((5 + int_size_in_bytes(TREE_TYPE(exp))) & ((1 << HASHBITS) - 1))
                     % MAX_HASH_TABLE;
@@ -1933,11 +1935,11 @@ static int compare_constant(tree exp, struct constant_descriptor *desc)
    against a subdescriptor, and if it succeeds it returns the
    address of the subdescriptor for the next operand.  */
 
-static char *compare_constant_1(tree exp, char *p)
+static const char *compare_constant_1(tree exp, const char *p)
 {
-    register char *strp;
-    register int len;
-    register enum tree_code code = TREE_CODE(exp);
+    const char *strp;
+    int len;
+    enum tree_code code = TREE_CODE(exp);
 
     if (code != (enum tree_code) * p++)
         return 0;
@@ -1952,7 +1954,7 @@ static char *compare_constant_1(tree exp, char *p)
         if (*p++ != TYPE_PRECISION(TREE_TYPE(exp)))
             return 0;
 
-        strp = (char *)&TREE_INT_CST_LOW(exp);
+        strp = (const char *)&TREE_INT_CST_LOW(exp);
         len = 2 * sizeof TREE_INT_CST_LOW(exp);
         break;
 
@@ -1961,7 +1963,7 @@ static char *compare_constant_1(tree exp, char *p)
         if (*p++ != TYPE_PRECISION(TREE_TYPE(exp)))
             return 0;
 
-        strp = (char *)&TREE_REAL_CST(exp);
+        strp = (const char *)&TREE_REAL_CST(exp);
         len = sizeof TREE_REAL_CST(exp);
         break;
 
@@ -1992,8 +1994,9 @@ static char *compare_constant_1(tree exp, char *p)
         {
             int xlen = len = int_size_in_bytes(TREE_TYPE(exp));
 
-            strp = (char *)alloca(len);
-            get_set_constructor_bytes(exp, (unsigned char *)strp, len);
+            char *tmp = (char *)alloca(len);
+            get_set_constructor_bytes(exp, (unsigned char *)tmp, len);
+            strp = tmp;
             if (memcmp((char *)&xlen, p, sizeof xlen))
                 return 0;
 
@@ -2002,7 +2005,7 @@ static char *compare_constant_1(tree exp, char *p)
         }
         else
         {
-            register tree link;
+            tree link;
             int length = list_length(CONSTRUCTOR_ELTS(exp));
             tree type;
             int have_purpose = 0;
@@ -2157,9 +2160,9 @@ static struct constant_descriptor *record_constant(tree exp)
 
 static void record_constant_1(tree exp)
 {
-    register char *strp;
-    register int len;
-    register enum tree_code code = TREE_CODE(exp);
+    char *strp;
+    int len;
+    enum tree_code code = TREE_CODE(exp);
 
     obstack_1grow(&permanent_obstack, (unsigned int)code);
 
@@ -2205,7 +2208,7 @@ static void record_constant_1(tree exp)
         }
         else
         {
-            register tree link;
+            tree link;
             int length = list_length(CONSTRUCTOR_ELTS(exp));
             tree type;
             int have_purpose = 0;
@@ -2428,12 +2431,12 @@ static tree copy_constant(tree exp)
 
 rtx output_constant_def(tree exp)
 {
-    register int hash;
-    register struct constant_descriptor *desc;
+    int hash;
+    struct constant_descriptor *desc;
     char label[256];
     char *found = 0;
     int reloc;
-    register rtx def;
+    rtx def;
 
     if (TREE_CST_RTL(exp))
         return TREE_CST_RTL(exp);
@@ -2723,7 +2726,7 @@ static void decode_rtx_const(enum machine_mode mode, rtx x, struct rtx_const *va
         if (GET_MODE(x) != VOIDmode)
         {
             value->mode = GET_MODE(x);
-            for (int i = 0; i < sizeof(REAL_VALUE_TYPE) / sizeof(int32_t); i++)
+            for (int i = 0; i < 2; i++)
                 value->un.du.i[i] = XWINT(x, 2 + i);
         }
         else
@@ -2801,8 +2804,8 @@ rtx simplify_subtraction(rtx x)
 
 static int const_hash_rtx(enum machine_mode mode, rtx x)
 {
-    register int hi;
-    register size_t i;
+    int hi;
+    size_t i;
 
     struct rtx_const value;
     decode_rtx_const(mode, x, &value);
@@ -2822,9 +2825,9 @@ static int const_hash_rtx(enum machine_mode mode, rtx x)
 
 static int compare_constant_rtx(enum machine_mode mode, rtx x, struct constant_descriptor *desc)
 {
-    register int *p = (int *)desc->contents;
-    register int *strp;
-    register int len;
+    int *p = (int *)desc->contents;
+    int *strp;
+    int len;
     struct rtx_const value;
 
     decode_rtx_const(mode, x, &value);
@@ -2845,7 +2848,7 @@ static int compare_constant_rtx(enum machine_mode mode, rtx x, struct constant_d
 static struct constant_descriptor *record_constant_rtx(enum machine_mode mode, rtx x)
 {
     struct constant_descriptor *ptr = 0;
-    char *label = 0;
+    char *label = NULL;
     struct rtx_const value;
 
     decode_rtx_const(mode, x, &value);
@@ -2867,10 +2870,10 @@ static struct constant_descriptor *record_constant_rtx(enum machine_mode mode, r
 
 rtx force_const_mem(enum machine_mode mode, rtx x)
 {
-    register int hash;
-    register struct constant_descriptor *desc;
+    int hash;
+    struct constant_descriptor *desc;
     char label[256];
-    char *found = 0;
+    char *found = NULL;
     rtx def;
 
     /* If we want this CONST_DOUBLE in the same mode as it is in memory
@@ -2905,8 +2908,8 @@ rtx force_const_mem(enum machine_mode mode, rtx x)
 
     if (found == 0)
     {
-        register struct pool_constant *pool;
-        register struct pool_sym *sym;
+        struct pool_constant *pool;
+        struct pool_sym *sym;
         int align;
 
         /* No constant equal to X is known to have been output.
@@ -3015,7 +3018,7 @@ rtx force_const_mem(enum machine_mode mode, rtx x)
 static struct pool_constant *find_pool_constant(rtx addr)
 {
     struct pool_sym *sym;
-    char *label = XSTR(addr, 0);
+    const char *label = XSTR(addr, 0);
 
     for (sym = const_rtx_sym_hash_table[SYMHASH(label)]; sym; sym = sym->next)
         if (sym->label == label)
@@ -3040,7 +3043,7 @@ enum machine_mode get_pool_mode(rtx addr)
 
 /* Write all the constants in the constant pool.  */
 
-void output_constant_pool(char *fnname ATTRIBUTE_UNUSED, tree fndecl ATTRIBUTE_UNUSED)
+void output_constant_pool(const char *fnname ATTRIBUTE_UNUSED, tree fndecl ATTRIBUTE_UNUSED)
 {
     struct pool_constant *pool;
     rtx x;
@@ -3101,7 +3104,7 @@ void output_constant_pool(char *fnname ATTRIBUTE_UNUSED, tree fndecl ATTRIBUTE_U
             if (GET_CODE(x) != CONST_DOUBLE)
                 abort();
 
-            for (int i = 0; i < sizeof(REAL_VALUE_TYPE) / sizeof(int32_t); i++)
+            for (int i = 0; i < 2; i++)
                 u.i[i] = XWINT(x, 2 + i);
 
             assemble_real(u.d, pool->mode);
@@ -3133,7 +3136,7 @@ void output_constant_pool(char *fnname ATTRIBUTE_UNUSED, tree fndecl ATTRIBUTE_U
 
 static void mark_constant_pool(void)
 {
-    register rtx insn;
+    rtx insn;
     struct pool_constant *pool;
 
     if (first_pool == 0)
@@ -3147,10 +3150,10 @@ static void mark_constant_pool(void)
             mark_constants(PATTERN(insn));
 }
 
-static void mark_constants(register rtx x)
+static void mark_constants(rtx x)
 {
-    register int i;
-    register char *format_ptr;
+    int i;
+    const char *format_ptr;
 
     if (x == 0)
         return;
@@ -3191,7 +3194,7 @@ static void mark_constants(register rtx x)
         case 'E':
             if (XVEC(x, i) != 0)
             {
-                register int j;
+                int j;
 
                 for (j = 0; j < XVECLEN(x, i); j++)
                     mark_constants(XVECEXP(x, i, j));
@@ -3225,7 +3228,7 @@ static int output_addressed_constants(tree exp)
     {
     case ADDR_EXPR:
     {
-        register tree constant = TREE_OPERAND(exp, 0);
+        tree constant = TREE_OPERAND(exp, 0);
 
         while (TREE_CODE(constant) == COMPONENT_REF)
         {
@@ -3254,7 +3257,7 @@ static int output_addressed_constants(tree exp)
 
     case CONSTRUCTOR:
     {
-        register tree link;
+        tree link;
         for (link = CONSTRUCTOR_ELTS(exp); link; link = TREE_CHAIN(link))
             if (TREE_VALUE(link) != 0)
                 reloc |= output_addressed_constants(TREE_VALUE(link));
@@ -3285,9 +3288,9 @@ static int output_addressed_constants(tree exp)
    for a structure constructor that wants to produce more than SIZE bytes.
    But such constructors will never be generated for any possible input.  */
 
-void output_constant(register tree exp, register int size)
+void output_constant(tree exp, int size)
 {
-    register enum tree_code code = TREE_CODE(TREE_TYPE(exp));
+    enum tree_code code = TREE_CODE(TREE_TYPE(exp));
 
     if (size == 0)
         return;
@@ -3401,14 +3404,14 @@ void output_constant(register tree exp, register int size)
 
 static void output_constructor(tree exp, int size)
 {
-    register tree link, field = 0;
+    tree link, field = 0;
     int32_t min_index = 0;
     /* Number of bytes output or skipped so far.
        In other words, current position within the constructor.  */
     int total_bytes = 0;
     /* Non-zero means BYTE contains part of a byte, to be output.  */
     int byte_buffer_in_use = 0;
-    register int byte = 0;
+    int byte = 0;
 
     if (32 < BITS_PER_UNIT)
         abort();
@@ -3448,7 +3451,7 @@ static void output_constructor(tree exp, int size)
 
         if (index && TREE_CODE(index) == RANGE_EXPR)
         {
-            register int fieldsize = int_size_in_bytes(TREE_TYPE(TREE_TYPE(exp)));
+            int fieldsize = int_size_in_bytes(TREE_TYPE(TREE_TYPE(exp)));
             int32_t lo_index = TREE_INT_CST_LOW(TREE_OPERAND(index, 0));
             int32_t hi_index = TREE_INT_CST_LOW(TREE_OPERAND(index, 1));
             int32_t index;
@@ -3468,7 +3471,7 @@ static void output_constructor(tree exp, int size)
         {
             /* An element that is not a bit-field.  */
 
-            register int fieldsize;
+            int fieldsize;
             /* Since this structure is static,
                we know the positions are constant.  */
             int bitpos = (field ? (TREE_INT_CST_LOW(DECL_FIELD_BITPOS(field)) / BITS_PER_UNIT) : 0);
@@ -3644,9 +3647,9 @@ void weak_finish(void) {}
 
 void assemble_alias(tree decl, tree target)
 {
-    char *name;
+    const char *name;
 
-    make_decl_rtl(decl, (char *)0, 1);
+    make_decl_rtl(decl, NULL, 1);
     name = XSTR(XEXP(DECL_RTL(decl), 0), 0);
 
 #ifdef ASM_OUTPUT_DEF

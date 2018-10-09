@@ -106,8 +106,8 @@ static inline bitmap_element *bitmap_element_allocate(void)
 #endif
 
             obstack_specify_allocation(&bitmap_obstack, OBSTACK_CHUNK_SIZE,
-                __alignof__(bitmap_element), (void *(*)())OBSTACK_CHUNK_ALLOC,
-                (void (*)())OBSTACK_CHUNK_FREE);
+                __alignof__(bitmap_element), (void *(*)(size_t))OBSTACK_CHUNK_ALLOC,
+                (void (*)(void *))OBSTACK_CHUNK_FREE);
         }
 
         element = (bitmap_element *)obstack_alloc(&bitmap_obstack, sizeof(bitmap_element));
@@ -496,9 +496,9 @@ bitmap bitmap_initialize(bitmap head)
 /* Function to print out the contents of a bitmap.  Unlike bitmap_debug_file,
    it does not print anything but the bits.  */
 
-void bitmap_print(FILE *file, bitmap head, char *prefix, char *suffix)
+void bitmap_print(FILE *file, bitmap head, const char *prefix, const char *suffix)
 {
-    char *comma = "";
+    const char *comma = "";
     int i;
 
     fputs(prefix, file);

@@ -60,7 +60,7 @@ static const char *type_from_format(int c)
     case 'w':
         return "int32_t";
     case 's':
-        return "char *";
+        return "const char *";
     case 'e':
     case 'u':
         return "rtx";
@@ -100,6 +100,31 @@ static const char *accessor_from_format(int c)
         return "XBITMAP";
     case 't':
         return "XTREE";
+    default:
+        abort();
+    }
+}
+
+
+static const char *cast_from_format(int c)
+{
+    switch (c)
+    {
+    case 'i':
+        return "(int)";
+    case 'w':
+        return "(int32_t)";
+    case 's':
+        return "(const char *)";
+    case 'e':
+    case 'u':
+        return "(struct rtx_def *)";
+    case 'E':
+        return "(struct rtvec_def *)";
+    case 'b':
+        return "(struct bitmap_head_def *)";
+    case 't':
+        return "(tree)";
     default:
         abort();
     }
@@ -189,7 +214,7 @@ static void gendef(FILE *f, const char *format)
     for (p = format, i = j = 0; *p; ++p, ++i)
         if (*p != '0')
         {
-            fprintf(f, "  %s (rt, %d) = arg%d;\n", accessor_from_format(*p), i, j++);
+            fprintf(f, "  %s (rt, %d) = %s arg%d;\n", accessor_from_format(*p), i, cast_from_format(*p), j++);
         }
 
     fprintf(f, "\n  return rt;\n}\n\n");
@@ -239,9 +264,9 @@ static void gencode(FILE *f)
 }
 
 #if defined(USE_C_ALLOCA)
-void *xmalloc(nbytes) size_t nbytes;
+void *xmalloc(size_t nbytes)
 {
-    register void *tmp = malloc(nbytes);
+    void *tmp = malloc(nbytes);
 
     if (!tmp)
     {

@@ -33,8 +33,8 @@ point formats, define REAL_ARITHMETIC in the tm.h file.
 
 In either case the machine files (tm.h) must not contain any code
 that tries to use host floating point arithmetic to convert
-REAL_VALUE_TYPEs from `double' to `float', pass them to fprintf,
-etc.  In cross-compile situations a REAL_VALUE_TYPE may not
+doubles from `double' to `float', pass them to fprintf,
+etc.  In cross-compile situations a double may not
 be intelligible to the host computer's native arithmetic.
 
 The emulator defaults to the host's floating point format so that
@@ -122,9 +122,9 @@ netlib.att.com: netlib/cephes.   */
 #define INFINITY
 #define NANS
 
-/* Construct macros to translate between REAL_VALUE_TYPE and e type.
+/* Construct macros to translate between double and e type.
    In GET_REAL and PUT_REAL, r and e are pointers.
-   A REAL_VALUE_TYPE is guaranteed to occupy contiguous locations
+   A double is guaranteed to occupy contiguous locations
    in memory, with no holes.  */
 
 #define NE 6
@@ -189,7 +189,7 @@ netlib.att.com: netlib/cephes.   */
 extern int extra_warnings;
 extern uint16_t ezero[], eone[];
 
-static void endian(uint16_t *, long *, enum machine_mode);
+static void endian(uint16_t *, int32_t *, enum machine_mode);
 static void eclear(uint16_t *);
 static void emov(uint16_t *, uint16_t *);
 static void eneg(uint16_t *);
@@ -215,9 +215,9 @@ static void eshup6(uint16_t *);
 static void eshdn6(uint16_t *);
 static void eaddm(uint16_t *, uint16_t *);
 static void esubm(uint16_t *, uint16_t *);
-static void m16m(unsigned int, unsigned short *, unsigned short *);
-static int edivm(unsigned short *, unsigned short *);
-static int emulm(unsigned short *, unsigned short *);
+static void m16m(unsigned int, uint16_t *, uint16_t *);
+static int edivm(uint16_t *, uint16_t *);
+static int emulm(uint16_t *, uint16_t *);
 static void emdnorm(uint16_t *, int, int, int32_t, int);
 static void esub(uint16_t *, uint16_t *, uint16_t *);
 static void eadd(uint16_t *, uint16_t *, uint16_t *);
@@ -238,24 +238,22 @@ static void euifrac(uint16_t *, uint32_t *, uint16_t *);
 static int eshift(uint16_t *, int);
 static int enormlz(uint16_t *);
 static void etoasc(uint16_t *, char *, int);
-static void asctoe24(char *, uint16_t *);
-static void asctoe53(char *, uint16_t *);
-static void asctoe(char *, uint16_t *);
-static void asctoeg(char *, uint16_t *, int);
+static void asctoe24(const char *, uint16_t *);
+static void asctoe53(const char *, uint16_t *);
+static void asctoe(const char *, uint16_t *);
+static void asctoeg(const char *, uint16_t *, int);
 static void efloor(uint16_t *, uint16_t *);
 static void eldexp(uint16_t *, int, uint16_t *);
 static void eiremain(uint16_t *, uint16_t *);
-static void mtherr(char *, int);
+static void mtherr(const char *, int);
 
 /* Copy 32-bit numbers obtained from array containing 16-bit numbers,
    swapping ends if required, into output array of longs.  The
    result is normally passed to fprintf by the ASM_OUTPUT_ macros.   */
 
-static void endian(e, x, mode) uint16_t e[];
-long x[];
-enum machine_mode mode;
+static void endian(uint16_t e[], int32_t x[], enum machine_mode mode)
 {
-    unsigned long th, t;
+    uint32_t th, t;
 
     if (REAL_WORDS_BIG_ENDIAN)
     {
@@ -263,18 +261,18 @@ enum machine_mode mode;
         {
         case DFmode:
             /* Swap halfwords in the second word.  */
-            th = (unsigned long)e[2] & 0xffff;
-            t = (unsigned long)e[3] & 0xffff;
+            th = (uint32_t)e[2] & 0xffff;
+            t = (uint32_t)e[3] & 0xffff;
             t |= th << 16;
-            x[1] = (long)t;
+            x[1] = (int32_t)t;
             /* fall into the float case */
 
         case SFmode:
             /* Swap halfwords in the first word.  */
-            th = (unsigned long)e[0] & 0xffff;
-            t = (unsigned long)e[1] & 0xffff;
+            th = (uint32_t)e[0] & 0xffff;
+            t = (uint32_t)e[1] & 0xffff;
             t |= th << 16;
-            x[0] = (long)t;
+            x[0] = (int32_t)t;
             break;
 
         default:
@@ -289,47 +287,30 @@ enum machine_mode mode;
         {
         case DFmode:
             /* Pack the second long */
-            th = (unsigned long)e[3] & 0xffff;
-            t = (unsigned long)e[2] & 0xffff;
+            th = (uint32_t)e[3] & 0xffff;
+            t = (uint32_t)e[2] & 0xffff;
             t |= th << 16;
-            x[1] = (long)t;
+            x[1] = (int32_t)t;
             /* fall into the float case */
 
         case SFmode:
             /* Pack the first long */
-            th = (unsigned long)e[1] & 0xffff;
-            t = (unsigned long)e[0] & 0xffff;
+            th = (uint32_t)e[1] & 0xffff;
+            t = (uint32_t)e[0] & 0xffff;
             t |= th << 16;
-            x[0] = (long)t;
+            x[0] = (int32_t)t;
             break;
 
         default:
             abort();
         }
     }
-
-    /* If 32 bits is an entire word for the target, but not for the host,
-       then sign-extend on the host so that the number will look the same
-       way on the host that it would on the target.  See for instance
-       simplify_unary_operation.  The #if is needed to avoid compiler
-       warnings.  */
-
-#if 32 > 32
-    if (BITS_PER_WORD < 32 && BITS_PER_WORD == 32)
-    {
-        if (x[0] & ((int32_t)1 << 31))
-            x[0] |= ((int32_t)(-1) << 32);
-
-        if (x[1] & ((int32_t)1 << 31))
-            x[1] |= ((int32_t)(-1) << 32);
-    }
-#endif
 }
 
 
 /* This is the implementation of the REAL_ARITHMETIC macro.  */
 
-void earith(REAL_VALUE_TYPE *value, int icode, REAL_VALUE_TYPE *r1, REAL_VALUE_TYPE *r2)
+void earith(double *value, int icode, double *r1, double *r2)
 {
     uint16_t d1[NE], d2[NE], v[NE];
     enum tree_code code;
@@ -394,14 +375,14 @@ void earith(REAL_VALUE_TYPE *value, int icode, REAL_VALUE_TYPE *r1, REAL_VALUE_T
 }
 
 
-/* Truncate REAL_VALUE_TYPE toward zero to signed int32_t.
+/* Truncate double toward zero to signed int32_t.
    implements REAL_VALUE_RNDZINT (x) (etrunci (x)).  */
 
-REAL_VALUE_TYPE
-etrunci(REAL_VALUE_TYPE x)
+double
+etrunci(double x)
 {
     uint16_t f[NE], g[NE];
-    REAL_VALUE_TYPE r;
+    double r;
     int32_t l;
 
     GET_REAL(&x, g);
@@ -414,14 +395,14 @@ etrunci(REAL_VALUE_TYPE x)
 }
 
 
-/* Truncate REAL_VALUE_TYPE toward zero to uint32_t;
+/* Truncate double toward zero to uint32_t;
    implements REAL_VALUE_UNSIGNED_RNDZINT (x) (etruncui (x)).  */
 
-REAL_VALUE_TYPE
-etruncui(REAL_VALUE_TYPE x)
+double
+etruncui(double x)
 {
     uint16_t f[NE], g[NE];
-    REAL_VALUE_TYPE r;
+    double r;
     uint32_t l;
 
     GET_REAL(&x, g);
@@ -436,13 +417,13 @@ etruncui(REAL_VALUE_TYPE x)
 
 /* This is the REAL_VALUE_ATOF function.  It converts a decimal or hexadecimal
    string to binary, rounding off as indicated by the machine_mode argument.
-   Then it promotes the rounded value to REAL_VALUE_TYPE.  */
+   Then it promotes the rounded value to double.  */
 
-REAL_VALUE_TYPE
-ereal_atof(char *s, enum machine_mode t)
+double
+ereal_atof(const char *s, enum machine_mode t)
 {
     uint16_t tem[NE], e[NE];
-    REAL_VALUE_TYPE r;
+    double r;
 
     switch (t)
     {
@@ -466,11 +447,11 @@ ereal_atof(char *s, enum machine_mode t)
 
 /* Expansion of REAL_NEGATE.  */
 
-REAL_VALUE_TYPE
-ereal_negate(REAL_VALUE_TYPE x)
+double
+ereal_negate(double x)
 {
     uint16_t e[NE];
-    REAL_VALUE_TYPE r;
+    double r;
 
     GET_REAL(&x, e);
     eneg(e);
@@ -483,7 +464,7 @@ ereal_negate(REAL_VALUE_TYPE x)
    implements REAL_VALUE_FIX (x).  */
 
 int32_t
-efixi(REAL_VALUE_TYPE x)
+efixi(double x)
 {
     uint16_t f[NE], g[NE];
     int32_t l;
@@ -503,7 +484,7 @@ efixi(REAL_VALUE_TYPE x)
    Negative input returns zero.  */
 
 uint32_t
-efixui(REAL_VALUE_TYPE x)
+efixui(double x)
 {
     uint16_t f[NE], g[NE];
     uint32_t l;
@@ -521,7 +502,7 @@ efixui(REAL_VALUE_TYPE x)
 
 /* REAL_VALUE_FROM_INT macro.  */
 
-void ereal_from_int(REAL_VALUE_TYPE *d, int32_t i, int32_t j, enum machine_mode mode)
+void ereal_from_int(double *d, int32_t i, int32_t j, enum machine_mode mode)
 {
     uint16_t df[NE], dg[NE];
     int32_t low, high;
@@ -549,7 +530,7 @@ void ereal_from_int(REAL_VALUE_TYPE *d, int32_t i, int32_t j, enum machine_mode 
     if (sign)
         eneg(dg);
 
-    /* A REAL_VALUE_TYPE may not be wide enough to hold the two int32_tS.
+    /* A double may not be wide enough to hold the two int32_tS.
        Avoid double-rounding errors later by rounding off now from the
        extra-wide internal format to the requested precision.  */
     switch (GET_MODE_BITSIZE(mode))
@@ -574,7 +555,7 @@ void ereal_from_int(REAL_VALUE_TYPE *d, int32_t i, int32_t j, enum machine_mode 
 
 /* REAL_VALUE_FROM_UNSIGNED_INT macro.   */
 
-void ereal_from_uint(REAL_VALUE_TYPE *d, uint32_t i, uint32_t j, enum machine_mode mode)
+void ereal_from_uint(double *d, uint32_t i, uint32_t j, enum machine_mode mode)
 {
     uint16_t df[NE], dg[NE];
     uint32_t low, high;
@@ -589,7 +570,7 @@ void ereal_from_uint(REAL_VALUE_TYPE *d, uint32_t i, uint32_t j, enum machine_mo
     ultoe(&low, df);
     eadd(df, dg, dg);
 
-    /* A REAL_VALUE_TYPE may not be wide enough to hold the two int32_tS.
+    /* A double may not be wide enough to hold the two int32_tS.
        Avoid double-rounding errors later by rounding off now from the
        extra-wide internal format to the requested precision.  */
     switch (GET_MODE_BITSIZE(mode))
@@ -614,7 +595,7 @@ void ereal_from_uint(REAL_VALUE_TYPE *d, uint32_t i, uint32_t j, enum machine_mo
 
 /* REAL_VALUE_TO_INT macro.  */
 
-void ereal_to_int(int32_t *low, int32_t *high, REAL_VALUE_TYPE rr)
+void ereal_to_int(int32_t *low, int32_t *high, double rr)
 {
     uint16_t d[NE], df[NE], dg[NE], dh[NE];
     int s;
@@ -653,11 +634,11 @@ void ereal_to_int(int32_t *low, int32_t *high, REAL_VALUE_TYPE rr)
 
 /* REAL_VALUE_LDEXP macro.  */
 
-REAL_VALUE_TYPE
-ereal_ldexp(REAL_VALUE_TYPE x, int n)
+double
+ereal_ldexp(double x, int n)
 {
     uint16_t e[NE], y[NE];
-    REAL_VALUE_TYPE r;
+    double r;
 
     GET_REAL(&x, e);
     if (eisnan(e))
@@ -671,9 +652,9 @@ ereal_ldexp(REAL_VALUE_TYPE x, int n)
    of the same names may be defined in fold-const.c.  */
 
 
-/* Check for infinity in a REAL_VALUE_TYPE.  */
+/* Check for infinity in a double.  */
 
-int target_isinf(REAL_VALUE_TYPE x)
+int target_isinf(double x)
 {
     uint16_t e[NE];
 
@@ -681,9 +662,9 @@ int target_isinf(REAL_VALUE_TYPE x)
     return (eisinf(e));
 }
 
-/* Check whether a REAL_VALUE_TYPE item is a NaN.  */
+/* Check whether a double item is a NaN.  */
 
-int target_isnan(REAL_VALUE_TYPE x)
+int target_isnan(double x)
 {
     uint16_t e[NE];
 
@@ -692,10 +673,10 @@ int target_isnan(REAL_VALUE_TYPE x)
 }
 
 
-/* Check for a negative REAL_VALUE_TYPE number.
+/* Check for a negative double number.
    This just checks the sign bit, so that -0 counts as negative.  */
 
-int target_negative(REAL_VALUE_TYPE x)
+int target_negative(double x)
 {
     return ereal_isneg(x);
 }
@@ -703,11 +684,11 @@ int target_negative(REAL_VALUE_TYPE x)
 /* Expansion of REAL_VALUE_TRUNCATE.
    The result is in floating point, rounded to nearest or even.  */
 
-REAL_VALUE_TYPE
-real_value_truncate(enum machine_mode mode, REAL_VALUE_TYPE arg)
+double
+real_value_truncate(enum machine_mode mode, double arg)
 {
     uint16_t e[NE], t[NE];
-    REAL_VALUE_TYPE r;
+    double r;
 
     GET_REAL(&arg, e);
     if (eisnan(e))
@@ -744,10 +725,10 @@ real_value_truncate(enum machine_mode mode, REAL_VALUE_TYPE arg)
 /* Try to change R into its exact multiplicative inverse in machine mode
    MODE.  Return nonzero function value if successful.  */
 
-int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
+int exact_real_inverse(enum machine_mode mode, double *r)
 {
     uint16_t e[NE], einv[NE];
-    REAL_VALUE_TYPE rinv;
+    double rinv;
     int i;
 
     GET_REAL(r, e);
@@ -801,7 +782,7 @@ int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
     return 1;
 }
 
-/* The following routines convert REAL_VALUE_TYPE to the various floating
+/* The following routines convert double to the various floating
    point formats that are meaningful to supported computers.
 
    The results are returned in 32-bit pieces, each piece stored in a `long'.
@@ -814,7 +795,7 @@ int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
 /* Convert R to a double precision value.  The output array L contains two
    32-bit pieces of the result, in the order they would appear in memory.  */
 
-void etardouble(REAL_VALUE_TYPE r, long l[])
+void etardouble(double r, int32_t l[])
 {
     uint16_t e[NE];
 
@@ -826,15 +807,15 @@ void etardouble(REAL_VALUE_TYPE r, long l[])
 /* Convert R to a single precision float value stored in the least-significant
    bits of a `long'.  */
 
-long etarsingle(REAL_VALUE_TYPE r)
+int32_t etarsingle(double r)
 {
     uint16_t e[NE];
-    long l;
+    int32_t l;
 
     GET_REAL(&r, e);
     etoe24(e, e);
     endian(e, &l, SFmode);
-    return ((long)l);
+    return ((int32_t)l);
 }
 
 /* Convert X to a decimal ASCII string S for output to an assembly
@@ -842,7 +823,7 @@ long etarsingle(REAL_VALUE_TYPE r)
    a NaN, so these values may require special treatment in the tm.h
    macros.  */
 
-void ereal_to_decimal(REAL_VALUE_TYPE x, char *s)
+void ereal_to_decimal(double x, char *s)
 {
     uint16_t e[NE];
 
@@ -853,7 +834,7 @@ void ereal_to_decimal(REAL_VALUE_TYPE x, char *s)
 /* Compare X and Y.  Return 1 if X > Y, 0 if X == Y, -1 if X < Y,
    or -2 if either is a NaN.   */
 
-int ereal_cmp(REAL_VALUE_TYPE x, REAL_VALUE_TYPE y)
+int ereal_cmp(double x, double y)
 {
     uint16_t ex[NE], ey[NE];
 
@@ -864,7 +845,7 @@ int ereal_cmp(REAL_VALUE_TYPE x, REAL_VALUE_TYPE y)
 
 /*  Return 1 if the sign bit of X is set, else return 0.  */
 
-int ereal_isneg(REAL_VALUE_TYPE x)
+int ereal_isneg(double x)
 {
     uint16_t ex[NE];
 
@@ -1076,9 +1057,9 @@ extern int rndprc;
 
 /*  Clear out entire e-type number X.  */
 
-static void eclear(x) register uint16_t *x;
+static void eclear(uint16_t *x)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NE; i++)
         *x++ = 0;
@@ -1086,9 +1067,9 @@ static void eclear(x) register uint16_t *x;
 
 /* Move e-type number from A to B.  */
 
-static void emov(a, b) register uint16_t *a, *b;
+static void emov(uint16_t *a, uint16_t *b)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NE; i++)
         *b++ = *a++;
@@ -1097,14 +1078,14 @@ static void emov(a, b) register uint16_t *a, *b;
 
 /* Negate the e-type number X.  */
 
-static void eneg(x) uint16_t x[];
+static void eneg(uint16_t x[])
 {
     x[NE - 1] ^= 0x8000; /* Toggle the sign bit */
 }
 
 /* Return 1 if sign bit of e-type number X is nonzero, else zero.  */
 
-static int eisneg(x) uint16_t x[];
+static int eisneg(uint16_t x[])
 {
     if (x[NE - 1] & 0x8000)
         return (1);
@@ -1114,7 +1095,7 @@ static int eisneg(x) uint16_t x[];
 
 /* Return 1 if e-type number X is infinity, else return zero.  */
 
-static int eisinf(x) uint16_t x[];
+static int eisinf(uint16_t x[])
 {
     if (eisnan(x))
         return (0);
@@ -1127,7 +1108,7 @@ static int eisinf(x) uint16_t x[];
 /* Check if e-type number is not a number.  The bit pattern is one that we
    defined, so we know for sure how to detect it.  */
 
-static int eisnan(x) uint16_t x[];
+static int eisnan(uint16_t x[])
 {
     int i;
 
@@ -1147,9 +1128,9 @@ static int eisnan(x) uint16_t x[];
 /*  Fill e-type number X with infinity pattern (IEEE)
     or largest possible number (non-IEEE).  */
 
-static void einfin(x) register uint16_t *x;
+static void einfin(uint16_t *x)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NE - 1; i++)
         *x++ = 0;
@@ -1160,10 +1141,9 @@ static void einfin(x) register uint16_t *x;
    This generates Intel's quiet NaN pattern for extended real.
    The exponent is 7fff, the leading mantissa word is c000.  */
 
-static void enan(x, sign) register uint16_t *x;
-int sign;
+static void enan(uint16_t *x, int sign)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NE - 2; i++)
         *x++ = 0;
@@ -1173,9 +1153,9 @@ int sign;
 
 /* Move in an e-type number A, converting it to exploded e-type B.  */
 
-static void emovi(a, b) uint16_t *a, *b;
+static void emovi(uint16_t *a, uint16_t *b)
 {
-    register uint16_t *p, *q;
+    uint16_t *p, *q;
     int i;
 
     q = b;
@@ -1214,9 +1194,9 @@ static void emovi(a, b) uint16_t *a, *b;
 
 /* Move out exploded e-type number A, converting it to e type B.  */
 
-static void emovo(a, b) uint16_t *a, *b;
+static void emovo(uint16_t *a, uint16_t *b)
 {
-    register uint16_t *p, *q;
+    uint16_t *p, *q;
     uint16_t i;
     int j;
 
@@ -1247,9 +1227,9 @@ static void emovo(a, b) uint16_t *a, *b;
 
 /* Clear out exploded e-type number XI.  */
 
-static void ecleaz(xi) register uint16_t *xi;
+static void ecleaz(uint16_t *xi)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NI; i++)
         *xi++ = 0;
@@ -1257,9 +1237,9 @@ static void ecleaz(xi) register uint16_t *xi;
 
 /* Clear out exploded e-type XI, but don't touch the sign.  */
 
-static void ecleazs(xi) register uint16_t *xi;
+static void ecleazs(uint16_t *xi)
 {
-    register int i;
+    int i;
 
     ++xi;
     for (i = 0; i < NI - 1; i++)
@@ -1268,9 +1248,9 @@ static void ecleazs(xi) register uint16_t *xi;
 
 /* Move exploded e-type number from A to B.  */
 
-static void emovz(a, b) register uint16_t *a, *b;
+static void emovz(uint16_t *a, uint16_t *b)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < NI - 1; i++)
         *b++ = *a++;
@@ -1282,7 +1262,7 @@ static void emovz(a, b) register uint16_t *a, *b;
    The explicit pattern for this is maximum exponent and
    top two significant bits set.  */
 
-static void einan(x) uint16_t x[];
+static void einan(uint16_t x[])
 {
     ecleaz(x);
     x[E] = 0x7fff;
@@ -1291,7 +1271,7 @@ static void einan(x) uint16_t x[];
 
 /* Return nonzero if exploded e-type X is a NaN.  */
 
-static int eiisnan(x) uint16_t x[];
+static int eiisnan(uint16_t x[])
 {
     int i;
 
@@ -1308,7 +1288,7 @@ static int eiisnan(x) uint16_t x[];
 
 /* Return nonzero if sign of exploded e-type X is nonzero.  */
 
-static int eiisneg(x) uint16_t x[];
+static int eiisneg(uint16_t x[])
 {
     return x[0] != 0;
 }
@@ -1320,7 +1300,7 @@ static int eiisneg(x) uint16_t x[];
          0 if a == b
         -1 if a < b   */
 
-static int ecmpm(a, b) register uint16_t *a, *b;
+static int ecmpm(uint16_t *a, uint16_t *b)
 {
     int i;
 
@@ -1342,9 +1322,9 @@ difrnt:
 
 /* Shift significand of exploded e-type X down by 1 bit.  */
 
-static void eshdn1(x) register uint16_t *x;
+static void eshdn1(uint16_t *x)
 {
-    register uint16_t bits;
+    uint16_t bits;
     int i;
 
     x += M; /* point to significand area */
@@ -1364,9 +1344,9 @@ static void eshdn1(x) register uint16_t *x;
 
 /* Shift significand of exploded e-type X up by 1 bit.  */
 
-static void eshup1(x) register uint16_t *x;
+static void eshup1(uint16_t *x)
 {
-    register uint16_t bits;
+    uint16_t bits;
     int i;
 
     x += NI - 1;
@@ -1387,9 +1367,9 @@ static void eshup1(x) register uint16_t *x;
 
 /* Shift significand of exploded e-type X down by 8 bits.  */
 
-static void eshdn8(x) register uint16_t *x;
+static void eshdn8(uint16_t *x)
 {
-    register uint16_t newbyt, oldbyt;
+    uint16_t newbyt, oldbyt;
     int i;
 
     x += M;
@@ -1406,10 +1386,10 @@ static void eshdn8(x) register uint16_t *x;
 
 /* Shift significand of exploded e-type X up by 8 bits.  */
 
-static void eshup8(x) register uint16_t *x;
+static void eshup8(uint16_t *x)
 {
     int i;
-    register uint16_t newbyt, oldbyt;
+    uint16_t newbyt, oldbyt;
 
     x += NI - 1;
     oldbyt = 0;
@@ -1426,10 +1406,10 @@ static void eshup8(x) register uint16_t *x;
 
 /* Shift significand of exploded e-type X up by 16 bits.  */
 
-static void eshup6(x) register uint16_t *x;
+static void eshup6(uint16_t *x)
 {
     int i;
-    register uint16_t *p;
+    uint16_t *p;
 
     p = x + M;
     x += M + 1;
@@ -1442,10 +1422,10 @@ static void eshup6(x) register uint16_t *x;
 
 /* Shift significand of exploded e-type X down by 16 bits.  */
 
-static void eshdn6(x) register uint16_t *x;
+static void eshdn6(uint16_t *x)
 {
     int i;
-    register uint16_t *p;
+    uint16_t *p;
 
     x += NI - 1;
     p = x + 1;
@@ -1458,9 +1438,9 @@ static void eshdn6(x) register uint16_t *x;
 
 /* Add significands of exploded e-type X and Y.  X + Y replaces Y.  */
 
-static void eaddm(x, y) uint16_t *x, *y;
+static void eaddm(uint16_t *x, uint16_t *y)
 {
-    register uint32_t a;
+    uint32_t a;
     int i;
     unsigned int carry;
 
@@ -1482,7 +1462,7 @@ static void eaddm(x, y) uint16_t *x, *y;
 
 /* Subtract significands of exploded e-type X and Y.  Y - X replaces Y.  */
 
-static void esubm(x, y) uint16_t *x, *y;
+static void esubm(uint16_t *x, uint16_t *y)
 {
     uint32_t a;
     int i;
@@ -1513,11 +1493,10 @@ static uint16_t equot[NI];
 /* Multiply significand of e-type number B
    by 16-bit quantity A, return e-type result to C.  */
 
-static void m16m(a, b, c) unsigned int a;
-uint16_t b[], c[];
+static void m16m(unsigned int a, uint16_t b[], uint16_t c[])
 {
-    register uint16_t *pp;
-    register uint32_t carry;
+    uint16_t *pp;
+    uint32_t carry;
     uint16_t *ps;
     uint16_t p[NI];
     uint32_t aa, m;
@@ -1555,10 +1534,10 @@ uint16_t b[], c[];
    numerator NUM nor the denominator DEN is permitted to have its high guard
    word nonzero.  */
 
-static int edivm(den, num) uint16_t den[], num[];
+static int edivm(uint16_t den[], uint16_t num[])
 {
     int i;
-    register uint16_t *p;
+    uint16_t *p;
     uint32_t tnum;
     uint16_t j, tdenm, tquot;
     uint16_t tprod[NI + 1];
@@ -1579,7 +1558,7 @@ static int edivm(den, num) uint16_t den[], num[];
         tnum = (((uint32_t)num[M]) << 16) + num[M + 1];
 
         /* Do not execute the divide instruction if it will overflow.  */
-        if ((tdenm * (unsigned long)0xffff) < tnum)
+        if ((tdenm * (uint32_t)0xffff) < tnum)
             tquot = 0xffff;
         else
             tquot = tnum / tdenm;
@@ -1618,7 +1597,7 @@ static int edivm(den, num) uint16_t den[], num[];
 
 /* Multiply significands of exploded e-type A and B, result in B.  */
 
-static int emulm(a, b) uint16_t a[], b[];
+static int emulm(uint16_t a[], uint16_t b[])
 {
     uint16_t *p, *q;
     uint16_t pprod[NI];
@@ -1691,11 +1670,7 @@ static uint16_t rebit = 0;
 static int re = 0;
 static uint16_t rbit[NI];
 
-static void emdnorm(s, lost, subflg, exp, rcntrl) uint16_t s[];
-int lost;
-int subflg;
-int32_t exp;
-int rcntrl;
+static void emdnorm(uint16_t s[], int lost, int subflg, int32_t exp, int rcntrl)
 {
     int i, j;
     uint16_t r;
@@ -1728,7 +1703,7 @@ int rcntrl;
     /* Round off, unless told not to by rcntrl.  */
     if (rcntrl == 0)
         goto mdfin;
-    /* Set up rounding parameters if the control register changed.  */
+    /* Set up rounding parameters if the control changed.  */
     if (rndprc != rlast)
     {
         ecleaz(rbit);
@@ -1871,7 +1846,7 @@ mdfin:
 
 static int subflg = 0;
 
-static void esub(a, b, c) uint16_t *a, *b, *c;
+static void esub(uint16_t *a, uint16_t *b, uint16_t *c)
 {
     if (eisnan(a))
     {
@@ -1897,7 +1872,7 @@ static void esub(a, b, c) uint16_t *a, *b, *c;
 
 /* Add.  C = A + B, all e type.  */
 
-static void eadd(a, b, c) uint16_t *a, *b, *c;
+static void eadd(uint16_t *a, uint16_t *b, uint16_t *c)
 {
     /* NaN plus anything is a NaN.  */
     if (eisnan(a))
@@ -1924,7 +1899,7 @@ static void eadd(a, b, c) uint16_t *a, *b, *c;
 
 /* Arithmetic common to both addition and subtraction.  */
 
-static void eadd1(a, b, c) uint16_t *a, *b, *c;
+static void eadd1(uint16_t *a, uint16_t *b, uint16_t *c)
 {
     uint16_t ai[NI], bi[NI], ci[NI];
     int i, lost, j, k;
@@ -2031,7 +2006,7 @@ done:
 
 /* Divide: C = B/A, all e type.  */
 
-static void ediv(a, b, c) uint16_t *a, *b, *c;
+static void ediv(uint16_t *a, uint16_t *b, uint16_t *c)
 {
     uint16_t ai[NI], bi[NI];
     int i, sign;
@@ -2124,7 +2099,7 @@ divsign:
 
 /* Multiply e-types A and B, return e-type product C.   */
 
-static void emul(a, b, c) uint16_t *a, *b, *c;
+static void emul(uint16_t *a, uint16_t *b, uint16_t *c)
 {
     uint16_t ai[NI], bi[NI];
     int i, j, sign;
@@ -2209,10 +2184,10 @@ mulsign:
 
 /* Convert double precision PE to e-type Y.  */
 
-static void e53toe(pe, y) uint16_t *pe, *y;
+static void e53toe(uint16_t *pe, uint16_t *y)
 {
-    register uint16_t r;
-    register uint16_t *e, *p;
+    uint16_t r;
+    uint16_t *e, *p;
     uint16_t yy[NI];
     int denorm, k;
 
@@ -2290,10 +2265,10 @@ static void e53toe(pe, y) uint16_t *pe, *y;
 
 /* Convert single precision float PE to e type Y.  */
 
-static void e24toe(pe, y) uint16_t *pe, *y;
+static void e24toe(uint16_t *pe, uint16_t *y)
 {
-    register uint16_t r;
-    register uint16_t *e, *p;
+    uint16_t r;
+    uint16_t *e, *p;
     uint16_t yy[NI];
     int denorm, k;
 
@@ -2366,7 +2341,7 @@ static void e24toe(pe, y) uint16_t *pe, *y;
 
 /* Convert e-type X to IEEE double E.  */
 
-static void etoe53(x, e) uint16_t *x, *e;
+static void etoe53(uint16_t *x, uint16_t *e)
 {
     uint16_t xi[NI];
     int32_t exp;
@@ -2389,7 +2364,7 @@ nonorm:
 /* Convert exploded e-type X, that has already been rounded to
    53-bit precision, to IEEE double Y.  */
 
-static void toe53(x, y) uint16_t *x, *y;
+static void toe53(uint16_t *x, uint16_t *y)
 {
     uint16_t i;
     uint16_t *p;
@@ -2449,7 +2424,7 @@ static void toe53(x, y) uint16_t *x, *y;
 
 /* Convert e-type X to IEEE float E.  DEC float is the same as IEEE float.  */
 
-static void etoe24(x, e) uint16_t *x, *e;
+static void etoe24(uint16_t *x, uint16_t *e)
 {
     int32_t exp;
     uint16_t xi[NI];
@@ -2472,7 +2447,7 @@ nonorm:
 /* Convert exploded e-type X, that has already been rounded to
    float precision, to IEEE float Y.  */
 
-static void toe24(x, y) uint16_t *x, *y;
+static void toe24(uint16_t *x, uint16_t *y)
 {
     uint16_t i;
     uint16_t *p;
@@ -2525,11 +2500,11 @@ static void toe24(x, y) uint16_t *x, *y;
           -1 if a < b
           -2 if either a or b is a NaN.  */
 
-static int ecmp(a, b) uint16_t *a, *b;
+static int ecmp(uint16_t *a, uint16_t *b)
 {
     uint16_t ai[NI], bi[NI];
-    register uint16_t *p, *q;
-    register int i;
+    uint16_t *p, *q;
+    int i;
     int msign;
 
     if (eisnan(a) || eisnan(b))
@@ -2583,8 +2558,7 @@ diff:
 
 /* Convert int32_t LP to e type Y.  */
 
-static void ltoe(lp, y) int32_t *lp;
-uint16_t *y;
+static void ltoe(int32_t *lp, uint16_t *y)
 {
     uint16_t yi[NI];
     uint32_t ll;
@@ -2602,17 +2576,10 @@ uint16_t *y;
         ll = (uint32_t)(*lp);
     }
     /* move the long integer to yi significand area */
-#if 32 == 64
-    yi[M] = (uint16_t)(ll >> 48);
-    yi[M + 1] = (uint16_t)(ll >> 32);
-    yi[M + 2] = (uint16_t)(ll >> 16);
-    yi[M + 3] = (uint16_t)ll;
-    yi[E] = EXONE + 47; /* exponent if normalize shift count were 0 */
-#else
+
     yi[M] = (uint16_t)(ll >> 16);
     yi[M + 1] = (uint16_t)ll;
     yi[E] = EXONE + 15; /* exponent if normalize shift count were 0 */
-#endif
 
     if ((k = enormlz(yi)) > NBITS) /* normalize the significand */
         ecleaz(yi);                /* it was zero */
@@ -2623,8 +2590,7 @@ uint16_t *y;
 
 /* Convert uint32_t LP to e type Y.  */
 
-static void ultoe(lp, y) uint32_t *lp;
-uint16_t *y;
+static void ultoe(uint32_t *lp, uint16_t *y)
 {
     uint16_t yi[NI];
     uint32_t ll;
@@ -2634,17 +2600,9 @@ uint16_t *y;
     ll = *lp;
 
     /* move the long integer to ayi significand area */
-#if 32 == 64
-    yi[M] = (uint16_t)(ll >> 48);
-    yi[M + 1] = (uint16_t)(ll >> 32);
-    yi[M + 2] = (uint16_t)(ll >> 16);
-    yi[M + 3] = (uint16_t)ll;
-    yi[E] = EXONE + 47; /* exponent if normalize shift count were 0 */
-#else
     yi[M] = (uint16_t)(ll >> 16);
     yi[M + 1] = (uint16_t)ll;
     yi[E] = EXONE + 15; /* exponent if normalize shift count were 0 */
-#endif
 
     if ((k = enormlz(yi)) > NBITS) /* normalize the significand */
         ecleaz(yi);                /* it was zero */
@@ -2660,9 +2618,7 @@ uint16_t *y;
    The output e-type fraction FRAC is the positive fractional
    part of abs (X).  */
 
-static void eifrac(x, i, frac) uint16_t *x;
-int32_t *i;
-uint16_t *frac;
+static void eifrac(uint16_t *x, int32_t *i, uint16_t *frac)
 {
     uint16_t xi[NI];
     int j, k;
@@ -2733,9 +2689,7 @@ uint16_t *frac;
    FRAC of e-type X.  A negative input yields integer output = 0 but
    correct fraction.  */
 
-static void euifrac(x, i, frac) uint16_t *x;
-uint32_t *i;
-uint16_t *frac;
+static void euifrac(uint16_t *x, uint32_t *i, uint16_t *frac)
 {
     uint32_t ll;
     uint16_t xi[NI];
@@ -2799,8 +2753,7 @@ uint16_t *frac;
 
 /* Shift the significand of exploded e-type X up or down by SC bits.  */
 
-static int eshift(x, sc) uint16_t *x;
-int sc;
+static int eshift(uint16_t *x, int sc)
 {
     uint16_t lost;
     uint16_t *p;
@@ -2863,9 +2816,9 @@ int sc;
 /* Shift normalize the significand area of exploded e-type X.
    Return the shift count (up = positive).  */
 
-static int enormlz(x) uint16_t x[];
+static int enormlz(uint16_t x[])
 {
-    register uint16_t *p;
+    uint16_t *p;
     int sc;
 
     sc = 0;
@@ -3153,9 +3106,7 @@ static uint16_t emtens[NTEN + 1][NE] = {
 
 static char wstring[80]; /* working storage for ASCII output */
 
-static void etoasc(x, string, ndigs) uint16_t x[];
-char *string;
-int ndigs;
+static void etoasc(uint16_t x[], char *string, int ndigs)
 {
     int16_t digit;
     uint16_t y[NI], t[NI], u[NI], w[NI];
@@ -3464,8 +3415,7 @@ bxit:
 
 /* Convert ASCII string S to single precision float value Y.  */
 
-static void asctoe24(s, y) char *s;
-uint16_t *y;
+static void asctoe24(const char *s, uint16_t *y)
 {
     asctoeg(s, y, 24);
 }
@@ -3473,16 +3423,14 @@ uint16_t *y;
 
 /* Convert ASCII string S to double precision value Y.  */
 
-static void asctoe53(s, y) char *s;
-uint16_t *y;
+static void asctoe53(const char *s, uint16_t *y)
 {
     asctoeg(s, y, 53);
 }
 
 /* Convert ASCII string S to e type Y.  */
 
-static void asctoe(s, y) char *s;
-uint16_t *y;
+static void asctoe(const char *s, uint16_t *y)
 {
     asctoeg(s, y, NBITS);
 }
@@ -3490,27 +3438,26 @@ uint16_t *y;
 /* Convert ASCII string SS to e type Y, with a specified rounding precision
    of OPREC bits.  BASE is 16 for C9X hexadecimal floating constants.  */
 
-static void asctoeg(ss, y, oprec) char *ss;
-uint16_t *y;
-int oprec;
+static void asctoeg(const char *ss, uint16_t *y, int oprec)
 {
     uint16_t yy[NI], xt[NI], tt[NI];
     int esign, decflg, sgnflg, nexp, exp, prec, lost;
     int k, trail, c, rndsav;
     int32_t lexp;
     uint16_t nsign, *p;
-    char *sp, *s, *lstr;
+    const char *ssp;
+    char *s, *sp, *lstr;
     int base = 10;
 
     /* Copy the input string.  */
     lstr = (char *)alloca(strlen(ss) + 1);
 
-    s = ss;
-    while (*s == ' ') /* skip leading spaces */
-        ++s;
+    ssp = ss;
+    while (*ssp == ' ') /* skip leading spaces */
+        ++ssp;
 
     sp = lstr;
-    while ((*sp++ = *s++) != '\0')
+    while ((*sp++ = *ssp++) != '\0')
         ;
     s = lstr;
 
@@ -3853,9 +3800,9 @@ static uint16_t bmask[] = {
     0x0000,
 };
 
-static void efloor(x, y) uint16_t x[], y[];
+static void efloor(uint16_t x[], uint16_t y[])
 {
-    register uint16_t *p;
+    uint16_t *p;
     int e, expon, i;
     uint16_t f[NE];
 
@@ -3900,9 +3847,7 @@ isitneg:
 
 /* Return e type Y = X * 2^PWR2.  */
 
-static void eldexp(x, pwr2, y) uint16_t x[];
-int pwr2;
-uint16_t y[];
+static void eldexp(uint16_t x[], int pwr2, uint16_t y[])
 {
     uint16_t xi[NI];
     int32_t li;
@@ -3920,7 +3865,7 @@ uint16_t y[];
 /*  Return quotient of exploded e-types NUM / DEN in EQUOT,
     remainder in NUM.  */
 
-static void eiremain(den, num) uint16_t den[], num[];
+static void eiremain(uint16_t den[], uint16_t num[])
 {
     int32_t ld, ln;
     uint16_t j;
@@ -3966,7 +3911,7 @@ static void eiremain(den, num) uint16_t den[], num[];
    error codes defined above.  */
 
 #define NMSGS 8
-static char *ermsg[NMSGS] = { "unknown", /* error code 0 */
+static const char *ermsg[NMSGS] = { "unknown", /* error code 0 */
     "domain error",                      /* error code 1 */
     "singularity",                       /* et seq.      */
     "overflow", "underflow", "total loss of precision", "partial loss of precision",
@@ -3975,7 +3920,7 @@ static char *ermsg[NMSGS] = { "unknown", /* error code 0 */
 int merror = 0;
 extern int merror;
 
-static void mtherr(char *name, int code)
+static void mtherr(const char *name, int code)
 {
     char errstr[80];
 
@@ -4008,14 +3953,14 @@ static void mtherr(char *name, int code)
     merror = code + 1;
 }
 
-/* Convert an SFmode target `float' value to a REAL_VALUE_TYPE.
+/* Convert an SFmode target `float' value to a double.
    This is somewhat like ereal_unto_float, but the input types
    for these are different.  */
 
-REAL_VALUE_TYPE
+double
 ereal_from_float(int32_t f)
 {
-    REAL_VALUE_TYPE r;
+    double r;
     uint16_t s[2];
     uint16_t e[NE];
 
@@ -4033,13 +3978,13 @@ ereal_from_float(int32_t f)
     }
     /* Convert and promote the target float to E-type.  */
     e24toe(s, e);
-    /* Output E-type to REAL_VALUE_TYPE.  */
+    /* Output E-type to double.  */
     PUT_REAL(e, &r);
     return r;
 }
 
 
-/* Convert a DFmode target `double' value to a REAL_VALUE_TYPE.
+/* Convert a DFmode target `double' value to a double.
    This is somewhat like ereal_unto_double, but the input types
    for these are different.
 
@@ -4048,10 +3993,10 @@ ereal_from_float(int32_t f)
    of the input array holds the bits that would come first in the
    target computer's memory.  */
 
-REAL_VALUE_TYPE
+double
 ereal_from_double(int32_t d[])
 {
-    REAL_VALUE_TYPE r;
+    double r;
     uint16_t s[4];
     uint16_t e[NE];
 
@@ -4060,33 +4005,20 @@ ereal_from_double(int32_t d[])
     {
         s[0] = (uint16_t)(d[0] >> 16);
         s[1] = (uint16_t)d[0];
-#if 32 == 32
         s[2] = (uint16_t)(d[1] >> 16);
         s[3] = (uint16_t)d[1];
-#else
-        /* In this case the entire target double is contained in the
-       first array element.  The second element of the input is
-       ignored.  */
-        s[2] = (uint16_t)(d[0] >> 48);
-        s[3] = (uint16_t)(d[0] >> 32);
-#endif
     }
     else
     {
         /* Target float words are little-endian.  */
         s[0] = (uint16_t)d[0];
         s[1] = (uint16_t)(d[0] >> 16);
-#if 32 == 32
         s[2] = (uint16_t)d[1];
         s[3] = (uint16_t)(d[1] >> 16);
-#else
-        s[2] = (uint16_t)(d[0] >> 32);
-        s[3] = (uint16_t)(d[0] >> 48);
-#endif
     }
     /* Convert target double to E-type.  */
     e53toe(s, e);
-    /* Output E-type to REAL_VALUE_TYPE.  */
+    /* Output E-type to double.  */
     PUT_REAL(e, &r);
     return r;
 }

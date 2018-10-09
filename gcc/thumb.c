@@ -43,7 +43,7 @@ static int current_function_has_far_jump = 0;
 #endif
 
 /* Used to parse -mstructure_size_boundary command line option.  */
-char *structure_size_string = NULL;
+const char *structure_size_string = NULL;
 int arm_structure_size_boundary = 32; /* Used to be 8 */
 
 /* Predicates */
@@ -57,7 +57,6 @@ int thumb_cmp_operand(rtx op, enum machine_mode mode)
 
 int thumb_shiftable_const(int32_t val)
 {
-    uint32_t x = val;
     uint32_t mask = 0xff;
     int i;
 
@@ -147,7 +146,6 @@ static rtx pool_vector_label;
 static int32_t add_constant(rtx x, enum machine_mode mode)
 {
     int i;
-    rtx lab;
     int32_t offset;
 
     if (mode == SImode && GET_CODE(x) == MEM && CONSTANT_P(XEXP(x, 0))
@@ -252,7 +250,7 @@ static rtx find_barrier(rtx from)
             && CONSTANT_P(SET_SRC(PATTERN(from)))
             && CONSTANT_POOL_ADDRESS_P(SET_SRC(PATTERN(from))))
         {
-            rtx src = SET_SRC(PATTERN(from));
+            rtx src ATTRIBUTE_UNUSED = SET_SRC(PATTERN(from));
             count += 2;
         }
         else
@@ -480,16 +478,6 @@ void final_prescan_insn(rtx insn)
 
 static void thumb_pushpop(FILE *, int, int); /* Forward declaration.  */
 
-static inline int number_of_first_bit_set(int mask)
-{
-    int bit;
-
-    for (bit = 0; (mask & (1 << bit)) == 0; ++bit)
-        continue;
-
-    return bit;
-}
-
 #define ARG_1_REGISTER 0
 #define ARG_2_REGISTER 1
 #define ARG_3_REGISTER 2
@@ -688,7 +676,6 @@ static int return_used_this_function = 0;
 
 void thumb_function_prologue(FILE *f, int frame_size)
 {
-    int amount = frame_size + current_function_outgoing_args_size;
     int live_regs_mask = 0;
     int high_regs_pushed = 0;
     int store_arg_regs = 0;
@@ -850,7 +837,6 @@ void thumb_expand_prologue(void)
 void thumb_expand_epilogue(void)
 {
     int32_t amount = (get_frame_size() + current_function_outgoing_args_size);
-    int regno;
 
     if (arm_naked_function_p(current_function_decl))
         return;
@@ -888,7 +874,7 @@ void thumb_function_epilogue(FILE *f, int frame_size)
 }
 
 /* The bits which aren't usefully expanded as rtl. */
-char *thumb_unexpanded_epilogue(void)
+const char *thumb_unexpanded_epilogue(void)
 {
     int regno;
     int live_regs_mask = 0;
@@ -1044,7 +1030,7 @@ char *thumb_unexpanded_epilogue(void)
    a computed memory address.  The computed address may involve a
    register which is overwritten by the load.  */
 
-char *thumb_load_double_from_address(rtx *operands)
+const char *thumb_load_double_from_address(rtx *operands)
 {
     rtx addr;
     rtx base;
@@ -1178,7 +1164,7 @@ char *thumb_load_double_from_address(rtx *operands)
     return "";
 }
 
-char *output_move_mem_multiple(int n, rtx *operands)
+const char *output_move_mem_multiple(int n, rtx *operands)
 {
     rtx tmp;
 
@@ -1225,10 +1211,10 @@ char *output_move_mem_multiple(int n, rtx *operands)
     return "";
 }
 
-static char *conds[]
+static const char *conds[]
     = { "eq", "ne", "cs", "cc", "mi", "pl", "vs", "vc", "hi", "ls", "ge", "lt", "gt", "le" };
 
-static char *thumb_condition_code(rtx x, int invert)
+static const char *thumb_condition_code(rtx x, int invert)
 {
     int val;
 

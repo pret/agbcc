@@ -94,16 +94,11 @@
 #define ALIAS 315
 #define OBJC_STRING 316
 
-
-
-
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 87 "c-parse.y"
 {long itype; tree ttype; enum tree_code code;
-	char *filename; int lineno; int ends_in_label; }
+	const char *filename; int lineno; int ends_in_label; }
 /* Line 1489 of yacc.c.  */
-#line 174 "c-parse.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

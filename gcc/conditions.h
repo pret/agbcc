@@ -48,10 +48,6 @@ Boston, MA 02111-1307, USA.  */
 #define CC_STATUS_MDEP int
 #endif
 
-#ifndef CC_STATUS_MDEP_INIT
-#define CC_STATUS_MDEP_INIT 0
-#endif
-
 typedef struct {int flags; rtx value1, value2; CC_STATUS_MDEP mdep;} CC_STATUS;
 
 /* While outputting an insn as assembler code,
@@ -112,7 +108,6 @@ extern CC_STATUS cc_status;
    final does this at appropriate moments.  */
 
 #define CC_STATUS_INIT  \
- (cc_status.flags = 0, cc_status.value1 = 0, cc_status.value2 = 0,  \
-  CC_STATUS_MDEP_INIT)
+ do { cc_status.flags = 0; cc_status.value1 = 0; cc_status.value2 = 0; } while (0)
 
 #endif

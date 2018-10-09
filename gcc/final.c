@@ -1,4 +1,4 @@
-/* Convert RTL to assembler code and output it, for GNU compiler.
+/* xConvert RTL to assembler code and output it, for GNU compiler.
    Copyright (C) 1987, 88, 89, 92-97, 1998 Free Software Foundation, Inc.
 
 This file is part of GNU CC.
@@ -116,7 +116,7 @@ static int high_block_linenum;
 static int high_function_linenum;
 
 /* Filename of last NOTE.  */
-static char *last_filename;
+static const char *last_filename;
 
 extern int length_unit_log; /* This is defined in insn-attrtab.c.  */
 
@@ -246,11 +246,11 @@ static void leaf_renumber_regs(rtx);
 static int alter_cond(rtx);
 #endif
 
-extern char *getpwd();
+extern char *getpwd(void);
 
 /* Initialize data in final at the beginning of a compilation.  */
 
-void init_final(char *filename)
+void init_final(const char *filename)
 {
     next_block_index = 2;
     app_on = 0;
@@ -264,7 +264,7 @@ void init_final(char *filename)
 /* Called at end of source file,
    to output the block-profiling table for this entire compilation.  */
 
-void end_final(char *filename) {}
+void end_final(const char *filename ATTRIBUTE_UNUSED) {}
 
 /* Enable APP processing of subsequent output.
    Used before the output from an `asm' statement.  */
@@ -1020,16 +1020,16 @@ void shorten_branches(rtx first)
 
 static int asm_insn_count(rtx body)
 {
-    char *template;
+    const char *templ;
     int count = 1;
 
     if (GET_CODE(body) == ASM_INPUT)
-        template = XSTR(body, 0);
+        templ = XSTR(body, 0);
     else
-        template = decode_asm_operands(body, NULL, NULL, NULL, NULL);
+        templ = decode_asm_operands(body, NULL, NULL, NULL, NULL);
 
-    for (; *template; template ++)
-        if (IS_ASM_LOGICAL_LINE_SEPARATOR(*template) || *template == '\n')
+    for (; *templ; templ++)
+        if (IS_ASM_LOGICAL_LINE_SEPARATOR(*templ) || *templ == '\n')
             count++;
 
     return count;
@@ -1115,7 +1115,7 @@ void final_end_function(rtx first, FILE *file, int optimize)
 
 void final(rtx first, FILE *file, int optimize, int prescan)
 {
-    register rtx insn;
+    rtx insn;
     int max_line = 0;
     int max_uid = 0;
 
@@ -1329,7 +1329,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
         else if (NOTE_LINE_NUMBER(insn) > 0)
         /* This note is a line-number.  */
         {
-            register rtx note;
+            rtx note;
 
 #if 0 /* This is what we used to do.  */
 	  output_source_line (file, insn);
@@ -1465,9 +1465,9 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
 
     default:
     {
-        register rtx body = PATTERN(insn);
+        rtx body = PATTERN(insn);
         int insn_code_number;
-        char *template;
+        const char *templ;
 #ifdef HAVE_cc0
         rtx note;
 #endif
@@ -1499,7 +1499,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
         if (GET_CODE(body) == ADDR_VEC || GET_CODE(body) == ADDR_DIFF_VEC)
         {
 #if !(defined(ASM_OUTPUT_ADDR_VEC) || defined(ASM_OUTPUT_ADDR_DIFF_VEC))
-            register int vlen, idx;
+            int vlen, idx;
 #endif
 
             if (prescan > 0)
@@ -1583,7 +1583,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
         {
             unsigned int noperands = asm_noperands(body);
             rtx *ops = (rtx *)alloca(noperands * sizeof(rtx));
-            char *string;
+            const char *string;
 
             /* There's no telling what that did to the condition codes.  */
             CC_STATUS_INIT;
@@ -1617,7 +1617,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
         if (GET_CODE(body) == SEQUENCE)
         {
             /* A delayed-branch sequence */
-            register int i;
+            int i;
             rtx next;
 
             if (prescan > 0)
@@ -1740,7 +1740,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
                It may also return 1 meaning condition now always true
                or -1 meaning condition now always false
                or 2 meaning condition nontrivial but altered.  */
-            register int result = alter_cond(XEXP(SET_SRC(body), 0));
+            int result = alter_cond(XEXP(SET_SRC(body), 0));
             /* If condition now has fixed value, replace the IF_THEN_ELSE
                with its then-operand or its else-operand.  */
             if (result == 1)
@@ -1801,7 +1801,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
             case EQ:
             case NE:
             {
-                register int result;
+                int result;
                 if (XEXP(cond_rtx, 0) != cc0_rtx)
                     break;
                 result = alter_cond(cond_rtx);
@@ -1895,15 +1895,15 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
         /* If the proper template needs to be chosen by some C code,
            run that code and get the real template.  */
 
-        template = insn_template[insn_code_number];
-        if (template == 0)
+        templ = insn_template[insn_code_number];
+        if (templ == 0)
         {
-            template = (*insn_outfun[insn_code_number])(recog_operand, insn);
+            templ = (*insn_outfun[insn_code_number])(recog_operand, insn);
 
             /* If the C code returns 0, it means that it is a jump insn
                which follows a deleted test insn, and that test insn
                needs to be reinserted.  */
-            if (template == 0)
+            if (templ == 0)
             {
                 if (prev_nonnote_insn(insn) != last_ignored_compare)
                     abort();
@@ -1913,12 +1913,12 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
 
         /* If the template is the string "#", it means that this insn must
            be split.  */
-        if (template[0] == '#' && template[1] == '\0')
+        if (templ[0] == '#' && templ[1] == '\0')
         {
-            rtx new = try_split(body, insn, 0);
+            rtx ret = try_split(body, insn, 0);
 
             /* If we didn't split the insn, go away.  */
-            if (new == insn && PATTERN(new) == body)
+            if (ret == insn && PATTERN(ret) == body)
                 fatal_insn("Could not split insn", insn);
 
 #ifdef HAVE_ATTR_length
@@ -1928,7 +1928,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
             abort();
 #endif
 
-            return new;
+            return ret;
         }
 
         if (prescan > 0)
@@ -1936,7 +1936,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
 
         /* Output assembler code from the template.  */
 
-        output_asm_insn(template, recog_operand);
+        output_asm_insn(templ, recog_operand);
 
 
 #if 0
@@ -1959,7 +1959,7 @@ rtx final_scan_insn(rtx insn, FILE *file, int optimize, int prescan, int nopeeph
 
 static void output_source_line(FILE *file, rtx insn)
 {
-    register char *filename = NOTE_SOURCE_FILE(insn);
+    const char *filename = NOTE_SOURCE_FILE(insn);
 
     last_filename = filename;
     last_linenum = NOTE_LINE_NUMBER(insn);
@@ -2003,9 +2003,9 @@ void cleanup_subreg_operands(rtx insn)
 /* If X is a SUBREG, replace it with a REG or a MEM,
    based on the thing it is a subreg of.  */
 
-rtx alter_subreg(register rtx x)
+rtx alter_subreg(rtx x)
 {
-    register rtx y = SUBREG_REG(x);
+    rtx y = SUBREG_REG(x);
 
     if (GET_CODE(y) == SUBREG)
         y = alter_subreg(y);
@@ -2036,7 +2036,7 @@ rtx alter_subreg(register rtx x)
     }
     else if (GET_CODE(y) == MEM)
     {
-        register int offset = SUBREG_WORD(x) * UNITS_PER_WORD;
+        int offset = SUBREG_WORD(x) * UNITS_PER_WORD;
         PUT_CODE(x, MEM);
         MEM_COPY_ATTRIBUTES(x, y);
         MEM_ALIAS_SET(x) = MEM_ALIAS_SET(y);
@@ -2083,7 +2083,7 @@ static rtx walk_alter_subreg(rtx x)
    -1 means that the condition has become always false.
    2 means that COND has been altered.  */
 
-static int alter_cond(register rtx cond)
+static int alter_cond(rtx cond)
 {
     int value = 0;
 
@@ -2235,7 +2235,7 @@ static int alter_cond(register rtx cond)
 /* Report inconsistency between the assembler template and the operands.
    In an `asm', it's the user's fault; otherwise, the compiler's fault.  */
 
-void output_operand_lossage(char *str)
+void output_operand_lossage(const char *str)
 {
     if (this_is_asm_operands)
         error_for_asm(this_is_asm_operands, "invalid `asm': %s", str);
@@ -2269,7 +2269,7 @@ static void output_asm_name(void)
        alternative used.  */
         if (debug_insn)
         {
-            register int num = INSN_CODE(debug_insn);
+            int num = INSN_CODE(debug_insn);
             fprintf(asm_out_file, "\t%s %d\t%s", ASM_COMMENT_START, INSN_UID(debug_insn),
                 insn_name[num]);
             if (insn_n_alternatives[num] > 1)
@@ -2284,17 +2284,17 @@ static void output_asm_name(void)
     }
 }
 
-void output_asm_insn(char *template, rtx *operands)
+void output_asm_insn(const char *templ, rtx *operands)
 {
-    register char *p;
-    register int c;
+    const char *p;
+    int c;
 
     /* An insn may return a null string template
        in a case where no assembler code is needed.  */
-    if (*template == 0)
+    if (*templ == 0)
         return;
 
-    p = template;
+    p = templ;
     putc('\t', asm_out_file);
 
 #ifdef ASM_OUTPUT_OPCODE
@@ -2595,7 +2595,7 @@ restart:
 
    We handle alternate assembler dialects here, just like output_asm_insn.  */
 
-void asm_fprintf(FILE *file, char *p, ...)
+void asm_fprintf(FILE *file, const char *p, ...)
 {
     va_list argptr;
     char buf[10];

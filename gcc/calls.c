@@ -1,3 +1,4 @@
+
 /* Convert function calls to rtl insns, for GNU C compiler.
    Copyright (C) 1989, 92-97, 1998, 1999 Free Software Foundation, Inc.
 
@@ -151,7 +152,7 @@ static int calls_function(tree exp, int which)
 
 static int calls_function_1(tree exp, int which)
 {
-    register int i;
+    int i;
     enum tree_code code = TREE_CODE(exp);
     int type = TREE_CODE_CLASS(code);
     int length = tree_code_length[(int)code];
@@ -194,14 +195,14 @@ static int calls_function_1(tree exp, int which)
 
     case BLOCK:
     {
-        register tree local;
+        tree local;
 
         for (local = BLOCK_VARS(exp); local; local = TREE_CHAIN(local))
             if (DECL_INITIAL(local) != 0 && calls_function_1(DECL_INITIAL(local), which))
                 return 1;
     }
         {
-            register tree subblock;
+            tree subblock;
 
             for (subblock = BLOCK_SUBBLOCKS(exp); subblock; subblock = TREE_CHAIN(subblock))
                 if (calls_function_1(subblock, which))
@@ -366,10 +367,9 @@ static void emit_call_1(rtx funexp, tree fndecl ATTRIBUTE_UNUSED, tree funtype A
     {
         if (valreg)
             emit_call_insn(gen_call_value(valreg, gen_rtx_MEM(FUNCTION_MODE, funexp),
-                stack_size_rtx, next_arg_reg, NULL_RTX));
+                stack_size_rtx));
         else
-            emit_call_insn(gen_call(gen_rtx_MEM(FUNCTION_MODE, funexp), stack_size_rtx,
-                next_arg_reg, struct_value_size_rtx));
+            emit_call_insn(gen_call(gen_rtx_MEM(FUNCTION_MODE, funexp), stack_size_rtx));
     }
     else
 #endif
@@ -533,7 +533,7 @@ static void precompute_register_parameters(
             if (args[i].value == 0)
             {
                 push_temp_slots();
-                args[i].value = expand_expr(args[i].tree_value, NULL_RTX, VOIDmode, 0);
+                args[i].value = expand_expr(args[i].tree_value, NULL_RTX, VOIDmode, EXPAND_NORMAL);
                 preserve_temp_slots(args[i].value);
                 pop_temp_slots();
 
@@ -813,8 +813,8 @@ rtx expand_call(tree exp, rtx target, int ignore)
     int old_pending_adj = 0;
     int old_inhibit_defer_pop = inhibit_defer_pop;
     rtx call_fusage = 0;
-    register tree p;
-    register int i, j;
+    tree p;
+    int i, j;
 
     /* The value of the function call can be put in a hard register.  But
        if -fcheck-memory-usage, code which invokes functions (and thus
@@ -1472,7 +1472,7 @@ rtx expand_call(tree exp, rtx target, int ignore)
             push_temp_slots();
 
             args[i].initial_value = args[i].value
-                = expand_expr(args[i].tree_value, NULL_RTX, VOIDmode, 0);
+                = expand_expr(args[i].tree_value, NULL_RTX, VOIDmode, EXPAND_NORMAL);
 
             preserve_temp_slots(args[i].value);
             pop_temp_slots();
@@ -1719,7 +1719,7 @@ rtx expand_call(tree exp, rtx target, int ignore)
     /* Generate an rtx (probably a pseudo-register) for the address.  */
     {
         push_temp_slots();
-        funexp = expand_expr(TREE_OPERAND(exp, 0), NULL_RTX, VOIDmode, 0);
+        funexp = expand_expr(TREE_OPERAND(exp, 0), NULL_RTX, VOIDmode, EXPAND_NORMAL);
         pop_temp_slots(); /* FUNEXP can't be BLKmode */
 
         /* Check the function is executable.  */
@@ -2137,7 +2137,7 @@ void emit_library_call(rtx orgfun, int no_queue, enum machine_mode outmode, int 
     struct args_size args_size;
     /* Size of arguments before any adjustments (such as rounding).  */
     struct args_size original_args_size;
-    register int argnum;
+    int argnum;
     rtx fun;
     int inc;
     int count;
@@ -2412,8 +2412,8 @@ void emit_library_call(rtx orgfun, int no_queue, enum machine_mode outmode, int 
        are to be pushed.  */
     for (count = 0; count < nargs; count++, argnum += inc)
     {
-        register enum machine_mode mode = argvec[argnum].mode;
-        register rtx val = argvec[argnum].value;
+        enum machine_mode mode = argvec[argnum].mode;
+        rtx val = argvec[argnum].value;
         rtx reg = argvec[argnum].reg;
         int partial = argvec[argnum].partial;
 #ifdef ACCUMULATE_OUTGOING_ARGS
@@ -2491,7 +2491,7 @@ void emit_library_call(rtx orgfun, int no_queue, enum machine_mode outmode, int 
        are to be pushed.  */
     for (count = 0; count < nargs; count++, argnum += inc)
     {
-        register rtx val = argvec[argnum].value;
+        rtx val = argvec[argnum].value;
         rtx reg = argvec[argnum].reg;
         int partial = argvec[argnum].partial;
 
@@ -2586,7 +2586,7 @@ rtx emit_library_call_value(
     struct args_size args_size;
     /* Size of arguments before any adjustments (such as rounding).  */
     struct args_size original_args_size;
-    register int argnum;
+    int argnum;
     rtx fun;
     int inc;
     int count;
@@ -2919,8 +2919,8 @@ rtx emit_library_call_value(
        are to be pushed.  */
     for (count = 0; count < nargs; count++, argnum += inc)
     {
-        register enum machine_mode mode = argvec[argnum].mode;
-        register rtx val = argvec[argnum].value;
+        enum machine_mode mode = argvec[argnum].mode;
+        rtx val = argvec[argnum].value;
         rtx reg = argvec[argnum].reg;
         int partial = argvec[argnum].partial;
 #ifdef ACCUMULATE_OUTGOING_ARGS
@@ -2998,7 +2998,7 @@ rtx emit_library_call_value(
        are to be pushed.  */
     for (count = 0; count < nargs; count++, argnum += inc)
     {
-        register rtx val = argvec[argnum].value;
+        rtx val = argvec[argnum].value;
         rtx reg = argvec[argnum].reg;
         int partial = argvec[argnum].partial;
 
@@ -3154,7 +3154,7 @@ target_for_arg (tree type, rtx size, rtx args_addr, struct args_size offset)
 static void store_one_arg(struct arg_data *arg, rtx argblock, int may_be_alloca, int variable_size,
     int reg_parm_stack_space)
 {
-    register tree pval = arg->tree_value;
+    tree pval = arg->tree_value;
     rtx reg = 0;
     int partial = 0;
     int used = 0;
@@ -3275,7 +3275,7 @@ static void store_one_arg(struct arg_data *arg, rtx argblock, int may_be_alloca,
 #endif
         arg->value = expand_expr(pval,
             (partial || TYPE_MODE(TREE_TYPE(pval)) != arg->mode) ? NULL_RTX : arg->stack, VOIDmode,
-            0);
+            EXPAND_NORMAL);
 
         /* If we are promoting object (or for any other reason) the mode
        doesn't agree, convert the mode.  */
@@ -3308,7 +3308,7 @@ static void store_one_arg(struct arg_data *arg, rtx argblock, int may_be_alloca,
     }
     else if (arg->mode != BLKmode)
     {
-        register int size;
+        int size;
 
         /* Argument is a scalar, not entirely passed in registers.
        (If part is passed in registers, arg->partial says how much
@@ -3341,7 +3341,7 @@ static void store_one_arg(struct arg_data *arg, rtx argblock, int may_be_alloca,
     {
         /* BLKmode, at least partly to be pushed.  */
 
-        register int excess;
+        int excess;
         rtx size_rtx;
 
         /* Pushing a nonscalar.

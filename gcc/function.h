@@ -24,7 +24,7 @@ typedef union union_node *_function_tree;
 #define tree _function_tree
 #endif
 #if !defined(NULL_RTX) && !defined(rtx)
-typedef struct rtx_def *_function_rtx;
+typedef struct rtx_def __attribute__((may_alias)) *_function_rtx;
 #define rtx _function_rtx
 #endif
 
@@ -67,7 +67,7 @@ struct function
   struct function *next;
 
   /* For function.c.  */
-  char *name;
+  const char *name;
   tree decl;
   int pops_args;
   int returns_struct;
@@ -163,7 +163,7 @@ struct function
   struct sequence_stack *sequence_stack;
   int cur_insn_uid;
   int last_linenum;
-  char *last_filename;
+  const char *last_filename;
   char *regno_pointer_flag;
   char *regno_pointer_align;
   int regno_pointer_flag_length;

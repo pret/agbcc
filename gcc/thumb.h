@@ -36,6 +36,8 @@ Boston, MA 02111-1307, USA.  */
 /* ??? There is no pattern for the TST instuction.  Check for other unsupported
    instructions.  */
 
+#include <stdint.h>
+
 #define TARGET_VERSION  fputs (" (ARM/THUMB:generic)", stderr);
 
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
@@ -58,18 +60,19 @@ extern int target_flags;
 
 #define TARGET_SWITCHES                                 	\
 {                                                       	\
-  {"thumb-interwork",		    ARM_FLAG_THUMB},		\
-  {"no-thumb-interwork",           -ARM_FLAG_THUMB},		\
+  {"thumb-interwork",		    ARM_FLAG_THUMB,     	\
+   "Enable thumb interworking" },				\
+  {"no-thumb-interwork",           -ARM_FLAG_THUMB, ""},	\
   {"long-calls",		ARM_FLAG_LONG_CALLS,		\
    "Generate all call instructions as indirect calls"},		\
   {"no-long-calls",	       -ARM_FLAG_LONG_CALLS, ""},	\
   SUBTARGET_SWITCHES						\
-  {"",                          TARGET_DEFAULT}         	\
+  {"",                          TARGET_DEFAULT, ""}         	\
 }
 
 #define TARGET_OPTIONS						\
 {								\
-  { "structure-size-boundary=", & structure_size_string }, 	\
+  { "structure-size-boundary=", & structure_size_string, ""}, 	\
 }
 
 #define REGISTER_PREFIX ""
@@ -166,19 +169,19 @@ extern int target_flags;
 
 #define ASM_OUTPUT_DOUBLE(STREAM, VALUE)  				\
 do { char dstr[30];							\
-     long l[2];								\
+     int32_t l[2];								\
      REAL_VALUE_TO_TARGET_DOUBLE (VALUE, l);				\
      REAL_VALUE_TO_DECIMAL (VALUE, "%.14g", dstr);			\
-     fprintf (STREAM, "\t.long 0x%lx, 0x%lx\t%s double %s\n", l[0],	\
+     fprintf (STREAM, "\t.long 0x%x, 0x%x\t%s double %s\n", l[0],	\
 	      l[1], ASM_COMMENT_START, dstr);				\
    } while (0)
 
 #define ASM_OUTPUT_FLOAT(STREAM, VALUE)					\
 do { char dstr[30];							\
-     long l;								\
+     int32_t l;								\
      REAL_VALUE_TO_TARGET_SINGLE (VALUE, l);				\
      REAL_VALUE_TO_DECIMAL (VALUE, "%.7g", dstr);			\
-     fprintf (STREAM, "\t.word 0x%lx\t%s float %s\n", l,		\
+     fprintf (STREAM, "\t.word 0x%x\t%s float %s\n", l,		\
 	      ASM_COMMENT_START, dstr);					\
    } while (0);
 
@@ -194,12 +197,12 @@ do { char dstr[30];							\
 /* This is how to output a string.  */
 #define ASM_OUTPUT_ASCII(STREAM, STRING, LEN)				\
 do {									\
-  register int i, len = (LEN), cur_pos = 17;				\
-  register unsigned char *string = (unsigned char *)(STRING);		\
+  int i, len = (LEN), cur_pos = 17;					\
+  const unsigned char *string = (const unsigned char *)(STRING);	\
   fprintf ((STREAM), "\t.ascii\t\"");					\
   for (i = 0; i < len; i++)						\
     {									\
-      register int c = string[i];					\
+      int c = string[i];						\
 									\
       switch (c)							\
 	{								\
@@ -367,7 +370,7 @@ do {									\
 #define STRUCTURE_SIZE_BOUNDARY 32
 
 /* Used when parsing command line option -mstructure_size_boundary.  */
-extern char * structure_size_string;
+extern const char * structure_size_string;
 
 #define STRICT_ALIGNMENT 1
 
@@ -543,7 +546,7 @@ enum reg_class
 
 #define CLASS_MAX_NREGS(CLASS,MODE) HARD_REGNO_NREGS(0,(MODE))
 
-int thumb_shiftable_const();
+int thumb_shiftable_const(int32_t);
 
 #define CONST_OK_FOR_LETTER_P(VAL,C)				\
   ((C) == 'I' ? (uint32_t) (VAL) < 256		\
@@ -1077,28 +1080,28 @@ int thumb_shiftable_const();
 
 #include <stdio.h>
 
-enum machine_mode;
+#include "machmode.h"
 
-struct rtx_def;
-typedef struct rtx_def *rtx;
+struct __attribute__((may_alias)) rtx_def;
+typedef struct rtx_def *__attribute__((may_alias)) rtx;
 
-union tree_node;
-typedef union tree_node *tree;
+union __attribute__((may_alias)) tree_node;
+typedef union tree_node *__attribute__((may_alias)) tree;
 
-extern int thumb_cmp_operand();
-extern void thumb_reorg();
-extern void thumb_expand_movstrqi();
-extern void final_prescan_insn();
-extern int far_jump_used_p();
+extern int thumb_cmp_operand(rtx, enum machine_mode);
+extern void thumb_reorg(rtx);
+extern void thumb_expand_movstrqi(rtx *);
+extern void final_prescan_insn(rtx);
+extern int far_jump_used_p(void);
 extern void thumb_function_prologue(FILE *, int);
-extern void thumb_expand_prologue();
+extern void thumb_expand_prologue(void);
 extern void thumb_function_epilogue(FILE *, int);
-extern void thumb_expand_epilogue();
-extern char *thumb_unexpanded_epilogue();
-extern char *thumb_load_double_from_address();
-extern char *output_move_mem_multiple();
+extern void thumb_expand_epilogue(void);
+extern const char *thumb_unexpanded_epilogue(void);
+extern const char *thumb_load_double_from_address(rtx *);
+extern const char *output_move_mem_multiple(int, rtx *);
 extern void thumb_print_operand(FILE *, rtx, int);
-extern int thumb_return_in_memory();
-extern void thumb_override_options();
-extern int arm_valid_machine_decl_attribute();
-extern int s_register_operand();
+extern int thumb_return_in_memory(tree);
+extern void thumb_override_options(void);
+extern int arm_valid_machine_decl_attribute(tree, tree, tree, tree);
+extern int s_register_operand(rtx, enum machine_mode);

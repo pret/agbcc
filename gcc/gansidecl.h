@@ -33,7 +33,7 @@ Boston, MA 02111-1307, USA.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 93)
 #  define ATTRIBUTE_UNUSED_LABEL
 # else
-#  define ATTRIBUTE_UNUSED_LABEL ATTRIBUTE_UNUSED
+#  define ATTRIBUTE_UNUSED_LABEL ATTRIBUTE_UNUSED;
 # endif /* GNUC < 2.93 */
 #endif /* ATTRIBUTE_UNUSED_LABEL */
 

@@ -66,8 +66,8 @@ enum attrs
     A_ALIAS
 };
 
-static void declare_hidden_char_array(char *, char *);
-static void add_attribute(enum attrs, char *, int, int, int);
+static void declare_hidden_char_array(const char *, const char *);
+static void add_attribute(enum attrs, const char *, int, int, int);
 static void init_attributes(void);
 static tree c_find_base_decl(tree);
 
@@ -80,7 +80,7 @@ typedef struct
 {
     int compstmt_count;
     int line;
-    char *file;
+    const char *file;
     int needs_warning;
 } if_elt;
 
@@ -157,7 +157,7 @@ void c_expand_start_else(void)
 
 void declare_function_name(void)
 {
-    char *name, *printable_name;
+    const char *name, *printable_name;
 
     if (current_function_decl == NULL)
     {
@@ -181,7 +181,7 @@ void declare_function_name(void)
     declare_hidden_char_array("__func__", name);
 }
 
-static void declare_hidden_char_array(char *name, char *value)
+static void declare_hidden_char_array(const char *name, const char *value)
 {
     tree decl, type, init;
     int vlen;
@@ -213,8 +213,8 @@ static void declare_hidden_char_array(char *name, char *value)
 
 tree combine_strings(tree strings)
 {
-    register tree value, t;
-    register int length = 1;
+    tree value, t;
+    int length = 1;
     int wide_length = 0;
     int wide_flag = 0;
     int wchar_bytes = TYPE_PRECISION(wchar_type_node) / BITS_PER_UNIT;
@@ -223,7 +223,7 @@ tree combine_strings(tree strings)
     if (TREE_CHAIN(strings))
     {
         /* More than one in the chain, so concatenate.  */
-        register char *p, *q;
+        char *p, *q;
 
         /* Don't include the \0 at the end of each substring,
        except for the last one.
@@ -328,7 +328,7 @@ static int attrtab_idx = 0;
 
 /* Add an entry to the attribute table above.  */
 
-static void add_attribute(enum attrs id, char *string, int min_len, int max_len, int decl_req)
+static void add_attribute(enum attrs id, const char *string, int min_len, int max_len, int decl_req)
 {
     char buf[100];
 
@@ -987,7 +987,7 @@ int min_precision(tree value, int unsignedp)
 
 void binary_op_error(enum tree_code code)
 {
-    register char *opname;
+    const char *opname;
 
     switch (code)
     {
@@ -1084,7 +1084,7 @@ void binary_op_error(enum tree_code code)
 
 tree shorten_compare(tree *op0_ptr, tree *op1_ptr, tree *restype_ptr, enum tree_code *rescode_ptr)
 {
-    register tree type;
+    tree type;
     tree op0 = *op0_ptr;
     tree op1 = *op1_ptr;
     int unsignedp0, unsignedp1;
@@ -1116,8 +1116,8 @@ tree shorten_compare(tree *op0_ptr, tree *op1_ptr, tree *restype_ptr, enum tree_
 
     if (TREE_CONSTANT(primop0) && !integer_zerop(primop1) && !real_zerop(primop1))
     {
-        register tree tem = primop0;
-        register int temi = unsignedp0;
+        tree tem = primop0;
+        int temi = unsignedp0;
         primop0 = primop1;
         primop1 = tem;
         tem = op0;

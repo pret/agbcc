@@ -144,7 +144,6 @@ static struct eh_entry *pop_eh_entry(struct eh_stack *);
 static void enqueue_eh_entry(struct eh_queue *, struct eh_entry *);
 static struct eh_entry *dequeue_eh_entry(struct eh_queue *);
 static rtx call_get_eh_context(void);
-static void start_dynamic_cleanup(tree, tree);
 static void start_dynamic_handler(void);
 static void expand_rethrow(rtx);
 static void output_exception_table_entry(FILE *, int);
@@ -209,15 +208,6 @@ static void push_eh_entry(struct eh_stack *stack)
         entry->outer_context = create_rethrow_ref(CODE_LABEL_NUMBER(rlab));
     entry->rethrow_label = entry->outer_context;
 
-    node->entry = entry;
-    node->chain = stack->top;
-    stack->top = node;
-}
-
-/* push an existing entry onto a stack. */
-static void push_entry(struct eh_stack *stack, struct eh_entry *entry)
-{
-    struct eh_node *node = (struct eh_node *)xmalloc(sizeof(struct eh_node));
     node->entry = entry;
     node->chain = stack->top;
     stack->top = node;
@@ -603,7 +593,7 @@ static rtx call_get_eh_context(void)
     expr = build(CALL_EXPR, TREE_TYPE(TREE_TYPE(fn)), expr, NULL_TREE, NULL_TREE);
     TREE_SIDE_EFFECTS(expr) = 1;
 
-    return copy_to_reg(expand_expr(expr, NULL_RTX, VOIDmode, 0));
+    return copy_to_reg(expand_expr(expr, NULL_RTX, VOIDmode, EXPAND_NORMAL));
 }
 
 /* Get a reference to the EH context.
@@ -682,58 +672,6 @@ static void jumpif_rtx(rtx x, rtx label)
     jumpif(make_tree(type_for_mode(GET_MODE(x), 0), x), label);
 }
 #endif
-
-/* Start a dynamic cleanup on the EH runtime dynamic cleanup stack.
-   We just need to create an element for the cleanup list, and push it
-   into the chain.
-
-   A dynamic cleanup is a cleanup action implied by the presence of an
-   element on the EH runtime dynamic cleanup stack that is to be
-   performed when an exception is thrown.  The cleanup action is
-   performed by __sjthrow when an exception is thrown.  Only certain
-   actions can be optimized into dynamic cleanup actions.  For the
-   restrictions on what actions can be performed using this routine,
-   see expand_eh_region_start_tree.  */
-
-static void start_dynamic_cleanup(tree func, tree arg)
-{
-    rtx dcc;
-    rtx new_func, new_arg;
-    rtx x, buf;
-    int size;
-
-    /* We allocate enough room for a pointer to the function, and
-       one argument.  */
-    size = 2;
-
-    /* XXX, FIXME: The stack space allocated this way is too long lived,
-       but there is no allocation routine that allocates at the level of
-       the last binding contour.  */
-    buf = assign_stack_local(BLKmode, GET_MODE_SIZE(Pmode) * (size + 1), 0);
-
-    buf = change_address(buf, Pmode, NULL_RTX);
-
-    /* Store dcc into the first word of the newly allocated buffer.  */
-
-    dcc = get_dynamic_cleanup_chain();
-    emit_move_insn(buf, dcc);
-
-    /* Store func and arg into the cleanup list element.  */
-
-    new_func = gen_rtx_MEM(Pmode, plus_constant(XEXP(buf, 0), GET_MODE_SIZE(Pmode)));
-    new_arg = gen_rtx_MEM(Pmode, plus_constant(XEXP(buf, 0), GET_MODE_SIZE(Pmode) * 2));
-    x = expand_expr(func, new_func, Pmode, 0);
-    if (x != new_func)
-        emit_move_insn(new_func, x);
-
-    x = expand_expr(arg, new_arg, Pmode, 0);
-    if (x != new_arg)
-        emit_move_insn(new_arg, x);
-
-    /* Update the cleanup chain.  */
-
-    emit_move_insn(dcc, XEXP(buf, 0));
-}
 
 /* Emit RTL to start a dynamic handler on the EH runtime dynamic
    handler stack.  This should only be used by expand_eh_region_start
@@ -1033,7 +971,7 @@ void expand_leftover_cleanups(void)
             get_new_handler(entry->exception_handler_label, NULL));
 
         /* And now generate the insns for the handler.  */
-        expand_expr(entry->finalization, const0_rtx, VOIDmode, 0);
+        expand_expr(entry->finalization, const0_rtx, VOIDmode, EXPAND_NORMAL);
 
         prev = get_last_insn();
         if (prev == NULL || GET_CODE(prev) != BARRIER)
@@ -1513,12 +1451,12 @@ static rtx scan_region(rtx insn, int n, int *delete_outer)
     rtx start = insn;
 
     /* Assume we can delete the region.  */
-    int delete = 1;
+    int can_delete = 1;
 
     int r = find_func_region(n);
     /* Can't delete something which is rethrown to. */
     if (SYMBOL_REF_USED((function_eh_regions[r].rethrow_label)))
-        delete = 0;
+        can_delete = 0;
 
     if (insn == NULL_RTX || GET_CODE(insn) != NOTE
         || NOTE_LINE_NUMBER(insn) != NOTE_INSN_EH_REGION_BEG || NOTE_BLOCK_NUMBER(insn) != n
@@ -1531,15 +1469,15 @@ static rtx scan_region(rtx insn, int n, int *delete_outer)
     while (!(GET_CODE(insn) == NOTE && NOTE_LINE_NUMBER(insn) == NOTE_INSN_EH_REGION_END))
     {
         /* If anything can throw, we can't remove the region.  */
-        if (delete &&can_throw(insn))
+        if (can_delete &&can_throw(insn))
         {
-            delete = 0;
+            can_delete = 0;
         }
 
         /* Watch out for and handle nested regions.  */
         if (GET_CODE(insn) == NOTE && NOTE_LINE_NUMBER(insn) == NOTE_INSN_EH_REGION_BEG)
         {
-            insn = scan_region(insn, NOTE_BLOCK_NUMBER(insn), &delete);
+            insn = scan_region(insn, NOTE_BLOCK_NUMBER(insn), &can_delete);
         }
 
         insn = NEXT_INSN(insn);
@@ -1550,7 +1488,7 @@ static rtx scan_region(rtx insn, int n, int *delete_outer)
         abort();
 
     /* If anything in this exception region can throw, we can throw.  */
-    if (!delete)
+    if (!can_delete)
         *delete_outer = 0;
     else
     {
@@ -1560,42 +1498,6 @@ static rtx scan_region(rtx insn, int n, int *delete_outer)
 
         /* We no longer removed labels here, since flow will now remove any
            handler which cannot be called any more. */
-
-#if 0
-      /* Only do this part if we have built the exception handler
-         labels.  */
-      if (exception_handler_labels)
-	{
-	  rtx x, *prev = &exception_handler_labels;
-
-	  /* Find it in the list of handlers.  */
-	  for (x = exception_handler_labels; x; x = XEXP (x, 1))
-	    {
-	      rtx label = XEXP (x, 0);
-	      if (CODE_LABEL_NUMBER (label) == n)
-		{
-		  /* If we are the last reference to the handler,
-                     delete it.  */
-		  if (--LABEL_NUSES (label) == 0)
-		    delete_insn (label);
-
-		  if (optimize)
-		    {
-		      /* Remove it from the list of exception handler
-			 labels, if we are optimizing.  If we are not, then
-			 leave it in the list, as we are not really going to
-			 remove the region.  */
-		      *prev = XEXP (x, 1);
-		      XEXP (x, 1) = 0;
-		      XEXP (x, 0) = 0;
-		    }
-
-		  break;
-		}
-	      prev = &XEXP (x, 1);
-	    }
-	}
-#endif
     }
     return insn;
 }
@@ -1648,7 +1550,7 @@ void expand_builtin_unwind_init(void)
 
 rtx expand_builtin_extract_return_addr(tree addr_tree)
 {
-    rtx addr = expand_expr(addr_tree, NULL_RTX, Pmode, 0);
+    rtx addr = expand_expr(addr_tree, NULL_RTX, Pmode, EXPAND_NORMAL);
     return eh_outer_context(addr);
 }
 
@@ -1658,7 +1560,7 @@ rtx expand_builtin_extract_return_addr(tree addr_tree)
 
 rtx expand_builtin_frob_return_addr(tree addr_tree)
 {
-    rtx addr = expand_expr(addr_tree, NULL_RTX, Pmode, 0);
+    rtx addr = expand_expr(addr_tree, NULL_RTX, Pmode, EXPAND_NORMAL);
 #ifdef RETURN_ADDR_OFFSET
     addr = plus_constant(addr, -RETURN_ADDR_OFFSET);
 #endif
@@ -1735,9 +1637,9 @@ void expand_builtin_eh_return(tree context, tree stack, tree handler)
     if (eh_return_context)
         error("Duplicate call to __builtin_eh_return");
 
-    eh_return_context = copy_to_reg(expand_expr(context, NULL_RTX, VOIDmode, 0));
-    eh_return_stack_adjust = copy_to_reg(expand_expr(stack, NULL_RTX, VOIDmode, 0));
-    eh_return_handler = copy_to_reg(expand_expr(handler, NULL_RTX, VOIDmode, 0));
+    eh_return_context = copy_to_reg(expand_expr(context, NULL_RTX, VOIDmode, EXPAND_NORMAL));
+    eh_return_stack_adjust = copy_to_reg(expand_expr(stack, NULL_RTX, VOIDmode, EXPAND_NORMAL));
+    eh_return_handler = copy_to_reg(expand_expr(handler, NULL_RTX, VOIDmode, EXPAND_NORMAL));
 }
 
 void expand_eh_return(void)

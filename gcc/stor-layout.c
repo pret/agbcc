@@ -104,7 +104,7 @@ tree variable_size(tree size)
     if (immediate_size_expand)
         /* NULL_RTX is not defined; neither is the rtx type.
            Also, we would like to pass const0_rtx here, but don't have it.  */
-        expand_expr(size, expand_expr(integer_zero_node, NULL, VOIDmode, 0), VOIDmode, 0);
+        expand_expr(size, expand_expr(integer_zero_node, NULL, VOIDmode, EXPAND_NORMAL), VOIDmode, EXPAND_NORMAL);
     else
         pending_sizes = tree_cons(NULL_TREE, size, pending_sizes);
 
@@ -120,15 +120,15 @@ tree variable_size(tree size)
    If LIMIT is nonzero, modes of wider than MAX_FIXED_MODE_SIZE will not
    be used.  */
 
-enum machine_mode mode_for_size(unsigned int size, enum mode_class class, int limit)
+enum machine_mode mode_for_size(unsigned int size, enum mode_class mclass, int limit)
 {
-    register enum machine_mode mode;
+    enum machine_mode mode;
 
     if (limit && size > (unsigned int)(MAX_FIXED_MODE_SIZE))
         return BLKmode;
 
     /* Get the first mode which has this size, in the specified class.  */
-    for (mode = GET_CLASS_NARROWEST_MODE(class); mode != VOIDmode; mode = GET_MODE_WIDER_MODE(mode))
+    for (mode = GET_CLASS_NARROWEST_MODE(mclass); mode != VOIDmode; mode = GET_MODE_WIDER_MODE(mode))
         if ((unsigned int)GET_MODE_BITSIZE(mode) == size)
             return mode;
 
@@ -138,13 +138,13 @@ enum machine_mode mode_for_size(unsigned int size, enum mode_class class, int li
 /* Similar, but never return BLKmode; return the narrowest mode that
    contains at least the requested number of bits.  */
 
-static enum machine_mode smallest_mode_for_size(unsigned int size, enum mode_class class)
+static enum machine_mode smallest_mode_for_size(unsigned int size, enum mode_class mclass)
 {
-    register enum machine_mode mode;
+    enum machine_mode mode;
 
     /* Get the first mode which has at least this size, in the
        specified class.  */
-    for (mode = GET_CLASS_NARROWEST_MODE(class); mode != VOIDmode; mode = GET_MODE_WIDER_MODE(mode))
+    for (mode = GET_CLASS_NARROWEST_MODE(mclass); mode != VOIDmode; mode = GET_MODE_WIDER_MODE(mode))
         if ((unsigned int)GET_MODE_BITSIZE(mode) >= size)
             return mode;
 
@@ -202,8 +202,8 @@ tree round_up(tree value, int divisor)
 
 void layout_decl(tree decl, unsigned known_align)
 {
-    register tree type = TREE_TYPE(decl);
-    register enum tree_code code = TREE_CODE(decl);
+    tree type = TREE_TYPE(decl);
+    enum tree_code code = TREE_CODE(decl);
     int spec_size = DECL_FIELD_SIZE(decl);
 
     if (code == CONST_DECL)
@@ -255,7 +255,7 @@ void layout_decl(tree decl, unsigned known_align)
     if (DECL_BIT_FIELD(decl) && TYPE_SIZE(type) != 0 && TREE_CODE(TYPE_SIZE(type)) == INTEGER_CST
         && GET_MODE_CLASS(TYPE_MODE(type)) == MODE_INT)
     {
-        register enum machine_mode xmode
+        enum machine_mode xmode
             = mode_for_size(TREE_INT_CST_LOW(DECL_SIZE(decl)), MODE_INT, 1);
 
         if (xmode != BLKmode && known_align % GET_MODE_ALIGNMENT(xmode) == 0)
@@ -295,7 +295,7 @@ void layout_decl(tree decl, unsigned known_align)
 
 static tree layout_record(tree rec)
 {
-    register tree field;
+    tree field;
     unsigned record_align = MAX(BITS_PER_UNIT, TYPE_ALIGN(rec));
     /* These must be laid out *after* the record is.  */
     tree pending_statics = NULL_TREE;
@@ -304,11 +304,11 @@ static tree layout_record(tree rec)
        and VAR_SIZE is a tree expression.
        If VAR_SIZE is null, the size is just CONST_SIZE.
        Naturally we try to avoid using VAR_SIZE.  */
-    register int32_t const_size = 0;
-    register tree var_size = 0;
+    int32_t const_size = 0;
+    tree var_size = 0;
     /* Once we start using VAR_SIZE, this is the maximum alignment
        that we know VAR_SIZE has.  */
-    register int var_align = BITS_PER_UNIT;
+    int var_align = BITS_PER_UNIT;
 
 #ifdef STRUCTURE_SIZE_BOUNDARY
     /* Packed structures don't need to have minimum size.  */
@@ -318,8 +318,8 @@ static tree layout_record(tree rec)
 
     for (field = TYPE_FIELDS(rec); field; field = TREE_CHAIN(field))
     {
-        register int known_align = var_size ? var_align : const_size;
-        register int desired_align = 0;
+        int known_align = var_size ? var_align : const_size;
+        int desired_align = 0;
 
         /* If FIELD is static, then treat it like a separate variable,
        not really like a structure field.
@@ -417,7 +417,7 @@ static tree layout_record(tree rec)
             && !integer_zerop(DECL_SIZE(field)))
         {
             int type_align = TYPE_ALIGN(TREE_TYPE(field));
-            register tree dsize = DECL_SIZE(field);
+            tree dsize = DECL_SIZE(field);
             int field_size = TREE_INT_CST_LOW(dsize);
 
             /* A bit field may not span more units of alignment of its type
@@ -436,7 +436,7 @@ static tree layout_record(tree rec)
             && !DECL_PACKED(field) && !integer_zerop(DECL_SIZE(field)))
         {
             int type_align = TYPE_ALIGN(TREE_TYPE(field));
-            register tree dsize = DECL_SIZE(field);
+            tree dsize = DECL_SIZE(field);
             int field_size = TREE_INT_CST_LOW(dsize);
 
             if (maximum_field_alignment != 0)
@@ -476,7 +476,7 @@ static tree layout_record(tree rec)
         /* Now add size of this field to the size of the record.  */
 
         {
-            register tree dsize = DECL_SIZE(field);
+            tree dsize = DECL_SIZE(field);
 
             /* This can happen when we have an invalid nested struct definition,
                such as struct j { struct j { int i; } }.  The error message is
@@ -565,14 +565,14 @@ static tree layout_record(tree rec)
 
 static void layout_union(tree rec)
 {
-    register tree field;
+    tree field;
     unsigned union_align = BITS_PER_UNIT;
 
     /* The size of the union, based on the fields scanned so far,
        is max (CONST_SIZE, VAR_SIZE).
        VAR_SIZE may be null; then CONST_SIZE by itself is the size.  */
-    register int const_size = 0;
-    register tree var_size = 0;
+    int const_size = 0;
+    tree var_size = 0;
 
 #ifdef STRUCTURE_SIZE_BOUNDARY
     /* Packed structures don't need to have minimum size.  */
@@ -753,8 +753,8 @@ void layout_type(tree type)
 
     case ARRAY_TYPE:
     {
-        register tree index = TYPE_DOMAIN(type);
-        register tree element = TREE_TYPE(type);
+        tree index = TYPE_DOMAIN(type);
+        tree element = TREE_TYPE(type);
 
         build_pointer_type(element);
 
@@ -1061,7 +1061,7 @@ void layout_type(tree type)
 
 tree make_signed_type(int precision)
 {
-    register tree type = make_node(INTEGER_TYPE);
+    tree type = make_node(INTEGER_TYPE);
 
     TYPE_PRECISION(type) = precision;
 
@@ -1100,7 +1100,7 @@ tree make_signed_type(int precision)
 
 tree make_unsigned_type(int precision)
 {
-    register tree type = make_node(INTEGER_TYPE);
+    tree type = make_node(INTEGER_TYPE);
 
     TYPE_PRECISION(type) = precision;
 
@@ -1173,7 +1173,7 @@ void set_sizetype(tree type)
 
 void fixup_signed_type(tree type)
 {
-    register int precision = TYPE_PRECISION(type);
+    int precision = TYPE_PRECISION(type);
 
     TYPE_MIN_VALUE(type) = build_int_2(
         (precision - 32 > 0 ? 0 : (int32_t)(-1) << (precision - 1)),
@@ -1200,7 +1200,7 @@ void fixup_signed_type(tree type)
 
 void fixup_unsigned_type(tree type)
 {
-    register int precision = TYPE_PRECISION(type);
+    int precision = TYPE_PRECISION(type);
 
     TYPE_MIN_VALUE(type) = build_int_2(0, 0);
     TYPE_MAX_VALUE(type) = build_int_2(

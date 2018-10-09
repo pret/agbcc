@@ -35,7 +35,7 @@ struct operand_alternative
   char *constraint;
 
   /* The register class valid for this alternative (possibly NO_REGS).  */
-  enum reg_class class;
+  enum reg_class rclass;
 
   /* "Badness" of this alternative, computed from number of '?' and '!'
      characters in the constraint string.  */
@@ -66,45 +66,42 @@ struct operand_alternative
 };
 
 
-extern void init_recog();
-extern void init_recog_no_volatile();
-extern int recog_memoized();
-extern int check_asm_operands();
-extern int validate_change();
-extern int apply_change_group();
-extern int num_validated_changes();
-extern void cancel_changes();
-extern int constrain_operands();
-extern int memory_address_p();
-extern int strict_memory_address_p();
-extern int validate_replace_rtx();
-extern void validate_replace_rtx_group();
-extern int validate_replace_src();
-extern int reg_fits_class_p();
-extern rtx *find_single_use();
+extern void init_recog(void);
+extern void init_recog_no_volatile(void);
+extern int recog_memoized(rtx);
+extern int check_asm_operands(rtx);
+extern int validate_change(rtx, rtx *, rtx, int);
+extern int apply_change_group(void);
+extern int num_validated_changes(void);
+extern void cancel_changes(int);
+extern int constrain_operands(int);
+extern int memory_address_p(enum machine_mode, rtx);
+extern int strict_memory_address_p(enum machine_mode, rtx);
+extern int validate_replace_rtx(rtx, rtx, rtx);
+extern void validate_replace_rtx_group(rtx, rtx, rtx);
+extern int validate_replace_src(rtx, rtx, rtx);
+extern int reg_fits_class_p(rtx, enum reg_class, int, enum machine_mode);
+extern rtx *find_single_use(rtx, rtx, rtx *);
 
-extern int general_operand();
-extern int register_operand();
-extern int scratch_operand();
-extern int const_int_operand();
-extern int const_double_operand();
-extern int nonimmediate_operand();
-extern int nonmemory_operand();
-extern int push_operand();
-extern int pop_operand();
-extern int memory_operand();
-extern int mode_independent_operand();
-extern int comparison_operator();
+extern int general_operand(rtx, enum machine_mode);
+extern int register_operand(rtx, enum machine_mode);
+extern int scratch_operand(rtx, enum machine_mode);
+extern int const_int_operand(rtx, enum machine_mode ATTRIBUTE_UNUSED);
+extern int nonimmediate_operand(rtx, enum machine_mode);
+extern int nonmemory_operand(rtx, enum machine_mode);
+extern int push_operand(rtx, enum machine_mode);
+extern int memory_operand(rtx, enum machine_mode);
+extern int comparison_operator(rtx, enum machine_mode);
 
-extern int offsettable_memref_p();
-extern int offsettable_nonstrict_memref_p();
-extern int offsettable_address_p();
-extern int mode_dependent_address_p();
+extern int offsettable_memref_p(rtx);
+extern int offsettable_nonstrict_memref_p(rtx);
+extern int offsettable_address_p(int, enum machine_mode, rtx);
+extern int mode_dependent_address_p(rtx);
 
-extern int recog();
-extern void add_clobbers();
-extern void insn_extract();
-extern void extract_insn();
+extern int recog (rtx, rtx ATTRIBUTE_UNUSED, int * ATTRIBUTE_UNUSED);
+extern void add_clobbers(rtx, int);
+extern void insn_extract(rtx);
+extern void extract_insn(rtx);
 
 /* Nonzero means volatile operands are recognized.  */
 extern int volatile_ok;
@@ -144,7 +141,7 @@ extern int recog_n_alternatives;
 extern enum machine_mode recog_operand_mode[];
 
 /* Indexed by N, gives the constraint string for operand N.  */
-extern char *recog_constraints[];
+extern const char *recog_constraints[];
 
 /* Indexed by N, gives the type (in, out, inout) for operand N.  */
 extern enum op_type recog_op_type[];
@@ -167,9 +164,9 @@ extern struct operand_alternative recog_op_alt[MAX_RECOG_OPERANDS][MAX_RECOG_ALT
 
 /* These are vectors indexed by insn-code.  Details in genoutput.c.  */
 
-extern char *const insn_template[];
+extern const char *const insn_template[];
 
-extern char *(*const insn_outfun[])();
+extern const char *(*const insn_outfun[])(rtx *, rtx);
 
 extern const int insn_n_operands[];
 
@@ -183,17 +180,17 @@ extern const int insn_n_alternatives[];
    and second by the operand number.  Details in genoutput.c.  */
 
 #ifdef REGISTER_CONSTRAINTS  /* Avoid undef sym in certain broken linkers.  */
-extern char *const insn_operand_constraint[][MAX_RECOG_OPERANDS];
+extern const char *const insn_operand_constraint[][MAX_RECOG_OPERANDS];
 #endif
 
 #ifndef REGISTER_CONSTRAINTS  /* Avoid undef sym in certain broken linkers.  */
-extern const char insn_operand_address_p[][MAX_RECOG_OPERANDS];
+extern const char *insn_operand_address_p[][MAX_RECOG_OPERANDS];
 #endif
 
 extern const enum machine_mode insn_operand_mode[][MAX_RECOG_OPERANDS];
 
 extern const char insn_operand_strict_low[][MAX_RECOG_OPERANDS];
 
-extern int (*const insn_operand_predicate[][MAX_RECOG_OPERANDS])();
+extern int (*const insn_operand_predicate[][MAX_RECOG_OPERANDS])(rtx, enum machine_mode);
 
-extern char * insn_name[];
+extern const char *insn_name[];

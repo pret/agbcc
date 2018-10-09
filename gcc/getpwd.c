@@ -1,13 +1,42 @@
 /* getpwd.c - get the working directory */
 
-#include "config.h"
-#include "system.h"
+/*
 
-#if !(defined(_WIN32) && !defined(__CYGWIN__))
+@deftypefn Supplemental char* getpwd (void)
+
+Returns the current working directory.  This implementation caches the
+result on the assumption that the process will not call @code{chdir}
+between calls to @code{getpwd}.
+
+@end deftypefn
+
+*/
 
 #include <sys/types.h>
-#include <sys/stat.h>
+
+#include <errno.h>
+#ifndef errno
+extern int errno;
+#endif
+
+#include <stdlib.h>
+#include <limits.h>
+
+/* Virtually every UN*X system now in common use (except for pre-4.3-tahoe
+   BSD systems) now provides getcwd as called for by POSIX.  Allow for
+   the few exceptions to the general rule here.  */
+
+#ifdef MAXPATHLEN
+#define GUESSPATHLEN (MAXPATHLEN + 1)
+#else
+#define GUESSPATHLEN 100
+#endif
+
+#if !(defined (VMS) || (defined(_WIN32) && !defined(__CYGWIN__)))
+
 #include <unistd.h>
+#include <sys/param.h>
+#include <sys/stat.h>
 
 /* Get the working directory.  Use the PWD environment variable if it's
    set correctly, since this is faster and gives more uniform answers
@@ -20,50 +49,53 @@ char *getpwd(void)
     static int failure_errno;
 
     char *p = pwd;
-    size_t guessed_len;
+    size_t s;
     struct stat dotstat, pwdstat;
 
     if (!p && !(errno = failure_errno))
     {
-        int env_ok = ((p = getenv("PWD")) != 0 && *p == '/' && stat(p, &pwdstat) == 0
-            && stat(".", &dotstat) == 0 && dotstat.st_ino == pwdstat.st_ino
-            && dotstat.st_dev == pwdstat.st_dev);
+        if (! ((p = getenv("PWD")) != 0
+             && *p == '/'
+             && stat(p, &pwdstat) == 0
+             && stat(".", &dotstat) == 0
+             && dotstat.st_ino == pwdstat.st_ino
+             && dotstat.st_dev == pwdstat.st_dev))
 
-        if (!env_ok)
-        {
             /* The shortcut didn't work.  Try the slow, ``sure'' way.  */
-            for (guessed_len = 256; !getcwd(p = xmalloc(guessed_len), guessed_len);
-                 guessed_len *= 2)
+            for (s = GUESSPATHLEN;  !getcwd(p = (char *)malloc(s), s);  s *= 2)
             {
                 int e = errno;
                 free(p);
+#ifdef ERANGE
                 if (e != ERANGE)
+#endif
                 {
                     errno = failure_errno = e;
                     p = 0;
                     break;
                 }
             }
-        }
 
         /* Cache the result.  This assumes that the program does
-       not invoke chdir between calls to getpwd.  */
+           not invoke chdir between calls to getpwd.  */
         pwd = p;
     }
     return p;
 }
 
-#else /* _WIN32 && !__CYGWIN__ */
+#else        /* VMS || _WIN32 && !__CYGWIN__ */
 
-#include <direct.h>
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 255
+#endif
 
 char *getpwd(void)
 {
     static char *pwd = 0;
 
     if (!pwd)
-        pwd = _getcwd(NULL, 0);
+        pwd = getcwd((char *)malloc(MAXPATHLEN + 1), MAXPATHLEN + 1);
     return pwd;
 }
 
-#endif /* _WIN32 && !__CYGWIN__ */
+#endif        /* VMS || _WIN32 && !__CYGWIN__ */

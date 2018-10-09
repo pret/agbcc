@@ -61,7 +61,7 @@ struct obstack *rtl_obstack = &obstack;
 #define obstack_chunk_free free
 
 /* Holds an array of names indexed by insn_code_number.  */
-char **insn_name_ptr = 0;
+const char **insn_name_ptr = 0;
 int insn_name_ptr_size = 0;
 
 /* Data structure for a listhead of decision trees.  The alternatives
@@ -92,10 +92,10 @@ struct decision
     int test_elt_one_int;          /* Nonzero if should test XINT (rtl, 1) */
     int elt_one_int;               /* Required value for XINT (rtl, 1) */
     int test_elt_zero_wide;        /* Nonzero if should test XWINT (rtl, 0) */
-    int32_t elt_zero_wide;   /* Required value for XWINT (rtl, 0) */
+    int32_t elt_zero_wide;         /* Required value for XWINT (rtl, 0) */
     const char *tests;             /* If nonzero predicate to call */
     int pred;                      /* `preds' index of predicate or -1 */
-    char *c_test;                  /* Additional test to perform */
+    const char *c_test;            /* Additional test to perform */
     struct decision_head success;  /* Nodes to test on success */
     int insn_code_number;          /* Insn number matched, if success */
     int num_clobbers_to_add;       /* Number of CLOBBERs to be added to pattern */
@@ -192,20 +192,20 @@ void fancy_abort(void) ATTRIBUTE_NORETURN;
 static struct decision_head make_insn_sequence(rtx insn, enum routine_type type)
 {
     rtx x;
-    char *c_test = XSTR(insn, type == RECOG ? 2 : 1);
+    const char *c_test = XSTR(insn, type == RECOG ? 2 : 1);
     struct decision *last;
     struct decision_head head;
 
     {
-        static char *last_real_name = "insn";
+        static const char *last_real_name = "insn";
         static int last_real_code = 0;
-        char *name;
+        const char *name;
 
         if (insn_name_ptr_size <= next_insn_code)
         {
             int new_size;
             new_size = (insn_name_ptr_size ? insn_name_ptr_size * 2 : 512);
-            insn_name_ptr = xrealloc(insn_name_ptr, sizeof(char *) * new_size);
+            insn_name_ptr = (const char **)xrealloc(insn_name_ptr, sizeof(char *) * new_size);
             zero_memory(insn_name_ptr + insn_name_ptr_size,
                 sizeof(char *) * (new_size - insn_name_ptr_size));
             insn_name_ptr_size = new_size;
@@ -214,8 +214,9 @@ static struct decision_head make_insn_sequence(rtx insn, enum routine_type type)
         name = XSTR(insn, 0);
         if (!name || name[0] == '\0')
         {
-            name = xmalloc(strlen(last_real_name) + 10);
-            sprintf(name, "%s+%d", last_real_name, next_insn_code - last_real_code);
+            char *tmp_name = (char *)xmalloc(strlen(last_real_name) + 10);
+            sprintf(tmp_name, "%s+%d", last_real_name, next_insn_code - last_real_code);
+            name = tmp_name;
         }
         else
         {
@@ -258,22 +259,22 @@ static struct decision_head make_insn_sequence(rtx insn, enum routine_type type)
 
         if (i != XVECLEN(x, 0))
         {
-            rtx new;
+            rtx new_rtx;
             struct decision_head clobber_head;
 
             if (i == 1)
-                new = XVECEXP(x, 0, 0);
+                new_rtx = XVECEXP(x, 0, 0);
             else
             {
                 int j;
 
-                new = rtx_alloc(PARALLEL);
-                XVEC(new, 0) = rtvec_alloc(i);
+                new_rtx = rtx_alloc(PARALLEL);
+                XVEC(new_rtx, 0) = rtvec_alloc(i);
                 for (j = i - 1; j >= 0; j--)
-                    XVECEXP(new, 0, j) = XVECEXP(x, 0, j);
+                    XVECEXP(new_rtx, 0, j) = XVECEXP(x, 0, j);
             }
 
-            last = add_to_sequence(new, &clobber_head, "");
+            last = add_to_sequence(new_rtx, &clobber_head, "");
 
             if (c_test[0])
                 last->c_test = c_test;
@@ -288,7 +289,7 @@ static struct decision_head make_insn_sequence(rtx insn, enum routine_type type)
 
     if (type == SPLIT)
         /* Define the subroutine we will call below and emit in genemit.  */
-        printf("extern rtx gen_split_%d ();\n", last->insn_code_number);
+        printf("extern rtx gen_split_%d(rtx *);\n", last->insn_code_number);
 
     return head;
 }
@@ -305,48 +306,48 @@ static struct decision_head make_insn_sequence(rtx insn, enum routine_type type)
 static struct decision *add_to_sequence(
     rtx pattern, struct decision_head *last, const char *position)
 {
-    register RTX_CODE code;
-    register struct decision *new = (struct decision *)xmalloc(sizeof(struct decision));
-    struct decision *this;
+    RTX_CODE code;
+    struct decision *new_dec = (struct decision *)xmalloc(sizeof(struct decision));
+    struct decision *this_dec;
     char *newpos;
-    register char *fmt;
-    register size_t i;
+    const char *fmt;
+    size_t i;
     int depth = strlen(position);
     int len;
 
     if (depth > max_depth)
         max_depth = depth;
 
-    new->number = next_number++;
-    new->position = copystr(position);
-    new->ignore_code = 0;
-    new->ignore_mode = 0;
-    new->enforce_mode = 1;
-    new->retest_code = new->retest_mode = 0;
-    new->veclen = 0;
-    new->test_elt_zero_int = 0;
-    new->test_elt_one_int = 0;
-    new->test_elt_zero_wide = 0;
-    new->elt_zero_int = 0;
-    new->elt_one_int = 0;
-    new->elt_zero_wide = 0;
-    new->tests = 0;
-    new->pred = -1;
-    new->c_test = 0;
-    new->success.first = new->success.last = 0;
-    new->insn_code_number = -1;
-    new->num_clobbers_to_add = 0;
-    new->next = 0;
-    new->prev = 0;
-    new->afterward = 0;
-    new->opno = -1;
-    new->dupno = -1;
-    new->label_needed = 0;
-    new->subroutine_number = 0;
+    new_dec->number = next_number++;
+    new_dec->position = copystr(position);
+    new_dec->ignore_code = 0;
+    new_dec->ignore_mode = 0;
+    new_dec->enforce_mode = 1;
+    new_dec->retest_code = new_dec->retest_mode = 0;
+    new_dec->veclen = 0;
+    new_dec->test_elt_zero_int = 0;
+    new_dec->test_elt_one_int = 0;
+    new_dec->test_elt_zero_wide = 0;
+    new_dec->elt_zero_int = 0;
+    new_dec->elt_one_int = 0;
+    new_dec->elt_zero_wide = 0;
+    new_dec->tests = 0;
+    new_dec->pred = -1;
+    new_dec->c_test = 0;
+    new_dec->success.first = new_dec->success.last = 0;
+    new_dec->insn_code_number = -1;
+    new_dec->num_clobbers_to_add = 0;
+    new_dec->next = 0;
+    new_dec->prev = 0;
+    new_dec->afterward = 0;
+    new_dec->opno = -1;
+    new_dec->dupno = -1;
+    new_dec->label_needed = 0;
+    new_dec->subroutine_number = 0;
 
-    this = new;
+    this_dec = new_dec;
 
-    last->first = last->last = new;
+    last->first = last->last = new_dec;
 
     newpos = (char *)alloca(depth + 2);
     strcpy(newpos, position);
@@ -354,8 +355,8 @@ static struct decision *add_to_sequence(
 
 restart:
 
-    new->mode = GET_MODE(pattern);
-    new->code = code = GET_CODE(pattern);
+    new_dec->mode = GET_MODE(pattern);
+    new_dec->code = code = GET_CODE(pattern);
 
     switch (code)
     {
@@ -364,17 +365,17 @@ restart:
     case MATCH_OPERATOR:
     case MATCH_PARALLEL:
     case MATCH_INSN2:
-        new->opno = XINT(pattern, 0);
-        new->code = (code == MATCH_PARALLEL ? PARALLEL : UNKNOWN);
-        new->enforce_mode = 0;
+        new_dec->opno = XINT(pattern, 0);
+        new_dec->code = (code == MATCH_PARALLEL ? PARALLEL : UNKNOWN);
+        new_dec->enforce_mode = 0;
 
         if (code == MATCH_SCRATCH)
-            new->tests = "scratch_operand";
+            new_dec->tests = "scratch_operand";
         else
-            new->tests = XSTR(pattern, 1);
+            new_dec->tests = XSTR(pattern, 1);
 
-        if (*new->tests == 0)
-            new->tests = 0;
+        if (*new_dec->tests == 0)
+            new_dec->tests = 0;
 
         /* See if we know about this predicate and save its number.  If we do,
        and it only accepts one code, note that fact.  The predicate
@@ -388,21 +389,21 @@ restart:
        so we can test the mode (but we need not).  This fact should
        considerably simplify the generated code.  */
 
-        if (new->tests)
+        if (new_dec->tests)
         {
             for (i = 0; i < NUM_KNOWN_PREDS; i++)
-                if (!strcmp(preds[i].name, new->tests))
+                if (!strcmp(preds[i].name, new_dec->tests))
                 {
                     int j;
                     int allows_const_int = 0;
 
-                    new->pred = i;
+                    new_dec->pred = i;
 
-                    if (preds[i].codes[1] == 0 && new->code == UNKNOWN)
+                    if (preds[i].codes[1] == 0 && new_dec->code == UNKNOWN)
                     {
-                        new->code = preds[i].codes[0];
-                        if (!strcmp("const_int_operand", new->tests))
-                            new->tests = 0, new->pred = -1;
+                        new_dec->code = preds[i].codes[0];
+                        if (!strcmp("const_int_operand", new_dec->tests))
+                            new_dec->tests = 0, new_dec->pred = -1;
                     }
 
                     for (j = 0; j < NUM_RTX_CODE && preds[i].codes[j] != 0; j++)
@@ -410,17 +411,10 @@ restart:
                             allows_const_int = 1;
 
                     if (!allows_const_int)
-                        new->enforce_mode = new->ignore_mode = 1;
+                        new_dec->enforce_mode = new_dec->ignore_mode = 1;
 
                     break;
                 }
-
-#ifdef PREDICATE_CODES
-            /* If the port has a list of the predicates it uses but omits
-               one, warn.  */
-            if (i == NUM_KNOWN_PREDS)
-                fprintf(stderr, "Warning: `%s' not in PREDICATE_CODES\n", new->tests);
-#endif
         }
 
         if (code == MATCH_OPERATOR || code == MATCH_PARALLEL)
@@ -428,30 +422,30 @@ restart:
             for (i = 0; i < (size_t)XVECLEN(pattern, 2); i++)
             {
                 newpos[depth] = i + (code == MATCH_OPERATOR ? '0' : 'a');
-                new = add_to_sequence(XVECEXP(pattern, 2, i), &new->success, newpos);
+                new_dec = add_to_sequence(XVECEXP(pattern, 2, i), &new_dec->success, newpos);
             }
         }
 
-        return new;
+        return new_dec;
 
     case MATCH_OP_DUP:
-        new->opno = XINT(pattern, 0);
-        new->dupno = XINT(pattern, 0);
-        new->code = UNKNOWN;
-        new->tests = 0;
+        new_dec->opno = XINT(pattern, 0);
+        new_dec->dupno = XINT(pattern, 0);
+        new_dec->code = UNKNOWN;
+        new_dec->tests = 0;
         for (i = 0; i < (size_t)XVECLEN(pattern, 1); i++)
         {
             newpos[depth] = i + '0';
-            new = add_to_sequence(XVECEXP(pattern, 1, i), &new->success, newpos);
+            new_dec = add_to_sequence(XVECEXP(pattern, 1, i), &new_dec->success, newpos);
         }
-        return new;
+        return new_dec;
 
     case MATCH_DUP:
     case MATCH_PAR_DUP:
-        new->dupno = XINT(pattern, 0);
-        new->code = UNKNOWN;
-        new->enforce_mode = 0;
-        return new;
+        new_dec->dupno = XINT(pattern, 0);
+        new_dec->code = UNKNOWN;
+        new_dec->enforce_mode = 0;
+        return new_dec;
 
     case ADDRESS:
         pattern = XEXP(pattern, 0);
@@ -471,43 +465,43 @@ restart:
             fatal("mode mismatch in SET");
         }
         newpos[depth] = '0';
-        new = add_to_sequence(SET_DEST(pattern), &new->success, newpos);
-        this->success.first->enforce_mode = 1;
+        new_dec = add_to_sequence(SET_DEST(pattern), &new_dec->success, newpos);
+        this_dec->success.first->enforce_mode = 1;
         newpos[depth] = '1';
-        new = add_to_sequence(SET_SRC(pattern), &new->success, newpos);
+        new_dec = add_to_sequence(SET_SRC(pattern), &new_dec->success, newpos);
 
         /* If set are setting CC0 from anything other than a COMPARE, we
        must enforce the mode so that we do not produce ambiguous insns.  */
         if (GET_CODE(SET_DEST(pattern)) == CC0 && GET_CODE(SET_SRC(pattern)) != COMPARE)
-            this->success.first->enforce_mode = 1;
-        return new;
+            this_dec->success.first->enforce_mode = 1;
+        return new_dec;
 
     case SIGN_EXTEND:
     case ZERO_EXTEND:
     case STRICT_LOW_PART:
         newpos[depth] = '0';
-        new = add_to_sequence(XEXP(pattern, 0), &new->success, newpos);
-        this->success.first->enforce_mode = 1;
-        return new;
+        new_dec = add_to_sequence(XEXP(pattern, 0), &new_dec->success, newpos);
+        this_dec->success.first->enforce_mode = 1;
+        return new_dec;
 
     case SUBREG:
-        this->test_elt_one_int = 1;
-        this->elt_one_int = XINT(pattern, 1);
+        this_dec->test_elt_one_int = 1;
+        this_dec->elt_one_int = XINT(pattern, 1);
         newpos[depth] = '0';
-        new = add_to_sequence(XEXP(pattern, 0), &new->success, newpos);
-        this->success.first->enforce_mode = 1;
-        return new;
+        new_dec = add_to_sequence(XEXP(pattern, 0), &new_dec->success, newpos);
+        this_dec->success.first->enforce_mode = 1;
+        return new_dec;
 
     case ZERO_EXTRACT:
     case SIGN_EXTRACT:
         newpos[depth] = '0';
-        new = add_to_sequence(XEXP(pattern, 0), &new->success, newpos);
-        this->success.first->enforce_mode = 1;
+        new_dec = add_to_sequence(XEXP(pattern, 0), &new_dec->success, newpos);
+        this_dec->success.first->enforce_mode = 1;
         newpos[depth] = '1';
-        new = add_to_sequence(XEXP(pattern, 1), &new->success, newpos);
+        new_dec = add_to_sequence(XEXP(pattern, 1), &new_dec->success, newpos);
         newpos[depth] = '2';
-        new = add_to_sequence(XEXP(pattern, 2), &new->success, newpos);
-        return new;
+        new_dec = add_to_sequence(XEXP(pattern, 2), &new_dec->success, newpos);
+        return new_dec;
 
     case EQ:
     case NE:
@@ -529,11 +523,11 @@ restart:
     case COMPARE:
         /* Enforce the mode on the first operand to avoid ambiguous insns.  */
         newpos[depth] = '0';
-        new = add_to_sequence(XEXP(pattern, 0), &new->success, newpos);
-        this->success.first->enforce_mode = 1;
+        new_dec = add_to_sequence(XEXP(pattern, 0), &new_dec->success, newpos);
+        this_dec->success.first->enforce_mode = 1;
         newpos[depth] = '1';
-        new = add_to_sequence(XEXP(pattern, 1), &new->success, newpos);
-        return new;
+        new_dec = add_to_sequence(XEXP(pattern, 1), &new_dec->success, newpos);
+        return new_dec;
 
     default:
         break;
@@ -545,25 +539,25 @@ restart:
     {
         newpos[depth] = '0' + i;
         if (fmt[i] == 'e' || fmt[i] == 'u')
-            new = add_to_sequence(XEXP(pattern, i), &new->success, newpos);
+            new_dec = add_to_sequence(XEXP(pattern, i), &new_dec->success, newpos);
         else if (fmt[i] == 'i' && i == 0)
         {
-            this->test_elt_zero_int = 1;
-            this->elt_zero_int = XINT(pattern, i);
+            this_dec->test_elt_zero_int = 1;
+            this_dec->elt_zero_int = XINT(pattern, i);
         }
         else if (fmt[i] == 'i' && i == 1)
         {
-            this->test_elt_one_int = 1;
-            this->elt_one_int = XINT(pattern, i);
+            this_dec->test_elt_one_int = 1;
+            this_dec->elt_one_int = XINT(pattern, i);
         }
         else if (fmt[i] == 'w' && i == 0)
         {
-            this->test_elt_zero_wide = 1;
-            this->elt_zero_wide = XWINT(pattern, i);
+            this_dec->test_elt_zero_wide = 1;
+            this_dec->elt_zero_wide = XWINT(pattern, i);
         }
         else if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             /* We do not handle a vector appearing as other than
                the first item, just because nothing uses them
                and by handling only the special case
@@ -572,17 +566,17 @@ restart:
                or the element number in a vector.  */
             if (i != 0)
                 abort();
-            this->veclen = XVECLEN(pattern, i);
+            this_dec->veclen = XVECLEN(pattern, i);
             for (j = 0; j < XVECLEN(pattern, i); j++)
             {
                 newpos[depth] = 'a' + j;
-                new = add_to_sequence(XVECEXP(pattern, i, j), &new->success, newpos);
+                new_dec = add_to_sequence(XVECEXP(pattern, i, j), &new_dec->success, newpos);
             }
         }
         else if (fmt[i] != '0')
             abort();
     }
-    return new;
+    return new_dec;
 }
 /* Return 1 if we can prove that there is no RTL that can match both
    D1 and D2.  Otherwise, return 0 (it may be that there is an RTL that
@@ -982,16 +976,16 @@ static void write_subroutine(struct decision *tree, enum routine_type type)
     else if (type == SPLIT)
         printf("_insns");
 
-    printf(" (register rtx x0, rtx insn ATTRIBUTE_UNUSED");
+    printf(" (rtx x0, rtx insn ATTRIBUTE_UNUSED");
     if (type == RECOG)
         printf(", int *pnum_clobbers ATTRIBUTE_UNUSED");
 
     printf(")\n");
 
     printf("{\n");
-    printf("  register rtx *ro = &recog_operand[0];\n");
+    printf("  rtx *ro = &recog_operand[0];\n");
 
-    printf("  register rtx ");
+    printf("  rtx ");
     for (i = 1; i < max_depth; i++)
         printf("x%d  ATTRIBUTE_UNUSED, ", i);
 
@@ -1032,8 +1026,8 @@ static const char *indents[] = { "  ", "  ", "  ", "   ", "    ", "     ", "    
 static void write_tree_1(
     struct decision *tree, const char *prevpos, struct decision *afterward, enum routine_type type)
 {
-    register struct decision *p, *p1;
-    register int depth = tree ? strlen(tree->position) : 0;
+    struct decision *p, *p1;
+    int depth = tree ? strlen(tree->position) : 0;
     enum machine_mode switch_mode = VOIDmode;
     RTX_CODE switch_code = UNKNOWN;
     int uncond = 0;
@@ -1342,7 +1336,7 @@ static void write_tree_1(
             if (p->tests)
                 printf("%s (x%d, %smode)", p->tests, depth, GET_MODE_NAME(p->mode));
             else
-                printf("1");
+                printf("(1)");
 
             printf(")\n");
             inner_indent += 2;
@@ -1444,7 +1438,7 @@ static void write_tree_1(
 
 static void print_code(enum rtx_code code)
 {
-    register char *p1;
+    const char *p1;
     for (p1 = GET_RTX_NAME(code); *p1; p1++)
     {
         if (*p1 >= 'a' && *p1 <= 'z')
@@ -1454,7 +1448,7 @@ static void print_code(enum rtx_code code)
     }
 }
 
-static int same_codes(register struct decision *p, register enum rtx_code code)
+static int same_codes(struct decision *p, enum rtx_code code)
 {
     for (; p; p = p->next)
         if (p->code != code)
@@ -1463,13 +1457,13 @@ static int same_codes(register struct decision *p, register enum rtx_code code)
     return 1;
 }
 
-static void clear_codes(register struct decision *p)
+static void clear_codes(struct decision *p)
 {
     for (; p; p = p->next)
         p->ignore_code = 1;
 }
 
-static int same_modes(register struct decision *p, register enum machine_mode mode)
+static int same_modes(struct decision *p, enum machine_mode mode)
 {
     for (; p; p = p->next)
         if ((p->enforce_mode ? p->mode : VOIDmode) != mode)
@@ -1478,7 +1472,7 @@ static int same_modes(register struct decision *p, register enum machine_mode mo
     return 1;
 }
 
-static void clear_modes(register struct decision *p)
+static void clear_modes(struct decision *p)
 {
     for (; p; p = p->next)
         p->enforce_mode = 0;
@@ -1494,7 +1488,7 @@ static void clear_modes(register struct decision *p)
 static void write_tree(struct decision *tree, const char *prevpos, struct decision *afterward,
     int initial, enum routine_type type)
 {
-    register struct decision *p;
+    struct decision *p;
     const char *name_prefix = (type == SPLIT ? "split" : "recog");
     const char *call_suffix = (type == SPLIT ? "" : ", pnum_clobbers");
 
@@ -1557,7 +1551,7 @@ static void change_state(const char *oldpos, const char *newpos, int indent)
 }
 static char *copystr(const char *s1)
 {
-    register char *tem;
+    char *tem;
 
     if (s1 == 0)
         return 0;
@@ -1582,7 +1576,7 @@ static void mybcopy(char *in, char *out, unsigned length)
 
 void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -1594,7 +1588,7 @@ void *xrealloc(void *old, size_t size)
 
 void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
@@ -1629,7 +1623,7 @@ int main(int argc, char **argv)
     struct decision_head recog_tree;
     struct decision_head split_tree;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
     recog_tree.first = recog_tree.last = split_tree.first = split_tree.last = 0;

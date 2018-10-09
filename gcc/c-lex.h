@@ -81,7 +81,7 @@ extern void position_after_white_space (void);
 extern int check_newline (void);
 
 extern int yylex (void);
-extern void yyerror (char *);
+extern void yyerror (const char *);
 
 extern void forget_protocol_qualifiers (void);
 extern tree is_class_name (tree);

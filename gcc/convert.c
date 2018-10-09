@@ -274,7 +274,7 @@ tree convert_to_integer(tree type, tree expr)
             {
                 /* Do the arithmetic in type TYPEX,
                    then convert result to TYPE.  */
-                register tree typex = type;
+                tree typex = type;
 
                 /* Can't do arithmetic in enumeral types
                    so use an integer type that will hold the values.  */
@@ -308,7 +308,7 @@ tree convert_to_integer(tree type, tree expr)
             /* This is not correct for ABS_EXPR,
                since we must test the sign before truncation.  */
             {
-                register tree typex = type;
+                tree typex = type;
 
                 /* Can't do arithmetic in enumeral types
                    so use an integer type that will hold the values.  */

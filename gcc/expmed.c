@@ -92,7 +92,7 @@ void init_expmed(void)
 
     reg = gen_rtx(REG, word_mode, 10000);
 
-    zero_cost = rtx_cost(const0_rtx, 0);
+    zero_cost = rtx_cost(const0_rtx, UNKNOWN);
     add_cost = rtx_cost(gen_rtx_PLUS(word_mode, reg, reg), SET);
 
     shift_insn = emit_insn(gen_rtx_SET(VOIDmode, reg, gen_rtx_ASHIFT(word_mode, reg, const0_rtx)));
@@ -188,13 +188,13 @@ rtx negate_rtx(enum machine_mode mode, rtx x)
    If operand 3 of the insv pattern is VOIDmode, then we will use BITS_PER_WORD
    else, we use the mode of operand 3.  */
 
-rtx store_bit_field(rtx str_rtx, register int bitsize, int bitnum, enum machine_mode fieldmode,
+rtx store_bit_field(rtx str_rtx, int bitsize, int bitnum, enum machine_mode fieldmode,
     rtx value, int align, int total_size)
 {
     int unit = (GET_CODE(str_rtx) == MEM) ? BITS_PER_UNIT : BITS_PER_WORD;
-    register int offset = bitnum / unit;
-    register int bitpos = bitnum % unit;
-    register rtx op0 = str_rtx;
+    int offset = bitnum / unit;
+    int bitpos = bitnum % unit;
+    rtx op0 = str_rtx;
 
     if (GET_CODE(str_rtx) == MEM && !MEM_IN_STRUCT_P(str_rtx))
         abort();
@@ -401,10 +401,10 @@ rtx store_bit_field(rtx str_rtx, register int bitsize, int bitnum, enum machine_
 
    Note that protect_from_queue has already been done on OP0 and VALUE.  */
 
-static void store_fixed_bit_field(register rtx op0, register int offset, register int bitsize,
-    register int bitpos, register rtx value, int struct_align)
+static void store_fixed_bit_field(rtx op0, int offset, int bitsize,
+    int bitpos, rtx value, int struct_align)
 {
-    register enum machine_mode mode;
+    enum machine_mode mode;
     int total_bits = BITS_PER_WORD;
     rtx subtarget, temp;
     int all_zero = 0;
@@ -485,7 +485,7 @@ static void store_fixed_bit_field(register rtx op0, register int offset, registe
 
     if (GET_CODE(value) == CONST_INT)
     {
-        register int32_t v = INTVAL(value);
+        int32_t v = INTVAL(value);
 
         if (bitsize < 32)
             v &= ((int32_t)1 << bitsize) - 1;
@@ -657,13 +657,13 @@ static void store_split_bit_field(rtx op0, int bitsize, int bitpos, rtx value, i
    Otherwise, we return a REG of mode TMODE or MODE, with TMODE preferred
    if they are equally easy.  */
 
-rtx extract_bit_field(rtx str_rtx, register int bitsize, int bitnum, int unsignedp, rtx target,
+rtx extract_bit_field(rtx str_rtx, int bitsize, int bitnum, int unsignedp, rtx target,
     enum machine_mode mode, enum machine_mode tmode, int align, int total_size)
 {
     int unit = (GET_CODE(str_rtx) == MEM) ? BITS_PER_UNIT : BITS_PER_WORD;
-    register int offset = bitnum / unit;
-    register int bitpos = bitnum % unit;
-    register rtx op0 = str_rtx;
+    int offset = bitnum / unit;
+    int bitpos = bitnum % unit;
+    rtx op0 = str_rtx;
     rtx spec_target = target;
     rtx spec_target_subreg = 0;
     int extzv_bitsize;
@@ -1010,8 +1010,8 @@ rtx extract_bit_field(rtx str_rtx, register int bitsize, int bitnum, int unsigne
 
    ALIGN is the alignment that STR_RTX is known to have, measured in bytes.  */
 
-static rtx extract_fixed_bit_field(enum machine_mode tmode, register rtx op0, register int offset,
-    register int bitsize, register int bitpos, register rtx target, int unsignedp, int align)
+static rtx extract_fixed_bit_field(enum machine_mode tmode, rtx op0, int offset,
+    int bitsize, int bitpos, rtx target, int unsignedp, int align)
 {
     int total_bits = BITS_PER_WORD;
     enum machine_mode mode;
@@ -1311,20 +1311,20 @@ void expand_dec(rtx target, rtx dec)
    If UNSIGNEDP is nonzero, do a logical shift; otherwise, arithmetic.
    Return the rtx for where the value is.  */
 
-rtx expand_shift(enum tree_code code, register enum machine_mode mode, rtx shifted, tree amount,
-    register rtx target, int unsignedp)
+rtx expand_shift(enum tree_code code, enum machine_mode mode, rtx shifted, tree amount,
+    rtx target, int unsignedp)
 {
-    register rtx op1, temp = 0;
-    register int left = (code == LSHIFT_EXPR || code == LROTATE_EXPR);
-    register int rotate = (code == LROTATE_EXPR || code == RROTATE_EXPR);
-    int try
+    rtx op1, temp = 0;
+    int left = (code == LSHIFT_EXPR || code == LROTATE_EXPR);
+    int rotate = (code == LROTATE_EXPR || code == RROTATE_EXPR);
+    int tries
         ;
 
     /* Previously detected shift-counts computed by NEGATE_EXPR
        and shifted in the other direction; but that does not work
        on all machines.  */
 
-    op1 = expand_expr(amount, NULL_RTX, VOIDmode, 0);
+    op1 = expand_expr(amount, NULL_RTX, VOIDmode, EXPAND_NORMAL);
 
 #ifdef SHIFT_COUNT_TRUNCATED
     if (SHIFT_COUNT_TRUNCATED)
@@ -1340,13 +1340,13 @@ rtx expand_shift(enum tree_code code, register enum machine_mode mode, rtx shift
     if (op1 == const0_rtx)
         return shifted;
 
-    for (try = 0; temp == 0 && try < 3; try ++)
+    for (tries = 0; temp == 0 && tries < 3; tries ++)
     {
         enum optab_methods methods;
 
-        if (try == 0)
+        if (tries == 0)
             methods = OPTAB_DIRECT;
-        else if (try == 1)
+        else if (tries == 1)
             methods = OPTAB_WIDEN;
         else
             methods = OPTAB_LIB_WIDEN;
@@ -1726,7 +1726,7 @@ static void synth_mult(struct algorithm *alg_out, uint32_t t, int cost_limit)
    you should swap the two operands if OP0 would be constant.  */
 
 rtx expand_mult(
-    enum machine_mode mode, register rtx op0, register rtx op1, register rtx target, int unsignedp)
+    enum machine_mode mode, rtx op0, rtx op1, rtx target, int unsignedp)
 {
     rtx const_op1 = op1;
 
@@ -2066,8 +2066,8 @@ static uint32_t invert_mod2n(uint32_t x, int n)
 
    MODE is the mode of operation.  */
 
-rtx expand_mult_highpart_adjust(enum machine_mode mode, register rtx adj_operand, register rtx op0,
-    register rtx op1, register rtx target, int unsignedp)
+rtx expand_mult_highpart_adjust(enum machine_mode mode, rtx adj_operand, rtx op0,
+    rtx op1, rtx target, int unsignedp)
 {
     rtx tem;
     enum rtx_code adj_code = unsignedp ? PLUS : MINUS;
@@ -2095,8 +2095,8 @@ rtx expand_mult_highpart_adjust(enum machine_mode mode, register rtx adj_operand
 
    MAX_COST is the total allowed cost for the expanded RTL.  */
 
-rtx expand_mult_highpart(enum machine_mode mode, register rtx op0, uint32_t cnst1,
-    register rtx target, int unsignedp, int max_cost)
+rtx expand_mult_highpart(enum machine_mode mode, rtx op0, uint32_t cnst1,
+    rtx target, int unsignedp, int max_cost)
 {
     enum machine_mode wider_mode = GET_MODE_WIDER_MODE(mode);
     optab mul_highpart_optab;
@@ -2163,8 +2163,7 @@ rtx expand_mult_highpart(enum machine_mode mode, register rtx op0, uint32_t cnst
         && mul_widen_cost[(int)wider_mode] < max_cost)
     {
         op1 = force_reg(mode, op1);
-        goto try
-            ;
+        goto do_it;
     }
 
     /* Try widening the mode and perform a non-widening multiplication.  */
@@ -2173,8 +2172,7 @@ rtx expand_mult_highpart(enum machine_mode mode, register rtx op0, uint32_t cnst
         && mul_cost[(int)wider_mode] + shift_cost[size - 1] < max_cost)
     {
         op1 = wide_op1;
-        goto try
-            ;
+        goto do_it;
     }
 
     /* Try widening multiplication of opposite signedness, and adjust.  */
@@ -2196,7 +2194,7 @@ rtx expand_mult_highpart(enum machine_mode mode, register rtx op0, uint32_t cnst
 
     return 0;
 
-    try :
+    do_it:
         /* Pass NULL_RTX as target since TARGET has wrong mode.  */
         tem
         = expand_binop(wider_mode, moptab, op0, op1, NULL_RTX, unsignedp, OPTAB_WIDEN);
@@ -2255,11 +2253,11 @@ rtx expand_mult_highpart(enum machine_mode mode, register rtx op0, uint32_t cnst
 
 #define EXACT_POWER_OF_2_OR_ZERO_P(x) (((x) & ((x)-1)) == 0)
 
-rtx expand_divmod(int rem_flag, enum tree_code code, enum machine_mode mode, register rtx op0,
-    register rtx op1, register rtx target, int unsignedp)
+rtx expand_divmod(int rem_flag, enum tree_code code, enum machine_mode mode, rtx op0,
+    rtx op1, rtx target, int unsignedp)
 {
     enum machine_mode compute_mode;
-    register rtx tquotient;
+    rtx tquotient;
     rtx quotient = 0, remainder = 0;
     rtx last;
     int size;
@@ -3201,7 +3199,7 @@ tree make_tree(tree type, rtx x)
         }
         else
         {
-            REAL_VALUE_TYPE d;
+            double d;
 
             REAL_VALUE_FROM_CONST_DOUBLE(d, x);
             t = build_real(type, d);
@@ -3277,7 +3275,7 @@ rtx expand_mult_add(rtx x, rtx target, rtx mult, rtx add, enum machine_mode mode
         fold(build(MULT_EXPR, type, make_tree(type, x), make_tree(type, mult))),
         make_tree(add_type, add)));
 
-    return expand_expr(result, target, VOIDmode, 0);
+    return expand_expr(result, target, VOIDmode, EXPAND_NORMAL);
 }
 
 /* Compute the logical-and of OP0 and OP1, storing it in TARGET

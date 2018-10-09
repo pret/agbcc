@@ -48,16 +48,17 @@ static void optimize_reg_copy_3(rtx, rtx, rtx);
 static rtx gen_add3_insn(rtx, rtx, rtx);
 static void copy_src_to_dest(rtx, rtx, rtx, int, int);
 static int *regmove_bb_head;
-
+enum match_use
+{
+    READ,
+    WRITE,
+    READWRITE
+};
+ 
 struct match
 {
     int with[MAX_RECOG_OPERANDS];
-    enum
-    {
-        READ,
-        WRITE,
-        READWRITE
-    } use[MAX_RECOG_OPERANDS];
+    enum match_use use[MAX_RECOG_OPERANDS];
     int commutative[MAX_RECOG_OPERANDS];
     int early_clobber[MAX_RECOG_OPERANDS];
 };
@@ -67,7 +68,7 @@ static int find_matches(rtx, struct match *);
 static int fixup_match_1(rtx, rtx, rtx, rtx, rtx, int, int, int, FILE *);
 static int reg_is_remote_constant_p(rtx, rtx, rtx);
 static int stable_but_for_p(rtx, rtx, rtx);
-static int regclass_compatible_p(int, int);
+static int regclass_compatible_p(enum reg_class, enum reg_class);
 /* CYGNUS LOCAL SH4-OPT */
 static struct rel_use *lookup_related(int, enum reg_class, int32_t);
 static void rel_build_chain(struct rel_use *, struct rel_use *, int);
@@ -85,7 +86,7 @@ static int loop_depth;
 
 /* Return non-zero if registers with CLASS1 and CLASS2 can be merged without
    causing too much register allocation problems.  */
-static int regclass_compatible_p(int class0, int class1)
+static int regclass_compatible_p(enum reg_class class0, enum reg_class class1)
 {
     return (class0 == class1
         || (reg_class_subset_p(class0, class1) && !CLASS_LIKELY_SPILLED_P(class0))
@@ -332,7 +333,7 @@ struct rel_use
 {
     rtx insn, *addrp;
     int luid, call_tally;
-    enum reg_class class;
+    enum reg_class rclass;
     int set_in_parallel : 1;
     int32_t offset, match_offset;
     struct rel_use *next_chain, **prev_chain_ref, *next_hash, *sibling;
@@ -341,7 +342,6 @@ struct rel_use
 struct related **regno_related, *rel_base_list, *unrelatedly_used;
 
 #define rel_alloc(N) obstack_alloc(&related_obstack, (N))
-#define rel_new(X) ((X) = rel_alloc(sizeof *(X)))
 
 static struct obstack related_obstack;
 
@@ -356,7 +356,7 @@ static int32_t add_limits[NUM_MACHINE_MODES][2];
 /* Try to find a related value with offset OFFSET from the base
    register belonging to REGNO, using a register with preferred class
    that is compatible with CLASS.  */
-static struct rel_use *lookup_related(int regno, enum reg_class class, int32_t offset)
+static struct rel_use *lookup_related(int regno, enum reg_class rclass, int32_t offset)
 {
     int base = regno_related[regno]->u.base;
     int hash = REL_USE_HASH(offset);
@@ -367,7 +367,7 @@ static struct rel_use *lookup_related(int regno, enum reg_class class, int32_t o
             continue;
         if (match->next_chain)
             continue;
-        if (regclass_compatible_p(class, match->class))
+        if (regclass_compatible_p(rclass, match->rclass))
             break;
     }
     return match;
@@ -397,7 +397,7 @@ static void rel_build_chain(struct rel_use *new_use, struct rel_use *match, int 
     {
         struct rel_use_chain *new_chain;
 
-        rel_new(new_chain);
+        new_chain = (struct rel_use_chain *)rel_alloc(sizeof *new_chain);
         new_chain->chain = new_use;
         new_use->prev_chain_ref = &new_chain->chain;
         new_use->next_chain = 0;
@@ -428,7 +428,7 @@ static void rel_record_mem(
     int regno, base;
     int32_t offset;
     struct rel_use *new_use, *match;
-    enum reg_class class;
+    enum reg_class rclass;
     int hash;
 
     if (GET_CODE(addr) != REG)
@@ -455,12 +455,12 @@ static void rel_record_mem(
     XEXP(auto_inc, 0) = addr;
     *addrp = auto_inc;
 
-    rel_new(new_use);
+    new_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));;
     new_use->insn = insn;
     new_use->addrp = addrp;
     new_use->luid = luid;
     new_use->call_tally = call_tally;
-    new_use->class = class = reg_preferred_class(regno);
+    new_use->rclass = rclass = reg_preferred_class(regno);
     new_use->set_in_parallel = 0;
     new_use->offset = offset;
     new_use->match_offset = offset;
@@ -468,7 +468,7 @@ static void rel_record_mem(
 
     do
     {
-        match = lookup_related(regno, class, offset);
+        match = lookup_related(regno, rclass, offset);
         if (!match)
         {
             /* We can choose PRE_{IN,DE}CREMENT on the spot with the information
@@ -479,14 +479,14 @@ static void rel_record_mem(
                the changes could be made, but don't really want to make a
                change right now.  The caching from recog_memoized would only
                get in the way.  */
-            match = lookup_related(regno, class, offset - size);
+            match = lookup_related(regno, rclass, offset - size);
             if (HAVE_PRE_INCREMENT && match)
             {
                 PUT_CODE(auto_inc, PRE_INC);
                 if (recog(PATTERN(insn), insn, NULL) >= 0)
                     break;
             }
-            match = lookup_related(regno, class, offset + size);
+            match = lookup_related(regno, rclass, offset + size);
             if (HAVE_PRE_DECREMENT && match)
             {
                 PUT_CODE(auto_inc, PRE_DEC);
@@ -500,7 +500,7 @@ static void rel_record_mem(
         {
             struct rel_use *inc_use;
 
-            rel_new(inc_use);
+            inc_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
             *inc_use = *new_use;
             inc_use->sibling = new_use;
             new_use->sibling = inc_use;
@@ -515,7 +515,7 @@ static void rel_record_mem(
         {
             struct rel_use *dec_use;
 
-            rel_new(dec_use);
+            dec_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
             *dec_use = *new_use;
             dec_use->sibling = new_use->sibling;
             new_use->sibling = dec_use;
@@ -540,7 +540,7 @@ static void invalidate_related(rtx reg, int luid)
     struct related *rel = regno_related[regno];
     if (!rel)
     {
-        rel_new(rel);
+        rel = (struct related *)rel_alloc(sizeof(struct related));
         regno_related[regno] = rel;
         rel->prev = unrelatedly_used;
         unrelatedly_used = rel;
@@ -566,7 +566,7 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
 {
     rtx x = *xp;
     enum rtx_code code = GET_CODE(x);
-    char *fmt;
+    const char *fmt;
     int i;
 
     switch (code)
@@ -631,7 +631,7 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
                 regno_related[dst_regno]->reg_orig_refs += loop_depth;
                 regno_related[dst_regno]->offset
                     = regno_related[src_regno]->offset + INTVAL(XEXP(src, 1));
-                rel_new(new_update);
+                new_update = (struct update *)rel_alloc(sizeof(struct update));
                 new_update->insn = insn;
                 new_update->death_insn = regno_related[dst_regno]->death;
                 regno_related[dst_regno]->death = NULL_RTX;
@@ -643,7 +643,8 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
             {
                 if (src_regno == dst_regno)
                     break;
-                rel_new(new_related);
+
+                new_related = (struct related *)rel_alloc(sizeof(struct related));
                 new_related->reg = src_reg;
                 new_related->insn = insn;
                 new_related->updates = 0;
@@ -654,7 +655,7 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
                 new_related->prev = 0;
                 new_related->invalidate_luid = 0;
                 new_related->death = NULL_RTX;
-                rel_new(new_related->baseinfo);
+                new_related->baseinfo = (struct related_baseinfo *)rel_alloc(sizeof(struct related_baseinfo));
                 zero_memory((char *)new_related->baseinfo, sizeof *new_related->baseinfo);
                 new_related->baseinfo->prev_base = rel_base_list;
                 rel_base_list = new_related;
@@ -668,7 +669,8 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
                 && (regno_related[dst_regno]->u.last_luid
                        >= regno_related[regno_related[src_regno]->u.base]->baseinfo->insn_luid))
                 break;
-            rel_new(new_related);
+
+            new_related = (struct related *)rel_alloc(sizeof(struct related));
             new_related->reg = dst;
             new_related->insn = insn;
             new_related->updates = 0;
@@ -717,22 +719,22 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
             if (rel && rel->insn && !rel->invalidate_luid && xp != &PATTERN(insn)
                 && count_occurrences(PATTERN(insn), dst) > 1)
             {
-                enum reg_class class = reg_preferred_class(regno);
+                enum reg_class rclass = reg_preferred_class(regno);
                 struct rel_use *new_use, *match;
                 int32_t offset = rel->offset;
 
-                rel_new(new_use);
+                new_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
                 new_use->insn = insn;
                 new_use->addrp = &XEXP(x, 0);
                 new_use->luid = luid;
                 new_use->call_tally = call_tally;
-                new_use->class = class;
+                new_use->rclass = rclass;
                 new_use->set_in_parallel = 1;
                 new_use->sibling = new_use;
                 do
                 {
                     new_use->match_offset = new_use->offset = offset;
-                    match = lookup_related(regno, class, offset);
+                    match = lookup_related(regno, rclass, offset);
                     offset++;
                 } while (!match || match->luid != luid);
                 rel_build_chain(new_use, match, rel->u.base);
@@ -749,7 +751,7 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
         int regno = REGNO(x);
         if (!regno_related[regno])
         {
-            rel_new(regno_related[regno]);
+            regno_related[regno] = (struct related *)rel_alloc(sizeof(struct related));
             regno_related[regno]->prev = unrelatedly_used;
             unrelatedly_used = regno_related[regno];
             regno_related[regno]->reg = x;
@@ -763,25 +765,25 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
             struct rel_use *new_use, *match;
             int32_t offset;
             int base;
-            enum reg_class class;
+            enum reg_class rclass;
 
             regno_related[regno]->reg_orig_refs += loop_depth;
 
             offset = regno_related[regno]->offset;
             base = regno_related[regno]->u.base;
 
-            rel_new(new_use);
+            new_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
             new_use->insn = insn;
             new_use->addrp = xp;
             new_use->luid = luid;
             new_use->call_tally = call_tally;
-            new_use->class = class = reg_preferred_class(regno);
+            new_use->rclass = rclass = reg_preferred_class(regno);
             new_use->set_in_parallel = 0;
             new_use->offset = offset;
             new_use->match_offset = offset;
             new_use->sibling = new_use;
 
-            match = lookup_related(regno, class, offset);
+            match = lookup_related(regno, rclass, offset);
             rel_build_chain(new_use, match, base);
         }
         return;
@@ -854,21 +856,21 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
                         && XEXP(src, 0) == *dstp && GET_CODE(XEXP(src, 1)) == CONST_INT)
                     {
                         struct rel_use *new_use, *match;
-                        enum reg_class class;
+                        enum reg_class rclass;
 
                         regno_related[regno]->reg_orig_refs += loop_depth;
-                        rel_new(new_use);
+                        new_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
                         new_use->insn = insn;
                         new_use->addrp = dstp;
                         new_use->luid = luid;
                         new_use->call_tally = call_tally;
-                        new_use->class = class = reg_preferred_class(regno);
+                        new_use->rclass = rclass = reg_preferred_class(regno);
                         new_use->set_in_parallel = 1;
                         new_use->offset = regno_related[regno]->offset;
                         new_use->match_offset = regno_related[regno]->offset
                             += INTVAL(XEXP(src, 1));
                         new_use->sibling = new_use;
-                        match = lookup_related(regno, class, new_use->offset);
+                        match = lookup_related(regno, rclass, new_use->offset);
                         rel_build_chain(new_use, match, regno_related[regno]->u.base);
                     }
                     else
@@ -891,7 +893,7 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
             find_related(&XEXP(x, i), insn, luid, call_tally);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 find_related(&XVECEXP(x, i, j), insn, luid, call_tally);
         }
@@ -901,14 +903,15 @@ static void find_related(rtx *xp, rtx insn, int luid, int call_tally)
 /* Comparison functions for qsort.  */
 static int chain_starts_earlier(const void *chain1, const void *chain2)
 {
-    int d = ((*(struct rel_use_chain **)chain2)->start_luid
-        - (*(struct rel_use_chain **)chain1)->start_luid);
+    const struct rel_use_chain *const ch1 = *(const struct rel_use_chain *const *)chain1;
+    const struct rel_use_chain *const ch2 = *(const struct rel_use_chain *const *)chain2;
+    int d = (ch2->start_luid - ch1->start_luid);
     if (!d)
-        d = ((*(struct rel_use_chain **)chain2)->chain->offset
-            - (*(struct rel_use_chain **)chain1)->chain->offset);
+        d = (ch2->chain->offset
+            - ch1->chain->offset);
     if (!d)
-        d = ((*(struct rel_use_chain **)chain2)->chain->set_in_parallel
-            - (*(struct rel_use_chain **)chain1)->chain->set_in_parallel);
+        d = (ch2->chain->set_in_parallel
+            - ch1->chain->set_in_parallel);
     /* If set_in_parallel is not set on both chain's first use, they must
        differ in start_luid or offset, since otherwise they would use the
        same chain.
@@ -917,21 +920,22 @@ static int chain_starts_earlier(const void *chain1, const void *chain2)
        multiple times in the same insn, the registers must be different.  */
 
     if (!d)
-        d = (REGNO(*(*(struct rel_use_chain **)chain2)->chain->addrp)
-            - REGNO(*(*(struct rel_use_chain **)chain1)->chain->addrp));
+        d = (REGNO(*ch2->chain->addrp)
+            - REGNO(*ch1->chain->addrp));
     return d;
 }
 
 static int chain_ends_later(const void *chain1, const void *chain2)
 {
-    int d = ((*(struct rel_use_chain **)chain1)->end_luid
-        - (*(struct rel_use_chain **)chain2)->end_luid);
+    const struct rel_use_chain *const ch1 = *(const struct rel_use_chain *const *)chain1;
+    const struct rel_use_chain *const ch2 = *(const struct rel_use_chain *const *)chain2;
+
+    int d = (ch1->end_luid - ch2->end_luid);
     if (!d)
-        d = ((*(struct rel_use_chain **)chain2)->chain->offset
-            - (*(struct rel_use_chain **)chain1)->chain->offset);
+        d = (ch2->chain->offset
+            - ch1->chain->offset);
     if (!d)
-        d = ((*(struct rel_use_chain **)chain2)->chain->set_in_parallel
-            - (*(struct rel_use_chain **)chain1)->chain->set_in_parallel);
+        d = (ch2->chain->set_in_parallel - ch1->chain->set_in_parallel);
     /* If set_in_parallel is not set on both chain's first use, they must
        differ in start_luid or offset, since otherwise they would use the
        same chain.
@@ -940,8 +944,8 @@ static int chain_ends_later(const void *chain1, const void *chain2)
        multiple times in the same insn, the registers must be different.  */
 
     if (!d)
-        d = (REGNO(*(*(struct rel_use_chain **)chain2)->chain->addrp)
-            - REGNO(*(*(struct rel_use_chain **)chain1)->chain->addrp));
+        d = (REGNO(*ch2->chain->addrp)
+            - REGNO(*ch1->chain->addrp));
     return d;
 }
 
@@ -977,19 +981,19 @@ static struct related *optimize_related_values_1(
 
         if (!rel->death && !rel->invalidate_luid)
         {
-            enum reg_class class = reg_preferred_class(regno);
+            enum reg_class rclass = reg_preferred_class(regno);
             struct rel_use *new_use, *match;
 
-            rel_new(new_use);
+            new_use = (struct rel_use *)rel_alloc(sizeof(struct rel_use));
             new_use->insn = NULL_RTX;
             new_use->addrp = &rel->reg;
             new_use->luid = luid;
             new_use->call_tally = call_tally;
-            new_use->class = class;
+            new_use->rclass = rclass;
             new_use->set_in_parallel = 1;
             new_use->match_offset = new_use->offset = rel->offset;
             new_use->sibling = new_use;
-            match = lookup_related(regno, class, rel->offset);
+            match = lookup_related(regno, rclass, rel->offset);
             rel_build_chain(new_use, match, REGNO(rel_base->reg));
             /* Prevent other registers from using the same chain.  */
             new_use->next_chain = new_use;
@@ -1039,8 +1043,8 @@ static struct related *optimize_related_values_1(
        ends before the lifetime of said chain starts.
        So we first sort according to luid of first and last instruction that
        is in the chain, respectively;  this is O(n * log n) on average.  */
-    chain_starttab = rel_alloc(num_chains * sizeof *chain_starttab);
-    chain_endtab = rel_alloc(num_chains * sizeof *chain_starttab);
+    chain_starttab = (struct rel_use_chain **)rel_alloc(num_chains * sizeof *chain_starttab);
+    chain_endtab = (struct rel_use_chain **)rel_alloc(num_chains * sizeof *chain_starttab);
     for (chain = baseinfo->chains, i = 0; chain; chain = chain->prev, i++)
     {
         chain_starttab[i] = chain;
@@ -1064,7 +1068,7 @@ static struct related *optimize_related_values_1(
             && (pred_chain->calls_crossed
                        ? succ_chain->calls_crossed
                        : succ_chain->end->call_tally == pred_chain->chain->call_tally)
-            && regclass_compatible_p(succ_chain->chain->class, pred_chain->chain->class)
+            && regclass_compatible_p(succ_chain->chain->rclass, pred_chain->chain->rclass)
             /* add_limits is not valid for MODE_PARTIAL_INT .  */
             && GET_MODE_CLASS(GET_MODE(rel_base->reg)) == MODE_INT
             && (succ_chain->chain->offset - pred_chain->match_offset
@@ -1513,7 +1517,7 @@ static void optimize_related_values(int nregs, FILE *regmove_dump_file)
     }
 
     gcc_obstack_init(&related_obstack);
-    regno_related = rel_alloc(nregs * sizeof *regno_related);
+    regno_related = (struct related **)rel_alloc(nregs * sizeof *regno_related);
     zero_memory((char *)regno_related, nregs * sizeof *regno_related);
     rel_base_list = 0;
     loop_depth = 1;
@@ -2097,7 +2101,7 @@ static void copy_src_to_dest(rtx insn, rtx src, rtx dest, int loop_depth, int ol
 
 static int reg_is_remote_constant_p(rtx reg, rtx insn, rtx first)
 {
-    register rtx p;
+    rtx p;
 
     if (REG_N_SETS(REGNO(reg)) != 1)
         return 0;
@@ -2744,12 +2748,12 @@ void regmove_optimize(rtx f, int nregs, FILE *regmove_dump_file)
     for (i = 0; i < n_basic_blocks; i++)
     {
         rtx end = BLOCK_END(i);
-        rtx new = end;
-        rtx next = NEXT_INSN(new);
+        rtx newinsn = end;
+        rtx next = NEXT_INSN(newinsn);
         while (next != 0 && INSN_UID(next) >= old_max_uid
             && (i == n_basic_blocks - 1 || BLOCK_HEAD(i + 1) != next))
-            new = next, next = NEXT_INSN(new);
-        BLOCK_END(i) = new;
+            newinsn = next, next = NEXT_INSN(newinsn);
+        BLOCK_END(i) = newinsn;
     }
 }
 
@@ -2777,7 +2781,8 @@ static int find_matches(rtx insn, struct match *matchp)
 
     for (op_no = 0; op_no < recog_n_operands; op_no++)
     {
-        char *p, c;
+        const char *p;
+        char c;
         int i = 0;
 
         p = recog_constraints[op_no];
@@ -3313,7 +3318,7 @@ static int stable_but_for_p(rtx x, rtx src, rtx dst)
     case '3':
     {
         int i;
-        char *fmt = GET_RTX_FORMAT(code);
+        const char *fmt = GET_RTX_FORMAT(code);
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
             if (fmt[i] == 'e' && !stable_but_for_p(XEXP(x, i), src, dst))
                 return 0;

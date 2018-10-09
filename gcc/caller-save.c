@@ -181,8 +181,8 @@ void init_caller_save(void)
                 rtx restinsn = emit_insn(restpat);
                 int ok;
 
-                reg_save_code[i][j] = recog_memoized(saveinsn);
-                reg_restore_code[i][j] = recog_memoized(restinsn);
+                reg_save_code[i][j] = (enum insn_code)recog_memoized(saveinsn);
+                reg_restore_code[i][j] = (enum insn_code)recog_memoized(restinsn);
 
                 /* Now extract both insns and see if we can meet their
                        constraints.  */
@@ -451,7 +451,7 @@ void save_call_clobbered_regs(void)
    so we can ignore pseudos.  */
 static void mark_set_regs(rtx reg ATTRIBUTE_UNUSED, rtx setter)
 {
-    register int regno, endregno, i;
+    int regno, endregno, i;
     enum machine_mode mode = GET_MODE(reg);
     int word = 0;
 
@@ -475,7 +475,7 @@ static void mark_set_regs(rtx reg ATTRIBUTE_UNUSED, rtx setter)
 static void mark_referenced_regs(rtx x)
 {
     enum rtx_code code = GET_CODE(x);
-    char *fmt;
+    const char *fmt;
     int i, j;
 
     if (code == SET)
@@ -664,7 +664,7 @@ static int insert_save(struct insn_chain *chain, int before_p, int regno, HARD_R
 static void insert_one_insn(struct insn_chain *chain, int before_p, enum insn_code code, rtx pat)
 {
     rtx insn = chain->insn;
-    struct insn_chain *new;
+    struct insn_chain *new_chain;
 
 #ifdef HAVE_cc0
     /* If INSN references CC0, put our insns in front of the insn that sets
@@ -678,42 +678,42 @@ static void insert_one_insn(struct insn_chain *chain, int before_p, enum insn_co
         chain = chain->prev, insn = chain->insn;
 #endif
 
-    new = new_insn_chain();
+    new_chain = new_insn_chain();
     if (before_p)
     {
-        new->prev = chain->prev;
-        if (new->prev != 0)
-            new->prev->next = new;
+        new_chain->prev = chain->prev;
+        if (new_chain->prev != 0)
+            new_chain->prev->next = new_chain;
         else
-            reload_insn_chain = new;
+            reload_insn_chain = new_chain;
 
-        chain->prev = new;
-        new->next = chain;
-        new->insn = emit_insn_before(pat, insn);
+        chain->prev = new_chain;
+        new_chain->next = chain;
+        new_chain->insn = emit_insn_before(pat, insn);
         /* ??? It would be nice if we could exclude the already / still saved
        registers from the live sets.  */
-        COPY_REG_SET(new->live_before, chain->live_before);
-        COPY_REG_SET(new->live_after, chain->live_before);
+        COPY_REG_SET(new_chain->live_before, chain->live_before);
+        COPY_REG_SET(new_chain->live_after, chain->live_before);
         if (chain->insn == BLOCK_HEAD(chain->block))
-            BLOCK_HEAD(chain->block) = new->insn;
+            BLOCK_HEAD(chain->block) = new_chain->insn;
     }
     else
     {
-        new->next = chain->next;
-        if (new->next != 0)
-            new->next->prev = new;
-        chain->next = new;
-        new->prev = chain;
-        new->insn = emit_insn_after(pat, insn);
+        new_chain->next = chain->next;
+        if (new_chain->next != 0)
+            new_chain->next->prev = new_chain;
+        chain->next = new_chain;
+        new_chain->prev = chain;
+        new_chain->insn = emit_insn_after(pat, insn);
         /* ??? It would be nice if we could exclude the already / still saved
        registers from the live sets, and observe REG_UNUSED notes.  */
-        COPY_REG_SET(new->live_before, chain->live_after);
-        COPY_REG_SET(new->live_after, chain->live_after);
+        COPY_REG_SET(new_chain->live_before, chain->live_after);
+        COPY_REG_SET(new_chain->live_after, chain->live_after);
         if (chain->insn == BLOCK_END(chain->block))
-            BLOCK_END(chain->block) = new->insn;
+            BLOCK_END(chain->block) = new_chain->insn;
     }
-    new->block = chain->block;
-    new->is_caller_save_insn = 1;
+    new_chain->block = chain->block;
+    new_chain->is_caller_save_insn = 1;
 
-    INSN_CODE(new->insn) = code;
+    INSN_CODE(new_chain->insn) = code;
 }

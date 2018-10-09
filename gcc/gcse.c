@@ -476,7 +476,7 @@ static int const_prop_count;
 /* Number of copys propagated.  */
 static int copy_prop_count;
 
-extern char *current_function_name;
+extern const char *current_function_name;
 extern int current_function_calls_setjmp;
 
 /* These variables are used by classic GCSE.
@@ -545,7 +545,7 @@ static void compute_set_hash_table(void);
 static void alloc_expr_hash_table(int);
 static void free_expr_hash_table(void);
 static void compute_expr_hash_table(void);
-static void dump_hash_table(FILE *, char *, struct expr **, int, int);
+static void dump_hash_table(FILE *, const char *, struct expr **, int, int);
 static struct expr *lookup_set(int, rtx);
 static struct expr *next_set(int, struct expr *);
 static void reset_opr_set_tables(void);
@@ -846,19 +846,19 @@ static void compute_can_copy(void)
 
 /* Cover function to xmalloc to record bytes allocated.  */
 
-static char *gmalloc(unsigned int size)
+static char *gmalloc(size_t size)
 {
     bytes_used += size;
-    return xmalloc(size);
+    return (char *)xmalloc(size);
 }
 
 /* Cover function to xrealloc.
    We don't record the additional size since we don't know it.
    It won't affect memory usage stats much anyway.  */
 
-static char *grealloc(char *ptr, unsigned int size)
+static char *grealloc(char *ptr, size_t size)
 {
-    return xrealloc(ptr, size);
+    return (char *)xrealloc(ptr, size);
 }
 
 /* Cover function to obstack_alloc.
@@ -1255,7 +1255,7 @@ static int oprs_unchanged_p(rtx x, rtx insn, int avail_p)
 {
     int i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:
@@ -1379,7 +1379,7 @@ static unsigned int hash_expr_1(rtx x, enum machine_mode mode, int *do_not_recor
     int i, j;
     unsigned hash = 0;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:
@@ -1392,7 +1392,7 @@ repeat:
     {
     case REG:
     {
-        register int regno = REGNO(x);
+        int regno = REGNO(x);
         hash += ((unsigned)REG << 7) + regno;
         return hash;
     }
@@ -1433,7 +1433,7 @@ repeat:
            final assembler.  This also avoids differences in the dump files
            between various stages.  */
         unsigned int h = 0;
-        unsigned char *p = (unsigned char *)XSTR(x, 0);
+        const unsigned char *p = (const unsigned char *)XSTR(x, 0);
         while (*p)
             h += (h << 7) + *p++; /* ??? revisit */
         hash += ((unsigned)SYMBOL_REF << 7) + h;
@@ -1489,27 +1489,27 @@ repeat:
                 x = tem;
                 goto repeat;
             }
-            hash += hash_expr_1(tem, 0, do_not_record_p);
+            hash += hash_expr_1(tem, (enum machine_mode)0, do_not_record_p);
             if (*do_not_record_p)
                 return 0;
         }
         else if (fmt[i] == 'E')
             for (j = 0; j < XVECLEN(x, i); j++)
             {
-                hash += hash_expr_1(XVECEXP(x, i, j), 0, do_not_record_p);
+                hash += hash_expr_1(XVECEXP(x, i, j), (enum machine_mode)0, do_not_record_p);
                 if (*do_not_record_p)
                     return 0;
             }
         else if (fmt[i] == 's')
         {
-            register unsigned char *p = (unsigned char *)XSTR(x, i);
+            const uint8_t *p = (const uint8_t *)XSTR(x, i);
             if (p)
                 while (*p)
                     hash += *p++;
         }
         else if (fmt[i] == 'i')
         {
-            register unsigned tem = XINT(x, i);
+            unsigned tem = XINT(x, i);
             hash += tem;
         }
         else
@@ -1539,9 +1539,9 @@ static unsigned int hash_set(int regno, int hash_table_size)
 
 static int expr_equiv_p(rtx x, rtx y)
 {
-    register int i, j;
-    register enum rtx_code code;
-    register char *fmt;
+    int i, j;
+    enum rtx_code code;
+    const char *fmt;
 
     if (x == y)
         return 1;
@@ -1964,7 +1964,7 @@ static void hash_scan_insn(rtx insn, int set_p, int in_libcall_block)
 }
 
 static void dump_hash_table(
-    FILE *file, char *name, struct expr **table, int table_size, int total_size)
+    FILE *file, const char *name, struct expr **table, int table_size, int total_size)
 {
     int i;
     /* Flattened out table, so it's printed in proper order.  */
@@ -2290,7 +2290,7 @@ static int oprs_not_set_p(rtx x, rtx insn)
 {
     int i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:
@@ -2640,7 +2640,7 @@ static int expr_killed_p(rtx x, int bb)
 {
     int i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:
@@ -3264,7 +3264,7 @@ static void compute_transp(rtx x, int indx, sbitmap *bmap, int set_p)
 {
     int bb, i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:
@@ -3462,7 +3462,7 @@ static void find_used_regs(rtx x)
 {
     int i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     /* repeat is used to turn tail-recursion into iteration.  */
 repeat:

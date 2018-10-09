@@ -18,18 +18,17 @@ along with GNU CC; see the file COPYING.  If not, write to
 the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
-extern void dwarf2out_init 		(FILE *asm_out_file, 
-						char *main_input_filename);
+extern void dwarf2out_init 		(FILE *, const char *);
 extern void dwarf2out_finish		(void);
 
 extern void dwarf2out_define		(unsigned, char *);
-extern void dwarf2out_undef 		(unsigned, char *);                                       
-extern void dwarf2out_start_source_file 	(char *);
+extern void dwarf2out_undef 		(unsigned, char *);
+extern void dwarf2out_start_source_file 	(const char *);
 extern void dwarf2out_end_source_file 	(void);
 
 extern void dwarf2out_begin_block	(unsigned);
 extern void dwarf2out_end_block		(unsigned);
-extern void dwarf2out_label		(rtx);			
-extern void dwarf2out_decl		(tree);	
-extern void dwarf2out_line		(char *, unsigned);			
+extern void dwarf2out_label		(rtx);
+extern void dwarf2out_decl		(tree);
+extern void dwarf2out_line		(const char *, unsigned);
 

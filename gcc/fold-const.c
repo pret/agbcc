@@ -144,7 +144,7 @@ static void decode(int32_t *words, int32_t *low, int32_t *hi)
 int force_fit_type(tree t, int overflow)
 {
     int32_t low, high;
-    register int prec;
+    int prec;
 
     if (TREE_CODE(t) == REAL_CST)
     {
@@ -260,8 +260,8 @@ int mul_double(int32_t l1, int32_t h1, int32_t l2, int32_t h2,
     int32_t arg1[4];
     int32_t arg2[4];
     int32_t prod[4 * 2];
-    register uint32_t carry;
-    register int i, j, k;
+    uint32_t carry;
+    int i, j, k;
     int32_t toplow, tophigh, neglow, neghigh;
 
     encode(arg1, l1, h1);
@@ -428,9 +428,9 @@ int div_and_round_double(enum tree_code code,
     int quo_neg = 0;
     int32_t num[4 + 1]; /* extra element for scaling.  */
     int32_t den[4], quo[4];
-    register int i, j;
+    int i, j;
     uint32_t work;
-    register uint32_t carry = 0;
+    uint32_t carry = 0;
     int32_t lnum = lnum_orig;
     int32_t hnum = hnum_orig;
     int32_t lden = lden_orig;
@@ -679,8 +679,8 @@ finish_up:
    A trap may occur during the FP operations and it is the responsibility
    of the calling function to have a handler established.  */
 
-REAL_VALUE_TYPE
-real_value_truncate(enum machine_mode mode, REAL_VALUE_TYPE arg)
+double
+real_value_truncate(enum machine_mode mode, double arg)
 {
     return REAL_VALUE_TRUNCATE(mode, arg);
 }
@@ -689,11 +689,11 @@ real_value_truncate(enum machine_mode mode, REAL_VALUE_TYPE arg)
 
 /* Check for infinity in an IEEE double precision number.  */
 
-int target_isinf(REAL_VALUE_TYPE x)
+int target_isinf(double x)
 {
     /* The IEEE 64-bit double format.  */
     union {
-        REAL_VALUE_TYPE d;
+        double d;
         struct
         {
             unsigned sign : 1;
@@ -727,11 +727,11 @@ int target_isinf(REAL_VALUE_TYPE x)
 
 /* Check whether an IEEE double precision number is a NaN.  */
 
-int target_isnan(REAL_VALUE_TYPE x)
+int target_isnan(double x)
 {
     /* The IEEE 64-bit double format.  */
     union {
-        REAL_VALUE_TYPE d;
+        double d;
         struct
         {
             unsigned sign : 1;
@@ -765,11 +765,11 @@ int target_isnan(REAL_VALUE_TYPE x)
 
 /* Check for a negative IEEE double precision number.  */
 
-int target_negative(REAL_VALUE_TYPE x)
+int target_negative(double x)
 {
     /* The IEEE 64-bit double format.  */
     union {
-        REAL_VALUE_TYPE d;
+        double d;
         struct
         {
             unsigned sign : 1;
@@ -803,7 +803,7 @@ int target_negative(REAL_VALUE_TYPE x)
 /* Let's assume other float formats don't have infinity.
    (This can be overridden by redefining REAL_VALUE_ISINF.)  */
 
-int target_isinf(REAL_VALUE_TYPE x)
+int target_isinf(double x)
 {
     return 0;
 }
@@ -811,7 +811,7 @@ int target_isinf(REAL_VALUE_TYPE x)
 /* Let's assume other float formats don't have NaNs.
    (This can be overridden by redefining REAL_VALUE_ISNAN.)  */
 
-int target_isnan(REAL_VALUE_TYPE x)
+int target_isnan(double x)
 {
     return 0;
 }
@@ -819,7 +819,7 @@ int target_isnan(REAL_VALUE_TYPE x)
 /* Let's assume other float formats don't have minus zero.
    (This can be overridden by redefining REAL_VALUE_NEGATIVE.)  */
 
-int target_negative(REAL_VALUE_TYPE x)
+int target_negative(double x)
 {
     return x < 0;
 }
@@ -828,7 +828,7 @@ int target_negative(REAL_VALUE_TYPE x)
 /* Try to change R into its exact multiplicative inverse in machine mode
    MODE.  Return nonzero function value if successful.  */
 
-int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
+int exact_real_inverse(enum machine_mode mode, double *r)
 {
     union {
         double d;
@@ -914,10 +914,10 @@ int exact_real_inverse(enum machine_mode mode, REAL_VALUE_TYPE *r)
    real value type in mode MODE.  This function uses the host computer's
    fp arithmetic when there is no REAL_ARITHMETIC.  */
 
-REAL_VALUE_TYPE
+double
 real_hex_to_f(char *s, enum machine_mode mode)
 {
-    REAL_VALUE_TYPE ip;
+    double ip;
     char *p = s;
     uint32_t low, high;
     int frexpon, expon, shcount, nrmcount, k;
@@ -1152,7 +1152,7 @@ real_hex_to_f(char *s, enum machine_mode mode)
 
 static int split_tree(tree in, enum tree_code code, tree *varp, tree *conp, int *varsignp)
 {
-    register tree outtype = TREE_TYPE(in);
+    tree outtype = TREE_TYPE(in);
     *varp = 0;
     *conp = 0;
 
@@ -1222,12 +1222,12 @@ static int split_tree(tree in, enum tree_code code, tree *varp, tree *conp, int 
    If FORSIZE is nonzero, compute overflow for unsigned types.  */
 
 static tree int_const_binop(
-    enum tree_code code, register tree arg1, register tree arg2, int notrunc, int forsize)
+    enum tree_code code, tree arg1, tree arg2, int notrunc, int forsize)
 {
     int32_t int1l, int1h, int2l, int2h;
     int32_t low, hi;
     int32_t garbagel, garbageh;
-    register tree t;
+    tree t;
     int uns = TREE_UNSIGNED(TREE_TYPE(arg1));
     int overflow = 0;
     int no_overflow = 0;
@@ -1388,7 +1388,7 @@ static tree int_const_binop(
 
    If NOTRUNC is nonzero, do not truncate the result to fit the data type.  */
 
-static tree const_binop(enum tree_code code, register tree arg1, register tree arg2, int notrunc)
+static tree const_binop(enum tree_code code, tree arg1, tree arg2, int notrunc)
 {
     STRIP_NOPS(arg1);
     STRIP_NOPS(arg2);
@@ -1399,10 +1399,10 @@ static tree const_binop(enum tree_code code, register tree arg1, register tree a
 #if !defined(REAL_IS_NOT_DOUBLE) || defined(REAL_ARITHMETIC)
     if (TREE_CODE(arg1) == REAL_CST)
     {
-        REAL_VALUE_TYPE d1;
-        REAL_VALUE_TYPE d2;
+        double d1;
+        double d2;
         int overflow = 0;
-        REAL_VALUE_TYPE value;
+        double value;
         tree t;
 
         d1 = TREE_REAL_CST(arg1);
@@ -1474,12 +1474,12 @@ static tree const_binop(enum tree_code code, register tree arg1, register tree a
 #endif /* not REAL_IS_NOT_DOUBLE, or REAL_ARITHMETIC */
     if (TREE_CODE(arg1) == COMPLEX_CST)
     {
-        register tree type = TREE_TYPE(arg1);
-        register tree r1 = TREE_REALPART(arg1);
-        register tree i1 = TREE_IMAGPART(arg1);
-        register tree r2 = TREE_REALPART(arg2);
-        register tree i2 = TREE_IMAGPART(arg2);
-        register tree t;
+        tree type = TREE_TYPE(arg1);
+        tree r1 = TREE_REALPART(arg1);
+        tree i1 = TREE_IMAGPART(arg1);
+        tree r2 = TREE_REALPART(arg2);
+        tree i2 = TREE_IMAGPART(arg2);
+        tree t;
 
         switch (code)
         {
@@ -1509,7 +1509,7 @@ static tree const_binop(enum tree_code code, register tree arg1, register tree a
 
         case RDIV_EXPR:
         {
-            register tree magsquared = const_binop(PLUS_EXPR,
+            tree magsquared = const_binop(PLUS_EXPR,
                 const_binop(MULT_EXPR, r2, r2, notrunc),
                 const_binop(MULT_EXPR, i2, i2, notrunc),
                 notrunc);
@@ -1544,7 +1544,7 @@ static tree const_binop(enum tree_code code, register tree arg1, register tree a
 
 tree size_int_wide(uint32_t number, uint32_t high, int bit_p)
 {
-    register tree t;
+    tree t;
     /* Type-size nodes already made for small sizes.  */
     static tree size_table[2 * 32 + 1][2];
 
@@ -1599,9 +1599,9 @@ tree size_binop(enum tree_code code, tree arg0, tree arg1)
 /* Given T, a tree representing type conversion of ARG1, a constant,
    return a constant tree representing the result of conversion.  */
 
-static tree fold_convert(register tree t, register tree arg1)
+static tree fold_convert(tree t, tree arg1)
 {
-    register tree type = TREE_TYPE(t);
+    tree type = TREE_TYPE(t);
     int overflow = 0;
 
     if (POINTER_TYPE_P(type) || INTEGRAL_TYPE_P(type))
@@ -1634,9 +1634,9 @@ static tree fold_convert(register tree t, register tree arg1)
         {
             /* Don't initialize these, use assignments.
                Initialized local aggregates don't work on old compilers.  */
-            REAL_VALUE_TYPE x;
-            REAL_VALUE_TYPE l;
-            REAL_VALUE_TYPE u;
+            double x;
+            double l;
+            double u;
             tree type1 = TREE_TYPE(arg1);
             int no_upper_bound;
 
@@ -1675,10 +1675,10 @@ static tree fold_convert(register tree t, register tree arg1)
                     x = -x;
 
                 high = (int32_t)(x / half_word / half_word);
-                x -= (REAL_VALUE_TYPE)high * half_word * half_word;
-                if (x >= (REAL_VALUE_TYPE)half_word * half_word / 2)
+                x -= (double)high * half_word * half_word;
+                if (x >= (double)half_word * half_word / 2)
                 {
-                    low = x - (REAL_VALUE_TYPE)half_word * half_word / 2;
+                    low = x - (double)half_word * half_word / 2;
                     low |= (int32_t)-1 << (32 - 1);
                 }
                 else
@@ -2013,32 +2013,16 @@ static int operand_equal_for_comparison_p(tree arg0, tree arg1, tree other)
 static int twoval_comparison_p(tree arg, tree *cval1, tree *cval2, int *save_p)
 {
     enum tree_code code = TREE_CODE(arg);
-    char class = TREE_CODE_CLASS(code);
+    char code_class = TREE_CODE_CLASS(code);
 
     /* We can handle some of the 'e' cases here.  */
-    if (class == 'e' && code == TRUTH_NOT_EXPR)
-        class = '1';
-    else if (class == 'e'
+    if (code_class == 'e' && code == TRUTH_NOT_EXPR)
+        code_class = '1';
+    else if (code_class == 'e'
         && (code == TRUTH_ANDIF_EXPR || code == TRUTH_ORIF_EXPR || code == COMPOUND_EXPR))
-        class = '2';
+        code_class = '2';
 
-        /* ??? Disable this since the SAVE_EXPR might already be in use outside
-           the expression.  There may be no way to make this work, but it needs
-           to be looked at again for 2.6.  */
-#if 0
-  else if (class == 'e' && code == SAVE_EXPR && SAVE_EXPR_RTL (arg) == 0)
-    {
-      /* If we've already found a CVAL1 or CVAL2, this expression is
-	 two complex to handle.  */
-      if (*cval1 || *cval2)
-	return 0;
-
-      class = '1';
-      *save_p = 1;
-    }
-#endif
-
-    switch (class)
+    switch (code_class)
     {
     case '1':
         return twoval_comparison_p(TREE_OPERAND(arg, 0), cval1, cval2, save_p);
@@ -2103,15 +2087,15 @@ static tree eval_subst(tree arg, tree old0, tree new0, tree old1, tree new1)
 {
     tree type = TREE_TYPE(arg);
     enum tree_code code = TREE_CODE(arg);
-    char class = TREE_CODE_CLASS(code);
+    char code_class = TREE_CODE_CLASS(code);
 
     /* We can handle some of the 'e' cases here.  */
-    if (class == 'e' && code == TRUTH_NOT_EXPR)
-        class = '1';
-    else if (class == 'e' && (code == TRUTH_ANDIF_EXPR || code == TRUTH_ORIF_EXPR))
-        class = '2';
+    if (code_class == 'e' && code == TRUTH_NOT_EXPR)
+        code_class = '1';
+    else if (code_class == 'e' && (code == TRUTH_ANDIF_EXPR || code == TRUTH_ORIF_EXPR))
+        code_class = '2';
 
-    switch (class)
+    switch (code_class)
     {
     case '1':
         return fold(build1(code, type, eval_subst(TREE_OPERAND(arg, 0), old0, new0, old1, new1)));
@@ -3833,13 +3817,13 @@ static tree constant_boolean_node(int value, tree type)
 
 tree fold(tree expr)
 {
-    register tree t = expr;
+    tree t = expr;
     tree t1 = NULL_TREE;
     tree tem;
     tree type = TREE_TYPE(expr);
-    register tree arg0 = NULL_TREE, arg1 = NULL_TREE;
-    register enum tree_code code = TREE_CODE(t);
-    register int kind;
+    tree arg0 = NULL_TREE, arg1 = NULL_TREE;
+    enum tree_code code = TREE_CODE(t);
+    int kind;
     int invert;
 
     /* WINS will be nonzero when the switch is done
@@ -3893,8 +3877,8 @@ tree fold(tree expr)
     }
     else if (kind == 'e' || kind == '<' || kind == '1' || kind == '2' || kind == 'r')
     {
-        register int len = tree_code_length[(int)code];
-        register int i;
+        int len = tree_code_length[(int)code];
+        int i;
         for (i = 0; i < len; i++)
         {
             tree op = TREE_OPERAND(t, i);
@@ -4648,7 +4632,7 @@ tree fold(tree expr)
     case BIT_IOR_EXPR:
     bit_ior:
     {
-        register enum tree_code code0, code1;
+        enum tree_code code0, code1;
 
         if (integer_all_onesp(arg1))
             return omit_one_operand(type, arg1, arg0);
@@ -4670,8 +4654,8 @@ tree fold(tree expr)
             && operand_equal_p(TREE_OPERAND(arg0, 0), TREE_OPERAND(arg1, 0), 0)
             && TREE_UNSIGNED(TREE_TYPE(TREE_OPERAND(arg0, 0))))
         {
-            register tree tree01, tree11;
-            register enum tree_code code01, code11;
+            tree tree01, tree11;
+            enum tree_code code01, code11;
 
             tree01 = TREE_OPERAND(arg0, 1);
             tree11 = TREE_OPERAND(arg1, 1);
@@ -4777,7 +4761,7 @@ tree fold(tree expr)
             /* Find the reciprocal if optimizing and the result is exact. */
             else if (optimize)
             {
-                REAL_VALUE_TYPE r;
+                double r;
                 r = TREE_REAL_CST(arg1);
                 if (exact_real_inverse(TYPE_MODE(TREE_TYPE(arg0)), &r))
                 {

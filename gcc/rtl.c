@@ -52,7 +52,7 @@ int rtx_length[NUM_RTX_CODE + 1];
 
 #define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) NAME,
 
-char *rtx_name[] = {
+const char *rtx_name[] = {
 #include "rtl.def" /* rtl expressions are documented here */
 };
 
@@ -63,7 +63,7 @@ char *rtx_name[] = {
 
 #define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER) NAME,
 
-char *mode_name[(int)MAX_MACHINE_MODE + 1] = {
+const char *mode_name[(int)MAX_MACHINE_MODE + 1] = {
 #include "machmode.def"
 
 #ifdef EXTRA_CC_MODES
@@ -120,15 +120,21 @@ unsigned char mode_wider_mode[(int)MAX_MACHINE_MODE] = {
 };
 
 #undef DEF_MACHMODE
+#ifdef __clang__
+#define SHUT_UP_CLANG _Pragma("clang diagnostic push")                                                               \
+            _Pragma("clang diagnostic ignored \"-Wshift-count-overflow\"")
+#define UNSHUT_UP_CLANG _Pragma("clang diagnostic pop")
+#else
+#define SHUT_UP_CLANG
+#define UNSHUT_UP_CLANG
+#endif
 
 #define DEF_MACHMODE(SYM, NAME, CLASS, SIZE, UNIT, WIDER)                                          \
-    /* Shut up, clang */                                                                           \
-    _Pragma("clang diagnostic push")                                                               \
-            _Pragma("clang diagnostic ignored \"-Wshift-count-overflow\"")(                        \
-                (SIZE)*BITS_PER_UNIT >= 32)                                    \
+    (SHUT_UP_CLANG                                                                           \
+    ((SIZE)*BITS_PER_UNIT >= 32)                                    \
         ? ~(uint32_t)0                                                                       \
-        : ((uint32_t)1 << (SIZE)*BITS_PER_UNIT) - 1,                                         \
-        _Pragma("clang diagnostic pop")
+        : ((uint32_t)1 << (SIZE)*BITS_PER_UNIT) - 1                                         \
+        UNSHUT_UP_CLANG),
 
 /* Indexed by machine mode, gives mask of significant bits in mode.  */
 
@@ -144,7 +150,7 @@ enum machine_mode class_narrowest_mode[(int)MAX_MODE_CLASS];
    rtx's of that code.  The sequence is a C string in which
    each character describes one operand.  */
 
-char *rtx_format[] = {
+const char *rtx_format[] = {
 /* "*" undefined.
        can cause a warning message
    "0" field is unused (or used in a phase-dependent manner)
@@ -177,7 +183,7 @@ char *rtx_format[] = {
 /* Indexed by rtx code, gives a character representing the "class" of
    that rtx code.  See rtl.def for documentation on the defined classes.  */
 
-char rtx_class[] = {
+const char rtx_class[] = {
 #define DEF_RTL_EXPR(ENUM, NAME, FORMAT, CLASS) CLASS,
 #include "rtl.def" /* rtl expressions are defined here */
 #undef DEF_RTL_EXPR
@@ -185,14 +191,14 @@ char rtx_class[] = {
 
 /* Names for kinds of NOTEs and REG_NOTEs.  */
 
-char *note_insn_name[] = { 0, "NOTE_INSN_DELETED", "NOTE_INSN_BLOCK_BEG", "NOTE_INSN_BLOCK_END",
+const char *note_insn_name[] = { 0, "NOTE_INSN_DELETED", "NOTE_INSN_BLOCK_BEG", "NOTE_INSN_BLOCK_END",
     "NOTE_INSN_LOOP_BEG", "NOTE_INSN_LOOP_END", "NOTE_INSN_FUNCTION_END", "NOTE_INSN_SETJMP",
     "NOTE_INSN_LOOP_CONT", "NOTE_INSN_LOOP_VTOP", "NOTE_INSN_PROLOGUE_END",
     "NOTE_INSN_EPILOGUE_BEG", "NOTE_INSN_DELETED_LABEL", "NOTE_INSN_FUNCTION_BEG",
     "NOTE_INSN_EH_REGION_BEG", "NOTE_INSN_EH_REGION_END", "NOTE_REPEATED_LINE_NUMBER",
     "NOTE_INSN_RANGE_START", "NOTE_INSN_RANGE_END", "NOTE_INSN_LIVE" };
 
-char *reg_note_name[] = { "", "REG_DEAD", "REG_INC", "REG_EQUIV", "REG_WAS_0", "REG_EQUAL",
+const char *reg_note_name[] = { "", "REG_DEAD", "REG_INC", "REG_EQUIV", "REG_WAS_0", "REG_EQUAL",
     "REG_RETVAL", "REG_LIBCALL", "REG_NONNEG", "REG_NO_CONFLICT", "REG_UNUSED", "REG_CC_SETTER",
     "REG_CC_USER", "REG_LABEL", "REG_DEP_ANTI", "REG_DEP_OUTPUT", "REG_NOALIAS", "REG_SAVE_AREA",
     "REG_BR_PRED", "REG_EH_CONTEXT", "REG_FRAME_RELATED_EXPR", "REG_EH_REGION", "REG_EH_RETHROW" };
@@ -225,9 +231,9 @@ rtvec rtvec_alloc(int n)
 rtx rtx_alloc(RTX_CODE code)
 {
     rtx rt;
-    register struct obstack *ob = rtl_obstack;
-    register int nelts = GET_RTX_LENGTH(code);
-    register int length = sizeof(struct rtx_def) + (nelts - 1) * sizeof(rtunion);
+    struct obstack *ob = rtl_obstack;
+    int nelts = GET_RTX_LENGTH(code);
+    int length = sizeof(struct rtx_def) + (nelts - 1) * sizeof(rtunion);
 
     /* This function is called more than any other in GCC,
        so we manipulate the obstack directly.
@@ -259,12 +265,12 @@ rtx rtx_alloc(RTX_CODE code)
    Recursively copies the operands of the rtx,
    except for those few rtx codes that are sharable.  */
 
-rtx copy_rtx(register rtx orig)
+rtx copy_rtx(rtx orig)
 {
-    register rtx copy;
-    register int i, j;
-    register RTX_CODE code;
-    register char *format_ptr;
+    rtx copy;
+    int i, j;
+    RTX_CODE code;
+    const char *format_ptr;
 
     code = GET_CODE(orig);
 
@@ -370,12 +376,12 @@ rtx copy_rtx(register rtx orig)
 /* Similar to `copy_rtx' except that if MAY_SHARE is present, it is
    placed in the result directly, rather than being copied.  */
 
-rtx copy_most_rtx(register rtx orig, register rtx may_share)
+rtx copy_most_rtx(rtx orig, rtx may_share)
 {
-    register rtx copy;
-    register int i, j;
-    register RTX_CODE code;
-    register char *format_ptr;
+    rtx copy;
+    int i, j;
+    RTX_CODE code;
+    const char *format_ptr;
 
     if (orig == may_share)
         return orig;
@@ -484,7 +490,7 @@ static void dump_and_abort(int expected_c, int actual_c, FILE *infile)
 
 int read_skip_spaces(FILE *infile)
 {
-    register int c;
+    int c;
     while ((c = getc(infile)))
     {
         if (c == ' ' || c == '\n' || c == '\t' || c == '\f')
@@ -496,7 +502,7 @@ int read_skip_spaces(FILE *infile)
         }
         else if (c == '/')
         {
-            register int prevc;
+            int prevc;
             c = getc(infile);
             if (c != '*')
                 dump_and_abort('*', c, infile);
@@ -520,8 +526,8 @@ int read_skip_spaces(FILE *infile)
 
 static void read_name(char *str, FILE *infile)
 {
-    register char *p;
-    register int c;
+    char *p;
+    int c;
 
     c = read_skip_spaces(infile);
 
@@ -554,15 +560,15 @@ static void read_name(char *str, FILE *infile)
 
 rtx read_rtx(FILE *infile)
 {
-    register int i, j, list_counter;
+    int i, j, list_counter;
     RTX_CODE tmp_code;
-    register char *format_ptr;
+    const char *format_ptr;
     /* tmp_char is a buffer used for reading decimal integers
        and names of rtx types and machine modes.
        Therefore, 256 must be enough.  */
     char tmp_char[256];
     rtx return_rtx;
-    register int c;
+    int c;
     int tmp_int;
     int32_t tmp_wide;
 
@@ -612,7 +618,7 @@ rtx read_rtx(FILE *infile)
     i = read_skip_spaces(infile);
     if (i == ':')
     {
-        register int k;
+        int k;
         read_name(tmp_char, infile);
         for (k = 0; k < NUM_MACHINE_MODES; k++)
             if (!strcmp(GET_MODE_NAME(k), tmp_char))
@@ -650,7 +656,7 @@ rtx read_rtx(FILE *infile)
 
         case 'E':
         {
-            register struct rtx_list *next_rtx, *rtx_list_link;
+            struct rtx_list *next_rtx, *rtx_list_link;
             struct rtx_list *list_rtx = NULL;
 
             c = read_skip_spaces(infile);
@@ -699,7 +705,7 @@ rtx read_rtx(FILE *infile)
         case 's':
         {
             int saw_paren = 0;
-            register char *stringbuf;
+            char *stringbuf;
 
             c = read_skip_spaces(infile);
             if (c == '(')
@@ -787,8 +793,7 @@ void init_rtl(void)
            Note that REAL_VALUE_TYPE is not defined by default,
            since tree.h is not included.  But the default dfn as `double'
            would do no harm.  */
-#ifdef REAL_VALUE_TYPE
-    i = sizeof(REAL_VALUE_TYPE) / sizeof(rtunion) + 2;
+    i = sizeof(double) / sizeof(rtunion) + 2;
     if (rtx_length[(int)CONST_DOUBLE] < i)
     {
         char *s = (char *)xmalloc(i + 1);
@@ -803,7 +808,6 @@ void init_rtl(void)
             *s++ = 'w';
         *s++ = 0;
     }
-#endif
 
 #ifdef EXTRA_CC_MODES
     for (i = (int)CCmode + 1; i < (int)MAX_MACHINE_MODE; i++)

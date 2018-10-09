@@ -73,32 +73,24 @@ static void gen_peephole(rtx peep)
     n_operands = 0;
 
     printf("  insn = ins1;\n");
-#if 0
-  printf ("  want_jump = 0;\n");
-#endif
 
     for (i = 0; i < ninsns; i++)
     {
         if (i > 0)
         {
-            printf("  do { insn = NEXT_INSN (insn);\n");
+            printf("  do { insn = NEXT_INSN(insn);\n");
             printf("       if (insn == 0) goto L%d; }\n", insn_code_number);
-            printf("  while (GET_CODE (insn) == NOTE\n");
-            printf("\t || (GET_CODE (insn) == INSN\n");
-            printf("\t     && (GET_CODE (PATTERN (insn)) == USE\n");
-            printf("\t\t || GET_CODE (PATTERN (insn)) == CLOBBER)));\n");
+            printf("  while (GET_CODE(insn) == NOTE\n");
+            printf("         || (GET_CODE(insn) == INSN\n");
+            printf("             && (GET_CODE (PATTERN(insn)) == USE\n");
+            printf("                  || GET_CODE (PATTERN(insn)) == CLOBBER)));\n");
 
             printf("  if (GET_CODE (insn) == CODE_LABEL\n\
       || GET_CODE (insn) == BARRIER)\n    goto L%d;\n",
                 insn_code_number);
         }
 
-#if 0
-      printf ("  if (GET_CODE (insn) == JUMP_INSN)\n");
-      printf ("    want_jump = JUMP_LABEL (insn);\n");
-#endif
-
-        printf("  pat = PATTERN (insn);\n");
+        printf("    pat = PATTERN(insn);\n");
 
         /* Walk the insn's pattern, remembering at all times the path
        down to the walking point.  */
@@ -110,7 +102,7 @@ static void gen_peephole(rtx peep)
        Now test the extra condition.  */
 
     if (XSTR(peep, 1) && XSTR(peep, 1)[0])
-        printf("  if (! (%s)) goto L%d;\n", XSTR(peep, 1), insn_code_number);
+        printf("    if (!(%s))\n        goto L%d;\n", XSTR(peep, 1), insn_code_number);
 
     /* If that matches, construct new pattern and put it in the first insn.
        This new pattern will never be matched.
@@ -118,25 +110,16 @@ static void gen_peephole(rtx peep)
        So use a simple regular form: a PARALLEL containing a vector
        of all the operands.  */
 
-    printf("  PATTERN (ins1) = gen_rtx_PARALLEL (VOIDmode, gen_rtvec_v (%d, operands));\n",
+    printf("    PATTERN(ins1) = gen_rtx_PARALLEL(VOIDmode, gen_rtvec_v(%d, operands));\n",
         n_operands);
-
-#if 0
-  printf ("  if (want_jump && GET_CODE (ins1) != JUMP_INSN)\n");
-  printf ("    {\n");
-  printf ("      rtx insn2 = emit_jump_insn_before (PATTERN (ins1), ins1);\n");
-  printf ("      delete_insn (ins1);\n");
-  printf ("      ins1 = ins2;\n");
-  printf ("    }\n");
-#endif
 
     /* Record this define_peephole's insn code in the insn,
        as if it had been recognized to match this.  */
-    printf("  INSN_CODE (ins1) = %d;\n", insn_code_number);
+    printf("    INSN_CODE(ins1) = %d;\n", insn_code_number);
 
     /* Delete the remaining insns.  */
     if (ninsns > 1)
-        printf("  delete_for_peephole (NEXT_INSN (ins1), insn);\n");
+        printf("  delete_for_peephole(NEXT_INSN(ins1), insn);\n");
 
     /* See reload1.c for insertion of NOTE which guarantees that this
        cannot be zero.  */
@@ -147,10 +130,10 @@ static void gen_peephole(rtx peep)
 
 static void match_rtx(rtx x, struct link *path, int fail_label)
 {
-    register RTX_CODE code;
-    register int i;
-    register int len;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    int len;
+    const char *fmt;
     struct link link;
 
     if (x == 0)
@@ -173,7 +156,7 @@ static void match_rtx(rtx x, struct link *path, int fail_label)
 
         printf("  operands[%d] = x;\n", XINT(x, 0));
         if (XSTR(x, 1) && XSTR(x, 1)[0])
-            printf("  if (! %s (x, %smode)) goto L%d;\n", XSTR(x, 1), GET_MODE_NAME(GET_MODE(x)),
+            printf("  if (!%s(x, %smode)) goto L%d;\n", XSTR(x, 1), GET_MODE_NAME(GET_MODE(x)),
                 fail_label);
         return;
 
@@ -183,7 +166,7 @@ static void match_rtx(rtx x, struct link *path, int fail_label)
         print_path(path);
         printf(";\n");
 
-        printf("  if (!rtx_equal_p (operands[%d], x)) goto L%d;\n", XINT(x, 0), fail_label);
+        printf("  if (!rtx_equal_p(operands[%d], x)) goto L%d;\n", XINT(x, 0), fail_label);
         return;
 
     case MATCH_OP_DUP:
@@ -191,8 +174,8 @@ static void match_rtx(rtx x, struct link *path, int fail_label)
         print_path(path);
         printf(";\n");
 
-        printf("  if (GET_CODE (operands[%d]) != GET_CODE (x)\n", XINT(x, 0));
-        printf("      || GET_MODE (operands[%d]) != GET_MODE (x)) goto L%d;\n", XINT(x, 0),
+        printf("  if (GET_CODE(operands[%d]) != GET_CODE(x)\n", XINT(x, 0));
+        printf("      || GET_MODE(operands[%d]) != GET_MODE(x)) goto L%d;\n", XINT(x, 0),
             fail_label);
         printf("  operands[%d] = x;\n", XINT(x, 0));
         link.next = path;
@@ -356,7 +339,7 @@ static void print_path(struct link *path)
 
 static void print_code(RTX_CODE code)
 {
-    register char *p1;
+    const char *p1;
     for (p1 = GET_RTX_NAME(code); *p1; p1++)
     {
         if (*p1 >= 'a' && *p1 <= 'z')
@@ -366,19 +349,18 @@ static void print_code(RTX_CODE code)
     }
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -414,7 +396,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     max_opno = -1;
 
@@ -448,12 +430,12 @@ from the machine description file `md'.  */\n\n");
     printf("extern rtx peep_operand[];\n\n");
     printf("#define operands peep_operand\n\n");
 
-    printf("rtx\npeephole (ins1)\n     rtx ins1;\n{\n");
-    printf("  rtx insn ATTRIBUTE_UNUSED ATTRIBUTE_UNUSED, x ATTRIBUTE_UNUSED, pat ;\n\n");
+    printf("rtx peephole(rtx ins1)\n{\n");
+    printf("  rtx insn ATTRIBUTE_UNUSED, x ATTRIBUTE_UNUSED, pat ;\n\n");
 
     /* Early out: no peepholes for insns followed by barriers.  */
-    printf("  if (NEXT_INSN (ins1)\n");
-    printf("      && GET_CODE (NEXT_INSN (ins1)) == BARRIER)\n");
+    printf("  if (NEXT_INSN(ins1)\n");
+    printf("      && GET_CODE (NEXT_INSN(ins1)) == BARRIER)\n");
     printf("    return 0;\n\n");
 
     /* Read the machine description.  */

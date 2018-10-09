@@ -170,8 +170,8 @@ static void find_clobbered_regs(rtx reg, rtx setter)
 
 void stupid_life_analysis(rtx f, int nregs, FILE *file)
 {
-    register int i;
-    register rtx last, insn;
+    int i;
+    rtx last, insn;
     int max_suid;
 
     current_function_has_computed_jump = 0;
@@ -264,7 +264,7 @@ void stupid_life_analysis(rtx f, int nregs, FILE *file)
     reload_insn_chain = 0;
     for (insn = last; insn; insn = PREV_INSN(insn))
     {
-        register HARD_REG_SET *p = after_insn_hard_regs + INSN_SUID(insn);
+        HARD_REG_SET *p = after_insn_hard_regs + INSN_SUID(insn);
         struct insn_chain *chain = 0;
 
         /* Copy the info in regs_live into the element of after_insn_hard_regs
@@ -362,7 +362,7 @@ void stupid_life_analysis(rtx f, int nregs, FILE *file)
 
     for (i = LAST_VIRTUAL_REGISTER + 1; i < max_regno; i++)
     {
-        register int r = reg_order[i];
+        int r = reg_order[i];
 
         /* Some regnos disappear from the rtl.  Ignore them to avoid crash.
        Also don't allocate registers that cross a setjmp, or live across
@@ -439,9 +439,9 @@ void stupid_life_analysis(rtx f, int nregs, FILE *file)
 
 static int stupid_reg_compare(const void *r1p, const void *r2p)
 {
-    register int r1 = *(int *)r1p, r2 = *(int *)r2p;
-    register int len1 = reg_where_dead[r1] - REG_WHERE_BORN(r1);
-    register int len2 = reg_where_dead[r2] - REG_WHERE_BORN(r2);
+    const int r1 = *(const int *)r1p, r2 = *(const int *)r2p;
+    int len1 = reg_where_dead[r1] - REG_WHERE_BORN(r1);
+    int len2 = reg_where_dead[r2] - REG_WHERE_BORN(r2);
     int tem;
 
     tem = len2 - len1;
@@ -471,10 +471,10 @@ static int stupid_reg_compare(const void *r1p, const void *r2p)
    If CHANGES_SIZE is nonzero, it means this register was used as the
    operand of a SUBREG that changes its size.  */
 
-static int stupid_find_reg(int call_preserved, enum reg_class class, enum machine_mode mode,
+static int stupid_find_reg(int call_preserved, enum reg_class rclass, enum machine_mode mode,
     int born_insn, int dead_insn, int changes_size ATTRIBUTE_UNUSED)
 {
-    register int i, ins;
+    int i, ins;
     HARD_REG_SET used, this_reg;
     static struct
     {
@@ -497,7 +497,7 @@ static int stupid_find_reg(int call_preserved, enum reg_class class, enum machin
         IOR_HARD_REG_SET(used, after_insn_hard_regs[ins]);
 
 
-    IOR_COMPL_HARD_REG_SET(used, reg_class_contents[(int)class]);
+    IOR_COMPL_HARD_REG_SET(used, reg_class_contents[(int)rclass]);
 
 #ifdef CLASS_CANNOT_CHANGE_SIZE
     if (changes_size)
@@ -519,8 +519,8 @@ static int stupid_find_reg(int call_preserved, enum reg_class class, enum machin
 
         if (!TEST_HARD_REG_BIT(used, regno) && HARD_REGNO_MODE_OK(regno, mode))
         {
-            register int j;
-            register int size1 = HARD_REGNO_NREGS(regno, mode);
+            int j;
+            int size1 = HARD_REGNO_NREGS(regno, mode);
             for (j = 1; j < size1 && !TEST_HARD_REG_BIT(used, regno + j); j++)
                 ;
             if (j == size1)
@@ -547,9 +547,9 @@ static int stupid_find_reg(int call_preserved, enum reg_class class, enum machin
 
 static void stupid_mark_refs(rtx x, struct insn_chain *chain)
 {
-    register RTX_CODE code;
-    register char *fmt;
-    register int regno, i;
+    RTX_CODE code;
+    const char *fmt;
+    int regno, i;
     rtx insn = chain->insn;
 
     if (x == 0)
@@ -574,7 +574,7 @@ static void stupid_mark_refs(rtx x, struct insn_chain *chain)
             /* For hard regs, update the where-live info.  */
             if (regno < FIRST_PSEUDO_REGISTER)
             {
-                register int j = HARD_REGNO_NREGS(regno, GET_MODE(SET_DEST(x)));
+                int j = HARD_REGNO_NREGS(regno, GET_MODE(SET_DEST(x)));
 
                 while (--j >= 0)
                 {
@@ -665,7 +665,7 @@ static void stupid_mark_refs(rtx x, struct insn_chain *chain)
         if (regno < FIRST_PSEUDO_REGISTER)
         {
             /* Hard reg: mark it live for continuing scan of previous insns.  */
-            register int j = HARD_REGNO_NREGS(regno, GET_MODE(x));
+            int j = HARD_REGNO_NREGS(regno, GET_MODE(x));
             while (--j >= 0)
             {
                 regs_ever_live[regno + j] = 1;
@@ -698,7 +698,7 @@ static void stupid_mark_refs(rtx x, struct insn_chain *chain)
             stupid_mark_refs(XEXP(x, i), chain);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = XVECLEN(x, i) - 1; j >= 0; j--)
                 stupid_mark_refs(XVECEXP(x, i, j), chain);
         }

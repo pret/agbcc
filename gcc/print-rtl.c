@@ -37,9 +37,9 @@ Boston, MA 02111-1307, USA.  */
 /* Array containing all of the register names */
 
 #ifdef DEBUG_REGISTER_NAMES
-static char *reg_names[] = DEBUG_REGISTER_NAMES;
+static const char *reg_names[] = DEBUG_REGISTER_NAMES;
 #else
-static char *reg_names[] = REGISTER_NAMES;
+static const char *reg_names[] = REGISTER_NAMES;
 #endif
 
 static FILE *outfile;
@@ -67,12 +67,12 @@ int dump_for_graph;
 
 /* Print IN_RTX onto OUTFILE.  This is the recursive part of printing.  */
 
-static void print_rtx(register rtx in_rtx)
+static void print_rtx(rtx in_rtx)
 {
-    register int i = 0;
-    register int j;
-    register char *format_ptr;
-    register int is_insn;
+    int i = 0;
+    int j;
+    const char *format_ptr;
+    int is_insn;
 
     if (sawclose)
     {
@@ -215,7 +215,7 @@ static void print_rtx(register rtx in_rtx)
 
         case 'i':
         {
-            register int value = XINT(in_rtx, i);
+            int value = XINT(in_rtx, i);
 
             if (GET_CODE(in_rtx) == REG && value < FIRST_PSEUDO_REGISTER)
             {
@@ -320,7 +320,7 @@ void debug_rtx(rtx x)
 
 void print_rtl(FILE *outf, rtx rtx_first)
 {
-    register rtx tmp_rtx;
+    rtx tmp_rtx;
 
     outfile = outf;
     sawclose = 0;

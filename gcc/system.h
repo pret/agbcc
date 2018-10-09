@@ -93,9 +93,9 @@ Boston, MA 02111-1307, USA.  */
 #define _(String) String
 #define N_(String) String
 
-extern void *xmalloc();
+extern void *xmalloc(size_t);
 extern void *xrealloc(void *, size_t);
-extern void *xcalloc();
-extern char *xstrdup();
+extern void *xcalloc(size_t, size_t);
+extern char *xstrdup(const char *);
 
 #endif /* __GCC_SYSTEM_H__ */

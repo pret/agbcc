@@ -58,9 +58,9 @@ typedef SBITMAP_ELT_TYPE *sbitmap_ptr;
 /* Loop over all elements of SBITSET, starting with MIN.  */
 #define EXECUTE_IF_SET_IN_SBITMAP(SBITMAP, MIN, N, CODE)		\
 do {									\
-  unsigned int bit_num_ = (MIN) % (unsigned) SBITMAP_ELT_BITS;		\
-  unsigned int word_num_ = (MIN) / (unsigned) SBITMAP_ELT_BITS;		\
-  unsigned int size_ = (SBITMAP)->size;					\
+  uint32_t bit_num_ = (MIN) % (unsigned) SBITMAP_ELT_BITS;		\
+  uint32_t word_num_ = (MIN) / (unsigned) SBITMAP_ELT_BITS;		\
+  uint32_t size_ = (SBITMAP)->size;					\
   SBITMAP_ELT_TYPE *ptr_ = (SBITMAP)->elms;				\
 									\
   while (word_num_ < size_)						\

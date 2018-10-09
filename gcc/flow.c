@@ -303,8 +303,8 @@ static void invalidate_mems_from_autoinc(rtx);
 
 void find_basic_blocks(rtx f, int nregs, FILE *file)
 {
-    register rtx insn;
-    register int i;
+    rtx insn;
+    int i;
     rtx nonlocal_label_list = nonlocal_label_rtx_list();
 
     /* Avoid leaking memory if this is called multiple times per compiled
@@ -315,8 +315,8 @@ void find_basic_blocks(rtx f, int nregs, FILE *file)
 
     {
         rtx prev_call = 0;
-        register RTX_CODE prev_code = JUMP_INSN;
-        register RTX_CODE code;
+        RTX_CODE prev_code = JUMP_INSN;
+        RTX_CODE code;
         int eh_region = 0;
         int call_had_abnormal_edge = 0;
 
@@ -430,10 +430,10 @@ static rtx nonlocal_label_list;
 
 static void find_basic_blocks_1(rtx f, rtx nonlocal_labels)
 {
-    register rtx insn;
-    register int i;
-    register char *block_live = (char *)alloca(n_basic_blocks);
-    register char *block_marked = (char *)alloca(n_basic_blocks);
+    rtx insn;
+    int i;
+    char *block_live = (char *)alloca(n_basic_blocks);
+    char *block_marked = (char *)alloca(n_basic_blocks);
     rtx note, eh_note;
     enum rtx_code prev_code, code;
     int depth;
@@ -650,9 +650,9 @@ static void add_edge_to_label(int pred, rtx label)
 
 static void mark_label_ref(int pred, rtx x)
 {
-    register RTX_CODE code;
-    register int i;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    const char *fmt;
 
     code = GET_CODE(x);
     if (code == LABEL_REF)
@@ -668,7 +668,7 @@ static void mark_label_ref(int pred, rtx x)
             mark_label_ref(pred, XEXP(x, i));
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 mark_label_ref(pred, XVECEXP(x, i, j));
         }
@@ -1050,7 +1050,7 @@ static int delete_block(int i)
 
     if (block_live_static[i - 1])
     {
-        register int j;
+        int j;
         for (j = i + 1; j < n_basic_blocks; j++)
             if (block_live_static[j])
             {
@@ -1084,7 +1084,7 @@ static int delete_block(int i)
 void life_analysis(rtx f, int nregs, FILE *file)
 {
 #ifdef ELIMINABLE_REGS
-    register size_t i;
+    size_t i;
     static struct
     {
         int from, to;
@@ -1306,7 +1306,7 @@ static void life_analysis_1(rtx f, int nregs)
        These are the regs that are set within the basic block,
        possibly excluding those that are used after they are set.  */
     regset *basic_block_significant;
-    register int i;
+    int i;
     char save_regs_ever_live[FIRST_PSEUDO_REGISTER];
 
     struct obstack flow_obstack;
@@ -1385,7 +1385,7 @@ static void life_analysis_1(rtx f, int nregs)
         {
             int consider = first_pass;
             int must_rescan = first_pass;
-            register int j;
+            int j;
 
             if (!first_pass)
             {
@@ -1446,7 +1446,7 @@ static void life_analysis_1(rtx f, int nregs)
                    all the blocks that reach this one.  */
                 for (p = basic_block_pred[i]; p; p = p->next)
                 {
-                    register int from_block = INT_LIST_VAL(p);
+                    int from_block = INT_LIST_VAL(p);
                     IOR_REG_SET(
                         basic_block_new_live_at_end[from_block], basic_block_live_at_start[i]);
                 }
@@ -1543,7 +1543,7 @@ static void life_analysis_1(rtx f, int nregs)
 
 void allocate_for_life_analysis(void)
 {
-    register int i;
+    int i;
 
     /* Recalculate the register space, in case it has grown.  Old style
        vector oriented regsets would set regset_{size,bytes} here also.  */
@@ -1570,7 +1570,7 @@ void allocate_for_life_analysis(void)
 /* CYGNUS LOCAL LRS */
 void init_regset_vector(regset *vector, int nelts, struct obstack *alloc_obstack)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < nelts; i++)
     {
@@ -1584,7 +1584,7 @@ void init_regset_vector(regset *vector, int nelts, struct obstack *alloc_obstack
 
 void free_regset_vector(regset *vector, int nelts)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < nelts; i++)
         FREE_REG_SET(vector[i]);
@@ -1610,9 +1610,9 @@ void free_regset_vector(regset *vector, int nelts)
    BNUM is the number of the basic block.  */
 
 static void propagate_block(
-    register regset old, rtx first, rtx last, int final, regset significant, int bnum)
+    regset old, rtx first, rtx last, int final, regset significant, int bnum)
 {
-    register rtx insn;
+    rtx insn;
     rtx prev;
     regset live;
     regset dead;
@@ -1643,7 +1643,7 @@ static void propagate_block(
 
     if (final)
     {
-        register int i;
+        int i;
 
         /* Process the regs live at the end of the block.
        Mark them as not local to any one basic block. */
@@ -1686,7 +1686,7 @@ static void propagate_block(
 
         else if (GET_RTX_CLASS(GET_CODE(insn)) == 'i')
         {
-            register int i;
+            int i;
             rtx note = find_reg_note(insn, REG_RETVAL, NULL_RTX);
             int insn_is_dead = (insn_dead_p(PATTERN(insn), old, 0, REG_NOTES(insn))
                 /* Don't delete something that refers to volatile storage!  */
@@ -1735,7 +1735,7 @@ static void propagate_block(
                merged into a following memory address.  */
 #ifdef AUTO_INC_DEC
             {
-                register rtx x = single_set(insn);
+                rtx x = single_set(insn);
 
                 /* Does this instruction increment or decrement a register?  */
                 if (!reload_completed && final && x != 0 && GET_CODE(SET_DEST(x)) == REG
@@ -1804,7 +1804,7 @@ static void propagate_block(
 
                 if (!insn_is_dead && GET_CODE(insn) == CALL_INSN)
                 {
-                    register int i;
+                    int i;
 
                     rtx note;
 
@@ -1996,16 +1996,16 @@ static int insn_dead_p(rtx x, regset needed, int call_ok, rtx notes ATTRIBUTE_UN
 
 static int libcall_dead_p(rtx x, regset needed, rtx note, rtx insn)
 {
-    register RTX_CODE code = GET_CODE(x);
+    RTX_CODE code = GET_CODE(x);
 
     if (code == SET)
     {
-        register rtx r = SET_SRC(x);
+        rtx r = SET_SRC(x);
         if (GET_CODE(r) == REG)
         {
             rtx call = XEXP(note, 0);
             rtx call_pat;
-            register int i;
+            int i;
 
             /* Find the call insn.  */
             while (call != insn && GET_CODE(call) != CALL_INSN)
@@ -2111,13 +2111,13 @@ static void invalidate_mems_from_autoinc(rtx insn)
 
 static void mark_set_regs(regset needed, regset dead, rtx x, rtx insn, regset significant)
 {
-    register RTX_CODE code = GET_CODE(x);
+    RTX_CODE code = GET_CODE(x);
 
     if (code == SET || code == CLOBBER)
         mark_set_1(needed, dead, x, insn, significant);
     else if (code == PARALLEL)
     {
-        register int i;
+        int i;
         for (i = XVECLEN(x, 0) - 1; i >= 0; i--)
         {
             code = GET_CODE(XVECEXP(x, 0, i));
@@ -2131,15 +2131,15 @@ static void mark_set_regs(regset needed, regset dead, rtx x, rtx insn, regset si
 
 static void mark_set_1(regset needed, regset dead, rtx x, rtx insn, regset significant)
 {
-    register int regno;
-    register rtx reg = SET_DEST(x);
+    int regno;
+    rtx reg = SET_DEST(x);
 
     /* Some targets place small structures in registers for
        return values of functions.  We have to detect this
        case specially here to get correct flow information.  */
     if (GET_CODE(reg) == PARALLEL && GET_MODE(reg) == BLKmode)
     {
-        register int i;
+        int i;
 
         for (i = XVECLEN(reg, 0) - 1; i >= 0; i--)
             mark_set_1(needed, dead, XVECEXP(reg, 0, i), insn, significant);
@@ -2242,14 +2242,14 @@ static void mark_set_1(regset needed, regset dead, rtx x, rtx insn, regset signi
         /* Additional data to record if this is the final pass.  */
         if (insn)
         {
-            register rtx y = reg_next_use[regno];
-            register int blocknum = BLOCK_NUM(insn);
+            rtx y = reg_next_use[regno];
+            int blocknum = BLOCK_NUM(insn);
 
             /* If this is a hard reg, record this function uses the reg.  */
 
             if (regno < FIRST_PSEUDO_REGISTER)
             {
-                register int i;
+                int i;
                 int endregno = regno + HARD_REGNO_NREGS(regno, GET_MODE(reg));
 
                 for (i = regno; i < endregno; i++)
@@ -2360,8 +2360,8 @@ static void find_auto_inc(regset needed, rtx x, rtx insn)
 
     if (GET_CODE(addr) == REG)
     {
-        register rtx y;
-        register int size = GET_MODE_SIZE(GET_MODE(x));
+        rtx y;
+        int size = GET_MODE_SIZE(GET_MODE(x));
         rtx use;
         rtx incr;
         int regno = REGNO(addr);
@@ -2518,8 +2518,8 @@ static void find_auto_inc(regset needed, rtx x, rtx insn)
 
 static void mark_used_regs(regset needed, regset live, rtx x, int final, rtx insn)
 {
-    register RTX_CODE code;
-    register int regno;
+    RTX_CODE code;
+    int regno;
     int i;
 
 retry:
@@ -2681,7 +2681,7 @@ retry:
                 {
                     /* Keep track of which basic block each reg appears in.  */
 
-                    register int blocknum = BLOCK_NUM(insn);
+                    int blocknum = BLOCK_NUM(insn);
 
                     if (REG_BASIC_BLOCK(regno) == REG_BLOCK_UNKNOWN)
                         REG_BASIC_BLOCK(regno) = blocknum;
@@ -2742,7 +2742,7 @@ retry:
 
     case SET:
     {
-        register rtx testreg = SET_DEST(x);
+        rtx testreg = SET_DEST(x);
         int mark_dest = 0;
 
         /* If storing into MEM, don't show it as being used.  But do
@@ -2855,8 +2855,8 @@ retry:
     /* Recursively scan the operands of this expression.  */
 
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
 
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
@@ -2872,7 +2872,7 @@ retry:
             }
             else if (fmt[i] == 'E')
             {
-                register int j;
+                int j;
                 for (j = 0; j < XVECLEN(x, i); j++)
                     mark_used_regs(needed, live, XVECEXP(x, i, j), final, insn);
             }
@@ -2924,7 +2924,7 @@ static int try_pre_increment_1(rtx insn)
 
 static int try_pre_increment(rtx insn, rtx reg, int32_t amount)
 {
-    register rtx use;
+    rtx use;
 
     /* Nonzero if we can try to make a pre-increment or pre-decrement.
        For example, addl $4,r1; movl (r1),... can become movl +(r1),...  */
@@ -2999,13 +2999,13 @@ static int try_pre_increment(rtx insn, rtx reg, int32_t amount)
    If REG appears more than once, or is used other than in such an address,
    return (rtx)1.  */
 
-rtx find_use_as_address(register rtx x, rtx reg, int32_t plusconst)
+rtx find_use_as_address(rtx x, rtx reg, int32_t plusconst)
 {
     enum rtx_code code = GET_CODE(x);
-    char *fmt = GET_RTX_FORMAT(code);
-    register int i;
-    register rtx value = 0;
-    register rtx tem;
+    const char *fmt = GET_RTX_FORMAT(code);
+    int i;
+    rtx value = 0;
+    rtx tem;
 
     if (code == MEM && XEXP(x, 0) == reg && plusconst == 0)
         return x;
@@ -3037,7 +3037,7 @@ rtx find_use_as_address(register rtx x, rtx reg, int32_t plusconst)
         }
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = XVECLEN(x, i) - 1; j >= 0; j--)
             {
                 tem = find_use_as_address(XVECEXP(x, i, j), reg, plusconst);
@@ -3057,15 +3057,15 @@ rtx find_use_as_address(register rtx x, rtx reg, int32_t plusconst)
 
 void dump_flow_info(FILE *file)
 {
-    register int i;
-    static char *reg_class_names[] = REG_CLASS_NAMES;
+    int i;
+    static const char *reg_class_names[] = REG_CLASS_NAMES;
 
     fprintf(file, "%d registers.\n", max_regno);
 
     for (i = FIRST_PSEUDO_REGISTER; i < max_regno; i++)
         if (REG_N_REFS(i))
         {
-            enum reg_class class, altclass;
+            enum reg_class rclass, altclass;
             fprintf(file, "\nRegister %d used %d times across %d insns", i, REG_N_REFS(i),
                 REG_LIVE_LENGTH(i));
             if (REG_BASIC_BLOCK(i) >= 0)
@@ -3082,16 +3082,16 @@ void dump_flow_info(FILE *file)
                 fprintf(file, "; crosses %d calls", REG_N_CALLS_CROSSED(i));
             if (PSEUDO_REGNO_BYTES(i) != UNITS_PER_WORD)
                 fprintf(file, "; %d bytes", PSEUDO_REGNO_BYTES(i));
-            class = reg_preferred_class(i);
+            rclass = reg_preferred_class(i);
             altclass = reg_alternate_class(i);
-            if (class != GENERAL_REGS || altclass != ALL_REGS)
+            if (rclass != GENERAL_REGS || altclass != ALL_REGS)
             {
-                if (altclass == ALL_REGS || class == ALL_REGS)
-                    fprintf(file, "; pref %s", reg_class_names[(int)class]);
+                if (altclass == ALL_REGS || rclass == ALL_REGS)
+                    fprintf(file, "; pref %s", reg_class_names[(int)rclass]);
                 else if (altclass == NO_REGS)
-                    fprintf(file, "; %s or none", reg_class_names[(int)class]);
+                    fprintf(file, "; %s or none", reg_class_names[(int)rclass]);
                 else
-                    fprintf(file, "; pref %s, else %s", reg_class_names[(int)class],
+                    fprintf(file, "; pref %s, else %s", reg_class_names[(int)rclass],
                         reg_class_names[(int)altclass]);
             }
             if (REGNO_POINTER_FLAG(i))
@@ -3108,7 +3108,7 @@ void dump_flow_info(FILE *file)
 
 void print_rtl_with_bb(FILE *outf, rtx rtx_first)
 {
-    register rtx tmp_rtx;
+    rtx tmp_rtx;
 
     if (rtx_first == 0)
         fprintf(outf, "(nil)\n");
@@ -3862,8 +3862,8 @@ void merge_blocks(rtx f)
 
 static void count_reg_sets_1(rtx x)
 {
-    register int regno;
-    register rtx reg = SET_DEST(x);
+    int regno;
+    rtx reg = SET_DEST(x);
 
     /* Find the register that's set/clobbered.  */
     while (GET_CODE(reg) == SUBREG || GET_CODE(reg) == ZERO_EXTRACT || GET_CODE(reg) == SIGN_EXTRACT
@@ -3872,7 +3872,7 @@ static void count_reg_sets_1(rtx x)
 
     if (GET_CODE(reg) == PARALLEL && GET_MODE(reg) == BLKmode)
     {
-        register int i;
+        int i;
         for (i = XVECLEN(reg, 0) - 1; i >= 0; i--)
             count_reg_sets_1(XVECEXP(reg, 0, i));
         return;
@@ -3897,13 +3897,13 @@ static void count_reg_sets_1(rtx x)
 
 static void count_reg_sets(rtx x)
 {
-    register RTX_CODE code = GET_CODE(x);
+    RTX_CODE code = GET_CODE(x);
 
     if (code == SET || code == CLOBBER)
         count_reg_sets_1(x);
     else if (code == PARALLEL)
     {
-        register int i;
+        int i;
         for (i = XVECLEN(x, 0) - 1; i >= 0; i--)
         {
             code = GET_CODE(XVECEXP(x, 0, i));
@@ -3918,7 +3918,7 @@ static void count_reg_sets(rtx x)
 
 static void count_reg_references(rtx x)
 {
-    register RTX_CODE code;
+    RTX_CODE code;
 
 retry:
     code = GET_CODE(x);
@@ -3967,7 +3967,7 @@ retry:
 
     case SET:
     {
-        register rtx testreg = SET_DEST(x);
+        rtx testreg = SET_DEST(x);
         int mark_dest = 0;
 
         /* If storing into MEM, don't show it as being used.  But do
@@ -4021,8 +4021,8 @@ retry:
     /* Recursively scan the operands of this expression.  */
 
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
 
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
@@ -4038,7 +4038,7 @@ retry:
             }
             else if (fmt[i] == 'E')
             {
-                register int j;
+                int j;
                 for (j = 0; j < XVECLEN(x, i); j++)
                     count_reg_references(XVECEXP(x, i, j));
             }

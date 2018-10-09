@@ -41,11 +41,11 @@ static void emit_stack_probe(rtx);
 
    This function should be used via the `plus_constant' macro.  */
 
-rtx plus_constant_wide(register rtx x, register int32_t c)
+rtx plus_constant_wide(rtx x, int32_t c)
 {
-    register RTX_CODE code;
-    register enum machine_mode mode;
-    register rtx tem;
+    RTX_CODE code;
+    enum machine_mode mode;
+    rtx tem;
     int all_constant = 0;
 
     if (c == 0)
@@ -152,9 +152,9 @@ restart:
 
    This function should be used via the `plus_constant_for_output' macro.  */
 
-rtx plus_constant_for_output_wide(register rtx x, register int32_t c)
+rtx plus_constant_for_output_wide(rtx x, int32_t c)
 {
-    register enum machine_mode mode = GET_MODE(x);
+    enum machine_mode mode = GET_MODE(x);
 
     if (GET_CODE(x) == LO_SUM)
         return gen_rtx_LO_SUM(mode, XEXP(x, 0), plus_constant_for_output(XEXP(x, 1), c));
@@ -170,7 +170,7 @@ rtx plus_constant_for_output_wide(register rtx x, register int32_t c)
 
 rtx eliminate_constant_term(rtx x, rtx *constptr)
 {
-    register rtx x0, x1;
+    rtx x0, x1;
     rtx tem;
 
     if (GET_CODE(x) != PLUS)
@@ -227,14 +227,14 @@ rtx expr_size(tree exp)
    X may contain no arithmetic except addition, subtraction and multiplication.
    Values returned by expand_expr with 1 for sum_ok fit this constraint.  */
 
-static rtx break_out_memory_refs(register rtx x)
+static rtx break_out_memory_refs(rtx x)
 {
     if (GET_CODE(x) == MEM || (CONSTANT_P(x) && CONSTANT_ADDRESS_P(x) && GET_MODE(x) != VOIDmode))
         x = force_reg(GET_MODE(x), x);
     else if (GET_CODE(x) == PLUS || GET_CODE(x) == MINUS || GET_CODE(x) == MULT)
     {
-        register rtx op0 = break_out_memory_refs(XEXP(x, 0));
-        register rtx op1 = break_out_memory_refs(XEXP(x, 1));
+        rtx op0 = break_out_memory_refs(XEXP(x, 0));
+        rtx op1 = break_out_memory_refs(XEXP(x, 1));
 
         if (op0 != XEXP(x, 0) || op1 != XEXP(x, 1))
             x = gen_rtx_fmt_ee(GET_CODE(x), Pmode, op0, op1);
@@ -243,77 +243,16 @@ static rtx break_out_memory_refs(register rtx x)
     return x;
 }
 
-#ifdef POINTERS_EXTEND_UNSIGNED
-
-/* Given X, a memory address in ptr_mode, convert it to an address
-   in Pmode, or vice versa (TO_MODE says which way).  We take advantage of
-   the fact that pointers are not allowed to overflow by commuting arithmetic
-   operations over conversions so that address arithmetic insns can be
-   used.  */
-
-rtx convert_memory_address(enum machine_mode to_mode, rtx x)
-{
-    enum machine_mode from_mode = to_mode == ptr_mode ? Pmode : ptr_mode;
-    rtx temp;
-
-    /* Here we handle some special cases.  If none of them apply, fall through
-       to the default case.  */
-    switch (GET_CODE(x))
-    {
-    case CONST_INT:
-    case CONST_DOUBLE:
-        return x;
-
-    case LABEL_REF:
-        temp = gen_rtx_LABEL_REF(to_mode, XEXP(x, 0));
-        LABEL_REF_NONLOCAL_P(temp) = LABEL_REF_NONLOCAL_P(x);
-        return temp;
-
-    case SYMBOL_REF:
-        temp = gen_rtx_SYMBOL_REF(to_mode, XSTR(x, 0));
-        SYMBOL_REF_FLAG(temp) = SYMBOL_REF_FLAG(x);
-        CONSTANT_POOL_ADDRESS_P(temp) = CONSTANT_POOL_ADDRESS_P(x);
-        return temp;
-
-    case CONST:
-        return gen_rtx_CONST(to_mode, convert_memory_address(to_mode, XEXP(x, 0)));
-
-    case PLUS:
-    case MULT:
-        /* For addition the second operand is a small constant, we can safely
-       permute the conversion and addition operation.  We can always safely
-       permute them if we are making the address narrower.  In addition,
-       always permute the operations if this is a constant.  */
-        if (GET_MODE_SIZE(to_mode) < GET_MODE_SIZE(from_mode)
-            || (GET_CODE(x) == PLUS && GET_CODE(XEXP(x, 1)) == CONST_INT
-                   && (INTVAL(XEXP(x, 1)) + 20000 < 40000 || CONSTANT_P(XEXP(x, 0)))))
-            return gen_rtx_fmt_ee(GET_CODE(x), to_mode, convert_memory_address(to_mode, XEXP(x, 0)),
-                convert_memory_address(to_mode, XEXP(x, 1)));
-        break;
-
-    default:
-        break;
-    }
-
-    return convert_modes(to_mode, from_mode, x, POINTERS_EXTEND_UNSIGNED);
-}
-#endif
-
 /* Return something equivalent to X but valid as a memory address
    for something of mode MODE.  When X is not itself valid, this
    works by copying X or subexpressions of it into registers.  */
 
-rtx memory_address(enum machine_mode mode, register rtx x)
+rtx memory_address(enum machine_mode mode, rtx x)
 {
-    register rtx oldx = x;
+    rtx oldx = x;
 
     if (GET_CODE(x) == ADDRESSOF)
         return x;
-
-#ifdef POINTERS_EXTEND_UNSIGNED
-    if (GET_MODE(x) == ptr_mode)
-        x = convert_memory_address(Pmode, x);
-#endif
 
     /* By passing constant addresses thru registers
        we get a chance to cse them.  */
@@ -456,7 +395,7 @@ rtx validize_mem(rtx ref)
 
 rtx copy_to_reg(rtx x)
 {
-    register rtx temp = gen_reg_rtx(GET_MODE(x));
+    rtx temp = gen_reg_rtx(GET_MODE(x));
 
     /* If not an operand, must be an address with PLUS and MULT so
        do the computation.  */
@@ -482,7 +421,7 @@ rtx copy_addr_to_reg(rtx x)
 
 rtx copy_to_mode_reg(enum machine_mode mode, rtx x)
 {
-    register rtx temp = gen_reg_rtx(mode);
+    rtx temp = gen_reg_rtx(mode);
 
     /* If not an operand, must be an address with PLUS and MULT so
        do the computation.  */
@@ -506,7 +445,7 @@ rtx copy_to_mode_reg(enum machine_mode mode, rtx x)
 
 rtx force_reg(enum machine_mode mode, rtx x)
 {
-    register rtx temp, insn, set;
+    rtx temp, insn, set;
 
     if (GET_CODE(x) == REG)
         return x;
@@ -533,7 +472,7 @@ rtx force_reg(enum machine_mode mode, rtx x)
 
 rtx force_not_mem(rtx x)
 {
-    register rtx temp;
+    rtx temp;
     if (GET_CODE(x) != MEM || GET_MODE(x) == BLKmode)
         return x;
     temp = gen_reg_rtx(GET_MODE(x));
@@ -547,8 +486,7 @@ rtx force_not_mem(rtx x)
 
    FOR_CALL is non-zero if this call is promoting args for a call.  */
 
-enum machine_mode promote_mode(
-    tree type, enum machine_mode mode, int *punsignedp, int for_call ATTRIBUTE_UNUSED)
+enum machine_mode promote_mode(tree type, enum machine_mode mode, int *punsignedp, int for_call ATTRIBUTE_UNUSED)
 {
     enum tree_code code = TREE_CODE(type);
     int unsignedp = *punsignedp;
@@ -568,14 +506,6 @@ enum machine_mode promote_mode(
     case REAL_TYPE:
     case OFFSET_TYPE:
         PROMOTE_MODE(mode, unsignedp, type);
-        break;
-#endif
-
-#ifdef POINTERS_EXTEND_UNSIGNED
-    case REFERENCE_TYPE:
-    case POINTER_TYPE:
-        mode = Pmode;
-        unsignedp = POINTERS_EXTEND_UNSIGNED;
         break;
 #endif
 
@@ -644,9 +574,9 @@ rtx round_push(rtx size)
         return size;
     if (GET_CODE(size) == CONST_INT)
     {
-        int new = (INTVAL(size) + align - 1) / align *align;
-        if (INTVAL(size) != new)
-            size = GEN_INT(new);
+        int new_val = (INTVAL(size) + align - 1) / align *align;
+        if (INTVAL(size) != new_val)
+            size = GEN_INT(new_val);
     }
     else
     {

@@ -58,7 +58,7 @@ MAX_MACHINE_MODE };
 
 /* Get the name of mode MODE as a string.  */
 
-extern char *mode_name[];
+extern const char *mode_name[];
 #define GET_MODE_NAME(MODE)		(mode_name[(int) (MODE)])
 
 enum mode_class { MODE_RANDOM, MODE_INT, MODE_FLOAT, MODE_PARTIAL_INT, MODE_CC,
@@ -121,16 +121,16 @@ extern unsigned char mode_wider_mode[];
    If LIMIT is nonzero, then don't use modes bigger than MAX_FIXED_MODE_SIZE.
    The value is BLKmode if no other mode is found.  */
 
-extern enum machine_mode mode_for_size();
+extern enum machine_mode mode_for_size(unsigned int, enum mode_class, int);
 
 /* Return an integer mode of the exact same size as the input mode,
    or BLKmode on failure.  */
 
-extern enum machine_mode int_mode_for_mode();
+extern enum machine_mode int_mode_for_mode(enum machine_mode);
 
 /* Find the best mode to use to access a bit field.  */
 
-extern enum machine_mode get_best_mode();
+extern enum machine_mode get_best_mode(int, int, int, enum machine_mode, int);
 
 /* Determine alignment, 1<=result<=BIGGEST_ALIGNMENT.  */
 

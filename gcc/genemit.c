@@ -75,10 +75,10 @@ static void output_init_mov_optab(void);
 
 static void max_operand_1(rtx x)
 {
-    register RTX_CODE code;
-    register int i;
-    register int len;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    int len;
+    const char *fmt;
 
     if (x == 0)
         return;
@@ -111,8 +111,8 @@ static void max_operand_1(rtx x)
 
 static int max_operand_vec(rtx insn, int arg)
 {
-    register int len = XVECLEN(insn, arg);
-    register int i;
+    int len = XVECLEN(insn, arg);
+    int i;
 
     max_opno = -1;
     max_dup_opno = -1;
@@ -125,7 +125,7 @@ static int max_operand_vec(rtx insn, int arg)
 
 static void print_code(RTX_CODE code)
 {
-    register char *p1;
+    const char *p1;
     for (p1 = GET_RTX_NAME(code); *p1; p1++)
     {
         if (*p1 >= 'a' && *p1 <= 'z')
@@ -140,10 +140,10 @@ static void print_code(RTX_CODE code)
 
 static void gen_exp(rtx x)
 {
-    register RTX_CODE code;
-    register int i;
-    register int len;
-    register char *fmt;
+    RTX_CODE code;
+    int i;
+    int len;
+    const char *fmt;
 
     if (x == 0)
     {
@@ -161,9 +161,9 @@ static void gen_exp(rtx x)
         return;
 
     case MATCH_OP_DUP:
-        printf("gen_rtx (GET_CODE (operand%d), ", XINT(x, 0));
+        printf("gen_rtx(GET_CODE(operand%d), ", XINT(x, 0));
         if (GET_MODE(x) == VOIDmode)
-            printf("GET_MODE (operand%d)", XINT(x, 0));
+            printf("GET_MODE(operand%d)", XINT(x, 0));
         else
             printf("%smode", GET_MODE_NAME(GET_MODE(x)));
         for (i = 0; i < XVECLEN(x, 1); i++)
@@ -175,7 +175,7 @@ static void gen_exp(rtx x)
         return;
 
     case MATCH_OPERATOR:
-        printf("gen_rtx (GET_CODE (operand%d)", XINT(x, 0));
+        printf("gen_rtx(GET_CODE(operand%d)", XINT(x, 0));
         printf(", %smode", GET_MODE_NAME(GET_MODE(x)));
         for (i = 0; i < XVECLEN(x, 2); i++)
         {
@@ -191,7 +191,7 @@ static void gen_exp(rtx x)
         return;
 
     case MATCH_SCRATCH:
-        printf("gen_rtx_SCRATCH (%smode)", GET_MODE_NAME(GET_MODE(x)));
+        printf("gen_rtx_SCRATCH(%smode)", GET_MODE_NAME(GET_MODE(x)));
         return;
 
     case ADDRESS:
@@ -216,7 +216,7 @@ static void gen_exp(rtx x)
             printf("const_true_rtx");
         else
         {
-            printf("GEN_INT (");
+            printf("GEN_INT(");
             printf(int32_t_PRINT_DEC, INTVAL(x));
             printf(")");
         }
@@ -233,7 +233,7 @@ static void gen_exp(rtx x)
 
     printf("gen_rtx_");
     print_code(code);
-    printf(" (%smode", GET_MODE_NAME(GET_MODE(x)));
+    printf("(%smode", GET_MODE_NAME(GET_MODE(x)));
 
     fmt = GET_RTX_FORMAT(code);
     len = GET_RTX_LENGTH(code);
@@ -251,7 +251,7 @@ static void gen_exp(rtx x)
         else if (fmt[i] == 'E')
         {
             int j;
-            printf("gen_rtvec (%d", XVECLEN(x, i));
+            printf("gen_rtvec(%d", XVECLEN(x, i));
             for (j = 0; j < XVECLEN(x, i); j++)
             {
                 printf(",\n\t\t");
@@ -270,7 +270,7 @@ static void gen_exp(rtx x)
 static void gen_insn(rtx insn)
 {
     int operands;
-    register int i;
+    int i;
 
     /* See if the pattern for this insn ends with a group of CLOBBERs of (hard)
        registers or MATCH_SCRATCHes.  If so, store away the information for
@@ -286,10 +286,10 @@ static void gen_insn(rtx insn)
 
         if (i != XVECLEN(insn, 1) - 1)
         {
-            register struct clobber_pat *p;
-            register struct clobber_ent *link
+            struct clobber_pat *p;
+            struct clobber_ent *link
                 = (struct clobber_ent *)xmalloc(sizeof(struct clobber_ent));
-            register int j;
+            int j;
 
             link->code_number = insn_code_number;
 
@@ -303,16 +303,16 @@ static void gen_insn(rtx insn)
 
                 for (j = i + 1; j < XVECLEN(insn, 1); j++)
                 {
-                    rtx old = XEXP(XVECEXP(p->pattern, 1, j), 0);
-                    rtx new = XEXP(XVECEXP(insn, 1, j), 0);
+                    rtx old_rtx = XEXP(XVECEXP(p->pattern, 1, j), 0);
+                    rtx new_rtx = XEXP(XVECEXP(insn, 1, j), 0);
 
                     /* OLD and NEW are the same if both are to be a SCRATCH
                        of the same mode,
                        or if both are registers of the same mode and number.  */
-                    if (!(GET_MODE(old) == GET_MODE(new)
-                            && ((GET_CODE(old) == MATCH_SCRATCH && GET_CODE(new) == MATCH_SCRATCH)
-                                   || (GET_CODE(old) == REG && GET_CODE(new) == REG
-                                          && REGNO(old) == REGNO(new)))))
+                    if (!(GET_MODE(old_rtx) == GET_MODE(new_rtx)
+                            && ((GET_CODE(old_rtx) == MATCH_SCRATCH && GET_CODE(new_rtx) == MATCH_SCRATCH)
+                                   || (GET_CODE(old_rtx) == REG && GET_CODE(new_rtx) == REG
+                                          && REGNO(old_rtx) == REGNO(new_rtx)))))
                         break;
                 }
 
@@ -350,9 +350,12 @@ static void gen_insn(rtx insn)
         fatal("match_dup operand number has no match_operand");
 
     /* Output the function name and argument declarations.  */
-    printf("rtx\ngen_%s (", XSTR(insn, 0));
-    for (i = 0; i < operands; i++)
-        printf(i ? ", rtx operand%d" : "rtx operand%d", i);
+    printf("rtx gen_%s(", XSTR(insn, 0));
+    if (operands == 0)
+        printf("void");
+    else
+        for (i = 0; i < operands; i++)
+            printf(i ? ", rtx operand%d" : "rtx operand%d", i);
     printf(")\n{\n");
 
     /* Output code to construct and return the rtl for the instruction body */
@@ -365,7 +368,7 @@ static void gen_insn(rtx insn)
     }
     else
     {
-        printf("  return gen_rtx_PARALLEL (VOIDmode, gen_rtvec (%d", XVECLEN(insn, 1));
+        printf("  return gen_rtx_PARALLEL(VOIDmode, gen_rtvec(%d", XVECLEN(insn, 1));
         for (i = 0; i < XVECLEN(insn, 1); i++)
         {
             printf(",\n\t\t");
@@ -380,7 +383,7 @@ static void gen_insn(rtx insn)
 static void gen_expand(rtx expand)
 {
     int operands;
-    register int i;
+    int i;
 
     if (strlen(XSTR(expand, 0)) == 0)
         fatal("define_expand lacks a name");
@@ -394,9 +397,12 @@ static void gen_expand(rtx expand)
     operands = max_operand_vec(expand, 1);
 
     /* Output the function name and argument declarations.  */
-    printf("rtx\ngen_%s (", XSTR(expand, 0));
-    for (i = 0; i < operands; i++)
-        printf(i ? ", rtx operand%d" : "rtx operand%d", i);
+    printf("rtx gen_%s(", XSTR(expand, 0));
+    if (operands == 0)
+        printf("void");
+    else
+        for (i = 0; i < operands; i++)
+            printf(i ? ", rtx operand%d" : "rtx operand%d", i);
     printf(")\n{\n");
 
     /* If we don't have any C code to write, only one insn is being written,
@@ -418,7 +424,7 @@ static void gen_expand(rtx expand)
     if (operands > 0 || max_dup_opno >= 0)
         printf("  rtx operands[%d];\n", MAX(operands, max_dup_opno + 1));
     printf("  rtx _val = 0;\n");
-    printf("  start_sequence ();\n");
+    printf("  start_sequence();\n");
 
     /* The fourth operand of DEFINE_EXPAND is some code to be executed
        before the actual construction.
@@ -458,26 +464,26 @@ static void gen_expand(rtx expand)
             || (GET_CODE(next) == PARALLEL && GET_CODE(XVECEXP(next, 0, 0)) == SET
                    && GET_CODE(SET_DEST(XVECEXP(next, 0, 0))) == PC)
             || GET_CODE(next) == RETURN)
-            printf("  emit_jump_insn (");
+            printf("  emit_jump_insn(");
         else if ((GET_CODE(next) == SET && GET_CODE(SET_SRC(next)) == CALL)
             || GET_CODE(next) == CALL
             || (GET_CODE(next) == PARALLEL && GET_CODE(XVECEXP(next, 0, 0)) == SET
                    && GET_CODE(SET_SRC(XVECEXP(next, 0, 0))) == CALL)
             || (GET_CODE(next) == PARALLEL && GET_CODE(XVECEXP(next, 0, 0)) == CALL))
-            printf("  emit_call_insn (");
+            printf("  emit_call_insn(");
         else if (GET_CODE(next) == CODE_LABEL)
             printf("  emit_label (");
         else if (GET_CODE(next) == MATCH_OPERAND || GET_CODE(next) == MATCH_OPERATOR
             || GET_CODE(next) == MATCH_PARALLEL || GET_CODE(next) == MATCH_OP_DUP
             || GET_CODE(next) == MATCH_DUP || GET_CODE(next) == PARALLEL)
-            printf("  emit (");
+            printf("  emit(");
         else
-            printf("  emit_insn (");
+            printf("  emit_insn(");
         gen_exp(next);
         printf(");\n");
         if (GET_CODE(next) == SET && GET_CODE(SET_DEST(next)) == PC
             && GET_CODE(SET_SRC(next)) == LABEL_REF)
-            printf("  emit_barrier ();");
+            printf("  emit_barrier();");
     }
 
     /* Call `gen_sequence' to make a SEQUENCE out of all the
@@ -492,7 +498,7 @@ static void gen_expand(rtx expand)
 
 static void gen_split(rtx split)
 {
-    register int i;
+    int i;
     int operands;
 
     if (XVEC(split, 0) == 0)
@@ -506,14 +512,14 @@ static void gen_split(rtx split)
     operands = MAX(max_opno, max_dup_opno) + 1;
 
     /* Output the function name and argument declarations.  */
-    printf("rtx\ngen_split_%d (operands)\n     rtx *operands;\n", insn_code_number);
+    printf("rtx gen_split_%d(rtx *operands)\n", insn_code_number);
     printf("{\n");
 
     /* Declare all local variables.  */
     for (i = 0; i < operands; i++)
         printf("  rtx operand%d;\n", i);
     printf("  rtx _val = 0;\n");
-    printf("  start_sequence ();\n");
+    printf("  start_sequence();\n");
 
     /* The fourth operand of DEFINE_SPLIT is some code to be executed
        before the actual construction.  */
@@ -612,7 +618,7 @@ static void output_init_mov_optab(void)
     char *p;
     size_t i;
 
-    printf("\nvoid init_mov_optab (void)\n{\n");
+    printf("\nvoid init_mov_optab(void)\n{\n");
 
     for (i = 0; i < sizeof cc_names / sizeof cc_names[0]; i++)
     {
@@ -634,9 +640,9 @@ static void output_init_mov_optab(void)
 #endif
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
@@ -644,10 +650,9 @@ void *xmalloc(size) size_t size;
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -683,7 +688,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
 
@@ -722,8 +727,8 @@ from the machine description file `md'.  */\n\n");
     printf("#include \"reload.h\"\n\n");
     printf("extern rtx recog_operand[];\n");
     printf("#define operands emit_operand\n\n");
-    printf("#define FAIL return (end_sequence (), _val)\n");
-    printf("#define DONE return (_val = gen_sequence (), end_sequence (), _val)\n");
+    printf("#define FAIL return (end_sequence(), _val)\n");
+    printf("#define DONE return (_val = gen_sequence(), end_sequence(), _val)\n");
 
     /* Read the machine description.  */
 

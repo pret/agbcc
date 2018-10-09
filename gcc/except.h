@@ -211,7 +211,7 @@ extern void output_exception_table		(void);
 /* Given a return address in ADDR, determine the address we should use
    to find the corresponding EH region.  */
 
-extern rtx eh_outer_context			(rtx addr);
+extern rtx eh_outer_context			(rtx);
 
 /* An internal throw.  */
 

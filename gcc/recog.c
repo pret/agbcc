@@ -95,7 +95,7 @@ int recog_n_alternatives;
 enum machine_mode recog_operand_mode[MAX_RECOG_OPERANDS];
 
 /* Indexed by N, gives the constraint string for operand N.  */
-char *recog_constraints[MAX_RECOG_OPERANDS];
+const char *recog_constraints[MAX_RECOG_OPERANDS];
 
 /* Indexed by N, gives the type (in, out, inout) for operand N.  */
 enum op_type recog_op_type[MAX_RECOG_OPERANDS];
@@ -207,17 +207,17 @@ static int num_changes = 0;
    is not valid for the machine, suppress the change and return zero.
    Otherwise, perform the change and return 1.  */
 
-int validate_change(rtx object, rtx *loc, rtx new, int in_group)
+int validate_change(rtx object, rtx *loc, rtx to_validate, int in_group)
 {
     rtx old = *loc;
 
-    if (old == new || rtx_equal_p(old, new))
+    if (old == to_validate || rtx_equal_p(old, to_validate))
         return 1;
 
     if (in_group == 0 && num_changes != 0)
         abort();
 
-    *loc = new;
+    *loc = to_validate;
 
     /* Save the information describing this change.  */
     if (num_changes >= changes_allocated)
@@ -395,9 +395,9 @@ void cancel_changes(int num)
 
 static void validate_replace_rtx_1(rtx *loc, rtx from, rtx to, rtx object)
 {
-    register int i, j;
-    register char *fmt;
-    register rtx x = *loc;
+    int i, j;
+    const char *fmt;
+    rtx x = *loc;
     enum rtx_code code = GET_CODE(x);
 
     /* X matches FROM if it is the same rtx or they are both referring to the
@@ -466,11 +466,11 @@ static void validate_replace_rtx_1(rtx *loc, rtx from, rtx to, rtx object)
                           && GET_MODE(XEXP(x, 0)) == GET_MODE(from)
                           && REGNO(XEXP(x, 0)) == REGNO(from))))
         {
-            rtx new = simplify_unary_operation(code, GET_MODE(x), to, GET_MODE(from));
-            if (new == 0)
-                new = gen_rtx_CLOBBER(GET_MODE(x), const0_rtx);
+            rtx tmp = simplify_unary_operation(code, GET_MODE(x), to, GET_MODE(from));
+            if (tmp == 0)
+                tmp = gen_rtx_CLOBBER(GET_MODE(x), const0_rtx);
 
-            validate_change(object, loc, new, 1);
+            validate_change(object, loc, tmp, 1);
             return;
         }
         break;
@@ -487,12 +487,12 @@ static void validate_replace_rtx_1(rtx *loc, rtx from, rtx to, rtx object)
         {
             int offset = SUBREG_WORD(x) * UNITS_PER_WORD;
             enum machine_mode mode = GET_MODE(x);
-            rtx new;
+            rtx tmp;
 
-            new = gen_rtx_MEM(mode, plus_constant(XEXP(to, 0), offset));
-            RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(to);
-            MEM_COPY_ATTRIBUTES(new, to);
-            validate_change(object, loc, new, 1);
+            tmp = gen_rtx_MEM(mode, plus_constant(XEXP(to, 0), offset));
+            RTX_UNCHANGING_P(tmp) = RTX_UNCHANGING_P(to);
+            MEM_COPY_ATTRIBUTES(tmp, to);
+            validate_change(object, loc, tmp, 1);
             return;
         }
         break;
@@ -603,7 +603,7 @@ static rtx *find_single_use_1(rtx dest, rtx *loc)
     rtx *result = 0;
     rtx *this_result;
     int i;
-    char *fmt;
+    const char *fmt;
 
     switch (code)
     {
@@ -762,9 +762,9 @@ rtx *find_single_use(rtx dest, rtx insn, rtx *ploc)
    For an explanation of this function's behavior for registers of
    class NO_REGS, see the comment for `register_operand'.  */
 
-int general_operand(register rtx op, enum machine_mode mode)
+int general_operand(rtx op, enum machine_mode mode)
 {
-    register enum rtx_code code = GET_CODE(op);
+    enum rtx_code code = GET_CODE(op);
     int mode_altering_drug = 0;
 
     if (mode == VOIDmode)
@@ -801,7 +801,7 @@ int general_operand(register rtx op, enum machine_mode mode)
 
     if (code == MEM)
     {
-        register rtx y = XEXP(op, 0);
+        rtx y = XEXP(op, 0);
         if (!volatile_ok && MEM_VOLATILE_P(op))
             return 0;
         if (GET_CODE(y) == ADDRESSOF)
@@ -838,7 +838,7 @@ win:
    as registers in any case where register classes are examined,
    it is most consistent to keep this function from accepting them.  */
 
-int register_operand(register rtx op, enum machine_mode mode)
+int register_operand(rtx op, enum machine_mode mode)
 {
     if (GET_MODE(op) != mode && mode != VOIDmode)
         return 0;
@@ -876,7 +876,7 @@ int register_operand(register rtx op, enum machine_mode mode)
 /* Return 1 if OP should match a MATCH_SCRATCH, i.e., if it is a SCRATCH
    or a hard register.  */
 
-int scratch_operand(register rtx op, enum machine_mode mode)
+int scratch_operand(rtx op, enum machine_mode mode)
 {
     return (GET_MODE(op) == mode
         && (GET_CODE(op) == SCRATCH || (GET_CODE(op) == REG && REGNO(op) < FIRST_PSEUDO_REGISTER)));
@@ -884,21 +884,21 @@ int scratch_operand(register rtx op, enum machine_mode mode)
 
 /* Returns 1 if OP is an operand that is a CONST_INT.  */
 
-int const_int_operand(register rtx op, enum machine_mode mode ATTRIBUTE_UNUSED)
+int const_int_operand(rtx op, enum machine_mode mode ATTRIBUTE_UNUSED)
 {
     return GET_CODE(op) == CONST_INT;
 }
 
 /* Return 1 if OP is a general operand that is not an immediate operand.  */
 
-int nonimmediate_operand(register rtx op, enum machine_mode mode)
+int nonimmediate_operand(rtx op, enum machine_mode mode)
 {
     return (general_operand(op, mode) && !CONSTANT_P(op));
 }
 
 /* Return 1 if OP is a register reference or immediate value of mode MODE.  */
 
-int nonmemory_operand(register rtx op, enum machine_mode mode)
+int nonmemory_operand(rtx op, enum machine_mode mode)
 {
     if (CONSTANT_P(op))
     {
@@ -956,7 +956,7 @@ int push_operand(rtx op, enum machine_mode mode)
 
 /* Return 1 if ADDR is a valid memory address for mode MODE.  */
 
-int memory_address_p(enum machine_mode mode, register rtx addr)
+int memory_address_p(enum machine_mode mode, rtx addr)
 {
     if (GET_CODE(addr) == ADDRESSOF)
         return 1;
@@ -974,7 +974,7 @@ win:
    The main use of this function is as a predicate in match_operand
    expressions in the machine description.  */
 
-int memory_operand(register rtx op, enum machine_mode mode)
+int memory_operand(rtx op, enum machine_mode mode)
 {
     rtx inner;
 
@@ -996,7 +996,7 @@ int memory_operand(register rtx op, enum machine_mode mode)
 /* Return 1 if this is a comparison operator.  This allows the use of
    MATCH_OPERATOR to recognize all the branch insns.  */
 
-int comparison_operator(register rtx op, enum machine_mode mode)
+int comparison_operator(rtx op, enum machine_mode mode)
 {
     return ((mode == VOIDmode || GET_MODE(op) == mode) && GET_RTX_CLASS(GET_CODE(op)) == '<');
 }
@@ -1078,12 +1078,12 @@ int asm_noperands(rtx body)
    If MODES, OPERAND_LOCS, CONSTRAINTS or OPERANDS is 0,
    we don't store that info.  */
 
-char *decode_asm_operands(
-    rtx body, rtx *operands, rtx **operand_locs, char **constraints, enum machine_mode *modes)
+const char *decode_asm_operands(
+    rtx body, rtx *operands, rtx **operand_locs, const char **constraints, enum machine_mode *modes)
 {
-    register int i;
+    int i;
     int noperands;
-    char *template = 0;
+    const char *templ = 0;
 
     if (GET_CODE(body) == SET && GET_CODE(SET_SRC(body)) == ASM_OPERANDS)
     {
@@ -1114,7 +1114,7 @@ char *decode_asm_operands(
             constraints[0] = ASM_OPERANDS_OUTPUT_CONSTRAINT(asmop);
         if (modes)
             modes[0] = GET_MODE(SET_DEST(body));
-        template = ASM_OPERANDS_TEMPLATE(asmop);
+        templ = ASM_OPERANDS_TEMPLATE(asmop);
     }
     else if (GET_CODE(body) == ASM_OPERANDS)
     {
@@ -1136,7 +1136,7 @@ char *decode_asm_operands(
             if (modes)
                 modes[i] = ASM_OPERANDS_INPUT_MODE(asmop, i);
         }
-        template = ASM_OPERANDS_TEMPLATE(asmop);
+        templ = ASM_OPERANDS_TEMPLATE(asmop);
     }
     else if (GET_CODE(body) == PARALLEL && GET_CODE(XVECEXP(body, 0, 0)) == SET)
     {
@@ -1177,7 +1177,7 @@ char *decode_asm_operands(
                 modes[i + nout] = ASM_OPERANDS_INPUT_MODE(asmop, i);
         }
 
-        template = ASM_OPERANDS_TEMPLATE(asmop);
+        templ = ASM_OPERANDS_TEMPLATE(asmop);
     }
     else if (GET_CODE(body) == PARALLEL && GET_CODE(XVECEXP(body, 0, 0)) == ASM_OPERANDS)
     {
@@ -1198,10 +1198,10 @@ char *decode_asm_operands(
                 modes[i] = ASM_OPERANDS_INPUT_MODE(asmop, i);
         }
 
-        template = ASM_OPERANDS_TEMPLATE(asmop);
+        templ = ASM_OPERANDS_TEMPLATE(asmop);
     }
 
-    return template;
+    return templ;
 }
 
 /* Given an rtx *P, if it is a sum containing an integer constant term,
@@ -1210,8 +1210,8 @@ char *decode_asm_operands(
 
 static rtx *find_constant_term_loc(rtx *p)
 {
-    register rtx *tem;
-    register enum rtx_code code = GET_CODE(*p);
+    rtx *tem;
+    enum rtx_code code = GET_CODE(*p);
 
     /* If *P IS such a constant term, P is its location.  */
 
@@ -1281,13 +1281,13 @@ int offsettable_nonstrict_memref_p(rtx op)
    If STRICTP is nonzero, we require a strictly valid address,
    for the sake of use in reload.c.  */
 
-int offsettable_address_p(int strictp, enum machine_mode mode, register rtx y)
+int offsettable_address_p(int strictp, enum machine_mode mode, rtx y)
 {
-    register enum rtx_code ycode = GET_CODE(y);
-    register rtx z;
+    enum rtx_code ycode = GET_CODE(y);
+    rtx z;
     rtx y1 = y;
     rtx *y2;
-    int (*addressp)() = (strictp ? strict_memory_address_p : memory_address_p);
+    int (*addressp)(enum machine_mode, rtx) = (strictp ? strict_memory_address_p : memory_address_p);
 
     if (CONSTANT_ADDRESS_P(y))
         return 1;
@@ -1353,24 +1353,24 @@ win:
 
 rtx adj_offsettable_operand(rtx op, int offset)
 {
-    register enum rtx_code code = GET_CODE(op);
+    enum rtx_code code = GET_CODE(op);
 
     if (code == MEM)
     {
-        register rtx y = XEXP(op, 0);
-        register rtx new;
+        rtx y = XEXP(op, 0);
+        rtx ret;
 
         if (CONSTANT_ADDRESS_P(y))
         {
-            new = gen_rtx_MEM(GET_MODE(op), plus_constant_for_output(y, offset));
-            RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(op);
-            return new;
+            ret = gen_rtx_MEM(GET_MODE(op), plus_constant_for_output(y, offset));
+            RTX_UNCHANGING_P(ret) = RTX_UNCHANGING_P(op);
+            return ret;
         }
 
         if (GET_CODE(y) == PLUS)
         {
             rtx z = y;
-            register rtx *const_loc;
+            rtx *const_loc;
 
             op = copy_rtx(op);
             z = XEXP(op, 0);
@@ -1382,9 +1382,9 @@ rtx adj_offsettable_operand(rtx op, int offset)
             }
         }
 
-        new = gen_rtx_MEM(GET_MODE(op), plus_constant_for_output(y, offset));
-        RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(op);
-        return new;
+        ret = gen_rtx_MEM(GET_MODE(op), plus_constant_for_output(y, offset));
+        RTX_UNCHANGING_P(ret) = RTX_UNCHANGING_P(op);
+        return ret;
     }
     abort();
 }
@@ -1431,7 +1431,7 @@ void extract_insn(rtx insn)
                 body, recog_operand, recog_operand_loc, recog_constraints, recog_operand_mode);
             if (noperands > 0)
             {
-                char *p = recog_constraints[0];
+                const char *p = recog_constraints[0];
                 recog_n_alternatives = 1;
                 while (*p)
                     recog_n_alternatives += (*p++ == ',');
@@ -1508,15 +1508,15 @@ void extract_insn(rtx insn)
 
 struct funny_match
 {
-    int this, other;
+    int curr, other;
 };
 
 int constrain_operands(int strict)
 {
-    char *constraints[MAX_RECOG_OPERANDS];
+    const char *constraints[MAX_RECOG_OPERANDS];
     int matching_operands[MAX_RECOG_OPERANDS];
     int earlyclobber[MAX_RECOG_OPERANDS];
-    register int c;
+    int c;
 
     struct funny_match funny_match[MAX_RECOG_OPERANDS];
     int funny_match_index;
@@ -1534,15 +1534,15 @@ int constrain_operands(int strict)
 
     while (which_alternative < recog_n_alternatives)
     {
-        register int opno;
+        int opno;
         int lose = 0;
         funny_match_index = 0;
 
         for (opno = 0; opno < recog_n_operands; opno++)
         {
-            register rtx op = recog_operand[opno];
+            rtx op = recog_operand[opno];
             enum machine_mode mode = GET_MODE(op);
-            register char *p = constraints[opno];
+            const char *p = constraints[opno];
             int offset = 0;
             int win = 0;
             int val;
@@ -1617,7 +1617,7 @@ int constrain_operands(int strict)
                        since the output op is the one that will be printed.  */
                     if (val == 2 && strict > 0)
                     {
-                        funny_match[funny_match_index].this = opno;
+                        funny_match[funny_match_index].curr = opno;
                         funny_match[funny_match_index++].other = c - '0';
                     }
                     break;
@@ -1814,7 +1814,7 @@ int constrain_operands(int strict)
                 while (--funny_match_index >= 0)
                 {
                     recog_operand[funny_match[funny_match_index].other]
-                        = recog_operand[funny_match[funny_match_index].this];
+                        = recog_operand[funny_match[funny_match_index].curr];
                 }
 
                 return 1;
@@ -1837,16 +1837,16 @@ int constrain_operands(int strict)
    and changed to mode MODE.
    If REG occupies multiple hard regs, all of them must be in CLASS.  */
 
-int reg_fits_class_p(rtx operand, register enum reg_class class, int offset, enum machine_mode mode)
+int reg_fits_class_p(rtx operand, enum reg_class rclass, int offset, enum machine_mode mode)
 {
-    register int regno = REGNO(operand);
+    int regno = REGNO(operand);
     if (regno < FIRST_PSEUDO_REGISTER
-        && TEST_HARD_REG_BIT(reg_class_contents[(int)class], regno + offset))
+        && TEST_HARD_REG_BIT(reg_class_contents[(int)rclass], regno + offset))
     {
-        register int sr;
+        int sr;
         regno += offset;
         for (sr = HARD_REGNO_NREGS(regno, mode) - 1; sr > 0; sr--)
-            if (!TEST_HARD_REG_BIT(reg_class_contents[(int)class], regno + sr))
+            if (!TEST_HARD_REG_BIT(reg_class_contents[(int)rclass], regno + sr))
                 break;
         return sr == 0;
     }

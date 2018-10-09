@@ -44,9 +44,9 @@ int target_flags;
 
 int rtx_unstable_p(rtx x)
 {
-    register RTX_CODE code = GET_CODE(x);
-    register int i;
-    register char *fmt;
+    RTX_CODE code = GET_CODE(x);
+    int i;
+    const char *fmt;
 
     if (code == MEM)
         return !RTX_UNCHANGING_P(x);
@@ -76,9 +76,9 @@ int rtx_unstable_p(rtx x)
 
 int rtx_varies_p(rtx x)
 {
-    register RTX_CODE code = GET_CODE(x);
-    register int i;
-    register char *fmt;
+    RTX_CODE code = GET_CODE(x);
+    int i;
+    const char *fmt;
 
     switch (code)
     {
@@ -119,9 +119,9 @@ int rtx_varies_p(rtx x)
 
 /* Return 0 if the use of X as an address in a MEM can cause a trap.  */
 
-static int rtx_addr_can_trap_p(register rtx x)
+static int rtx_addr_can_trap_p(rtx x)
 {
-    register enum rtx_code code = GET_CODE(x);
+    enum rtx_code code = GET_CODE(x);
 
     switch (code)
     {
@@ -162,9 +162,9 @@ static int rtx_addr_can_trap_p(register rtx x)
 
 int rtx_addr_varies_p(rtx x)
 {
-    register enum rtx_code code;
-    register int i;
-    register char *fmt;
+    enum rtx_code code;
+    int i;
+    const char *fmt;
 
     if (x == 0)
         return 0;
@@ -195,8 +195,7 @@ int rtx_addr_varies_p(rtx x)
    Only obvious integer terms are detected.
    This is used in cse.c with the `related_value' field.*/
 
-int32_t
-get_integer_term(rtx x)
+int32_t get_integer_term(rtx x)
 {
     if (GET_CODE(x) == CONST)
         x = XEXP(x, 0);
@@ -228,11 +227,11 @@ rtx get_related_value(rtx x)
    Also works if REG is not a register; in this case it checks
    for a subexpression of IN that is Lisp "equal" to REG.  */
 
-int reg_mentioned_p(register rtx reg, register rtx in)
+int reg_mentioned_p(rtx reg, rtx in)
 {
-    register char *fmt;
-    register int i;
-    register enum rtx_code code;
+    const char *fmt;
+    int i;
+    enum rtx_code code;
 
     if (in == 0)
         return 0;
@@ -278,7 +277,7 @@ int reg_mentioned_p(register rtx reg, register rtx in)
     {
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = XVECLEN(in, i) - 1; j >= 0; j--)
                 if (reg_mentioned_p(reg, XVECEXP(in, i, j)))
                     return 1;
@@ -294,7 +293,7 @@ int reg_mentioned_p(register rtx reg, register rtx in)
 
 int no_labels_between_p(rtx beg, rtx end)
 {
-    register rtx p;
+    rtx p;
     for (p = NEXT_INSN(beg); p != end; p = NEXT_INSN(p))
         if (GET_CODE(p) == CODE_LABEL)
             return 0;
@@ -306,7 +305,7 @@ int no_labels_between_p(rtx beg, rtx end)
 
 int no_jumps_between_p(rtx beg, rtx end)
 {
-    register rtx p;
+    rtx p;
     for (p = NEXT_INSN(beg); p != end; p = NEXT_INSN(p))
         if (GET_CODE(p) == JUMP_INSN)
             return 0;
@@ -318,7 +317,7 @@ int no_jumps_between_p(rtx beg, rtx end)
 
 int reg_used_between_p(rtx reg, rtx from_insn, rtx to_insn)
 {
-    register rtx insn;
+    rtx insn;
 
     if (from_insn == to_insn)
         return 0;
@@ -393,7 +392,7 @@ int reg_referenced_p(rtx x, rtx body)
 
 int reg_referenced_between_p(rtx reg, rtx from_insn, rtx to_insn)
 {
-    register rtx insn;
+    rtx insn;
 
     if (from_insn == to_insn)
         return 0;
@@ -411,7 +410,7 @@ int reg_referenced_between_p(rtx reg, rtx from_insn, rtx to_insn)
 
 int reg_set_between_p(rtx reg, rtx from_insn, rtx to_insn)
 {
-    register rtx insn;
+    rtx insn;
 
     if (from_insn == to_insn)
         return 0;
@@ -472,7 +471,7 @@ int reg_set_p(rtx reg, rtx insn)
 int regs_set_between_p(rtx x, rtx start, rtx end)
 {
     enum rtx_code code = GET_CODE(x);
-    char *fmt;
+    const char *fmt;
     int i, j;
 
     switch (code)
@@ -515,7 +514,7 @@ int regs_set_between_p(rtx x, rtx start, rtx end)
 int modified_between_p(rtx x, rtx start, rtx end)
 {
     enum rtx_code code = GET_CODE(x);
-    char *fmt;
+    const char *fmt;
     int i, j;
 
     switch (code)
@@ -567,7 +566,7 @@ int modified_between_p(rtx x, rtx start, rtx end)
 int modified_in_p(rtx x, rtx insn)
 {
     enum rtx_code code = GET_CODE(x);
-    char *fmt;
+    const char *fmt;
     int i, j;
 
     switch (code)
@@ -684,9 +683,9 @@ int multiple_sets(rtx insn)
 
 int refers_to_regno_p(int regno, int endregno, rtx x, rtx *loc)
 {
-    register int i;
-    register RTX_CODE code;
-    register char *fmt;
+    int i;
+    RTX_CODE code;
+    const char *fmt;
 
 repeat:
     /* The contents of a REG_NONNEG note is always zero, so we must come here
@@ -764,7 +763,7 @@ repeat:
         }
         else if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = XVECLEN(x, i) - 1; j >= 0; j--)
                 if (loc != &XVECEXP(x, i, j)
                     && refers_to_regno_p(regno, endregno, XVECEXP(x, i, j), loc))
@@ -801,7 +800,7 @@ int reg_overlap_mentioned_p(rtx x, rtx in)
         regno = REGNO(x);
     else if (GET_CODE(x) == MEM)
     {
-        char *fmt;
+        const char *fmt;
         int i;
 
         if (GET_CODE(in) == MEM)
@@ -819,7 +818,7 @@ int reg_overlap_mentioned_p(rtx x, rtx in)
         return reg_mentioned_p(x, in);
     else if (GET_CODE(x) == PARALLEL && GET_MODE(x) == BLKmode)
     {
-        register int i;
+        int i;
 
         /* If any register in here refers to it
        we return true.  */
@@ -927,10 +926,10 @@ int rtx_equal_function_value_matters;
 
 int rtx_equal_p(rtx x, rtx y)
 {
-    register int i;
-    register int j;
-    register enum rtx_code code;
-    register char *fmt;
+    int i;
+    int j;
+    enum rtx_code code;
+    const char *fmt;
 
     if (x == y)
         return 1;
@@ -1033,11 +1032,11 @@ int rtx_equal_p(rtx x, rtx y)
   If the item being stored in or clobbered is a SUBREG of a hard register,
   the SUBREG will be passed.  */
 
-void note_stores(register rtx x, void (*fun)())
+void note_stores(rtx x, void (*fun)(rtx, rtx))
 {
     if ((GET_CODE(x) == SET || GET_CODE(x) == CLOBBER))
     {
-        register rtx dest = SET_DEST(x);
+        rtx dest = SET_DEST(x);
         while ((GET_CODE(dest) == SUBREG
                    && (GET_CODE(SUBREG_REG(dest)) != REG
                           || REGNO(SUBREG_REG(dest)) >= FIRST_PSEUDO_REGISTER))
@@ -1047,7 +1046,7 @@ void note_stores(register rtx x, void (*fun)())
 
         if (GET_CODE(dest) == PARALLEL && GET_MODE(dest) == BLKmode)
         {
-            register int i;
+            int i;
             for (i = XVECLEN(dest, 0) - 1; i >= 0; i--)
                 (*fun)(SET_DEST(XVECEXP(dest, 0, i)), x);
         }
@@ -1056,13 +1055,13 @@ void note_stores(register rtx x, void (*fun)())
     }
     else if (GET_CODE(x) == PARALLEL)
     {
-        register int i;
+        int i;
         for (i = XVECLEN(x, 0) - 1; i >= 0; i--)
         {
-            register rtx y = XVECEXP(x, 0, i);
+            rtx y = XVECEXP(x, 0, i);
             if (GET_CODE(y) == SET || GET_CODE(y) == CLOBBER)
             {
-                register rtx dest = SET_DEST(y);
+                rtx dest = SET_DEST(y);
                 while ((GET_CODE(dest) == SUBREG
                            && (GET_CODE(SUBREG_REG(dest)) != REG
                                   || (REGNO(SUBREG_REG(dest)) >= FIRST_PSEUDO_REGISTER)))
@@ -1071,7 +1070,7 @@ void note_stores(register rtx x, void (*fun)())
                     dest = XEXP(dest, 0);
                 if (GET_CODE(dest) == PARALLEL && GET_MODE(dest) == BLKmode)
                 {
-                    register int i;
+                    int i;
                     for (i = XVECLEN(dest, 0) - 1; i >= 0; i--)
                         (*fun)(SET_DEST(XVECEXP(dest, 0, i)), y);
                 }
@@ -1101,8 +1100,8 @@ void note_stores(register rtx x, void (*fun)())
 
 int dead_or_set_p(rtx insn, rtx x)
 {
-    register int regno, last_regno;
-    register int i;
+    int regno, last_regno;
+    int i;
 
     /* Can't use cc0_rtx below since this file is used by genattrtab.c.  */
     if (GET_CODE(x) == CC0)
@@ -1175,7 +1174,7 @@ int dead_or_set_regno_p(rtx insn, int test_regno)
     }
     else if (GET_CODE(PATTERN(insn)) == PARALLEL)
     {
-        register int i;
+        int i;
 
         for (i = XVECLEN(PATTERN(insn), 0) - 1; i >= 0; i--)
         {
@@ -1213,7 +1212,7 @@ int dead_or_set_regno_p(rtx insn, int test_regno)
 
 rtx find_reg_note(rtx insn, enum reg_note kind, rtx datum)
 {
-    register rtx link;
+    rtx link;
 
     /* Ignore anything that is not an INSN, JUMP_INSN or CALL_INSN.  */
     if (GET_RTX_CLASS(GET_CODE(insn)) != 'i')
@@ -1232,7 +1231,7 @@ rtx find_reg_note(rtx insn, enum reg_note kind, rtx datum)
 
 rtx find_regno_note(rtx insn, enum reg_note kind, int regno)
 {
-    register rtx link;
+    rtx link;
 
     /* Ignore anything that is not an INSN, JUMP_INSN or CALL_INSN.  */
     if (GET_RTX_CLASS(GET_CODE(insn)) != 'i')
@@ -1267,7 +1266,7 @@ int find_reg_fusage(rtx insn, enum rtx_code code, rtx datum)
 
     if (GET_CODE(datum) != REG)
     {
-        register rtx link;
+        rtx link;
 
         for (link = CALL_INSN_FUNCTION_USAGE(insn); link; link = XEXP(link, 1))
             if (GET_CODE(XEXP(link, 0)) == code && rtx_equal_p(datum, SET_DEST(XEXP(link, 0))))
@@ -1275,7 +1274,7 @@ int find_reg_fusage(rtx insn, enum rtx_code code, rtx datum)
     }
     else
     {
-        register int regno = REGNO(datum);
+        int regno = REGNO(datum);
 
         /* CALL_INSN_FUNCTION_USAGE information cannot contain references
        to pseudo registers, so don't bother checking.  */
@@ -1299,7 +1298,7 @@ int find_reg_fusage(rtx insn, enum rtx_code code, rtx datum)
 
 int find_regno_fusage(rtx insn, enum rtx_code code, int regno)
 {
-    register rtx link;
+    rtx link;
 
     /* CALL_INSN_FUNCTION_USAGE information cannot contain references
        to pseudo registers, so don't bother checking.  */
@@ -1309,8 +1308,8 @@ int find_regno_fusage(rtx insn, enum rtx_code code, int regno)
 
     for (link = CALL_INSN_FUNCTION_USAGE(insn); link; link = XEXP(link, 1))
     {
-        register int regnote;
-        register rtx op;
+        int regnote;
+        rtx op;
 
         if (GET_CODE(op = XEXP(link, 0)) == code && GET_CODE(SET_DEST(op)) == REG
             && (regnote = REGNO(SET_DEST(op))) <= regno
@@ -1323,9 +1322,9 @@ int find_regno_fusage(rtx insn, enum rtx_code code, int regno)
 
 /* Remove register note NOTE from the REG_NOTES of INSN.  */
 
-void remove_note(register rtx insn, register rtx note)
+void remove_note(rtx insn, rtx note)
 {
-    register rtx link;
+    rtx link;
 
     if (REG_NOTES(insn) == note)
     {
@@ -1350,7 +1349,7 @@ void remove_note(register rtx insn, register rtx note)
 
 int volatile_insn_p(rtx x)
 {
-    register RTX_CODE code;
+    RTX_CODE code;
 
     code = GET_CODE(x);
     switch (code)
@@ -1387,8 +1386,8 @@ int volatile_insn_p(rtx x)
     /* Recursively scan the operands of this expression.  */
 
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
 
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
@@ -1399,7 +1398,7 @@ int volatile_insn_p(rtx x)
             }
             if (fmt[i] == 'E')
             {
-                register int j;
+                int j;
                 for (j = 0; j < XVECLEN(x, i); j++)
                     if (volatile_insn_p(XVECEXP(x, i, j)))
                         return 1;
@@ -1414,7 +1413,7 @@ int volatile_insn_p(rtx x)
 
 int volatile_refs_p(rtx x)
 {
-    register RTX_CODE code;
+    RTX_CODE code;
 
     code = GET_CODE(x);
     switch (code)
@@ -1451,8 +1450,8 @@ int volatile_refs_p(rtx x)
     /* Recursively scan the operands of this expression.  */
 
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
 
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
@@ -1463,7 +1462,7 @@ int volatile_refs_p(rtx x)
             }
             if (fmt[i] == 'E')
             {
-                register int j;
+                int j;
                 for (j = 0; j < XVECLEN(x, i); j++)
                     if (volatile_refs_p(XVECEXP(x, i, j)))
                         return 1;
@@ -1478,7 +1477,7 @@ int volatile_refs_p(rtx x)
 
 int side_effects_p(rtx x)
 {
-    register RTX_CODE code;
+    RTX_CODE code;
 
     code = GET_CODE(x);
     switch (code)
@@ -1524,8 +1523,8 @@ int side_effects_p(rtx x)
     /* Recursively scan the operands of this expression.  */
 
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
 
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
@@ -1536,7 +1535,7 @@ int side_effects_p(rtx x)
             }
             if (fmt[i] == 'E')
             {
-                register int j;
+                int j;
                 for (j = 0; j < XVECLEN(x, i); j++)
                     if (side_effects_p(XVECEXP(x, i, j)))
                         return 1;
@@ -1552,7 +1551,7 @@ int may_trap_p(rtx x)
 {
     int i;
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
 
     if (x == 0)
         return 0;
@@ -1614,7 +1613,7 @@ int may_trap_p(rtx x)
         }
         else if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 if (may_trap_p(XVECEXP(x, i, j)))
                     return 1;
@@ -1631,8 +1630,8 @@ int may_trap_p(rtx x)
 
 rtx replace_rtx(rtx x, rtx from, rtx to)
 {
-    register int i, j;
-    register char *fmt;
+    int i, j;
+    const char *fmt;
 
     /* The following prevents loops occurrence when we change MEM in
        CONST_DOUBLE onto the same CONST_DOUBLE. */
@@ -1673,9 +1672,9 @@ rtx replace_rtx(rtx x, rtx from, rtx to)
 
 rtx replace_regs(rtx x, rtx *reg_map, int nregs, int replace_dest)
 {
-    register enum rtx_code code;
-    register int i;
-    register char *fmt;
+    enum rtx_code code;
+    int i;
+    const char *fmt;
 
     if (x == 0)
         return x;
@@ -1726,12 +1725,6 @@ rtx replace_regs(rtx x, rtx *reg_map, int nregs, int replace_dest)
                 SUBREG_REG(x) = map_inner;
                 SUBREG_WORD(x) += SUBREG_WORD(map_val);
                 return x;
-#if 0
-	      rtx new = rtx_alloc (SUBREG);
-	      PUT_MODE (new, GET_MODE (x));
-	      SUBREG_REG (new) = map_inner;
-	      SUBREG_WORD (new) = SUBREG_WORD (x) + SUBREG_WORD (map_val);
-#endif
             }
         }
         break;
@@ -1763,7 +1756,7 @@ rtx replace_regs(rtx x, rtx *reg_map, int nregs, int replace_dest)
             XEXP(x, i) = replace_regs(XEXP(x, i), reg_map, nregs, replace_dest);
         if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = 0; j < XVECLEN(x, i); j++)
                 XVECEXP(x, i, j) = replace_regs(XVECEXP(x, i, j), reg_map, nregs, replace_dest);
         }
@@ -1778,7 +1771,7 @@ static int jmp_uses_reg_or_mem(rtx x)
 {
     enum rtx_code code = GET_CODE(x);
     int i, j;
-    char *fmt;
+    const char *fmt;
 
     switch (code)
     {
@@ -1873,7 +1866,7 @@ int for_each_rtx(rtx *x, rtx_function f, void *data)
 {
     int result;
     int length;
-    char *format;
+    const char *format;
     int i;
 
     /* Call F on X.  */

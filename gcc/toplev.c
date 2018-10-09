@@ -51,7 +51,7 @@
 extern int rtx_equal_function_value_matters;
 
 extern char **environ;
-extern char *version_string, *language_string;
+extern const char *version_string, *language_string;
 
 /* Carry information from ASM_DECLARE_OBJECT_NAME
    to ASM_FINISH_DECLARE_OBJECT.  */
@@ -59,74 +59,74 @@ extern char *version_string, *language_string;
 extern int size_directive_output;
 extern tree last_assemble_variable_decl;
 
-extern void check_line_directive();
+extern void check_line_directive(void);
 
-extern char *init_parse(char *);
-extern void finish_parse();
-extern void init_decl_processing();
-extern void init_obstacks();
-extern void init_tree_codes();
-extern void init_rtl();
-extern void init_regs();
-extern void init_optabs();
-extern void init_stmt();
-extern void init_reg_sets();
-extern void dump_flow_info();
-extern void dump_local_alloc();
-extern void regset_release_memory();
+extern const char *init_parse(const char *);
+extern void finish_parse(void);
+extern void init_decl_processing(void);
+extern void init_obstacks(void);
+extern void init_tree_codes(void);
+extern void init_rtl(void);
+extern void init_regs(void);
+extern void init_optabs(void);
+extern void init_stmt(void);
+extern void init_reg_sets(void);
+extern void dump_flow_info(FILE *file);
+extern void dump_local_alloc(FILE *file);
+extern void regset_release_memory(void);
 
-extern void print_rtl();
+extern void print_rtl(FILE *outf, rtx rtx_first);
 extern void print_rtl_with_bb(FILE *, rtx);
 
-void rest_of_decl_compilation();
-void error_with_file_and_line(char *file, int line, char *s, ...);
-void error_with_decl(tree decl, char *s, ...);
-void error(char *s, ...);
-void fatal(char *s, ...);
-void warning_with_file_and_line(char *file, int line, char *s, ...);
-void warning_with_decl(tree decl, char *s, ...);
-void warning(char *s, ...);
-void pedwarn(char *s, ...);
-void pedwarn_with_decl(tree decl, char *s, ...);
-void pedwarn_with_file_and_line(char *file, int line, char *s, ...);
-void note(char *s, ...);
-void note_with_decl(tree decl, char *s, ...);
-void sorry(char *s, ...);
-static void set_target_switch(char *);
+void rest_of_decl_compilation(tree decl, char *asmspec, int top_level, int at_end);
+void error_with_file_and_line(const char *file, int line, const char *s, ...);
+void error_with_decl(tree decl, const char *s, ...);
+void error(const char *s, ...);
+void fatal(const char *s, ...);
+void warning_with_file_and_line(const char *file, int line, const char *s, ...);
+void warning_with_decl(tree decl, const char *s, ...);
+void warning(const char *s, ...);
+void pedwarn(const char *s, ...);
+void pedwarn_with_decl(tree decl, const char *s, ...);
+void pedwarn_with_file_and_line(const char *file, int line, const char *s, ...);
+void note(const char *s, ...);
+void note_with_decl(tree decl, const char *s, ...);
+void sorry(const char *s, ...);
+static void set_target_switch(const char *);
 static char *decl_name(tree, int);
-static void vmessage(char *, char *, va_list);
-static void v_message_with_file_and_line(char *, int, char *, char *, va_list);
-static void v_message_with_decl(tree, char *, char *, va_list);
-static void file_and_line_for_asm(rtx, char **, int *);
-static void v_error_with_file_and_line(char *, int, char *, va_list);
-static void v_error_with_decl(tree, char *, va_list);
-static void v_error_for_asm(rtx, char *, va_list);
-static void verror(char *, va_list);
-static void vfatal(char *, va_list) ATTRIBUTE_NORETURN;
-static void v_warning_with_file_and_line(char *, int, char *, va_list);
-static void v_warning_with_decl(tree, char *, va_list);
-static void v_warning_for_asm(rtx, char *, va_list);
-static void vwarning(char *, va_list);
-static void vpedwarn(char *, va_list);
-static void v_pedwarn_with_decl(tree, char *, va_list);
-static void v_pedwarn_with_file_and_line(char *, int, char *, va_list);
-static void vnote(char *, va_list);
-static void v_note_with_decl(tree, char *, va_list);
-static void v_note_with_file_and_line(char *, int, char *, va_list);
-static void vsorry(char *, va_list);
-static void v_really_sorry(char *, va_list) ATTRIBUTE_NORETURN;
+static void vmessage(const char *, const char *, va_list);
+static void v_message_with_file_and_line(const char *, int, const char *, const char *, va_list);
+static void v_message_with_decl(tree, const char *, const char *, va_list);
+static void file_and_line_for_asm(rtx, const char **, int *);
+static void v_error_with_file_and_line(const char *, int, const char *, va_list);
+static void v_error_with_decl(tree, const char *, va_list);
+static void v_error_for_asm(rtx, const char *, va_list);
+static void verror(const char *, va_list);
+static void vfatal(const char *, va_list) ATTRIBUTE_NORETURN;
+static void v_warning_with_file_and_line(const char *, int, const char *, va_list);
+static void v_warning_with_decl(tree, const char *, va_list);
+static void v_warning_for_asm(rtx, const char *, va_list);
+static void vwarning(const char *, va_list);
+static void vpedwarn(const char *, va_list);
+static void v_pedwarn_with_decl(tree, const char *, va_list);
+static void v_pedwarn_with_file_and_line(const char *, int, const char *, va_list);
+static void vnote(const char *, va_list);
+static void v_note_with_decl(tree, const char *, va_list);
+static void v_note_with_file_and_line(const char *, int, const char *, va_list);
+static void vsorry(const char *, va_list);
+static void v_really_sorry(const char *, va_list) ATTRIBUTE_NORETURN;
 static void float_signal(int);
 static void pipe_closed(int) ATTRIBUTE_NORETURN;
-static void open_dump_file(char *, char *);
+static void open_dump_file(const char *, const char *);
 static void close_dump_file(void (*)(FILE *, rtx), rtx);
-static void dump_rtl(char *, tree, void (*)(FILE *, rtx), rtx);
-static void clean_dump_file(char *);
-static void compile_file(char *);
+static void dump_rtl(const char *, tree, void (*)(FILE *, rtx), rtx);
+static void clean_dump_file(const char *);
+static void compile_file(const char *);
 static void display_help(void);
 
-static void print_version(FILE *, char *);
-static int print_single_switch(FILE *, int, int, char *, char *, char *, char *, char *);
-static void print_switch_values(FILE *, int, int, char *, char *, char *);
+static void print_version(FILE *, const char *);
+static int print_single_switch(FILE *, int, int, const char *, const char *, const char *, const char *, const char *);
+static void print_switch_values(FILE *, int, int, const char *, const char *, const char *);
 
 void print_rtl_graph_with_bb(const char *, const char *, rtx);
 void clean_graph_dump_file(const char *, const char *);
@@ -136,7 +136,7 @@ void finish_graph_dump_file(const char *, const char *);
 
 /* Name of program invoked, sans directories.  */
 
-char *progname;
+const char *progname;
 
 /* Copy of arguments to main.  */
 int save_argc;
@@ -145,13 +145,13 @@ char **save_argv;
 /* Name of current original source file (what was input to cpp).
    This comes from each #-command in the actual input.  */
 
-char *input_filename;
+const char *input_filename;
 
 /* Name of top-level original source file (what was input to cpp).
    This comes from the #-command at the beginning of the actual input.
    If there isn't any there, then this is the cc1 input file name.  */
 
-char *main_input_filename;
+const char *main_input_filename;
 
 /* Current line number in real source file.  */
 
@@ -173,7 +173,7 @@ extern tree current_function_decl;
 
 /* Name to use as base of names for dump output files.  */
 
-char *dump_base_name;
+const char *dump_base_name;
 
 /* Bit flags that specify the machine subtype we are compiling for.
    Bits are tested using macros TARGET_... defined in the tm.h file
@@ -249,13 +249,6 @@ int color_diagnostics = 0;
         parameter types in C++.  */
 
 char *(*decl_printable_name)(tree, int);
-
-/* Pointer to function to compute rtl for a language-specific tree code.  */
-
-typedef rtx (*lang_expand_expr_t)(
-    union tree_node *, rtx, enum machine_mode, enum expand_modifier modifier);
-
-lang_expand_expr_t lang_expand_expr = 0;
 
 /* Pointer to function to finish handling an incomplete decl at the
    end of compilation.  */
@@ -594,10 +587,10 @@ int flag_hex_asm = 0;
 
 typedef struct
 {
-    char *string;
+    const char *string;
     int *variable;
     int on_value;
-    char *description;
+    const char *description;
 } lang_independent_options;
 
 /* Table of language-independent -f options.
@@ -606,7 +599,7 @@ typedef struct
     if `-fSTRING' is seen as an option.
    (If `-fno-STRING' is seen as an option, the opposite value is stored.)  */
 
-lang_independent_options f_options[] = {
+const lang_independent_options f_options[] = {
     { "float-store", &flag_float_store, 1, "Do not store floats in registers" },
     { "volatile", &flag_volatile, 1, "Consider all mem refs through pointers as volatile" },
     { "volatile-global", &flag_volatile_global, 1,
@@ -701,10 +694,10 @@ lang_independent_options f_options[] = {
 
 /* Table of language-specific options.  */
 
-static struct lang_opt
+static const struct lang_opt
 {
-    char *option;
-    char *description;
+    const char *option;
+    const char *description;
 } documented_lang_options[] = {
     /* In order not to overload the --help output, the convention
        used here is to only describe those options which are not
@@ -798,21 +791,21 @@ static struct lang_opt
    If VALUE is negative, -VALUE is bits to clear.
    (The sign bit is not used so there is no confusion.)  */
 
-struct
+const struct
 {
-    char *name;
+    const char *name;
     int value;
-    char *description;
+    const char *description;
 } target_switches[] = TARGET_SWITCHES;
 
 /* This table is similar, but allows the switch to have a value.  */
 
 #ifdef TARGET_OPTIONS
-struct
+const struct
 {
-    char *prefix;
-    char **variable;
-    char *description;
+    const char *prefix;
+    const char **variable;
+    const char *description;
 } target_options[] = TARGET_OPTIONS;
 #endif
 
@@ -954,7 +947,7 @@ long get_run_time()
         VAR += get_run_time() - otime;                                                             \
     } while (0)
 
-void print_time(char *str, int total)
+void print_time(const char *str, int total)
 {
     fprintf(stderr, "time in %s: %d.%06d\n", str, total / 1000000, total % 1000000);
 }
@@ -972,11 +965,11 @@ static void print_error_line(const char *filename, ssize_t line)
     if (line == 0 || !filename || *filename == '\0' || !strcmp(filename, "stdin"))
         return;
 
-    buf = (char *)malloc(33);
-
     file = fopen(filename, "r");
     if (!file)
         return;
+
+    buf = (char *)malloc(33);
 
     while ((count = getline(&buf, &size, file)) != -1)
     {
@@ -1032,14 +1025,14 @@ int count_error(int warningp)
 /* Print a fatal error message.  NAME is the text.
    Also include a system error message based on `errno'.  */
 
-void pfatal_with_name(char *name)
+void pfatal_with_name(const char *name)
 {
     fprintf(stderr, BOLD("%s: "), progname);
     perror(name);
     exit(EXIT_FAILURE);
 }
 
-void fatal_io_error(char *name)
+void fatal_io_error(const char *name)
 {
     fprintf(stderr, "%s: %s: I/O error\n", progname, name);
     exit(EXIT_FAILURE);
@@ -1048,7 +1041,7 @@ void fatal_io_error(char *name)
 /* Called to give a better error message for a bad insn rather than
    just calling abort().  */
 
-void fatal_insn(char *message, rtx insn)
+void fatal_insn(const char *message, rtx insn)
 {
     error("%s", message);
     debug_rtx(insn);
@@ -1112,11 +1105,11 @@ void announce_function(tree decl)
 /* The default function to print out name of current function that caused
    an error.  */
 
-void default_print_error_function(char *file)
+void default_print_error_function(const char *file)
 {
     if (last_error_function != current_function_decl)
     {
-        char *kind = "function";
+        const char *kind = "function";
         if (current_function_decl != 0
             && TREE_CODE(TREE_TYPE(current_function_decl)) == METHOD_TYPE)
             kind = "method";
@@ -1128,7 +1121,7 @@ void default_print_error_function(char *file)
             fprintf(stderr, "At top level:\n");
         else
         {
-            char *name = (*decl_printable_name)(current_function_decl, 2);
+            const char *name = (*decl_printable_name)(current_function_decl, 2);
             fprintf(stderr, "In %s `%s':\n", kind, name);
         }
 
@@ -1139,12 +1132,12 @@ void default_print_error_function(char *file)
 /* Called by report_error_function to print out function name.
  * Default may be overridden by language front-ends.  */
 
-void (*print_error_function)(char *) = default_print_error_function;
+void (*print_error_function)(const char *) = default_print_error_function;
 
 /* Prints out, if necessary, the name of the current function
    that caused an error.  Called from all error and warning functions.  */
 
-void report_error_function(char *file)
+void report_error_function(const char *file)
 {
     struct file_stack *p;
 
@@ -1175,7 +1168,7 @@ void report_error_function(char *file)
 
 /* Print a message.  */
 
-static void vmessage(char *prefix, char *s, va_list ap)
+static void vmessage(const char *prefix, const char *s, va_list ap)
 {
     if (prefix)
         fprintf(stderr, BOLD("%s: "), prefix);
@@ -1185,7 +1178,7 @@ static void vmessage(char *prefix, char *s, va_list ap)
 
 /* Print a message relevant to line LINE of file FILE.  */
 
-static void v_message_with_file_and_line(char *file, int line, char *prefix, char *s, va_list ap)
+static void v_message_with_file_and_line(const char *file, int line, const char *prefix, const char *s, va_list ap)
 {
     if (file)
         fprintf(stderr, BOLD("%s:%d: "), file, line);
@@ -1199,9 +1192,9 @@ static void v_message_with_file_and_line(char *file, int line, char *prefix, cha
 
 /* Print a message relevant to the given DECL.  */
 
-static void v_message_with_decl(tree decl, char *prefix, char *s, va_list ap)
+static void v_message_with_decl(tree decl, const char *prefix, const char *s, va_list ap)
 {
-    char *p;
+    const char *p;
 
     fprintf(stderr, BOLD("%s:%d: "), DECL_SOURCE_FILE(decl), DECL_SOURCE_LINE(decl));
 
@@ -1236,7 +1229,7 @@ static void v_message_with_decl(tree decl, char *prefix, char *s, va_list ap)
 
     if (*p == '%') /* Print the name.  */
     {
-        char *n = (DECL_NAME(decl) ? (*decl_printable_name)(decl, 2) : "((anonymous))");
+        const char *n = (DECL_NAME(decl) ? (*decl_printable_name)(decl, 2) : "((anonymous))");
         fputs(n, stderr);
         while (*p)
         {
@@ -1254,7 +1247,7 @@ static void v_message_with_decl(tree decl, char *prefix, char *s, va_list ap)
 
 /* Figure file and line of the given INSN.  */
 
-static void file_and_line_for_asm(rtx insn, char **pfile, int *pline)
+static void file_and_line_for_asm(rtx insn, const char **pfile, int *pline)
 {
     rtx body = PATTERN(insn);
     rtx asmop;
@@ -1285,7 +1278,7 @@ static void file_and_line_for_asm(rtx insn, char **pfile, int *pline)
 
 /* Report an error at line LINE of file FILE.  */
 
-static void v_error_with_file_and_line(char *file, int line, char *s, va_list ap)
+static void v_error_with_file_and_line(const char *file, int line, const char *s, va_list ap)
 {
     count_error(0);
     report_error_function(file);
@@ -1293,7 +1286,7 @@ static void v_error_with_file_and_line(char *file, int line, char *s, va_list ap
     print_error_line(file, line);
 }
 
-void error_with_file_and_line(char *file, int line, char *s, ...)
+void error_with_file_and_line(const char *file, int line, const char *s, ...)
 {
     va_list ap;
 
@@ -1308,7 +1301,7 @@ void error_with_file_and_line(char *file, int line, char *s, ...)
    S is a format string which uses %s to substitute the declaration
    name; subsequent substitutions are a la printf.  */
 
-static void v_error_with_decl(tree decl, char *s, va_list ap)
+static void v_error_with_decl(tree decl, const char *s, va_list ap)
 {
     count_error(0);
     report_error_function(DECL_SOURCE_FILE(decl));
@@ -1316,7 +1309,7 @@ static void v_error_with_decl(tree decl, char *s, va_list ap)
     print_error_line(DECL_SOURCE_FILE(decl), DECL_SOURCE_LINE(decl));
 }
 
-void error_with_decl(tree decl, char *s, ...)
+void error_with_decl(tree decl, const char *s, ...)
 {
     va_list ap;
 
@@ -1331,9 +1324,9 @@ void error_with_decl(tree decl, char *s, ...)
    This is used only when INSN is an `asm' with operands,
    and each ASM_OPERANDS records its own source file and line.  */
 
-static void v_error_for_asm(rtx insn, char *s, va_list ap)
+static void v_error_for_asm(rtx insn, const char *s, va_list ap)
 {
-    char *file;
+    const char *file;
     int line;
 
     count_error(0);
@@ -1343,7 +1336,7 @@ static void v_error_for_asm(rtx insn, char *s, va_list ap)
     print_error_line(file, line);
 }
 
-void error_for_asm(rtx insn, char *s, ...)
+void error_for_asm(rtx insn, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1353,12 +1346,12 @@ void error_for_asm(rtx insn, char *s, ...)
 
 /* Report an error at the current line number.  */
 
-static void verror(char *s, va_list ap)
+static void verror(const char *s, va_list ap)
 {
     v_error_with_file_and_line(input_filename, lineno, s, ap);
 }
 
-void error(char *s, ...)
+void error(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1368,13 +1361,13 @@ void error(char *s, ...)
 
 /* Report a fatal error at the current line number.  */
 
-static void vfatal(char *s, va_list ap)
+static void vfatal(const char *s, va_list ap)
 {
     verror(s, ap);
     exit(EXIT_FAILURE);
 }
 
-void fatal(char *s, ...)
+void fatal(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1384,7 +1377,7 @@ void fatal(char *s, ...)
 
 /* Report a warning at line LINE of file FILE.  */
 
-static void v_warning_with_file_and_line(char *file, int line, char *s, va_list ap)
+static void v_warning_with_file_and_line(const char *file, int line, const char *s, va_list ap)
 {
     if (count_error(1))
     {
@@ -1394,7 +1387,7 @@ static void v_warning_with_file_and_line(char *file, int line, char *s, va_list 
     }
 }
 
-void warning_with_file_and_line(char *file, int line, char *s, ...)
+void warning_with_file_and_line(const char *file, int line, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1406,7 +1399,7 @@ void warning_with_file_and_line(char *file, int line, char *s, ...)
    S is a format string which uses %s to substitute the declaration
    name; subsequent substitutions are a la printf.  */
 
-static void v_warning_with_decl(tree decl, char *s, va_list ap)
+static void v_warning_with_decl(tree decl, const char *s, va_list ap)
 {
     if (count_error(1))
     {
@@ -1416,7 +1409,7 @@ static void v_warning_with_decl(tree decl, char *s, va_list ap)
     }
 }
 
-void warning_with_decl(tree decl, char *s, ...)
+void warning_with_decl(tree decl, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1428,11 +1421,11 @@ void warning_with_decl(tree decl, char *s, ...)
    This is used only when INSN is an `asm' with operands,
    and each ASM_OPERANDS records its own source file and line.  */
 
-static void v_warning_for_asm(rtx insn, char *s, va_list ap)
+static void v_warning_for_asm(rtx insn, const char *s, va_list ap)
 {
     if (count_error(1))
     {
-        char *file;
+        const char *file;
         int line;
 
         file_and_line_for_asm(insn, &file, &line);
@@ -1442,7 +1435,7 @@ static void v_warning_for_asm(rtx insn, char *s, va_list ap)
     }
 }
 
-void warning_for_asm(rtx insn, char *s, ...)
+void warning_for_asm(rtx insn, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1452,12 +1445,12 @@ void warning_for_asm(rtx insn, char *s, ...)
 
 /* Report a warning at the current line number.  */
 
-static void vwarning(char *s, va_list ap)
+static void vwarning(const char *s, va_list ap)
 {
     v_warning_with_file_and_line(input_filename, lineno, s, ap);
 }
 
-void warning(char *s, ...)
+void warning(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1468,7 +1461,7 @@ void warning(char *s, ...)
 /* These functions issue either warnings or errors depending on
    -pedantic-errors.  */
 
-static void vpedwarn(char *s, va_list ap)
+static void vpedwarn(const char *s, va_list ap)
 {
     if (flag_pedantic_errors)
         verror(s, ap);
@@ -1476,7 +1469,7 @@ static void vpedwarn(char *s, va_list ap)
         vwarning(s, ap);
 }
 
-void pedwarn(char *s, ...)
+void pedwarn(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1484,7 +1477,7 @@ void pedwarn(char *s, ...)
     va_end(ap);
 }
 
-static void v_pedwarn_with_decl(tree decl, char *s, va_list ap)
+static void v_pedwarn_with_decl(tree decl, const char *s, va_list ap)
 {
     /* We don't want -pedantic-errors to cause the compilation to fail from
        "errors" in system header files.  Sometimes fixincludes can't fix what's
@@ -1503,7 +1496,7 @@ static void v_pedwarn_with_decl(tree decl, char *s, va_list ap)
     }
 }
 
-void pedwarn_with_decl(tree decl, char *s, ...)
+void pedwarn_with_decl(tree decl, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1511,7 +1504,7 @@ void pedwarn_with_decl(tree decl, char *s, ...)
     va_end(ap);
 }
 
-static void v_pedwarn_with_file_and_line(char *file, int line, char *s, va_list ap)
+static void v_pedwarn_with_file_and_line(const char *file, int line, const char *s, va_list ap)
 {
     if (flag_pedantic_errors)
         v_error_with_file_and_line(file, line, s, ap);
@@ -1519,7 +1512,7 @@ static void v_pedwarn_with_file_and_line(char *file, int line, char *s, va_list 
         v_warning_with_file_and_line(file, line, s, ap);
 }
 
-void pedwarn_with_file_and_line(char *file, int line, char *s, ...)
+void pedwarn_with_file_and_line(const char *file, int line, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1531,7 +1524,7 @@ void pedwarn_with_file_and_line(char *file, int line, char *s, ...)
 
 /* Report a note at line LINE of file FILE.  */
 
-static void v_note_with_file_and_line(char *file, int line, char *s, va_list ap)
+static void v_note_with_file_and_line(const char *file, int line, const char *s, va_list ap)
 {
     report_error_function(file);
     v_message_with_file_and_line(file, line, CYAN("note"), s, ap);
@@ -1541,13 +1534,13 @@ static void v_note_with_file_and_line(char *file, int line, char *s, va_list ap)
    S is a format string which uses %s to substitute the declaration
    name; subsequent substitutions are a la printf.  */
 
-static void v_note_with_decl(tree decl, char *s, va_list ap)
+static void v_note_with_decl(tree decl, const char *s, va_list ap)
 {
     report_error_function(DECL_SOURCE_FILE(decl));
     v_message_with_decl(decl, CYAN("note"), s, ap);
 }
 
-void note_with_decl(tree decl, char *s, ...)
+void note_with_decl(tree decl, const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1558,12 +1551,12 @@ void note_with_decl(tree decl, char *s, ...)
 
 /* Report a note at the current line number.  */
 
-static void vnote(char *s, va_list ap)
+static void vnote(const char *s, va_list ap)
 {
     v_note_with_file_and_line(input_filename, lineno, s, ap);
 }
 
-void note(char *s, ...)
+void note(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1573,7 +1566,7 @@ void note(char *s, ...)
 
 /* Apologize for not implementing some feature.  */
 
-static void vsorry(char *s, va_list ap)
+static void vsorry(const char *s, va_list ap)
 {
     sorrycount++;
     if (input_filename)
@@ -1584,7 +1577,7 @@ static void vsorry(char *s, va_list ap)
     fputc('\n', stderr);
 }
 
-void sorry(char *s, ...)
+void sorry(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1594,7 +1587,7 @@ void sorry(char *s, ...)
 
 /* Apologize for not implementing some feature, then quit.  */
 
-static void v_really_sorry(char *s, va_list ap)
+static void v_really_sorry(const char *s, va_list ap)
 {
     sorrycount++;
     if (input_filename)
@@ -1605,7 +1598,7 @@ static void v_really_sorry(char *s, va_list ap)
     fatal(" (fatal)\n");
 }
 
-void really_sorry(char *s, ...)
+void really_sorry(const char *s, ...)
 {
     va_list ap;
     va_start(ap, s);
@@ -1784,7 +1777,7 @@ void strip_off_ending(char *name, int len)
 }
 
 /* Routine to open a dump file.  */
-static void open_dump_file(char *suffix, char *function_name)
+static void open_dump_file(const char *suffix, const char *function_name)
 {
     char *dumpname;
 
@@ -1828,14 +1821,14 @@ static void close_dump_file(void (*func)(FILE *, rtx), rtx insns)
 }
 
 /* Routine to dump rtl into a file.  */
-static void dump_rtl(char *suffix, tree decl, void (*func)(FILE *, rtx), rtx insns)
+static void dump_rtl(const char *suffix, tree decl, void (*func)(FILE *, rtx), rtx insns)
 {
     open_dump_file(suffix, decl_printable_name(decl, 2));
     close_dump_file(func, insns);
 }
 
 /* Routine to empty a dump file.  */
-static void clean_dump_file(char *suffix)
+static void clean_dump_file(const char *suffix)
 {
     char *dumpname;
 
@@ -1861,14 +1854,14 @@ static void clean_dump_file(char *suffix)
 /* Compile an entire file of output from cpp, named NAME.
    Write a file of assembly output and various debugging dumps.  */
 
-static void compile_file(char *name)
+static void compile_file(const char *name)
 {
     tree globals;
     int start_time;
 
     int name_specified = name != 0;
 
-    if (dump_base_name == 0)
+    if (dump_base_name == NULL)
         dump_base_name = name ? name : "gccdump";
 
     parse_time = 0;
@@ -2032,6 +2025,9 @@ static void compile_file(char *name)
                 asm_file_name = (char *)xmalloc(strlen(dumpname) + 1);
                 strcpy(asm_file_name, dumpname);
             }
+
+            free(dumpname);
+
             if (!strcmp(asm_file_name, "-"))
                 asm_out_file = stdout;
             else
@@ -2057,7 +2053,7 @@ static void compile_file(char *name)
 
     /* If the input doesn't start with a #line, use the input name
        as the official input file name.  */
-    if (main_input_filename == 0)
+    if (main_input_filename == NULL)
         main_input_filename = name;
 
     if (flag_syntax_only)
@@ -2499,7 +2495,7 @@ void rest_of_compilation(tree decl)
     if (DECL_SAVED_INSNS(decl) == 0)
     {
         int inlinable = 0;
-        char *lose;
+        const char *lose;
 
         /* If requested, consider whether to make this function inline.  */
         if (DECL_INLINE(decl) || flag_inline_functions)
@@ -3073,7 +3069,7 @@ void rest_of_compilation(tree decl)
 
     TIMEVAR(final_time, {
         rtx x;
-        char *fnname;
+        const char *fnname;
 
         /* Get the function's name, as described by its RTL.
            This may be different from the DECL_NAME name used
@@ -3187,7 +3183,7 @@ static void display_help(void)
 {
     int undoc;
     unsigned long i;
-    char *lang;
+    const char *lang;
 
     printf("Usage: %s input [switches]\n", progname);
     printf("Switches:\n");
@@ -3197,7 +3193,7 @@ static void display_help(void)
 
     for (i = NUM_ELEM(f_options); i--;)
     {
-        char *description = f_options[i].description;
+        const char *description = f_options[i].description;
 
         if (description != NULL && *description != 0)
             printf("  -f%-21s %s\n", f_options[i].string, description);
@@ -3212,7 +3208,7 @@ static void display_help(void)
 
     for (i = NUM_ELEM(W_options); i--;)
     {
-        char *description = W_options[i].description;
+        const char *description = W_options[i].description;
 
         if (description != NULL && *description != 0)
             printf("  -W%-21s %s\n", W_options[i].string, description);
@@ -3250,8 +3246,8 @@ static void display_help(void)
 
         for (i = 0; i < NUM_ELEM(documented_lang_options); i++)
         {
-            char *description = documented_lang_options[i].description;
-            char *option = documented_lang_options[i].option;
+            const char *description = documented_lang_options[i].description;
+            const char *option = documented_lang_options[i].option;
 
             if (description == NULL)
             {
@@ -3294,8 +3290,8 @@ static void display_help(void)
 
         for (i = NUM_ELEM(target_switches); i--;)
         {
-            char *option = target_switches[i].name;
-            char *description = target_switches[i].description;
+            const char *option = target_switches[i].name;
+            const char *description = target_switches[i].description;
 
             if (option == NULL || *option == 0)
                 continue;
@@ -3313,8 +3309,8 @@ static void display_help(void)
 #ifdef TARGET_OPTIONS
         for (i = NUM_ELEM(target_options); i--;)
         {
-            char *option = target_options[i].prefix;
-            char *description = target_options[i].description;
+            const char *option = target_options[i].prefix;
+            const char *description = target_options[i].description;
 
             if (option == NULL || *option == 0)
                 continue;
@@ -3343,13 +3339,13 @@ static void display_help(void)
    specific 'lang_option'.  Return true if they match, or
    if 'option' is a viable prefix of 'lang_option'.  */
 
-static int check_lang_option(char *option, char *lang_option)
+static int check_lang_option(const char *option, const char *lang_option)
 {
-    lang_independent_options *indep_options;
+    const lang_independent_options *indep_options;
     long num_elements;
     int len;
     long k;
-    char *space;
+    const char *space;
 
     /* Ignore NULL entries.  */
     if (option == NULL || lang_option == NULL)
@@ -3421,7 +3417,7 @@ static int check_lang_option(char *option, char *lang_option)
 int main(int argc, char **argv)
 {
     int i;
-    char *filename = 0;
+    const char *filename = NULL;
     int version_flag = 0;
     char *p;
 
@@ -3445,7 +3441,6 @@ int main(int argc, char **argv)
 #endif
 
     decl_printable_name = decl_name;
-    lang_expand_expr = (lang_expand_expr_t)do_abort;
 
 #ifdef DEFAULT_SHORT_ENUMS
     /* Initialize how much space enums occupy, by default.  */
@@ -3907,7 +3902,7 @@ int main(int argc, char **argv)
 /* Decode -m switches.  */
 /* Decode the switch -mNAME.  */
 
-static void set_target_switch(char *name)
+static void set_target_switch(const char *name)
 {
     size_t j;
     int valid = 0;
@@ -3943,12 +3938,12 @@ static void set_target_switch(char *name)
    Each line begins with INDENT (for the case where FILE is the
    assembler output file).  */
 
-static void print_version(FILE *file, char *indent)
+static void print_version(FILE *file, const char *indent)
 {
     fprintf(file, "%s%s%s version %s", indent, *indent != 0 ? " " : "", language_string,
         version_string);
 
-    char *target_name = "thumb-elf";
+    const char *target_name = "thumb-elf";
     fprintf(file, " (%s)", target_name);
     fprintf(file, " (agbcc version %d)", AGBCC_VERSION);
 #ifdef __GNUC__
@@ -3966,7 +3961,7 @@ static void print_version(FILE *file, char *indent)
    other code will catch a disk full though.  */
 
 static int print_single_switch(
-    FILE *file, int pos, int max, char *indent, char *sep, char *term, char *type, char *name)
+    FILE *file, int pos, int max, const  char *indent, const char *sep, const char *term, const char *type, const char *name)
 {
     /* The ultrix fprintf returns 0 on success, so compute the result we want
        here since we need it for the following test.  */
@@ -3992,7 +3987,7 @@ static int print_single_switch(
    Each line begins with INDENT and ends with TERM.
    Each switch is separated from the next by SEP.  */
 
-static void print_switch_values(FILE *file, int pos, int max, char *indent, char *sep, char *term)
+static void print_switch_values(FILE *file, int pos, int max, const char *indent, const char *sep, const char *term)
 {
     size_t j;
     char **p;
@@ -4061,7 +4056,7 @@ static void print_switch_values(FILE *file, int pos, int max, char *indent, char
 
 /* Record the beginning of a new source file, named FILENAME.  */
 
-void debug_start_source_file(char *filename)
+void debug_start_source_file(const char *filename)
 {
 #ifdef DWARF2_DEBUGGING_INFO
     if (debug_info_level == DINFO_LEVEL_VERBOSE && write_symbols == DWARF2_DEBUG)

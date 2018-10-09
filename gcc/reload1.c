@@ -405,7 +405,7 @@ static void delete_output_reload(rtx, int, int);
 static void delete_address_reloads(rtx, rtx);
 static void delete_address_reloads_1(rtx, rtx, rtx);
 static rtx inc_for_reload(rtx, rtx, rtx, int);
-static int constraint_accepts_reg_p(char *, rtx);
+static int constraint_accepts_reg_p(const char *const, rtx);
 static void reload_cse_regs_1(rtx);
 static void reload_cse_invalidate_regno(int, enum machine_mode, int);
 static int reload_cse_mem_conflict_p(rtx, rtx);
@@ -427,13 +427,13 @@ static void move2add_note_store(rtx, rtx);
 
 void init_reload(void)
 {
-    register int i;
+    int i;
 
     /* Often (MEM (REG n)) is still valid even if (REG n) is put on the stack.
        Set spill_indirect_levels to the number of levels such addressing is
        permitted, zero if it is not permitted at all.  */
 
-    register rtx tem = gen_rtx_MEM(
+    rtx tem = gen_rtx_MEM(
         Pmode, gen_rtx_PLUS(Pmode, gen_rtx_REG(Pmode, LAST_VIRTUAL_REGISTER + 1), GEN_INT(4)));
     spill_indirect_levels = 0;
 
@@ -478,7 +478,7 @@ struct insn_chain *new_insn_chain(void)
 
     if (unused_insn_chains == 0)
     {
-        c = obstack_alloc(&reload_obstack, sizeof(struct insn_chain));
+        c = (struct insn_chain *)obstack_alloc(&reload_obstack, sizeof(struct insn_chain));
         c->live_before = OBSTACK_ALLOC_REG_SET(&reload_obstack);
         c->live_after = OBSTACK_ALLOC_REG_SET(&reload_obstack);
     }
@@ -550,9 +550,9 @@ static int failure;
 
 int reload(rtx first, int global, FILE *dumpfile)
 {
-    register int i;
-    register rtx insn;
-    register struct elim_table *ep;
+    int i;
+    rtx insn;
+    struct elim_table *ep;
 
     /* The two pointers used to track the true location of the memory used
        for label offsets.  */
@@ -715,7 +715,7 @@ int reload(rtx first, int global, FILE *dumpfile)
     /* We used to use alloca here, but the size of what it would try to
        allocate would occasionally cause it to exceed the stack limit and
        cause a core dump.  */
-    real_known_ptr = xmalloc(num_labels);
+    real_known_ptr = (char *)xmalloc(num_labels);
     real_at_ptr
         = (int(*)[NUM_ELIMINABLE_REGS])xmalloc(num_labels * NUM_ELIMINABLE_REGS * sizeof(int));
 
@@ -838,7 +838,7 @@ int reload(rtx first, int global, FILE *dumpfile)
         for (i = FIRST_PSEUDO_REGISTER; i < max_regno; i++)
             if (reg_renumber[i] < 0 && reg_equiv_memory_loc[i])
             {
-                rtx x = eliminate_regs(reg_equiv_memory_loc[i], 0, NULL_RTX);
+                rtx x = eliminate_regs(reg_equiv_memory_loc[i], (enum machine_mode)0, NULL_RTX);
 
                 if (strict_memory_address_p(GET_MODE(regno_reg_rtx[i]), XEXP(x, 0)))
                     reg_equiv_mem[i] = x, reg_equiv_address[i] = 0;
@@ -1298,8 +1298,8 @@ static void calculate_needs(struct insn_chain *chain)
 
     for (i = 0; i < n_reloads; i++)
     {
-        register enum reg_class *p;
-        enum reg_class class = reload_reg_class[i];
+        enum reg_class *p;
+        enum reg_class rclass = reload_reg_class[i];
         int size;
         enum machine_mode mode;
         struct needs *this_needs;
@@ -1315,7 +1315,7 @@ static void calculate_needs(struct insn_chain *chain)
         mode = reload_inmode[i];
         if (GET_MODE_SIZE(reload_outmode[i]) > GET_MODE_SIZE(mode))
             mode = reload_outmode[i];
-        size = CLASS_MAX_NREGS(class, mode);
+        size = CLASS_MAX_NREGS(rclass, mode);
 
         /* Decide which time-of-use to count this reload for.  */
         switch (reload_when_needed[i])
@@ -1363,41 +1363,41 @@ static void calculate_needs(struct insn_chain *chain)
 
             /* Count number of groups needed separately from
                number of individual regs needed.  */
-            this_needs->groups[(int)class]++;
-            p = reg_class_superclasses[(int)class];
+            this_needs->groups[(int)rclass]++;
+            p = reg_class_superclasses[(int)rclass];
             while (*p != LIM_REG_CLASSES)
                 this_needs->groups[(int)*p++]++;
 
             /* Record size and mode of a group of this class.  */
             /* If more than one size group is needed,
                make all groups the largest needed size.  */
-            if (chain->group_size[(int)class] < size)
+            if (chain->group_size[(int)rclass] < size)
             {
-                other_mode = chain->group_mode[(int)class];
+                other_mode = chain->group_mode[(int)rclass];
                 allocate_mode = mode;
 
-                chain->group_size[(int)class] = size;
-                chain->group_mode[(int)class] = mode;
+                chain->group_size[(int)rclass] = size;
+                chain->group_mode[(int)rclass] = mode;
             }
             else
             {
                 other_mode = mode;
-                allocate_mode = chain->group_mode[(int)class];
+                allocate_mode = chain->group_mode[(int)rclass];
             }
 
             /* Crash if two dissimilar machine modes both need
                groups of consecutive regs of the same class.  */
 
             if (other_mode != VOIDmode && other_mode != allocate_mode
-                && !modes_equiv_for_class_p(allocate_mode, other_mode, class))
+                && !modes_equiv_for_class_p(allocate_mode, other_mode, rclass))
                 fatal_insn("Two dissimilar machine modes both need groups of "
                            "consecutive regs of the same class",
                     chain->insn);
         }
         else if (size == 1)
         {
-            this_needs->regs[(unsigned char)reload_nongroup[i]][(int)class] += 1;
-            p = reg_class_superclasses[(int)class];
+            this_needs->regs[(unsigned char)reload_nongroup[i]][(int)rclass] += 1;
+            p = reg_class_superclasses[(int)rclass];
             while (*p != LIM_REG_CLASSES)
                 this_needs->regs[(unsigned char)reload_nongroup[i]][(int)*p++] += 1;
         }
@@ -1484,7 +1484,7 @@ static void calculate_needs(struct insn_chain *chain)
 
    Then try to create a group from any pair of registers.  */
 
-static void find_tworeg_group(struct insn_chain *chain, int class, FILE *dumpfile)
+static void find_tworeg_group(struct insn_chain *chain, int rclass, FILE *dumpfile)
 {
     int i;
     /* First, look for a register that will complete a group.  */
@@ -1495,29 +1495,29 @@ static void find_tworeg_group(struct insn_chain *chain, int class, FILE *dumpfil
         j = potential_reload_regs[i];
         if (j >= 0 && !TEST_HARD_REG_BIT(bad_spill_regs, j)
             && ((j > 0 && (other = j - 1, spill_reg_order[other] >= 0)
-                    && TEST_HARD_REG_BIT(reg_class_contents[class], j)
-                    && TEST_HARD_REG_BIT(reg_class_contents[class], other)
-                    && HARD_REGNO_MODE_OK(other, chain->group_mode[class])
+                    && TEST_HARD_REG_BIT(reg_class_contents[rclass], j)
+                    && TEST_HARD_REG_BIT(reg_class_contents[rclass], other)
+                    && HARD_REGNO_MODE_OK(other, chain->group_mode[rclass])
                     && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, other)
                     /* We don't want one part of another group.
                        We could get "two groups" that overlap!  */
                     && !TEST_HARD_REG_BIT(chain->counted_for_groups, other))
                    || (j < FIRST_PSEUDO_REGISTER - 1 && (other = j + 1, spill_reg_order[other] >= 0)
-                          && TEST_HARD_REG_BIT(reg_class_contents[class], j)
-                          && TEST_HARD_REG_BIT(reg_class_contents[class], other)
-                          && HARD_REGNO_MODE_OK(j, chain->group_mode[class])
+                          && TEST_HARD_REG_BIT(reg_class_contents[rclass], j)
+                          && TEST_HARD_REG_BIT(reg_class_contents[rclass], other)
+                          && HARD_REGNO_MODE_OK(j, chain->group_mode[rclass])
                           && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, other)
                           && !TEST_HARD_REG_BIT(chain->counted_for_groups, other))))
         {
-            register enum reg_class *p;
+            enum reg_class *p;
 
             /* We have found one that will complete a group,
                so count off one group as provided.  */
-            chain->need.groups[class]--;
-            p = reg_class_superclasses[class];
+            chain->need.groups[rclass]--;
+            p = reg_class_superclasses[rclass];
             while (*p != LIM_REG_CLASSES)
             {
-                if (chain->group_size[(int)*p] <= chain->group_size[class])
+                if (chain->group_size[(int)*p] <= chain->group_size[rclass])
                     chain->need.groups[(int)*p]--;
                 p++;
             }
@@ -1540,9 +1540,9 @@ static void find_tworeg_group(struct insn_chain *chain, int class, FILE *dumpfil
                     break;
             if (j >= 0 && j + 1 < FIRST_PSEUDO_REGISTER && k < FIRST_PSEUDO_REGISTER
                 && spill_reg_order[j] < 0 && spill_reg_order[j + 1] < 0
-                && TEST_HARD_REG_BIT(reg_class_contents[class], j)
-                && TEST_HARD_REG_BIT(reg_class_contents[class], j + 1)
-                && HARD_REGNO_MODE_OK(j, chain->group_mode[class])
+                && TEST_HARD_REG_BIT(reg_class_contents[rclass], j)
+                && TEST_HARD_REG_BIT(reg_class_contents[rclass], j + 1)
+                && HARD_REGNO_MODE_OK(j, chain->group_mode[rclass])
                 && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, j + 1)
                 && !TEST_HARD_REG_BIT(bad_spill_regs, j + 1))
                 break;
@@ -1551,14 +1551,14 @@ static void find_tworeg_group(struct insn_chain *chain, int class, FILE *dumpfil
     /* I should be the index in potential_reload_regs
        of the new reload reg we have found.  */
 
-    new_spill_reg(chain, i, class, 0, dumpfile);
+    new_spill_reg(chain, i, rclass, 0, dumpfile);
 }
 
 /* Find a group of more than 2 registers.
    Look for a sufficient sequence of unspilled registers, and spill them all
    at once.  */
 
-static void find_group(struct insn_chain *chain, int class, FILE *dumpfile)
+static void find_group(struct insn_chain *chain, int rclass, FILE *dumpfile)
 {
     int i;
 
@@ -1566,36 +1566,36 @@ static void find_group(struct insn_chain *chain, int class, FILE *dumpfile)
     {
         int j = potential_reload_regs[i];
 
-        if (j >= 0 && j + chain->group_size[class] <= FIRST_PSEUDO_REGISTER
-            && HARD_REGNO_MODE_OK(j, chain->group_mode[class]))
+        if (j >= 0 && j + chain->group_size[rclass] <= FIRST_PSEUDO_REGISTER
+            && HARD_REGNO_MODE_OK(j, chain->group_mode[rclass]))
         {
             int k;
             /* Check each reg in the sequence.  */
-            for (k = 0; k < chain->group_size[class]; k++)
+            for (k = 0; k < chain->group_size[rclass]; k++)
                 if (!(spill_reg_order[j + k] < 0 && !TEST_HARD_REG_BIT(bad_spill_regs, j + k)
-                        && TEST_HARD_REG_BIT(reg_class_contents[class], j + k)))
+                        && TEST_HARD_REG_BIT(reg_class_contents[rclass], j + k)))
                     break;
             /* We got a full sequence, so spill them all.  */
-            if (k == chain->group_size[class])
+            if (k == chain->group_size[rclass])
             {
-                register enum reg_class *p;
-                for (k = 0; k < chain->group_size[class]; k++)
+                enum reg_class *p;
+                for (k = 0; k < chain->group_size[rclass]; k++)
                 {
                     int idx;
                     SET_HARD_REG_BIT(chain->counted_for_groups, j + k);
                     for (idx = 0; idx < FIRST_PSEUDO_REGISTER; idx++)
                         if (potential_reload_regs[idx] == j + k)
                             break;
-                    new_spill_reg(chain, idx, class, 0, dumpfile);
+                    new_spill_reg(chain, idx, rclass, 0, dumpfile);
                 }
 
                 /* We have found one that will complete a group,
                    so count off one group as provided.  */
-                chain->need.groups[class]--;
-                p = reg_class_superclasses[class];
+                chain->need.groups[rclass]--;
+                p = reg_class_superclasses[rclass];
                 while (*p != LIM_REG_CLASSES)
                 {
-                    if (chain->group_size[(int)*p] <= chain->group_size[class])
+                    if (chain->group_size[(int)*p] <= chain->group_size[rclass])
                         chain->need.groups[(int)*p]--;
                     p++;
                 }
@@ -1652,7 +1652,7 @@ static void maybe_mark_pseudo_spilled(int reg)
 
 static void find_reload_regs(struct insn_chain *chain, FILE *dumpfile)
 {
-    int i, class;
+    int i, rclass;
     short *group_needs = chain->need.groups;
     short *simple_needs = chain->need.regs[0];
     short *nongroup_needs = chain->need.regs[1];
@@ -1674,58 +1674,58 @@ static void find_reload_regs(struct insn_chain *chain, FILE *dumpfile)
     CLEAR_HARD_REG_SET(chain->counted_for_groups);
     CLEAR_HARD_REG_SET(chain->counted_for_nongroups);
 
-    for (class = 0; class < N_REG_CLASSES; class ++)
+    for (rclass = 0; rclass < N_REG_CLASSES; rclass ++)
     {
         /* First get the groups of registers.
            If we got single registers first, we might fragment
            possible groups.  */
-        while (group_needs[class] > 0)
+        while (group_needs[rclass] > 0)
         {
             /* If any single spilled regs happen to form groups,
                count them now.  Maybe we don't really need
                to spill another group.  */
-            count_possible_groups(chain, class);
+            count_possible_groups(chain, rclass);
 
-            if (group_needs[class] <= 0)
+            if (group_needs[rclass] <= 0)
                 break;
 
             /* Groups of size 2, the only groups used on most machines,
                are treated specially.  */
-            if (chain->group_size[class] == 2)
-                find_tworeg_group(chain, class, dumpfile);
+            if (chain->group_size[rclass] == 2)
+                find_tworeg_group(chain, rclass, dumpfile);
             else
-                find_group(chain, class, dumpfile);
+                find_group(chain, rclass, dumpfile);
             if (failure)
                 return;
         }
 
         /* Now similarly satisfy all need for single registers.  */
 
-        while (simple_needs[class] > 0 || nongroup_needs[class] > 0)
+        while (simple_needs[rclass] > 0 || nongroup_needs[rclass] > 0)
         {
             /* If we spilled enough regs, but they weren't counted
                against the non-group need, see if we can count them now.
                If so, we can avoid some actual spilling.  */
-            if (simple_needs[class] <= 0 && nongroup_needs[class] > 0)
+            if (simple_needs[rclass] <= 0 && nongroup_needs[rclass] > 0)
                 for (i = 0; i < n_spills; i++)
                 {
                     int regno = spill_regs[i];
-                    if (TEST_HARD_REG_BIT(reg_class_contents[class], regno)
+                    if (TEST_HARD_REG_BIT(reg_class_contents[rclass], regno)
                         && !TEST_HARD_REG_BIT(chain->counted_for_groups, regno)
                         && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, regno)
-                        && nongroup_needs[class] > 0)
+                        && nongroup_needs[rclass] > 0)
                     {
-                        register enum reg_class *p;
+                        enum reg_class *p;
 
                         SET_HARD_REG_BIT(chain->counted_for_nongroups, regno);
-                        nongroup_needs[class]--;
-                        p = reg_class_superclasses[class];
+                        nongroup_needs[rclass]--;
+                        p = reg_class_superclasses[rclass];
                         while (*p != LIM_REG_CLASSES)
                             nongroup_needs[(int)*p++]--;
                     }
                 }
 
-            if (simple_needs[class] <= 0 && nongroup_needs[class] <= 0)
+            if (simple_needs[rclass] <= 0 && nongroup_needs[rclass] <= 0)
                 break;
 
             /* Consider the potential reload regs that aren't
@@ -1736,14 +1736,14 @@ static void find_reload_regs(struct insn_chain *chain, FILE *dumpfile)
             {
                 int regno = potential_reload_regs[i];
                 if (regno >= 0
-                    && TEST_HARD_REG_BIT(reg_class_contents[class], regno)
+                    && TEST_HARD_REG_BIT(reg_class_contents[rclass], regno)
                     /* If this reg will not be available for groups,
                        pick one that does not foreclose possible groups.
                        This is a kludge, and not very general,
                        but it should be sufficient to make the 386 work,
                        and the problem should not occur on machines with
                        more registers.  */
-                    && (nongroup_needs[class] == 0 || possible_group_p(chain, regno)))
+                    && (nongroup_needs[rclass] == 0 || possible_group_p(chain, regno)))
                     break;
             }
 
@@ -1756,13 +1756,13 @@ static void find_reload_regs(struct insn_chain *chain, FILE *dumpfile)
             if (i >= FIRST_PSEUDO_REGISTER && asm_noperands(chain->insn) < 0)
                 for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
                     if (potential_reload_regs[i] >= 0
-                        && TEST_HARD_REG_BIT(reg_class_contents[class], potential_reload_regs[i]))
+                        && TEST_HARD_REG_BIT(reg_class_contents[rclass], potential_reload_regs[i]))
                         break;
 
             /* I should be the index in potential_reload_regs
                of the new reload reg we have found.  */
 
-            new_spill_reg(chain, i, class, 1, dumpfile);
+            new_spill_reg(chain, i, rclass, 1, dumpfile);
             if (failure)
                 return;
         }
@@ -1823,16 +1823,16 @@ static void delete_caller_save_insns(void)
 static int possible_group_p(struct insn_chain *chain, int regno)
 {
     int i;
-    int class = (int)NO_REGS;
+    int rclass = (int)NO_REGS;
 
     for (i = 0; i < (int)N_REG_CLASSES; i++)
         if (chain->need.groups[i] > 0)
         {
-            class = i;
+            rclass = i;
             break;
         }
 
-    if (class == (int)NO_REGS)
+    if (rclass == (int)NO_REGS)
         return 1;
 
     /* Consider each pair of consecutive registers.  */
@@ -1846,8 +1846,8 @@ static int possible_group_p(struct insn_chain *chain, int regno)
            ??? Here we fail to handle the case where two different classes
            independently need groups.  But this never happens with our
            current machine descriptions.  */
-        if (!(TEST_HARD_REG_BIT(reg_class_contents[class], i)
-                && TEST_HARD_REG_BIT(reg_class_contents[class], i + 1)))
+        if (!(TEST_HARD_REG_BIT(reg_class_contents[rclass], i)
+                && TEST_HARD_REG_BIT(reg_class_contents[rclass], i + 1)))
             continue;
 
         /* A pair of consecutive regs we can still spill does the trick.  */
@@ -1873,57 +1873,57 @@ static int possible_group_p(struct insn_chain *chain, int regno)
 /* Count any groups of CLASS that can be formed from the registers recently
    spilled.  */
 
-static void count_possible_groups(struct insn_chain *chain, int class)
+static void count_possible_groups(struct insn_chain *chain, int rclass)
 {
-    HARD_REG_SET new;
+    HARD_REG_SET new_set;
     int i, j;
 
     /* Now find all consecutive groups of spilled registers
        and mark each group off against the need for such groups.
        But don't count them against ordinary need, yet.  */
 
-    if (chain->group_size[class] == 0)
+    if (chain->group_size[rclass] == 0)
         return;
 
-    CLEAR_HARD_REG_SET(new);
+    CLEAR_HARD_REG_SET(new_set);
 
     /* Make a mask of all the regs that are spill regs in class I.  */
     for (i = 0; i < n_spills; i++)
     {
         int regno = spill_regs[i];
 
-        if (TEST_HARD_REG_BIT(reg_class_contents[class], regno)
+        if (TEST_HARD_REG_BIT(reg_class_contents[rclass], regno)
             && !TEST_HARD_REG_BIT(chain->counted_for_groups, regno)
             && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, regno))
-            SET_HARD_REG_BIT(new, regno);
+            SET_HARD_REG_BIT(new_set, regno);
     }
 
     /* Find each consecutive group of them.  */
-    for (i = 0; i < FIRST_PSEUDO_REGISTER && chain->need.groups[class] > 0; i++)
-        if (TEST_HARD_REG_BIT(new, i) && i + chain->group_size[class] <= FIRST_PSEUDO_REGISTER
-            && HARD_REGNO_MODE_OK(i, chain->group_mode[class]))
+    for (i = 0; i < FIRST_PSEUDO_REGISTER && chain->need.groups[rclass] > 0; i++)
+        if (TEST_HARD_REG_BIT(new_set, i) && i + chain->group_size[rclass] <= FIRST_PSEUDO_REGISTER
+            && HARD_REGNO_MODE_OK(i, chain->group_mode[rclass]))
         {
-            for (j = 1; j < chain->group_size[class]; j++)
-                if (!TEST_HARD_REG_BIT(new, i + j))
+            for (j = 1; j < chain->group_size[rclass]; j++)
+                if (!TEST_HARD_REG_BIT(new_set, i + j))
                     break;
 
-            if (j == chain->group_size[class])
+            if (j == chain->group_size[rclass])
             {
                 /* We found a group.  Mark it off against this class's need for
                    groups, and against each superclass too.  */
-                register enum reg_class *p;
+                enum reg_class *p;
 
-                chain->need.groups[class]--;
-                p = reg_class_superclasses[class];
+                chain->need.groups[rclass]--;
+                p = reg_class_superclasses[rclass];
                 while (*p != LIM_REG_CLASSES)
                 {
-                    if (chain->group_size[(int)*p] <= chain->group_size[class])
+                    if (chain->group_size[(int)*p] <= chain->group_size[rclass])
                         chain->need.groups[(int)*p]--;
                     p++;
                 }
 
                 /* Don't count these registers again.  */
-                for (j = 0; j < chain->group_size[class]; j++)
+                for (j = 0; j < chain->group_size[rclass]; j++)
                     SET_HARD_REG_BIT(chain->counted_for_groups, i + j);
             }
 
@@ -1946,12 +1946,12 @@ static void count_possible_groups(struct insn_chain *chain, int class)
    more strict alignment rules than the smaller mode.  */
 
 static int modes_equiv_for_class_p(
-    enum machine_mode allocate_mode, enum machine_mode other_mode, enum reg_class class)
+    enum machine_mode allocate_mode, enum machine_mode other_mode, enum reg_class rclass)
 {
-    register int regno;
+    int regno;
     for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
     {
-        if (TEST_HARD_REG_BIT(reg_class_contents[(int)class], regno)
+        if (TEST_HARD_REG_BIT(reg_class_contents[(int)rclass], regno)
             && HARD_REGNO_MODE_OK(regno, allocate_mode) && !HARD_REGNO_MODE_OK(regno, other_mode))
             return 0;
     }
@@ -1977,9 +1977,9 @@ static void spill_failure(rtx insn)
    NONGROUP is 0 if this register is part of a group.
    DUMPFILE is the same as the one that `reload' got.  */
 
-static void new_spill_reg(struct insn_chain *chain, int i, int class, int nongroup, FILE *dumpfile)
+static void new_spill_reg(struct insn_chain *chain, int i, int rclass, int nongroup, FILE *dumpfile)
 {
-    register enum reg_class *p;
+    enum reg_class *p;
     int regno = potential_reload_regs[i];
 
     if (i >= FIRST_PSEUDO_REGISTER)
@@ -1991,7 +1991,7 @@ static void new_spill_reg(struct insn_chain *chain, int i, int class, int nongro
 
     if (TEST_HARD_REG_BIT(bad_spill_regs, regno))
     {
-        static char *reg_class_names[] = REG_CLASS_NAMES;
+        static const char *reg_class_names[] = REG_CLASS_NAMES;
 
         if (asm_noperands(PATTERN(chain->insn)) < 0)
         {
@@ -1999,14 +1999,14 @@ static void new_spill_reg(struct insn_chain *chain, int i, int class, int nongro
                an asm statement that caused the problem, but one of the global
                registers declared by the users might have screwed us.  */
             error("fixed or forbidden register %d (%s) was spilled for class %s.", regno,
-                reg_names[regno], reg_class_names[class]);
+                reg_names[regno], reg_class_names[rclass]);
             error("This may be due to a compiler bug or to impossible asm");
             error("statements or clauses.");
             fatal_insn("This is the instruction:", chain->insn);
         }
         error_for_asm(chain->insn, "Invalid `asm' statement:");
         error_for_asm(chain->insn, "fixed or forbidden register %d (%s) was spilled for class %s.",
-            regno, reg_names[regno], reg_class_names[class]);
+            regno, reg_names[regno], reg_class_names[rclass]);
         failure = 1;
         return;
     }
@@ -2022,16 +2022,16 @@ static void new_spill_reg(struct insn_chain *chain, int i, int class, int nongro
 
     /* Clear off the needs we just satisfied.  */
 
-    chain->need.regs[0][class]--;
-    p = reg_class_superclasses[class];
+    chain->need.regs[0][rclass]--;
+    p = reg_class_superclasses[rclass];
     while (*p != LIM_REG_CLASSES)
         chain->need.regs[0][(int)*p++]--;
 
-    if (nongroup && chain->need.regs[1][class] > 0)
+    if (nongroup && chain->need.regs[1][rclass] > 0)
     {
         SET_HARD_REG_BIT(chain->counted_for_nongroups, regno);
-        chain->need.regs[1][class]--;
-        p = reg_class_superclasses[class];
+        chain->need.regs[1][rclass]--;
+        p = reg_class_superclasses[rclass];
         while (*p != LIM_REG_CLASSES)
             chain->need.regs[1][(int)*p++]--;
     }
@@ -2069,7 +2069,7 @@ static void delete_dead_insn(rtx insn)
    This is used so that all pseudos spilled from a given hard reg
    can share one stack slot.  */
 
-static void alter_reg(register int i, int from_reg)
+static void alter_reg(int i, int from_reg)
 {
     /* When outputting an inline function, this can happen
        for a reg that isn't actually used.  */
@@ -2091,7 +2091,7 @@ static void alter_reg(register int i, int from_reg)
     if (reg_renumber[i] < 0 && REG_N_REFS(i) > 0 && reg_equiv_constant[i] == 0
         && reg_equiv_memory_loc[i] == 0)
     {
-        register rtx x;
+        rtx x;
         int inherent_size = PSEUDO_REGNO_BYTES(i);
         int total_size = MAX(inherent_size, reg_max_ref_width[i]);
         int adjust = 0;
@@ -2162,7 +2162,7 @@ static void alter_reg(register int i, int from_reg)
 
 void mark_home_live(int regno)
 {
-    register int i, lim;
+    int i, lim;
     i = reg_renumber[regno];
     if (i < 0)
         return;
@@ -2350,9 +2350,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
     enum rtx_code code = GET_CODE(x);
     struct elim_table *ep;
     int regno;
-    rtx new;
+    rtx newreg;
     int i, j;
-    char *fmt;
+    const char *fmt;
     int copied = 0;
 
     if (!current_function_decl)
@@ -2377,9 +2377,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
         /* This is only for the benefit of the debugging backends, which call
            eliminate_regs on DECL_RTL; any ADDRESSOFs in the actual insns are
            removed after CSE.  */
-        new = eliminate_regs(XEXP(x, 0), 0, insn);
-        if (GET_CODE(new) == MEM)
-            return XEXP(new, 0);
+        newreg = eliminate_regs(XEXP(x, 0), (enum machine_mode)0, insn);
+        if (GET_CODE(newreg) == MEM)
+            return XEXP(newreg, 0);
         return x;
 
     case REG:
@@ -2473,15 +2473,15 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
                     && reg_equiv_constant[REGNO(new0)] != 0)
                     new0 = reg_equiv_constant[REGNO(new0)];
 
-                new = form_sum(new0, new1);
+                newreg = form_sum(new0, new1);
 
                 /* As above, if we are not inside a MEM we do not want to
                    turn a PLUS into something else.  We might try to do so here
                    for an addition of 0 if we aren't optimizing.  */
-                if (!mem_mode && GET_CODE(new) != PLUS)
-                    return gen_rtx_PLUS(GET_MODE(x), new, const0_rtx);
+                if (!mem_mode && GET_CODE(newreg) != PLUS)
+                    return gen_rtx_PLUS(GET_MODE(x), newreg, const0_rtx);
                 else
-                    return new;
+                    return newreg;
             }
         }
         return x;
@@ -2547,9 +2547,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
         /* If we have something in XEXP (x, 0), the usual case, eliminate it.  */
         if (XEXP(x, 0))
         {
-            new = eliminate_regs(XEXP(x, 0), mem_mode, insn);
-            if (new != XEXP(x, 0))
-                x = gen_rtx_EXPR_LIST(REG_NOTE_KIND(x), new, XEXP(x, 1));
+            newreg = eliminate_regs(XEXP(x, 0), mem_mode, insn);
+            if (newreg != XEXP(x, 0))
+                x = gen_rtx_EXPR_LIST(REG_NOTE_KIND(x), newreg, XEXP(x, 1));
         }
 
         /* ... fall through ...  */
@@ -2560,9 +2560,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
            strictly needed, but it simplifies the code.  */
         if (XEXP(x, 1))
         {
-            new = eliminate_regs(XEXP(x, 1), mem_mode, insn);
-            if (new != XEXP(x, 1))
-                return gen_rtx_fmt_ee(GET_CODE(x), GET_MODE(x), XEXP(x, 0), new);
+            newreg = eliminate_regs(XEXP(x, 1), mem_mode, insn);
+            if (newreg != XEXP(x, 1))
+                return gen_rtx_fmt_ee(GET_CODE(x), GET_MODE(x), XEXP(x, 0), newreg);
         }
         return x;
 
@@ -2598,9 +2598,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
     case ABS:
     case SQRT:
     case FFS:
-        new = eliminate_regs(XEXP(x, 0), mem_mode, insn);
-        if (new != XEXP(x, 0))
-            return gen_rtx_fmt_e(code, GET_MODE(x), new);
+        newreg = eliminate_regs(XEXP(x, 0), mem_mode, insn);
+        if (newreg != XEXP(x, 0))
+            return gen_rtx_fmt_e(code, GET_MODE(x), newreg);
         return x;
 
     case SUBREG:
@@ -2614,17 +2614,17 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
             && (GET_MODE_SIZE(GET_MODE(x)) <= GET_MODE_SIZE(GET_MODE(SUBREG_REG(x))))
             && reg_equiv_memory_loc != 0 && reg_equiv_memory_loc[REGNO(SUBREG_REG(x))] != 0)
         {
-            new = SUBREG_REG(x);
+            newreg = SUBREG_REG(x);
         }
         else
-            new = eliminate_regs(SUBREG_REG(x), mem_mode, insn);
+            newreg = eliminate_regs(SUBREG_REG(x), mem_mode, insn);
 
-        if (new != XEXP(x, 0))
+        if (newreg != XEXP(x, 0))
         {
             int x_size = GET_MODE_SIZE(GET_MODE(x));
-            int new_size = GET_MODE_SIZE(GET_MODE(new));
+            int new_size = GET_MODE_SIZE(GET_MODE(newreg));
 
-            if (GET_CODE(new) == MEM
+            if (GET_CODE(newreg) == MEM
                 && ((x_size < new_size
                         /* Since THUMB has WORD_REGISTER_OPERATIONS, combine can
                            create rtl of the form (set (subreg:m1 (reg:m2 R) 0) ...)
@@ -2639,12 +2639,12 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
                 int offset = SUBREG_WORD(x) * UNITS_PER_WORD;
                 enum machine_mode mode = GET_MODE(x);
 
-                PUT_MODE(new, mode);
-                XEXP(new, 0) = plus_constant(XEXP(new, 0), offset);
-                return new;
+                PUT_MODE(newreg, mode);
+                XEXP(newreg, 0) = plus_constant(XEXP(newreg, 0), offset);
+                return newreg;
             }
             else
-                return gen_rtx_SUBREG(GET_MODE(x), new, SUBREG_WORD(x));
+                return gen_rtx_SUBREG(GET_MODE(x), newreg, SUBREG_WORD(x));
         }
 
         return x;
@@ -2657,9 +2657,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
             if (ep->from_rtx == XEXP(x, 0))
                 ep->can_eliminate = 0;
 
-        new = eliminate_regs(XEXP(x, 0), mem_mode, insn);
-        if (new != XEXP(x, 0))
-            return gen_rtx_fmt_e(code, GET_MODE(x), new);
+        newreg = eliminate_regs(XEXP(x, 0), mem_mode, insn);
+        if (newreg != XEXP(x, 0))
+            return gen_rtx_fmt_e(code, GET_MODE(x), newreg);
         return x;
 
     case CLOBBER:
@@ -2670,9 +2670,9 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
             if (ep->to_rtx == XEXP(x, 0))
                 ep->can_eliminate = 0;
 
-        new = eliminate_regs(XEXP(x, 0), mem_mode, insn);
-        if (new != XEXP(x, 0))
-            return gen_rtx_fmt_e(code, GET_MODE(x), new);
+        newreg = eliminate_regs(XEXP(x, 0), mem_mode, insn);
+        if (newreg != XEXP(x, 0))
+            return gen_rtx_fmt_e(code, GET_MODE(x), newreg);
         return x;
 
     case ASM_OPERANDS:
@@ -2703,12 +2703,12 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
         if (new_asm_operands_vec == old_asm_operands_vec)
             return x;
 
-        new = gen_rtx_ASM_OPERANDS(VOIDmode, ASM_OPERANDS_TEMPLATE(x),
+        newreg = gen_rtx_ASM_OPERANDS(VOIDmode, ASM_OPERANDS_TEMPLATE(x),
             ASM_OPERANDS_OUTPUT_CONSTRAINT(x), ASM_OPERANDS_OUTPUT_IDX(x), new_asm_operands_vec,
             ASM_OPERANDS_INPUT_CONSTRAINT_VEC(x), ASM_OPERANDS_SOURCE_FILE(x),
             ASM_OPERANDS_SOURCE_LINE(x));
-        new->volatil = x->volatil;
-        return new;
+        newreg->volatil = x->volatil;
+        return newreg;
     }
 
     case SET:
@@ -2751,8 +2751,8 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
 
         /* Now avoid the loop below in this common case.  */
         {
-            rtx new0 = eliminate_regs(SET_DEST(x), 0, insn);
-            rtx new1 = eliminate_regs(SET_SRC(x), 0, insn);
+            rtx new0 = eliminate_regs(SET_DEST(x), (enum machine_mode)0, insn);
+            rtx new1 = eliminate_regs(SET_SRC(x), (enum machine_mode)0, insn);
 
             /* If SET_DEST changed from a REG to a MEM and INSN is an insn,
                write a CLOBBER insn.  */
@@ -2771,19 +2771,19 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
            eliminate_regs on DECL_RTL; any ADDRESSOFs in the actual insns are
            removed after CSE.  */
         if (GET_CODE(XEXP(x, 0)) == ADDRESSOF)
-            return eliminate_regs(XEXP(XEXP(x, 0), 0), 0, insn);
+            return eliminate_regs(XEXP(XEXP(x, 0), 0), (enum machine_mode)0, insn);
 
         /* Our only special processing is to pass the mode of the MEM to our
            recursive call and copy the flags.  While we are here, handle this
            case more efficiently.  */
-        new = eliminate_regs(XEXP(x, 0), GET_MODE(x), insn);
-        if (new != XEXP(x, 0))
+        newreg = eliminate_regs(XEXP(x, 0), GET_MODE(x), insn);
+        if (newreg != XEXP(x, 0))
         {
-            new = gen_rtx_MEM(GET_MODE(x), new);
-            new->volatil = x->volatil;
-            new->unchanging = x->unchanging;
-            new->in_struct = x->in_struct;
-            return new;
+            newreg = gen_rtx_MEM(GET_MODE(x), newreg);
+            newreg->volatil = x->volatil;
+            newreg->unchanging = x->unchanging;
+            newreg->in_struct = x->in_struct;
+            return newreg;
         }
         else
             return x;
@@ -2799,8 +2799,8 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
     {
         if (*fmt == 'e')
         {
-            new = eliminate_regs(XEXP(x, i), mem_mode, insn);
-            if (new != XEXP(x, i) && !copied)
+            newreg = eliminate_regs(XEXP(x, i), mem_mode, insn);
+            if (newreg != XEXP(x, i) && !copied)
             {
                 rtx new_x = rtx_alloc(code);
                 copy_memory((char *)x, (char *)new_x,
@@ -2809,15 +2809,15 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
                 x = new_x;
                 copied = 1;
             }
-            XEXP(x, i) = new;
+            XEXP(x, i) = newreg;
         }
         else if (*fmt == 'E')
         {
             int copied_vec = 0;
             for (j = 0; j < XVECLEN(x, i); j++)
             {
-                new = eliminate_regs(XVECEXP(x, i, j), mem_mode, insn);
-                if (new != XVECEXP(x, i, j) && !copied_vec)
+                newreg = eliminate_regs(XVECEXP(x, i, j), mem_mode, insn);
+                if (newreg != XVECEXP(x, i, j) && !copied_vec)
                 {
                     rtvec new_v = gen_rtvec_vv(XVECLEN(x, i), XVEC(x, i)->elem);
                     if (!copied)
@@ -2832,7 +2832,7 @@ rtx eliminate_regs(rtx x, enum machine_mode mem_mode, rtx insn)
                     XVEC(x, i) = new_v;
                     copied_vec = 1;
                 }
-                XVECEXP(x, i, j) = new;
+                XVECEXP(x, i, j) = newreg;
             }
         }
     }
@@ -2924,7 +2924,7 @@ static int eliminate_regs_in_insn(rtx insn, int replace)
        but now can do this as a load-address.  This saves an insn in this
        common case.  */
 
-    new_body = eliminate_regs(old_body, 0, replace ? insn : NULL_RTX);
+    new_body = eliminate_regs(old_body, (enum machine_mode)0, replace ? insn : NULL_RTX);
     if (new_body != old_body)
     {
         /* If we aren't replacing things permanently and we changed something,
@@ -2997,7 +2997,7 @@ done:
        of spill registers to be needed in the final reload pass than in
        the pre-passes.  */
     if (val && REG_NOTES(insn) != 0)
-        REG_NOTES(insn) = eliminate_regs(REG_NOTES(insn), 0, REG_NOTES(insn));
+        REG_NOTES(insn) = eliminate_regs(REG_NOTES(insn), (enum machine_mode)0, REG_NOTES(insn));
 
     if (!replace)
         pop_obstacks();
@@ -3040,7 +3040,7 @@ static void update_eliminable_offsets(void)
 
 static void mark_not_eliminable(rtx dest, rtx x)
 {
-    register unsigned int i;
+    unsigned int i;
 
     /* A SUBREG of a hard register here is just changing its mode.  We should
        not see a SUBREG of an eliminable hard register, but check just in
@@ -3151,7 +3151,7 @@ static void update_eliminables(HARD_REG_SET *pset)
     for (ep = reg_eliminate; ep < &reg_eliminate[NUM_ELIMINABLE_REGS]; ep++)
     {
         struct elim_table *op;
-        register int new_to = -1;
+        int new_to = -1;
 
         if (!ep->can_eliminate && ep->can_eliminate_previous)
         {
@@ -3244,9 +3244,9 @@ static void init_elim_table(void)
 
    Return nonzero if any pseudos needed to be kicked out.  */
 
-static void spill_hard_reg(register int regno, FILE *dumpfile, int cant_eliminate)
+static void spill_hard_reg(int regno, FILE *dumpfile, int cant_eliminate)
 {
-    register int i;
+    int i;
 
     if (cant_eliminate)
     {
@@ -3413,11 +3413,11 @@ static int finish_spills(int global, FILE *dumpfile)
    Also mark any hard registers used to store user variables as
    forbidden from being used for spill registers.  */
 
-static void scan_paradoxical_subregs(register rtx x)
+static void scan_paradoxical_subregs(rtx x)
 {
-    register int i;
-    register char *fmt;
-    register enum rtx_code code = GET_CODE(x);
+    int i;
+    const char *fmt;
+    enum rtx_code code = GET_CODE(x);
 
     switch (code)
     {
@@ -3457,7 +3457,7 @@ static void scan_paradoxical_subregs(register rtx x)
             scan_paradoxical_subregs(XEXP(x, i));
         else if (fmt[i] == 'E')
         {
-            register int j;
+            int j;
             for (j = XVECLEN(x, i) - 1; j >= 0; j--)
                 scan_paradoxical_subregs(XVECEXP(x, i, j));
         }
@@ -3466,8 +3466,8 @@ static void scan_paradoxical_subregs(register rtx x)
 
 static int hard_reg_use_compare(const void *p1p, const void *p2p)
 {
-    struct hard_reg_n_uses *p1 = (struct hard_reg_n_uses *)p1p;
-    struct hard_reg_n_uses *p2 = (struct hard_reg_n_uses *)p2p;
+    const struct hard_reg_n_uses *p1 = (const struct hard_reg_n_uses *)p1p;
+    const struct hard_reg_n_uses *p2 = (const struct hard_reg_n_uses *)p2p;
     int bad1 = TEST_HARD_REG_BIT(bad_spill_regs, p1->regno);
     int bad2 = TEST_HARD_REG_BIT(bad_spill_regs, p2->regno);
     if (bad1 && bad2)
@@ -3512,8 +3512,8 @@ static void count_pseudo(struct hard_reg_n_uses *n_uses, int reg)
 
 static void order_regs_for_reload(struct insn_chain *chain)
 {
-    register int i;
-    register int o = 0;
+    int i;
+    int o = 0;
     struct hard_reg_n_uses hard_reg_n_uses[FIRST_PSEUDO_REGISTER];
 
     pseudos_counted = ALLOCA_REG_SET();
@@ -3595,7 +3595,7 @@ static void reload_as_needed(int live_known)
 {
     struct insn_chain *chain;
 #if defined(AUTO_INC_DEC) || defined(INSN_CLOBBERS_REGNO_P)
-    register int i;
+    int i;
 #endif
     rtx x;
 
@@ -3841,7 +3841,7 @@ static void reload_as_needed(int live_known)
 
 static void forget_old_reloads_1(rtx x ATTRIBUTE_UNUSED, rtx ignored)
 {
-    register int regno;
+    int regno;
     int nr;
     int offset = 0;
 
@@ -3895,8 +3895,8 @@ static int reload_nregs[MAX_RELOADS];
 
 static int reload_reg_class_lower(const void *r1p, const void *r2p)
 {
-    register int r1 = *(short *)r1p, r2 = *(short *)r2p;
-    register int t;
+    const int r1 = *(const short *)r1p, r2 = *(const short *)r2p;
+    int t;
 
     /* Consider required reloads before optional ones.  */
     t = reload_optional[r1] - reload_optional[r2];
@@ -4709,7 +4709,7 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
 {
     rtx insn = chain->insn;
     int i, pass, count, regno;
-    rtx new;
+    rtx newreg;
 
     /* If we put this reload ahead, thinking it is a group,
        then insist on finding a group.  Otherwise we can grab a
@@ -4757,7 +4757,7 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
 
         for (count = 0; count < n_spills; count++)
         {
-            int class = (int)reload_reg_class[r];
+            int rclass = (int)reload_reg_class[r];
             int regnum;
 
             i++;
@@ -4772,7 +4772,7 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
                            && !TEST_HARD_REG_BIT(reload_reg_used, regnum)
                            && reload_reg_free_for_value_p(regnum, reload_opnum[r],
                                   reload_when_needed[r], reload_in[r], reload_out[r], r, 1)))
-                && TEST_HARD_REG_BIT(reg_class_contents[class], regnum)
+                && TEST_HARD_REG_BIT(reg_class_contents[rclass], regnum)
                 && HARD_REGNO_MODE_OK(regnum, reload_mode[r])
                 /* Look first for regs to share, then for unshared.  But
                    don't share regs used for inherited reloads; they are
@@ -4803,7 +4803,7 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
                     while (nr > 1)
                     {
                         regno = regnum + nr - 1;
-                        if (!(TEST_HARD_REG_BIT(reg_class_contents[class], regno)
+                        if (!(TEST_HARD_REG_BIT(reg_class_contents[rclass], regno)
                                 && spill_reg_order[regno] >= 0
                                 && reload_reg_free_p(regno, reload_opnum[r], reload_when_needed[r])
                                 && !TEST_HARD_REG_BIT(chain->counted_for_nongroups, regno)))
@@ -4831,12 +4831,12 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
     /* I is the index in SPILL_REG_RTX of the reload register we are to
        allocate.  Get an rtx for it and find its register number.  */
 
-    new = spill_reg_rtx[i];
+    newreg = spill_reg_rtx[i];
 
-    if (new == 0 || GET_MODE(new) != reload_mode[r])
-        spill_reg_rtx[i] = new = gen_rtx_REG(reload_mode[r], spill_regs[i]);
+    if (newreg == 0 || GET_MODE(newreg) != reload_mode[r])
+        spill_reg_rtx[i] = newreg = gen_rtx_REG(reload_mode[r], spill_regs[i]);
 
-    regno = true_regnum(new);
+    regno = true_regnum(newreg);
 
     /* Detect when the reload reg can't hold the reload mode.
        This used to be one `if', but Sequent compiler can't handle that.  */
@@ -4862,7 +4862,7 @@ static int allocate_reload_reg(struct insn_chain *chain, int r, int last_reload,
                 mark_reload_reg_in_use(
                     spill_regs[i], reload_opnum[r], reload_when_needed[r], reload_mode[r]);
 
-                reload_reg_rtx[r] = new;
+                reload_reg_rtx[r] = newreg;
                 reload_spill_index[r] = spill_regs[i];
                 return 1;
             }
@@ -4899,7 +4899,7 @@ failure:
 static void choose_reload_regs(struct insn_chain *chain)
 {
     rtx insn = chain->insn;
-    register int i, j;
+    int i, j;
     int max_group_size = 1;
     enum reg_class group_class = NO_REGS;
     int inheritance;
@@ -4955,28 +4955,6 @@ static void choose_reload_regs(struct insn_chain *chain)
     }
 
     IOR_COMPL_HARD_REG_SET(reload_reg_used, chain->used_spill_regs);
-
-#if 0 /* Not needed, now that we can always retry without inheritance.  */
-  /* See if we have more mandatory reloads than spill regs.
-     If so, then we cannot risk optimizations that could prevent
-     reloads from sharing one spill register.
-
-     Since we will try finding a better register than reload_reg_rtx
-     unless it is equal to reload_in or reload_out, count such reloads.  */
-
-  {
-    int tem = 0;
-    for (j = 0; j < n_reloads; j++)
-      if (! reload_optional[j]
-	  && (reload_in[j] != 0 || reload_out[j] != 0 || reload_secondary_p[j])
-	  && (reload_reg_rtx[j] == 0
-	      || (! rtx_equal_p (reload_reg_rtx[j], reload_in[j])
-		  && ! rtx_equal_p (reload_reg_rtx[j], reload_out[j]))))
-	tem++;
-    if (tem > n_spills)
-      must_reuse = 1;
-  }
-#endif
 
     /* In order to be certain of getting the registers we need,
        we must sort the reloads into order of increasing register class.
@@ -5078,7 +5056,7 @@ static void choose_reload_regs(struct insn_chain *chain)
 
         for (j = 0; j < n_reloads; j++)
         {
-            register int r = reload_order[j];
+            int r = reload_order[j];
 
             /* Ignore reloads that got marked inoperative.  */
             if (reload_out[r] == 0 && reload_in[r] == 0 && !reload_secondary_p[r])
@@ -5095,22 +5073,6 @@ static void choose_reload_regs(struct insn_chain *chain)
                               && GET_CODE(reload_in[r]) != MEM
                               && true_regnum(reload_in[r]) < FIRST_PSEUDO_REGISTER)))
                 continue;
-
-#if 0 /* No longer needed for correct operation.                                                   \
-         It might give better code, or might not; worth an experiment?  */
-	  /* If this is an optional reload, we can't inherit from earlier insns
-	     until we are sure that any non-optional reloads have been allocated.
-	     The following code takes advantage of the fact that optional reloads
-	     are at the end of reload_order.  */
-	  if (reload_optional[r] != 0)
-	    for (i = 0; i < j; i++)
-	      if ((reload_out[reload_order[i]] != 0
-		   || reload_in[reload_order[i]] != 0
-		   || reload_secondary_p[reload_order[i]])
-		  && ! reload_optional[reload_order[i]]
-		  && reload_reg_rtx[reload_order[i]] == 0)
-		allocate_reload_reg (chain, reload_order[i], 0, inheritance);
-#endif
 
             /* First see if this pseudo is already available as reloaded
                for a previous insn.  We cannot try to inherit for reloads
@@ -5129,7 +5091,7 @@ static void choose_reload_regs(struct insn_chain *chain)
             if (inheritance)
             {
                 int word = 0;
-                register int regno = -1;
+                int regno = -1;
                 enum machine_mode mode;
 
                 if (reload_in[r] == 0)
@@ -5165,18 +5127,10 @@ static void choose_reload_regs(struct insn_chain *chain)
                     reload_out[r] = reload_in[r];
                 }
 #endif
-#if 0
-	      /* This won't work, since REGNO can be a pseudo reg number.
-		 Also, it takes much more hair to keep track of all the things
-		 that can invalidate an inherited reload of part of a pseudoreg.  */
-	      else if (GET_CODE (reload_in[r]) == SUBREG
-		       && GET_CODE (SUBREG_REG (reload_in[r])) == REG)
-		regno = REGNO (SUBREG_REG (reload_in[r])) + SUBREG_WORD (reload_in[r]);
-#endif
 
                 if (regno >= 0 && reg_last_reload_reg[regno] != 0)
                 {
-                    enum reg_class class = reload_reg_class[r], last_class;
+                    enum reg_class rclass = reload_reg_class[r], last_class;
                     rtx last_reg = reg_last_reload_reg[regno];
 
                     i = REGNO(last_reg) + word;
@@ -5186,15 +5140,15 @@ static void choose_reload_regs(struct insn_chain *chain)
                         && reg_reloaded_contents[i] == regno
                         && TEST_HARD_REG_BIT(reg_reloaded_valid, i)
                         && HARD_REGNO_MODE_OK(i, reload_mode[r])
-                        && (TEST_HARD_REG_BIT(reg_class_contents[(int)class], i)
+                        && (TEST_HARD_REG_BIT(reg_class_contents[(int)rclass], i)
                                /* Even if we can't use this register as a reload
                                   register, we might use it for reload_override_in,
                                   if copying it to the desired class is cheap
                                   enough.  */
-                               || ((REGISTER_MOVE_COST(last_class, class)
-                                       < MEMORY_MOVE_COST(mode, class, 1))
+                               || ((REGISTER_MOVE_COST(last_class, rclass)
+                                       < MEMORY_MOVE_COST(mode, rclass, 1))
 #ifdef SECONDARY_INPUT_RELOAD_CLASS
-                                      && (SECONDARY_INPUT_RELOAD_CLASS(class, mode, last_reg)
+                                      && (SECONDARY_INPUT_RELOAD_CLASS(rclass, mode, last_reg)
                                              == NO_REGS)
 #endif
                                           ))
@@ -5283,7 +5237,7 @@ static void choose_reload_regs(struct insn_chain *chain)
                 && (reload_nregs[r] == max_group_size
                        || !reg_classes_intersect_p(reload_reg_class[r], group_class)))
             {
-                register rtx equiv = find_equiv_reg(
+                rtx equiv = find_equiv_reg(
                     reload_in[r], insn, reload_reg_class[r], -1, NULL, 0, reload_mode[r]);
                 int regno;
 
@@ -5391,47 +5345,13 @@ static void choose_reload_regs(struct insn_chain *chain)
                reload, we are done.  */
             if (reload_reg_rtx[r] != 0 || reload_optional[r] != 0)
                 continue;
-
-#if 0 /* No longer needed for correct operation.  Might or might not                               \
-         give better code on the average.  Want to experiment?  */
-
-	  /* See if there is a later reload that has a class different from our
-	     class that intersects our class or that requires less register
-	     than our reload.  If so, we must allocate a register to this
-	     reload now, since that reload might inherit a previous reload
-	     and take the only available register in our class.  Don't do this
-	     for optional reloads since they will force all previous reloads
-	     to be allocated.  Also don't do this for reloads that have been
-	     turned off.  */
-
-	  for (i = j + 1; i < n_reloads; i++)
-	    {
-	      int s = reload_order[i];
-
-	      if ((reload_in[s] == 0 && reload_out[s] == 0
-		   && ! reload_secondary_p[s])
-		  || reload_optional[s])
-		continue;
-
-	      if ((reload_reg_class[s] != reload_reg_class[r]
-		   && reg_classes_intersect_p (reload_reg_class[r],
-					       reload_reg_class[s]))
-		  || reload_nregs[s] < reload_nregs[r])
-	      break;
-	    }
-
-	  if (i == n_reloads)
-	    continue;
-
-	  allocate_reload_reg (chain, r, j == n_reloads - 1, inheritance);
-#endif
         }
 
         /* Now allocate reload registers for anything non-optional that
            didn't get one yet.  */
         for (j = 0; j < n_reloads; j++)
         {
-            register int r = reload_order[j];
+            int r = reload_order[j];
 
             /* Ignore reloads that got marked inoperative.  */
             if (reload_out[r] == 0 && reload_in[r] == 0 && !reload_secondary_p[r])
@@ -5498,7 +5418,7 @@ static void choose_reload_regs(struct insn_chain *chain)
     {
         for (j = 0; j < n_reloads; j++)
         {
-            register int r = reload_order[j];
+            int r = reload_order[j];
             rtx check_reg;
             int check_regnum, nr, cant_inherit;
 
@@ -5577,7 +5497,7 @@ static void choose_reload_regs(struct insn_chain *chain)
     /* Record which pseudos and which spill regs have output reloads.  */
     for (j = 0; j < n_reloads; j++)
     {
-        register int r = reload_order[j];
+        int r = reload_order[j];
 
         i = reload_spill_index[r];
 
@@ -5586,7 +5506,7 @@ static void choose_reload_regs(struct insn_chain *chain)
            that we opted to ignore.  */
         if (reload_out_reg[r] != 0 && GET_CODE(reload_out_reg[r]) == REG && reload_reg_rtx[r] != 0)
         {
-            register int nregno = REGNO(reload_out_reg[r]);
+            int nregno = REGNO(reload_out_reg[r]);
             int nr = 1;
 
             if (nregno < FIRST_PSEUDO_REGISTER)
@@ -5732,7 +5652,7 @@ static void emit_reload_insns(struct insn_chain *chain)
 {
     rtx insn = chain->insn;
 
-    register int j;
+    int j;
     rtx input_reload_insns[MAX_RECOG_OPERANDS];
     rtx other_input_address_reload_insns = 0;
     rtx other_input_reload_insns = 0;
@@ -5765,7 +5685,7 @@ static void emit_reload_insns(struct insn_chain *chain)
 
     for (j = 0; j < n_reloads; j++)
     {
-        register rtx old;
+        rtx old;
         rtx oldequiv_reg = 0;
         rtx this_reload_insn = 0;
         int expect_occurrences ATTRIBUTE_UNUSED = 1;
@@ -5781,7 +5701,7 @@ static void emit_reload_insns(struct insn_chain *chain)
             && (!reload_inherited[j] || (reload_out[j] && !reload_out_reg[j]))
             && !rtx_equal_p(reload_reg_rtx[j], old) && reload_reg_rtx[j] != 0)
         {
-            register rtx reloadreg = reload_reg_rtx[j];
+            rtx reloadreg = reload_reg_rtx[j];
             rtx oldequiv = 0;
             enum machine_mode mode;
             rtx *where;
@@ -6262,9 +6182,9 @@ static void emit_reload_insns(struct insn_chain *chain)
         old = reload_out_reg[j];
         if (old != 0 && reload_reg_rtx[j] != old && reload_reg_rtx[j] != 0)
         {
-            register rtx reloadreg = reload_reg_rtx[j];
+            rtx reloadreg = reload_reg_rtx[j];
 #ifdef SECONDARY_OUTPUT_RELOAD_CLASS
-            register rtx second_reloadreg = 0;
+            rtx second_reloadreg = 0;
 #endif
             rtx note, p;
             enum machine_mode mode;
@@ -6290,16 +6210,6 @@ static void emit_reload_insns(struct insn_chain *chain)
                 /* If we aren't optimizing, there won't be a REG_UNUSED note,
                    but we don't want to make an output reload.  */
                 continue;
-
-#if 0
-	  /* Strip off of OLD any size-increasing SUBREGs such as
-	     (SUBREG:SI foo:QI 0).  */
-
-	  while (GET_CODE (old) == SUBREG && SUBREG_WORD (old) == 0
-		 && (GET_MODE_SIZE (GET_MODE (old))
-		     > GET_MODE_SIZE (GET_MODE (SUBREG_REG (old)))))
-	    old = SUBREG_REG (old);
-#endif
 
             /* If is a JUMP_INSN, we can't support output reloads yet.  */
             if (GET_CODE(insn) == JUMP_INSN)
@@ -6557,8 +6467,8 @@ static void emit_reload_insns(struct insn_chain *chain)
 
     for (j = 0; j < n_reloads; j++)
     {
-        register int r = reload_order[j];
-        register int i = reload_spill_index[r];
+        int r = reload_order[j];
+        int i = reload_spill_index[r];
 
         /* If this is a non-inherited input reload from a pseudo, we must
            clear any memory of a previous store to the same pseudo.  Only do
@@ -6630,7 +6540,7 @@ static void emit_reload_insns(struct insn_chain *chain)
                             : reload_out_reg[r] ? reload_out_reg[r]
                                                 /* AUTO_INC */
                                                 : XEXP(reload_in_reg[r], 0));
-                    register int nregno = REGNO(out);
+                    int nregno = REGNO(out);
                     int nnr = (nregno >= FIRST_PSEUDO_REGISTER
                             ? 1
                             : HARD_REGNO_NREGS(nregno, GET_MODE(reload_reg_rtx[r])));
@@ -6674,7 +6584,7 @@ static void emit_reload_insns(struct insn_chain *chain)
                                   && !reg_has_output_reload[REGNO(reload_in_reg[r])]))
                     && !reg_set_p(reload_reg_rtx[r], PATTERN(insn)))
                 {
-                    register int nregno;
+                    int nregno;
                     int nnr;
 
                     if (GET_CODE(reload_in[r]) == REG
@@ -6739,7 +6649,7 @@ static void emit_reload_insns(struct insn_chain *chain)
                    || (GET_CODE(reload_out[r]) == MEM && GET_CODE(reload_out_reg[r]) == REG)))
         {
             rtx out = (GET_CODE(reload_out[r]) == REG ? reload_out[r] : reload_out_reg[r]);
-            register int nregno = REGNO(out);
+            int nregno = REGNO(out);
             if (nregno >= FIRST_PSEUDO_REGISTER)
             {
                 rtx src_reg, store_insn;
@@ -7004,7 +6914,7 @@ static void delete_output_reload(rtx insn, int j, int last_reload_reg)
     int k;
     int n_occurrences;
     int n_inherited = 0;
-    register rtx i1;
+    rtx i1;
     rtx substed;
 
     /* Get the raw pseudo-register referred to.  */
@@ -7191,7 +7101,7 @@ static void delete_address_reloads_1(rtx dead_insn, rtx x, rtx current_insn)
 
     if (code != REG)
     {
-        char *fmt = GET_RTX_FORMAT(code);
+        const char *fmt = GET_RTX_FORMAT(code);
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
             if (fmt[i] == 'e')
@@ -7391,21 +7301,19 @@ static rtx inc_for_reload(rtx reloadreg, rtx in, rtx value, int inc_amount)
 /* Return 1 if we are certain that the constraint-string STRING allows
    the hard register REG.  Return 0 if we can't be sure of this.  */
 
-static int constraint_accepts_reg_p(char *string, rtx reg)
+static int constraint_accepts_reg_p(const char *const string, rtx reg)
 {
     int value = 0;
     int regno = true_regnum(reg);
     int c;
+    const size_t len = strlen(string);
 
     /* Initialize for first alternative.  */
     value = 0;
     /* Check that each alternative contains `g' or `r'.  */
-    while (1)
-        switch (c = *string++)
+    for (size_t i = 0; i < len; ++i)
+        switch (string[i])
         {
-        case 0:
-            /* If an alternative lacks `g' or `r', we lose.  */
-            return value;
         case ',':
             /* If an alternative lacks `g' or `r', we lose.  */
             if (value == 0)
@@ -7422,22 +7330,23 @@ static int constraint_accepts_reg_p(char *string, rtx reg)
         default:
             /* Any reg in specified class wins for this alternative.  */
             {
-                enum reg_class class = REG_CLASS_FROM_LETTER(c);
+                enum reg_class rclass = REG_CLASS_FROM_LETTER(string[i]);
 
-                if (TEST_HARD_REG_BIT(reg_class_contents[(int)class], regno))
+                if (TEST_HARD_REG_BIT(reg_class_contents[(int)rclass], regno))
                     value = 1;
             }
         }
+    return value;
 }
 
 /* Return the number of places FIND appears within X, but don't count
    an occurrence if some SET_DEST is FIND.  */
 
-int count_occurrences(register rtx x, register rtx find)
+int count_occurrences(rtx x, rtx find)
 {
-    register int i, j;
-    register enum rtx_code code;
-    register char *format_ptr;
+    int i, j;
+    enum rtx_code code;
+    const char *format_ptr;
     int count;
 
     if (x == find)
@@ -7529,7 +7438,7 @@ static rtx invalidate_regno_rtx;
 static void reload_cse_invalidate_regno(int regno, enum machine_mode mode, int clobber)
 {
     int endregno;
-    register int i;
+    int i;
 
     /* Our callers don't always go through true_regnum; we may see a
        pseudo-register here from a CLOBBER or the like.  We probably
@@ -7603,7 +7512,7 @@ static void reload_cse_invalidate_regno(int regno, enum machine_mode mode, int c
 static int reload_cse_mem_conflict_p(rtx mem_base, rtx val)
 {
     enum rtx_code code;
-    char *fmt;
+    const char *fmt;
     int i;
 
     code = GET_CODE(val);
@@ -7661,7 +7570,7 @@ static int reload_cse_mem_conflict_p(rtx mem_base, rtx val)
 
 static void reload_cse_invalidate_mem(rtx mem_rtx)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
@@ -7710,7 +7619,7 @@ static void reload_cse_invalidate_rtx(rtx dest ATTRIBUTE_UNUSED, rtx ignore)
 
    This function also detects cases where we load a value from memory
    into two different registers, and (if memory is more expensive than
-   registers) changes it to simply copy the first register into the
+   registers) changes it to simply copy the first into the
    second register.
 
    Another optimization is performed that scans the operands of each
@@ -7722,7 +7631,7 @@ static void reload_cse_regs_1(rtx first)
 {
     char *firstobj;
     rtx callmem;
-    register int i;
+    int i;
     rtx insn;
 
     init_alias_analysis();
@@ -8039,7 +7948,7 @@ static int reload_cse_simplify_set(rtx set, rtx insn)
     rtx src;
     enum machine_mode dest_mode;
     enum reg_class dclass;
-    register int i;
+    int i;
 
     dreg = true_regnum(SET_DEST(set));
     if (dreg < 0)
@@ -8099,7 +8008,7 @@ static int reload_cse_simplify_operands(rtx insn)
 #ifdef REGISTER_CONSTRAINTS
     int i, j;
 
-    char *constraints[MAX_RECOG_OPERANDS];
+    const char *constraints[MAX_RECOG_OPERANDS];
 
     /* Vector recording how bad an alternative is.  */
     int *alternative_reject;
@@ -8133,7 +8042,7 @@ static int reload_cse_simplify_operands(rtx insn)
     {
         enum machine_mode mode;
         int regno;
-        char *p;
+        const char *p;
 
         op_alt_regno[i] = (int *)alloca(recog_n_alternatives * sizeof(int));
         for (j = 0; j < recog_n_alternatives; j++)
@@ -8164,7 +8073,7 @@ static int reload_cse_simplify_operands(rtx insn)
 
         for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
         {
-            int class = (int)NO_REGS;
+            int rclass = (int)NO_REGS;
 
             if (!reload_cse_regno_equal_p(regno, recog_operand[i], mode))
                 continue;
@@ -8230,11 +8139,11 @@ static int reload_cse_simplify_operands(rtx insn)
 
                 case 'g':
                 case 'r':
-                    class = reg_class_subunion[(int)class][(int)GENERAL_REGS];
+                    rclass = reg_class_subunion[(int)rclass][(int)GENERAL_REGS];
                     break;
 
                 default:
-                    class = reg_class_subunion[(int)class]
+                    rclass = reg_class_subunion[(int)rclass]
                                               [(int)REG_CLASS_FROM_LETTER((unsigned char)c)];
                     break;
 
@@ -8244,7 +8153,7 @@ static int reload_cse_simplify_operands(rtx insn)
                        replacement register if we don't have one for this
                        alternative yet and the operand being replaced is not
                        a cheap CONST_INT. */
-                    if (op_alt_regno[i][j] == -1 && reg_fits_class_p(reg, class, 0, mode)
+                    if (op_alt_regno[i][j] == -1 && reg_fits_class_p(reg, (enum reg_class)rclass, (enum reg_class)0, mode)
                         && (GET_CODE(recog_operand[i]) != CONST_INT
                                || rtx_cost(recog_operand[i], SET) > rtx_cost(reg, SET)))
                     {
@@ -8822,7 +8731,7 @@ static void reload_combine_note_use(rtx *xp, rtx insn)
 {
     rtx x = *xp;
     enum rtx_code code = x->code;
-    char *fmt;
+    const char *fmt;
     int i, j;
     rtx offset = const0_rtx; /* For the REG case below.  */
 

@@ -36,14 +36,14 @@ enum formals_style_enum
 typedef enum formals_style_enum formals_style;
 
 
-static char *data_type;
+static const char *data_type;
 
-static char *affix_data_type(char *);
-static char *gen_formal_list_for_type(tree, formals_style);
+static const char *affix_data_type(const char *);
+static const char *gen_formal_list_for_type(tree, formals_style);
 static int deserves_ellipsis(tree);
-static char *gen_formal_list_for_func_def(tree, formals_style);
-static char *gen_type(char *, tree, formals_style);
-static char *gen_decl(tree, int, formals_style);
+static const char *gen_formal_list_for_func_def(tree, formals_style);
+static const char *gen_type(const char *, tree, formals_style);
+static const char *gen_decl(tree, int, formals_style);
 
 /* Concatenate strings and return the result.
    Each string is passed as an argument, with the last argument being NULL,
@@ -105,6 +105,48 @@ char *concat(const char *first, ...)
     return newstr;
 }
 
+
+/* Concatenate strings and return the result.
+   Each string is passed as an argument, with the last argument being NULL,
+   e.g. concat("str1", "str2", "str3", ..., "strN", NULL).  */
+
+char *concatlen(size_t length, const char *first, ...)
+{
+    char *newstr;
+    char *end;
+    const char *arg;
+    va_list args;
+ 
+    newstr = (char *)xmalloc(length + 1);
+
+    /* Now copy the individual pieces to the result string. */
+
+    va_start(args, first);
+    end = newstr;
+
+    if (first != NULL)
+    {
+        arg = first;
+        while (*arg)
+        {
+            *end++ = *arg++;
+        }
+
+        while ((arg = va_arg(args, const char *)) != NULL)
+        {
+            while (*arg)
+            {
+                *end++ = *arg++;
+            }
+        }
+    }
+
+    *end = 0;
+    va_end(args);
+
+    return newstr;
+}
+
 /* Given a string representing an entire type or an entire declaration
    which only lacks the actual "data-type" specifier (at its left end),
    affix the data-type specifier to the left end of the given type
@@ -119,11 +161,10 @@ char *concat(const char *first, ...)
    `const char *foo;' and *not* `char const *foo;' so we try to create types
    that look as expected.  */
 
-static char *affix_data_type(char *type_or_decl)
+static const char *affix_data_type(const char *type_or_decl)
 {
-    char *p = type_or_decl;
+    const char *p = type_or_decl;
     char *qualifiers_then_data_type;
-    char saved;
 
     /* Skip as many leading const's or volatile's as there are.  */
 
@@ -148,10 +189,7 @@ static char *affix_data_type(char *type_or_decl)
     if (p == type_or_decl)
         return concat(data_type, " ", type_or_decl, NULL);
 
-    saved = *p;
-    *p = '\0';
-    qualifiers_then_data_type = concat(type_or_decl, data_type, NULL);
-    *p = saved;
+    qualifiers_then_data_type = concatlen(p - type_or_decl, type_or_decl, data_type, NULL);
     return concat(qualifiers_then_data_type, " ", p, NULL);
 }
 
@@ -162,9 +200,9 @@ static char *affix_data_type(char *type_or_decl)
    we are currently aiming for is non-ansi, then we just return a pair
    of empty parens here.  */
 
-static char *gen_formal_list_for_type(tree fntype, formals_style style)
+static const char *gen_formal_list_for_type(tree fntype, formals_style style)
 {
-    char *formal_list = "";
+    const char *formal_list = "";
     tree formal_type;
 
     if (style != ansi)
@@ -173,7 +211,7 @@ static char *gen_formal_list_for_type(tree fntype, formals_style style)
     formal_type = TYPE_ARG_TYPES(fntype);
     while (formal_type && TREE_VALUE(formal_type) != void_type_node)
     {
-        char *this_type;
+        const char *this_type;
 
         if (*formal_list)
             formal_list = concat(formal_list, ", ", NULL);
@@ -275,15 +313,15 @@ static int deserves_ellipsis(tree fntype)
    This routine returns a string which is the source form for the entire
    function formal parameter list.  */
 
-static char *gen_formal_list_for_func_def(tree fndecl, formals_style style)
+static const char *gen_formal_list_for_func_def(tree fndecl, formals_style style)
 {
-    char *formal_list = "";
+    const char *formal_list = "";
     tree formal_decl;
 
     formal_decl = DECL_ARGUMENTS(fndecl);
     while (formal_decl)
     {
-        char *this_formal;
+        const char *this_formal;
 
         if (*formal_list && ((style == ansi) || (style == k_and_r_names)))
             formal_list = concat(formal_list, ", ", NULL);
@@ -347,7 +385,7 @@ static char *gen_formal_list_for_func_def(tree fndecl, formals_style style)
    to do at this point is for the initial caller to prepend the "data_type"
    string onto the returned "seed".  */
 
-static char *gen_type(char *ret_val, tree t, formals_style style)
+static const char *gen_type(const char *ret_val, tree t, formals_style style)
 {
     tree chain_p;
 
@@ -509,9 +547,9 @@ static char *gen_type(char *ret_val, tree t, formals_style style)
    associated with a function definition.  In this case, we can assume that
    an attached list of DECL nodes for function formal arguments is present.  */
 
-static char *gen_decl(tree decl, int is_func_definition, formals_style style)
+static const char *gen_decl(tree decl, int is_func_definition, formals_style style)
 {
-    char *ret_val;
+    const char *ret_val;
 
     if (DECL_NAME(decl))
         ret_val = IDENTIFIER_POINTER(DECL_NAME(decl));

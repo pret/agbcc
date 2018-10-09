@@ -148,7 +148,7 @@ enum reg_class reg_class_superunion[N_REG_CLASSES][N_REG_CLASSES];
 
 /* Array containing all of the register names */
 
-char *reg_names[] = REGISTER_NAMES;
+const char *reg_names[] = REGISTER_NAMES;
 
 /* For each hard register, the widest mode object that it can contain.
    This will be a MODE_INT mode if the register can hold integers.  Otherwise
@@ -210,7 +210,7 @@ static struct reg_info_data *reg_info_head;
 
 void init_reg_sets(void)
 {
-    register int i, j;
+    int i, j;
 
     /* First copy the register information from the initial int form into
        the regsets.  */
@@ -238,7 +238,7 @@ void init_reg_sets(void)
 
 static void init_reg_sets_1(void)
 {
-    register unsigned int i, j;
+    unsigned int i, j;
 
     /* Compute number of hard regs in each class.  */
 
@@ -386,7 +386,7 @@ static void init_reg_sets_1(void)
 
             move_cost[i][j] = cost;
 
-            if (reg_class_subset_p(i, j))
+            if (reg_class_subset_p((enum reg_class)i, (enum reg_class)j))
                 cost = 0;
 
             may_move_cost[i][j] = cost;
@@ -399,7 +399,7 @@ static void init_reg_sets_1(void)
 
 static void init_reg_modes(void)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
     {
@@ -432,7 +432,7 @@ void init_regs(void)
            memory_move_secondary_cost.  */
         int i;
         for (i = 0; i < MAX_MACHINE_MODE; i++)
-            top_of_stack[i] = gen_rtx_MEM(i, stack_pointer_rtx);
+            top_of_stack[i] = gen_rtx_MEM((enum machine_mode)i, stack_pointer_rtx);
     }
 #endif
 }
@@ -487,7 +487,7 @@ void fix_register(char *name, int fixed, int call_used)
         if ((i == STACK_POINTER_REGNUM || i == FRAME_POINTER_REGNUM)
             && (fixed == 0 || call_used == 0))
         {
-            static char *what_option[2][2]
+            static const char *what_option[2][2]
                 = { { "call-saved", "call-used" }, { "no-such-option", "fixed" } };
 
             error("can't use '%s' as a %s register", name, what_option[fixed][call_used]);
@@ -589,7 +589,7 @@ static int loop_depth;
 static int loop_cost;
 
 static rtx scan_one_insn(rtx, int);
-static void record_reg_classes(int, int, rtx *, enum machine_mode *, char **, rtx);
+static void record_reg_classes(int, int, rtx *, enum machine_mode *, const char **, rtx);
 static int copy_cost(rtx, enum machine_mode, enum reg_class, int);
 static void record_address_regs(rtx, enum reg_class, int);
 #ifdef FORBIDDEN_INC_DEC_CLASSES
@@ -642,7 +642,7 @@ static rtx scan_one_insn(rtx insn, int pass)
 {
     enum rtx_code code = GET_CODE(insn);
     enum rtx_code pat_code;
-    char *constraints[MAX_RECOG_OPERANDS];
+    const char *constraints[MAX_RECOG_OPERANDS];
     enum machine_mode modes[MAX_RECOG_OPERANDS];
     rtx set, note;
     int i, j;
@@ -764,7 +764,7 @@ static rtx scan_one_insn(rtx insn, int pass)
     for (i = 0; i < recog_n_operands - 1; i++)
         if (constraints[i][0] == '%')
         {
-            char *xconstraints[MAX_RECOG_OPERANDS];
+            const char *xconstraints[MAX_RECOG_OPERANDS];
             int j;
 
             /* Handle commutative operands by swapping the constraints.
@@ -807,8 +807,8 @@ static rtx scan_one_insn(rtx insn, int pass)
 void regclass(rtx f, int nregs)
 {
 #ifdef REGISTER_CONSTRAINTS
-    register rtx insn;
-    register int i;
+    rtx insn;
+    int i;
     int pass;
 
     init_recog();
@@ -828,7 +828,7 @@ void regclass(rtx f, int nregs)
     {
         rtx r = gen_rtx_REG(VOIDmode, 0);
         enum machine_mode m;
-        register int j;
+        int j;
 
         for (j = 0; j < FIRST_PSEUDO_REGISTER; j++)
             if (TEST_HARD_REG_BIT(reg_class_contents[i], j))
@@ -903,30 +903,30 @@ void regclass(rtx f, int nregs)
 
         for (i = FIRST_PSEUDO_REGISTER; i < nregs; i++)
         {
-            register int best_cost = (1 << (HOST_BITS_PER_INT - 2)) - 1;
+            int best_cost = (1 << (HOST_BITS_PER_INT - 2)) - 1;
             enum reg_class best = ALL_REGS, alt = NO_REGS;
             /* This is an enum reg_class, but we call it an int
                to save lots of casts.  */
-            register int class;
-            register struct costs *p = &costs[i];
+            int rclass;
+            struct costs *p = &costs[i];
 
-            for (class = (int)ALL_REGS - 1; class > 0; class --)
+            for (rclass = (int)ALL_REGS - 1; rclass > 0; rclass --)
             {
                 /* Ignore classes that are too small for this operand or
                invalid for a operand that was auto-incremented.  */
-                if (CLASS_MAX_NREGS(class, PSEUDO_REGNO_MODE(i)) > reg_class_size[class]
+                if (CLASS_MAX_NREGS(rclass, PSEUDO_REGNO_MODE(i)) > reg_class_size[rclass]
 #ifdef FORBIDDEN_INC_DEC_CLASSES
-                    || (in_inc_dec[i] && forbidden_inc_dec_class[class])
+                    || (in_inc_dec[i] && forbidden_inc_dec_class[rclass])
 #endif
                 )
                     ;
-                else if (p->cost[class] < best_cost)
+                else if (p->cost[rclass] < best_cost)
                 {
-                    best_cost = p->cost[class];
-                    best = (enum reg_class) class;
+                    best_cost = p->cost[rclass];
+                    best = (enum reg_class) rclass;
                 }
-                else if (p->cost[class] == best_cost)
-                    best = reg_class_subunion[(int)best][class];
+                else if (p->cost[rclass] == best_cost)
+                    best = reg_class_subunion[(int)best][rclass];
             }
 
             /* Record the alternate register class; i.e., a class for which
@@ -937,15 +937,15 @@ void regclass(rtx f, int nregs)
                will be doing it again later.  */
 
             if (pass == 1 || !flag_expensive_optimizations)
-                for (class = 0; class < N_REG_CLASSES; class ++)
-                    if (p->cost[class] < p->mem_cost
-                        && (reg_class_size[(int)reg_class_subunion[(int)alt][class]]
+                for (rclass = 0; rclass < N_REG_CLASSES; rclass++)
+                    if (p->cost[rclass] < p->mem_cost
+                        && (reg_class_size[(int)reg_class_subunion[(int)alt][rclass]]
                                > reg_class_size[(int)alt])
 #ifdef FORBIDDEN_INC_DEC_CLASSES
-                        && !(in_inc_dec[i] && forbidden_inc_dec_class[class])
+                        && !(in_inc_dec[i] && forbidden_inc_dec_class[rclass])
 #endif
                     )
-                        alt = reg_class_subunion[(int)alt][class];
+                        alt = reg_class_subunion[(int)alt][rclass];
 
             /* If we don't add any classes, nothing to try.  */
             if (alt == best)
@@ -988,7 +988,7 @@ void regclass(rtx f, int nregs)
    alternatives.  */
 
 static void record_reg_classes(
-    int n_alts, int n_ops, rtx *ops, enum machine_mode *modes, char **constraints, rtx insn)
+    int n_alts, int n_ops, rtx *ops, enum machine_mode *modes, const char **constraints, rtx insn)
 {
     int alt;
     int i, j;
@@ -1003,11 +1003,11 @@ static void record_reg_classes(
         int alt_fail = 0;
         int alt_cost = 0;
         enum reg_class classes[MAX_RECOG_OPERANDS];
-        int class;
+        int rclass;
 
         for (i = 0; i < n_ops; i++)
         {
-            char *p = constraints[i];
+            const char *p = constraints[i];
             rtx op = ops[i];
             enum machine_mode mode = modes[i];
             int allows_mem = 0;
@@ -1241,8 +1241,8 @@ static void record_reg_classes(
                 {
                     struct costs *pp = &this_op_costs[i];
 
-                    for (class = 0; class < N_REG_CLASSES; class ++)
-                        pp->cost[class] = may_move_cost[class][(int)classes[i]];
+                    for (rclass = 0; rclass < N_REG_CLASSES; rclass ++)
+                        pp->cost[rclass] = may_move_cost[rclass][(int)classes[i]];
 
                     /* If the alternative actually allows memory, make things
                        a bit cheaper since we won't need an extra insn to
@@ -1304,8 +1304,8 @@ static void record_reg_classes(
 
                 pp->mem_cost = MIN(pp->mem_cost, (qq->mem_cost + alt_cost) * scale);
 
-                for (class = 0; class < N_REG_CLASSES; class ++)
-                    pp->cost[class] = MIN(pp->cost[class], (qq->cost[class] + alt_cost) * scale);
+                for (rclass = 0; rclass < N_REG_CLASSES; rclass ++)
+                    pp->cost[rclass] = MIN(pp->cost[rclass], (qq->cost[rclass] + alt_cost) * scale);
             }
     }
 
@@ -1320,7 +1320,7 @@ static void record_reg_classes(
             {
                 int regno = REGNO(ops[!i]);
                 enum machine_mode mode = GET_MODE(ops[!i]);
-                int class;
+                int rclass;
                 int nr;
 
                 if (regno >= FIRST_PSEUDO_REGISTER && prefclass != 0
@@ -1328,22 +1328,22 @@ static void record_reg_classes(
                            == CLASS_MAX_NREGS(prefclass[regno], mode)))
                     op_costs[i].cost[(unsigned char)prefclass[regno]] = -1;
                 else if (regno < FIRST_PSEUDO_REGISTER)
-                    for (class = 0; class < N_REG_CLASSES; class ++)
-                        if (TEST_HARD_REG_BIT(reg_class_contents[class], regno)
-                            && reg_class_size[class] == CLASS_MAX_NREGS(class, mode))
+                    for (rclass = 0; rclass < N_REG_CLASSES; rclass++)
+                        if (TEST_HARD_REG_BIT(reg_class_contents[rclass], regno)
+                            && reg_class_size[rclass] == CLASS_MAX_NREGS(rclass, mode))
                         {
-                            if (reg_class_size[class] == 1)
-                                op_costs[i].cost[class] = -1;
+                            if (reg_class_size[rclass] == 1)
+                                op_costs[i].cost[rclass] = -1;
                             else
                             {
                                 for (nr = 0; nr < HARD_REGNO_NREGS(regno, mode); nr++)
                                 {
-                                    if (!TEST_HARD_REG_BIT(reg_class_contents[class], regno + nr))
+                                    if (!TEST_HARD_REG_BIT(reg_class_contents[rclass], regno + nr))
                                         break;
                                 }
 
                                 if (nr == HARD_REGNO_NREGS(regno, mode))
-                                    op_costs[i].cost[class] = -1;
+                                    op_costs[i].cost[rclass] = -1;
                             }
                         }
             }
@@ -1354,7 +1354,7 @@ static void record_reg_classes(
 
    X must not be a pseudo.  */
 
-static int copy_cost(rtx x, enum machine_mode mode, enum reg_class class, int to_p)
+static int copy_cost(rtx x, enum machine_mode mode, enum reg_class rclass, int to_p)
 {
 #ifdef HAVE_SECONDARY_RELOADS
     enum reg_class secondary_class = NO_REGS;
@@ -1367,7 +1367,7 @@ static int copy_cost(rtx x, enum machine_mode mode, enum reg_class class, int to
         return 0;
 
     /* Get the class we will actually use for a reload.  */
-    class = PREFERRED_RELOAD_CLASS(x, class);
+    rclass = PREFERRED_RELOAD_CLASS(x, rclass);
 
 #ifdef HAVE_SECONDARY_RELOADS
     /* If we need a secondary reload (we assume here that we are using
@@ -1377,28 +1377,28 @@ static int copy_cost(rtx x, enum machine_mode mode, enum reg_class class, int to
 
 #ifdef SECONDARY_INPUT_RELOAD_CLASS
     if (to_p == 1)
-        secondary_class = SECONDARY_INPUT_RELOAD_CLASS(class, mode, x);
+        secondary_class = SECONDARY_INPUT_RELOAD_CLASS(rclass, mode, x);
 #endif
 
 #ifdef SECONDARY_OUTPUT_RELOAD_CLASS
     if (!to_p)
-        secondary_class = SECONDARY_OUTPUT_RELOAD_CLASS(class, mode, x);
+        secondary_class = SECONDARY_OUTPUT_RELOAD_CLASS(rclass, mode, x);
 #endif
 
     if (secondary_class != NO_REGS)
         return (
-            move_cost[(int)secondary_class][(int)class] + copy_cost(x, mode, secondary_class, 2));
+            move_cost[(int)secondary_class][(int)rclass] + copy_cost(x, mode, secondary_class, 2));
 #endif /* HAVE_SECONDARY_RELOADS */
 
     /* For memory, use the memory move cost, for (hard) registers, use the
        cost to move between the register classes, and use 2 for everything
        else (constants).  */
 
-    if (GET_CODE(x) == MEM || class == NO_REGS)
-        return MEMORY_MOVE_COST(mode, class, to_p);
+    if (GET_CODE(x) == MEM || rclass == NO_REGS)
+        return MEMORY_MOVE_COST(mode, rclass, to_p);
 
     else if (GET_CODE(x) == REG)
-        return move_cost[(int)REGNO_REG_CLASS(REGNO(x))][(int)class];
+        return move_cost[(int)REGNO_REG_CLASS(REGNO(x))][(int)rclass];
 
     else
         /* If this is a constant, we may eventually want to call rtx_cost here.  */
@@ -1414,9 +1414,9 @@ static int copy_cost(rtx x, enum machine_mode mode, enum reg_class class, int to
    SCALE is twice the amount to multiply the cost by (it is twice so we
    can represent half-cost adjustments).  */
 
-static void record_address_regs(rtx x, enum reg_class class, int scale)
+static void record_address_regs(rtx x, enum reg_class rclass, int scale)
 {
-    register enum rtx_code code = GET_CODE(x);
+    enum rtx_code code = GET_CODE(x);
 
     switch (code)
     {
@@ -1444,8 +1444,8 @@ static void record_address_regs(rtx x, enum reg_class class, int scale)
         {
             rtx arg0 = XEXP(x, 0);
             rtx arg1 = XEXP(x, 1);
-            register enum rtx_code code0 = GET_CODE(arg0);
-            register enum rtx_code code1 = GET_CODE(arg1);
+            enum rtx_code code0 = GET_CODE(arg0);
+            enum rtx_code code1 = GET_CODE(arg1);
 
             /* Look inside subregs.  */
             if (code0 == SUBREG)
@@ -1457,7 +1457,7 @@ static void record_address_regs(rtx x, enum reg_class class, int scale)
                be in the first operand.  */
 
             if (MAX_REGS_PER_ADDRESS == 1)
-                record_address_regs(arg0, class, scale);
+                record_address_regs(arg0, rclass, scale);
 
             /* If index and base registers are the same on this machine, just
                record registers in any non-constant operands.  We assume here,
@@ -1466,16 +1466,16 @@ static void record_address_regs(rtx x, enum reg_class class, int scale)
 
             else if (INDEX_REG_CLASS == BASE_REG_CLASS)
             {
-                record_address_regs(arg0, class, scale);
+                record_address_regs(arg0, rclass, scale);
                 if (!CONSTANT_P(arg1))
-                    record_address_regs(arg1, class, scale);
+                    record_address_regs(arg1, rclass, scale);
             }
 
             /* If the second operand is a constant integer, it doesn't change
                what class the first operand must be.  */
 
             else if (code1 == CONST_INT || code1 == CONST_DOUBLE)
-                record_address_regs(arg0, class, scale);
+                record_address_regs(arg0, rclass, scale);
 
             /* If the second operand is a symbolic constant, the first operand
                must be an index register.  */
@@ -1540,28 +1540,28 @@ static void record_address_regs(rtx x, enum reg_class class, int scale)
             in_inc_dec[REGNO(XEXP(x, 0))] = 1;
 #endif
 
-        record_address_regs(XEXP(x, 0), class, 2 * scale);
+        record_address_regs(XEXP(x, 0), rclass, 2 * scale);
         break;
 
     case REG:
     {
-        register struct costs *pp = &costs[REGNO(x)];
-        register int i;
+        struct costs *pp = &costs[REGNO(x)];
+        int i;
 
-        pp->mem_cost += (MEMORY_MOVE_COST(Pmode, class, 1) * scale) / 2;
+        pp->mem_cost += (MEMORY_MOVE_COST(Pmode, rclass, 1) * scale) / 2;
 
         for (i = 0; i < N_REG_CLASSES; i++)
-            pp->cost[i] += (may_move_cost[i][(int)class] * scale) / 2;
+            pp->cost[i] += (may_move_cost[i][(int)rclass] * scale) / 2;
     }
     break;
 
     default:
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
             if (fmt[i] == 'e')
-                record_address_regs(XEXP(x, i), class, scale);
+                record_address_regs(XEXP(x, i), rclass, scale);
     }
     }
 }
@@ -1601,9 +1601,7 @@ static size_t regno_allocated = 0;
    function to function, only reallocating it when we need more room.  If
    RENUMBER_P is non zero, allocate the reg_renumber array also.  */
 
-void allocate_reg_info(num_regs, new_p, renumber_p) size_t num_regs;
-int new_p;
-int renumber_p;
+void allocate_reg_info(size_t num_regs, int new_p, int renumber_p)
 {
     size_t size_info;
     size_t size_renumber;
@@ -1753,7 +1751,7 @@ int max_parallel;
 
 void reg_scan(rtx f, int nregs, int repeat)
 {
-    register rtx insn;
+    rtx insn;
 
     allocate_reg_info(nregs, TRUE, FALSE);
     max_parallel = 3;
@@ -1777,7 +1775,7 @@ void reg_scan(rtx f, int nregs, int repeat)
 
 void reg_scan_update(rtx first, rtx last, int old_max_regno)
 {
-    register rtx insn;
+    rtx insn;
 
     allocate_reg_info(max_reg_num(), FALSE, FALSE);
 
@@ -1800,9 +1798,9 @@ void reg_scan_update(rtx first, rtx last, int old_max_regno)
 
 static void reg_scan_mark_refs(rtx x, rtx insn, int note_flag, int min_regno)
 {
-    register enum rtx_code code;
-    register rtx dest;
-    register rtx note;
+    enum rtx_code code;
+    rtx dest;
+    rtx note;
 
     code = GET_CODE(x);
     switch (code)
@@ -1824,7 +1822,7 @@ static void reg_scan_mark_refs(rtx x, rtx insn, int note_flag, int min_regno)
 
     case REG:
     {
-        register int regno = REGNO(x);
+        int regno = REGNO(x);
 
         if (regno >= min_regno)
         {
@@ -1905,15 +1903,15 @@ static void reg_scan_mark_refs(rtx x, rtx insn, int note_flag, int min_regno)
 
     default:
     {
-        register char *fmt = GET_RTX_FORMAT(code);
-        register int i;
+        const char *fmt = GET_RTX_FORMAT(code);
+        int i;
         for (i = GET_RTX_LENGTH(code) - 1; i >= 0; i--)
         {
             if (fmt[i] == 'e')
                 reg_scan_mark_refs(XEXP(x, i), insn, note_flag, min_regno);
             else if (fmt[i] == 'E' && XVEC(x, i) != 0)
             {
-                register int j;
+                int j;
                 for (j = XVECLEN(x, i) - 1; j >= 0; j--)
                     reg_scan_mark_refs(XVECEXP(x, i, j), insn, note_flag, min_regno);
             }
@@ -1925,7 +1923,7 @@ static void reg_scan_mark_refs(rtx x, rtx insn, int note_flag, int min_regno)
 /* Return nonzero if C1 is a subset of C2, i.e., if every register in C1
    is also in C2.  */
 
-int reg_class_subset_p(register enum reg_class c1, register enum reg_class c2)
+int reg_class_subset_p(enum reg_class c1, enum reg_class c2)
 {
     if (c1 == c2)
         return 1;
@@ -1939,7 +1937,7 @@ int reg_class_subset_p(register enum reg_class c1, register enum reg_class c2)
 
 /* Return nonzero if there is a register that is in both C1 and C2.  */
 
-int reg_classes_intersect_p(register enum reg_class c1, register enum reg_class c2)
+int reg_classes_intersect_p(enum reg_class c1, enum reg_class c2)
 {
     HARD_REG_SET c;
 

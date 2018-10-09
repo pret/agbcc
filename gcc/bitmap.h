@@ -40,7 +40,7 @@ typedef struct bitmap_element_def
 {
   struct bitmap_element_def *next;		/* Next element. */
   struct bitmap_element_def *prev;		/* Previous element. */
-  unsigned int indx;			/* regno/BITMAP_ELEMENT_ALL_BITS. */
+  uint32_t indx;			/* regno/BITMAP_ELEMENT_ALL_BITS. */
   uint32_t bits[BITMAP_ELEMENT_WORDS]; /* Bits that are set. */
 } bitmap_element;
 
@@ -48,7 +48,7 @@ typedef struct bitmap_element_def
 typedef struct bitmap_head_def {
   bitmap_element *first;	/* First element in linked list. */
   bitmap_element *current;	/* Last element looked at. */
-  int indx;			/* Index of last element looked at. */
+  uint32_t indx;			/* Index of last element looked at. */
 } bitmap_head, *bitmap;
 
 /* Enumeration giving the various operations we support.  */
@@ -89,7 +89,7 @@ extern void bitmap_debug (bitmap);
 extern void bitmap_debug_file (FILE *, bitmap);
 
 /* Print a bitmap */
-extern void bitmap_print (FILE *, bitmap, char *, char *);
+extern void bitmap_print (FILE *, bitmap, const char *, const char *);
 
 /* Initialize a bitmap header.  */
 extern bitmap bitmap_initialize (bitmap);

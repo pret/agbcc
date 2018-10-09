@@ -47,9 +47,9 @@ dyn_string_t dyn_string_new(int space)
 /* Append the NUL-terminated string S to DS, resizing DS if
    necessary.  */
 
-dyn_string_t dyn_string_append(dyn_string_t ds, char *s)
+dyn_string_t dyn_string_append(dyn_string_t ds, const char *s)
 {
-    int len = strlen(s);
+    size_t len = strlen(s);
     dyn_string_resize(ds, ds->length + len + 1 /* '\0' */);
     strcpy(ds->s + ds->length, s);
     ds->length += len;

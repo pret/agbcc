@@ -1,7 +1,7 @@
 /* KR-C code produced by gperf version 2.7.1 (19981006 egcs) */
 /* Command-line: gperf -L KR-C -F , 0, 0 -p -j1 -i 1 -g -o -t -G -N is_reserved_word -k1,3,$ ../../gcc/c-parse.gperf  */
 /* Command-line: gperf -L KR-C -F ', 0, 0' -p -j1 -i 1 -g -o -t -N is_reserved_word -k1,3,$ c-parse.gperf  */ 
-struct resword { char *name; short token; enum rid rid; };
+struct resword { const char *name; short token; enum rid rid; };
 
 #define TOTAL_KEYWORDS 83
 #define MIN_WORD_LENGTH 2
@@ -12,7 +12,7 @@ struct resword { char *name; short token; enum rid rid; };
 
 
 static inline unsigned int 
-hash (register char *str, register unsigned int len)
+hash (const char *str, unsigned int len)
 {
   static unsigned char asso_values[] =
     {
@@ -43,7 +43,7 @@ hash (register char *str, register unsigned int len)
       142, 142, 142, 142, 142, 142, 142, 142, 142, 142,
       142, 142, 142, 142, 142, 142
     };
-  register int hval = len;
+  int hval = len;
 
   switch (hval)
     {
@@ -60,12 +60,12 @@ hash (register char *str, register unsigned int len)
 
 static struct resword wordlist[] =
   {
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"out", TYPE_QUAL, RID_OUT},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"float", TYPESPEC, RID_FLOAT},
     {"__typeof", TYPEOF, NORID},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"__typeof__", TYPEOF, NORID},
     {"typeof", TYPEOF, NORID},
     {"typedef", SCSPEC, RID_TYPEDEF},
@@ -104,37 +104,37 @@ static struct resword wordlist[] =
     {"break", BREAK, NORID},
     {"default", DEFAULT, NORID},
     {"__volatile", TYPE_QUAL, RID_VOLATILE},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"@defs", DEFS, NORID},
     {"id", OBJECTNAME, RID_ID},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"__signed", TYPESPEC, RID_SIGNED},
     {"bycopy", TYPE_QUAL, RID_BYCOPY},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"extern", SCSPEC, RID_EXTERN},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"in", TYPE_QUAL, RID_IN},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"@compatibility_alias", ALIAS, NORID},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"@private", PRIVATE, NORID},
     {"@selector", SELECTOR, NORID},
     {"register", SCSPEC, RID_REGISTER},
     {"__label__", LABEL, NORID},
-    {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"enum", ENUM, NORID},
     {"return", RETURN, NORID},
-    {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"signed", TYPESPEC, RID_SIGNED},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"const", TYPE_QUAL, RID_CONST},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"inline", SCSPEC, RID_INLINE},
     {"__real", REALPART, NORID},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"void", TYPESPEC, RID_VOID},
     {"continue", CONTINUE, NORID},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"@encode", ENCODE, NORID},
     {"auto", SCSPEC, RID_AUTO},
     {"__asm__", ASM_KEYWORD, NORID},
@@ -149,36 +149,36 @@ static struct resword wordlist[] =
     {"__attribute", ATTRIBUTE, NORID},
     {"@class", CLASS, NORID},
     {"__asm", ASM_KEYWORD, NORID},
-    {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"@implementation", IMPLEMENTATION, NORID},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"union", UNION, NORID},
-    {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"@public", PUBLIC, NORID},
     {"asm", ASM_KEYWORD, NORID},
-    {"", 0, 0},
+    {"", 0, RID_UNUSED},
     {"@protocol", PROTOCOL, NORID},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"@end", END, NORID},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"static", SCSPEC, RID_STATIC},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"long", TYPESPEC, RID_LONG},
-    {"", 0, 0}, {"", 0, 0}, {"", 0, 0},
+    {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED}, {"", 0, RID_UNUSED},
     {"char", TYPESPEC, RID_CHAR}
   };
 
 
 static inline struct resword *
-is_reserved_word (register char *str, register unsigned int len)
+is_reserved_word (const char *str, unsigned int len)
 {
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register int key = hash (str, len);
+      int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE && key >= 0)
         {
-          register char *s = wordlist[key].name;
+          const char *s = wordlist[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
             return &wordlist[key];

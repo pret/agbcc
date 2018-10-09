@@ -101,13 +101,13 @@ rtx get_label_from_map(struct inline_remap *map, int i)
    Nonzero means value is a warning message with a single %s
    for the function's name.  */
 
-char *function_cannot_inline_p(register tree fndecl)
+const char *function_cannot_inline_p(tree fndecl)
 {
-    register rtx insn;
+    rtx insn;
     tree last = tree_last(TYPE_ARG_TYPES(TREE_TYPE(fndecl)));
     int max_insns = INTEGRATE_THRESHOLD(fndecl);
-    register int ninsns = 0;
-    register tree parms;
+    int ninsns = 0;
+    tree parms;
     rtx result;
 
     /* No inlines with varargs.  */
@@ -126,18 +126,6 @@ char *function_cannot_inline_p(register tree fndecl)
     /* If its not even close, don't even look.  */
     if (!DECL_INLINE(fndecl) && get_max_uid() > 3 * max_insns)
         return "function too large to be inline";
-
-#if 0
-  /* Don't inline functions which do not specify a function prototype and
-     have BLKmode argument or take the address of a parameter.  */
-  for (parms = DECL_ARGUMENTS (fndecl); parms; parms = TREE_CHAIN (parms))
-    {
-      if (TYPE_MODE (TREE_TYPE (parms)) == BLKmode)
-	TREE_ADDRESSABLE (parms) = 1;
-      if (last == NULL_TREE && TREE_ADDRESSABLE (parms))
-	return "no prototype, and parameter address used; cannot be inline";
-    }
-#endif
 
     /* We can't inline functions that return structures
        the old-fashioned PCC way, copying into a static block.  */
@@ -297,15 +285,15 @@ static rtx initialize_for_inline(
                later in compilation won't affect this arg_vector.
                Virtual register instantiation can screw the address
                of the rtl.  */
-            rtx new = copy_rtx(p);
+            rtx copy = copy_rtx(p);
 
             /* Don't leave the old copy anywhere in this decl.  */
             if (DECL_RTL(parms) == DECL_INCOMING_RTL(parms)
                 || (GET_CODE(DECL_RTL(parms)) == MEM && GET_CODE(DECL_INCOMING_RTL(parms)) == MEM
                        && (XEXP(DECL_RTL(parms), 0) == XEXP(DECL_INCOMING_RTL(parms), 0))))
-                DECL_INCOMING_RTL(parms) = new, copied_incoming = 1;
+                DECL_INCOMING_RTL(parms) = copy, copied_incoming = 1;
 
-            DECL_RTL(parms) = new;
+            DECL_RTL(parms) = copy;
         }
 
         RTVEC_ELT(arg_vector, i) = p;
@@ -390,16 +378,14 @@ static void finish_inline(tree fndecl, rtx head)
 /* Adjust the BLOCK_END_NOTE pointers in a given copied DECL tree so that
    they all point to the new (copied) rtxs.  */
 
-static void adjust_copied_decl_tree(register tree block)
+static void adjust_copied_decl_tree(tree block)
 {
-    register tree subblock;
-    register rtx original_end;
-
-    original_end = BLOCK_END_NOTE(block);
+    tree subblock;
+    rtx original_end = BLOCK_END_NOTE(block);
     if (original_end)
     {
-        BLOCK_END_NOTE(block) = (rtx)NOTE_SOURCE_FILE(original_end);
-        NOTE_SOURCE_FILE(original_end) = 0;
+        BLOCK_END_NOTE(block) = NOTE_LIVE_INFO(original_end);
+        NOTE_SOURCE_FILE(original_end) = NULL;
     }
 
     /* Process all subblocks.  */
@@ -431,7 +417,7 @@ void save_for_inline_copying(tree fndecl)
     int max_reg;
     int max_uid;
     rtx first_nonparm_insn;
-    char *new, *new1;
+    char *new0, *new1;
     rtx *new_parm_reg_stack_loc;
     rtx *new2;
 
@@ -523,7 +509,7 @@ void save_for_inline_copying(tree fndecl)
 
     regno_reg_rtx = reg_map;
 
-    /* Put copies of all the virtual register rtx into the new regno_reg_rtx.  */
+    /* Put copies of all the virtual rtx into the new regno_reg_rtx.  */
     init_virtual_regs();
 
     /* Likewise each label rtx must have a unique rtx as its copy.  */
@@ -681,12 +667,12 @@ void save_for_inline_copying(tree fndecl)
     finish_inline(fndecl, head);
 
     /* Make new versions of the register tables.  */
-    new = (char *)savealloc(regno_pointer_flag_length);
-    copy_memory(regno_pointer_flag, new, regno_pointer_flag_length);
+    new0 = (char *)savealloc(regno_pointer_flag_length);
+    copy_memory(regno_pointer_flag, new0, regno_pointer_flag_length);
     new1 = (char *)savealloc(regno_pointer_flag_length);
     copy_memory(regno_pointer_align, new1, regno_pointer_flag_length);
 
-    regno_pointer_flag = new;
+    regno_pointer_flag = new0;
     regno_pointer_align = new1;
 
     set_new_first_and_last_insn(first_insn, last_insn);
@@ -721,7 +707,7 @@ static tree copy_and_set_decl_abstract_origin(tree node)
 static tree copy_decl_list(tree list)
 {
     tree head;
-    register tree prev, next;
+    tree prev, next;
 
     if (list == 0)
         return 0;
@@ -730,7 +716,7 @@ static tree copy_decl_list(tree list)
     next = TREE_CHAIN(list);
     while (next)
     {
-        register tree copy;
+        tree copy;
 
         copy = copy_and_set_decl_abstract_origin(next);
         TREE_CHAIN(prev) = copy;
@@ -902,8 +888,8 @@ again:
         && CONSTANT_POOL_ADDRESS_P(XEXP(x, 0)))
     {
         enum machine_mode const_mode = get_pool_mode(XEXP(x, 0));
-        rtx new = gen_rtx_CONST(const_mode, get_pool_constant(XEXP(x, 0)));
-        RTX_INTEGRATED_P(new) = 1;
+        rtx tmp = gen_rtx_CONST(const_mode, get_pool_constant(XEXP(x, 0)));
+        RTX_INTEGRATED_P(tmp) = 1;
 
         /* If the MEM was in a different mode than the constant (perhaps we
        were only looking at the low-order part), surround it with a
@@ -911,11 +897,11 @@ again:
 
         if (GET_MODE(x) != const_mode)
         {
-            new = gen_rtx_SUBREG(GET_MODE(x), new, 0);
-            RTX_INTEGRATED_P(new) = 1;
+            tmp = gen_rtx_SUBREG(GET_MODE(x), tmp, 0);
+            RTX_INTEGRATED_P(tmp) = 1;
         }
 
-        *px = new;
+        *px = tmp;
         save_constants(&XEXP(*px, 0));
     }
     else if (GET_CODE(x) == SYMBOL_REF && CONSTANT_POOL_ADDRESS_P(x))
@@ -927,7 +913,7 @@ again:
 
     else
     {
-        char *fmt = GET_RTX_FORMAT(GET_CODE(x));
+        const char *fmt = GET_RTX_FORMAT(GET_CODE(x));
         int len = GET_RTX_LENGTH(GET_CODE(x));
 
         for (i = len - 1; i >= 0; i--)
@@ -979,11 +965,11 @@ static void note_modified_parmregs(rtx reg, rtx x ATTRIBUTE_UNUSED)
 
 static rtx copy_for_inline(rtx orig)
 {
-    register rtx x = orig;
-    register rtx new;
-    register int i;
-    register enum rtx_code code;
-    register char *format_ptr;
+    rtx x = orig;
+    rtx copy;
+    int i;
+    enum rtx_code code;
+    const char *format_ptr;
 
     if (x == 0)
         return x;
@@ -1010,7 +996,7 @@ static rtx copy_for_inline(rtx orig)
        it correctly.  Using the old CONST_DOUBLE_MEM data is wrong.  */
         if (GET_MODE_CLASS(GET_MODE(x)) == MODE_FLOAT)
         {
-            REAL_VALUE_TYPE d;
+            double d;
 
             REAL_VALUE_FROM_CONST_DOUBLE(d, x);
             return CONST_DOUBLE_FROM_REAL_VALUE(d, GET_MODE(x));
@@ -1028,10 +1014,10 @@ static rtx copy_for_inline(rtx orig)
         /* Get constant pool entry, but access in different mode.  */
         if (RTX_INTEGRATED_P(x))
         {
-            new = force_const_mem(GET_MODE(SUBREG_REG(x)), copy_for_inline(XEXP(SUBREG_REG(x), 0)));
+            copy = force_const_mem(GET_MODE(SUBREG_REG(x)), copy_for_inline(XEXP(SUBREG_REG(x), 0)));
 
-            PUT_MODE(new, GET_MODE(x));
-            return validize_mem(new);
+            PUT_MODE(copy, GET_MODE(x));
+            return validize_mem(copy);
         }
         break;
 
@@ -1041,15 +1027,10 @@ static rtx copy_for_inline(rtx orig)
         if (!RTX_INTEGRATED_P(x))
             abort();
 
-        new = force_const_mem(GET_MODE(XEXP(x, 0)), copy_for_inline(XEXP(XEXP(x, 0), 0)));
-        new = XEXP(new, 0);
+        copy = force_const_mem(GET_MODE(XEXP(x, 0)), copy_for_inline(XEXP(XEXP(x, 0), 0)));
+        copy = XEXP(copy, 0);
 
-#ifdef POINTERS_EXTEND_UNSIGNED
-        if (GET_MODE(new) != GET_MODE(x))
-            new = convert_memory_address(GET_MODE(x), new);
-#endif
-
-        return new;
+        return copy;
 
     case ASM_OPERANDS:
         /* If a single asm insn contains multiple output operands
@@ -1171,7 +1152,7 @@ static rtx copy_for_inline(rtx orig)
         case 'E':
             if (XVEC(x, i) != NULL && XVECLEN(x, i) != 0)
             {
-                register int j;
+                int j;
 
                 XVEC(x, i) = gen_rtvec_vv(XVECLEN(x, i), XVEC(x, i)->elem);
                 for (j = 0; j < XVECLEN(x, i); j++)
@@ -1264,7 +1245,7 @@ rtx expand_inline_function(
     rtx *arg_vals;
     rtx insn;
     int max_regno;
-    register int i;
+    int i;
     int min_labelno = FIRST_LABELNO(header);
     int max_labelno = LAST_LABELNO(header);
     int nargs;
@@ -1318,7 +1299,7 @@ rtx expand_inline_function(
     /* Extra arguments are valid, but will be ignored below, so we must
        evaluate them here for side-effects.  */
     for (; actual; actual = TREE_CHAIN(actual))
-        expand_expr(TREE_VALUE(actual), const0_rtx, TYPE_MODE(TREE_TYPE(TREE_VALUE(actual))), 0);
+        expand_expr(TREE_VALUE(actual), const0_rtx, TYPE_MODE(TREE_TYPE(TREE_VALUE(actual))), EXPAND_NORMAL);
 
     /* Make a binding contour to keep inline cleanups called at
        outer function-scope level from looking like they are shadowing
@@ -1980,7 +1961,7 @@ rtx expand_inline_function(
     emit_line_note(input_filename, lineno);
 
     /* If the function returns a BLKmode object in a register, copy it
-       out of the temp register into a BLKmode memory object. */
+       out of the temp into a BLKmode memory object. */
     if (TYPE_MODE(TREE_TYPE(TREE_TYPE(fndecl))) == BLKmode
         && !aggregate_value_p(TREE_TYPE(TREE_TYPE(fndecl))))
         target = copy_blkmode_from_reg(0, target, TREE_TYPE(TREE_TYPE(fndecl)));
@@ -2004,12 +1985,12 @@ rtx expand_inline_function(
 
 static void integrate_parm_decls(tree args, struct inline_remap *map, rtvec arg_vector)
 {
-    register tree tail;
-    register int i;
+    tree tail;
+    int i;
 
     for (tail = args, i = 0; tail; tail = TREE_CHAIN(tail), i++)
     {
-        register tree decl = build_decl(VAR_DECL, DECL_NAME(tail), TREE_TYPE(tail));
+        tree decl = build_decl(VAR_DECL, DECL_NAME(tail), TREE_TYPE(tail));
         rtx new_decl_rtl = copy_rtx_and_substitute(RTVEC_ELT(arg_vector, i), map);
 
         DECL_ARG_TYPE(decl) = DECL_ARG_TYPE(tail);
@@ -2116,13 +2097,13 @@ static void save_constants_in_decl_trees(tree let)
    Handle constants that need to be placed in the constant pool by
    calling `force_const_mem'.  */
 
-rtx copy_rtx_and_substitute(register rtx orig, struct inline_remap *map)
+rtx copy_rtx_and_substitute(rtx orig, struct inline_remap *map)
 {
-    register rtx copy, temp;
-    register int i, j;
-    register RTX_CODE code;
-    register enum machine_mode mode;
-    register char *format_ptr;
+    rtx copy, temp;
+    int i, j;
+    RTX_CODE code;
+    enum machine_mode mode;
+    const char *format_ptr;
     int regno;
 
     if (orig == 0)
@@ -2365,7 +2346,7 @@ rtx copy_rtx_and_substitute(register rtx orig, struct inline_remap *map)
        duplicate of a CONST_DOUBLE we have already seen.  */
         if (GET_MODE_CLASS(GET_MODE(orig)) == MODE_FLOAT)
         {
-            REAL_VALUE_TYPE d;
+            double d;
 
             REAL_VALUE_FROM_CONST_DOUBLE(d, orig);
             return CONST_DOUBLE_FROM_REAL_VALUE(d, GET_MODE(orig));
@@ -2424,11 +2405,6 @@ rtx copy_rtx_and_substitute(register rtx orig, struct inline_remap *map)
 #endif
 
         temp = XEXP(temp, 0);
-
-#ifdef POINTERS_EXTEND_UNSIGNED
-        if (GET_MODE(temp) != GET_MODE(orig))
-            temp = convert_memory_address(GET_MODE(orig), temp);
-#endif
 
         return temp;
 
@@ -2639,12 +2615,12 @@ void try_constants(rtx insn, struct inline_remap *map)
 static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
 {
     rtx x = *loc;
-    register int i;
-    register enum rtx_code code;
-    register char *format_ptr;
+    int i;
+    enum rtx_code code;
+    const char *format_ptr;
     int num_changes = num_validated_changes();
-    rtx new = 0;
-    enum machine_mode op0_mode = 0;
+    rtx sub = 0;
+    enum machine_mode op0_mode = (enum machine_mode)0;
 
     code = GET_CODE(x);
 
@@ -2695,7 +2671,7 @@ static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
         if (GET_CODE(SUBREG_REG(x)) == REG)
         {
             rtx inner = SUBREG_REG(x);
-            rtx new = 0;
+            rtx newreg = 0;
 
             /* We can't call subst_constants on &SUBREG_REG (x) because any
                constant or SUBREG wouldn't be valid inside our SUBEG.  Instead,
@@ -2707,14 +2683,14 @@ static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
             if (GET_MODE_CLASS(GET_MODE(x)) == MODE_INT
                 && GET_MODE_SIZE(GET_MODE(x)) == UNITS_PER_WORD
                 && GET_MODE(SUBREG_REG(x)) != VOIDmode)
-                new = operand_subword(inner, SUBREG_WORD(x), 0, GET_MODE(SUBREG_REG(x)));
+                newreg = operand_subword(inner, SUBREG_WORD(x), 0, GET_MODE(SUBREG_REG(x)));
 
             cancel_changes(num_changes);
-            if (new == 0 && subreg_lowpart_p(x))
-                new = gen_lowpart_common(GET_MODE(x), inner);
+            if (newreg == 0 && subreg_lowpart_p(x))
+                newreg = gen_lowpart_common(GET_MODE(x), inner);
 
-            if (new)
-                validate_change(insn, loc, new, 1);
+            if (newreg)
+                validate_change(insn, loc, newreg, 1);
 
             return;
         }
@@ -2849,7 +2825,7 @@ static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
     switch (GET_RTX_CLASS(code))
     {
     case '1':
-        new = simplify_unary_operation(code, GET_MODE(x), XEXP(x, 0), op0_mode);
+        sub = simplify_unary_operation(code, GET_MODE(x), XEXP(x, 0), op0_mode);
         break;
 
     case '<':
@@ -2857,10 +2833,10 @@ static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
         enum machine_mode op_mode = GET_MODE(XEXP(x, 0));
         if (op_mode == VOIDmode)
             op_mode = GET_MODE(XEXP(x, 1));
-        new = simplify_relational_operation(code, op_mode, XEXP(x, 0), XEXP(x, 1));
+        sub = simplify_relational_operation(code, op_mode, XEXP(x, 0), XEXP(x, 1));
 #ifdef FLOAT_STORE_FLAG_VALUE
-        if (new != 0 && GET_MODE_CLASS(GET_MODE(x)) == MODE_FLOAT)
-            new = ((new == const0_rtx)
+        if (sub != 0 && GET_MODE_CLASS(GET_MODE(x)) == MODE_FLOAT)
+            sub = ((sub == const0_rtx)
                     ? CONST0_RTX(GET_MODE(x))
                     : CONST_DOUBLE_FROM_REAL_VALUE(FLOAT_STORE_FLAG_VALUE, GET_MODE(x)));
 #endif
@@ -2869,18 +2845,18 @@ static void subst_constants(rtx *loc, rtx insn, struct inline_remap *map)
 
     case '2':
     case 'c':
-        new = simplify_binary_operation(code, GET_MODE(x), XEXP(x, 0), XEXP(x, 1));
+        sub = simplify_binary_operation(code, GET_MODE(x), XEXP(x, 0), XEXP(x, 1));
         break;
 
     case 'b':
     case '3':
-        new = simplify_ternary_operation(
+        sub = simplify_ternary_operation(
             code, GET_MODE(x), op0_mode, XEXP(x, 0), XEXP(x, 1), XEXP(x, 2));
         break;
     }
 
-    if (new)
-        validate_change(insn, loc, new, 1);
+    if (sub)
+        validate_change(insn, loc, sub, 1);
 }
 
 /* Show that register modified no longer contain known constants.  We are
@@ -2928,7 +2904,7 @@ static void restore_constants(rtx *px)
 {
     rtx x = *px;
     int i, j;
-    char *fmt;
+    const char *fmt;
 
     if (x == 0)
         return;
@@ -2939,7 +2915,7 @@ static void restore_constants(rtx *px)
        it correctly.  Using the old CONST_DOUBLE_MEM data is wrong.  */
         if (GET_MODE_CLASS(GET_MODE(x)) == MODE_FLOAT)
         {
-            REAL_VALUE_TYPE d;
+            double d;
 
             REAL_VALUE_FROM_CONST_DOUBLE(d, x);
             *px = CONST_DOUBLE_FROM_REAL_VALUE(d, GET_MODE(x));
@@ -2956,23 +2932,18 @@ static void restore_constants(rtx *px)
     else if (RTX_INTEGRATED_P(x) && GET_CODE(x) == SUBREG)
     {
         /* This must be (subreg/i:M1 (const/i:M2 ...) 0).  */
-        rtx new = XEXP(SUBREG_REG(x), 0);
+        rtx newrtx = XEXP(SUBREG_REG(x), 0);
 
-        restore_constants(&new);
-        new = force_const_mem(GET_MODE(SUBREG_REG(x)), new);
-        PUT_MODE(new, GET_MODE(x));
-        *px = validize_mem(new);
+        restore_constants(&newrtx);
+        newrtx = force_const_mem(GET_MODE(SUBREG_REG(x)), newrtx);
+        PUT_MODE(newrtx, GET_MODE(x));
+        *px = validize_mem(newrtx);
     }
     else if (RTX_INTEGRATED_P(x) && GET_CODE(x) == ADDRESS)
     {
-        rtx new = XEXP(force_const_mem(GET_MODE(XEXP(x, 0)), XEXP(XEXP(x, 0), 0)), 0);
+        rtx tmp = XEXP(force_const_mem(GET_MODE(XEXP(x, 0)), XEXP(XEXP(x, 0), 0)), 0);
 
-#ifdef POINTERS_EXTEND_UNSIGNED
-        if (GET_MODE(new) != GET_MODE(x))
-            new = convert_memory_address(GET_MODE(x), new);
-#endif
-
-        *px = new;
+        *px = tmp;
     }
     else
     {
@@ -3004,14 +2975,14 @@ static void restore_constants(rtx *px)
    still NULL, set *their* DECL_ABSTRACT_ORIGIN or BLOCK_ABSTRACT_ORIGIN
    values to point to themselves.  */
 
-static void set_block_origin_self(register tree stmt)
+static void set_block_origin_self(tree stmt)
 {
     if (BLOCK_ABSTRACT_ORIGIN(stmt) == NULL_TREE)
     {
         BLOCK_ABSTRACT_ORIGIN(stmt) = stmt;
 
         {
-            register tree local_decl;
+            tree local_decl;
 
             for (local_decl = BLOCK_VARS(stmt); local_decl != NULL_TREE;
                  local_decl = TREE_CHAIN(local_decl))
@@ -3019,7 +2990,7 @@ static void set_block_origin_self(register tree stmt)
         }
 
         {
-            register tree subblock;
+            tree subblock;
 
             for (subblock = BLOCK_SUBBLOCKS(stmt); subblock != NULL_TREE;
                  subblock = BLOCK_CHAIN(subblock))
@@ -3039,14 +3010,14 @@ static void set_block_origin_self(register tree stmt)
    set *their* DECL_ABSTRACT_ORIGIN or BLOCK_ABSTRACT_ORIGIN values to
    point to themselves.  */
 
-static void set_decl_origin_self(register tree decl)
+static void set_decl_origin_self(tree decl)
 {
     if (DECL_ABSTRACT_ORIGIN(decl) == NULL_TREE)
     {
         DECL_ABSTRACT_ORIGIN(decl) = decl;
         if (TREE_CODE(decl) == FUNCTION_DECL)
         {
-            register tree arg;
+            tree arg;
 
             for (arg = DECL_ARGUMENTS(decl); arg; arg = TREE_CHAIN(arg))
                 DECL_ABSTRACT_ORIGIN(arg) = arg;
@@ -3061,10 +3032,10 @@ static void set_decl_origin_self(register tree decl)
    the given block, and for all local decls and all local sub-blocks
    (recursively) which are contained therein.  */
 
-static void set_block_abstract_flags(register tree stmt, register int setting)
+static void set_block_abstract_flags(tree stmt, int setting)
 {
-    register tree local_decl;
-    register tree subblock;
+    tree local_decl;
+    tree subblock;
 
     BLOCK_ABSTRACT(stmt) = setting;
 
@@ -3082,12 +3053,12 @@ static void set_block_abstract_flags(register tree stmt, register int setting)
    set the abstract flags for all of the parameters, local vars, local
    blocks and sub-blocks (recursively) to the same setting.  */
 
-void set_decl_abstract_flags(register tree decl, register int setting)
+void set_decl_abstract_flags(tree decl, int setting)
 {
     DECL_ABSTRACT(decl) = setting;
     if (TREE_CODE(decl) == FUNCTION_DECL)
     {
-        register tree arg;
+        tree arg;
 
         for (arg = DECL_ARGUMENTS(decl); arg; arg = TREE_CHAIN(arg))
             DECL_ABSTRACT(arg) = setting;

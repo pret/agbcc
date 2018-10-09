@@ -112,7 +112,7 @@ void forget_protocol_qualifiers(void)
             wordlist[i].name = "";
 }
 
-char *init_parse(char *filename)
+const char *init_parse(const char *filename)
 {
     /* Open input file.  */
     if (filename == 0 || !strcmp(filename, "-"))
@@ -264,7 +264,7 @@ static int whitespace_cr(int c)
 /* If C is not whitespace, return C.
    Otherwise skip whitespace and return first nonwhite char read.  */
 
-static int skip_white_space(register int c)
+static int skip_white_space(int c)
 {
     for (;;)
     {
@@ -318,7 +318,7 @@ void position_after_white_space(void)
    Moreover, we don't get passed a character to start with.  */
 static int skip_white_space_on_line(void)
 {
-    register int c;
+    int c;
 
     while (1)
     {
@@ -375,8 +375,8 @@ void check_line_directive(void)
 
 int check_newline(void)
 {
-    register int c;
-    register int token;
+    int c;
+    int token;
 
     lineno++;
 
@@ -493,9 +493,9 @@ linenum:
             error("invalid #line");
             goto skipline;
         }
-
-        input_filename = (char *)permalloc(TREE_STRING_LENGTH(yylval.ttype) + 1);
-        strcpy(input_filename, TREE_STRING_POINTER(yylval.ttype));
+        char *tmp  = (char *)permalloc(TREE_STRING_LENGTH(yylval.ttype) + 1);
+        strcpy(tmp, TREE_STRING_POINTER(yylval.ttype));
+        input_filename = tmp;
         lineno = l;
 
         /* Each change of file name
@@ -616,9 +616,9 @@ skipline:
 
 static int readescape(int *ignore_ptr)
 {
-    register int c = GETC();
-    register int code;
-    register unsigned count;
+    int c = GETC();
+    int code;
+    unsigned count;
     unsigned firstdig = 0;
     int nonnull;
 
@@ -753,7 +753,7 @@ static int readescape(int *ignore_ptr)
     return c;
 }
 
-void yyerror(char *string)
+void yyerror(const char *string)
 {
     char buf[200];
 
@@ -799,9 +799,9 @@ struct try_type type_sequence[] =
 
 int yylex(void)
 {
-    register int c;
-    register char *p;
-    register int value;
+    int c;
+    char *p;
+    int value;
     int wide_flag = 0;
 
     c = GETC();
@@ -847,7 +847,7 @@ found_nonwhite:
     case 'L':
         /* Capital L may start a wide-string or wide-character constant.  */
         {
-            register int c = GETC();
+            int c = GETC();
             if (c == '\'')
             {
                 wide_flag = 1;
@@ -938,7 +938,7 @@ found_nonwhite:
         /* Try to recognize a keyword.  Uses minimum-perfect hash function */
 
         {
-            register struct resword *ptr;
+            struct resword *ptr;
 
             if ((ptr = is_reserved_word(token_buffer, p - token_buffer)))
             {
@@ -1185,7 +1185,7 @@ found_nonwhite:
             tree type = double_type_node;
             int imag = 0;
             int conversion_errno = 0;
-            REAL_VALUE_TYPE value;
+            double value;
             jmp_buf handler;
 
             /* Read explicit exponent if any, and put it in tokenbuf.  */
@@ -1529,8 +1529,8 @@ found_nonwhite:
     case '\'':
     char_constant:
     {
-        register int result = 0;
-        register int num_chars = 0;
+        int result = 0;
+        int num_chars = 0;
         int chars_seen = 0;
         unsigned width = TYPE_PRECISION(char_type_node);
         int max_chars;
@@ -1729,7 +1729,7 @@ found_nonwhite:
     case '!':
     case '=':
     {
-        register int c1;
+        int c1;
 
     combine:
 

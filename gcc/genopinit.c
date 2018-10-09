@@ -128,7 +128,7 @@ static void gen_insn(rtx);
 
 static void gen_insn(rtx insn)
 {
-    char *name = XSTR(insn, 0);
+    const char *name = XSTR(insn, 0);
     int m1 = 0, m2 = 0, op = 0;
     size_t pindex;
     int i;
@@ -280,7 +280,7 @@ static void gen_insn(rtx insn)
 
 void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
@@ -290,7 +290,7 @@ void *xmalloc(size_t size)
 
 void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -326,7 +326,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
 

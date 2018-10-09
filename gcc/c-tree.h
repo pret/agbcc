@@ -212,9 +212,6 @@ extern tree double_ftype_double;
 extern tree double_ftype_double_double;
 extern tree double_type_node;
 extern tree float_type_node;
-#if 32 >= 64
-extern tree intTI_type_node;
-#endif
 extern tree intDI_type_node;
 extern tree intHI_type_node;
 extern tree intQI_type_node;
@@ -244,9 +241,6 @@ extern tree signed_wchar_type_node;
 extern tree string_ftype_ptr_ptr;
 extern tree string_type_node;
 extern tree unsigned_char_type_node;
-#if 32 >= 64
-extern tree unsigned_intTI_type_node;
-#endif
 extern tree unsigned_intDI_type_node;
 extern tree unsigned_intHI_type_node;
 extern tree unsigned_intQI_type_node;
@@ -264,7 +258,7 @@ extern tree boolean_false_node;
 
 extern tree build_enumerator                    (tree, tree);
 /* Declare a predefined function.  Return the declaration.  */
-extern tree builtin_function                    (char *, tree, enum built_in_function function_, char *);
+extern tree builtin_function                    (const char *, tree, enum built_in_function function_, const char *);
 /* Add qualifiers to a type, in the fashion for C.  */
 extern tree c_build_qualified_type              (tree, int);
 #define c_build_type_variant(TYPE, CONST_P, VOLATILE_P)		  \
@@ -277,7 +271,7 @@ extern tree check_identifier                    (tree, tree);
 extern void clear_parm_order                    (void);
 extern int  complete_array_type                 (tree, tree, int);
 extern void declare_parm_level                  (int);
-extern tree define_label                        (char *, int, tree);
+extern tree define_label                        (const char *, int, tree);
 extern void delete_block                        (tree);
 extern void finish_decl                         (tree, tree, tree);
 extern void finish_decl_top_level               (tree, tree, tree);
@@ -288,7 +282,7 @@ extern tree get_parm_info                       (int);
 extern tree getdecls                            (void);
 extern tree gettags                             (void);
 extern int  global_bindings_p                   (void);
-extern tree grokfield                           (char *, int, tree, tree, tree);
+extern tree grokfield                           (const char *, int, tree, tree, tree);
 extern tree groktypename                        (tree);
 extern tree implicitly_declare                  (tree);
 extern int  in_parm_level_p                     (void);
@@ -343,7 +337,7 @@ extern tree c_alignof				(tree);
 extern tree c_alignof_expr			(tree);
 extern tree default_conversion                  (tree);
 extern tree build_component_ref                 (tree, tree);
-extern tree build_indirect_ref                  (tree, char *);
+extern tree build_indirect_ref                  (tree, const char *);
 extern tree build_array_ref                     (tree, tree);
 extern tree build_function_call                 (tree, tree);
 extern tree parser_build_binary_op              (enum tree_code,
@@ -353,8 +347,8 @@ extern tree build_binary_op                     (enum tree_code,
 extern tree build_unary_op                      (enum tree_code,
 						       tree, int);
 extern int lvalue_p				(tree);
-extern int lvalue_or_else			(tree, char *);
-extern void readonly_warning			(tree, char *);
+extern int lvalue_or_else			(tree, const char *);
+extern void readonly_warning			(tree, const char *);
 extern int mark_addressable			(tree);
 extern tree build_conditional_expr              (tree, tree, tree);
 extern tree build_compound_expr                 (tree);
@@ -363,10 +357,10 @@ extern tree build_modify_expr                   (tree, enum tree_code,
 						       tree);
 extern tree initializer_constant_valid_p	(tree, tree);
 extern void store_init_value                    (tree, tree);
-extern void error_init				(char *, char *,
-						       char *);
-extern void pedwarn_init			(char *, char *,
-						       char *);
+extern void error_init				(const char *, const char *,
+						       const char *);
+extern void pedwarn_init			(const char *, const char *,
+						       const char *);
 extern void start_init				(tree, tree, int);
 extern void finish_init				(void);
 extern void really_start_incremental_init	(tree);
@@ -376,7 +370,7 @@ extern void set_init_index			(tree, tree);
 extern void set_init_label			(tree);
 extern void process_init_element		(tree);
 extern void c_expand_asm_operands		(tree, tree, tree, tree,
-						       int, char *, int);
+						       int, const char *, int);
 extern void c_expand_return			(tree);
 extern tree c_expand_start_case                 (tree);
 

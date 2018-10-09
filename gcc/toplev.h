@@ -26,55 +26,55 @@ Boston, MA 02111-1307, USA.  */
 union tree_node;
 struct rtx_def;
 
-extern int count_error();
-extern void strip_off_ending();
-extern void print_time();
-extern void debug_start_source_file();
-extern void debug_end_source_file();
-extern void debug_define();
-extern void debug_undef();
-extern void fatal			(char *, ...)
+extern int count_error(int);
+extern void strip_off_ending(char *, int);
+extern void print_time(const char *, int);
+extern void debug_start_source_file(const char *);
+extern void debug_end_source_file(unsigned);
+extern void debug_define(unsigned, char *);
+extern void debug_undef(unsigned, char *);
+extern void fatal			(const char *, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-extern void fatal_io_error		(char *) ATTRIBUTE_NORETURN;
-extern void pfatal_with_name		(char *) ATTRIBUTE_NORETURN;
-extern void fatal_insn_not_found	(struct rtx_def *)
+extern void fatal_io_error		(const char *) ATTRIBUTE_NORETURN;
+extern void pfatal_with_name		(const char *) ATTRIBUTE_NORETURN;
+extern void fatal_insn_not_found	(rtx)
   ATTRIBUTE_NORETURN;
-extern void fatal_insn			(char *, struct rtx_def *)
+extern void fatal_insn			(const char *, rtx)
   ATTRIBUTE_NORETURN;
-extern void warning			(char *, ...)
+extern void warning			(const char *, ...)
 						ATTRIBUTE_PRINTF_1;
-extern void error			(char *, ...)
+extern void error			(const char *, ...)
 						ATTRIBUTE_PRINTF_1;
-extern void pedwarn			(char *, ...)
+extern void pedwarn			(const char *, ...)
 						ATTRIBUTE_PRINTF_1;
-extern void note			(char *, ...)
+extern void note			(const char *, ...)
 						ATTRIBUTE_PRINTF_1;
-extern void pedwarn_with_file_and_line	(char *, int, char *, ...)
+extern void pedwarn_with_file_and_line	(const char *, int, const char *, ...)
 						ATTRIBUTE_PRINTF_3;
-extern void warning_with_file_and_line	(char *, int, char *, ...)
+extern void warning_with_file_and_line	(const char *, int, const char *, ...)
 						ATTRIBUTE_PRINTF_3;
-extern void error_with_file_and_line	(char *, int, char *, ...)
+extern void error_with_file_and_line	(const char *, int, const char *, ...)
 						ATTRIBUTE_PRINTF_3;
-extern void note_with_file_and_line		(char *, int, char *, ...)
+extern void note_with_file_and_line		(const char *, int, const char *, ...)
 						ATTRIBUTE_PRINTF_3;
-extern void sorry			(char *s, ...)
+extern void sorry			(const char *s, ...)
 						ATTRIBUTE_PRINTF_1;
-extern void really_sorry		(char *s, ...)
+extern void really_sorry		(const char *s, ...)
   ATTRIBUTE_PRINTF_1 ATTRIBUTE_NORETURN;
-extern void default_print_error_function (char *);
-extern void report_error_function	(char *);
+extern void default_print_error_function (const char *);
+extern void report_error_function	(const char *);
 
-extern void rest_of_decl_compilation	(union tree_node *, char *, int, int);
-extern void rest_of_type_compilation	(union tree_node *, int);
-extern void rest_of_compilation		(union tree_node *);
-extern void pedwarn_with_decl		(union tree_node *, char *, ...);
-extern void warning_with_decl		(union tree_node *, char *, ...);
-extern void error_with_decl		(union tree_node *, char *, ...);
-extern void announce_function		(union tree_node *);
+extern void rest_of_decl_compilation	(tree, char *, int, int);
+extern void rest_of_type_compilation	(tree, int);
+extern void rest_of_compilation		(tree);
+extern void pedwarn_with_decl		(tree, const char *, ...);
+extern void warning_with_decl		(tree, const char *, ...);
+extern void error_with_decl		(tree, const char *, ...);
+extern void announce_function		(tree);
 
-extern void error_for_asm		(struct rtx_def *, char *, ...)
+extern void error_for_asm		(rtx, const char *, ...)
 						ATTRIBUTE_PRINTF_2;
-extern void warning_for_asm		(struct rtx_def *, char *, ...)
+extern void warning_for_asm		(rtx, const char *, ...)
 						ATTRIBUTE_PRINTF_2;
 extern void set_float_handler (jmp_buf);
 

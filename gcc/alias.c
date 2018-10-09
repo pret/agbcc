@@ -58,7 +58,7 @@ Boston, MA 02111-1307, USA.  */
    However, this is no actual entry for alias set zero.  It is an
    error to attempt to explicitly construct a subset of zero.  */
 
-typedef struct alias_set_entry
+typedef struct alias_set_entry_s
 {
     /* The alias set number, as stored in MEM_ALIAS_SET.  */
     int alias_set;
@@ -275,7 +275,7 @@ void record_alias_subset(int superset, int subset)
     {
         /* Create an entry for the SUPERSET, so that we have a place to
        attach the SUBSET.  */
-        superset_entry = (alias_set_entry)xmalloc(sizeof(struct alias_set_entry));
+        superset_entry = (alias_set_entry)xmalloc(sizeof(struct alias_set_entry_s));
         superset_entry->alias_set = superset;
         superset_entry->children = splay_tree_new(alias_set_compare, 0, 0);
         splay_tree_insert(alias_sets, (splay_tree_key)superset, (splay_tree_value)superset_entry);
@@ -296,7 +296,7 @@ void record_alias_subset(int superset, int subset)
 
 /* Inside SRC, the source of a SET, find a base address.  */
 
-static rtx find_base_value(register rtx src)
+static rtx find_base_value(rtx src)
 {
     switch (GET_CODE(src))
     {
@@ -423,7 +423,7 @@ static int unique_id;
 
 static void record_set(rtx dest, rtx set)
 {
-    register int regno;
+    int regno;
     rtx src;
 
     if (GET_CODE(dest) != REG)
@@ -539,11 +539,11 @@ static rtx canon_rtx(rtx x)
         rtx addr = canon_rtx(XEXP(x, 0));
         if (addr != XEXP(x, 0))
         {
-            rtx new = gen_rtx_MEM(GET_MODE(x), addr);
-            RTX_UNCHANGING_P(new) = RTX_UNCHANGING_P(x);
-            MEM_COPY_ATTRIBUTES(new, x);
-            MEM_ALIAS_SET(new) = MEM_ALIAS_SET(x);
-            x = new;
+            rtx tmp = gen_rtx_MEM(GET_MODE(x), addr);
+            RTX_UNCHANGING_P(tmp) = RTX_UNCHANGING_P(x);
+            MEM_COPY_ATTRIBUTES(tmp, x);
+            MEM_ALIAS_SET(tmp) = MEM_ALIAS_SET(x);
+            x = tmp;
         }
     }
     return x;
@@ -556,10 +556,10 @@ static rtx canon_rtx(rtx x)
 
 static int rtx_equal_for_memref_p(rtx x, rtx y)
 {
-    register int i;
-    register int j;
-    register enum rtx_code code;
-    register char *fmt;
+    int i;
+    int j;
+    enum rtx_code code;
+    const char *fmt;
 
     if (x == 0 && y == 0)
         return 1;
@@ -653,7 +653,7 @@ static int rtx_equal_for_memref_p(rtx x, rtx y)
     return 1;
 }
 
-static rtx find_base_term(register rtx x)
+static rtx find_base_term(rtx x)
 {
     switch (GET_CODE(x))
     {
@@ -825,7 +825,7 @@ rtx addr_side_effect_eval(rtx addr, int size, int n_refs)
    local variables had their addresses taken, but that's too hard now.  */
 
 
-static int memrefs_conflict_p(int xsize, register rtx x, int ysize, register rtx y, int32_t c)
+static int memrefs_conflict_p(int xsize, rtx x, int ysize, rtx y, int32_t c)
 {
     if (GET_CODE(x) == HIGH)
         x = XEXP(x, 0);
@@ -1068,7 +1068,7 @@ static int aliases_everything_p(rtx mem)
 
 int true_dependence(rtx mem, enum machine_mode mem_mode, rtx x, int (*varies)(rtx))
 {
-    register rtx x_addr, mem_addr;
+    rtx x_addr, mem_addr;
 
     if (MEM_VOLATILE_P(x) && MEM_VOLATILE_P(mem))
         return 1;
@@ -1161,7 +1161,7 @@ int anti_dependence(rtx mem, rtx x)
 
 /* Output dependence: X is written after store in MEM takes place.  */
 
-int output_dependence(register rtx mem, register rtx x)
+int output_dependence(rtx mem, rtx x)
 {
     return write_dependence_p(mem, x, /*writep=*/1);
 }
@@ -1171,7 +1171,7 @@ static HARD_REG_SET argument_registers;
 
 void init_alias_once(void)
 {
-    register int i;
+    int i;
 
 #ifndef OUTGOING_REGNO
 #define OUTGOING_REGNO(N) N
@@ -1190,9 +1190,9 @@ void init_alias_analysis(void)
 {
     int maxreg = max_reg_num();
     int changed, pass;
-    register int i;
-    register unsigned int ui;
-    register rtx insn;
+    int i;
+    unsigned int ui;
+    rtx insn;
 
     reg_known_value_size = maxreg;
 

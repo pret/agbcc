@@ -70,9 +70,9 @@ static void gen_peephole(rtx);
 
 static void walk_insn_part(rtx part, int recog_p, int non_pc_set_src)
 {
-    register int i, j;
-    register RTX_CODE code;
-    register char *format_ptr;
+    int i, j;
+    RTX_CODE code;
+    const char *format_ptr;
 
     if (part == 0)
         return;
@@ -251,9 +251,9 @@ static void gen_peephole(rtx peep)
         walk_insn_part(XVECEXP(peep, 0, i), 1, 0);
 }
 
-void *xmalloc(size) size_t size;
+void *xmalloc(size_t size)
 {
-    register void *val = malloc(size);
+    void *val = malloc(size);
 
     if (val == 0)
         fatal("virtual memory exhausted");
@@ -261,10 +261,9 @@ void *xmalloc(size) size_t size;
     return val;
 }
 
-void *xrealloc(old, size) void *old;
-size_t size;
+void *xrealloc(void *old, size_t size)
 {
-    register void *ptr;
+    void *ptr;
     if (old)
         ptr = realloc(old, size);
     else
@@ -300,7 +299,7 @@ int main(int argc, char **argv)
 {
     rtx desc;
     FILE *infile;
-    register int c;
+    int c;
 
     obstack_init(rtl_obstack);
 

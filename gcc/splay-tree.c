@@ -40,11 +40,11 @@ static int splay_tree_foreach_helper(splay_tree, splay_tree_node, splay_tree_for
 /* Help splay SP around KEY.  PARENT and GRANDPARENT are the parent
    and grandparent, respectively, of NODE.  */
 
-static splay_tree_node splay_tree_splay_helper(sp, key, node, parent, grandparent) splay_tree sp;
-splay_tree_key key;
-splay_tree_node *node;
-splay_tree_node *parent;
-splay_tree_node *grandparent;
+static splay_tree_node splay_tree_splay_helper(splay_tree sp,
+splay_tree_key key,
+splay_tree_node *node,
+splay_tree_node *parent,
+splay_tree_node *grandparent)
 {
     splay_tree_node *next;
     splay_tree_node n;
@@ -149,8 +149,7 @@ splay_tree_node *grandparent;
 
 /* Splay SP around KEY.  */
 
-static void splay_tree_splay(sp, key) splay_tree sp;
-splay_tree_key key;
+static void splay_tree_splay(splay_tree sp, splay_tree_key key)
 {
     if (sp->root == 0)
         return;
@@ -190,7 +189,7 @@ static int splay_tree_foreach_helper(
 splay_tree splay_tree_new(splay_tree_compare_fn compare_fn, splay_tree_delete_key_fn delete_key_fn,
     splay_tree_delete_value_fn delete_value_fn)
 {
-    splay_tree sp = (splay_tree)xmalloc(sizeof(struct splay_tree));
+    splay_tree sp = (splay_tree)xmalloc(sizeof(struct splay_tree_s));
     sp->root = 0;
     sp->comp = compare_fn;
     sp->delete_key = delete_key_fn;
@@ -203,9 +202,7 @@ splay_tree splay_tree_new(splay_tree_compare_fn compare_fn, splay_tree_delete_ke
    previous node with the indicated KEY exists, its data is replaced
    with the new value.  */
 
-void splay_tree_insert(sp, key, value) splay_tree sp;
-splay_tree_key key;
-splay_tree_value value;
+void splay_tree_insert(splay_tree sp, splay_tree_key key, splay_tree_value value)
 {
     int comparison;
 
@@ -227,7 +224,7 @@ splay_tree_value value;
         /* Create a new node, and insert it at the root.  */
         splay_tree_node node;
 
-        node = (splay_tree_node)xmalloc(sizeof(struct splay_tree_node));
+        node = (splay_tree_node)xmalloc(sizeof(struct splay_tree_node_s));
         node->key = key;
         node->value = value;
 
@@ -253,8 +250,7 @@ splay_tree_value value;
 /* Lookup KEY in SP, returning VALUE if present, and NULL
    otherwise.  */
 
-splay_tree_node splay_tree_lookup(sp, key) splay_tree sp;
-splay_tree_key key;
+splay_tree_node splay_tree_lookup(splay_tree sp, splay_tree_key key)
 {
     splay_tree_splay(sp, key);
 

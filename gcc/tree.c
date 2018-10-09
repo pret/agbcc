@@ -173,7 +173,7 @@ struct momentary_level *momentary_stack;
 
 #define DEFTREECODE(SYM, NAME, TYPE, LENGTH) TYPE,
 
-char tree_code_type[MAX_TREE_CODES] = {
+const char tree_code_type[MAX_TREE_CODES] = {
 #include "tree.def"
 };
 #undef DEFTREECODE
@@ -193,7 +193,7 @@ int tree_code_length[MAX_TREE_CODES] = {
    Used for printing out the tree and error messages.  */
 #define DEFTREECODE(SYM, NAME, TYPE, LEN) NAME,
 
-char *tree_code_name[MAX_TREE_CODES] = {
+const char *tree_code_name[MAX_TREE_CODES] = {
 #include "tree.def"
 };
 #undef DEFTREECODE
@@ -222,7 +222,7 @@ typedef enum
 int tree_node_counts[(int)all_kinds];
 int tree_node_sizes[(int)all_kinds];
 
-char *tree_node_kind_names[] = { "decls", "types", "blocks", "stmts", "refs", "exprs", "constants",
+const char *tree_node_kind_names[] = { "decls", "types", "blocks", "stmts", "refs", "exprs", "constants",
     "identifiers", "op_identifiers", "perm_tree_lists", "temp_tree_lists", "vecs", "random kinds",
     "lang_decl kinds", "lang_type kinds" };
 
@@ -245,13 +245,13 @@ int (*lang_get_alias_set)(tree);
 
 /* Here is how primitive or already-canonicalized types' hash
    codes are made.  */
-#define TYPE_HASH(TYPE) ((unsigned long)(TYPE)&0777777)
+#define TYPE_HASH(TYPE) ((uint32_t)(TYPE)&0777777)
 
 static void set_type_quals(tree, int);
 
-extern char *mode_name[];
+extern const char *mode_name[];
 
-void gcc_obstack_init();
+void gcc_obstack_init(struct obstack *);
 
 /* Init the principal obstacks.  */
 
@@ -293,8 +293,8 @@ void gcc_obstack_init(struct obstack *obstack)
 #ifndef OBSTACK_CHUNK_FREE
 #define OBSTACK_CHUNK_FREE free
 #endif
-    _obstack_begin(obstack, OBSTACK_CHUNK_SIZE, 0, (void *(*)())OBSTACK_CHUNK_ALLOC,
-        (void (*)())OBSTACK_CHUNK_FREE);
+    _obstack_begin(obstack, OBSTACK_CHUNK_SIZE, 0, (void *(*)(size_t))OBSTACK_CHUNK_ALLOC,
+        (void (*)(void *))OBSTACK_CHUNK_FREE);
 }
 
 /* Save all variables describing the current status into the structure *P.
@@ -621,7 +621,7 @@ void rtl_in_saveable_obstack(void)
    and return a pointer to them.
    In practice the current obstack is always the temporary one.  */
 
-char *oballoc(int size)
+char *oballoc(size_t size)
 {
     return (char *)obstack_alloc(current_obstack, size);
 }
@@ -638,7 +638,7 @@ void obfree(char *ptr)
 /* Allocate SIZE bytes in the permanent obstack
    and return a pointer to them.  */
 
-char *permalloc(int size)
+char *permalloc(size_t size)
 {
     return (char *)obstack_alloc(&permanent_obstack, size);
 }
@@ -646,7 +646,7 @@ char *permalloc(int size)
 /* Allocate SIZE bytes in the saveable obstack
    and return a pointer to them.  */
 
-char *savealloc(int size)
+char *savealloc(size_t size)
 {
     return (char *)obstack_alloc(saveable_obstack, size);
 }
@@ -707,7 +707,7 @@ void pop_momentary_nofree(void)
 
 int suspend_momentary(void)
 {
-    register int tem = expression_obstack == &momentary_obstack;
+    int tem = expression_obstack == &momentary_obstack;
     expression_obstack = saveable_obstack;
     return tem;
 }
@@ -737,12 +737,12 @@ void init_tree_codes(void) {}
 
 tree make_node(enum tree_code code)
 {
-    register tree t;
-    register int type = TREE_CODE_CLASS(code);
-    register int length = 0;
-    register struct obstack *obstack = current_obstack;
+    tree t;
+    int type = TREE_CODE_CLASS(code);
+    int length = 0;
+    struct obstack *obstack = current_obstack;
 #ifdef GATHER_STATISTICS
-    register tree_node_kind kind;
+    tree_node_kind kind;
 #endif
 
     switch (type)
@@ -925,9 +925,9 @@ tree make_node(enum tree_code code)
 
 tree copy_node(tree node)
 {
-    register tree t;
-    register enum tree_code code = TREE_CODE(node);
-    register int length = 0;
+    tree t;
+    enum tree_code code = TREE_CODE(node);
+    int length = 0;
 
     switch (TREE_CODE_CLASS(code))
     {
@@ -1007,7 +1007,7 @@ tree copy_node(tree node)
 tree copy_list(tree list)
 {
     tree head;
-    register tree prev, next;
+    tree prev, next;
 
     if (list == 0)
         return 0;
@@ -1029,12 +1029,12 @@ tree copy_list(tree list)
    If an identifier with that name has previously been referred to,
    the same node is returned this time.  */
 
-tree get_identifier(register char *text)
+tree get_identifier(const char *text)
 {
-    register int hi;
-    register int i;
-    register tree idp;
-    register int len, hash_len;
+    int hi;
+    int i;
+    tree idp;
+    int len, hash_len;
 
     /* Compute length of text in len.  */
     len = strlen(text);
@@ -1078,7 +1078,7 @@ tree get_identifier(register char *text)
     id_string_size += len;
 #endif
 
-    IDENTIFIER_POINTER(idp) = obstack_copy0(&permanent_obstack, text, len);
+    IDENTIFIER_POINTER(idp) = (char *)obstack_copy0(&permanent_obstack, text, len);
 
     TREE_CHAIN(idp) = hash_table[hi];
     hash_table[hi] = idp;
@@ -1089,12 +1089,12 @@ tree get_identifier(register char *text)
    previously been referred to, return that node; otherwise return
    NULL_TREE.  */
 
-tree maybe_get_identifier(register char *text)
+tree maybe_get_identifier(const char *text)
 {
-    register int hi;
-    register int i;
-    register tree idp;
-    register int len, hash_len;
+    int hi;
+    int i;
+    tree idp;
+    int len, hash_len;
 
     /* Compute length of text in len.  */
     len = strlen(text);
@@ -1147,7 +1147,7 @@ void set_identifier_size(int size)
 
 tree build_int_2_wide(int32_t low, int32_t hi)
 {
-    register tree t = make_node(INTEGER_CST);
+    tree t = make_node(INTEGER_CST);
     TREE_INT_CST_LOW(t) = low;
     TREE_INT_CST_HIGH(t) = hi;
     TREE_TYPE(t) = integer_type_node;
@@ -1156,7 +1156,7 @@ tree build_int_2_wide(int32_t low, int32_t hi)
 
 /* Return a new REAL_CST node whose type is TYPE and value is D.  */
 
-tree build_real(tree type, REAL_VALUE_TYPE d)
+tree build_real(tree type, double d)
 {
     tree v;
     int overflow = 0;
@@ -1179,10 +1179,10 @@ tree build_real(tree type, REAL_VALUE_TYPE d)
 
 #if !defined(REAL_IS_NOT_DOUBLE) || defined(REAL_ARITHMETIC)
 
-REAL_VALUE_TYPE
+double
 real_value_from_int_cst(tree type, tree i)
 {
-    REAL_VALUE_TYPE d;
+    double d;
 
 #ifdef REAL_ARITHMETIC
     if (!TREE_UNSIGNED(TREE_TYPE(i)))
@@ -1194,7 +1194,7 @@ real_value_from_int_cst(tree type, tree i)
        so introduce a temporary variable E to avoid those bugs.  */
     if (TREE_INT_CST_HIGH(i) < 0 && !TREE_UNSIGNED(TREE_TYPE(i)))
     {
-        REAL_VALUE_TYPE e;
+        double e;
 
         d = (double)(~TREE_INT_CST_HIGH(i));
         e = ((double)((int32_t)1 << (32 / 2))
@@ -1206,7 +1206,7 @@ real_value_from_int_cst(tree type, tree i)
     }
     else
     {
-        REAL_VALUE_TYPE e;
+        double e;
 
         d = (double)(uint32_t)TREE_INT_CST_HIGH(i);
         e = ((double)((int32_t)1 << (32 / 2))
@@ -1226,7 +1226,7 @@ tree build_real_from_int_cst(tree type, tree i)
 {
     tree v;
     int overflow = TREE_OVERFLOW(i);
-    REAL_VALUE_TYPE d;
+    double d;
     jmp_buf float_error;
 
     v = make_node(REAL_CST);
@@ -1267,15 +1267,15 @@ got_it:
    the LEN characters at STR.
    The TREE_TYPE is not initialized.  */
 
-tree build_string(int len, char *str)
+tree build_string(int len, const char *str)
 {
     /* Put the string in saveable_obstack since it will be placed in the RTL
        for an "asm" statement and will also be kept around a while if
        deferring constant output in varasm.c.  */
 
-    register tree s = make_node(STRING_CST);
+    tree s = make_node(STRING_CST);
     TREE_STRING_LENGTH(s) = len;
-    TREE_STRING_POINTER(s) = obstack_copy0(saveable_obstack, str, len);
+    TREE_STRING_POINTER(s) = (char *)obstack_copy0(saveable_obstack, str, len);
     return s;
 }
 
@@ -1286,7 +1286,7 @@ tree build_string(int len, char *str)
 
 tree build_complex(tree type, tree real, tree imag)
 {
-    register tree t = make_node(COMPLEX_CST);
+    tree t = make_node(COMPLEX_CST);
 
     TREE_REALPART(t) = real;
     TREE_IMAGPART(t) = imag;
@@ -1327,8 +1327,8 @@ int integer_onep(tree expr)
 
 int integer_all_onesp(tree expr)
 {
-    register int prec;
-    register int uns;
+    int prec;
+    int uns;
 
     STRIP_NOPS(expr);
 
@@ -1539,8 +1539,8 @@ int chain_member(tree elem, tree chain)
 
 int list_length(tree t)
 {
-    register tree tail;
-    register int len = 0;
+    tree tail;
+    int len = 0;
 
     for (tail = t; tail; tail = TREE_CHAIN(tail))
         len++;
@@ -1556,8 +1556,8 @@ tree chainon(tree op1, tree op2)
 {
     if (op1)
     {
-        register tree t1;
-        register tree t2;
+        tree t1;
+        tree t2;
 
         for (t1 = op1; TREE_CHAIN(t1); t1 = TREE_CHAIN(t1))
             ;
@@ -1573,9 +1573,9 @@ tree chainon(tree op1, tree op2)
 
 /* Return the last node in a chain of nodes (chained through TREE_CHAIN).  */
 
-tree tree_last(register tree chain)
+tree tree_last(tree chain)
 {
-    register tree next;
+    tree next;
     if (chain)
         while ((next = TREE_CHAIN(chain)))
             chain = next;
@@ -1587,7 +1587,7 @@ tree tree_last(register tree chain)
 
 tree nreverse(tree t)
 {
-    register tree prev = 0, decl, next;
+    tree prev = 0, decl, next;
     for (decl = t; decl; decl = next)
     {
         next = TREE_CHAIN(decl);
@@ -1602,7 +1602,7 @@ tree nreverse(tree t)
 
 tree build_tree_list(tree parm, tree value)
 {
-    register tree t = make_node(TREE_LIST);
+    tree t = make_node(TREE_LIST);
     TREE_PURPOSE(t) = parm;
     TREE_VALUE(t) = value;
     return t;
@@ -1615,10 +1615,10 @@ tree build_tree_list(tree parm, tree value)
 tree tree_cons(tree purpose, tree value, tree chain)
 {
 #if 0
-  register tree node = make_node (TREE_LIST);
+  tree node = make_node (TREE_LIST);
 #else
-    register int i;
-    register tree node = (tree)obstack_alloc(current_obstack, sizeof(struct tree_list));
+    int i;
+    tree node = (tree)obstack_alloc(current_obstack, sizeof(struct tree_list));
 #ifdef GATHER_STATISTICS
     tree_node_counts[(int)x_kind]++;
     tree_node_sizes[(int)x_kind] += sizeof(struct tree_list);
@@ -1642,8 +1642,8 @@ tree tree_cons(tree purpose, tree value, tree chain)
 
 tree perm_tree_cons(tree purpose, tree value, tree chain)
 {
-    register tree node;
-    register struct obstack *ambient_obstack = current_obstack;
+    tree node;
+    struct obstack *ambient_obstack = current_obstack;
     current_obstack = &permanent_obstack;
 
     node = tree_cons(purpose, value, chain);
@@ -1655,8 +1655,8 @@ tree perm_tree_cons(tree purpose, tree value, tree chain)
 
 tree temp_tree_cons(tree purpose, tree value, tree chain)
 {
-    register tree node;
-    register struct obstack *ambient_obstack = current_obstack;
+    tree node;
+    struct obstack *ambient_obstack = current_obstack;
     current_obstack = &temporary_obstack;
 
     node = tree_cons(purpose, value, chain);
@@ -1668,8 +1668,8 @@ tree temp_tree_cons(tree purpose, tree value, tree chain)
 
 tree saveable_tree_cons(tree purpose, tree value, tree chain)
 {
-    register tree node;
-    register struct obstack *ambient_obstack = current_obstack;
+    tree node;
+    struct obstack *ambient_obstack = current_obstack;
     current_obstack = saveable_obstack;
 
     node = tree_cons(purpose, value, chain);
@@ -1794,7 +1794,7 @@ int staticp(tree arg)
 
 tree save_expr(tree expr)
 {
-    register tree t = fold(expr);
+    tree t = fold(expr);
 
     /* We don't care about whether this can be used as an lvalue in this
        context.  */
@@ -1878,7 +1878,7 @@ int first_rtl_op(enum tree_code code)
 tree unsave_expr_now(tree expr)
 {
     enum tree_code code;
-    register int i;
+    int i;
     int first_rtl;
 
     if (expr == NULL_TREE)
@@ -1949,7 +1949,7 @@ tree unsave_expr_now(tree expr)
 
 int contains_placeholder_p(tree exp)
 {
-    register enum tree_code code = TREE_CODE(exp);
+    enum tree_code code = TREE_CODE(exp);
     int result;
 
     /* If we have a WITH_RECORD_EXPR, it "cancels" any PLACEHOLDER_EXPR
@@ -2096,8 +2096,8 @@ int has_cleanups(tree exp)
 
 tree stabilize_reference(tree ref)
 {
-    register tree result;
-    register enum tree_code code = TREE_CODE(ref);
+    tree result;
+    enum tree_code code = TREE_CODE(ref);
 
     switch (code)
     {
@@ -2184,8 +2184,8 @@ tree stabilize_reference(tree ref)
 
 tree stabilize_reference_1(tree e)
 {
-    register tree result;
-    register enum tree_code code = TREE_CODE(e);
+    tree result;
+    enum tree_code code = TREE_CODE(e);
 
     /* We cannot ignore const expressions because it might be a reference
        to a const array but whose index contains side-effects.  But we can
@@ -2259,9 +2259,9 @@ tree stabilize_reference_1(tree e)
 tree build(enum tree_code code, tree tt, ...)
 {
     va_list p;
-    register tree t;
-    register int length;
-    register int i;
+    tree t;
+    int length;
+    int i;
 
     va_start(p, tt);
 
@@ -2273,8 +2273,8 @@ tree build(enum tree_code code, tree tt, ...)
     if (length == 2)
     {
         /* This is equivalent to the loop below, but faster.  */
-        register tree arg0 = va_arg(p, tree);
-        register tree arg1 = va_arg(p, tree);
+        tree arg0 = va_arg(p, tree);
+        tree arg1 = va_arg(p, tree);
         TREE_OPERAND(t, 0) = arg0;
         TREE_OPERAND(t, 1) = arg1;
         if ((arg0 && TREE_SIDE_EFFECTS(arg0)) || (arg1 && TREE_SIDE_EFFECTS(arg1)))
@@ -2283,7 +2283,7 @@ tree build(enum tree_code code, tree tt, ...)
     }
     else if (length == 1)
     {
-        register tree arg0 = va_arg(p, tree);
+        tree arg0 = va_arg(p, tree);
 
         /* Call build1 for this!  */
         if (TREE_CODE_CLASS(code) != 's')
@@ -2297,7 +2297,7 @@ tree build(enum tree_code code, tree tt, ...)
     {
         for (i = 0; i < length; i++)
         {
-            register tree operand = va_arg(p, tree);
+            tree operand = va_arg(p, tree);
             TREE_OPERAND(t, i) = operand;
             if (operand)
             {
@@ -2318,12 +2318,12 @@ tree build(enum tree_code code, tree tt, ...)
 
 tree build1(enum tree_code code, tree type, tree node)
 {
-    register struct obstack *obstack = expression_obstack;
-    register int length;
+    struct obstack *obstack = expression_obstack;
+    int length;
 #ifdef GATHER_STATISTICS
-    register tree_node_kind kind;
+    tree_node_kind kind;
 #endif
-    register tree t;
+    tree t;
 
 #ifdef GATHER_STATISTICS
     if (TREE_CODE_CLASS(code) == 'r')
@@ -2368,9 +2368,9 @@ tree build1(enum tree_code code, tree type, tree node)
 tree build_nt(enum tree_code code, ...)
 {
     va_list p;
-    register tree t;
-    register int length;
-    register int i;
+    tree t;
+    int length;
+    int i;
 
     va_start(p, code);
 
@@ -2393,7 +2393,7 @@ tree build_nt(enum tree_code code, ...)
 
 tree build_decl(enum tree_code code, tree name, tree type)
 {
-    register tree t;
+    tree t;
 
     t = make_node(code);
 
@@ -2432,8 +2432,8 @@ tree build_type_attribute_variant(tree ttype, tree attribute)
 {
     if (!attribute_list_equal(TYPE_ATTRIBUTES(ttype), attribute))
     {
-        register int hashcode;
-        register struct obstack *ambient_obstack = current_obstack;
+        int hashcode;
+        struct obstack *ambient_obstack = current_obstack;
         tree ntype;
 
         if (ambient_obstack != &permanent_obstack)
@@ -2584,10 +2584,10 @@ int valid_machine_attribute(
    `text'.  One might then also require attribute lists to be stored in
    their canonicalized form.  */
 
-int is_attribute_p(char *attr, tree ident)
+int is_attribute_p(const char *attr, tree ident)
 {
     int ident_len, attr_len;
-    char *p;
+    const char *p;
 
     if (TREE_CODE(ident) != IDENTIFIER_NODE)
         return 0;
@@ -2621,7 +2621,7 @@ int is_attribute_p(char *attr, tree ident)
    attribute's list element if the attribute is part of the list, or NULL_TREE
    if not found.  */
 
-tree lookup_attribute(char *attr_name, tree list)
+tree lookup_attribute(const char *attr_name, tree list)
 {
     tree l;
 
@@ -2638,7 +2638,7 @@ tree lookup_attribute(char *attr_name, tree list)
 
 /* Return an attribute list that is the union of a1 and a2.  */
 
-tree merge_attributes(register tree a1, register tree a2)
+tree merge_attributes(tree a1, tree a2)
 {
     tree attributes;
 
@@ -2716,7 +2716,7 @@ static void set_type_quals(tree type, int type_quals)
 
 tree build_qualified_type(tree type, int type_quals)
 {
-    register tree t;
+    tree t;
 
     /* Search the chain of variants to see if there is already one there just
        like the one we need to have.  If so, use that existing one.  We must
@@ -2737,8 +2737,8 @@ tree build_qualified_type(tree type, int type_quals)
 
 tree build_type_copy(tree type)
 {
-    register tree t, m = TYPE_MAIN_VARIANT(type);
-    register struct obstack *ambient_obstack = current_obstack;
+    tree t, m = TYPE_MAIN_VARIANT(type);
+    struct obstack *ambient_obstack = current_obstack;
 
     current_obstack = TYPE_OBSTACK(type);
     t = copy_node(type);
@@ -2783,8 +2783,8 @@ struct type_hash *type_hash_table[TYPE_HASH_SIZE];
 
 int type_hash_list(tree list)
 {
-    register int hashcode;
-    register tree tail;
+    int hashcode;
+    tree tail;
     for (hashcode = 0, tail = list; tail; tail = TREE_CHAIN(tail))
         hashcode += TYPE_HASH(TREE_VALUE(tail));
     return hashcode;
@@ -2795,7 +2795,7 @@ int type_hash_list(tree list)
 
 tree type_hash_lookup(int hashcode, tree type)
 {
-    register struct type_hash *h;
+    struct type_hash *h;
     for (h = type_hash_table[hashcode % TYPE_HASH_SIZE]; h; h = h->next)
         if (h->hashcode == hashcode && TREE_CODE(h->type) == TREE_CODE(type)
             && TREE_TYPE(h->type) == TREE_TYPE(type)
@@ -2818,7 +2818,7 @@ tree type_hash_lookup(int hashcode, tree type)
 
 void type_hash_add(int hashcode, tree type)
 {
-    register struct type_hash *h;
+    struct type_hash *h;
 
     h = (struct type_hash *)oballoc(sizeof(struct type_hash));
     h->hashcode = hashcode;
@@ -2872,8 +2872,8 @@ tree type_hash_canon(int hashcode, tree type)
 
 int attribute_hash_list(tree list)
 {
-    register int hashcode;
-    register tree tail;
+    int hashcode;
+    tree tail;
     for (hashcode = 0, tail = list; tail; tail = TREE_CHAIN(tail))
         /* ??? Do we want to add in TREE_VALUE too? */
         hashcode += TYPE_HASH(TREE_PURPOSE(tail));
@@ -2898,7 +2898,7 @@ int attribute_list_equal(tree l1, tree l2)
 
 int attribute_list_contained(tree l1, tree l2)
 {
-    register tree t1, t2;
+    tree t1, t2;
 
     /* First check the obvious, maybe the lists are identical.  */
     if (l1 == l2)
@@ -2934,7 +2934,7 @@ int attribute_list_contained(tree l1, tree l2)
 
 int type_list_equal(tree l1, tree l2)
 {
-    register tree t1, t2;
+    tree t1, t2;
 
     for (t1 = l1, t2 = l2; t1 && t2; t1 = TREE_CHAIN(t1), t2 = TREE_CHAIN(t2))
         if (TREE_VALUE(t1) != TREE_VALUE(t2)
@@ -3016,7 +3016,7 @@ int simple_cst_list_equal(tree l1, tree l2)
 
 int simple_cst_equal(tree t1, tree t2)
 {
-    register enum tree_code code1, code2;
+    enum tree_code code1, code2;
     int cmp;
 
     if (t1 == t2)
@@ -3146,7 +3146,7 @@ int simple_cst_equal(tree t1, tree t2)
 
 tree build_pointer_type(tree to_type)
 {
-    register tree t = TYPE_POINTER_TO(to_type);
+    tree t = TYPE_POINTER_TO(to_type);
 
     /* First, if we already have a type for pointers to TO_TYPE, use it.  */
 
@@ -3182,7 +3182,7 @@ tree build_pointer_type(tree to_type)
 
 tree build_index_type(tree maxval)
 {
-    register tree itype = make_node(INTEGER_TYPE);
+    tree itype = make_node(INTEGER_TYPE);
 
     TYPE_PRECISION(itype) = TYPE_PRECISION(sizetype);
     TYPE_MIN_VALUE(itype) = size_zero_node;
@@ -3217,7 +3217,7 @@ tree build_index_type(tree maxval)
 
 tree build_array_type(tree elt_type, tree index_type)
 {
-    register tree t;
+    tree t;
     int hashcode;
 
     if (TREE_CODE(elt_type) == FUNCTION_TYPE)
@@ -3257,7 +3257,7 @@ tree build_array_type(tree elt_type, tree index_type)
 
 tree build_function_type(tree value_type, tree arg_types)
 {
-    register tree t;
+    tree t;
     int hashcode;
 
     if (TREE_CODE(value_type) == FUNCTION_TYPE)
@@ -3284,7 +3284,7 @@ tree build_function_type(tree value_type, tree arg_types)
 
 tree build_complex_type(tree component_type)
 {
-    register tree t;
+    tree t;
     int hashcode;
 
     /* Make a node of the sort we want.  */
@@ -3326,18 +3326,18 @@ tree build_complex_type(tree component_type)
    since the result of extending (signed char)-1 to (int)
    is different from (int) OP.  */
 
-tree get_unwidened(register tree op, tree for_type)
+tree get_unwidened(tree op, tree for_type)
 {
     /* Set UNS initially if converting OP to FOR_TYPE is a zero-extension.  */
-    register tree type = TREE_TYPE(op);
-    register unsigned final_prec = TYPE_PRECISION(for_type != 0 ? for_type : type);
-    register int uns = (for_type != 0 && for_type != type && final_prec > TYPE_PRECISION(type)
+    tree type = TREE_TYPE(op);
+    unsigned final_prec = TYPE_PRECISION(for_type != 0 ? for_type : type);
+    int uns = (for_type != 0 && for_type != type && final_prec > TYPE_PRECISION(type)
         && TREE_UNSIGNED(type));
-    register tree win = op;
+    tree win = op;
 
     while (TREE_CODE(op) == NOP_EXPR)
     {
-        register int bitschange
+        int bitschange
             = TYPE_PRECISION(TREE_TYPE(op)) - TYPE_PRECISION(TREE_TYPE(TREE_OPERAND(op, 0)));
 
         /* Truncations are many-one so cannot be removed.
@@ -3404,15 +3404,15 @@ tree get_unwidened(register tree op, tree for_type)
    Store in *UNSIGNEDP_PTR either 1 if the value should be zero-extended
    or 0 if the value should be sign-extended.  */
 
-tree get_narrower(register tree op, int *unsignedp_ptr)
+tree get_narrower(tree op, int *unsignedp_ptr)
 {
-    register int uns = 0;
+    int uns = 0;
     int first = 1;
-    register tree win = op;
+    tree win = op;
 
     while (TREE_CODE(op) == NOP_EXPR)
     {
-        register int bitschange
+        int bitschange
             = TYPE_PRECISION(TREE_TYPE(op)) - TYPE_PRECISION(TREE_TYPE(TREE_OPERAND(op, 0)));
 
         /* Truncations are many-one so cannot be removed.  */

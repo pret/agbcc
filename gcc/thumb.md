@@ -598,7 +598,7 @@
 		 (match_operand:SI 2 "nonmemory_operand" "I,J,lL,*h,*r,!M,!O")))]
   ""
   "*
-   static char *asms[] = 
+   static const char *asms[] = 
 {
   \"add\\t%0, %0, %2\",
   \"sub\\t%0, %0, #%n2\",
@@ -1087,7 +1087,7 @@
     {
       int i;
       union real_extract u;
-      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (int32_t); i++)
+      for (i = 0; i < 2; i++)
         u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;
@@ -1111,7 +1111,7 @@
     {
       int i;
       union real_extract u;
-      for (i = 0; i < sizeof (REAL_VALUE_TYPE) / sizeof (int32_t); i++)
+      for (i = 0; i < 2; i++)
         u.i[i] = XWINT(operands[0], 2 + i);
       assemble_real (u.d, GET_MODE (operands[0]));
       break;
