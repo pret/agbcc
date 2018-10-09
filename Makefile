@@ -179,9 +179,9 @@ ld-all: ld-objs bfd-all libiberty-all
 ld-clean: ld-configure
 	@$(MAKE) -C ld clean
 ld-install: ld-all
-	@$(MAKE) -C ld install prefix=$(prefix)
+	@$(MAKE) -C ld install prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
 ld-install-strip: ld-all
-	@$(MAKE) -C ld install-strip prefix=$(prefix)
+	@$(MAKE) -C ld install-strip prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
 
 binutils-configure:
 	@if [ ! -f binutils/Makefile ]; then 			\
@@ -195,9 +195,9 @@ binutils-all: binutils-objs bfd-all libiberty-all
 binutils-clean: binutils-configure
 	@$(MAKE) -C binutils clean
 binutils-install: binutils-all
-	@$(MAKE) -C binutils install prefix=$(prefix)
+	@$(MAKE) -C binutils install prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
 binutils-install-strip: binutils-all
-	@$(MAKE) -C binutils install-strip prefix=$(prefix)
+	@$(MAKE) -C binutils install-strip prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
 
 gas-configure:
 	@if [ ! -f gas/Makefile ]; then 			\
@@ -211,9 +211,9 @@ gas-all: gas-objs bfd-all libiberty-all
 gas-clean: gas-configure
 	@$(MAKE) -C gas clean
 gas-install: gas-all
-	@$(MAKE) -C gas install prefix=$(prefix)
+	@$(MAKE) -C gas install prefix=$(PREFIX)/tools/binutils # DESTDIR=$(PREFIX)/tools/binutils
 gas-install-strip: gas-all
-	@$(MAKE) -C gas install-strip prefix=$(prefix)
+	@$(MAKE) -C gas install-strip prefix=$(PREFIX)/tools/binutils # DESTDIR=$(PREFIX)/tools/binutils
 
 bfd-configure:
 	@if [ ! -f bfd/Makefile ]; then				\
@@ -243,3 +243,4 @@ libiberty-all: libiberty-objs
 	@$(MAKE) -C libiberty
 libiberty-clean: libiberty-configure
 	@$(MAKE) -C libiberty clean
+
