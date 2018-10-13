@@ -98,8 +98,6 @@ bfd_default_target_size=32
 AC_SUBST(HDEFINES)
 AC_PROG_INSTALL
 
-BFD_HOST_64BIT_LONG=0
-BFD_HOST_64BIT_LONG_LONG=0
 BFD_HOST_64_BIT_DEFINED=0
 BFD_HOST_64_BIT=
 BFD_HOST_U_64_BIT=
@@ -110,23 +108,13 @@ AC_CHECK_SIZEOF(void *)
 
 if test "x${ac_cv_sizeof_void_p}" = "x8"; then
   host64=true
-fi
-
-
-  BFD_HOST_64BIT_LONG_LONG=1
-  test -n "${HOST_64BIT_TYPE}" || HOST_64BIT_TYPE="long long"
-  test -n "${HOST_U_64BIT_TYPE}" || HOST_U_64BIT_TYPE="unsigned long long"
-  if test "x${ac_cv_sizeof_void_p}" = "x8"; then
-    BFD_HOSTPTR_T="unsigned long long"
-  fi
-
-if test -n "${HOST_64BIT_TYPE}" -a -n "${HOST_U_64BIT_TYPE}"; then
   BFD_HOST_64_BIT_DEFINED=1
-  BFD_HOST_64_BIT="${HOST_64BIT_TYPE}"
-  BFD_HOST_U_64_BIT="${HOST_U_64BIT_TYPE}"
+  BFD_HOSTPTR_T="unsigned long long"
 fi
 
-AC_SUBST(BFD_HOST_64BIT_LONG_LONG)
+test -n "${HOST_64BIT_TYPE}" || HOST_64BIT_TYPE="long long"
+test -n "${HOST_U_64BIT_TYPE}" || HOST_U_64BIT_TYPE="unsigned long long"
+
 AC_SUBST(BFD_HOST_64_BIT_DEFINED)
 AC_SUBST(BFD_HOST_64_BIT)
 AC_SUBST(BFD_HOST_U_64_BIT)

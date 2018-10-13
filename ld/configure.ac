@@ -221,7 +221,6 @@ ACX_HEADER_STRING
 AC_CHECK_FUNCS_ONCE([mmap setlocale glob strcasecmp strcspn])
 
 AC_SEARCH_LIBS([dlopen], [dl])
-AM_CONDITIONAL([ENABLE_PLUGINS], [test x$plugins = xyes])
 
 AC_ARG_ENABLE(initfini-array,
 [  --disable-initfini-array do not use .init_array/.fini_array sections],

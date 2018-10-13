@@ -39,9 +39,6 @@
 #include "fnmatch.h"
 #include "hashtab.h"
 #include "elf-bfd.h"
-#ifdef ENABLE_PLUGINS
-#include "plugin.h"
-#endif /* ENABLE_PLUGINS */
 
 #ifndef offsetof
 #define offsetof(TYPE, MEMBER) ((size_t) & (((TYPE*) 0)->MEMBER))
@@ -3236,9 +3233,6 @@ enum open_bfd_mode
     OPEN_BFD_FORCE = 1,
     OPEN_BFD_RESCAN = 2
   };
-#ifdef ENABLE_PLUGINS
-static lang_input_statement_type *plugin_insert = NULL;
-#endif
 
 static void
 open_input_bfds (lang_statement_union_type *s, enum open_bfd_mode mode)
@@ -3297,10 +3291,6 @@ open_input_bfds (lang_statement_union_type *s, enum open_bfd_mode mode)
 		 has been loaded already.  Do the same for a rescan.
 		 Likewise reload --as-needed shared libs.  */
 	      if (mode != OPEN_BFD_NORMAL
-#ifdef ENABLE_PLUGINS
-		  && ((mode & OPEN_BFD_RESCAN) == 0
-		      || plugin_insert == NULL)
-#endif
 		  && s->input_statement.flags.loaded
 		  && (abfd = s->input_statement.the_bfd) != NULL
 		  && ((bfd_get_format (abfd) == bfd_archive
@@ -3344,12 +3334,6 @@ open_input_bfds (lang_statement_union_type *s, enum open_bfd_mode mode)
 		    }
 		}
 	    }
-#ifdef ENABLE_PLUGINS
-	  /* If we have found the point at which a plugin added new
-	     files, clear plugin_insert to enable archive rescan.  */
-	  if (&s->input_statement == plugin_insert)
-	    plugin_insert = NULL;
-#endif
 	  break;
 	case lang_assignment_statement_enum:
 	  if (s->assignment_statement.exp->type.node_class != etree_assert)
@@ -6267,11 +6251,6 @@ lang_check (void)
 
   for (file = file_chain.head; file != NULL; file = file->input_statement.next)
     {
-#ifdef ENABLE_PLUGINS
-      /* Don't check format of files claimed by plugin.  */
-      if (file->input_statement.flags.claimed)
-	continue;
-#endif /* ENABLE_PLUGINS */
       input_bfd = file->input_statement.the_bfd;
       compatible
 	= bfd_arch_get_compatible (input_bfd, link_info.output_bfd,
@@ -6814,10 +6793,6 @@ lang_gc_sections (void)
       LANG_FOR_EACH_INPUT_STATEMENT (f)
 	{
 	  asection *sec;
-#ifdef ENABLE_PLUGINS
-	  if (f->flags.claimed)
-	    continue;
-#endif
 	  for (sec = f->the_bfd->sections; sec != NULL; sec = sec->next)
 	    if ((sec->flags & SEC_DEBUGGING) == 0)
 	      sec->flags &= ~SEC_EXCLUDE;
@@ -6961,118 +6936,6 @@ lang_relax_sections (bfd_boolean need_layout)
     }
 }
 
-#ifdef ENABLE_PLUGINS
-/* Find the insert point for the plugin's replacement files.  We
-   place them after the first claimed real object file, or if the
-   first claimed object is an archive member, after the last real
-   object file immediately preceding the archive.  In the event
-   no objects have been claimed at all, we return the first dummy
-   object file on the list as the insert point; that works, but
-   the callee must be careful when relinking the file_chain as it
-   is not actually on that chain, only the statement_list and the
-   input_file list; in that case, the replacement files must be
-   inserted at the head of the file_chain.  */
-
-static lang_input_statement_type *
-find_replacements_insert_point (void)
-{
-  lang_input_statement_type *claim1, *lastobject;
-  lastobject = &input_file_chain.head->input_statement;
-  for (claim1 = &file_chain.head->input_statement;
-       claim1 != NULL;
-       claim1 = &claim1->next->input_statement)
-    {
-      if (claim1->flags.claimed)
-	return claim1->flags.claim_archive ? lastobject : claim1;
-      /* Update lastobject if this is a real object file.  */
-      if (claim1->the_bfd != NULL && claim1->the_bfd->my_archive == NULL)
-	lastobject = claim1;
-    }
-  /* No files were claimed by the plugin.  Choose the last object
-     file found on the list (maybe the first, dummy entry) as the
-     insert point.  */
-  return lastobject;
-}
-
-/* Find where to insert ADD, an archive element or shared library
-   added during a rescan.  */
-
-static lang_statement_union_type **
-find_rescan_insertion (lang_input_statement_type *add)
-{
-  bfd *add_bfd = add->the_bfd;
-  lang_input_statement_type *f;
-  lang_input_statement_type *last_loaded = NULL;
-  lang_input_statement_type *before = NULL;
-  lang_statement_union_type **iter = NULL;
-
-  if (add_bfd->my_archive != NULL)
-    add_bfd = add_bfd->my_archive;
-
-  /* First look through the input file chain, to find an object file
-     before the one we've rescanned.  Normal object files always
-     appear on both the input file chain and the file chain, so this
-     lets us get quickly to somewhere near the correct place on the
-     file chain if it is full of archive elements.  Archives don't
-     appear on the file chain, but if an element has been extracted
-     then their input_statement->next points at it.  */
-  for (f = &input_file_chain.head->input_statement;
-       f != NULL;
-       f = &f->next_real_file->input_statement)
-    {
-      if (f->the_bfd == add_bfd)
-	{
-	  before = last_loaded;
-	  if (f->next != NULL)
-	    return &f->next->input_statement.next;
-	}
-      if (f->the_bfd != NULL && f->next != NULL)
-	last_loaded = f;
-    }
-
-  for (iter = before ? &before->next : &file_chain.head->input_statement.next;
-       *iter != NULL;
-       iter = &(*iter)->input_statement.next)
-    if (!(*iter)->input_statement.flags.claim_archive
-	&& (*iter)->input_statement.the_bfd->my_archive == NULL)
-      break;
-
-  return iter;
-}
-
-/* Insert SRCLIST into DESTLIST after given element by chaining
-   on FIELD as the next-pointer.  (Counterintuitively does not need
-   a pointer to the actual after-node itself, just its chain field.)  */
-
-static void
-lang_list_insert_after (lang_statement_list_type *destlist,
-			lang_statement_list_type *srclist,
-			lang_statement_union_type **field)
-{
-  *(srclist->tail) = *field;
-  *field = srclist->head;
-  if (destlist->tail == field)
-    destlist->tail = srclist->tail;
-}
-
-/* Detach new nodes added to DESTLIST since the time ORIGLIST
-   was taken as a copy of it and leave them in ORIGLIST.  */
-
-static void
-lang_list_remove_tail (lang_statement_list_type *destlist,
-		       lang_statement_list_type *origlist)
-{
-  union lang_statement_union **savetail;
-  /* Check that ORIGLIST really is an earlier state of DESTLIST.  */
-  ASSERT (origlist->head == destlist->head);
-  savetail = origlist->tail;
-  origlist->head = *(savetail);
-  origlist->tail = destlist->tail;
-  destlist->tail = savetail;
-  *savetail = NULL;
-}
-#endif /* ENABLE_PLUGINS */
-
 /* Add NAME to the list of garbage collection entry points.  */
 
 void
@@ -7158,93 +7021,6 @@ lang_process (void)
   current_target = default_target;
   lang_statement_iteration++;
   open_input_bfds (statement_list.head, OPEN_BFD_NORMAL);
-
-#ifdef ENABLE_PLUGINS
-  if (link_info.lto_plugin_active)
-    {
-      lang_statement_list_type added;
-      lang_statement_list_type files, inputfiles;
-
-      /* Now all files are read, let the plugin(s) decide if there
-	 are any more to be added to the link before we call the
-	 emulation's after_open hook.  We create a private list of
-	 input statements for this purpose, which we will eventually
-	 insert into the global statement list after the first claimed
-	 file.  */
-      added = *stat_ptr;
-      /* We need to manipulate all three chains in synchrony.  */
-      files = file_chain;
-      inputfiles = input_file_chain;
-      if (plugin_call_all_symbols_read ())
-	einfo (_("%F%P: %s: plugin reported error after all symbols read\n"),
-	       plugin_error_plugin ());
-      /* Open any newly added files, updating the file chains.  */
-      open_input_bfds (*added.tail, OPEN_BFD_NORMAL);
-      /* Restore the global list pointer now they have all been added.  */
-      lang_list_remove_tail (stat_ptr, &added);
-      /* And detach the fresh ends of the file lists.  */
-      lang_list_remove_tail (&file_chain, &files);
-      lang_list_remove_tail (&input_file_chain, &inputfiles);
-      /* Were any new files added?  */
-      if (added.head != NULL)
-	{
-	  /* If so, we will insert them into the statement list immediately
-	     after the first input file that was claimed by the plugin.  */
-	  plugin_insert = find_replacements_insert_point ();
-	  /* If a plugin adds input files without having claimed any, we
-	     don't really have a good idea where to place them.  Just putting
-	     them at the start or end of the list is liable to leave them
-	     outside the crtbegin...crtend range.  */
-	  ASSERT (plugin_insert != NULL);
-	  /* Splice the new statement list into the old one.  */
-	  lang_list_insert_after (stat_ptr, &added,
-				  &plugin_insert->header.next);
-	  /* Likewise for the file chains.  */
-	  lang_list_insert_after (&input_file_chain, &inputfiles,
-				  &plugin_insert->next_real_file);
-	  /* We must be careful when relinking file_chain; we may need to
-	     insert the new files at the head of the list if the insert
-	     point chosen is the dummy first input file.  */
-	  if (plugin_insert->filename)
-	    lang_list_insert_after (&file_chain, &files, &plugin_insert->next);
-	  else
-	    lang_list_insert_after (&file_chain, &files, &file_chain.head);
-
-	  /* Rescan archives in case new undefined symbols have appeared.  */
-	  files = file_chain;
-	  lang_statement_iteration++;
-	  open_input_bfds (statement_list.head, OPEN_BFD_RESCAN);
-	  lang_list_remove_tail (&file_chain, &files);
-	  while (files.head != NULL)
-	    {
-	      lang_statement_union_type **insert;
-	      lang_statement_union_type **iter, *temp;
-	      bfd *my_arch;
-
-	      insert = find_rescan_insertion (&files.head->input_statement);
-	      /* All elements from an archive can be added at once.  */
-	      iter = &files.head->input_statement.next;
-	      my_arch = files.head->input_statement.the_bfd->my_archive;
-	      if (my_arch != NULL)
-		for (; *iter != NULL; iter = &(*iter)->input_statement.next)
-		  if ((*iter)->input_statement.the_bfd->my_archive != my_arch)
-		    break;
-	      temp = *insert;
-	      *insert = files.head;
-	      files.head = *iter;
-	      *iter = temp;
-	      if (my_arch != NULL)
-		{
-		  lang_input_statement_type *parent = my_arch->usrdata;
-		  if (parent != NULL)
-		    parent->next = (lang_statement_union_type *)
-		      ((char *) iter
-		       - offsetof (lang_input_statement_type, next));
-		}
-	    }
-	}
-    }
-#endif /* ENABLE_PLUGINS */
 
   /* Make sure that nobody has tried to add a symbol to this list
      before now.  */

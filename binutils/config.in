@@ -22,9 +22,6 @@
    */
 #undef HAVE_DECL_STPCPY
 
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
-
 /* Does the platform use an executable suffix? */
 #undef HAVE_EXECUTABLE_SUFFIX
 
@@ -126,9 +123,6 @@
 
 /* Define to 1 if you have the <utime.h> header file. */
 #undef HAVE_UTIME_H
-
-/* Define to 1 if you have the <windows.h> header file. */
-#undef HAVE_WINDOWS_H
 
 /* Name of package */
 #undef PACKAGE

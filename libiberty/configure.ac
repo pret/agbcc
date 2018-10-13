@@ -12,12 +12,6 @@ m4_include([../config/lean.m4])
 # exported.  We don't use libtool yet, but some day we might, so...
 ORIGINAL_LD_FOR_MULTILIBS=$LD
 
-dnl We use these options to decide which functions to include.
-dnl#AC_ARG_WITH(target-subdir,
-dnl#[  --with-target-subdir=SUBDIR      Configuring in a subdirectory for target])
-dnl#AC_ARG_WITH(build-subdir,
-dnl[  --with-build-subdir=SUBDIR       Configuring in a subdirectory for build])
-
 if test "${srcdir}" = "."; then
   if test -n "${with_build_subdir}"; then
     libiberty_topdir="${srcdir}/../.."
@@ -47,8 +41,6 @@ AC_SUBST(HAVE_PERL)
 
 AC_CANONICAL_HOST
 
-dnl When we start using automake:
-dnl## AM_INIT_AUTOMAKE(libiberty, 1.0)
 
 dnl## These must be called before libtool because it may want
 dnl## to call AC_CHECK_PROG.
@@ -121,11 +113,9 @@ AC_SUBST_FILE(host_makefile_frag)
 # It's OK to check for header files.  Although the compiler may not be
 # able to link anything, it had better be able to at least compile
 # something.
-AC_CHECK_HEADERS([fcntl.h float.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h])
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-
-## libiberty_AC_DECLARE_ERRNO
 
 # Determine sizes of some types.
 AC_CHECK_SIZEOF([long])

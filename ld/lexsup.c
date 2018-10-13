@@ -37,9 +37,6 @@
 #include "ldfile.h"
 #include "ldver.h"
 #include "ldemul.h"
-#ifdef ENABLE_PLUGINS
-#include "plugin.h"
-#endif /* ENABLE_PLUGINS */
 
 #ifndef PATH_SEPARATOR
 #if defined (__MSDOS__) || (defined (_WIN32) && ! defined (__CYGWIN32__))
@@ -168,18 +165,6 @@ static const struct ld_option ld_options[] =
     'O', NULL, N_("Optimize output file"), ONE_DASH },
   { {"out-implib", required_argument, NULL, OPTION_OUT_IMPLIB},
     '\0', N_("FILE"), N_("Generate import library"), TWO_DASHES },
-#ifdef ENABLE_PLUGINS
-  { {"plugin", required_argument, NULL, OPTION_PLUGIN},
-    '\0', N_("PLUGIN"), N_("Load named plugin"), ONE_DASH },
-  { {"plugin-opt", required_argument, NULL, OPTION_PLUGIN_OPT},
-    '\0', N_("ARG"), N_("Send arg to last-loaded plugin"), ONE_DASH },
-  { {"flto", optional_argument, NULL, OPTION_IGNORE},
-    '\0', NULL, N_("Ignored for GCC LTO option compatibility"),
-    ONE_DASH },
-  { {"flto-partition=", required_argument, NULL, OPTION_IGNORE},
-    '\0', NULL, N_("Ignored for GCC LTO option compatibility"),
-    ONE_DASH },
-#endif /* ENABLE_PLUGINS */
   { {"fuse-ld=", required_argument, NULL, OPTION_IGNORE},
     '\0', NULL, N_("Ignored for GCC linker option compatibility"),
     ONE_DASH },
@@ -1012,15 +997,6 @@ parse_args (unsigned argc, char **argv)
 	case OPTION_PRINT_OUTPUT_FORMAT:
 	  command_line.print_output_format = TRUE;
 	  break;
-#ifdef ENABLE_PLUGINS
-	case OPTION_PLUGIN:
-	  plugin_opt_plugin (optarg);
-	  break;
-	case OPTION_PLUGIN_OPT:
-	  if (plugin_opt_plugin_arg (optarg))
-	    einfo (_("%F%P: bad -plugin-opt option\n"));
-	  break;
-#endif /* ENABLE_PLUGINS */
 	case 'q':
 	  link_info.emitrelocations = TRUE;
 	  break;
@@ -1314,9 +1290,6 @@ parse_args (unsigned argc, char **argv)
 	      int level ATTRIBUTE_UNUSED = strtoul (optarg, &end, 0);
 	      if (*end)
 		einfo (_("%F%P: invalid number `%s'\n"), optarg);
-#ifdef ENABLE_PLUGINS
-	      report_plugin_symbols = level > 1;
-#endif /* ENABLE_PLUGINS */
 	    }
 	  break;
 	case 'v':

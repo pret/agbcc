@@ -113,8 +113,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/depstand.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lead-dot.m4 \
-	$(top_srcdir)/../config/plugins.m4 $(top_srcdir)/warning.m4 \
+	$(top_srcdir)/../config/lead-dot.m4 $(top_srcdir)/warning.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -256,7 +255,6 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BFD_HOSTPTR_T = @BFD_HOSTPTR_T@
-BFD_HOST_64BIT_LONG_LONG = @BFD_HOST_64BIT_LONG_LONG@
 BFD_HOST_64_BIT = @BFD_HOST_64_BIT@
 BFD_HOST_64_BIT_DEFINED = @BFD_HOST_64_BIT_DEFINED@
 BFD_HOST_U_64_BIT = @BFD_HOST_U_64_BIT@
@@ -550,7 +548,7 @@ MOSTLYCLEANFILES = ofiles stamp-ofiles
 CLEANFILES = bfd.h dep.sed stmp-bfd-h DEP DEPA DEP1 DEP2 libbfd.a stamp-lib \
 	stmp-bin2-h stmp-lbfd-h
 
-DISTCLEANFILES = $(BUILD_CFILES) $(BUILD_HFILES) libtool-soversion
+DISTCLEANFILES = $(BUILD_CFILES) $(BUILD_HFILES)
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1002,26 +1000,14 @@ targmatch.h: config.bfd targmatch.sed
 # info from configure.
 
 targets.o: targets.c Makefile
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='targets.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
+	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
 
 archures.o: archures.c Makefile
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='archures.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
+	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
 
 $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dwarf2.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
+	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
 
 elf32-target.h : elfxx-target.h
 	rm -f elf32-target.h
@@ -1071,8 +1057,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	    -e "s,@bfd_version_string@,$$bfd_version_string," \
 	    -e "s,@bfd_version_package@,$$bfd_version_package," \
 	    -e "s,@report_bugs_to@,$$report_bugs_to," \
-	    < $(srcdir)/version.h > $@; \
-	echo "$${bfd_soversion}" > libtool-soversion
+	    < $(srcdir)/version.h > $@;
 
 # A helper that only builds the object files, without linking.
 objs: headers $(OFILES) ofiles $(libbfd_a_OBJECTS)

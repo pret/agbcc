@@ -28,7 +28,6 @@
 #include "libiberty.h"
 #include "progress.h"
 #include "getopt.h"
-//#include "aout/ar.h"
 #include "bucomm.h"
 #include "arsup.h"
 #include "filenames.h"
@@ -624,9 +623,6 @@ main (int argc, char **argv)
   char *inarch_filename;
   int i;
 
-#if defined (HAVE_SETLOCALE) && defined (HAVE_LC_MESSAGES)
-  setlocale (LC_MESSAGES, "");
-#endif
 #if defined (HAVE_SETLOCALE)
   setlocale (LC_CTYPE, "");
 #endif

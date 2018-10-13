@@ -214,41 +214,14 @@ targmatch.h: config.bfd targmatch.sed
 # info from configure.
 
 targets.o: targets.c Makefile
-if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-else
-if AMDEP
-	source='targets.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
-endif
 
 archures.o: archures.c Makefile
-if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-else
-if AMDEP
-	source='archures.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
-endif
 
 $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
-if am__fastdepCC
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-else
-if AMDEP
-	source='dwarf2.c' object='$@' libtool=yes @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
-endif
 
 elf32-target.h : elfxx-target.h
 	rm -f elf32-target.h
@@ -298,7 +271,7 @@ MOSTLYCLEANFILES = ofiles stamp-ofiles
 CLEANFILES = bfd.h dep.sed stmp-bfd-h DEP DEPA DEP1 DEP2 libbfd.a stamp-lib \
 	stmp-bin2-h stmp-lbfd-h
 
-DISTCLEANFILES = $(BUILD_CFILES) $(BUILD_HFILES) libtool-soversion
+DISTCLEANFILES = $(BUILD_CFILES) $(BUILD_HFILES)
 
 bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	@echo "creating $@"
@@ -317,8 +290,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
 	    -e "s,@bfd_version_string@,$$bfd_version_string," \
 	    -e "s,@bfd_version_package@,$$bfd_version_package," \
 	    -e "s,@report_bugs_to@,$$report_bugs_to," \
-	    < $(srcdir)/version.h > $@; \
-	echo "$${bfd_soversion}" > libtool-soversion
+	    < $(srcdir)/version.h > $@;
 
 # A helper that only builds the object files, without linking.
 objs: headers $(OFILES) ofiles $(libbfd_a_OBJECTS)

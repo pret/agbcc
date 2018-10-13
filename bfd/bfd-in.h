@@ -78,32 +78,14 @@ extern "C" {
 /* The word size of the default bfd target.  */
 #define BFD_DEFAULT_TARGET_SIZE @bfd_default_target_size@
 
-#define BFD_HOST_64BIT_LONG @BFD_HOST_64BIT_LONG@
-#define BFD_HOST_64BIT_LONG_LONG @BFD_HOST_64BIT_LONG_LONG@
 #if @BFD_HOST_64_BIT_DEFINED@
-#define BFD_HOST_64_BIT @BFD_HOST_64_BIT@
-#define BFD_HOST_U_64_BIT @BFD_HOST_U_64_BIT@
+#define BFD_HOST_64_BIT int64_t
+#define BFD_HOST_U_64_BIT uint64_t
 typedef BFD_HOST_64_BIT bfd_int64_t;
 typedef BFD_HOST_U_64_BIT bfd_uint64_t;
 #endif
 
-#ifdef HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if BFD_HOST_64BIT_LONG
-#  define BFD_PRI64 "l"
-# elif defined (__MSVCRT__)
-#  define BFD_PRI64 "I64"
-# else
-#  define BFD_PRI64 "ll"
-# endif
-# undef PRId64
-# define PRId64 BFD_PRI64 "d"
-# undef PRIu64
-# define PRIu64 BFD_PRI64 "u"
-# undef PRIx64
-# define PRIx64 BFD_PRI64 "x"
-#endif
+#include <inttypes.h>
 
 #if BFD_ARCH_SIZE >= 64
 #define BFD64
@@ -133,26 +115,16 @@ typedef int bfd_boolean;
 
 #ifdef BFD64
 
-#ifndef BFD_HOST_64_BIT
- #error No 64 bit integer type available
-#endif /* ! defined (BFD_HOST_64_BIT) */
+typedef uint64_t bfd_vma;
+typedef int64_t bfd_signed_vma;
+typedef uint64_t bfd_size_type;
+typedef uint64_t symvalue;
 
-typedef BFD_HOST_U_64_BIT bfd_vma;
-typedef BFD_HOST_64_BIT bfd_signed_vma;
-typedef BFD_HOST_U_64_BIT bfd_size_type;
-typedef BFD_HOST_U_64_BIT symvalue;
-
-#if BFD_HOST_64BIT_LONG
-#define BFD_VMA_FMT "l"
-#elif defined (__MSVCRT__)
-#define BFD_VMA_FMT "I64"
-#else
-#define BFD_VMA_FMT "ll"
-#endif
+#define BFD_VMA_FMT PRIx64
 
 #ifndef fprintf_vma
-#define sprintf_vma(s,x) sprintf (s, "%016" BFD_VMA_FMT "x", x)
-#define fprintf_vma(f,x) fprintf (f, "%016" BFD_VMA_FMT "x", x)
+#define sprintf_vma(s,x) sprintf (s, "%016" BFD_VMA_FMT, x)
+#define fprintf_vma(f,x) fprintf (f, "%016" BFD_VMA_FMT, x)
 #endif
 
 #else /* not BFD64  */

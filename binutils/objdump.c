@@ -3446,9 +3446,6 @@ main (int argc, char **argv)
   bfd_boolean seenflag = FALSE;
 
 #if defined (HAVE_SETLOCALE)
-#if defined (HAVE_LC_MESSAGES)
-  setlocale (LC_MESSAGES, "");
-#endif
   setlocale (LC_CTYPE, "");
 #endif
 

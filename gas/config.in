@@ -25,9 +25,6 @@
    don't. */
 #undef HAVE_DECL_ASPRINTF
 
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -72,9 +69,6 @@
 
 /* Define to 1 if you have the `unlink' function. */
 #undef HAVE_UNLINK
-
-/* Define to 1 if you have the <windows.h> header file. */
-#undef HAVE_WINDOWS_H
 
 /* Define if environ is not declared in system header files. */
 #undef NEED_DECLARATION_ENVIRON

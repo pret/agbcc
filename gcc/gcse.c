@@ -510,9 +510,9 @@ static sbitmap *ae_kill, *ae_gen, *ae_in, *ae_out;
 
 static void compute_can_copy(void);
 
-static char *gmalloc(unsigned int);
-static char *grealloc(char *, unsigned int);
-static char *gcse_alloc(unsigned long);
+static char *gmalloc(size_t);
+static char *grealloc(char *, size_t);
+static char *gcse_alloc(size_t);
 static void alloc_gcse_mem(rtx);
 static void free_gcse_mem(void);
 static void alloc_reg_set_mem(int);
@@ -865,7 +865,7 @@ static char *grealloc(char *ptr, size_t size)
    We don't need to record the bytes allocated here since
    obstack_chunk_alloc is set to gmalloc.  */
 
-static char *gcse_alloc(unsigned long size)
+static char *gcse_alloc(size_t size)
 {
     return (char *)obstack_alloc(&gcse_obstack, size);
 }

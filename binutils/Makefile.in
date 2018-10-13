@@ -118,7 +118,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
 	$(top_srcdir)/../config/lcmessage.m4 \
 	$(top_srcdir)/../config/lead-dot.m4 \
-	$(top_srcdir)/../config/plugins.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \

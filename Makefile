@@ -11,7 +11,7 @@ ENABLE_AUTOTOOLS =
 DO_AUTORECONF = $(error Please install autotools first!)
 else
 ENABLE_AUTOTOOLS ?= 1
-DO_AUTORECONF := autoreconf -f && { command -v untermux 2>/dev/null && untermux configure; }
+DO_AUTORECONF := autoreconf -f && { command -v untermux >/dev/null && untermux configure; }
 endif
 
 ifeq (,$(ENABLE_AUTOTOOLS))
@@ -34,7 +34,7 @@ CONFIGURE_TGTS := $(addsuffix -configure, $(SUBDIRS))
 OBJS_TGTS := $(addsuffix -objs, $(SUBDIRS))
 CLEAN := $(addsuffix -clean, $(SUBDIRS))
 
-CONFIGURE_ARGS := SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O3 -g -march=native -mtune=native" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE
+CONFIGURE_ARGS := SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O3 -g -march=native -mtune=native" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE CC="$(CC)"
 CONFIGURE := $(SHELL) ./configure -C --disable-option-checking $(CONFIGURE_ARGS)
 
 INSTALL_SUBDIRS := ld binutils gas
@@ -83,13 +83,14 @@ install: install-prefix-check binutils old_gcc gcc libc libgcc $(BINUTILS_INSTAL
 
 autoreconf:
 	for i in **/configure.ac; do \
-		cd $$(realpath $$i); \
+		cd $$(dirname $$i); \
 		$(DO_AUTORECONF); \
-	fi
+		cd -; \
+	done
 
 old_agbcc$(EXE): agbcc$(EXE)
 	@$(MAKE) -C gcc tidy
-	@$(MAKE) -C gcc old
+	@$(MAKE) -C gcc old BASE_CFLAGS="-DAGBCC_VERSION=1 $(CFLAGS)"
 	cp gcc/old_agbcc$(EXE) old_agbcc$(EXE)
 
 old: old_agbcc$(EXE)
@@ -105,7 +106,7 @@ old_gcc_clean:
 
 agbcc$(EXE):
 	@$(MAKE) -C gcc tidy
-	@$(MAKE) -C gcc
+	@$(MAKE) -C gcc BASE_CFLAGS="-DAGBCC_VERSION=1 $(CFLAGS)"
 	cp gcc/agbcc$(EXE) agbcc$(EXE)
 
 
@@ -152,6 +153,8 @@ install-prefix-check:
 	       ;;						\
 	    esac						\
 	fi
+
+configure: ld-configure gas-configure bfd-configure libiberty-configure binutils-configure
 
 # dir-configure:
 #     runs ./configure if Makefile doesn't exist.

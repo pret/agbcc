@@ -13,8 +13,6 @@ AC_REQUIRE([AC_CANONICAL_TARGET])
 # As the $enable_largefile decision depends on --enable-plugins we must set it
 # even in directories otherwise not depending on the $plugins option.
 
-AC_PLUGINS
-
 case "${host}" in
 changequote(,)dnl
   sparc-*-solaris*|i[3-7]86-*-solaris*)

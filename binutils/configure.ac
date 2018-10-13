@@ -34,15 +34,6 @@ AC_USE_SYSTEM_EXTENSIONS
 
 ACX_LARGEFILE
 
-AC_ARG_ENABLE(targets,
-[  --enable-targets        alternative target configurations],
-[case "${enableval}" in
-  yes | "") AC_MSG_ERROR(enable-targets option must specify target names or 'all')
-            ;;
-  no)       enable_targets= ;;
-  *)        enable_targets=$enableval ;;
-esac])dnl
-
 AM_BINUTILS_WARNINGS
 
 AC_CONFIG_HEADERS(config.h:config.in)
@@ -72,13 +63,12 @@ HDEFINES=
 AC_SUBST(HDEFINES)
 AR=${AR-ar}
 AC_SUBST(AR)
-AC_PROG_RANLIB
 AC_PROG_INSTALL
 
 BFD_CC_FOR_BUILD
 
 AC_CHECK_SIZEOF([long])
-AC_CHECK_HEADERS_ONCE([fcntl.h locale.h malloc.h strings.h sys/file.h sys/param.h sys/time.h unistd.h utime.h])
+AC_CHECK_HEADERS_ONCE([fcntl.h malloc.h strings.h sys/file.h sys/param.h sys/time.h unistd.h utime.h])
 
 AC_HEADER_SYS_WAIT
 ACX_HEADER_STRING
@@ -90,19 +80,6 @@ AC_CHECK_FUNC([mkstemp],
 AC_CHECK_FUNC([mkdtemp],
               AC_DEFINE([HAVE_MKDTEMP], 1,
               [Define to 1 if you have the `mkdtemp' function.]))
-  AC_MSG_CHECKING([for mbstate_t])
-  AC_TRY_COMPILE([#include <wchar.h>],
-  [mbstate_t teststate;],
-  have_mbstate_t=yes, have_mbstate_t=no)
-  AC_MSG_RESULT($have_mbstate_t)
-  if test x"$have_mbstate_t" = xyes; then
-    AC_DEFINE(HAVE_MBSTATE_T,1,[Define if mbstate_t exists in wchar.h.])
-  fi
-
-# Some systems have frexp only in -lm, not in -lc.
-AC_SEARCH_LIBS(frexp, m)
-
-AM_LC_MESSAGES
 
 AC_MSG_CHECKING(for time_t in time.h)
 AC_CACHE_VAL(bu_cv_decl_time_t_time_h,
@@ -150,32 +127,8 @@ fi
 
 AC_CHECK_DECLS([asprintf, environ, getc_unlocked, stpcpy])
 
-# target-specific stuff:
-
-# Canonicalize the secondary target names.
-if test -n "$enable_targets"; then
-    for targ in `echo $enable_targets | sed 's/,/ /g'`
-    do
-	result=`$ac_config_sub $targ 2>/dev/null`
-	if test -n "$result"; then
-	    canon_targets="$canon_targets $result"
-	else
-	    # Allow targets that config.sub doesn't recognize, like "all".
-	    canon_targets="$canon_targets $targ"
-	fi
-    done
-fi
 
 all_targets=false
-BUILD_SRCONV=
-BUILD_DLLTOOL=
-DLLTOOL_DEFS=
-DLLTOOL_DEFAULT=
-BUILD_WINDRES=
-BUILD_WINDMC=
-BUILD_DLLWRAP=
-BUILD_MISC=
-BUILD_INSTALL_MISC=
 OBJDUMP_DEFS=
 OBJDUMP_PRIVATE_VECTORS=
 OBJDUMP_PRIVATE_OFILES=

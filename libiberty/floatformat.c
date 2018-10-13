@@ -31,9 +31,7 @@ Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA. 
 #include <string.h>
 
 /* On some platforms, <float.h> provides DBL_QNAN.  */
-#ifdef STDC_HEADERS
 #include <float.h>
-#endif
 
 #include "ansidecl.h"
 #include "libiberty.h"

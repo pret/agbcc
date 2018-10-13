@@ -5157,33 +5157,6 @@ $as_echo "no" >&6; }
     fi
   done
 
-  # special check for _system_configuration because AIX <4.3.2 do not
-  # contain the `physmem' member.
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for external symbol _system_configuration" >&5
-$as_echo_n "checking for external symbol _system_configuration... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/systemcfg.h>
-int
-main ()
-{
-double x = _system_configuration.physmem;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-$as_echo "#define HAVE__SYSTEM_CONFIGURATION 1" >>confdefs.h
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
   as_ac_Symbol=`$as_echo "ac_cv_have_decl_basename(char *)" | $as_tr_sh`
 ac_fn_c_check_decl "$LINENO" "basename(char *)" "$as_ac_Symbol" "$ac_includes_default"
 if eval test \"x\$"$as_ac_Symbol"\" = x"yes"; then :

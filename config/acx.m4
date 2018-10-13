@@ -420,37 +420,6 @@ else
 fi
 ])
 
-dnl 'make compare' can be significantly faster, if cmp itself can
-dnl skip bytes instead of using tail.  The test being performed is
-dnl "if cmp --ignore-initial=2 t1 t2 && ! cmp --ignore-initial=1 t1 t2"
-dnl but we need to sink errors and handle broken shells.  We also test
-dnl for the parameter format "cmp file1 file2 skip1 skip2" which is
-dnl accepted by cmp on some systems.
-AC_DEFUN([ACX_PROG_CMP_IGNORE_INITIAL],
-[AC_CACHE_CHECK([how to compare bootstrapped objects], gcc_cv_prog_cmp_skip,
-[ echo abfoo >t1
-  echo cdfoo >t2
-  gcc_cv_prog_cmp_skip='tail -c +17 $$f1 > tmp-foo1; tail -c +17 $$f2 > tmp-foo2; cmp tmp-foo1 tmp-foo2'
-  if cmp t1 t2 2 2 > /dev/null 2>&1; then
-    if cmp t1 t2 1 1 > /dev/null 2>&1; then
-      :
-    else
-      gcc_cv_prog_cmp_skip='cmp $$f1 $$f2 16 16'
-    fi
-  fi
-  if cmp --ignore-initial=2 t1 t2 > /dev/null 2>&1; then
-    if cmp --ignore-initial=1 t1 t2 > /dev/null 2>&1; then
-      :
-    else
-      gcc_cv_prog_cmp_skip='cmp --ignore-initial=16 $$f1 $$f2'
-    fi
-  fi
-  rm t1 t2
-])
-do_compare="$gcc_cv_prog_cmp_skip"
-AC_SUBST(do_compare)
-])
-
 dnl See whether we can include both string.h and strings.h.
 AC_DEFUN([ACX_HEADER_STRING],
 [AC_CACHE_CHECK([whether string.h and strings.h may both be included],
@@ -459,24 +428,6 @@ AC_DEFUN([ACX_HEADER_STRING],
 #include <strings.h>]], [[]])],[gcc_cv_header_string=yes],[gcc_cv_header_string=no])])
 if test $gcc_cv_header_string = yes; then
   AC_DEFINE(STRING_WITH_STRINGS, 1, [Define if you can safely include both <string.h> and <strings.h>.])
-fi
-])
-
-dnl See if stdbool.h properly defines bool and true/false.
-dnl Check whether _Bool is built-in.
-AC_DEFUN([ACX_HEADER_STDBOOL],
-[AC_CACHE_CHECK([for working stdbool.h],
-  ac_cv_header_stdbool_h,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdbool.h>]], [[bool foo = false;]])],[ac_cv_header_stdbool_h=yes],[ac_cv_header_stdbool_h=no])])
-if test $ac_cv_header_stdbool_h = yes; then
-  AC_DEFINE(HAVE_STDBOOL_H, 1,
-  [Define if you have a working <stdbool.h> header file.])
-fi
-AC_CACHE_CHECK(for built-in _Bool, gcc_cv_c__bool,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[_Bool foo;]])],[gcc_cv_c__bool=yes],[gcc_cv_c__bool=no])
-])
-if test $gcc_cv_c__bool = yes; then
-  AC_DEFINE(HAVE__BOOL, 1, [Define if the \`_Bool' type is built-in.])
 fi
 ])
 
