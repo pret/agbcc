@@ -2117,10 +2117,7 @@ as_fn_append ac_header_list " memory.h"
 as_fn_append ac_header_list " strings.h"
 as_fn_append ac_header_list " unistd.h"
 as_fn_append ac_header_list " sys/types.h"
-as_fn_append ac_header_list " locale.h"
-as_fn_append ac_header_list " time.h"
 as_fn_append ac_header_list " sys/stat.h"
-as_fn_append ac_func_list " setlocale"
 as_fn_append ac_func_list " strsignal"
 # Check that the precious variables saved in the cache have kept the same
 # value.
@@ -5078,10 +5075,6 @@ done
 
 
 
-
-
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether string.h and strings.h may both be included" >&5
 $as_echo_n "checking whether string.h and strings.h may both be included... " >&6; }
 if ${gcc_cv_header_string+:} false; then :
@@ -5340,8 +5333,6 @@ _ACEOF
 
 fi
 done
-
-
 
 
 

@@ -2397,7 +2397,6 @@ GCC_DEFAULT_CFLAGS="-g -O2"
 # exported.  We don't use libtool yet, but some day we might, so...
 ORIGINAL_LD_FOR_MULTILIBS=$LD
 
-
 if test "${srcdir}" = "."; then
   if test -n "${with_build_subdir}"; then
     libiberty_topdir="${srcdir}/../.."
@@ -4559,7 +4558,7 @@ host_makefile_frag=${frag}
 # It's OK to check for header files.  Although the compiler may not be
 # able to link anything, it had better be able to at least compile
 # something.
-for ac_header in fcntl.h float.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h
+for ac_header in fcntl.h malloc.h stdio_ext.h sys/file.h sys/param.h sys/time.h unistd.h
 do :
 
     as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -4651,8 +4650,6 @@ $as_echo "#define TIME_WITH_SYS_TIME 1" >>confdefs.h
 
 fi
 
-
-## libiberty_AC_DECLARE_ERRNO
 
 # Determine sizes of some types.
 

@@ -154,8 +154,7 @@ INCDIR = $(BASEDIR)/include
 # so that tm.h and config.h will be found in the compilation
 # subdirectory rather than in the source directory.
 AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
-	-I$(INCDIR) -I$(srcdir)/.. -I$(BFDDIR) \
-	-DLOCALEDIR="\"$(datadir)/locale\""
+	-I$(INCDIR) -I$(srcdir)/.. -I$(BFDDIR)
 
 # How to link with both our special library facilities
 # and the system's installed libraries.

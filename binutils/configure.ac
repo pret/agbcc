@@ -72,7 +72,7 @@ AC_CHECK_HEADERS_ONCE([fcntl.h malloc.h strings.h sys/file.h sys/param.h sys/tim
 
 AC_HEADER_SYS_WAIT
 ACX_HEADER_STRING
-AC_CHECK_FUNCS_ONCE([getpagesize mkdir rmdir setlocale stpcpy strcasecmp strdup strncasecmp utime])
+AC_CHECK_FUNCS_ONCE([getpagesize mkdir rmdir stpcpy strcasecmp strdup strncasecmp utime])
 
 AC_CHECK_FUNC([mkstemp],
 	      AC_DEFINE([HAVE_MKSTEMP], 1,

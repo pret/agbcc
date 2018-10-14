@@ -985,9 +985,6 @@ main (int argc, char ** argv)
   start_time = get_run_time ();
   signal_init ();
 
-#if defined (HAVE_SETLOCALE)
-  setlocale (LC_CTYPE, "");
-#endif
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 

@@ -6,7 +6,7 @@ PREFIX := $(shell realpath $(prefix))
 endif
 
 # Simulate autotools by hacking recursive submake
-ifeq (,$(shell which autoreconf 2>/dev/null || true))
+ifeq (,$(shell which aclocal-1.16 2>/dev/null || true))
 ENABLE_AUTOTOOLS =
 DO_AUTORECONF = $(error Please install autotools first!)
 else
@@ -176,15 +176,15 @@ ld-configure:
 	    cd ld && $(CONFIGURE);				\
 	fi
 ld-objs: ld-configure bfd-headers
-	@$(MAKE) -C ld objs
+	@$(MAKE) -C ld objs $(SUBSUBMAKEFLAGS)
 ld-all: ld-objs bfd-all libiberty-all
-	@$(MAKE) -C ld
+	@$(MAKE) -C ld $(SUBSUBMAKEFLAGS)
 ld-clean: ld-configure
-	@$(MAKE) -C ld clean
+	@$(MAKE) -C ld clean $(SUBSUBMAKEFLAGS)
 ld-install: ld-all
-	@$(MAKE) -C ld install prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C ld install prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
 ld-install-strip: ld-all
-	@$(MAKE) -C ld install-strip prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C ld install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 binutils-configure:
 	@if [ ! -f binutils/Makefile ]; then 			\
@@ -192,15 +192,15 @@ binutils-configure:
 	    cd binutils && $(CONFIGURE); 			\
 	fi
 binutils-objs: binutils-configure bfd-headers
-	@$(MAKE) -C binutils objs
+	@$(MAKE) -C binutils objs $(SUBSUBMAKEFLAGS)
 binutils-all: binutils-objs bfd-all libiberty-all
-	@$(MAKE) -C binutils
+	@$(MAKE) -C binutils $(SUBSUBMAKEFLAGS)
 binutils-clean: binutils-configure
-	@$(MAKE) -C binutils clean
+	@$(MAKE) -C binutils clean $(SUBSUBMAKEFLAGS)
 binutils-install: binutils-all
-	@$(MAKE) -C binutils install prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C binutils install prefix=$(PREFIX)/tools/binutils  $(SUBSUBMAKEFLAGS)
 binutils-install-strip: binutils-all
-	@$(MAKE) -C binutils install-strip prefix=$(PREFIX)/tools/binutils #DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C binutils install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 gas-configure:
 	@if [ ! -f gas/Makefile ]; then 			\
@@ -208,15 +208,15 @@ gas-configure:
 	    cd gas && $(CONFIGURE);				\
 	fi
 gas-objs: gas-configure bfd-headers
-	@$(MAKE) -C gas objs
+	@$(MAKE) -C gas objs $(SUBSUBMAKEFLAGS)
 gas-all: gas-objs bfd-all libiberty-all
-	@$(MAKE) -C gas
+	@$(MAKE) -C gas $(SUBSUBMAKEFLAGS)
 gas-clean: gas-configure
-	@$(MAKE) -C gas clean
+	@$(MAKE) -C gas clean $(SUBSUBMAKEFLAGS)
 gas-install: gas-all
-	@$(MAKE) -C gas install prefix=$(PREFIX)/tools/binutils # DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C gas install prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
 gas-install-strip: gas-all
-	@$(MAKE) -C gas install-strip prefix=$(PREFIX)/tools/binutils # DESTDIR=$(PREFIX)/tools/binutils
+	@$(MAKE) -C gas install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 bfd-configure:
 	@if [ ! -f bfd/Makefile ]; then				\
@@ -224,15 +224,15 @@ bfd-configure:
 	    cd bfd && $(CONFIGURE);				\
 	fi
 bfd-objs: bfd-configure
-	@$(MAKE) -C bfd objs
+	@$(MAKE) -C bfd objs $(SUBSUBMAKEFLAGS)
 bfd-all: bfd-objs
-	@$(MAKE) -C bfd
+	@$(MAKE) -C bfd $(SUBSUBMAKEFLAGS)
 bfd-clean: bfd-configure
-	@$(MAKE) -C bfd clean
+	@$(MAKE) -C bfd clean $(SUBSUBMAKEFLAGS)
 
 # All subdirs (aside from bfd and libiberty) need bfd.h to build.
 bfd-headers: bfd-configure
-	@$(MAKE) -C bfd headers
+	@$(MAKE) -C bfd headers $(SUBSUBMAKEFLAGS)
 .PHONY: bfd-headers
 
 libiberty-configure:
@@ -241,9 +241,9 @@ libiberty-configure:
 	    cd libiberty && $(CONFIGURE);			\
 	fi
 libiberty-objs: libiberty-configure
-	@$(MAKE) -C libiberty objs
+	@$(MAKE) -C libiberty objs $(SUBSUBMAKEFLAGS)
 libiberty-all: libiberty-objs
-	@$(MAKE) -C libiberty
+	@$(MAKE) -C libiberty $(SUBSUBMAKEFLAGS)
 libiberty-clean: libiberty-configure
-	@$(MAKE) -C libiberty clean
+	@$(MAKE) -C libiberty clean $(SUBSUBMAKEFLAGS)
 

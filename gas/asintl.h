@@ -20,10 +20,6 @@
    Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
-
 # define gettext(Msgid) (Msgid)
 # define dgettext(Domainname, Msgid) (Msgid)
 # define dcgettext(Domainname, Msgid, Category) (Msgid)
@@ -37,3 +33,4 @@
 # define bindtextdomain(Domainname, Dirname) do {} while (0)
 # define _(String) (String)
 # define N_(String) (String)
+

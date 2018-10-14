@@ -3445,10 +3445,6 @@ main (int argc, char **argv)
   char *target = default_target;
   bfd_boolean seenflag = FALSE;
 
-#if defined (HAVE_SETLOCALE)
-  setlocale (LC_CTYPE, "");
-#endif
-
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 

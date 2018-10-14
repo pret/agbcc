@@ -215,10 +215,10 @@ AM_CONDITIONAL(GENINSRC_NEVER, false)
 AC_SUBST(HDEFINES)
 AC_SUBST(NATIVE_LIB_DIRS)
 
-AC_CHECK_HEADERS_ONCE([fcntl.h locale.h malloc.h strings.h sys/file.h unistd.h])
+AC_CHECK_HEADERS_ONCE([fcntl.h malloc.h strings.h sys/file.h unistd.h])
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS_ONCE([mmap setlocale glob strcasecmp strcspn])
+AC_CHECK_FUNCS_ONCE([mmap glob strcasecmp strcspn])
 
 AC_SEARCH_LIBS([dlopen], [dl])
 

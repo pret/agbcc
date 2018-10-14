@@ -37,17 +37,8 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if your <locale.h> file defines LC_MESSAGES. */
-#undef HAVE_LC_MESSAGES
-
-/* Define to 1 if you have the <locale.h> header file. */
-#undef HAVE_LOCALE_H
-
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
-
-/* Define if mbstate_t exists in wchar.h. */
-#undef HAVE_MBSTATE_T
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -63,9 +54,6 @@
 
 /* Define to 1 if you have the `rmdir' function. */
 #undef HAVE_RMDIR
-
-/* Define to 1 if you have the `setlocale' function. */
-#undef HAVE_SETLOCALE
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

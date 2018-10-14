@@ -89,10 +89,6 @@ extern char **environ;
 #define SEEK_END 2
 #endif
 
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
-
 # define gettext(Msgid) (Msgid)
 # define dgettext(Domainname, Msgid) (Msgid)
 # define dcgettext(Domainname, Msgid, Category) (Msgid)

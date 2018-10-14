@@ -129,14 +129,14 @@ AC_DEFINE_UNQUOTED(TARGET_OS,		"${target_os}",    [Target OS.])
 
 AC_EXEEXT
 
-AC_CHECK_HEADERS_ONCE(memory.h strings.h unistd.h sys/types.h locale.h time.h sys/stat.h)
+AC_CHECK_HEADERS_ONCE(memory.h strings.h unistd.h sys/types.h sys/stat.h)
 ACX_HEADER_STRING
 
 AC_FUNC_ALLOCA
 
 # VMS doesn't have unlink.
 AC_CHECK_FUNCS(unlink remove, break)
-AC_CHECK_FUNCS_ONCE(setlocale strsignal)
+AC_CHECK_FUNCS_ONCE(strsignal)
 
 # On some systems, the system header files may not declare malloc, realloc,
 # and free.  There are places where gas needs these functions to have been

@@ -633,7 +633,6 @@ BUILD_INSTALL_MISC
 BUILD_MISC
 EXEEXT_FOR_BUILD
 CC_FOR_BUILD
-RANLIB
 AR
 HDEFINES
 GENINSRC_NEVER_FALSE
@@ -745,7 +744,6 @@ enable_option_checking
 enable_dependency_tracking
 enable_silent_rules
 enable_largefile
-enable_targets
 enable_werror
 enable_build_warnings
 '
@@ -1384,7 +1382,6 @@ Optional Features:
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
   --disable-largefile     omit support for large files
-  --enable-targets        alternative target configurations
   --enable-werror         treat compile warnings as errors
   --enable-build-warnings enable build-time compiler warnings
 
@@ -2252,7 +2249,6 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
 fi
 
 as_fn_append ac_header_list " fcntl.h"
-as_fn_append ac_header_list " locale.h"
 as_fn_append ac_header_list " malloc.h"
 as_fn_append ac_header_list " strings.h"
 as_fn_append ac_header_list " sys/file.h"
@@ -2263,7 +2259,6 @@ as_fn_append ac_header_list " utime.h"
 as_fn_append ac_func_list " getpagesize"
 as_fn_append ac_func_list " mkdir"
 as_fn_append ac_func_list " rmdir"
-as_fn_append ac_func_list " setlocale"
 as_fn_append ac_func_list " stpcpy"
 as_fn_append ac_func_list " strcasecmp"
 as_fn_append ac_func_list " strdup"
@@ -5246,16 +5241,6 @@ fi
 
 
 
-# Check whether --enable-targets was given.
-if test "${enable_targets+set}" = set; then :
-  enableval=$enable_targets; case "${enableval}" in
-  yes | "") as_fn_error $? "enable-targets option must specify target names or 'all'" "$LINENO" 5
-            ;;
-  no)       enable_targets= ;;
-  *)        enable_targets=$enableval ;;
-esac
-fi
-
 
 # Set the 'development' global.
 . $srcdir/../bfd/development.sh
@@ -5448,98 +5433,6 @@ HDEFINES=
 
 AR=${AR-ar}
 
-if test -n "$ac_tool_prefix"; then
-  # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
-set dummy ${ac_tool_prefix}ranlib; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_RANLIB+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$RANLIB"; then
-  ac_cv_prog_RANLIB="$RANLIB" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_RANLIB="${ac_tool_prefix}ranlib"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi
-fi
-RANLIB=$ac_cv_prog_RANLIB
-if test -n "$RANLIB"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $RANLIB" >&5
-$as_echo "$RANLIB" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-fi
-if test -z "$ac_cv_prog_RANLIB"; then
-  ac_ct_RANLIB=$RANLIB
-  # Extract the first word of "ranlib", so it can be a program name with args.
-set dummy ranlib; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_ac_ct_RANLIB+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$ac_ct_RANLIB"; then
-  ac_cv_prog_ac_ct_RANLIB="$ac_ct_RANLIB" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_ac_ct_RANLIB="ranlib"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi
-fi
-ac_ct_RANLIB=$ac_cv_prog_ac_ct_RANLIB
-if test -n "$ac_ct_RANLIB"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_RANLIB" >&5
-$as_echo "$ac_ct_RANLIB" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-  if test "x$ac_ct_RANLIB" = x; then
-    RANLIB=":"
-  else
-    case $cross_compiling:$ac_tool_warned in
-yes:)
-{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
-$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
-ac_tool_warned=yes ;;
-esac
-    RANLIB=$ac_ct_RANLIB
-  fi
-else
-  RANLIB="$ac_cv_prog_RANLIB"
-fi
-
 
 
 # Put a plausible default for CC_FOR_BUILD in Makefile.
@@ -5633,8 +5526,6 @@ fi
 
 
 done
-
-
 
 
 
@@ -5760,8 +5651,6 @@ done
 
 
 
-
-
 ac_fn_c_check_func "$LINENO" "mkstemp" "ac_cv_func_mkstemp"
 if test "x$ac_cv_func_mkstemp" = xyes; then :
 
@@ -5775,124 +5664,6 @@ if test "x$ac_cv_func_mkdtemp" = xyes; then :
 $as_echo "#define HAVE_MKDTEMP 1" >>confdefs.h
 
 fi
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for mbstate_t" >&5
-$as_echo_n "checking for mbstate_t... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <wchar.h>
-int
-main ()
-{
-mbstate_t teststate;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  have_mbstate_t=yes
-else
-  have_mbstate_t=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_mbstate_t" >&5
-$as_echo "$have_mbstate_t" >&6; }
-  if test x"$have_mbstate_t" = xyes; then
-
-$as_echo "#define HAVE_MBSTATE_T 1" >>confdefs.h
-
-  fi
-
-# Some systems have frexp only in -lm, not in -lc.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing frexp" >&5
-$as_echo_n "checking for library containing frexp... " >&6; }
-if ${ac_cv_search_frexp+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char frexp ();
-int
-main ()
-{
-return frexp ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' m; do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_search_frexp=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext
-  if ${ac_cv_search_frexp+:} false; then :
-  break
-fi
-done
-if ${ac_cv_search_frexp+:} false; then :
-
-else
-  ac_cv_search_frexp=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_frexp" >&5
-$as_echo "$ac_cv_search_frexp" >&6; }
-ac_res=$ac_cv_search_frexp
-if test "$ac_res" != no; then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-fi
-
-
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for LC_MESSAGES" >&5
-$as_echo_n "checking for LC_MESSAGES... " >&6; }
-if ${am_cv_val_LC_MESSAGES+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <locale.h>
-int
-main ()
-{
-return LC_MESSAGES
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  am_cv_val_LC_MESSAGES=yes
-else
-  am_cv_val_LC_MESSAGES=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_val_LC_MESSAGES" >&5
-$as_echo "$am_cv_val_LC_MESSAGES" >&6; }
-  if test $am_cv_val_LC_MESSAGES = yes; then
-
-$as_echo "#define HAVE_LC_MESSAGES 1" >>confdefs.h
-
-  fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for time_t in time.h" >&5
@@ -6069,32 +5840,8 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-# target-specific stuff:
-
-# Canonicalize the secondary target names.
-if test -n "$enable_targets"; then
-    for targ in `echo $enable_targets | sed 's/,/ /g'`
-    do
-	result=`$ac_config_sub $targ 2>/dev/null`
-	if test -n "$result"; then
-	    canon_targets="$canon_targets $result"
-	else
-	    # Allow targets that config.sub doesn't recognize, like "all".
-	    canon_targets="$canon_targets $targ"
-	fi
-    done
-fi
 
 all_targets=false
-BUILD_SRCONV=
-BUILD_DLLTOOL=
-DLLTOOL_DEFS=
-DLLTOOL_DEFAULT=
-BUILD_WINDRES=
-BUILD_WINDMC=
-BUILD_DLLWRAP=
-BUILD_MISC=
-BUILD_INSTALL_MISC=
 OBJDUMP_DEFS=
 OBJDUMP_PRIVATE_VECTORS=
 OBJDUMP_PRIVATE_OFILES=

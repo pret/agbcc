@@ -21,17 +21,11 @@
 #ifndef LD_H
 #define LD_H
 
-#ifdef HAVE_LOCALE_H
-#endif
 #ifndef SEEK_CUR
 #define SEEK_CUR 1
 #endif
 #ifndef SEEK_END
 #define SEEK_END 2
-#endif
-
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
 #endif
 
 # define gettext(Msgid) (Msgid)

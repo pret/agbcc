@@ -2286,13 +2286,11 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
 fi
 
 as_fn_append ac_header_list " fcntl.h"
-as_fn_append ac_header_list " locale.h"
 as_fn_append ac_header_list " malloc.h"
 as_fn_append ac_header_list " strings.h"
 as_fn_append ac_header_list " sys/file.h"
 as_fn_append ac_header_list " unistd.h"
 as_fn_append ac_func_list " mmap"
-as_fn_append ac_func_list " setlocale"
 as_fn_append ac_func_list " glob"
 as_fn_append ac_func_list " strcasecmp"
 as_fn_append ac_func_list " strcspn"
@@ -5666,8 +5664,6 @@ done
 
 
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether string.h and strings.h may both be included" >&5
 $as_echo_n "checking whether string.h and strings.h may both be included... " >&6; }
 if ${gcc_cv_header_string+:} false; then :
@@ -5714,8 +5710,6 @@ _ACEOF
 
 fi
 done
-
-
 
 
 
