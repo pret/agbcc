@@ -509,15 +509,7 @@ dump_headers (bfd *abfd)
   int max_section_name_length = 13;
   int bfd_vma_width;
 
-#ifndef BFD64
   bfd_vma_width = 10;
-#else
-  /* With BFD64, non-ELF returns -1 and wants always 64 bit addresses.  */
-  if (bfd_get_arch_size (abfd) == 32)
-    bfd_vma_width = 10;
-  else
-    bfd_vma_width = 18;
-#endif
 
   printf (_("Sections:\n"));
 

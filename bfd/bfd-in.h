@@ -87,9 +87,6 @@ typedef BFD_HOST_U_64_BIT bfd_uint64_t;
 
 #include <inttypes.h>
 
-#if BFD_ARCH_SIZE >= 64
-#define BFD64
-#endif
 
 /* Declaring a type wide enough to hold a host long and a host pointer.  */
 #define BFD_HOSTPTR_T @BFD_HOSTPTR_T@
@@ -113,22 +110,6 @@ typedef int bfd_boolean;
 #define FALSE 0
 #define TRUE 1
 
-#ifdef BFD64
-
-typedef uint64_t bfd_vma;
-typedef int64_t bfd_signed_vma;
-typedef uint64_t bfd_size_type;
-typedef uint64_t symvalue;
-
-#define BFD_VMA_FMT PRIx64
-
-#ifndef fprintf_vma
-#define sprintf_vma(s,x) sprintf (s, "%016" BFD_VMA_FMT, x)
-#define fprintf_vma(f,x) fprintf (f, "%016" BFD_VMA_FMT, x)
-#endif
-
-#else /* not BFD64  */
-
 /* Represent a target address.  Also used as a generic unsigned type
    which is guaranteed to be big enough to hold any arithmetic types
    we need to deal with.  */
@@ -147,8 +128,6 @@ typedef uint32_t bfd_size_type;
 #define BFD_VMA_FMT ""
 #define fprintf_vma(s,x) fprintf (s, "%08" BFD_VMA_FMT "x", x)
 #define sprintf_vma(s,x) sprintf (s, "%08" BFD_VMA_FMT "x", x)
-
-#endif /* not BFD64  */
 
 #define HALF_BFD_SIZE_TYPE \
   (((bfd_size_type) 1) << (8 * sizeof (bfd_size_type) / 2))

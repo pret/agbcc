@@ -122,8 +122,12 @@ extern char **environ;
 # endif
 #endif
 
+#if SIZEOF_LONG_LONG > SIZEOF_LONG
 /* We can't use any bfd types here since readelf may define BFD64 and
    objdump may not.  */
-#define HOST_WIDEST_INT	long long
+#define HOST_WIDEST_INT long long
+#else
+#define HOST_WIDEST_INT long
+#endif
 
 #endif /* _BIN_SYSDEP_H */

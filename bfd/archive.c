@@ -1036,12 +1036,8 @@ bfd_slurp_armap (bfd *abfd)
   else if (CONST_STRNEQ (nextname, "/SYM64/         "))
     {
       /* 64bit (Irix 6) archive.  */
-#ifdef BFD64
-      return _bfd_archive_64_bit_slurp_armap (abfd);
-#else
       bfd_set_error (bfd_error_wrong_format);
       return FALSE;
-#endif
     }
   else if (CONST_STRNEQ (nextname, "#1/20           "))
     {
@@ -2289,40 +2285,6 @@ _bfd_bsd_write_armap (bfd *arch,
 
   first = mapsize + elength + sizeof (struct ar_hdr) + SARMAG;
 
-#ifdef BFD64
-  firstreal = first;
-  current = arch->archive_head;
-  last_elt = current;	/* Last element arch seen.  */
-  for (count = 0; count < orl_count; count++)
-    {
-      unsigned int offset;
-
-      if (map[count].u.abfd != last_elt)
-	{
-	  do
-	    {
-	      struct areltdata *ared = arch_eltdata (current);
-
-	      firstreal += (ared->parsed_size + ared->extra_size
-			    + sizeof (struct ar_hdr));
-	      firstreal += firstreal % 2;
-	      current = current->archive_next;
-	    }
-	  while (current != map[count].u.abfd);
-	}
-
-      /* The archive file format only has 4 bytes to store the offset
-	 of the member.  Generate 64-bit archive if an archive is past
-	 its 4Gb limit.  */
-      offset = (unsigned int) firstreal;
-      if (firstreal != (file_ptr) offset)
-	return _bfd_archive_64_bit_write_armap (arch, elength, map,
-						orl_count, stridx);
-
-      last_elt = current;
-    }
-#endif
-
   /* If deterministic, we use 0 as the timestamp in the map.
      Some linkers may require that the archive filesystem modification
      time is less than (or near to) the archive map timestamp.  Those
@@ -2518,38 +2480,6 @@ _bfd_coff_write_armap (bfd *arch,
 				   + elength
 				   + sizeof (struct ar_hdr)
 				   + SARMAG);
-
-#ifdef BFD64
-  current = arch->archive_head;
-  count = 0;
-  archive_member_file_ptr = first_archive_member_file_ptr;
-  while (current != NULL && count < symbol_count)
-    {
-      /* For each symbol which is used defined in this object, write
-	 out the object file's address in the archive.  */
-
-      while (count < symbol_count && map[count].u.abfd == current)
-	{
-	  unsigned int offset = (unsigned int) archive_member_file_ptr;
-
-	  /* Generate 64-bit archive if an archive is past its 4Gb
-	     limit.  */
-	  if (archive_member_file_ptr != (file_ptr) offset)
-	    return _bfd_archive_64_bit_write_armap (arch, elength, map,
-						    symbol_count, stridx);
-	  count++;
-	}
-      archive_member_file_ptr += sizeof (struct ar_hdr);
-      if (! bfd_is_thin_archive (arch))
-	{
-	  /* Add size of this archive entry.  */
-	  archive_member_file_ptr += arelt_size (current);
-	  /* Remember about the even alignment.  */
-	  archive_member_file_ptr += archive_member_file_ptr % 2;
-	}
-      current = current->archive_next;
-    }
-#endif
 
   memset (&hdr, ' ', sizeof (struct ar_hdr));
   hdr.ar_name[0] = '/';

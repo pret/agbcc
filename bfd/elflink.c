@@ -8156,14 +8156,6 @@ put_value (bfd_vma size,
 	  x >>= 16;
 	  x >>= 16;
 	  break;
-#ifdef BFD64
-	case 8:
-	  bfd_put_64 (input_bfd, x, location);
-	  /* Computed this way because x >>= 64 is undefined if x is a 64-bit value.  */
-	  x >>= 32;
-	  x >>= 32;
-	  break;
-#endif
 	default:
 	  abort ();
 	  break;
@@ -8213,11 +8205,6 @@ get_value (bfd_vma size,
 	case 4:
 	  x = (x << shift) | bfd_get_32 (input_bfd, location);
 	  break;
-#ifdef BFD64
-	case 8:
-	  x = (x << shift) | bfd_get_64 (input_bfd, location);
-	  break;
-#endif
 	default:
 	  abort ();
 	}

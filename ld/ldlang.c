@@ -2088,9 +2088,7 @@ lang_map (void)
       minfo ("0x%V", m->length);
       if (m->flags || m->not_flags)
 	{
-#ifndef BFD64
 	  minfo ("        ");
-#endif
 	  if (m->flags)
 	    {
 	      print_space ();
@@ -4076,9 +4074,6 @@ print_assignment (lang_assignment_statement_type *assignment,
 	minfo ("[!provide]");
       else
 	minfo ("*undef*   ");
-#ifdef BFD64
-      minfo ("        ");
-#endif
     }
   expld.assign_name = NULL;
 
@@ -4210,11 +4205,7 @@ print_input_section (asection *i, bfd_boolean is_discarded)
   if (size != i->rawsize && i->rawsize != 0)
     {
       len = SECTION_NAME_MAP_LENGTH + 3;
-#ifdef BFD64
-      len += 16;
-#else
       len += 8;
-#endif
       while (len > 0)
 	{
 	  print_space ();

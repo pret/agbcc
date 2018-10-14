@@ -1587,49 +1587,18 @@ bfd_record_phdr (bfd *abfd,
   return TRUE;
 }
 
-#ifdef BFD64
-/* Return true iff this target is 32-bit.  */
-
-static bfd_boolean
-is32bit (bfd *abfd)
-{
-  if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
-    {
-      const struct elf_backend_data *bed = get_elf_backend_data (abfd);
-      return bed->s->elfclass == ELFCLASS32;
-    }
-
-  /* For non-ELF targets, use architecture information.  */
-  return bfd_arch_bits_per_address (abfd) <= 32;
-}
-#endif
-
 /* bfd_sprintf_vma and bfd_fprintf_vma display an address in the
    target's address size.  */
 
 void
 bfd_sprintf_vma (bfd *abfd ATTRIBUTE_UNUSED, char *buf, bfd_vma value)
 {
-#ifdef BFD64
-  if (is32bit (abfd))
-    {
-      sprintf (buf, "%08x", (uint32_t) value);
-      return;
-    }
-#endif
   sprintf_vma (buf, value);
 }
 
 void
 bfd_fprintf_vma (bfd *abfd ATTRIBUTE_UNUSED, void *stream, bfd_vma value)
 {
-#ifdef BFD64
-  if (is32bit (abfd))
-    {
-      fprintf ((FILE *) stream, "%08x", (uint32_t) value);
-      return;
-    }
-#endif
   fprintf_vma ((FILE *) stream, value);
 }
 

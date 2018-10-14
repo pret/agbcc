@@ -1237,12 +1237,7 @@ find_merged_cie (bfd *abfd, struct bfd_link_info *info, asection *sec,
 	 the reloc.  */
       rel = cookie->rels + cie->personality.reloc_index;
       memset (&cie->personality, 0, sizeof (cie->personality));
-#ifdef BFD64
-      if (elf_elfheader (abfd)->e_ident[EI_CLASS] == ELFCLASS64)
-	r_symndx = ELF64_R_SYM (rel->r_info);
-      else
-#endif
-	r_symndx = ELF32_R_SYM (rel->r_info);
+      r_symndx = ELF32_R_SYM (rel->r_info);
       if (r_symndx >= cookie->locsymcount
 	  || ELF_ST_BIND (cookie->locsyms[r_symndx].st_info) != STB_LOCAL)
 	{

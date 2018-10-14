@@ -231,7 +231,8 @@ bfd-clean: bfd-configure
 	@$(MAKE) -C bfd clean $(SUBSUBMAKEFLAGS)
 
 # All subdirs (aside from bfd and libiberty) need bfd.h to build.
-bfd-headers: bfd-configure
+bfd-headers: bfd/stmp-bfd-h
+bfd/stmp-bfd-h: bfd-configure
 	@$(MAKE) -C bfd headers $(SUBSUBMAKEFLAGS)
 .PHONY: bfd-headers
 

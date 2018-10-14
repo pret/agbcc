@@ -450,15 +450,7 @@ bfd_perform_relocation (bfd *abfd,
       break;
 
     case 4:
-#ifdef BFD64
-      {
-	bfd_vma x = bfd_get_64 (abfd, (bfd_byte *) data + octets);
-	DOIT (x);
-	bfd_put_64 (abfd, x, (bfd_byte *) data + octets);
-      }
-#else
       abort ();
-#endif
       break;
     default:
       return bfd_reloc_other;
@@ -774,11 +766,7 @@ _bfd_relocate_contents (reloc_howto_type *howto,
       x = bfd_get_32 (input_bfd, location);
       break;
     case 8:
-#ifdef BFD64
-      x = bfd_get_64 (input_bfd, location);
-#else
       abort ();
-#endif
       break;
     }
 
@@ -867,11 +855,7 @@ _bfd_relocate_contents (reloc_howto_type *howto,
       bfd_put_32 (input_bfd, x, location);
       break;
     case 8:
-#ifdef BFD64
-      bfd_put_64 (input_bfd, x, location);
-#else
       abort ();
-#endif
       break;
     }
 
@@ -908,11 +892,7 @@ _bfd_clear_contents (reloc_howto_type *howto,
       x = bfd_get_32 (input_bfd, location);
       break;
     case 8:
-#ifdef BFD64
-      x = bfd_get_64 (input_bfd, location);
-#else
       abort ();
-#endif
       break;
     }
 
@@ -942,11 +922,7 @@ _bfd_clear_contents (reloc_howto_type *howto,
       bfd_put_32 (input_bfd, x, location);
       break;
     case 8:
-#ifdef BFD64
-      bfd_put_64 (input_bfd, x, location);
-#else
       abort ();
-#endif
       break;
     }
 }

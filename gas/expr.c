@@ -35,9 +35,6 @@
 
 static void floating_constant (expressionS * expressionP);
 static valueT generic_bignum_to_int32 (void);
-#ifdef BFD64
-static valueT generic_bignum_to_int64 (void);
-#endif
 static void integer_constant (int radix, expressionS * expressionP);
 static void mri_char_constant (expressionS *);
 static void clean_up_expression (expressionS * expressionP);
@@ -226,22 +223,6 @@ generic_bignum_to_int32 (void)
   return number;
 }
 
-#ifdef BFD64
-static valueT
-generic_bignum_to_int64 (void)
-{
-  valueT number =
-    ((((((((valueT) generic_bignum[3] & LITTLENUM_MASK)
-	  << LITTLENUM_NUMBER_OF_BITS)
-	 | ((valueT) generic_bignum[2] & LITTLENUM_MASK))
-	<< LITTLENUM_NUMBER_OF_BITS)
-       | ((valueT) generic_bignum[1] & LITTLENUM_MASK))
-      << LITTLENUM_NUMBER_OF_BITS)
-     | ((valueT) generic_bignum[0] & LITTLENUM_MASK));
-  return number;
-}
-#endif
-
 static void
 integer_constant (int radix, expressionS *expressionP)
 {
@@ -275,11 +256,7 @@ integer_constant (int radix, expressionS *expressionP)
      you're compiling in 64-bit mode, the target is a 64-bit machine.
      This should be cleaned up.  */
 
-#ifdef BFD64
-#define valuesize 64
-#else /* includes non-bfd case, mostly */
 #define valuesize 32
-#endif
 
   if (is_end_of_line[(unsigned char) *input_line_pointer])
     {
@@ -428,14 +405,6 @@ integer_constant (int radix, expressionS *expressionP)
 	  number = generic_bignum_to_int32 ();
 	  small = 1;
 	}
-#ifdef BFD64
-      else if (num_little_digits <= 4)
-	{
-	  /* Will fit into 64 bits.  */
-	  number = generic_bignum_to_int64 ();
-	  small = 1;
-	}
-#endif
       else
 	{
 	  small = 0;
@@ -486,14 +455,6 @@ integer_constant (int radix, expressionS *expressionP)
 	  number = generic_bignum_to_int32 ();
 	  small = 1;
 	}
-#ifdef BFD64
-      else if (leader < generic_bignum + 4)
-	{
-	  /* Will fit into 64 bits.  */
-	  number = generic_bignum_to_int64 ();
-	  small = 1;
-	}
-#endif
       else
 	{
 	  /* Number of littlenums in the bignum.  */

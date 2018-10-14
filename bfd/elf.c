@@ -10956,11 +10956,7 @@ _bfd_elf_get_synthetic_symtab (bfd *abfd,
       size += strlen ((*p->sym_ptr_ptr)->name) + sizeof ("@plt");
       if (p->addend != 0)
 	{
-#ifdef BFD64
-	  size += sizeof ("+0x") - 1 + 8 + 8 * (bed->s->elfclass == ELFCLASS64);
-#else
 	  size += sizeof ("+0x") - 1 + 8;
-#endif
 	}
     }
 

@@ -954,10 +954,6 @@ list_symbol_table (void)
 			   (unsigned long) (sizeof (val) * 2));
 		  sprintf (buf, fmt, (unsigned long) val);
 		}
-#if defined (BFD64)
-	      else if (sizeof (val) > 4)
-		sprintf_vma (buf, val);
-#endif
 	      else
 		abort ();
 
