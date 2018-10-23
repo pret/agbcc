@@ -25,8 +25,8 @@ tooldir = $(exec_prefix)/$(target_alias)
 ELF_CLFAGS=-DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
-WARN_CFLAGS = @WARN_CFLAGS@
-NO_WERROR = @NO_WERROR@
+WARN_CFLAGS = -Wall
+NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
 
 PLUGIN_C =
@@ -78,7 +78,7 @@ CC_FOR_TARGET = ` \
 # Strip out sanitization options as we want to test building binaries without any extra paraphernalia
 CFLAGS_FOR_TARGET = `echo $(CFLAGS) | sed -e 's/-fsanitize=address//g' -e 's/-fsanitize=undefined//g'`
 
-transform = s/^ld-new$$/$(installed_linker)/;@program_transform_name@
+transform = s/^ld-new$$/ld.bfd/;@program_transform_name@
 bin_PROGRAMS = ld-new
 info_TEXINFOS =
 man_MANS =
@@ -319,22 +319,20 @@ CLEANFILES = dep.sed DEP DEPA DEP1 DEP2 spu_ovl.s spu_ovl.@OBJEXT@ spu_icache.s 
 
 install-exec-local: ld-new$(EXEEXT) install-binPROGRAMS
 	$(mkinstalldirs) $(DESTDIR)$(tooldir)/bin
-	n=`echo $(installed_linker) | sed '$(transform)'`; \
+	n=`echo ld.bfd | sed '$(transform)'`; \
 	if test "$(bindir)" != "$(tooldir)/bin"; then \
-	  rm -f $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
-	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
+	  rm -f $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT); \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT) >/dev/null 2>/dev/null \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT); \
 	fi; \
-	if test "x$(install_as_default)" = "xyes"; then \
-	  ld=`echo ld | sed '$(transform)'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
-	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
-	  if test "$(bindir)" != "$(tooldir)/bin"; then \
-	    rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
-	    ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
-	  fi; \
+	ld=`echo ld | sed '$(transform)'`; \
+	rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
+	|| $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	if test "$(bindir)" != "$(tooldir)/bin"; then \
+	  rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	fi
 
 install-data-local:

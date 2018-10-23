@@ -69,8 +69,6 @@ valueT resolve_symbol_value (symbolS *);
 void resolve_local_symbol_values (void);
 int snapshot_symbol (symbolS **, valueT *, segT *, fragS **);
 
-void print_symbol_value (symbolS *);
-void print_expr (expressionS *);
 void print_expr_1 (FILE *, expressionS *);
 void print_symbol_value_1 (FILE *, symbolS *);
 
@@ -88,7 +86,6 @@ extern void copy_symbol_attributes (symbolS *, symbolS *);
 extern valueT S_GET_VALUE (symbolS *);
 extern void S_SET_VALUE (symbolS *, valueT);
 
-extern int S_IS_FUNCTION (symbolS *);
 extern int S_IS_EXTERNAL (symbolS *);
 extern int S_IS_WEAK (symbolS *);
 extern int S_IS_WEAKREFR (symbolS *);
@@ -98,7 +95,6 @@ extern int S_IS_DEFINED (symbolS *);
 extern int S_FORCE_RELOC (symbolS *, int);
 extern int S_IS_DEBUG (symbolS *);
 extern int S_IS_LOCAL (symbolS *);
-extern int S_IS_STABD (symbolS *);
 extern int S_CAN_BE_REDEFINED (const symbolS *);
 extern int S_IS_VOLATILE (const symbolS *);
 extern int S_IS_FORWARD_REF (const symbolS *);
@@ -166,10 +162,6 @@ void symbol_insert (symbolS * addme, symbolS * target,
 void symbol_remove (symbolS * symbolP, symbolS ** rootP,
 		    symbolS ** lastP);
 
-extern symbolS *symbol_previous (symbolS *);
-
-void verify_symbol_chain (symbolS * rootP, symbolS * lastP);
-
 void symbol_append (symbolS * addme, symbolS * target,
 		    symbolS ** rootP, symbolS ** lastP);
 
@@ -182,17 +174,11 @@ extern void symbol_set_value_now (symbolS *);
 extern void symbol_set_frag (symbolS *, fragS *);
 extern fragS *symbol_get_frag (symbolS *);
 extern void symbol_mark_used (symbolS *);
-extern void symbol_clear_used (symbolS *);
 extern int symbol_used_p (symbolS *);
 extern void symbol_mark_used_in_reloc (symbolS *);
-extern void symbol_clear_used_in_reloc (symbolS *);
 extern int symbol_used_in_reloc_p (symbolS *);
-extern void symbol_mark_mri_common (symbolS *);
-extern void symbol_clear_mri_common (symbolS *);
 extern int symbol_mri_common_p (symbolS *);
 extern void symbol_mark_written (symbolS *);
-extern void symbol_clear_written (symbolS *);
-extern int symbol_written_p (symbolS *);
 extern void symbol_mark_resolved (symbolS *);
 extern int symbol_resolved_p (symbolS *);
 extern int symbol_section_p (symbolS *);
@@ -206,10 +192,8 @@ extern int symbol_same_p (symbolS *, symbolS *);
 
 #ifdef OBJ_SYMFIELD_TYPE
 OBJ_SYMFIELD_TYPE *symbol_get_obj (symbolS *);
-void symbol_set_obj (symbolS *, OBJ_SYMFIELD_TYPE *);
 #endif
 
 #ifdef TC_SYMFIELD_TYPE
 TC_SYMFIELD_TYPE *symbol_get_tc (symbolS *);
-void symbol_set_tc (symbolS *, TC_SYMFIELD_TYPE *);
 #endif

@@ -1,8 +1,5 @@
 /* config.in.  Generated from configure.ac by autoheader.  */
 
-/* Name of host specific core header file to include in elf.c. */
-#undef CORE_HEADER
-
 /* Define to 1 if you have the declaration of `asprintf', and to 0 if you
    don't. */
 #undef HAVE_DECL_ASPRINTF
@@ -37,9 +34,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
 /* Define to 1 if the system has the type `long double'. */
 #undef HAVE_LONG_DOUBLE
 
@@ -60,9 +54,6 @@
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -120,9 +111,6 @@
 
 /* Define if you can safely include both <string.h> and <strings.h>. */
 #undef STRING_WITH_STRINGS
-
-/* Define if 64-bit archives should always be used. */
-#undef USE_64_BIT_ARCHIVE
 
 /* Use mmap if it's available? */
 #undef USE_MMAP

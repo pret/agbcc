@@ -139,23 +139,6 @@ expr_symbol_where (symbolS *sym, const char **pfile, unsigned int *pline)
 /* ??? For completeness' sake one might want expr_build_symbol.
    It would just return its argument.  */
 
-/* Build an expression for an unsigned constant.
-   The corresponding one for signed constants is missing because
-   there's currently no need for it.  One could add an unsigned_p flag
-   but that seems more clumsy.  */
-
-symbolS *
-expr_build_uconstant (offsetT value)
-{
-  expressionS e;
-
-  e.X_op = O_constant;
-  e.X_add_number = value;
-  e.X_unsigned = 1;
-  e.X_extrabit = 0;
-  return make_expr_symbol (&e);
-}
-
 /* Build an expression for the current location ('.').  */
 
 symbolS *
@@ -1449,13 +1432,6 @@ expr_set_precedence (void)
       op_rank[O_divide] = STANDARD_MUL_PRECEDENCE;
       op_rank[O_modulus] = STANDARD_MUL_PRECEDENCE;
     }
-}
-
-void
-expr_set_rank (operatorT op, operator_rankT rank)
-{
-  gas_assert (op >= O_md1 && op < ARRAY_SIZE (op_rank));
-  op_rank[op] = rank;
 }
 
 /* Initialize the expression parser.  */

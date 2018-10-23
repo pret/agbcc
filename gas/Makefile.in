@@ -111,12 +111,9 @@ target_triplet = @target@
 noinst_PROGRAMS = as-new$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../bfd/warning.m4 \
-	$(top_srcdir)/../config/acx.m4 \
-	$(top_srcdir)/../config/depstand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lead-dot.m4 $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/../bfd/version.m4 \
+	$(top_srcdir)/acinclude.m4 $(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -247,7 +244,6 @@ LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
-NO_WERROR = @NO_WERROR@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -261,9 +257,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
-WARN_CFLAGS_FOR_BUILD = @WARN_CFLAGS_FOR_BUILD@
-WARN_WRITE_STRINGS = @WARN_WRITE_STRINGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -326,6 +319,8 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign no-dist subdir-objects
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
 tooldir = $(exec_prefix)/$(target_alias)
+WARN_CFLAGS = -Wall -Wwrite-strings
+NO_WERROR = 
 AM_CFLAGS = $(WARN_CFLAGS)
 TARG_CPU = arm
 TARG_CPU_C = $(srcdir)/config/tc-arm.c

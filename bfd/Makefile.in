@@ -111,9 +111,7 @@ target_triplet = @target@
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
-	$(top_srcdir)/../config/depstand.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lead-dot.m4 $(top_srcdir)/warning.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -158,24 +156,24 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archive64.Po \
-	./$(DEPDIR)/archures.Po ./$(DEPDIR)/arm-dis.Po \
-	./$(DEPDIR)/bfd.Po ./$(DEPDIR)/bfdio.Po ./$(DEPDIR)/bfdwin.Po \
-	./$(DEPDIR)/binary.Po ./$(DEPDIR)/cache.Po \
-	./$(DEPDIR)/compress.Po ./$(DEPDIR)/corefile.Po \
-	./$(DEPDIR)/cpu-arm.Po ./$(DEPDIR)/dis-buf.Po \
-	./$(DEPDIR)/dis-init.Po ./$(DEPDIR)/disassemble.Po \
-	./$(DEPDIR)/dwarf1.Po ./$(DEPDIR)/dwarf2.Po \
-	./$(DEPDIR)/elf-attrs.Po ./$(DEPDIR)/elf-eh-frame.Po \
-	./$(DEPDIR)/elf-properties.Po ./$(DEPDIR)/elf-strtab.Po \
-	./$(DEPDIR)/elf.Po ./$(DEPDIR)/elf32-arm.Po \
-	./$(DEPDIR)/elf32.Po ./$(DEPDIR)/elflink.Po \
-	./$(DEPDIR)/format.Po ./$(DEPDIR)/hash.Po ./$(DEPDIR)/init.Po \
-	./$(DEPDIR)/libbfd.Po ./$(DEPDIR)/linker.Po \
-	./$(DEPDIR)/merge.Po ./$(DEPDIR)/opncls.Po \
-	./$(DEPDIR)/reloc.Po ./$(DEPDIR)/reloc16.Po \
-	./$(DEPDIR)/section.Po ./$(DEPDIR)/simple.Po \
-	./$(DEPDIR)/syms.Po ./$(DEPDIR)/targets.Po
+am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archures.Po \
+	./$(DEPDIR)/arm-dis.Po ./$(DEPDIR)/bfd.Po ./$(DEPDIR)/bfdio.Po \
+	./$(DEPDIR)/bfdwin.Po ./$(DEPDIR)/binary.Po \
+	./$(DEPDIR)/cache.Po ./$(DEPDIR)/compress.Po \
+	./$(DEPDIR)/corefile.Po ./$(DEPDIR)/cpu-arm.Po \
+	./$(DEPDIR)/dis-buf.Po ./$(DEPDIR)/dis-init.Po \
+	./$(DEPDIR)/disassemble.Po ./$(DEPDIR)/dwarf1.Po \
+	./$(DEPDIR)/dwarf2.Po ./$(DEPDIR)/elf-attrs.Po \
+	./$(DEPDIR)/elf-eh-frame.Po ./$(DEPDIR)/elf-properties.Po \
+	./$(DEPDIR)/elf-strtab.Po ./$(DEPDIR)/elf.Po \
+	./$(DEPDIR)/elf32-arm.Po ./$(DEPDIR)/elf32.Po \
+	./$(DEPDIR)/elflink.Po ./$(DEPDIR)/format.Po \
+	./$(DEPDIR)/hash.Po ./$(DEPDIR)/init.Po ./$(DEPDIR)/libbfd.Po \
+	./$(DEPDIR)/linker.Po ./$(DEPDIR)/merge.Po \
+	./$(DEPDIR)/opncls.Po ./$(DEPDIR)/reloc.Po \
+	./$(DEPDIR)/reloc16.Po ./$(DEPDIR)/section.Po \
+	./$(DEPDIR)/simple.Po ./$(DEPDIR)/syms.Po \
+	./$(DEPDIR)/targets.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -262,8 +260,6 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 CFLAGS = @CFLAGS@
-COREFILE = @COREFILE@
-COREFLAG = @COREFLAG@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
@@ -289,7 +285,6 @@ LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
-NO_WERROR = @NO_WERROR@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -305,27 +300,20 @@ REPORT_BUGS_TEXI = @REPORT_BUGS_TEXI@
 REPORT_BUGS_TO = @REPORT_BUGS_TO@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
-SHARED_LDFLAGS = @SHARED_LDFLAGS@
-SHARED_LIBADD = @SHARED_LIBADD@
 SHELL = @SHELL@
 STRIP = @STRIP@
 TDEFINES = @TDEFINES@
 VERSION = @VERSION@
-WARN_CFLAGS = @WARN_CFLAGS@
-WARN_CFLAGS_FOR_BUILD = @WARN_CFLAGS_FOR_BUILD@
-WARN_WRITE_STRINGS = @WARN_WRITE_STRINGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
-all_backends = @all_backends@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-bfd64_libs = @bfd64_libs@
 bfd_backends = @bfd_backends@
 bfd_default_target_size = @bfd_default_target_size@
 bfd_file_ptr = @bfd_file_ptr@
@@ -357,7 +345,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_cv_dlopen_libs = @lt_cv_dlopen_libs@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -378,7 +365,6 @@ tdefaults = @tdefaults@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-wordsize = @wordsize@
 AUTOMAKE_OPTIONS = no-dist foreign
 ACLOCAL_AMFLAGS = -I . -I .. -I ../config
 INCDIR = $(srcdir)/../include
@@ -391,9 +377,11 @@ bfdlibdir =
 bfdincludedir = 
 bfdinclude_HEADERS = 
 rpath_bfdlibdir = @bfdlibdir@
+WARN_CFLAGS = -Wall
+NO_WERROR = 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS = -DBINDIR='"$(bindir)"' @HDEFINES@ @COREFLAG@ @TDEFINES@ \
-	$(CSEARCH) $(CSWITCHES) $(HAVEVECS)
+AM_CPPFLAGS = -DBINDIR='"$(bindir)"' @HDEFINES@ @TDEFINES@ $(CSEARCH) \
+	$(CSWITCHES) $(HAVEVECS)
 LTCOMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
 
 # bfd.h goes here, for now
@@ -414,7 +402,6 @@ BFD32_LIBS = \
 	section.o simple.o syms.o targets.o \
 	binary.o
 
-BFD64_LIBS = archive64.o
 BFD32_LIBS_CFILES = \
 	arm-dis.c archive.c archures.c bfd.c bfdio.c bfdwin.c \
 	cache.c  compress.c corefile.c disassemble.c \
@@ -423,7 +410,6 @@ BFD32_LIBS_CFILES = \
 	section.c simple.c syms.c targets.c \
 	binary.c
 
-BFD64_LIBS_CFILES = archive64.c
 
 # This list is alphabetized to make it easier to keep in sync
 # with the decls and initializer in archures.c.
@@ -444,7 +430,6 @@ BFD32_BACKENDS = \
 	elf-properties.o \
 	elf-strtab.o \
 	elf.o \
-	elf32-arc.o \
 	elf32-arm.o \
 	elf32.o \
 	elflink.o \
@@ -470,8 +455,6 @@ BFD32_BACKENDS_CFILES = \
 # and --enable-64-bit-bfd.
 # elf32-ia64.c requires a 64-bit bfd_vma, and hence can not be put in
 # BFD32_BACKENDS.
-BFD64_BACKENDS = 
-BFD64_BACKENDS_CFILES = 
 OPTIONAL_BACKENDS = 
 OPTIONAL_BACKENDS_CFILES = 
 
@@ -484,8 +467,7 @@ CONFIG_STATUS_DEPENDENCIES = \
 
 
 # These are defined by configure:
-WORDSIZE = @wordsize@
-ALL_BACKENDS = @all_backends@
+ALL_BACKENDS = $(BFD32_BACKENDS)
 BFD_BACKENDS = @bfd_backends@
 BFD_MACHINES = @bfd_machines@
 TDEFAULTS = @tdefaults@
@@ -494,10 +476,8 @@ HAVEVECS = @havevecs@
 # C source files that correspond to .o's.
 SOURCE_CFILES = \
 	$(BFD32_LIBS_CFILES) \
-	$(BFD64_LIBS_CFILES) \
 	$(ALL_MACHINES_CFILES) \
 	$(BFD32_BACKENDS_CFILES) \
-	$(BFD64_BACKENDS_CFILES) \
 	$(OPTIONAL_BACKENDS_CFILES)
 
 BUILD_CFILES = 
@@ -511,7 +491,7 @@ SOURCE_HFILES = \
 	version.h
 
 BUILD_HFILES = \
-	bfdver.h elf32-target.h targmatch.h # elf64-target.h targmatch.h
+	bfdver.h targmatch.h
 
 
 # Ensure they are built early:
@@ -521,9 +501,7 @@ HFILES = $(SOURCE_HFILES) $(BUILD_HFILES)
 # Various kinds of .o files to put in libbfd.a:
 # BFD_BACKENDS	Routines the configured targets need.
 # BFD_MACHINES	Architecture-specific routines the configured targets need.
-# COREFILE	Core file routines for a native configuration
-# bfd64_libs	Routines for 64bit support
-OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
+OFILES = $(BFD_BACKENDS) $(BFD_MACHINES)
 
 # Since BFD64_LIBS is optional and we can't have substitution in
 # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
@@ -532,7 +510,7 @@ OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
 libbfd_a_SOURCES = $(BFD32_LIBS_CFILES)
 EXTRA_libbfd_a_SOURCES = $(CFILES)
 libbfd_a_DEPENDENCIES = $(OFILES) ofiles
-libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL)
+libbfd_a_LIBADD = `cat ofiles` $(LIBDL)
 BFD_H_DEPS = $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h
 LOCAL_H_DEPS = libbfd.h sysdep.h config.h
 BFD_H_FILES = bfd-in.h init.c opncls.c libbfd.c \
@@ -540,7 +518,6 @@ BFD_H_FILES = bfd-in.h init.c opncls.c libbfd.c \
 	bfd.c archive.c corefile.c targets.c format.c \
 	linker.c simple.c syms.c compress.c
 
-BFD64_H_FILES = archive64.c
 LIBBFD_H_FILES = libbfd-in.h libbfd.c bfdio.c bfdwin.c \
 	cache.c reloc.c archures.c linker.c
 
@@ -620,7 +597,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archures.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm-dis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfd.Po@am__quote@ # am--include-marker
@@ -807,7 +783,6 @@ clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/archive.Po
-	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
 	-rm -f ./$(DEPDIR)/arm-dis.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
@@ -892,7 +867,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/archive.Po
-	-rm -f ./$(DEPDIR)/archive64.Po
 	-rm -f ./$(DEPDIR)/archures.Po
 	-rm -f ./$(DEPDIR)/arm-dis.Po
 	-rm -f ./$(DEPDIR)/bfd.Po
@@ -1008,16 +982,9 @@ archures.o: archures.c Makefile
 $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
 	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
-
-elf32-target.h : elfxx-target.h
-	rm -f elf32-target.h
-	$(SED) -e s/NN/32/g < $(srcdir)/elfxx-target.h > elf32-target.new
-	mv -f elf32-target.new elf32-target.h
 $(BFD32_LIBS) \
- $(BFD64_LIBS) \
  $(ALL_MACHINES) \
  $(BFD32_BACKENDS) \
- $(BFD64_BACKENDS) \
  $(OPTIONAL_BACKENDS): $(BFD_H) $(BFD_H_DEPS) $(LOCAL_H_DEPS)
 
 host-aout.o: Makefile

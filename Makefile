@@ -5,6 +5,8 @@ CHECK_PREFIX := @:
 PREFIX := $(shell realpath $(prefix))
 endif
 
+CFLAGS ?= -O3 -g -march=native -mtune=native
+
 # Simulate autotools by hacking recursive submake
 ifeq (,$(shell which aclocal-1.16 2>/dev/null || true))
 ENABLE_AUTOTOOLS =
@@ -34,7 +36,7 @@ CONFIGURE_TGTS := $(addsuffix -configure, $(SUBDIRS))
 OBJS_TGTS := $(addsuffix -objs, $(SUBDIRS))
 CLEAN := $(addsuffix -clean, $(SUBDIRS))
 
-CONFIGURE_ARGS := SHELL="$(SHELL)" LDFLAGS="" CFLAGS="-O3 -g -march=native -mtune=native" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE CC="$(CC)"
+CONFIGURE_ARGS := SHELL="$(SHELL)" LDFLAGS="" CFLAGS="$(CFLAGS)" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE CC="$(CC)"
 CONFIGURE := $(SHELL) ./configure -C --disable-option-checking $(CONFIGURE_ARGS)
 
 INSTALL_SUBDIRS := ld binutils gas
@@ -112,9 +114,10 @@ agbcc$(EXE):
 
 binutils_clean: $(CLEAN)
 
-libc.a: old_gcc binutils
-	@$(MAKE) -C libc
+libc.a: libc/libc.a
 	cp libc/libc.a libc.a
+libc/libc.a: old_gcc binutils
+	@$(MAKE) -C libc
 
 libc: libc.a
 
@@ -122,9 +125,11 @@ libc_clean:
 	$(RM) libc.a
 	@$(MAKE) -C libc clean
 
-libgcc.a: old_gcc binutils
-	@$(MAKE) -C libgcc
+libgcc.a: libgcc/libgcc.a
 	cp libgcc/libgcc.a libgcc.a
+
+libgcc/libgcc.a: old_gcc binutils
+	@$(MAKE) -C libgcc
 
 libgcc: libgcc.a
 

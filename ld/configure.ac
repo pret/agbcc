@@ -36,100 +36,16 @@ AC_PROG_INSTALL
 ACX_LARGEFILE
 
 AC_ARG_WITH(lib-path, [  --with-lib-path=dir1:dir2...  set default LIB_PATH],LIB_PATH=$withval)
-AC_ARG_ENABLE(64-bit-bfd,
-[  --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)],
-[case "${enableval}" in
-  yes)  want64=true  ;;
-  no)   want64=false ;;
-  *)    AC_MSG_ERROR(bad value ${enableval} for 64-bit-bfd option) ;;
-esac],[want64=false])dnl
 
-AC_ARG_WITH(sysroot,
-[  --with-sysroot[=DIR] Search for usr/lib et al within DIR.],
-[
- case ${with_sysroot} in
- yes) TARGET_SYSTEM_ROOT='${exec_prefix}/${target_alias}/sys-root' ;;
- *) TARGET_SYSTEM_ROOT=$with_sysroot ;;
- esac
-
- TARGET_SYSTEM_ROOT_DEFINE='-DTARGET_SYSTEM_ROOT=\"$(TARGET_SYSTEM_ROOT)\"'
- use_sysroot=yes
-
- if test "x$prefix" = xNONE; then
-  test_prefix=/usr/local
- else
-  test_prefix=$prefix
- fi
- if test "x$exec_prefix" = xNONE; then
-  test_exec_prefix=$test_prefix
- else
-  test_exec_prefix=$exec_prefix
- fi
- case ${TARGET_SYSTEM_ROOT} in
- "${test_prefix}"|"${test_prefix}/"*|\
- "${test_exec_prefix}"|"${test_exec_prefix}/"*|\
- '${prefix}'|'${prefix}/'*|\
- '${exec_prefix}'|'${exec_prefix}/'*)
-   t="$TARGET_SYSTEM_ROOT_DEFINE -DTARGET_SYSTEM_ROOT_RELOCATABLE"
-   TARGET_SYSTEM_ROOT_DEFINE="$t"
-   ;;
- esac
-], [
  use_sysroot=no
  TARGET_SYSTEM_ROOT=
  TARGET_SYSTEM_ROOT_DEFINE='-DTARGET_SYSTEM_ROOT=\"\"'
-])
 AC_SUBST(use_sysroot)
 AC_SUBST(TARGET_SYSTEM_ROOT)
 AC_SUBST(TARGET_SYSTEM_ROOT_DEFINE)
 
-dnl Use --enable-gold to decide if this linker should be the default.
-dnl "install_as_default" is set to false if gold is the default linker.
-dnl "installed_linker" is the installed BFD linker name.
-AC_ARG_ENABLE(gold,
-[[  --enable-gold[=ARG]     build gold [ARG={default,yes,no}]]],
-[case "${enableval}" in
- default)
-   install_as_default=no
-   installed_linker=ld.bfd
-   ;;
- yes|no)
-   install_as_default=yes
-   installed_linker=ld.bfd
-   ;;
- *)
-   AC_MSG_ERROR([invalid --enable-gold argument])
-   ;;
- esac],
-[install_as_default=yes
- installed_linker=ld.bfd])
-AC_SUBST(install_as_default)
-AC_SUBST(installed_linker)
-
-AC_ARG_ENABLE([got],
-AS_HELP_STRING([--enable-got=<type>],
-	       [GOT handling scheme (target, single, negative, multigot)]),
-[case "${enableval}" in
-  target | single | negative | multigot)  got_handling=$enableval ;;
-  *)  AC_MSG_ERROR(bad value ${enableval} for --enable-got option) ;;
-esac],
-[got_handling=target])
-
-case "${got_handling}" in
-  target)
-    AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_TARGET_DEFAULT],
-	      [Define to choose default GOT handling scheme]) ;;
-  single)
-    AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_SINGLE],
-	      [Define to choose default GOT handling scheme]) ;;
-  negative)
-    AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_NEGATIVE],
-	      [Define to choose default GOT handling scheme]) ;;
-  multigot)
-    AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_MULTIGOT],
-	      [Define to choose default GOT handling scheme]) ;;
-  *)  AC_MSG_ERROR(bad value ${got_handling} for --enable-got option) ;;
-esac
+AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_TARGET_DEFAULT],
+      [Define to choose default GOT handling scheme])
 
 # PR gas/19109
 # Decide the default method for compressing debug sections.
@@ -196,8 +112,6 @@ case "${enable_default_hash_style}" in
   *) ac_default_emit_gnu_hash=0 ;;
 esac
 
-AM_BINUTILS_WARNINGS
-
 AC_CONFIG_HEADERS([config.h:config.in])
 
 if test -z "$host" ; then
@@ -208,8 +122,6 @@ fi
 
 AC_EXEEXT
 
-AM_CONDITIONAL(GENINSRC_NEVER, false)
-
 . ${srcdir}/configure.host
 
 AC_SUBST(HDEFINES)
@@ -218,21 +130,9 @@ AC_SUBST(NATIVE_LIB_DIRS)
 AC_CHECK_HEADERS_ONCE([fcntl.h malloc.h strings.h sys/file.h unistd.h])
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS_ONCE([mmap glob strcasecmp strcspn])
+AC_CHECK_FUNCS_ONCE([mmap glob strcasecmp])
 
 AC_SEARCH_LIBS([dlopen], [dl])
-
-AC_ARG_ENABLE(initfini-array,
-[  --disable-initfini-array do not use .init_array/.fini_array sections],
-[case "${enableval}" in
- yes|no) ;;
- *) AC_MSG_ERROR([invalid --enable-initfini-array argument]) ;;
- esac], [enable_initfini_array=yes])
-AC_SUBST(enable_initfini_array)
-if test $enable_initfini_array = yes; then
-  AC_DEFINE(HAVE_INITFINI_ARRAY, 1,
-    [Define .init_array/.fini_array sections are available and working.])
-fi
 
 AC_CHECK_DECLS([environ])
 
@@ -259,14 +159,6 @@ dnl not permit literal newlines in an AC_SUBST variables.  So we use a
 dnl file.
 rm -f tdirs
 
-# If the host is 64-bit, then we enable 64-bit targets by default.
-# This is consistent with what ../bfd/configure.ac does.
-if test x${want64} = xfalse; then
-  AC_CHECK_SIZEOF(void *)
-  if test "x${ac_cv_sizeof_void_p}" = "x8"; then
-    want64=true
-  fi
-fi
 
 elf_list_options=FALSE
 elf_shlib_list_options=FALSE
@@ -287,14 +179,7 @@ do
       EMUL=$targ_emul
     fi
 
-    if test x${want64} = xfalse; then
       . ${srcdir}/../bfd/config.bfd
-    fi
-
-    if test x${want64} = xtrue; then
-      targ_extra_emuls="$targ_extra_emuls $targ64_extra_emuls"
-      targ_extra_libpath="$targ_extra_libpath $targ64_extra_libpath"
-    fi
 
     for i in $targ_emul $targ_extra_emuls $targ_extra_libpath; do
 	case " $all_emuls " in
@@ -391,18 +276,8 @@ AC_SUBST(EMUL)
 TDIRS=tdirs
 AC_SUBST_FILE(TDIRS)
 
-if test x${all_targets} = xtrue; then
-  if test x${want64} = xtrue; then
-    EMULATION_OFILES='$(ALL_EMULATIONS) $(ALL_64_EMULATIONS)'
-    EMUL_EXTRA_OFILES='$(ALL_EMUL_EXTRA_OFILES) $(ALL_64_EMUL_EXTRA_OFILES)'
-  else
-    EMULATION_OFILES='$(ALL_EMULATIONS)'
-    EMUL_EXTRA_OFILES='$(ALL_EMUL_EXTRA_OFILES)'
-  fi
-else
   EMULATION_OFILES=$all_emuls
   EMUL_EXTRA_OFILES=$all_emul_extras
-fi
 AC_SUBST(EMULATION_OFILES)
 AC_SUBST(EMUL_EXTRA_OFILES)
 AC_SUBST(LIB_PATH)

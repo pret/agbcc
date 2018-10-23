@@ -627,20 +627,12 @@ LTLIBOBJS
 LIBOBJS
 bfd_ufile_ptr
 bfd_file_ptr
-lt_cv_dlopen_libs
-COREFLAG
-COREFILE
 havevecs
 tdefaults
 bfd_default_target_size
 bfd_machines
 bfd_backends
-all_backends
-bfd64_libs
-wordsize
 TDEFINES
-SHARED_LIBADD
-SHARED_LDFLAGS
 EXEEXT_FOR_BUILD
 CC_FOR_BUILD
 BFD_HOSTPTR_T
@@ -648,12 +640,6 @@ BFD_HOST_U_64_BIT
 BFD_HOST_64_BIT
 BFD_HOST_64_BIT_DEFINED
 HDEFINES
-GENINSRC_NEVER_FALSE
-GENINSRC_NEVER_TRUE
-WARN_WRITE_STRINGS
-NO_WERROR
-WARN_CFLAGS_FOR_BUILD
-WARN_CFLAGS
 REPORT_BUGS_TEXI
 REPORT_BUGS_TO
 PKGVERSION
@@ -764,14 +750,10 @@ enable_option_checking
 enable_silent_rules
 enable_dependency_tracking
 enable_largefile
-enable_64_bit_bfd
-enable_64_bit_archive
 with_mmap
 with_separate_debug_dir
 with_pkgversion
 with_bugurl
-enable_werror
-enable_build_warnings
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1408,10 +1390,6 @@ Optional Features:
   --disable-dependency-tracking
                           speeds up one-time build
   --disable-largefile     omit support for large files
-  --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)
-  --enable-64-bit-archive force 64-bit archives
-  --enable-werror         treat compile warnings as errors
-  --enable-build-warnings enable build-time compiler warnings
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -2288,7 +2266,6 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
 fi
 
 as_fn_append ac_header_list " fcntl.h"
-as_fn_append ac_header_list " limits.h"
 as_fn_append ac_header_list " strings.h"
 as_fn_append ac_header_list " sys/file.h"
 as_fn_append ac_header_list " sys/time.h"
@@ -2297,7 +2274,6 @@ as_fn_append ac_func_list " getpagesize"
 as_fn_append ac_func_list " mmap"
 as_fn_append ac_func_list " munmap"
 as_fn_append ac_func_list " strcasecmp"
-as_fn_append ac_func_list " strdup"
 as_fn_append ac_func_list " strncasecmp"
 # Check that the precious variables saved in the cache have kept the same
 # value.
@@ -2365,36 +2341,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-ac_aux_dir=
-for ac_dir in ../aux "$srcdir"/../aux; do
-  if test -f "$ac_dir/install-sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install-sh -c"
-    break
-  elif test -f "$ac_dir/install.sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install.sh -c"
-    break
-  elif test -f "$ac_dir/shtool"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/shtool install -c"
-    break
-  fi
-done
-if test -z "$ac_aux_dir"; then
-  as_fn_error $? "cannot find install-sh, install.sh, or shtool in ../aux \"$srcdir\"/../aux" "$LINENO" 5
-fi
-
-# These three variables are undocumented and unsupported,
-# and are intended to be withdrawn in a future Autoconf release.
-# They can cause serious problems if a builder's source tree is in a directory
-# whose full name contains unusual characters.
-ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
-ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
-ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
-
 
 
 # autotools lean macros
@@ -2486,6 +2432,36 @@ GCC_DEFAULT_CFLAGS="-g -O2"
 
 # Force the use of a cache file if we use subdirectories, as otherwise we
 # retest things in the subdirs.
+
+
+
+ac_aux_dir=
+for ac_dir in ../aux "$srcdir"/../aux; do
+  if test -f "$ac_dir/install-sh"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install-sh -c"
+    break
+  elif test -f "$ac_dir/install.sh"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install.sh -c"
+    break
+  elif test -f "$ac_dir/shtool"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/shtool install -c"
+    break
+  fi
+done
+if test -z "$ac_aux_dir"; then
+  as_fn_error $? "cannot find install-sh, install.sh, or shtool in ../aux \"$srcdir\"/../aux" "$LINENO" 5
+fi
+
+# These three variables are undocumented and unsupported,
+# and are intended to be withdrawn in a future Autoconf release.
+# They can cause serious problems if a builder's source tree is in a directory
+# whose full name contains unusual characters.
+ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
+ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
+ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
@@ -4954,29 +4930,7 @@ fi
 
 
 
-# Check whether --enable-64-bit-bfd was given.
-if test "${enable_64_bit_bfd+set}" = set; then :
-  enableval=$enable_64_bit_bfd; case "${enableval}" in
-  yes)  want64=true  ;;
-  no)   want64=false ;;
-  *)    as_fn_error $? "bad value ${enableval} for 64-bit-bfd option" "$LINENO" 5 ;;
-esac
-else
-  want64=false
-fi
-
 enable_targets=
-
-# Check whether --enable-64_bit_archive was given.
-if test "${enable_64_bit_archive+set}" = set; then :
-  enableval=$enable_64_bit_archive; case "${enableval}" in
-  yes)  want_64_bit_archive=true  ;;
-  no)   want_64_bit_archive=false ;;
-  *)    as_fn_error $? "bad value ${enableval} for 64-bit-archive option" "$LINENO" 5 ;;
-esac
-else
-  want_64_bit_archive=unset
-fi
 
 
 # Check whether --with-mmap was given.
@@ -5045,172 +4999,11 @@ fi
 
 
 
-
-# Set the 'development' global.
-. $srcdir/../bfd/development.sh
-
-# Set acp_cpp_for_build variable
-ac_cpp_for_build="$CC_FOR_BUILD -E $CPPFLAGS_FOR_BUILD"
-
-# Default set of GCC warnings to enable.
-GCC_WARN_CFLAGS="-W -Wall -Wstrict-prototypes -Wmissing-prototypes"
-GCC_WARN_CFLAGS_FOR_BUILD="-W -Wall -Wstrict-prototypes -Wmissing-prototypes"
-
-# Add -Wshadow if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wshadow"
-fi
-rm -f conftest*
-
-
-# Add -Wstack-usage if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-4]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wstack-usage=262144"
-fi
-rm -f conftest*
-
-
-# Set WARN_WRITE_STRINGS if the compiler supports -Wwrite-strings.
-WARN_WRITE_STRINGS=""
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  WARN_WRITE_STRINGS="-Wwrite-strings"
-fi
-rm -f conftest*
-
-
-# Verify CC_FOR_BUILD to be compatible with warning flags
-
-# Add -Wshadow if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp_for_build conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wshadow"
-fi
-rm -f conftest*
-
-
-# Add -Wstack-usage if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp_for_build conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-4]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wstack-usage=262144"
-fi
-rm -f conftest*
-
-
-# Check whether --enable-werror was given.
-if test "${enable_werror+set}" = set; then :
-  enableval=$enable_werror; case "${enableval}" in
-     yes | y) ERROR_ON_WARNING="yes" ;;
-     no | n)  ERROR_ON_WARNING="no" ;;
-     *) as_fn_error $? "bad value ${enableval} for --enable-werror" "$LINENO" 5 ;;
-   esac
-fi
-
-
-# Disable -Wformat by default when using gcc on mingw
-case "${host}" in
-  *-*-mingw32*)
-    if test "${GCC}" = yes -a -z "${ERROR_ON_WARNING}" ; then
-      GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wno-format"
-      GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wno-format"
-    fi
-    ;;
-  *) ;;
-esac
-
-# Enable -Werror by default when using gcc.  Turn it off for releases.
-if test "${GCC}" = yes -a -z "${ERROR_ON_WARNING}" -a "$development" = true ; then
-    ERROR_ON_WARNING=yes
-fi
-
-NO_WERROR=
-if test "${ERROR_ON_WARNING}" = yes ; then
-    GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Werror"
-    GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Werror"
-    NO_WERROR="-Wno-error"
-fi
-
-if test "${GCC}" = yes ; then
-  WARN_CFLAGS="${GCC_WARN_CFLAGS}"
-  WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD}"
-fi
-
-# Check whether --enable-build-warnings was given.
-if test "${enable_build_warnings+set}" = set; then :
-  enableval=$enable_build_warnings; case "${enableval}" in
-  yes)	WARN_CFLAGS="${GCC_WARN_CFLAGS}"
-        WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD}";;
-  no)	if test "${GCC}" = yes ; then
-	  WARN_CFLAGS="-w"
-      WARN_CFLAGS_FOR_BUILD="-w"
-	fi;;
-  ,*)   t=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS="${GCC_WARN_CFLAGS} ${t}"
-        WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD} ${t}";;
-  *,)   t=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS="${t} ${GCC_WARN_CFLAGS}"
-        WARN_CFLAGS_FOR_BUILD="${t} ${GCC_WARN_CFLAGS_FOR_BUILD}";;
-  *)    WARN_CFLAGS=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS_FOR_BUILD=`echo "${enableval}" | sed -e "s/,/ /g"`;;
-esac
-fi
-
-
-if test x"$silent" != x"yes" && test x"$WARN_CFLAGS" != x""; then
-  echo "Setting warning flags = $WARN_CFLAGS" 6>&1
-fi
-
-
-
-
-
-
-
 ac_config_headers="$ac_config_headers config.h:config.in"
 
 
 if test -z "$target" ; then
     as_fn_error $? "Unrecognized target system type; please check config.sub." "$LINENO" 5
-fi
-
- if false; then
-  GENINSRC_NEVER_TRUE=
-  GENINSRC_NEVER_FALSE='#'
-else
-  GENINSRC_NEVER_TRUE='#'
-  GENINSRC_NEVER_FALSE=
 fi
 
 
@@ -5393,8 +5186,6 @@ done
 
 
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether string.h and strings.h may both be included" >&5
 $as_echo_n "checking whether string.h and strings.h may both be included... " >&6; }
 if ${gcc_cv_header_string+:} false; then :
@@ -5441,8 +5232,6 @@ _ACEOF
 
 fi
 done
-
-
 
 
 
@@ -5616,17 +5405,12 @@ if test $bfd_cv_hidden = yes; then
 $as_echo "#define HAVE_HIDDEN 1" >>confdefs.h
 
 fi
-##LT_LIB_M
 
 # When building a shared libbfd, link against the pic version of libiberty
 # so that apps that use libbfd won't need libiberty just to satisfy any
 # libbfd references.
 # We can't do that if a pic libiberty is unavailable since including non-pic
 # code would insert text relocations into libbfd.
-SHARED_LIBADD=
-SHARED_LDFLAGS=
-
-
 
 all_targets=false
 defvec=
@@ -5707,9 +5491,6 @@ do
     *) as_fn_error $? "*** unknown target vector $vec" "$LINENO" 5 ;;
     esac
 
-    if test ${target_size} = 64; then
-	target64=true
-    fi
     if test x"${vec}" = x"${defvec}"; then
 	bfd_default_target_size=${target_size}
     fi
@@ -5750,33 +5531,7 @@ bfd_machines="$ta"
   test -n "$selvecs" &&
     selvecs=`echo $selvecs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
   test -n "$selarchs" &&
-    selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
-
-# 64-bit archives need a 64-bit bfd_vma.
-if test "x$want_64_bit_archive" = xtrue; then
-  want64=true
-
-$as_echo "#define USE_64_BIT_ARCHIVE 1" >>confdefs.h
-
-fi
-
-case ${host64}-${target64}-${want64} in
-  *true*)
-    wordsize=64
-    bfd64_libs='$(BFD64_LIBS)'
-    all_backends='$(BFD64_BACKENDS) $(BFD32_BACKENDS)'
-    if test $BFD_HOST_64_BIT_DEFINED = 0; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You have requested a 64 bit BFD configuration, but" >&5
-$as_echo "$as_me: WARNING: You have requested a 64 bit BFD configuration, but" >&2;}
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: your compiler may not have a 64 bit integral type" >&5
-$as_echo "$as_me: WARNING: your compiler may not have a 64 bit integral type" >&2;}
-    fi
-    ;;
-  false-false-false)
-    wordsize=32
-    all_backends='$(BFD32_BACKENDS)'
-    ;;
-esac
+selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
 
 tdefaults=""
 test -n "${defvec}" && tdefaults="${tdefaults} -DDEFAULT_VECTOR=${defvec}"
@@ -5790,20 +5545,7 @@ test -n "${selarchs}" && tdefaults="${tdefaults} -DSELECT_ARCHITECTURES='${selar
 
 
 
-
-
-
-
-
-if test -n "$CORE_HEADER"; then
-
-cat >>confdefs.h <<_ACEOF
-#define CORE_HEADER $CORE_HEADER
-_ACEOF
-
-fi
-  supports_plugins=0
-
+supports_plugins=0
 
 # Determine the host dependent file_ptr a.k.a. off_t type.  In order
 # prefer: off64_t - if ftello64 and fseeko64, off_t - if ftello and
@@ -5869,11 +5611,6 @@ fi
 
 rm -f doc/config.status
 ac_config_files="$ac_config_files Makefile bfd-in3.h:bfd-in2.h"
-
-
-
-
-
 
 
 cat >confcache <<\_ACEOF
@@ -5999,10 +5736,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${GENINSRC_NEVER_TRUE}" && test -z "${GENINSRC_NEVER_FALSE}"; then
-  as_fn_error $? "conditional \"GENINSRC_NEVER\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

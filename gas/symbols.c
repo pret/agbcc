@@ -47,11 +47,7 @@ symbolS *symbol_lastP;
 symbolS abs_symbol;
 symbolS dot_symbol;
 
-#ifdef DEBUG_SYMS
-#define debug_verify_symchain verify_symbol_chain
-#else
 #define debug_verify_symchain(root, last) ((void) 0)
-#endif
 
 #define DOLLAR_LABEL_CHAR	'\001'
 #define LOCAL_LABEL_CHAR	'\002'
@@ -881,24 +877,6 @@ symbol_insert (symbolS *addme, symbolS *target,
   debug_verify_symchain (*rootPP, *lastPP);
 }
 
-void
-verify_symbol_chain (symbolS *rootP, symbolS *lastP)
-{
-  symbolS *symbolP = rootP;
-
-  if (symbolP == NULL)
-    return;
-
-  for (; symbol_next (symbolP) != NULL; symbolP = symbol_next (symbolP))
-    {
-      gas_assert (symbolP->bsym != NULL);
-      gas_assert (symbolP->sy_flags.sy_local_symbol == 0);
-      gas_assert (symbolP->sy_next->sy_previous == symbolP);
-    }
-
-  gas_assert (lastP == symbolP);
-}
-
 #ifdef OBJ_COMPLEX_RELC
 
 static int
@@ -1082,13 +1060,6 @@ resolve_symbol_value (symbolS *symp)
       char * relc_symbol_name = NULL;
 
       relc_symbol_name = symbol_relc_make_expr (& symp->sy_value);
-
-      /* For debugging, print out conversion input & output.  */
-#ifdef DEBUG_SYMS
-      print_expr (& symp->sy_value);
-      if (relc_symbol_name)
-	fprintf (stderr, "-> relc symbol: %s\n", relc_symbol_name);
-#endif
 
       if (relc_symbol_name != NULL)
 	relc_symbol = symbol_new (relc_symbol_name, undefined_section,
@@ -1999,19 +1970,6 @@ copy_symbol_attributes (symbolS *dest, symbolS *src)
 }
 
 int
-S_IS_FUNCTION (symbolS *s)
-{
-  flagword flags;
-
-  if (LOCAL_SYMBOL_CHECK (s))
-    return 0;
-
-  flags = s->bsym->flags;
-
-  return (flags & BSF_FUNCTION) != 0;
-}
-
-int
 S_IS_EXTERNAL (symbolS *s)
 {
   flagword flags;
@@ -2150,12 +2108,6 @@ S_IS_LOCAL (symbolS *s)
 		      || (flag_mri
 			  && name[0] == '?'
 			  && name[1] == '?')))));
-}
-
-int
-S_IS_STABD (symbolS *s)
-{
-  return S_GET_NAME (s) == 0;
 }
 
 int
@@ -2390,16 +2342,6 @@ S_SET_FORWARD_REF (symbolS *s)
   s->sy_flags.sy_forward_ref = 1;
 }
 
-/* Return the previous symbol in a chain.  */
-
-symbolS *
-symbol_previous (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    abort ();
-  return s->sy_previous;
-}
-
 /* Return the next symbol in a chain.  */
 
 symbolS *
@@ -2502,16 +2444,6 @@ symbol_mark_used (symbolS *s)
     symbol_mark_used (s->sy_value.X_add_symbol);
 }
 
-/* Clear the mark of whether a symbol has been used.  */
-
-void
-symbol_clear_used (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    s = local_symbol_convert ((struct local_symbol *) s);
-  s->sy_flags.sy_used = 0;
-}
-
 /* Return whether a symbol has been used.  */
 
 int
@@ -2532,16 +2464,6 @@ symbol_mark_used_in_reloc (symbolS *s)
   s->sy_flags.sy_used_in_reloc = 1;
 }
 
-/* Clear the mark of whether a symbol has been used in a reloc.  */
-
-void
-symbol_clear_used_in_reloc (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    return;
-  s->sy_flags.sy_used_in_reloc = 0;
-}
-
 /* Return whether a symbol has been used in a reloc.  */
 
 int
@@ -2550,26 +2472,6 @@ symbol_used_in_reloc_p (symbolS *s)
   if (LOCAL_SYMBOL_CHECK (s))
     return 0;
   return s->sy_flags.sy_used_in_reloc;
-}
-
-/* Mark a symbol as an MRI common symbol.  */
-
-void
-symbol_mark_mri_common (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    s = local_symbol_convert ((struct local_symbol *) s);
-  s->sy_flags.sy_mri_common = 1;
-}
-
-/* Clear the mark of whether a symbol is an MRI common symbol.  */
-
-void
-symbol_clear_mri_common (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    return;
-  s->sy_flags.sy_mri_common = 0;
 }
 
 /* Return whether a symbol is an MRI common symbol.  */
@@ -2590,26 +2492,6 @@ symbol_mark_written (symbolS *s)
   if (LOCAL_SYMBOL_CHECK (s))
     return;
   s->sy_flags.sy_written = 1;
-}
-
-/* Clear the mark of whether a symbol has been written.  */
-
-void
-symbol_clear_written (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    return;
-  s->sy_flags.sy_written = 0;
-}
-
-/* Return whether a symbol has been written.  */
-
-int
-symbol_written_p (symbolS *s)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    return 0;
-  return s->sy_flags.sy_written;
 }
 
 /* Mark a symbol has having been resolved.  */
@@ -2734,16 +2616,6 @@ symbol_get_obj (symbolS *s)
   return &s->sy_obj;
 }
 
-/* Set the object format information for a symbol.  */
-
-void
-symbol_set_obj (symbolS *s, OBJ_SYMFIELD_TYPE *o)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    s = local_symbol_convert ((struct local_symbol *) s);
-  s->sy_obj = *o;
-}
-
 #endif /* OBJ_SYMFIELD_TYPE */
 
 #ifdef TC_SYMFIELD_TYPE
@@ -2756,16 +2628,6 @@ symbol_get_tc (symbolS *s)
   if (LOCAL_SYMBOL_CHECK (s))
     s = local_symbol_convert ((struct local_symbol *) s);
   return &s->sy_tc;
-}
-
-/* Set the processor information for a symbol.  */
-
-void
-symbol_set_tc (symbolS *s, TC_SYMFIELD_TYPE *o)
-{
-  if (LOCAL_SYMBOL_CHECK (s))
-    s = local_symbol_convert ((struct local_symbol *) s);
-  s->sy_tc = *o;
 }
 
 #endif /* TC_SYMFIELD_TYPE */
@@ -2885,14 +2747,6 @@ print_symbol_value_1 (FILE *file, symbolS *sym)
       indent_level--;
     }
   fflush (file);
-}
-
-void
-print_symbol_value (symbolS *sym)
-{
-  indent_level = 0;
-  print_symbol_value_1 (stderr, sym);
-  fprintf (stderr, "\n");
 }
 
 static void
@@ -3019,13 +2873,6 @@ print_expr_1 (FILE *file, expressionS *exp)
       break;
     }
   fflush (stdout);
-}
-
-void
-print_expr (expressionS *exp)
-{
-  print_expr_1 (stderr, exp);
-  fprintf (stderr, "\n");
 }
 
 void

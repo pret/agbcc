@@ -36,8 +36,6 @@ AC_USE_SYSTEM_EXTENSIONS
 
 ACX_LARGEFILE
 
-AM_BINUTILS_WARNINGS
-
 # Generate a header file
 AC_CONFIG_HEADERS(config.h:config.in)
 

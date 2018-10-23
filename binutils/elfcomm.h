@@ -32,8 +32,6 @@ void warn (const char *, ...) ATTRIBUTE_PRINTF_1;
 typedef unsigned HOST_WIDEST_INT elf_vma;
 
 extern void (*byte_put) (unsigned char *, elf_vma, int);
-extern void byte_put_little_endian (unsigned char *, elf_vma, int);
-extern void byte_put_big_endian (unsigned char *, elf_vma, int);
 
 extern elf_vma (*byte_get) (const unsigned char *, int);
 extern elf_vma byte_get_signed (const unsigned char *, int);
@@ -93,12 +91,5 @@ extern char *get_archive_member_name (struct archive_info *,
 extern char *get_archive_member_name_at (struct archive_info *,
 					 unsigned long,
 					 struct archive_info *);
-
-/* Construct a string showing the name of the archive member, qualified
-   with the name of the containing archive file.  */
-
-extern char *make_qualified_name (struct archive_info *,
-				  struct archive_info *,
-				  const char *);
 
 #endif /* _ELFCOMM_H */

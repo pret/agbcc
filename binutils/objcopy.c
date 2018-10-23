@@ -4554,7 +4554,7 @@ copy_main (int argc, char *argv[])
 	    const char *s;
 	    int len;
 	    char *name;
-	    char *option = NULL;
+	    const char *option = NULL;
 	    bfd_vma val;
 
 	    switch (c)

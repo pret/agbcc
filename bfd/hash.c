@@ -524,21 +524,6 @@ _bfd_stringtab_init (void)
   return table;
 }
 
-/* Create a new strtab in which the strings are output in the format
-   used in the XCOFF .debug section: a two byte length precedes each
-   string.  */
-
-struct bfd_strtab_hash *
-_bfd_xcoff_stringtab_init (void)
-{
-  struct bfd_strtab_hash *ret;
-
-  ret = _bfd_stringtab_init ();
-  if (ret != NULL)
-    ret->xcoff = TRUE;
-  return ret;
-}
-
 /* Free a strtab.  */
 
 void

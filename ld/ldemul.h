@@ -80,8 +80,6 @@ extern void after_open_default
   (void);
 extern void after_check_relocs_default
   (void);
-extern void after_allocation_default
-  (void);
 extern void before_allocation_default
   (void);
 extern void finish_default

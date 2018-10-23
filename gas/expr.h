@@ -174,7 +174,6 @@ extern char get_symbol_name (char **);
 extern char restore_line_pointer (char);
 extern void expr_begin (void);
 extern void expr_set_precedence (void);
-extern void expr_set_rank (operatorT, operator_rankT);
 extern void add_to_result (expressionS *, offsetT, int);
 extern void subtract_from_result (expressionS *, offsetT, int);
 extern segT expr (int, expressionS *, enum expr_mode);
@@ -183,7 +182,6 @@ extern symbolS *make_expr_symbol (expressionS * expressionP);
 extern int expr_symbol_where (symbolS *, const char **, unsigned int *);
 extern void current_location (expressionS *);
 
-extern symbolS *expr_build_uconstant (offsetT);
 extern symbolS *expr_build_dot (void);
 
 int resolve_expression (expressionS *);

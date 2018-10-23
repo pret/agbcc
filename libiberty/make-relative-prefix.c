@@ -410,17 +410,3 @@ make_relative_prefix (const char *progname, const char *bin_prefix,
 {
   return make_relative_prefix_1 (progname, bin_prefix, prefix, 1);
 }
-
-/* Make the relative pathname without attempting to resolve any links.
-   '..' etc may also be left in the pathname.
-   This will find the files the user meant the program to find if the
-   installation is patched together with soft links. */
-
-char *
-make_relative_prefix_ignore_links (const char *progname,
-				   const char *bin_prefix,
-				   const char *prefix)
-{
-  return make_relative_prefix_1 (progname, bin_prefix, prefix, 0);
-}
-

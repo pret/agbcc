@@ -1,6 +1,5 @@
 dnl Process this file with autoconf to produce a configure script
 
-m4_include([../config/warnings.m4])
 AC_INIT
 AC_CONFIG_AUX_DIR([../aux])
 AC_CONFIG_SRCDIR([vprintf-support.c])
@@ -29,18 +28,8 @@ else
   libiberty_topdir="${srcdir}/.."
 fi
 AC_SUBST(libiberty_topdir)
-dnl AC_CONFIG_AUX_DIR($libiberty_topdir)
-
-MAINT='#'
-NOTMAINT=''
-AC_SUBST(MAINT)dnl
-AC_SUBST(NOTMAINT)dnl
-
-HAVE_PERL='#'
-AC_SUBST(HAVE_PERL)
 
 AC_CANONICAL_HOST
-
 
 dnl## These must be called before libtool because it may want
 dnl## to call AC_CHECK_PROG.
@@ -50,18 +39,8 @@ AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_PROG_CC
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
-AC_PROG_CPP_WERROR
 
-ACX_PROG_CC_WARNING_OPTS([-W -Wall], [ac_libiberty_warn_cflags])
-
-AC_PROG_CC_C_O
-# autoconf is lame and doesn't give us any substitution variable for this.
-if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" = no"; then
-  NO_MINUS_C_MINUS_O=yes
-else
-  OUTPUT_OPTION='-o $@'
-fi
-AC_SUBST(NO_MINUS_C_MINUS_O)
+OUTPUT_OPTION='-o $@'
 AC_SUBST(OUTPUT_OPTION)
 AC_C_BIGENDIAN
 
@@ -125,10 +104,10 @@ AC_CHECK_SIZEOF([size_t])
 # are not available on the host.
 
 funcs="asprintf atexit basename bzero ffs getcwd getpagesize \
-gettimeofday index insque mkstemps random rename rindex \
-sigsetmask stpcpy stpncpy  strdup strndup strverscmp \
-tmpnam vasprintf waitpid setproctitle"
-AC_CHECK_FUNCS_ONCE([atexit bzero getcwd getpagesize gettimeofday mempcpy pathconf pstat_getdynamic realpath stpcpy strdup strerror strndup strverscmp psignal strsignal])
+gettimeofday index mkstemps random rename  \
+sigsetmask stpcpy strdup  \
+vasprintf"
+AC_CHECK_FUNCS_ONCE([atexit bzero getcwd getpagesize gettimeofday mempcpy pathconf pstat_getdynamic realpath stpcpy strdup strerror psignal strsignal])
 
 # Also in the old function.def file: alloca, vfork, getopt.
 
@@ -162,21 +141,15 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([ffs])
     AC_LIBOBJ([getpagesize])
     AC_LIBOBJ([index])
-    AC_LIBOBJ([insque])
     AC_LIBOBJ([mkstemps])
     AC_LIBOBJ([random])
-    AC_LIBOBJ([rindex])
     AC_LIBOBJ([sigsetmask])
     AC_LIBOBJ([stpcpy])
-    AC_LIBOBJ([stpncpy])
-    AC_LIBOBJ([strndup])
-    AC_LIBOBJ([strverscmp])
     AC_LIBOBJ([vasprintf])
-    AC_LIBOBJ([waitpid])
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bzero | ffs | getpagesize | index | insque |  mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strverscmp | vasprintf | waitpid)
+	asprintf | basename | bzero | ffs | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -250,7 +223,7 @@ if test -z "${setobjs}"; then
     fi
   done
 
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, strverscmp canonicalize_file_name])
+  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, canonicalize_file_name])
 fi
 
   INSTALL_DEST=libdir

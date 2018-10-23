@@ -1333,18 +1333,6 @@ adjust_relative_path (const char * path, const char * ref_path)
   return pathbuf;
 }
 
-/* Build a BFD style extended name table.  */
-
-bfd_boolean
-_bfd_archive_bsd_construct_extended_name_table (bfd *abfd,
-						char **tabloc,
-						bfd_size_type *tablen,
-						const char **name)
-{
-  *name = "ARFILENAMES/";
-  return _bfd_construct_extended_name_table (abfd, FALSE, tabloc, tablen);
-}
-
 /* Build an SVR4 style extended name table.  */
 
 bfd_boolean
@@ -1566,50 +1554,6 @@ _bfd_construct_extended_name_table (bfd *abfd,
   return TRUE;
 }
 
-/* Do not construct an extended name table but transforms name field into
-   its extended form.  */
-
-bfd_boolean
-_bfd_archive_bsd44_construct_extended_name_table (bfd *abfd,
-						  char **tabloc,
-						  bfd_size_type *tablen,
-						  const char **name)
-{
-  unsigned int maxname = ar_maxnamelen (abfd);
-  bfd *current;
-
-  *tablen = 0;
-  *tabloc = NULL;
-  *name = NULL;
-
-  for (current = abfd->archive_head;
-       current != NULL;
-       current = current->archive_next)
-    {
-      const char *normal = normalize (current, current->filename);
-      int has_space = 0;
-      unsigned int len;
-
-      if (normal == NULL)
-	return FALSE;
-
-      for (len = 0; normal[len]; len++)
-	if (normal[len] == ' ')
-	  has_space = 1;
-
-      if (len > maxname || has_space)
-	{
-	  struct ar_hdr *hdr = arch_hdr (current);
-
-	  len = (len + 3) & ~3;
-	  arch_eltdata (current)->extra_size = len;
-	  _bfd_ar_spacepad (hdr->ar_name, maxname, "#1/%lu", len);
-	}
-    }
-
-  return TRUE;
-}
-
 /* Write an archive header.  */
 
 bfd_boolean
@@ -2385,61 +2329,6 @@ _bfd_bsd_write_armap (bfd *arch,
   return TRUE;
 }
 
-/* At the end of archive file handling, update the timestamp in the
-   file, so the linker will accept it.
-
-   Return TRUE if the timestamp was OK, or an unusual problem happened.
-   Return FALSE if we updated the timestamp.  */
-
-bfd_boolean
-_bfd_archive_bsd_update_armap_timestamp (bfd *arch)
-{
-  struct stat archstat;
-  struct ar_hdr hdr;
-
-  /* If creating deterministic archives, just leave the timestamp as-is.  */
-  if ((arch->flags & BFD_DETERMINISTIC_OUTPUT) != 0)
-    return TRUE;
-
-  /* Flush writes, get last-write timestamp from file, and compare it
-     to the timestamp IN the file.  */
-  bfd_flush (arch);
-  if (bfd_stat (arch, &archstat) == -1)
-    {
-      bfd_perror (_("Reading archive file mod timestamp"));
-
-      /* Can't read mod time for some reason.  */
-      return TRUE;
-    }
-  if (((long) archstat.st_mtime) <= bfd_ardata (arch)->armap_timestamp)
-    /* OK by the linker's rules.  */
-    return TRUE;
-
-  /* Update the timestamp.  */
-  bfd_ardata (arch)->armap_timestamp = archstat.st_mtime + ARMAP_TIME_OFFSET;
-
-  /* Prepare an ASCII version suitable for writing.  */
-  memset (hdr.ar_date, ' ', sizeof (hdr.ar_date));
-  _bfd_ar_spacepad (hdr.ar_date, sizeof (hdr.ar_date), "%ld",
-		    bfd_ardata (arch)->armap_timestamp);
-
-  /* Write it into the file.  */
-  bfd_ardata (arch)->armap_datepos = (SARMAG
-				      + offsetof (struct ar_hdr, ar_date[0]));
-  if (bfd_seek (arch, bfd_ardata (arch)->armap_datepos, SEEK_SET) != 0
-      || (bfd_bwrite (hdr.ar_date, sizeof (hdr.ar_date), arch)
-	  != sizeof (hdr.ar_date)))
-    {
-      bfd_perror (_("Writing updated armap timestamp"));
-
-      /* Some error while writing.  */
-      return TRUE;
-    }
-
-  /* We updated the timestamp successfully.  */
-  return FALSE;
-}
-
 /* A coff armap looks like :
    lARMAG
    struct ar_hdr with name = '/'

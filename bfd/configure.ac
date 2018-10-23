@@ -16,12 +16,15 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; see the file COPYING3.  If not see
 dnl <http://www.gnu.org/licenses/>.
 dnl
-
+targedt=armv4tl-none-eabi
+target_alias=armv4tl-none-eabi
+ac_cv_target=armv4tl-none-eabi
+ac_cv_target_alias=armv4tl-none-eabi
 m4_include([version.m4])
 AC_INIT([bfd], [BFD_VERSION])
+m4_include([../config/lean.m4])
 AC_CONFIG_AUX_DIR([../aux])
 AC_CONFIG_SRCDIR([libbfd.c])
-m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 
@@ -38,24 +41,7 @@ AC_USE_SYSTEM_EXTENSIONS
 
 ACX_LARGEFILE
 
-AC_ARG_ENABLE(64-bit-bfd,
-[  --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)],
-[case "${enableval}" in
-  yes)  want64=true  ;;
-  no)   want64=false ;;
-  *)    AC_MSG_ERROR(bad value ${enableval} for 64-bit-bfd option) ;;
-esac],[want64=false])dnl
-
 enable_targets=
-
-AC_ARG_ENABLE(64_bit_archive,
-	      AS_HELP_STRING([--enable-64-bit-archive],
-	      [force 64-bit archives]),
-[case "${enableval}" in
-  yes)  want_64_bit_archive=true  ;;
-  no)   want_64_bit_archive=false ;;
-  *)    AC_MSG_ERROR(bad value ${enableval} for 64-bit-archive option) ;;
-esac],[want_64_bit_archive=unset])dnl
 
 AC_ARG_WITH(mmap,
 [  --with-mmap             try using mmap for BFD input files if available],
@@ -75,15 +61,12 @@ AC_SUBST(DEBUGDIR)
 ACX_PKGVERSION([GNU Binutils])
 ACX_BUGURL([http://www.sourceware.org/bugzilla/])
 
-AM_BINUTILS_WARNINGS
-
 AC_CONFIG_HEADERS(config.h:config.in)
 
 if test -z "$target" ; then
     AC_MSG_ERROR(Unrecognized target system type; please check config.sub.)
 fi
 
-AM_CONDITIONAL(GENINSRC_NEVER, false)
 AC_EXEEXT
 
 host64=false
@@ -122,10 +105,10 @@ AC_SUBST(BFD_HOSTPTR_T)
 
 BFD_CC_FOR_BUILD
 
-AC_CHECK_HEADERS_ONCE([fcntl.h limits.h strings.h sys/file.h sys/time.h unistd.h])
+AC_CHECK_HEADERS_ONCE([fcntl.h strings.h sys/file.h sys/time.h unistd.h])
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS_ONCE([getpagesize mmap munmap strcasecmp strdup strncasecmp ])
+AC_CHECK_FUNCS_ONCE([getpagesize mmap munmap strcasecmp strncasecmp ])
 AC_FUNC_FSEEKO
 
 AC_CHECK_DECLS(ftello)
@@ -148,17 +131,12 @@ if test $bfd_cv_hidden = yes; then
   AC_DEFINE(HAVE_HIDDEN, 1,
 	    [Define if your compiler supports hidden visibility.])
 fi
-##LT_LIB_M
 
 # When building a shared libbfd, link against the pic version of libiberty
 # so that apps that use libbfd won't need libiberty just to satisfy any
 # libbfd references.
 # We can't do that if a pic libiberty is unavailable since including non-pic
 # code would insert text relocations into libbfd.
-SHARED_LIBADD=
-SHARED_LDFLAGS=
-AC_SUBST(SHARED_LDFLAGS)
-AC_SUBST(SHARED_LIBADD)
 
 all_targets=false
 defvec=
@@ -239,9 +217,6 @@ do
     *) AC_MSG_ERROR(*** unknown target vector $vec) ;;
     esac
 
-    if test ${target_size} = 64; then
-	target64=true
-    fi
     if test x"${vec}" = x"${defvec}"; then
 	bfd_default_target_size=${target_size}
     fi
@@ -282,30 +257,7 @@ bfd_machines="$ta"
   test -n "$selvecs" &&
     selvecs=`echo $selvecs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
   test -n "$selarchs" &&
-    selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
-
-# 64-bit archives need a 64-bit bfd_vma.
-if test "x$want_64_bit_archive" = xtrue; then
-  want64=true
-  AC_DEFINE(USE_64_BIT_ARCHIVE, 1,
-    [Define if 64-bit archives should always be used.])
-fi
-
-case ${host64}-${target64}-${want64} in
-  *true*)
-    wordsize=64
-    bfd64_libs='$(BFD64_LIBS)'
-    all_backends='$(BFD64_BACKENDS) $(BFD32_BACKENDS)'
-    if test $BFD_HOST_64_BIT_DEFINED = 0; then
-      AC_MSG_WARN([You have requested a 64 bit BFD configuration, but])
-      AC_MSG_WARN([your compiler may not have a 64 bit integral type])
-    fi
-    ;;
-  false-false-false)
-    wordsize=32
-    all_backends='$(BFD32_BACKENDS)'
-    ;;
-esac
+selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
 
 tdefaults=""
 test -n "${defvec}" && tdefaults="${tdefaults} -DDEFAULT_VECTOR=${defvec}"
@@ -313,23 +265,13 @@ test -n "${selvecs}" && tdefaults="${tdefaults} -DSELECT_VECS='${selvecs}'"
 test -n "${assocvecs}" && tdefaults="${tdefaults} -DASSOCIATED_VECS='${assocvecs}'"
 test -n "${selarchs}" && tdefaults="${tdefaults} -DSELECT_ARCHITECTURES='${selarchs}'"
 
-AC_SUBST(wordsize)
-AC_SUBST(bfd64_libs)
-AC_SUBST(all_backends)
 AC_SUBST(bfd_backends)
 AC_SUBST(bfd_machines)
 AC_SUBST(bfd_default_target_size)
 AC_SUBST(tdefaults)
 AC_SUBST(havevecs)
 
-AC_SUBST(COREFILE)
-AC_SUBST(COREFLAG)
-if test -n "$CORE_HEADER"; then
-  AC_DEFINE_UNQUOTED(CORE_HEADER, $CORE_HEADER,
-    [Name of host specific core header file to include in elf.c.])
-fi
-  supports_plugins=0
-AC_SUBST(lt_cv_dlopen_libs)
+supports_plugins=0
 
 # Determine the host dependent file_ptr a.k.a. off_t type.  In order
 # prefer: off64_t - if ftello64 and fseeko64, off_t - if ftello and
@@ -357,11 +299,5 @@ fi
 
 rm -f doc/config.status
 AC_CONFIG_FILES([Makefile bfd-in3.h:bfd-in2.h])
-
-dnl Required by html, pdf, install-pdf and install-html
-AC_SUBST(datarootdir)
-AC_SUBST(docdir)
-AC_SUBST(htmldir)
-AC_SUBST(pdfdir)
 
 AC_OUTPUT

@@ -215,8 +215,6 @@ extern unsigned long dwarf_start_die;
 
 extern int dwarf_check;
 
-extern void init_dwarf_regnames (unsigned int);
-
 extern bfd_boolean  load_debug_section (enum dwarf_section_display_enum, void *);
 extern void         free_debug_section (enum dwarf_section_display_enum);
 extern void *       load_separate_debug_file (void *, const char *);
@@ -228,8 +226,6 @@ extern void free_debug_memory (void);
 extern void dwarf_select_sections_by_names (const char *);
 extern void dwarf_select_sections_by_letters (const char *);
 extern void dwarf_select_sections_all (void);
-
-extern unsigned int * find_cu_tu_set (void *, unsigned int);
 
 extern void * cmalloc (size_t, size_t);
 extern void * calloc2 (size_t, size_t);

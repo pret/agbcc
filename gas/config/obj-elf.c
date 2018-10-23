@@ -204,10 +204,6 @@ elf_file_symbol (const char *s, int appfile)
 	  symbol_remove (sym, &symbol_rootP, &symbol_lastP);
 	  symbol_insert (sym, symbol_rootP, &symbol_rootP, &symbol_lastP);
 	}
-
-#ifdef DEBUG
-      verify_symbol_chain (symbol_rootP, symbol_lastP);
-#endif
     }
 }
 
@@ -1513,24 +1509,6 @@ record_attribute (int vendor, unsigned int tag)
   rai->base = base;
   rai->mask = mask;
   recorded_attributes = rai;
-}
-
-/* Return true if we have seen an explicit specification of attribute TAG
-   for vendor VENDOR.  */
-
-bfd_boolean
-obj_elf_seen_attribute (int vendor, unsigned int tag)
-{
-  unsigned int base;
-  unsigned long mask;
-  struct recorded_attribute_info *rai;
-
-  base = tag / (8 * sizeof (rai->mask));
-  mask = 1UL << (tag % (8 * sizeof (rai->mask)));
-  for (rai = recorded_attributes; rai; rai = rai->next)
-    if (rai->vendor == vendor && rai->base == base)
-      return (rai->mask & mask) != 0;
-  return FALSE;
 }
 
 /* Parse an attribute directive for VENDOR.

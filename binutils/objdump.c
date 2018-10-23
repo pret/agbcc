@@ -427,7 +427,7 @@ free_only_list (void)
 static void
 dump_section_header (bfd *abfd, asection *section, void *data)
 {
-  char *comma = "";
+  const char *comma = "";
   unsigned int opb = bfd_octets_per_byte (abfd);
   int longest_section_name = *((int *) data);
 
@@ -2659,7 +2659,7 @@ dump_dwarf (bfd *abfd)
 static void
 dump_bfd_header (bfd *abfd)
 {
-  char *comma = "";
+  const char *comma = "";
 
   printf (_("architecture: %s, "),
 	  bfd_printable_arch_mach (bfd_get_arch (abfd),
@@ -3397,7 +3397,7 @@ display_any_bfd (bfd *file, int level)
 }
 
 static void
-display_file (char *filename, char *target, bfd_boolean last_file)
+display_file (const char *filename, char *target, bfd_boolean last_file)
 {
   bfd *file;
 

@@ -41,12 +41,6 @@ DESCRIPTION
 */
 
 bfd_boolean
-_bfd_bool_bfd_false (bfd *abfd ATTRIBUTE_UNUSED)
-{
-  return FALSE;
-}
-
-bfd_boolean
 _bfd_bool_bfd_asymbol_false (bfd *abfd ATTRIBUTE_UNUSED,
 			     asymbol *sym ATTRIBUTE_UNUSED)
 {
@@ -61,13 +55,6 @@ _bfd_bool_bfd_false_error (bfd *ignore ATTRIBUTE_UNUSED)
 {
   bfd_set_error (bfd_error_invalid_operation);
   return FALSE;
-}
-
-bfd_boolean
-_bfd_bool_bfd_link_false_error (bfd *abfd,
-				struct bfd_link_info *info ATTRIBUTE_UNUSED)
-{
-  return _bfd_bool_bfd_false_error (abfd);
 }
 
 /* A routine which is used in target vectors for supported operations
@@ -99,21 +86,20 @@ _bfd_bool_bfd_uint_true (bfd *abfd ATTRIBUTE_UNUSED,
 {
   return TRUE;
 }
-
 bfd_boolean
 _bfd_bool_bfd_asection_bfd_asection_true (bfd *ibfd ATTRIBUTE_UNUSED,
-					  asection *isec ATTRIBUTE_UNUSED,
-					  bfd *obfd ATTRIBUTE_UNUSED,
-					  asection *osec ATTRIBUTE_UNUSED)
+					 asection *isec ATTRIBUTE_UNUSED,
+					 bfd *obfd ATTRIBUTE_UNUSED,
+					 asection *osec ATTRIBUTE_UNUSED)
 {
   return TRUE;
 }
 
 bfd_boolean
 _bfd_bool_bfd_asymbol_bfd_asymbol_true (bfd *ibfd ATTRIBUTE_UNUSED,
-					asymbol *isym ATTRIBUTE_UNUSED,
-					bfd *obfd ATTRIBUTE_UNUSED,
-					asymbol *osym ATTRIBUTE_UNUSED)
+					 asymbol *isym ATTRIBUTE_UNUSED,
+					 bfd *obfd ATTRIBUTE_UNUSED,
+					 asymbol *osym ATTRIBUTE_UNUSED)
 {
   return TRUE;
 }

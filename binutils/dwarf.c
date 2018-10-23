@@ -4661,7 +4661,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 	      || (xop == DW_LNS_copy))
 	    {
 	      const unsigned int MAX_FILENAME_LENGTH = 35;
-	      char *fileName;
+	      const char *fileName;
 	      char *newFileName = NULL;
 	      size_t fileNameLength;
 
@@ -4675,7 +4675,7 @@ display_debug_lines_decoded (struct dwarf_section *  section,
 		      fileName = _("<corrupt>");
 		    }
 		  else
-		    fileName = (char *) file_table[indx].name;
+		    fileName = (const char *) file_table[indx].name;
 		}
 	      else
 		fileName = _("<unknown>");
@@ -6942,7 +6942,7 @@ typedef struct Frame_Chunk
   /* DW_CFA_{undefined,same_value,offset,register,unreferenced}  */
   short int *col_type;
   int *col_offset;
-  char *augmentation;
+  const char *augmentation;
   unsigned int code_factor;
   int data_factor;
   dwarf_vma pc_begin;
@@ -7014,11 +7014,6 @@ frame_need_space (Frame_Chunk *fc, unsigned int reg)
       prev++;
     }
   return 1;
-}
-
-void
-init_dwarf_regnames (unsigned int e_machine)
-{
 }
 
 static const char *
@@ -9302,31 +9297,6 @@ load_cu_tu_indexes (void *file)
     }
 
   return (bfd_boolean) cu_tu_indexes_read;
-}
-
-/* Find the set of sections that includes section SHNDX.  */
-
-unsigned int *
-find_cu_tu_set (void *file, unsigned int shndx)
-{
-  unsigned int i;
-
-  if (! load_cu_tu_indexes (file))
-    return NULL;
-
-  /* Find SHNDX in the shndx pool.  */
-  for (i = 0; i < shndx_pool_used; i++)
-    if (shndx_pool [i] == shndx)
-      break;
-
-  if (i >= shndx_pool_used)
-    return NULL;
-
-  /* Now backup to find the first entry in the set.  */
-  while (i > 0 && shndx_pool [i - 1] != 0)
-    i--;
-
-  return shndx_pool + i;
 }
 
 /* Display a .debug_cu_index or .debug_tu_index section.  */

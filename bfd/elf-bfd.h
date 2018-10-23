@@ -2553,10 +2553,6 @@ extern bfd_boolean _bfd_elf_ppc_merge_fp_attributes
 /* Exported interface for writing elf corefile notes.  */
 extern char *elfcore_write_note
   (bfd *, char *, int *, const char *, int, const void *, int);
-extern char *elfcore_write_prpsinfo
-  (bfd *, char *, int *, const char *, const char *);
-extern char *elfcore_write_prstatus
-  (bfd *, char *, int *, long, int, const void *);
 extern char * elfcore_write_pstatus
   (bfd *, char *, int *, long, int, const void *);
 extern char *elfcore_write_prfpreg
@@ -2605,14 +2601,6 @@ struct elf_internal_linux_prpsinfo
     char pr_fname[16 + 1];		/* Filename of executable.  */
     char pr_psargs[80 + 1];		/* Initial part of arg list.  */
   };
-
-/* Linux/most 32-bit archs.  */
-extern char *elfcore_write_linux_prpsinfo32
-  (bfd *, char *, int *, const struct elf_internal_linux_prpsinfo *);
-
-/* Linux/most 64-bit archs.  */
-extern char *elfcore_write_linux_prpsinfo64
-  (bfd *, char *, int *, const struct elf_internal_linux_prpsinfo *);
 
 extern bfd *_bfd_elf32_bfd_from_remote_memory
   (bfd *templ, bfd_vma ehdr_vma, bfd_size_type size, bfd_vma *loadbasep,

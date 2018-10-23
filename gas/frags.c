@@ -25,20 +25,6 @@
 extern fragS zero_address_frag;
 extern fragS predefined_address_frag;
 
-static int totalfrags;
-
-int
-get_frag_count (void)
-{
-  return totalfrags;
-}
-
-void
-clear_frag_count (void)
-{
-  totalfrags = 0;
-}
-
 /* Initialization for frag routines.  */
 
 void
@@ -84,7 +70,6 @@ frag_alloc (struct obstack *ob)
   ptr = (fragS *) obstack_alloc (ob, SIZEOF_STRUCT_FRAG);
   obstack_alignment_mask (ob) = oalign;
   memset (ptr, 0, SIZEOF_STRUCT_FRAG);
-  totalfrags++;
   return ptr;
 }
 
@@ -260,24 +245,7 @@ frag_var (relax_stateT type, size_t max_chars, size_t var,
   frag_var_init (type, max_chars, var, subtype, symbol, offset, opcode);
   return retval;
 }
-
-/* OVE: This variant of frag_var assumes that space for the tail has been
-	allocated by caller.
-	No call to frag_grow is done.  */
 
-char *
-frag_variant (relax_stateT type, size_t max_chars, size_t var,
-	      relax_substateT subtype, symbolS *symbol, offsetT offset,
-	      char *opcode)
-{
-  char *retval;
-
-  retval = obstack_next_free (&frchain_now->frch_obstack);
-  frag_var_init (type, max_chars, var, subtype, symbol, offset, opcode);
-
-  return retval;
-}
-
 /* Reduce the variable end of a frag to a harmless state.  */
 
 void
@@ -286,14 +254,6 @@ frag_wane (fragS *fragP)
   fragP->fr_type = rs_fill;
   fragP->fr_offset = 0;
   fragP->fr_var = 0;
-}
-
-/* Return the number of bytes by which the current frag can be grown.  */
-
-size_t
-frag_room (void)
-{
-  return obstack_room (&frchain_now->frch_obstack);
 }
 
 /* Make an alignment frag.  The size of this frag will be adjusted to

@@ -546,15 +546,6 @@ dwarf2_where (struct dwarf2_line_info *line)
     *line = current;
 }
 
-/* A hook to allow the target backend to inform the line number state
-   machine of isa changes when assembler debug info is enabled.  */
-
-void
-dwarf2_set_isa (unsigned int isa)
-{
-  current.isa = isa;
-}
-
 /* Called for each machine instruction, or relatively atomic group of
    machine instructions (ie built-in macro).  The instruction or group
    is SIZE bytes in length.  If dwarf2 line number generation is called
@@ -574,33 +565,6 @@ dwarf2_emit_insn (int size)
 
   dwarf2_gen_line_info (frag_now_fix () - size, &loc);
   dwarf2_consume_line_info ();
-}
-
-/* Move all previously-emitted line entries for the current position by
-   DELTA bytes.  This function cannot be used to move the same entries
-   twice.  */
-
-void
-dwarf2_move_insn (int delta)
-{
-  struct line_subseg *lss;
-  struct line_entry *e;
-  valueT now;
-
-  if (delta == 0)
-    return;
-
-  lss = get_line_subseg (now_seg, now_subseg, FALSE);
-  if (!lss)
-    return;
-
-  now = frag_now_fix ();
-  while ((e = *lss->pmove_tail))
-    {
-      if (S_GET_VALUE (e->label) == now)
-	S_SET_VALUE (e->label, now + delta);
-      lss->pmove_tail = &e->next;
-    }
 }
 
 /* Called after the current line information has been either used with

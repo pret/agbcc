@@ -28,11 +28,10 @@ tooldir = $(exec_prefix)/$(target_alias)
 CC_FOR_BUILD = @CC_FOR_BUILD@
 EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
 
-WARN_CFLAGS = @WARN_CFLAGS@
-WARN_CFLAGS_FOR_BUILD = @WARN_CFLAGS_FOR_BUILD@
-NO_WERROR = @NO_WERROR@
+WARN_CFLAGS = -Wall -Wwrite-strings
+NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CFLAGS_FOR_BUILD = $(WARN_CFLAGS_FOR_BUILD)
+AM_CFLAGS_FOR_BUILD = -Wall
 
 # these two are almost the same program
 AR_PROG=ar

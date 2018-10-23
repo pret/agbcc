@@ -130,12 +130,6 @@ extern void *sha1_read_ctx (const struct sha1_ctx *ctx, void *resbuf);
    beginning at RESBLOCK.  */
 extern int sha1_stream (FILE *stream, void *resblock);
 
-/* Compute SHA1 message digest for LEN bytes beginning at BUFFER.  The
-   result is always in little endian byte order, so that a byte-wise
-   output yields to the wanted ASCII representation of the message
-   digest.  */
-extern void *sha1_buffer (const char *buffer, size_t len, void *resblock);
-
 #ifdef __cplusplus
 }
 #endif

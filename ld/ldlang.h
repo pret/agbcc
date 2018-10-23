@@ -538,8 +538,6 @@ extern void lang_section_start
   (const char *, union etree_union *, const segment_type *);
 extern void lang_add_entry
   (const char *, bfd_boolean);
-extern void lang_default_entry
-  (const char *);
 extern void lang_add_target
   (const char *);
 extern void lang_add_wild
@@ -570,8 +568,6 @@ extern void lang_reset_memory_regions
   (void);
 extern void lang_do_assignments
   (lang_phase_type);
-extern asection *section_for_dot
-  (void);
 
 #define LANG_FOR_EACH_INPUT_STATEMENT(statement)			\
   lang_input_statement_type *statement;					\
@@ -629,8 +625,6 @@ extern void strip_excluded_output_sections
   (void);
 extern void lang_clear_os_map
   (void);
-extern void dprint_statement
-  (lang_statement_union_type *, int);
 extern void lang_size_sections
   (bfd_boolean *, bfd_boolean);
 extern void one_lang_size_sections_pass

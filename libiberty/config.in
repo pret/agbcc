@@ -17,6 +17,10 @@
    you don't. */
 #undef HAVE_DECL_BASENAME
 
+/* Define to 1 if you have the declaration of `canonicalize_file_name', and to
+   0 if you don't. */
+#undef HAVE_DECL_CANONICALIZE_FILE_NAME
+
 /* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
 #undef HAVE_DECL_FFS
 
@@ -26,10 +30,6 @@
 
 /* Define to 1 if you have the declaration of `ntf', and to 0 if you don't. */
 #undef HAVE_DECL_NTF
-
-/* Define to 1 if you have the declaration of `strverscmp
-   canonicalize_file_name', and to 0 if you don't. */
-#undef HAVE_DECL_STRVERSCMP_CANONICALIZE_FILE_NAME
 
 /* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
    don't. */
@@ -95,14 +95,8 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strndup' function. */
-#undef HAVE_STRNDUP
-
 /* Define to 1 if you have the `strsignal' function. */
 #undef HAVE_STRSIGNAL
-
-/* Define to 1 if you have the `strverscmp' function. */
-#undef HAVE_STRVERSCMP
 
 /* Define if you have the sys_errlist variable. */
 #undef HAVE_SYS_ERRLIST
@@ -136,9 +130,6 @@
 
 /* Define to 1 if you have the `_doprnt' function. */
 #undef HAVE__DOPRNT
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#undef NO_MINUS_C_MINUS_O
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

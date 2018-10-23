@@ -22,8 +22,8 @@ ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
 
 tooldir = $(exec_prefix)/$(target_alias)
 
-WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
-NO_WERROR = @NO_WERROR@
+WARN_CFLAGS = -Wall -Wwrite-strings
+NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS)
 
 TARG_CPU = arm

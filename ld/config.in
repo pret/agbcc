@@ -33,9 +33,6 @@
 /* Define to 1 if you have the `glob' function. */
 #undef HAVE_GLOB
 
-/* Define .init_array/.fini_array sections are available and working. */
-#undef HAVE_INITFINI_ARRAY
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -56,9 +53,6 @@
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strcspn' function. */
-#undef HAVE_STRCSPN
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -98,9 +92,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* The size of `void *', as computed by sizeof. */
-#undef SIZEOF_VOID_P
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

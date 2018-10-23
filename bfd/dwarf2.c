@@ -3019,7 +3019,7 @@ read_rangelist (struct comp_unit *unit, struct arange *arange,
 
       if (low_pc == 0 && high_pc == 0)
 	break;
-      if (low_pc == -1UL && high_pc != -1UL)
+      if (low_pc == -1U && high_pc != -1U)
 	base_address = high_pc;
       else
 	{
@@ -4139,59 +4139,6 @@ stash_maybe_update_info_hash_tables (struct dwarf2_debug *stash)
 
   stash->hash_units_head = stash->all_comp_units;
   return TRUE;
-}
-
-/* Check consistency of info hash tables.  This is for debugging only.  */
-
-static void ATTRIBUTE_UNUSED
-stash_verify_info_hash_table (struct dwarf2_debug *stash)
-{
-  struct comp_unit *each_unit;
-  struct funcinfo *each_func;
-  struct varinfo *each_var;
-  struct info_list_node *node;
-  bfd_boolean found;
-
-  for (each_unit = stash->all_comp_units;
-       each_unit;
-       each_unit = each_unit->next_unit)
-    {
-      for (each_func = each_unit->function_table;
-	   each_func;
-	   each_func = each_func->prev_func)
-	{
-	  if (!each_func->name)
-	    continue;
-	  node = lookup_info_hash_table (stash->funcinfo_hash_table,
-					 each_func->name);
-	  BFD_ASSERT (node);
-	  found = FALSE;
-	  while (node && !found)
-	    {
-	      found = node->info == each_func;
-	      node = node->next;
-	    }
-	  BFD_ASSERT (found);
-	}
-
-      for (each_var = each_unit->variable_table;
-	   each_var;
-	   each_var = each_var->prev_var)
-	{
-	  if (!each_var->name || !each_var->file || each_var->stack)
-	    continue;
-	  node = lookup_info_hash_table (stash->varinfo_hash_table,
-					 each_var->name);
-	  BFD_ASSERT (node);
-	  found = FALSE;
-	  while (node && !found)
-	    {
-	      found = node->info == each_var;
-	      node = node->next;
-	    }
-	  BFD_ASSERT (found);
-	}
-    }
 }
 
 /* Check to see if we want to enable the info hash tables, which consume

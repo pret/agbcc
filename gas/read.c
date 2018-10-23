@@ -2530,12 +2530,6 @@ s_lcomm (int needs_align)
 }
 
 void
-s_lcomm_bytes (int needs_align)
-{
-  s_comm_internal (needs_align * 2, s_lcomm_internal);
-}
-
-void
 s_lsym (int ignore ATTRIBUTE_UNUSED)
 {
   char *name;
@@ -2943,79 +2937,6 @@ do_repeat (size_t count, const char *start, const char *end)
   input_scrub_include_sb (&many, input_line_pointer, 1);
   sb_kill (&many);
   buffer_limit = input_scrub_next_buffer (&input_line_pointer);
-}
-
-/* Like do_repeat except that any text matching EXPANDER in the
-   block is replaced by the iteration count.  */
-
-void
-do_repeat_with_expander (size_t count,
-			 const char * start,
-			 const char * end,
-			 const char * expander)
-{
-  sb one;
-  sb many;
-
-  if (((ssize_t) count) < 0)
-    {
-      as_bad (_("negative count for %s - ignored"), start);
-      count = 0;
-    }
-
-  sb_new (&one);
-  if (!buffer_and_nest (start, end, &one, get_non_macro_line_sb))
-    {
-      as_bad (_("%s without %s"), start, end);
-      return;
-    }
-
-  sb_new (&many);
-
-  if (expander != NULL && strstr (one.ptr, expander) != NULL)
-    {
-      while (count -- > 0)
-	{
-	  int len;
-	  char * sub;
-	  sb processed;
-
-	  sb_build (& processed, one.len);
-	  sb_add_sb (& processed, & one);
-	  sub = strstr (processed.ptr, expander);
-	  len = sprintf (sub, "%lu", (unsigned long) count);
-	  gas_assert (len < 8);
-	  strcpy (sub + len, sub + 8);
-	  processed.len -= (8 - len);
-	  sb_add_sb (& many, & processed);
-	  sb_kill (& processed);
-	}
-    }
-  else
-    while (count-- > 0)
-      sb_add_sb (&many, &one);
-
-  sb_kill (&one);
-
-  input_scrub_include_sb (&many, input_line_pointer, 1);
-  sb_kill (&many);
-  buffer_limit = input_scrub_next_buffer (&input_line_pointer);
-}
-
-/* Skip to end of current repeat loop; EXTRA indicates how many additional
-   input buffers to skip.  Assumes that conditionals preceding the loop end
-   are properly nested.
-
-   This function makes it easier to implement a premature "break" out of the
-   loop.  The EXTRA arg accounts for other buffers we might have inserted,
-   such as line substitutions.  */
-
-void
-end_repeat (int extra)
-{
-  cond_exit_macro (macro_nest);
-  while (extra-- >= 0)
-    buffer_limit = input_scrub_next_buffer (&input_line_pointer);
 }
 
 static void
@@ -5352,14 +5273,6 @@ get_known_segmented_expression (expressionS *expP)
   return retval;
 }
 
-char				/* Return terminator.  */
-get_absolute_expression_and_terminator (long *val_pointer /* Return value of expression.  */)
-{
-  /* FIXME: val_pointer should probably be offsetT *.  */
-  *val_pointer = (long) get_absolute_expression ();
-  return (*input_line_pointer++);
-}
-
 /* Like demand_copy_string, but return NULL if the string contains any '\0's.
    Give a warning if that happens.  */
 
@@ -5863,27 +5776,6 @@ read_print_statistics (FILE *file)
   hash_print_statistics (file, "pseudo-op table", po_hash);
 }
 
-/* Inserts the given line into the input stream.
-
-   This call avoids macro/conditionals nesting checking, since the contents of
-   the line are assumed to replace the contents of a line already scanned.
-
-   An appropriate use of this function would be substitution of input lines when
-   called by md_start_line_hook().  The given line is assumed to already be
-   properly scrubbed.  */
-
-void
-input_scrub_insert_line (const char *line)
-{
-  sb newline;
-  size_t len = strlen (line);
-  sb_build (&newline, len);
-  sb_add_buffer (&newline, line, len);
-  input_scrub_include_sb (&newline, input_line_pointer, 0);
-  sb_kill (&newline);
-  buffer_limit = input_scrub_next_buffer (&input_line_pointer);
-}
-
 /* Insert a file into the input stream; the path must resolve to an actual
    file; no include path searching or dependency registering is performed.  */
 
@@ -5948,50 +5840,4 @@ char *
 find_end_of_line (char *s, int mri_string)
 {
   return _find_end_of_line (s, mri_string, 0, 0);
-}
-
-static char *saved_ilp = NULL;
-static char *saved_limit;
-
-/* Use BUF as a temporary input pointer for calling other functions in this
-   file.  BUF must be a C string, so that its end can be found by strlen.
-   Also sets the buffer_limit variable (local to this file) so that buffer
-   overruns should not occur.  Saves the current input line pointer so that
-   it can be restored by calling restore_ilp().
-
-   Does not support recursion.
-
-   FIXME: This function is currently only used by stabs.c but that
-   should be extended to other files in the gas source directory.  */
-
-void
-temp_ilp (char *buf)
-{
-  gas_assert (saved_ilp == NULL);
-  gas_assert (buf != NULL);
-
-  saved_ilp = input_line_pointer;
-  saved_limit = buffer_limit;
-  /* Prevent the assert in restore_ilp from triggering if
-     the input_line_pointer has not yet been initialised.  */
-  if (saved_ilp == NULL)
-    saved_limit = saved_ilp = (char *) "";
-
-  input_line_pointer = buf;
-  buffer_limit = buf + strlen (buf);
-  input_from_string = TRUE;
-}
-
-/* Restore a saved input line pointer.  */
-
-void
-restore_ilp (void)
-{
-  gas_assert (saved_ilp != NULL);
-
-  input_line_pointer = saved_ilp;
-  buffer_limit = saved_limit;
-  input_from_string = FALSE;
-
-  saved_ilp = NULL;
 }

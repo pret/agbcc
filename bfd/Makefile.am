@@ -33,8 +33,8 @@ bfdincludedir =
 bfdinclude_HEADERS =
 rpath_bfdlibdir = @bfdlibdir@
 
-WARN_CFLAGS = @WARN_CFLAGS@
-NO_WERROR = @NO_WERROR@
+WARN_CFLAGS = -Wall
+NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -DBINDIR='"$(bindir)"'
 LTCOMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
@@ -56,7 +56,6 @@ BFD32_LIBS = \
 	init.o libbfd.o linker.o merge.o opncls.o reloc.o \
 	section.o simple.o syms.o targets.o \
 	binary.o
-BFD64_LIBS = archive64.o
 
 BFD32_LIBS_CFILES = \
 	arm-dis.c archive.c archures.c bfd.c bfdio.c bfdwin.c \
@@ -65,7 +64,6 @@ BFD32_LIBS_CFILES = \
 	init.c libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c syms.c targets.c \
 	binary.c
-BFD64_LIBS_CFILES = archive64.c
 
 # This list is alphabetized to make it easier to keep in sync
 # with the decls and initializer in archures.c.
@@ -84,7 +82,6 @@ BFD32_BACKENDS = \
 	elf-properties.o \
 	elf-strtab.o \
 	elf.o \
-	elf32-arc.o \
 	elf32-arm.o \
 	elf32.o \
 	elflink.o \
@@ -109,9 +106,6 @@ BFD32_BACKENDS_CFILES = \
 # and --enable-64-bit-bfd.
 # elf32-ia64.c requires a 64-bit bfd_vma, and hence can not be put in
 # BFD32_BACKENDS.
-BFD64_BACKENDS =
-
-BFD64_BACKENDS_CFILES =
 
 OPTIONAL_BACKENDS =
 OPTIONAL_BACKENDS_CFILES =
@@ -124,23 +118,20 @@ CONFIG_STATUS_DEPENDENCIES = \
 	$(srcdir)/development.sh
 
 # These are defined by configure:
-WORDSIZE = @wordsize@
-ALL_BACKENDS = @all_backends@
+ALL_BACKENDS = $(BFD32_BACKENDS)
 BFD_BACKENDS = @bfd_backends@
 BFD_MACHINES = @bfd_machines@
 TDEFAULTS = @tdefaults@
 HAVEVECS = @havevecs@
 
-AM_CPPFLAGS += @HDEFINES@ @COREFLAG@ @TDEFINES@ $(CSEARCH) $(CSWITCHES) \
+AM_CPPFLAGS += @HDEFINES@ @TDEFINES@ $(CSEARCH) $(CSWITCHES) \
 	$(HAVEVECS)
 
 # C source files that correspond to .o's.
 SOURCE_CFILES = \
 	$(BFD32_LIBS_CFILES) \
-	$(BFD64_LIBS_CFILES) \
 	$(ALL_MACHINES_CFILES) \
 	$(BFD32_BACKENDS_CFILES) \
-	$(BFD64_BACKENDS_CFILES) \
 	$(OPTIONAL_BACKENDS_CFILES)
 
 BUILD_CFILES =
@@ -157,7 +148,7 @@ SOURCE_HFILES = \
 
 ## ... and all .h files which are in the build tree.
 BUILD_HFILES = \
-	bfdver.h elf32-target.h targmatch.h # elf64-target.h targmatch.h
+	bfdver.h targmatch.h
 
 # Ensure they are built early:
 BUILT_SOURCES = $(BUILD_HFILES)
@@ -169,9 +160,7 @@ all diststuff: info
 # Various kinds of .o files to put in libbfd.a:
 # BFD_BACKENDS	Routines the configured targets need.
 # BFD_MACHINES	Architecture-specific routines the configured targets need.
-# COREFILE	Core file routines for a native configuration
-# bfd64_libs	Routines for 64bit support
-OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
+OFILES = $(BFD_BACKENDS) $(BFD_MACHINES)
 
 stamp-ofiles: Makefile
 	rm -f tofiles
@@ -195,7 +184,7 @@ ofiles: stamp-ofiles ; @true
 libbfd_a_SOURCES = $(BFD32_LIBS_CFILES)
 EXTRA_libbfd_a_SOURCES = $(CFILES)
 libbfd_a_DEPENDENCIES = $(OFILES) ofiles
-libbfd_a_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL)
+libbfd_a_LIBADD = `cat ofiles` $(LIBDL)
 
 # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
 # directory so that we don't have to convert all the programs that use
@@ -223,18 +212,11 @@ $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
 	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
 
-elf32-target.h : elfxx-target.h
-	rm -f elf32-target.h
-	$(SED) -e s/NN/32/g < $(srcdir)/elfxx-target.h > elf32-target.new
-	mv -f elf32-target.new elf32-target.h
-
 BFD_H_DEPS= $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h
 LOCAL_H_DEPS= libbfd.h sysdep.h config.h
 $(BFD32_LIBS) \
- $(BFD64_LIBS) \
  $(ALL_MACHINES) \
  $(BFD32_BACKENDS) \
- $(BFD64_BACKENDS) \
  $(OPTIONAL_BACKENDS): $(BFD_H) $(BFD_H_DEPS) $(LOCAL_H_DEPS)
 
 host-aout.o: Makefile
@@ -260,7 +242,6 @@ BFD_H_FILES = bfd-in.h init.c opncls.c libbfd.c \
 	bfd.c archive.c corefile.c targets.c format.c \
 	linker.c simple.c syms.c compress.c
 
-BFD64_H_FILES = archive64.c
 LIBBFD_H_FILES = libbfd-in.h libbfd.c bfdio.c bfdwin.c \
 	cache.c reloc.c archures.c linker.c
 

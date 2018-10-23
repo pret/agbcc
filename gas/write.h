@@ -162,7 +162,6 @@ extern addressT dot_value;
 extern fragS *dot_frag;
 extern struct reloc_list* reloc_list;
 
-extern void append (char **, char *, unsigned long);
 extern void record_alignment (segT, unsigned);
 extern int get_recorded_alignment (segT);
 extern void write_object_file (void);
@@ -172,9 +171,6 @@ extern void number_to_chars_littleendian (char *, valueT, int);
 extern void number_to_chars_bigendian (char *, valueT, int);
 extern fixS *fix_new
   (fragS * frag, int where, int size, symbolS * add_symbol,
-   offsetT offset, int pcrel, bfd_reloc_code_real_type r_type);
-extern fixS *fix_at_start
-  (fragS * frag, int size, symbolS * add_symbol,
    offsetT offset, int pcrel, bfd_reloc_code_real_type r_type);
 extern fixS *fix_new_exp
   (fragS * frag, int where, int size, expressionS *exp, int pcrel,

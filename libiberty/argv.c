@@ -88,33 +88,6 @@ dupargv (char * const *argv)
   return copy;
 }
 
-/*
-
-@deftypefn Extension void freeargv (char **@var{vector})
-
-Free an argument vector that was built using @code{buildargv}.  Simply
-scans through @var{vector}, freeing the memory for each argument until
-the terminating @code{NULL} is found, and then frees @var{vector}
-itself.
-
-@end deftypefn
-
-*/
-
-void freeargv (char **vector)
-{
-  register char **scan;
-
-  if (vector != NULL)
-    {
-      for (scan = vector; *scan != NULL; scan++)
-	{
-	  free (*scan);
-	}
-      free (vector);
-    }
-}
-
 static void
 consume_whitespace (const char **input)
 {
@@ -286,61 +259,6 @@ char **buildargv (const char *input)
 
 /*
 
-@deftypefn Extension int writeargv (char * const *@var{argv}, FILE *@var{file})
-
-Write each member of ARGV, handling all necessary quoting, to the file
-named by FILE, separated by whitespace.  Return 0 on success, non-zero
-if an error occurred while writing to FILE.
-
-@end deftypefn
-
-*/
-
-int
-writeargv (char * const *argv, FILE *f)
-{
-  int status = 0;
-
-  if (f == NULL)
-    return 1;
-
-  while (*argv != NULL)
-    {
-      const char *arg = *argv;
-
-      while (*arg != EOS)
-        {
-          char c = *arg;
-
-          if (ISSPACE(c) || c == '\\' || c == '\'' || c == '"')
-            if (EOF == fputc ('\\', f))
-              {
-                status = 1;
-                goto done;
-              }
-
-          if (EOF == fputc (c, f))
-            {
-              status = 1;
-              goto done;
-            }
-          arg++;
-        }
-
-      if (EOF == fputc ('\n', f))
-        {
-          status = 1;
-          goto done;
-        }
-      argv++;
-    }
-
- done:
-  return status;
-}
-
-/*
-
 @deftypefn Extension void expandargv (int *@var{argcp}, char ***@var{argvp})
 
 The @var{argcp} and @code{argvp} arguments are pointers to the usual
@@ -480,29 +398,6 @@ expandargv (int *argcp, char ***argvp)
       /* We're all done with the file now.  */
       fclose (f);
     }
-}
-
-/*
-
-@deftypefn Extension int countargv (char * const *@var{argv})
-
-Return the number of elements in @var{argv}.
-Returns zero if @var{argv} is NULL.
-
-@end deftypefn
-
-*/
-
-int
-countargv (char * const *argv)
-{
-  int argc;
-
-  if (argv == NULL)
-    return 0;
-  for (argc = 0; argv[argc] != NULL; argc++)
-    continue;
-  return argc;
 }
 
 #ifdef MAIN

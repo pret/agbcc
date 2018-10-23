@@ -109,11 +109,8 @@ target_triplet = @target@
 bin_PROGRAMS = ld-new$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../bfd/warning.m4 \
-	$(top_srcdir)/../config/acx.m4 \
-	$(top_srcdir)/../config/depstand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
 	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lead-dot.m4 \
 	$(top_srcdir)/../bfd/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -271,7 +268,7 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 AM_RECURSIVE_TARGETS = cscope
-transform = s/^ld-new$$/$(installed_linker)/;@program_transform_name@
+transform = s/^ld-new$$/ld.bfd/;@program_transform_name@
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -319,7 +316,6 @@ LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NATIVE_LIB_DIRS = @NATIVE_LIB_DIRS@
-NO_WERROR = @NO_WERROR@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -339,9 +335,6 @@ TARGET_SYSTEM_ROOT_DEFINE = @TARGET_SYSTEM_ROOT_DEFINE@
 # This is the real libbfd.a created by libtool.
 TESTBFDLIB = @TESTBFDLIB@
 VERSION = @VERSION@
-WARN_CFLAGS = @WARN_CFLAGS@
-WARN_CFLAGS_FOR_BUILD = @WARN_CFLAGS_FOR_BUILD@
-WARN_WRITE_STRINGS = @WARN_WRITE_STRINGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -366,7 +359,6 @@ dvidir = @dvidir@
 elf_list_options = @elf_list_options@
 elf_plt_unwind_list_options = @elf_plt_unwind_list_options@
 elf_shlib_list_options = @elf_shlib_list_options@
-enable_initfini_array = @enable_initfini_array@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -376,9 +368,7 @@ host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
-install_as_default = @install_as_default@
 install_sh = @install_sh@
-installed_linker = @installed_linker@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
@@ -410,6 +400,8 @@ ELF_CLFAGS = -DELF_LIST_OPTIONS=@elf_list_options@ \
 	   -DELF_SHLIB_LIST_OPTIONS=@elf_shlib_list_options@ \
 	   -DELF_PLT_UNWIND_LIST_OPTIONS=@elf_plt_unwind_list_options@
 
+WARN_CFLAGS = -Wall
+NO_WERROR = 
 AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
 PLUGIN_C = 
 PLUGIN_H = 
@@ -1217,22 +1209,20 @@ mostlyclean-local:
 
 install-exec-local: ld-new$(EXEEXT) install-binPROGRAMS
 	$(mkinstalldirs) $(DESTDIR)$(tooldir)/bin
-	n=`echo $(installed_linker) | sed '$(transform)'`; \
+	n=`echo ld.bfd | sed '$(transform)'`; \
 	if test "$(bindir)" != "$(tooldir)/bin"; then \
-	  rm -f $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
-	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/$(installed_linker)$(EXEEXT); \
+	  rm -f $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT); \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT) >/dev/null 2>/dev/null \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld.bfd$(EXEEXT); \
 	fi; \
-	if test "x$(install_as_default)" = "xyes"; then \
-	  ld=`echo ld | sed '$(transform)'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
-	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
-	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
-	  if test "$(bindir)" != "$(tooldir)/bin"; then \
-	    rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
-	    ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
-	    || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
-	  fi; \
+	ld=`echo ld | sed '$(transform)'`; \
+	rm -f $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT) >/dev/null 2>/dev/null \
+	|| $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(bindir)/$$ld$(EXEEXT); \
+	if test "$(bindir)" != "$(tooldir)/bin"; then \
+	  rm -f $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
+	  ln -s $(DESTDIR)$(bindir)/$$n$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT) >/dev/null 2>/dev/null \
+	  || $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) ld-new$(EXEEXT) $(DESTDIR)$(tooldir)/bin/ld$(EXEEXT); \
 	fi
 
 install-data-local:

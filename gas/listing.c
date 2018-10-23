@@ -440,35 +440,6 @@ listing_newline (char *ps)
 #endif
 }
 
-/* Attach all current frags to the previous line instead of the
-   current line.  This is called by the MIPS backend when it discovers
-   that it needs to add some NOP instructions; the added NOP
-   instructions should go with the instruction that has the delay, not
-   with the new instruction.  */
-
-void
-listing_prev_line (void)
-{
-  list_info_type *l;
-  fragS *f;
-
-  if (head == (list_info_type *) NULL
-      || head == listing_tail)
-    return;
-
-  new_frag ();
-
-  for (l = head; l->next != listing_tail; l = l->next)
-    ;
-
-  for (f = frchain_now->frch_root; f != (fragS *) NULL; f = f->fr_next)
-    if (f->line == listing_tail)
-      f->line = l;
-
-  listing_tail->frag = frag_now;
-  new_frag ();
-}
-
 /* This function returns the next source line from the file supplied,
    truncated to size.  It appends a fake line to the end of each input
    file to make using the returned buffer simpler.  */

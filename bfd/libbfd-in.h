@@ -187,14 +187,10 @@ extern bfd * _bfd_new_bfd
 extern bfd_boolean _bfd_free_cached_info
   (bfd *) ATTRIBUTE_HIDDEN;
 
-extern bfd_boolean _bfd_bool_bfd_false
-  (bfd *) ATTRIBUTE_HIDDEN;
 extern bfd_boolean _bfd_bool_bfd_asymbol_false
   (bfd *, asymbol *) ATTRIBUTE_HIDDEN;
 extern bfd_boolean _bfd_bool_bfd_false_error
   (bfd *) ATTRIBUTE_HIDDEN;
-extern bfd_boolean _bfd_bool_bfd_link_false_error
-  (bfd *, struct bfd_link_info *) ATTRIBUTE_HIDDEN;
 extern bfd_boolean _bfd_bool_bfd_true
   (bfd *) ATTRIBUTE_HIDDEN;
 extern bfd_boolean _bfd_bool_bfd_link_true
@@ -337,26 +333,6 @@ extern bfd * _bfd_noarchive_get_elt_at_index
 #define _bfd_noarchive_generic_stat_arch_elt bfd_generic_stat_arch_elt
 #define _bfd_noarchive_update_armap_timestamp _bfd_bool_bfd_false_error
 
-/* Routines to use for BFD_JUMP_TABLE_ARCHIVE to get BSD style
-   archives.  Use BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_bsd).  */
-
-#define _bfd_archive_bsd_slurp_armap bfd_slurp_bsd_armap
-#define _bfd_archive_bsd_slurp_extended_name_table \
-  _bfd_slurp_extended_name_table
-extern bfd_boolean _bfd_archive_bsd_construct_extended_name_table
-  (bfd *, char **, bfd_size_type *, const char **) ATTRIBUTE_HIDDEN;
-#define _bfd_archive_bsd_truncate_arname bfd_bsd_truncate_arname
-#define _bfd_archive_bsd_write_armap _bfd_bsd_write_armap
-#define _bfd_archive_bsd_read_ar_hdr _bfd_generic_read_ar_hdr
-#define _bfd_archive_bsd_write_ar_hdr _bfd_generic_write_ar_hdr
-#define _bfd_archive_bsd_openr_next_archived_file \
-  bfd_generic_openr_next_archived_file
-#define _bfd_archive_bsd_get_elt_at_index _bfd_generic_get_elt_at_index
-#define _bfd_archive_bsd_generic_stat_arch_elt \
-  bfd_generic_stat_arch_elt
-extern bfd_boolean _bfd_archive_bsd_update_armap_timestamp
-  (bfd *) ATTRIBUTE_HIDDEN;
-
 /* Routines to use for BFD_JUMP_TABLE_ARCHIVE to get COFF style
    archives.  Use BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_coff).  */
 
@@ -375,26 +351,6 @@ extern bfd_boolean _bfd_archive_coff_construct_extended_name_table
 #define _bfd_archive_coff_generic_stat_arch_elt \
   bfd_generic_stat_arch_elt
 #define _bfd_archive_coff_update_armap_timestamp _bfd_bool_bfd_true
-
-/* Routines to use for BFD_JUMP_TABLE_ARCHIVE to get BSD4.4 style
-   archives.  Use BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_bsd44).  */
-
-#define _bfd_archive_bsd44_slurp_armap bfd_slurp_bsd_armap
-#define _bfd_archive_bsd44_slurp_extended_name_table \
-  _bfd_slurp_extended_name_table
-extern bfd_boolean _bfd_archive_bsd44_construct_extended_name_table
-  (bfd *, char **, bfd_size_type *, const char **) ATTRIBUTE_HIDDEN;
-#define _bfd_archive_bsd44_truncate_arname bfd_bsd_truncate_arname
-#define _bfd_archive_bsd44_write_armap _bfd_bsd_write_armap
-#define _bfd_archive_bsd44_read_ar_hdr _bfd_generic_read_ar_hdr
-#define _bfd_archive_bsd44_write_ar_hdr _bfd_bsd44_write_ar_hdr
-#define _bfd_archive_bsd44_openr_next_archived_file \
-  bfd_generic_openr_next_archived_file
-#define _bfd_archive_bsd44_get_elt_at_index _bfd_generic_get_elt_at_index
-#define _bfd_archive_bsd44_generic_stat_arch_elt \
-  bfd_generic_stat_arch_elt
-#define _bfd_archive_bsd44_update_armap_timestamp \
-  _bfd_archive_bsd_update_armap_timestamp
 
 /* Routines to use for BFD_JUMP_TABLE_ARCHIVE to get VMS style
    archives.  Use BFD_JUMP_TABLE_ARCHIVE (_bfd_vms_lib).  Some of them
@@ -496,47 +452,6 @@ extern bfd_boolean _bfd_nowrite_set_section_contents
 #define _bfd_generic_set_arch_mach bfd_default_set_arch_mach
 extern bfd_boolean _bfd_generic_set_section_contents
   (bfd *, asection *, const void *, file_ptr, bfd_size_type) ATTRIBUTE_HIDDEN;
-
-/* Routines to use for BFD_JUMP_TABLE_LINK for targets which do not
-   support linking.  Use BFD_JUMP_TABLE_LINK (_bfd_nolink).  */
-
-extern int _bfd_nolink_sizeof_headers
-  (bfd *, struct bfd_link_info *) ATTRIBUTE_HIDDEN;
-extern bfd_byte *_bfd_nolink_bfd_get_relocated_section_contents
-  (bfd *, struct bfd_link_info *, struct bfd_link_order *,
-   bfd_byte *, bfd_boolean, asymbol **) ATTRIBUTE_HIDDEN;
-extern bfd_boolean _bfd_nolink_bfd_relax_section
-  (bfd *, asection *, struct bfd_link_info *, bfd_boolean *) ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_gc_sections _bfd_bool_bfd_link_false_error
-extern bfd_boolean _bfd_nolink_bfd_lookup_section_flags
-  (struct bfd_link_info *, struct flag_info *, asection *) ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_merge_sections _bfd_bool_bfd_link_false_error
-extern bfd_boolean _bfd_nolink_bfd_is_group_section
-  (bfd *, const asection *) ATTRIBUTE_HIDDEN;
-extern bfd_boolean _bfd_nolink_bfd_discard_group
-  (bfd *, asection *) ATTRIBUTE_HIDDEN;
-extern struct bfd_link_hash_table *_bfd_nolink_bfd_link_hash_table_create
-  (bfd *) ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_link_add_symbols _bfd_bool_bfd_link_false_error
-extern void _bfd_nolink_bfd_link_just_syms
-  (asection *, struct bfd_link_info *) ATTRIBUTE_HIDDEN;
-extern void _bfd_nolink_bfd_copy_link_hash_symbol_type
-  (bfd *, struct bfd_link_hash_entry *, struct bfd_link_hash_entry *)
-  ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_final_link _bfd_bool_bfd_link_false_error
-extern bfd_boolean _bfd_nolink_bfd_link_split_section
-  (bfd *, struct bfd_section *) ATTRIBUTE_HIDDEN;
-extern bfd_boolean _bfd_nolink_section_already_linked
-  (bfd *, asection *, struct bfd_link_info *) ATTRIBUTE_HIDDEN;
-extern bfd_boolean _bfd_nolink_bfd_define_common_symbol
-  (bfd *, struct bfd_link_info *, struct bfd_link_hash_entry *)
-  ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_link_hide_symbol \
-  _bfd_generic_link_hide_symbol
-extern struct bfd_link_hash_entry *_bfd_nolink_bfd_define_start_stop
-  (struct bfd_link_info *, const char *, asection *) ATTRIBUTE_HIDDEN;
-#define _bfd_nolink_bfd_link_check_relocs \
-  _bfd_generic_link_check_relocs
 
 /* Routines to use for BFD_JUMP_TABLE_DYNAMIC for targets which do not
    have dynamic symbols or relocs.  Use BFD_JUMP_TABLE_DYNAMIC
@@ -754,10 +669,6 @@ extern void _bfd_merge_sections_free (void *) ATTRIBUTE_HIDDEN;
 
 /* Create a string table.  */
 extern struct bfd_strtab_hash *_bfd_stringtab_init
-  (void) ATTRIBUTE_HIDDEN;
-
-/* Create an XCOFF .debug section style string table.  */
-extern struct bfd_strtab_hash *_bfd_xcoff_stringtab_init
   (void) ATTRIBUTE_HIDDEN;
 
 /* Free a string table.  */

@@ -107,7 +107,7 @@ installcheck: installcheck-subdir
 INCDIR=$(srcdir)/$(MULTISRCTOP)../include
 
 COMPILE.c = $(CC) -c @DEFS@ $(PICFLAG) $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) \
-               $(HDEFINES) @ac_libiberty_warn_cflags@ -D_GNU_SOURCE
+               $(HDEFINES) -D_GNU_SOURCE
 
 # Just to make sure we don't use a built-in rule with VPATH
 .c.$(objext):
@@ -120,30 +120,24 @@ COMPILE.c = $(CC) -c @DEFS@ $(PICFLAG) $(CFLAGS) $(CPPFLAGS) -I. -I$(INCDIR) \
 CFILES = argv.c asprintf.c atexit.c				\
 	basename.c  bzero.c			\
 	clock.c concat.c 		\
-	crc32.c				\
 	dwarfnames.c 			\
-	fdmatch.c ffs.c filename_cmp.c floatformat.c		\
-	fnmatch.c fopen_unlocked.c					\
+	fdmatch.c ffs.c filename_cmp.c 		\
+	fnmatch.c					\
 	getcwd.c getopt.c getopt1.c getpagesize.c getpwd.c getruntime.c	\
 	hashtab.c hex.c							\
-	index.c insque.c						\
+	index.c 					\
 	lbasename.c							\
 	lrealpath.c							\
 	make-relative-prefix.c						\
 	make-temp-file.c md5.c mkstemps.c			\
 	objalloc.c obstack.c						\
-	partition.c 						\
-	random.c rename.c rindex.c				\
-	safe-ctype.c setproctitle.c sha1.c sigsetmask.c        \
+	random.c rename.c 				\
+	safe-ctype.c sha1.c sigsetmask.c        \
 	 simple-object.c simple-object-elf.c	\
-         sort.c						\
 	 strdup.c	\
 	 strsignal.c	\
-	 sstrndup.c             \
-	 strverscmp.c tmpnam.c				\
 	unlink-if-ordinary.c						\
 	vasprintf.c vprintf-support.c	\
-	waitpid.c							\
 	xatexit.c xexit.c xmemdup.c 	\
 	 xstrerror.c xstrndup.c
 
@@ -153,23 +147,20 @@ REQUIRED_OFILES =							\
 	./md5.$(objext) ./sha1.$(objext) 		\
 	./argv.$(objext)						\
 	./concat.$(objext)			\
-	 ./crc32.$(objext) 	\
 	./dwarfnames.$(objext) 			\
 	./fdmatch.$(objext)				\
-	./filename_cmp.$(objext) ./floatformat.$(objext)		\
-	./fnmatch.$(objext) ./fopen_unlocked.$(objext)			\
+	./filename_cmp.$(objext) 	\
+	./fnmatch.$(objext)			\
 	./getopt.$(objext) ./getopt1.$(objext) ./getpwd.$(objext)	\
 	./getruntime.$(objext) ./hashtab.$(objext) ./hex.$(objext)	\
 	./lbasename.$(objext) ./lrealpath.$(objext)			\
 	./make-relative-prefix.$(objext) ./make-temp-file.$(objext)	\
 	./objalloc.$(objext)						\
 	./obstack.$(objext)						\
-	./partition.$(objext)	\
 	./vprintf-support.$(objext)		\
 	./safe-ctype.$(objext)						\
 	./simple-object.$(objext)	\
 	./simple-object-elf.$(objext) \
-	./sort.$(objext)			\
 	./strsignal.$(objext)			\
 	./unlink-if-ordinary.$(objext)	\
 	./xatexit.$(objext) ./xexit.$(objext)	\
@@ -186,27 +177,22 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
 	./_doprnt.$(objext)						\
 	 ./ffs.$(objext)						\
 	./getcwd.$(objext) ./getpagesize.$(objext)			\
-	./index.$(objext) ./insque.$(objext)				\
+	./index.$(objext)				\
 	 ./mkstemps.$(objext)	\
-	./random.$(objext) ./rename.$(objext) ./rindex.$(objext)	\
-	 ./setproctitle.$(objext)					\
+	./random.$(objext) ./rename.$(objext)	\
 	 ./sigsetmask.$(objext)			\
 	 ./stpcpy.$(objext)	\
 	 ./strdup.$(objext)	\
-	 ./strndup.$(objext)	\
-	./tmpnam.$(objext) ./strverscmp.$(objext)	\
-	./vasprintf.$(objext) ./waitpid.$(objext)
+	./vasprintf.$(objext)
 
 # These files are installed if the library has been configured to do so.
 INSTALLED_HEADERS =                                                     \
 	$(INCDIR)/ansidecl.h                                            \
-	$(INCDIR)/floatformat.h                                         \
 	$(INCDIR)/libiberty.h                                           \
 	$(INCDIR)/objalloc.h                                            \
-	$(INCDIR)/partition.h                                           \
 	$(INCDIR)/hashtab.h                                             \
-	$(INCDIR)/safe-ctype.h                                          \
-	$(INCDIR)/sort.h
+	$(INCDIR)/safe-ctype.h
+
 objs: $(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS)
 .PHONY: objs
 $(TARGETLIB): $(REQUIRED_OFILES) $(EXTRA_OFILES) $(LIBOBJS)
@@ -381,11 +367,9 @@ config.status: $(srcdir)/configure
 
 AUTOCONF = autoconf
 configure_deps = $(srcdir)/aclocal.m4 \
-	$(srcdir)/../config/acx.m4 \
-	$(srcdir)/../config/override.m4 \
-	$(srcdir)/../config/warnings.m4
+	$(srcdir)/../config/acx.m4
 
-$(srcdir)/configure: @MAINT@ $(srcdir)/configure.ac $(configure_deps)
+$(srcdir)/configure:
 	cd $(srcdir) && $(AUTOCONF)
 
 # Depending on config.h makes sure that config.status has been re-run
@@ -440,11 +424,6 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/concat.c $(OUTPUT_OPTION)
 
-
-./crc32.$(objext): $(srcdir)/crc32.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/crc32.c $(OUTPUT_OPTION)
-
 ./dwarfnames.$(objext): $(srcdir)/dwarfnames.c $(INCDIR)/dwarf2.def \
 	$(INCDIR)/dwarf2.h
 	$(COMPILE.c) $(srcdir)/dwarfnames.c $(OUTPUT_OPTION)
@@ -461,17 +440,9 @@ $(CONFIGURED_OFILES):
 	$(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/filename_cmp.c $(OUTPUT_OPTION)
 
-./floatformat.$(objext): $(srcdir)/floatformat.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/floatformat.h $(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/floatformat.c $(OUTPUT_OPTION)
-
 ./fnmatch.$(objext): $(srcdir)/fnmatch.c config.h $(INCDIR)/fnmatch.h \
 	$(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/fnmatch.c $(OUTPUT_OPTION)
-
-./fopen_unlocked.$(objext): $(srcdir)/fopen_unlocked.c config.h \
-	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h
-	$(COMPILE.c) $(srcdir)/fopen_unlocked.c $(OUTPUT_OPTION)
 
 ./getcwd.$(objext): $(srcdir)/getcwd.c config.h
 	$(COMPILE.c) $(srcdir)/getcwd.c $(OUTPUT_OPTION)
@@ -505,9 +476,6 @@ $(CONFIGURED_OFILES):
 ./index.$(objext): $(srcdir)/index.c
 	$(COMPILE.c) $(srcdir)/index.c $(OUTPUT_OPTION)
 
-./insque.$(objext): $(srcdir)/insque.c
-	$(COMPILE.c) $(srcdir)/insque.c $(OUTPUT_OPTION)
-
 ./lbasename.$(objext): $(srcdir)/lbasename.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/filenames.h $(INCDIR)/hashtab.h $(INCDIR)/libiberty.h \
 	$(INCDIR)/safe-ctype.h
@@ -538,25 +506,15 @@ $(CONFIGURED_OFILES):
 ./obstack.$(objext): $(srcdir)/obstack.c config.h $(INCDIR)/obstack.h
 	$(COMPILE.c) $(srcdir)/obstack.c $(OUTPUT_OPTION)
 
-./partition.$(objext): $(srcdir)/partition.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(INCDIR)/partition.h
-	$(COMPILE.c) $(srcdir)/partition.c $(OUTPUT_OPTION)
-
 ./random.$(objext): $(srcdir)/random.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/random.c $(OUTPUT_OPTION)
 
 ./rename.$(objext): $(srcdir)/rename.c config.h $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/rename.c $(OUTPUT_OPTION)
 
-./rindex.$(objext): $(srcdir)/rindex.c
-	$(COMPILE.c) $(srcdir)/rindex.c $(OUTPUT_OPTION)
-
 ./safe-ctype.$(objext): $(srcdir)/safe-ctype.c $(INCDIR)/ansidecl.h \
 	$(INCDIR)/safe-ctype.h
 	$(COMPILE.c) $(srcdir)/safe-ctype.c $(OUTPUT_OPTION)
-
-./setproctitle.$(objext): $(srcdir)/setproctitle.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/setproctitle.c $(OUTPUT_OPTION)
 
 ./sha1.$(objext): $(srcdir)/sha1.c config.h $(INCDIR)/ansidecl.h $(INCDIR)/sha1.h
 	$(COMPILE.c) $(srcdir)/sha1.c $(OUTPUT_OPTION)
@@ -574,32 +532,15 @@ $(CONFIGURED_OFILES):
 	$(srcdir)/simple-object-common.h $(INCDIR)/simple-object.h
 	$(COMPILE.c) $(srcdir)/simple-object.c $(OUTPUT_OPTION)
 
-./sort.$(objext): $(srcdir)/sort.c config.h $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(INCDIR)/sort.h
-	$(COMPILE.c) $(srcdir)/sort.c $(OUTPUT_OPTION)
-
 ./stpcpy.$(objext): $(srcdir)/stpcpy.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/stpcpy.c $(OUTPUT_OPTION)
-
-./stpncpy.$(objext): $(srcdir)/stpncpy.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/stpncpy.c $(OUTPUT_OPTION)
 
 ./strdup.$(objext): $(srcdir)/strdup.c $(INCDIR)/ansidecl.h
 	$(COMPILE.c) $(srcdir)/strdup.c $(OUTPUT_OPTION)
 
-./strndup.$(objext): $(srcdir)/strndup.c $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/strndup.c $(OUTPUT_OPTION)
-
 ./strsignal.$(objext): $(srcdir)/strsignal.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/strsignal.c $(OUTPUT_OPTION)
-
-./strverscmp.$(objext): $(srcdir)/strverscmp.c $(INCDIR)/ansidecl.h \
-	$(INCDIR)/libiberty.h $(INCDIR)/safe-ctype.h
-	$(COMPILE.c) $(srcdir)/strverscmp.c $(OUTPUT_OPTION)
-
-./tmpnam.$(objext): $(srcdir)/tmpnam.c
-	$(COMPILE.c) $(srcdir)/tmpnam.c $(OUTPUT_OPTION)
 
 ./unlink-if-ordinary.$(objext): $(srcdir)/unlink-if-ordinary.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h
@@ -612,9 +553,6 @@ $(CONFIGURED_OFILES):
 ./vprintf-support.$(objext): $(srcdir)/vprintf-support.c config.h \
 	$(INCDIR)/ansidecl.h $(INCDIR)/libiberty.h
 	$(COMPILE.c) $(srcdir)/vprintf-support.c $(OUTPUT_OPTION)
-
-./waitpid.$(objext): $(srcdir)/waitpid.c config.h $(INCDIR)/ansidecl.h
-	$(COMPILE.c) $(srcdir)/waitpid.c $(OUTPUT_OPTION)
 
 ./xatexit.$(objext): $(srcdir)/xatexit.c config.h $(INCDIR)/ansidecl.h \
 	$(INCDIR)/libiberty.h

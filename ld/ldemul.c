@@ -243,12 +243,6 @@ after_check_relocs_default (void)
 }
 
 void
-after_allocation_default (void)
-{
-  lang_relax_sections (FALSE);
-}
-
-void
 before_allocation_default (void)
 {
   if (!bfd_link_relocatable (&link_info))

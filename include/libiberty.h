@@ -48,34 +48,10 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 
-/* If the OS supports it, ensure that the supplied stream is setup to
-   avoid any multi-threaded locking.  Otherwise leave the FILE pointer
-   unchanged.  If the stream is NULL do nothing.  */
-
-extern void unlock_stream (FILE *);
-
-/* If the OS supports it, ensure that the standard I/O streams, stdin,
-   stdout and stderr are setup to avoid any multi-threaded locking.
-   Otherwise do nothing.  */
-
-extern void unlock_std_streams (void);
-
-/* Open and return a FILE pointer.  If the OS supports it, ensure that
-   the stream is setup to avoid any multi-threaded locking.  Otherwise
-   return the FILE pointer unchanged.  */
-
-extern FILE *fopen_unlocked (const char *, const char *);
-extern FILE *fdopen_unlocked (int, const char *);
-extern FILE *freopen_unlocked (const char *, const char *, FILE *);
-
 /* Build an argument vector from a string.  Allocates memory using
    malloc.  Use freeargv to free the vector.  */
 
 extern char **buildargv (const char *) ATTRIBUTE_MALLOC;
-
-/* Free a vector returned by buildargv.  */
-
-extern void freeargv (char **);
 
 /* Duplicate an argument vector. Allocates memory using malloc.  Use
    freeargv to free the vector.  */
@@ -85,14 +61,6 @@ extern char **dupargv (char * const *) ATTRIBUTE_MALLOC;
 /* Expand "@file" arguments in argv.  */
 
 extern void expandargv (int *, char ***);
-
-/* Write argv to an @-file, inserting necessary quoting.  */
-
-extern int writeargv (char * const *, FILE *);
-
-/* Return the number of elements in argv.  */
-
-extern int countargv (char * const *);
 
 /* Return the last component of a path name.  Note that we can't use a
    prototype here because the parameter is declared inconsistently
@@ -142,15 +110,6 @@ extern char *lrealpath (const char *);
    strings.  Allocates memory using malloc.  */
 
 extern char *concat (const char *, ...) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL ATTRIBUTE_SENTINEL;
-
-/* Concatenate an arbitrary number of strings.  You must pass NULL as
-   the last argument of this function, to terminate the list of
-   strings.  Allocates memory using malloc.  The first argument is
-   not one of the strings to be concatenated, but if not NULL is a
-   pointer to be freed after the new string is created, similar to the
-   way realloc works.  */
-
-extern char *reconcat (char *, const char *, ...) ATTRIBUTE_MALLOC ATTRIBUTE_RETURNS_NONNULL ATTRIBUTE_SENTINEL;
 
 /* Determine the length of concatenating an arbitrary number of
    strings.  You must pass NULL as the last argument of this function,
@@ -219,13 +178,6 @@ extern long get_run_time (void);
 extern char *make_relative_prefix (const char *, const char *,
                                    const char *) ATTRIBUTE_MALLOC;
 
-/* Generate a relocated path to some installation directory without
-   attempting to follow any soft links.  Allocates
-   return value using malloc.  */
-
-extern char *make_relative_prefix_ignore_links (const char *, const char *,
-						const char *) ATTRIBUTE_MALLOC;
-
 /* Returns a pointer to a directory path suitable for creating temporary
    files in.  */
 
@@ -257,26 +209,12 @@ extern int strtoerrno (const char *);
 
 extern char *xstrerror (int) ATTRIBUTE_RETURNS_NONNULL;
 
-/* Return the maximum signal number for which strsignal will return a
-   string.  */
-
-extern int signo_max (void);
-
 /* Return a signal message string for a signal number
    (e.g., strsignal (SIGHUP) returns something like "Hangup").  */
 /* This is commented out as it can conflict with one in system headers.
    We still document its existence though.  */
 
 /*extern const char *strsignal (int);*/
-
-/* Return the name of a signal number (e.g., strsigno (SIGHUP) returns
-   "SIGHUP").  */
-
-extern const char *strsigno (int);
-
-/* Given the name of a signal, return its number.  */
-
-extern int strtosigno (const char *);
 
 /* Register a function to be run by xexit.  Returns 0 on success.  */
 
@@ -617,11 +555,6 @@ extern int asprintf (char **, const char *, ...) ATTRIBUTE_PRINTF_2;
 extern int vasprintf (char **, const char *, va_list) ATTRIBUTE_PRINTF(2,0);
 #endif
 
-#if defined(HAVE_DECL_STRVERSCMP) && !HAVE_DECL_STRVERSCMP
-/* Compare version strings.  */
-extern int strverscmp (const char *, const char *);
-#endif
-
 #if defined(HAVE_DECL_STRTOL) && !HAVE_DECL_STRTOL
 extern long int strtol (const char *nptr,
                         char **endptr, int base);
@@ -643,14 +576,6 @@ __extension__
 extern unsigned long long int strtoull (const char *nptr,
                                         char **endptr, int base);
 #endif
-
-#if defined(HAVE_DECL_STRVERSCMP) && !HAVE_DECL_STRVERSCMP
-/* Compare version strings.  */
-extern int strverscmp (const char *, const char *);
-#endif
-
-/* Set the title of a process */
-extern void setproctitle (const char *name, ...);
 
 #define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
 

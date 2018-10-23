@@ -79,21 +79,4 @@ case "${targ}" in
     ;;
 esac
 
-case "${host64}${want64}" in
-  *true*)
-    targ_selvecs="${targ_selvecs} ${targ64_selvecs}"
-    ;;
-esac
-
-# If we support any ELF target, then automatically add support for the
-# generic ELF targets.  This permits an objdump with some ELF support
-# to be used on an arbitrary ELF file for anything other than
-# relocation information.
-case "${targ_defvec} ${targ_selvecs}" in
-  *elf64* | *mips_elf32_n*)
-    targ_selvecs="${targ_selvecs} elf64_le_vec elf32_le_vec"
-    ;;
-  *elf32*)
-    targ_selvecs="${targ_selvecs} elf32_le_vec"
-    ;;
-esac
+targ_selvecs="${targ_selvecs} elf32_le_vec"

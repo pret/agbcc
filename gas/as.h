@@ -412,15 +412,12 @@ int    had_errors (void);
 int    had_warnings (void);
 void   as_warn_value_out_of_range (const char *, offsetT, offsetT, offsetT,
 				   const char *, unsigned);
-void   as_bad_value_out_of_range (const char *, offsetT, offsetT, offsetT,
-				  const char *, unsigned);
 void   print_version_id (void);
 char * app_push (void);
 char * atof_ieee (char *, int, LITTLENUM_TYPE *);
 const char * ieee_md_atof (int, char *, int *, bfd_boolean);
 const char * vax_md_atof (int, char *, int *);
 char * input_scrub_include_file (const char *, char *);
-void   input_scrub_insert_line (const char *);
 void   input_scrub_insert_file (char *);
 char * input_scrub_new_file (const char *);
 char * input_scrub_next_buffer (char **bufp);

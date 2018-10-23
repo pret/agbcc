@@ -637,10 +637,6 @@ AR
 HDEFINES
 GENINSRC_NEVER_FALSE
 GENINSRC_NEVER_TRUE
-WARN_WRITE_STRINGS
-NO_WERROR
-WARN_CFLAGS_FOR_BUILD
-WARN_CFLAGS
 EGREP
 GREP
 CPP
@@ -744,8 +740,6 @@ enable_option_checking
 enable_dependency_tracking
 enable_silent_rules
 enable_largefile
-enable_werror
-enable_build_warnings
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1382,8 +1376,6 @@ Optional Features:
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
   --disable-largefile     omit support for large files
-  --enable-werror         treat compile warnings as errors
-  --enable-build-warnings enable build-time compiler warnings
 
 Some influential environment variables:
   CC          C compiler command
@@ -2261,7 +2253,6 @@ as_fn_append ac_func_list " mkdir"
 as_fn_append ac_func_list " rmdir"
 as_fn_append ac_func_list " stpcpy"
 as_fn_append ac_func_list " strcasecmp"
-as_fn_append ac_func_list " strdup"
 as_fn_append ac_func_list " strncasecmp"
 as_fn_append ac_func_list " utime"
 # Check that the precious variables saved in the cache have kept the same
@@ -5241,159 +5232,6 @@ fi
 
 
 
-
-# Set the 'development' global.
-. $srcdir/../bfd/development.sh
-
-# Set acp_cpp_for_build variable
-ac_cpp_for_build="$CC_FOR_BUILD -E $CPPFLAGS_FOR_BUILD"
-
-# Default set of GCC warnings to enable.
-GCC_WARN_CFLAGS="-W -Wall -Wstrict-prototypes -Wmissing-prototypes"
-GCC_WARN_CFLAGS_FOR_BUILD="-W -Wall -Wstrict-prototypes -Wmissing-prototypes"
-
-# Add -Wshadow if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wshadow"
-fi
-rm -f conftest*
-
-
-# Add -Wstack-usage if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-4]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wstack-usage=262144"
-fi
-rm -f conftest*
-
-
-# Set WARN_WRITE_STRINGS if the compiler supports -Wwrite-strings.
-WARN_WRITE_STRINGS=""
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  WARN_WRITE_STRINGS="-Wwrite-strings"
-fi
-rm -f conftest*
-
-
-# Verify CC_FOR_BUILD to be compatible with warning flags
-
-# Add -Wshadow if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp_for_build conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-3]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wshadow"
-fi
-rm -f conftest*
-
-
-# Add -Wstack-usage if the compiler is a sufficiently recent version of GCC.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-__GNUC__
-_ACEOF
-if (eval "$ac_cpp_for_build conftest.$ac_ext") 2>&5 |
-  $EGREP "^[0-4]$" >/dev/null 2>&1; then :
-
-else
-  GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wstack-usage=262144"
-fi
-rm -f conftest*
-
-
-# Check whether --enable-werror was given.
-if test "${enable_werror+set}" = set; then :
-  enableval=$enable_werror; case "${enableval}" in
-     yes | y) ERROR_ON_WARNING="yes" ;;
-     no | n)  ERROR_ON_WARNING="no" ;;
-     *) as_fn_error $? "bad value ${enableval} for --enable-werror" "$LINENO" 5 ;;
-   esac
-fi
-
-
-# Disable -Wformat by default when using gcc on mingw
-case "${host}" in
-  *-*-mingw32*)
-    if test "${GCC}" = yes -a -z "${ERROR_ON_WARNING}" ; then
-      GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Wno-format"
-      GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Wno-format"
-    fi
-    ;;
-  *) ;;
-esac
-
-# Enable -Werror by default when using gcc.  Turn it off for releases.
-if test "${GCC}" = yes -a -z "${ERROR_ON_WARNING}" -a "$development" = true ; then
-    ERROR_ON_WARNING=yes
-fi
-
-NO_WERROR=
-if test "${ERROR_ON_WARNING}" = yes ; then
-    GCC_WARN_CFLAGS="$GCC_WARN_CFLAGS -Werror"
-    GCC_WARN_CFLAGS_FOR_BUILD="$GCC_WARN_CFLAGS_FOR_BUILD -Werror"
-    NO_WERROR="-Wno-error"
-fi
-
-if test "${GCC}" = yes ; then
-  WARN_CFLAGS="${GCC_WARN_CFLAGS}"
-  WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD}"
-fi
-
-# Check whether --enable-build-warnings was given.
-if test "${enable_build_warnings+set}" = set; then :
-  enableval=$enable_build_warnings; case "${enableval}" in
-  yes)	WARN_CFLAGS="${GCC_WARN_CFLAGS}"
-        WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD}";;
-  no)	if test "${GCC}" = yes ; then
-	  WARN_CFLAGS="-w"
-      WARN_CFLAGS_FOR_BUILD="-w"
-	fi;;
-  ,*)   t=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS="${GCC_WARN_CFLAGS} ${t}"
-        WARN_CFLAGS_FOR_BUILD="${GCC_WARN_CFLAGS_FOR_BUILD} ${t}";;
-  *,)   t=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS="${t} ${GCC_WARN_CFLAGS}"
-        WARN_CFLAGS_FOR_BUILD="${t} ${GCC_WARN_CFLAGS_FOR_BUILD}";;
-  *)    WARN_CFLAGS=`echo "${enableval}" | sed -e "s/,/ /g"`
-        WARN_CFLAGS_FOR_BUILD=`echo "${enableval}" | sed -e "s/,/ /g"`;;
-esac
-fi
-
-
-if test x"$silent" != x"yes" && test x"$WARN_CFLAGS" != x""; then
-  echo "Setting warning flags = $WARN_CFLAGS" 6>&1
-fi
-
-
-
-
-
-
-
 ac_config_headers="$ac_config_headers config.h:config.in"
 
 
@@ -5632,8 +5470,6 @@ _ACEOF
 
 fi
 done
-
-
 
 
 

@@ -4575,32 +4575,6 @@ print_statements (void)
   print_statement_list (statement_list.head, abs_output_section);
 }
 
-/* Print the first N statements in statement list S to STDERR.
-   If N == 0, nothing is printed.
-   If N < 0, the entire list is printed.
-   Intended to be called from GDB.  */
-
-void
-dprint_statement (lang_statement_union_type *s, int n)
-{
-  FILE *map_save = config.map_file;
-
-  config.map_file = stderr;
-
-  if (n < 0)
-    print_statement_list (s, abs_output_section);
-  else
-    {
-      while (s && --n >= 0)
-	{
-	  print_statement (s, abs_output_section);
-	  s = s->header.next;
-	}
-    }
-
-  config.map_file = map_save;
-}
-
 static void
 insert_pad (lang_statement_union_type **ptr,
 	    fill_type *fill,
@@ -5891,81 +5865,6 @@ lang_do_assignments (lang_phase_type phase)
 			 abs_output_section, NULL, 0, &found_end);
 }
 
-/* For an assignment statement outside of an output section statement,
-   choose the best of neighbouring output sections to use for values
-   of "dot".  */
-
-asection *
-section_for_dot (void)
-{
-  asection *s;
-
-  /* Assignments belong to the previous output section, unless there
-     has been an assignment to "dot", in which case following
-     assignments belong to the next output section.  (The assumption
-     is that an assignment to "dot" is setting up the address for the
-     next output section.)  Except that past the assignment to "_end"
-     we always associate with the previous section.  This exception is
-     for targets like SH that define an alloc .stack or other
-     weirdness after non-alloc sections.  */
-  if (current_section == NULL || prefer_next_section)
-    {
-      lang_statement_union_type *stmt;
-      lang_output_section_statement_type *os;
-
-      for (stmt = (lang_statement_union_type *) current_assign;
-	   stmt != NULL;
-	   stmt = stmt->header.next)
-	if (stmt->header.type == lang_output_section_statement_enum)
-	  break;
-
-      os = &stmt->output_section_statement;
-      while (os != NULL
-	     && !os->after_end
-	     && (os->bfd_section == NULL
-		 || (os->bfd_section->flags & SEC_EXCLUDE) != 0
-		 || bfd_section_removed_from_list (link_info.output_bfd,
-						   os->bfd_section)))
-	os = os->next;
-
-      if (current_section == NULL || os == NULL || !os->after_end)
-	{
-	  if (os != NULL)
-	    s = os->bfd_section;
-	  else
-	    s = link_info.output_bfd->section_last;
-	  while (s != NULL
-		 && ((s->flags & SEC_ALLOC) == 0
-		     || (s->flags & SEC_THREAD_LOCAL) != 0))
-	    s = s->prev;
-	  if (s != NULL)
-	    return s;
-
-	  return bfd_abs_section_ptr;
-	}
-    }
-
-  s = current_section->bfd_section;
-
-  /* The section may have been stripped.  */
-  while (s != NULL
-	 && ((s->flags & SEC_EXCLUDE) != 0
-	     || (s->flags & SEC_ALLOC) == 0
-	     || (s->flags & SEC_THREAD_LOCAL) != 0
-	     || bfd_section_removed_from_list (link_info.output_bfd, s)))
-    s = s->prev;
-  if (s == NULL)
-    s = link_info.output_bfd->sections;
-  while (s != NULL
-	 && ((s->flags & SEC_ALLOC) == 0
-	     || (s->flags & SEC_THREAD_LOCAL) != 0))
-    s = s->next;
-  if (s != NULL)
-    return s;
-
-  return bfd_abs_section_ptr;
-}
-
 /* Array of __start/__stop/.startof./.sizeof/ symbols.  */
 
 static struct bfd_link_hash_entry **start_stop_syms;
@@ -7244,16 +7143,6 @@ lang_add_entry (const char *name, bfd_boolean cmdline)
       entry_symbol.name = name;
       entry_from_cmdline = cmdline;
     }
-}
-
-/* Set the default start symbol to NAME.  .em files should use this,
-   not lang_add_entry, to override the use of "start" if neither the
-   linker script nor the command line specifies an entry point.  NAME
-   must be permanently allocated.  */
-void
-lang_default_entry (const char *name)
-{
-  entry_symbol_default = name;
 }
 
 void

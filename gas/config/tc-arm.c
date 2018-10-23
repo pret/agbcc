@@ -3194,10 +3194,6 @@ symbol_locate (symbolS *    symbolP,
 #ifdef tc_symbol_new_hook
   tc_symbol_new_hook (symbolP);
 #endif
-
-#ifdef DEBUG_SYMS
-  verify_symbol_chain (symbol_rootP, symbol_lastP);
-#endif /* DEBUG_SYMS  */
 }
 
 static void

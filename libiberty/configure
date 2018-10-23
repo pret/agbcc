@@ -630,8 +630,6 @@ INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
 OUTPUT_OPTION
-NO_MINUS_C_MINUS_O
-ac_libiberty_warn_cflags
 EGREP
 GREP
 CPP
@@ -652,9 +650,6 @@ build_os
 build_vendor
 build_cpu
 build
-HAVE_PERL
-NOTMAINT
-MAINT
 libiberty_topdir
 target_alias
 host_alias
@@ -2196,8 +2191,6 @@ as_fn_append ac_func_list " realpath"
 as_fn_append ac_func_list " stpcpy"
 as_fn_append ac_func_list " strdup"
 as_fn_append ac_func_list " strerror"
-as_fn_append ac_func_list " strndup"
-as_fn_append ac_func_list " strverscmp"
 as_fn_append ac_func_list " psignal"
 as_fn_append ac_func_list " strsignal"
 # Check that the precious variables saved in the cache have kept the same
@@ -2415,12 +2408,6 @@ else
 fi
 
 
-MAINT='#'
-NOTMAINT=''
-
-HAVE_PERL='#'
-
-
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -2490,7 +2477,6 @@ shift; shift
 host_os=$*
 IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
 
 
 
@@ -4015,184 +4001,8 @@ rm -rf conftest*
 
 fi
 
-ac_c_preproc_warn_flag=yes
 
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-ac_libiberty_warn_cflags=
-save_CFLAGS="$CFLAGS"
-for real_option in -W -Wall; do
-  # Do the check with the no- prefix removed since gcc silently
-  # accepts any -Wno-* option on purpose
-  case $real_option in
-    -Wno-*) option=-W`expr x$real_option : 'x-Wno-\(.*\)'` ;;
-    *) option=$real_option ;;
-  esac
-  as_acx_Woption=`$as_echo "acx_cv_prog_cc_warning_$option" | $as_tr_sh`
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC supports $option" >&5
-$as_echo_n "checking whether $CC supports $option... " >&6; }
-if eval \${$as_acx_Woption+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  CFLAGS="$option"
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$as_acx_Woption=yes"
-else
-  eval "$as_acx_Woption=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-eval ac_res=\$$as_acx_Woption
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  if test `eval 'as_val=${'$as_acx_Woption'};$as_echo "$as_val"'` = yes; then :
-  ac_libiberty_warn_cflags="$ac_libiberty_warn_cflags${ac_libiberty_warn_cflags:+ }$real_option"
-fi
-  done
-CFLAGS="$save_CFLAGS"
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-
-if test "x$CC" != xcc; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC and cc understand -c and -o together" >&5
-$as_echo_n "checking whether $CC and cc understand -c and -o together... " >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether cc understands -c and -o together" >&5
-$as_echo_n "checking whether cc understands -c and -o together... " >&6; }
-fi
-set dummy $CC; ac_cc=`$as_echo "$2" |
-		      sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
-if eval \${ac_cv_prog_cc_${ac_cc}_c_o+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-# Make sure it works both with $CC and with simple cc.
-# We do the test twice because some compilers refuse to overwrite an
-# existing .o file with -o, though they will create one.
-ac_try='$CC -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
-rm -f conftest2.*
-if { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } &&
-   test -f conftest2.$ac_objext && { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; };
-then
-  eval ac_cv_prog_cc_${ac_cc}_c_o=yes
-  if test "x$CC" != xcc; then
-    # Test first that cc exists at all.
-    if { ac_try='cc -c conftest.$ac_ext >&5'
-  { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-      ac_try='cc -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
-      rm -f conftest2.*
-      if { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } &&
-	 test -f conftest2.$ac_objext && { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; };
-      then
-	# cc works too.
-	:
-      else
-	# cc exists but doesn't like -o.
-	eval ac_cv_prog_cc_${ac_cc}_c_o=no
-      fi
-    fi
-  fi
-else
-  eval ac_cv_prog_cc_${ac_cc}_c_o=no
-fi
-rm -f core conftest*
-
-fi
-if eval test \$ac_cv_prog_cc_${ac_cc}_c_o = yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-$as_echo "#define NO_MINUS_C_MINUS_O 1" >>confdefs.h
-
-fi
-
-# autoconf is lame and doesn't give us any substitution variable for this.
-if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" = no"; then
-  NO_MINUS_C_MINUS_O=yes
-else
-  OUTPUT_OPTION='-o $@'
-fi
-
+OUTPUT_OPTION='-o $@'
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether byte ordering is bigendian" >&5
 $as_echo_n "checking whether byte ordering is bigendian... " >&6; }
@@ -4727,9 +4537,9 @@ _ACEOF
 # are not available on the host.
 
 funcs="asprintf atexit basename bzero ffs getcwd getpagesize \
-gettimeofday index insque mkstemps random rename rindex \
-sigsetmask stpcpy stpncpy  strdup strndup strverscmp \
-tmpnam vasprintf waitpid setproctitle"
+gettimeofday index mkstemps random rename  \
+sigsetmask stpcpy strdup  \
+vasprintf"
 
 
 
@@ -4744,10 +4554,6 @@ _ACEOF
 
 fi
 done
-
-
-
-
 
 
 
@@ -4899,12 +4705,6 @@ esac
 esac
 
     case " $LIBOBJS " in
-  *" insque.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS insque.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
   *" mkstemps.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS mkstemps.$ac_objext"
  ;;
@@ -4913,12 +4713,6 @@ esac
     case " $LIBOBJS " in
   *" random.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS random.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
-  *" rindex.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS rindex.$ac_objext"
  ;;
 esac
 
@@ -4935,39 +4729,15 @@ esac
 esac
 
     case " $LIBOBJS " in
-  *" stpncpy.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS stpncpy.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
-  *" strndup.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strndup.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
-  *" strverscmp.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strverscmp.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
   *" vasprintf.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS vasprintf.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
-  *" waitpid.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS waitpid.$ac_objext"
  ;;
 esac
 
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bzero | ffs | getpagesize | index | insque |  mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strverscmp | vasprintf | waitpid)
+	asprintf | basename | bzero | ffs | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -5205,15 +4975,15 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_GETOPT $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "strverscmp canonicalize_file_name" "ac_cv_have_decl_strverscmp_canonicalize_file_name" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strverscmp_canonicalize_file_name" = xyes; then :
+ac_fn_c_check_decl "$LINENO" "canonicalize_file_name" "ac_cv_have_decl_canonicalize_file_name" "$ac_includes_default"
+if test "x$ac_cv_have_decl_canonicalize_file_name" = xyes; then :
   ac_have_decl=1
 else
   ac_have_decl=0
 fi
 
 cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRVERSCMP_CANONICALIZE_FILE_NAME $ac_have_decl
+#define HAVE_DECL_CANONICALIZE_FILE_NAME $ac_have_decl
 _ACEOF
 
 fi

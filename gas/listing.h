@@ -46,7 +46,6 @@ void listing_error (const char *message);
 void listing_file (const char *name);
 void listing_list (int on);
 void listing_newline (char *ps);
-void listing_prev_line (void);
 void listing_print (char *, char **);
 void listing_psize (int);
 void listing_nopage (int);
