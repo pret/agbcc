@@ -44,6 +44,8 @@ extern "C" {
 #include "diagnostics.h"
 #include <stdarg.h>
 #include <sys/stat.h>
+#include <stdint.h>
+
 
 #ifndef SABER
 /* This hack is to avoid a problem with some strict ANSI C preprocessors.
