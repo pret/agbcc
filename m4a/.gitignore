@@ -1,0 +1,6 @@
+*.a
+*.o
+*.i
+m4a_2.s
+m4a_4.s
+m4a_tables.s

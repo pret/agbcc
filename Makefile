@@ -63,11 +63,11 @@ else
 EXE :=
 endif
 
-all: binutils old_gcc gcc libc libgcc
+all: binutils old_gcc gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu libm4a libsiirtc
 
 binutils: $(BINUTILS_TGTS)
 
-install: install-prefix-check binutils old_gcc gcc libc libgcc $(BINUTILS_INSTALL_STRIP)
+install: install-prefix-check binutils old_gcc gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu libm4a libsiirtc $(BINUTILS_INSTALL_STRIP)
 	@mkdir -p $(PREFIX)/tools/agbcc
 	@mkdir -p $(PREFIX)/tools/agbcc/bin
 	@mkdir -p $(PREFIX)/tools/agbcc/include
@@ -79,8 +79,20 @@ install: install-prefix-check binutils old_gcc gcc libc libgcc $(BINUTILS_INSTAL
 	cp old_agbcc $(PREFIX)/tools/agbcc/bin/
 	cp -R libc/include $(PREFIX)/tools/agbcc/ #drop include, because we don't want include/include
 	cp ginclude/* $(PREFIX)/tools/agbcc/include/
+	cp agb_flash/agb_flash.h $(PREFIX)/tools/agbcc/include/
+	cp librfu/librfu.h $(PREFIX)/tools/agbcc/include/
+	cp libgcnmultiboot/libgcnmultiboot.h $(PREFIX)/tools/agbcc/include/
+	cp siirtc/siirtc.h $(PREFIX)/tools/agbcc/include
 	cp libgcc.a $(PREFIX)/tools/agbcc/lib/
 	cp libc.a $(PREFIX)/tools/agbcc/lib/
+	cp libagb_flash.a $(PREFIX)/tools/agbcc/lib/
+	cp libagbsyscall.a $(PREFIX)/tools/agbcc/lib/
+	cp libgcnmultiboot.a $(PREFIX)/tools/agbcc/lib/
+	cp libisagbprn.a $(PREFIX)/tools/agbcc/lib/
+	cp librfu_1024.a $(PREFIX)/tools/agbcc/lib/
+	cp librfu_1026.a $(PREFIX)/tools/agbcc/lib/
+	cp libm4a.a $(PREFIX)/tools/agbcc/lib/
+	cp libsiirtc.a $(PREFIX)/tools/agbcc/lib/
 
 
 autoreconf:
@@ -137,10 +149,89 @@ libgcc_clean:
 	$(RM) libgcc.a
 	@$(MAKE) -C libgcc clean
 
-clean: binutils_clean $(CLEAN) libc_clean libgcc_clean old_gcc_clean gcc_clean
+libagb_flash.a: agb_flash/libagb_flash.a
+	cp $< $@
+agb_flash/libagb_flash.a: agbcc
+	@$(MAKE) -C agb_flash
+
+libagb_flash: libagb_flash.a
+
+libagb_flash_clean:
+	$(RM) libagb_flash.a
+	@$(MAKE) -C agb_flash clean
+
+libagbsyscall.a: libagbsyscall/libagbsyscall.a
+	cp $< $@
+libagbsyscall/libagbsyscall.a:
+	@$(MAKE) -C libagbsyscall
+
+libagbsyscall: libagbsyscall.a
+
+libagbsyscall_clean:
+	$(RM) libagbsyscall.a
+	@$(MAKE) -C libagbsyscall clean
+
+libgcnmultiboot.a: libgcnmultiboot/libgcnmultiboot.a
+	cp $< $@
+libgcnmultiboot/libgcnmultiboot.a:
+	@$(MAKE) -C libgcnmultiboot
+
+libgcnmultiboot: libgcnmultiboot.a
+
+libgcnmultiboot_clean:
+	$(RM) libgcnmultiboot.a
+	@$(MAKE) -C libgcnmultiboot clean
+
+libisagbprn.a: libisagbprn/libisagbprn.a
+	cp $< $@
+libisagbprn/libisagbprn.a: agbcc
+	@$(MAKE) -C libisagbprn
+
+libisagbprn: libisagbprn.a
+
+libisagbprn_clean:
+	$(RM) libisagbprn.a
+	@$(MAKE) -C libisagbprn clean
+
+librfu_%.a: librfu/librfu_%.a
+	cp $< $@
+librfu/librfu_%.a: TARGET = $(@:librfu/librfu_%.a=v%)
+librfu/librfu_%.a: agbcc
+	@$(MAKE) -C librfu clean
+	@$(MAKE) -C librfu $(TARGET)
+
+librfu: librfu_1024.a librfu_1026.a
+
+librfu_clean:
+	$(RM) librfu_1024.a librfu_1026.a
+	@$(MAKE) -C librfu clean
+
+libm4a.a: m4a/libm4a.a
+	cp $< $@
+m4a/libm4a.a: old_agbcc
+	@$(MAKE) -C m4a
+
+libm4a: libm4a.a
+
+libm4a_clean:
+	$(RM) libm4a.a
+	@$(MAKE) -C m4a clean
+
+libsiirtc.a: siirtc/libsiirtc.a
+	cp $< $@
+siirtc/libsiirtc.a: agbcc
+	@$(MAKE) -C siirtc
+
+libsiirtc: libsiirtc.a
+
+libsiirtc_clean:
+	$(RM) libsiirtc.a
+	@$(MAKE) -C siirtc clean
+
+clean: binutils_clean $(CLEAN) libc_clean libgcc_clean old_gcc_clean gcc_clean libagb_flash_clean libagbsyscall_clean libgcnmultiboot_clean libisagbprn_clean librfu_clean libm4a_clean libsiirtc_clean
 
 
-.PHONY: binutils old gcc old_gcc libc libgcc all clean install
+.PHONY: binutils old gcc old_gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu librfu libm4a libsiirtc all clean install
 .PHONY: install-prefix-check $(ALL) $(SUBDIRS) $(OBJS_TGTS) $(BINUTILS_INSTALL) $(BINUTILS_INSTALL_STRIP) $(CLEAN) $(CONFIGURE_TGTS) install install-strip clean
 
 

@@ -1,0 +1,5 @@
+*.o
+*.i
+*.a
+librfu_stwi.s
+librfu_rfu.s
