@@ -44,7 +44,6 @@ v1026: ASFLAGS += --defsym VERSION_MAJOR=1 --defsym VERSION_MINOR=0 --defsym VER
 $(C_OBJS): %.o: %.c
 	@$(CPP) $(CPPFLAGS) $< -o $*.i
 	@$(CC1) $(CFLAGS) -o $*.s $*.i
-	@$(shell echo -e ".text\n\t.align\t2, 0\n" >> $*.s)
 	$(AS) $(ASFLAGS) -o $@ $*.s
 
 $(ASM_OBJS): %.o: %.s
