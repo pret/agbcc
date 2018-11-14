@@ -78,7 +78,7 @@ install: install-prefix-check binutils old_gcc gcc libc libgcc libagb_flash liba
 	cp agbcc $(PREFIX)/tools/agbcc/bin/
 	cp old_agbcc $(PREFIX)/tools/agbcc/bin/
 	cp -R libc/include $(PREFIX)/tools/agbcc/ #drop include, because we don't want include/include
-	cp ginclude/* $(PREFIX)/tools/agbcc/include/
+	cp -R ginclude/* $(PREFIX)/tools/agbcc/include/
 	cp agb_flash/agb_flash.h $(PREFIX)/tools/agbcc/include/
 	cp librfu/librfu.h $(PREFIX)/tools/agbcc/include/
 	cp libgcnmultiboot/libgcnmultiboot.h $(PREFIX)/tools/agbcc/include/
