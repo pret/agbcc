@@ -77,7 +77,8 @@ install: install-prefix-check binutils old_gcc gcc libc libgcc libagb_flash liba
 	cp agb_flash/agb_flash.h $(prefix)/tools/agbcc/include/
 	cp librfu/librfu.h $(prefix)/tools/agbcc/include/
 	cp libgcnmultiboot/libgcnmultiboot.h $(prefix)/tools/agbcc/include/
-	cp siirtc/siirtc.h $(prefix)/tools/agbcc/include
+	cp m4a/m4a.h $(prefix)/tools/agbcc/include/
+	cp siirtc/siirtc.h $(prefix)/tools/agbcc/include/
 	cp libgcc.a $(prefix)/tools/agbcc/lib/
 	cp libc.a $(prefix)/tools/agbcc/lib/
 	cp libagb_flash.a $(prefix)/tools/agbcc/lib/

@@ -3,8 +3,6 @@
 
 #include <gba/gba.h>
 
-typedef void (*IntrFunc)(void);
-
 enum
 {
     RFU_RESET = 0x10,
@@ -210,7 +208,7 @@ extern struct RfuUnk1* gUnknown_03007870[4];
 extern void* sub_82E53F4;
 extern void rfu_STC_clearAPIVariables(void);
 
-void STWI_init_all(struct RfuIntrStruct *interruptStruct, IntrFunc *interrupt, bool8 copyInterruptToRam);
+void STWI_init_all(struct RfuIntrStruct *interruptStruct, void (**interrupt)(void), bool8 copyInterruptToRam);
 void rfu_REQ_stopMode(void);
 void rfu_waitREQComplete(void);
 u32 rfu_REQBN_softReset_and_checkID(void);
@@ -248,8 +246,8 @@ bool16 rfu_UNI_PARENT_getDRAC_ACK(u8 *a0);
 void rfu_REQ_disconnect(u8 who);
 void rfu_changeSendTarget(u8 a0, u8 who, u8 a2);
 void rfu_NI_stopReceivingData(u8 who);
-u16 rfu_initializeAPI(u32 *unk0, u16 unk1, IntrFunc *interrupt, bool8 copyInterruptToRam);
-void rfu_setTimerInterrupt(u8 which, IntrFunc *intr);
+u16 rfu_initializeAPI(u32 *unk0, u16 unk1, void (**interrupt)(void), bool8 copyInterruptToRam);
+void rfu_setTimerInterrupt(u8 which, void (**intr)(void));
 void rfu_setRecvBuffer(u8 a0, u8 a1, void *a2, size_t a3);
 bool16 rfu_UNI_setSendData(u8 flag, void *ptr, u8 size);
 void rfu_REQ_recvData(void);
