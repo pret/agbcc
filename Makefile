@@ -5,7 +5,7 @@ CHECK_PREFIX := @:
 PREFIX := $(shell realpath $(prefix))
 endif
 
-CFLAGS ?= -O3 -g -march=native -mtune=native
+CFLAGS ?= -O3 -g -march=native -mtune=native -std=c99
 
 # Simulate autotools by hacking recursive submake
 ifeq (,$(shell which aclocal-1.16 2>/dev/null || true))
