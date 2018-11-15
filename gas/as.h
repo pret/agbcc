@@ -82,17 +82,6 @@
 #include "bfd.h"
 #include "libiberty.h"
 
-/* Define the standard progress macros.  */
-#include "progress.h"
-
-/* Other stuff from config.h.  */
-#ifdef NEED_DECLARATION_ENVIRON
-extern char **environ;
-#endif
-#ifdef NEED_DECLARATION_FFS
-extern int ffs (int);
-#endif
-
 /* This is needed for VMS.  */
 #if ! defined (HAVE_UNLINK) && defined (HAVE_REMOVE)
 #define unlink remove
@@ -341,7 +330,6 @@ enum debug_info_type
 {
   DEBUG_UNSPECIFIED,
   DEBUG_NONE,
-  DEBUG_STABS,
   DEBUG_DWARF,
   DEBUG_DWARF2
 };

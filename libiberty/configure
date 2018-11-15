@@ -625,11 +625,9 @@ INSTALL_DEST
 target_header_dir
 CHECK
 LIBOBJS
-PICFLAG
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
-OUTPUT_OPTION
 EGREP
 GREP
 CPP
@@ -4002,8 +4000,6 @@ rm -rf conftest*
 fi
 
 
-OUTPUT_OPTION='-o $@'
-
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether byte ordering is bigendian" >&5
 $as_echo_n "checking whether byte ordering is bigendian... " >&6; }
 if ${ac_cv_c_bigendian+:} false; then :
@@ -4346,9 +4342,6 @@ if [ -n "${frag}" ]; then
   frag=${libiberty_topdir}/libiberty/config/$frag
 fi
 
-  PICFLAG=
-
-
 echo "# Warning: this fragment is automatically generated" > temp-frag
 
 if [ -n "${frag}" ] && [ -f "${frag}" ]; then
@@ -4536,7 +4529,7 @@ _ACEOF
 # This is the list of functions which libiberty will provide if they
 # are not available on the host.
 
-funcs="asprintf atexit basename bzero ffs getcwd getpagesize \
+funcs="asprintf atexit basename bzero getcwd getpagesize \
 gettimeofday index mkstemps random rename  \
 sigsetmask stpcpy strdup  \
 vasprintf"
@@ -4602,16 +4595,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_BASENAME $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "ffs" "ac_cv_have_decl_ffs" "$ac_includes_default"
-if test "x$ac_cv_have_decl_ffs" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_FFS $ac_have_decl
 _ACEOF
 ac_fn_c_check_decl "$LINENO" "asprintf" "ac_cv_have_decl_asprintf" "$ac_includes_default"
 if test "x$ac_cv_have_decl_asprintf" = xyes; then :
@@ -4687,12 +4670,6 @@ esac
 esac
 
     case " $LIBOBJS " in
-  *" ffs.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS ffs.$ac_objext"
- ;;
-esac
-
-    case " $LIBOBJS " in
   *" getpagesize.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS getpagesize.$ac_objext"
  ;;
@@ -4737,7 +4714,7 @@ esac
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bzero | ffs | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
+	asprintf | basename | bzero | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -4796,62 +4773,6 @@ if test -z "${setobjs}"; then
 
   # We haven't set the list of objects yet.  Use the standard autoconf
   # tests.  This will only work if the compiler works.
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing strerror" >&5
-$as_echo_n "checking for library containing strerror... " >&6; }
-if ${ac_cv_search_strerror+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char strerror ();
-int
-main ()
-{
-return strerror ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' cposix; do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_search_strerror=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext
-  if ${ac_cv_search_strerror+:} false; then :
-  break
-fi
-done
-if ${ac_cv_search_strerror+:} false; then :
-
-else
-  ac_cv_search_strerror=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_strerror" >&5
-$as_echo "$ac_cv_search_strerror" >&6; }
-ac_res=$ac_cv_search_strerror
-if test "$ac_res" != no; then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-fi
-
   for ac_func in $funcs
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -4867,18 +4788,6 @@ else
   *) LIBOBJS="$LIBOBJS $ac_func.$ac_objext"
  ;;
 esac
-
-fi
-done
-
-
-    for ac_func in _doprnt
-do :
-  ac_fn_c_check_func "$LINENO" "_doprnt" "ac_cv_func__doprnt"
-if test "x$ac_cv_func__doprnt" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE__DOPRNT 1
-_ACEOF
 
 fi
 done
@@ -4934,16 +4843,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_BASENAME $ac_have_decl
-_ACEOF
-ac_fn_c_check_decl "$LINENO" "ffs" "ac_cv_have_decl_ffs" "$ac_includes_default"
-if test "x$ac_cv_have_decl_ffs" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_FFS $ac_have_decl
 _ACEOF
 ac_fn_c_check_decl "$LINENO" "asprintf" "ac_cv_have_decl_asprintf" "$ac_includes_default"
 if test "x$ac_cv_have_decl_asprintf" = xyes; then :

@@ -437,7 +437,6 @@ extern bfd_size_type bfd_bread (void *, bfd_size_type, bfd *);
 extern bfd_size_type bfd_bwrite (const void *, bfd_size_type, bfd *);
 extern int bfd_seek (bfd *, file_ptr, int);
 extern file_ptr bfd_tell (bfd *);
-extern int bfd_flush (bfd *);
 extern int bfd_stat (bfd *, struct stat *);
 
 /* Deprecated old routines.  */

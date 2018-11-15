@@ -16,10 +16,11 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; see the file COPYING3.  If not see
 dnl <http://www.gnu.org/licenses/>.
 dnl
-targedt=armv4tl-none-eabi
+target=armv4tl-none-eabi
 target_alias=armv4tl-none-eabi
 ac_cv_target=armv4tl-none-eabi
 ac_cv_target_alias=armv4tl-none-eabi
+
 m4_include([version.m4])
 AC_INIT([bfd], [BFD_VERSION])
 m4_include([../config/lean.m4])
@@ -39,7 +40,7 @@ AC_PROG_SED
 AC_PROG_CC
 AC_USE_SYSTEM_EXTENSIONS
 
-ACX_LARGEFILE
+AC_SYS_LARGEFILE
 
 enable_targets=
 
@@ -50,13 +51,6 @@ AC_ARG_WITH(mmap,
   no)   want_mmap=false ;;
   *)    AC_MSG_ERROR(bad value ${withval} for BFD with-mmap option) ;;
 esac],[want_mmap=false])dnl
-
-DEBUGDIR=${libdir}/debug
-AC_ARG_WITH(separate-debug-dir,
-  AS_HELP_STRING([--with-separate-debug-dir=DIR],
-                 [Look for global separate debug info in DIR [[default=LIBDIR/debug]]]),
-[DEBUGDIR="${withval}"])
-AC_SUBST(DEBUGDIR)
 
 ACX_PKGVERSION([GNU Binutils])
 ACX_BUGURL([http://www.sourceware.org/bugzilla/])
@@ -87,13 +81,13 @@ BFD_HOST_U_64_BIT=
 BFD_HOSTPTR_T="unsigned long"
 
 AC_TYPE_LONG_DOUBLE
-AC_CHECK_SIZEOF(void *)
+#AC_CHECK_SIZEOF(void *)
 
-if test "x${ac_cv_sizeof_void_p}" = "x8"; then
-  host64=true
-  BFD_HOST_64_BIT_DEFINED=1
-  BFD_HOSTPTR_T="unsigned long long"
-fi
+#if test "x${ac_cv_sizeof_void_p}" = "x8"; then
+#  host64=true
+#  BFD_HOST_64_BIT_DEFINED=1
+#  BFD_HOSTPTR_T="unsigned long long"
+#fi
 
 test -n "${HOST_64BIT_TYPE}" || HOST_64BIT_TYPE="long long"
 test -n "${HOST_U_64BIT_TYPE}" || HOST_U_64BIT_TYPE="unsigned long long"
@@ -114,23 +108,7 @@ AC_FUNC_FSEEKO
 AC_CHECK_DECLS(ftello)
 AC_CHECK_DECLS(ftello64)
 
-AC_CHECK_DECLS(ffs)
 AC_CHECK_DECLS(asprintf)
-AC_CHECK_DECLS(vasprintf)
-
-save_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -Werror"
-AC_CACHE_CHECK([compiler support for hidden visibility], bfd_cv_hidden,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-const char hw[] __attribute__ ((__visibility__ ("hidden"))) = "Hello, World\n";
-extern void print (const char *) __attribute__ ((__visibility__ ("hidden")));]],
-	[[print (hw);]])],
-  [bfd_cv_hidden=yes], [bfd_cv_hidden=no])])
-CFLAGS="$save_CFLAGS"
-if test $bfd_cv_hidden = yes; then
-  AC_DEFINE(HAVE_HIDDEN, 1,
-	    [Define if your compiler supports hidden visibility.])
-fi
 
 # When building a shared libbfd, link against the pic version of libiberty
 # so that apps that use libbfd won't need libiberty just to satisfy any
@@ -142,7 +120,6 @@ all_targets=false
 defvec=
 selvecs=
 assocvecs=
-selarchs=
 TDEFINES=
 for targ in $target $canon_targets
 do
@@ -151,7 +128,6 @@ do
 	    defvec=$targ_defvec
 	fi
 	selvecs="$selvecs $targ_defvec $targ_selvecs"
-	selarchs="$selarchs $targ_archs"
 	TDEFINES="$TDEFINES $targ_cflags"
 done
 AC_SUBST(TDEFINES)
@@ -184,94 +160,17 @@ for i in $assocvecs ; do
 done
 assocvecs="$f"
 
-
-# uniq the architectures in all the configured targets.
-f=""
-for i in $selarchs ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-selarchs="$f"
-
-# Target backend .o files.
-tb=
-
 elf="elf.o elflink.o elf-attrs.o elf-strtab.o elf-properties.o
      elf-eh-frame.o dwarf1.o dwarf2.o"
-coffgen="coffgen.o dwarf2.o"
 
-for vec in $selvecs
-do
-    target_size=32
-    case "$vec" in
-    # This list is alphabetized to make it easy to compare
-    # with the two vector lists in targets.c.  For the same reason,
-    # use one entry per line, even though this leads to long lines.
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o $elf" ;;
-    elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
-
-    "")				 ;;
-    *) AC_MSG_ERROR(*** unknown target vector $vec) ;;
-    esac
-
-    if test x"${vec}" = x"${defvec}"; then
-	bfd_default_target_size=${target_size}
-    fi
-done
 
 # Target architecture .o files.
 # A couple of CPUs use shorter file names to avoid problems on DOS
 # filesystems.
-ta=`echo $selarchs | sed -e s/bfd_/cpu-/g -e s/_arch/.o/g -e s/mn10200/m10200/ -e s/mn10300/m10300/`
-
-# Weed out duplicate .o files.
-f=""
-for i in $tb ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-tb="$f"
-
-f=""
-for i in $ta ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-ta="$f"
-
-bfd_backends="$tb"
-bfd_machines="$ta"
 
   # Only set these if they will be nonempty, for the clever echo.
-  havevecs=
-  assocvecs=
-  test -n "$selvecs" &&
-    havevecs=`echo $selvecs | sed -e 's/^/-DHAVE_/' -e 's/ \(.\)/ -DHAVE_\1/g'`
-  test -n "$selvecs" &&
-    selvecs=`echo $selvecs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
-  test -n "$selarchs" &&
-selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
 
-tdefaults=""
-test -n "${defvec}" && tdefaults="${tdefaults} -DDEFAULT_VECTOR=${defvec}"
-test -n "${selvecs}" && tdefaults="${tdefaults} -DSELECT_VECS='${selvecs}'"
-test -n "${assocvecs}" && tdefaults="${tdefaults} -DASSOCIATED_VECS='${assocvecs}'"
-test -n "${selarchs}" && tdefaults="${tdefaults} -DSELECT_ARCHITECTURES='${selarchs}'"
-
-AC_SUBST(bfd_backends)
-AC_SUBST(bfd_machines)
 AC_SUBST(bfd_default_target_size)
-AC_SUBST(tdefaults)
-AC_SUBST(havevecs)
-
-supports_plugins=0
 
 # Determine the host dependent file_ptr a.k.a. off_t type.  In order
 # prefer: off64_t - if ftello64 and fseeko64, off_t - if ftello and

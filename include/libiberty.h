@@ -143,14 +143,12 @@ extern char *libiberty_concat_ptr;
   (libiberty_concat_ptr = (char *) alloca (concat_length ACONCAT_PARAMS + 1), \
    concat_copy2 ACONCAT_PARAMS)
 
-/* Check whether two file descriptors refer to the same file.  */
-
-extern int fdmatch (int fd1, int fd2);
-
 /* Return the position of the first bit set in the argument.  */
 /* Prototypes vary from system to system, so we only provide a
    prototype on systems where we know that we need it.  */
-#if defined (HAVE_DECL_FFS) && !HAVE_DECL_FFS
+#if defined(__GNUC__) && (__GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+#define ffs __builtin_ffs
+#else
 extern int ffs(int);
 #endif
 

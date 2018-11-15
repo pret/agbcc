@@ -111,7 +111,6 @@ target_triplet = @target@
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
-	$(top_srcdir)/../config/largefile.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/version.m4 \
 	$(top_srcdir)/../config/lean.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -175,8 +174,6 @@ am__depfiles_remade = ./$(DEPDIR)/archive.Po ./$(DEPDIR)/archures.Po \
 	./$(DEPDIR)/simple.Po ./$(DEPDIR)/syms.Po \
 	./$(DEPDIR)/targets.Po
 am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
@@ -263,7 +260,6 @@ CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
-DEBUGDIR = @DEBUGDIR@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
@@ -314,10 +310,8 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-bfd_backends = @bfd_backends@
 bfd_default_target_size = @bfd_default_target_size@
 bfd_file_ptr = @bfd_file_ptr@
-bfd_machines = @bfd_machines@
 bfd_ufile_ptr = @bfd_ufile_ptr@
 bindir = @bindir@
 build = @build@
@@ -331,7 +325,6 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-havevecs = @havevecs@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -361,7 +354,6 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-tdefaults = @tdefaults@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
@@ -382,7 +374,7 @@ NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -DBINDIR='"$(bindir)"' @HDEFINES@ @TDEFINES@ $(CSEARCH) \
 	$(CSWITCHES) $(HAVEVECS)
-LTCOMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
+COMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
 
 # bfd.h goes here, for now
 BFD_H = bfd.h
@@ -466,12 +458,12 @@ CONFIG_STATUS_DEPENDENCIES = \
 	$(srcdir)/development.sh
 
 
-# These are defined by configure:
+# These are no longer defined by configure:
 ALL_BACKENDS = $(BFD32_BACKENDS)
-BFD_BACKENDS = @bfd_backends@
-BFD_MACHINES = @bfd_machines@
-TDEFAULTS = @tdefaults@
-HAVEVECS = @havevecs@
+BFD_BACKENDS = elf32-arm.o elf32.o elf.o elflink.o elf-attrs.o elf-strtab.o elf-properties.o elf-eh-frame.o dwarf1.o dwarf2.o elf32-gen.o
+BFD_MACHINES = cpu-arm.o
+TDEFAULTS = -DDEFAULT_VECTOR=arm_elf32_le_vec -DSELECT_VECS='&arm_elf32_le_vec,&arm_elf32_fdpic_le_vec,&elf32_le_vec' -DSELECT_ARCHITECTURES='&bfd_arm_arch'
+HAVEVECS = -DHAVE_arm_elf32_le_vec -DHAVE_arm_elf32_fdpic_le_vec -DHAVE_elf32_le_vec
 
 # C source files that correspond to .o's.
 SOURCE_CFILES = \
@@ -940,8 +932,6 @@ uninstall-am: uninstall-bfdincludeHEADERS
 .PRECIOUS: Makefile
 
 
-all diststuff: info
-
 stamp-ofiles: Makefile
 	rm -f tofiles
 	f=""; \
@@ -974,14 +964,14 @@ targmatch.h: config.bfd targmatch.sed
 # info from configure.
 
 targets.o: targets.c Makefile
-	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
+	$(COMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
 
 archures.o: archures.c Makefile
-	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
+	$(COMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
 
 $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
-	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
+	$(COMPILE) -c -o $@ -DDEBUGDIR=\"$(libdir)/debug\" $(srcdir)/dwarf2.c
 $(BFD32_LIBS) \
  $(ALL_MACHINES) \
  $(BFD32_BACKENDS) \

@@ -214,19 +214,6 @@ bfd_tell (bfd *abfd)
   return ptr - offset;
 }
 
-int
-bfd_flush (bfd *abfd)
-{
-  while (abfd->my_archive != NULL
-	 && !bfd_is_thin_archive (abfd->my_archive))
-    abfd = abfd->my_archive;
-
-  if (abfd->iovec == NULL)
-    return 0;
-
-  return abfd->iovec->bflush (abfd);
-}
-
 /* Returns 0 for success, negative value for failure (in which case
    bfd_get_error can retrieve the error code).  */
 int

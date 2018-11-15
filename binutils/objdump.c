@@ -51,7 +51,6 @@
 #include "sysdep.h"
 #include "bfd.h"
 #include "elf-bfd.h"
-#include "progress.h"
 #include "bucomm.h"
 #include "elfcomm.h"
 #include "dwarf.h"
@@ -70,7 +69,6 @@
 
 /* Internal headers for the ELF .stab-dump code - sorry.  */
 #define	BYTES_IN_WORD	32
-// #include "aout/aout64.h"
 
 /* Exit status.  */
 static int exit_status = 0;
@@ -3443,8 +3441,6 @@ main (int argc, char **argv)
   program_name = *argv;
   bfd_set_error_program_name (program_name);
 
-  START_PROGRESS (program_name, 0);
-
   expandargv (&argc, &argv);
 
   bfd_init ();
@@ -3695,8 +3691,6 @@ main (int argc, char **argv)
     }
 
   free_only_list ();
-
-  END_PROGRESS (program_name);
 
   return exit_status;
 }

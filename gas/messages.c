@@ -20,12 +20,6 @@
 #include "as.h"
 #include <signal.h>
 
-/* If the system doesn't provide strsignal, we get it defined in
-   libiberty but no declaration is supplied.  Because, reasons. */
-#if !defined (HAVE_STRSIGNAL) && !defined (strsignal)
-extern const char *strsignal (int);
-#endif
-
 static void identify (const char *);
 static void as_show_where (void);
 static void as_warn_internal (const char *, unsigned int, char *);

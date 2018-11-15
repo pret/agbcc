@@ -26,7 +26,7 @@
 #define _LIBBFD_H 1
 
 #ifndef ATTRIBUTE_HIDDEN
-#if HAVE_HIDDEN
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
 #define ATTRIBUTE_HIDDEN __attribute__ ((__visibility__ ("hidden")))
 #else
 #define ATTRIBUTE_HIDDEN
@@ -234,9 +234,6 @@ extern void bfd_bsd_truncate_arname
 extern void bfd_gnu_truncate_arname
   (bfd *, const char *, char *) ATTRIBUTE_HIDDEN;
 
-extern bfd_boolean _bfd_bsd_write_armap
-  (bfd *, unsigned int, struct orl *, unsigned int, int) ATTRIBUTE_HIDDEN;
-
 extern bfd_boolean _bfd_coff_write_armap
   (bfd *, unsigned int, struct orl *, unsigned int, int) ATTRIBUTE_HIDDEN;
 
@@ -251,9 +248,6 @@ extern void *_bfd_generic_read_ar_hdr_mag
   (bfd *, const char *) ATTRIBUTE_HIDDEN;
 
 extern bfd_boolean _bfd_generic_write_ar_hdr
-  (bfd *, bfd *) ATTRIBUTE_HIDDEN;
-
-extern bfd_boolean _bfd_bsd44_write_ar_hdr
   (bfd *, bfd *) ATTRIBUTE_HIDDEN;
 
 extern bfd * bfd_generic_openr_next_archived_file
@@ -504,10 +498,6 @@ extern bfd_boolean _bfd_dwarf2_find_nearest_line
    const char **, const char **, unsigned int *, unsigned int *,
    const struct dwarf_debug_section *, unsigned int, void **) ATTRIBUTE_HIDDEN;
 
-/* Find the bias between DWARF addresses and real addresses.  */
-extern bfd_signed_vma _bfd_dwarf2_find_symbol_bias
-  (asymbol **, void **) ATTRIBUTE_HIDDEN;
-
 /* Find inliner info after calling bfd_find_nearest_line. */
 extern bfd_boolean _bfd_dwarf2_find_inliner_info
   (bfd *, const char **, const char **, unsigned int *, void **)
@@ -596,10 +586,6 @@ extern bfd_boolean _bfd_generic_reloc_link_order
 extern bfd_boolean _bfd_default_link_order
   (bfd *, struct bfd_link_info *, asection *, struct bfd_link_order *)
   ATTRIBUTE_HIDDEN;
-
-/* Count the number of reloc entries in a link order list.  */
-extern unsigned int _bfd_count_link_order_relocs
-  (struct bfd_link_order *) ATTRIBUTE_HIDDEN;
 
 /* Final link relocation routine.  */
 extern bfd_reloc_status_type _bfd_final_link_relocate

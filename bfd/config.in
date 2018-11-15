@@ -4,9 +4,6 @@
    don't. */
 #undef HAVE_DECL_ASPRINTF
 
-/* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
-#undef HAVE_DECL_FFS
-
 /* Define to 1 if you have the declaration of `ftello', and to 0 if you don't.
    */
 #undef HAVE_DECL_FTELLO
@@ -14,10 +11,6 @@
 /* Define to 1 if you have the declaration of `ftello64', and to 0 if you
    don't. */
 #undef HAVE_DECL_FTELLO64
-
-/* Define to 1 if you have the declaration of `vasprintf', and to 0 if you
-   don't. */
-#undef HAVE_DECL_VASPRINTF
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
@@ -27,9 +20,6 @@
 
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
-
-/* Define if your compiler supports hidden visibility. */
-#undef HAVE_HIDDEN
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -102,9 +92,6 @@
 
 /* The size of `off_t', as computed by sizeof. */
 #undef SIZEOF_OFF_T
-
-/* The size of `void *', as computed by sizeof. */
-#undef SIZEOF_VOID_P
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

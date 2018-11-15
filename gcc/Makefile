@@ -26,7 +26,7 @@ VPATH := $(srcdir)
 
 CC := gcc
 
-BASE_CFLAGS := -O3 -march=native -mtune=native -std=gnu11
+BASE_CFLAGS := -O0 -std=gnu11
 INCLUDES := -I. -I$(srcdir)
 
 md_file := $(srcdir)/thumb.md

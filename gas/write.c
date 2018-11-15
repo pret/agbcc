@@ -2192,8 +2192,6 @@ write_object_file (void)
   if (IS_ELF)
     maybe_generate_build_notes ();
 #endif
-  
-  PROGRESS (1);
 
 #ifdef tc_frob_file_before_adjust
   tc_frob_file_before_adjust ();
@@ -2336,8 +2334,6 @@ write_object_file (void)
 	    skip_next_symbol = TRUE;
 	}
     }
-
-  PROGRESS (1);
 
   /* Now do any format-specific adjustments to the symbol table, such
      as adding file symbols.  */

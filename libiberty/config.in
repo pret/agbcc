@@ -21,9 +21,6 @@
    0 if you don't. */
 #undef HAVE_DECL_CANONICALIZE_FILE_NAME
 
-/* Define to 1 if you have the declaration of `ffs', and to 0 if you don't. */
-#undef HAVE_DECL_FFS
-
 /* Define to 1 if you have the declaration of `getopt', and to 0 if you don't.
    */
 #undef HAVE_DECL_GETOPT
@@ -127,9 +124,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
-
-/* Define to 1 if you have the `_doprnt' function. */
-#undef HAVE__DOPRNT
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

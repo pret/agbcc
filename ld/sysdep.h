@@ -61,10 +61,6 @@
 #endif
 #endif
 
-#ifdef HAVE_DLFCN_H
-#include <dlfcn.h>
-#endif
-
 #ifndef O_RDONLY
 #define O_RDONLY 0
 #endif
@@ -90,10 +86,6 @@
 #endif
 #ifndef SEEK_END
 #define SEEK_END 2
-#endif
-
-#if !HAVE_DECL_ENVIRON
-extern char **environ;
 #endif
 
 #endif /* ! defined (LD_SYSDEP_H) */

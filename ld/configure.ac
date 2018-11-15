@@ -25,7 +25,6 @@ m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
 AC_CANONICAL_BUILD
-AC_SEARCH_LIBS([strerror],[cposix])
 
 AM_INIT_AUTOMAKE
 
@@ -33,42 +32,7 @@ AC_PROG_CC
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_INSTALL
 
-ACX_LARGEFILE
-
-AC_ARG_WITH(lib-path, [  --with-lib-path=dir1:dir2...  set default LIB_PATH],LIB_PATH=$withval)
-
- use_sysroot=no
- TARGET_SYSTEM_ROOT=
- TARGET_SYSTEM_ROOT_DEFINE='-DTARGET_SYSTEM_ROOT=\"\"'
-AC_SUBST(use_sysroot)
-AC_SUBST(TARGET_SYSTEM_ROOT)
-AC_SUBST(TARGET_SYSTEM_ROOT_DEFINE)
-
-AC_DEFINE([GOT_HANDLING_DEFAULT], [GOT_HANDLING_TARGET_DEFAULT],
-      [Define to choose default GOT handling scheme])
-
-# PR gas/19109
-# Decide the default method for compressing debug sections.
-ac_default_compressed_debug_sections=unset
-# Provide a configure time option to override our default.
-AC_ARG_ENABLE(compressed_debug_sections,
-	      AS_HELP_STRING([--enable-compressed-debug-sections={all,ld,none}],
-	      [compress debug sections by default])],
-[case ,"${enableval}", in
-  ,yes, | ,all, | *,ld,*) ac_default_compressed_debug_sections=yes ;;
-  ,no, | ,none,)  ac_default_compressed_debug_sections=no ;;
-esac])dnl
-
-# Decide setting DT_RUNPATH instead of DT_RPATH by default
-ac_default_new_dtags=unset
-# Provide a configure time option to override our default.
-AC_ARG_ENABLE(new_dtags,
-	      AS_HELP_STRING([--enable-new-dtags],
-	      [set DT_RUNPATH instead of DT_RPATH by default])],
-[case "${enableval}" in
-  yes) ac_default_new_dtags=1 ;;
-  no) ac_default_new_dtags=0 ;;
-esac])dnl
+AC_SYS_LARGEFILE
 
 # Decide if -z relro should be enabled in ELF linker by default.
 ac_default_ld_z_relro=unset
@@ -91,27 +55,6 @@ AC_ARG_ENABLE(separate-code,
   no) ac_default_ld_z_separate_code=0 ;;
 esac])
 
-# Decide which "--hash-style" to use by default
-# Provide a configure time option to override our default.
-AC_ARG_ENABLE([default-hash-style],
-AS_HELP_STRING([--enable-default-hash-style={sysv,gnu,both}],
-	       [use this default hash style]),
-[case "${enable_default_hash_style}" in
-  sysv | gnu | both) ;;
-  *) AC_MSG_ERROR([bad value ${enable_default_hash_style} for enable-default-hash-style option]) ;;
-esac],
-[enable_default_hash_style=sysv])
-
-case "${enable_default_hash_style}" in
-  sysv | both) ac_default_emit_sysv_hash=1 ;;
-  *) ac_default_emit_sysv_hash=0 ;;
-esac
-
-case "${enable_default_hash_style}" in
-  gnu | both) ac_default_emit_gnu_hash=1 ;;
-  *) ac_default_emit_gnu_hash=0 ;;
-esac
-
 AC_CONFIG_HEADERS([config.h:config.in])
 
 if test -z "$host" ; then
@@ -130,20 +73,7 @@ AC_SUBST(NATIVE_LIB_DIRS)
 AC_CHECK_HEADERS_ONCE([fcntl.h malloc.h strings.h sys/file.h unistd.h])
 
 ACX_HEADER_STRING
-AC_CHECK_FUNCS_ONCE([mmap glob strcasecmp])
-
-AC_SEARCH_LIBS([dlopen], [dl])
-
-AC_CHECK_DECLS([environ])
-
-# When converting linker scripts into strings for use in emulation
-# files, use astring.sed if the compiler supports ANSI string
-# concatenation, or ostring.sed otherwise.  This is to support the
-# broken Microsoft MSVC compiler, which limits the length of string
-# constants, while still supporting pre-ANSI compilers which do not
-# support string concatenation.
-STRINGIFY=astring.sed
-AC_SUBST(STRINGIFY)
+AC_CHECK_FUNCS_ONCE([mmap strcasecmp])
 
 # target-specific stuff:
 
@@ -152,13 +82,6 @@ EMUL=
 all_emuls=
 all_emul_extras=
 all_libpath=
-
-dnl We need to get an arbitrary number of tdir definitions into
-dnl Makefile.  We can't do it using AC_SUBST, because autoconf does
-dnl not permit literal newlines in an AC_SUBST variables.  So we use a
-dnl file.
-rm -f tdirs
-
 
 elf_list_options=FALSE
 elf_shlib_list_options=FALSE
@@ -186,9 +109,7 @@ do
 	*" e${i}.o "*) ;;
 	*)
 	  all_emuls="$all_emuls e${i}.o"
-	  eval result=\$tdir_$i
 	  test -z "$result" && result=$targ_alias
-	  echo tdir_$i=$result >> tdirs
 	  case "${i}" in
 	  *elf*)
 	    elf_list_options=TRUE
@@ -235,16 +156,7 @@ do
     done
 done
 
-if test x$ac_default_compressed_debug_sections = xyes ; then
-  AC_DEFINE(DEFAULT_FLAG_COMPRESS_DEBUG, 1, [Define if you want compressed debug sections by default.])
-fi
 
-if test "${ac_default_new_dtags}" = unset; then
-  ac_default_new_dtags=0
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_NEW_DTAGS,
-  $ac_default_new_dtags,
-  [Define to 1 if you want to set DT_RUNPATH instead of DT_RPATH by default.])
 
 if test "${ac_default_ld_z_relro}" = unset; then
   ac_default_ld_z_relro=0
@@ -260,37 +172,18 @@ AC_DEFINE_UNQUOTED(DEFAULT_LD_Z_SEPARATE_CODE,
   $ac_default_ld_z_separate_code,
   [Define to 1 if you want to enable -z separate-code in ELF linker by default.])
 
-AC_DEFINE_UNQUOTED([DEFAULT_EMIT_SYSV_HASH],
-  [$ac_default_emit_sysv_hash],
-  [Define to 1 if you want to emit sysv hash in the ELF linker by default.])
-
-AC_DEFINE_UNQUOTED([DEFAULT_EMIT_GNU_HASH],
-  [$ac_default_emit_gnu_hash],
-  [Define to 1 if you want to emit gnu hash in the ELF linker by default.])
-
 AC_SUBST(elf_list_options)
 AC_SUBST(elf_shlib_list_options)
 AC_SUBST(elf_plt_unwind_list_options)
 AC_SUBST(EMUL)
 
-TDIRS=tdirs
-AC_SUBST_FILE(TDIRS)
-
   EMULATION_OFILES=$all_emuls
   EMUL_EXTRA_OFILES=$all_emul_extras
 AC_SUBST(EMULATION_OFILES)
 AC_SUBST(EMUL_EXTRA_OFILES)
-AC_SUBST(LIB_PATH)
 
 EMULATION_LIBPATH=$all_libpath
 AC_SUBST(EMULATION_LIBPATH)
-
-if test x${enable_static} = xno; then
-  TESTBFDLIB="-Wl,--rpath,../bfd/.libs ../bfd/.libs/libbfd.so"
-else
-  TESTBFDLIB="../bfd/.libs/libbfd.a"
-fi
-AC_SUBST(TESTBFDLIB)
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT

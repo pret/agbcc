@@ -627,11 +627,7 @@ LTLIBOBJS
 LIBOBJS
 bfd_ufile_ptr
 bfd_file_ptr
-havevecs
-tdefaults
 bfd_default_target_size
-bfd_machines
-bfd_backends
 TDEFINES
 EXEEXT_FOR_BUILD
 CC_FOR_BUILD
@@ -643,7 +639,6 @@ HDEFINES
 REPORT_BUGS_TEXI
 REPORT_BUGS_TO
 PKGVERSION
-DEBUGDIR
 EGREP
 GREP
 CPP
@@ -751,7 +746,6 @@ enable_silent_rules
 enable_dependency_tracking
 enable_largefile
 with_mmap
-with_separate_debug_dir
 with_pkgversion
 with_bugurl
 '
@@ -1395,9 +1389,6 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-mmap             try using mmap for BFD input files if available
-  --with-separate-debug-dir=DIR
-                          Look for global separate debug info in DIR
-                          [[default=LIBDIR/debug]]
   --with-pkgversion=PKG   Use PKG in the version string in place of "GNU
                           Binutils"
   --with-bugurl=URL       Direct users to URL to report a bug
@@ -1640,6 +1631,165 @@ fi
 
 } # ac_fn_c_try_run
 
+# ac_fn_c_try_link LINENO
+# -----------------------
+# Try to link conftest.$ac_ext, and return whether this succeeded.
+ac_fn_c_try_link ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  rm -f conftest.$ac_objext conftest$ac_exeext
+  if { { ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_link") 2>conftest.err
+  ac_status=$?
+  if test -s conftest.err; then
+    grep -v '^ *+' conftest.err >conftest.er1
+    cat conftest.er1 >&5
+    mv -f conftest.er1 conftest.err
+  fi
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 test -x conftest$ac_exeext
+       }; then :
+  ac_retval=0
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_retval=1
+fi
+  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
+  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
+  # interfere with the next link command; also delete a directory that is
+  # left behind by Apple's compiler.  We do this before executing the actions.
+  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+  as_fn_set_status $ac_retval
+
+} # ac_fn_c_try_link
+
+# ac_fn_c_check_func LINENO FUNC VAR
+# ----------------------------------
+# Tests whether FUNC exists, setting the cache variable VAR accordingly
+ac_fn_c_check_func ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+$as_echo_n "checking for $2... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $2 innocuous_$2
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $2 (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $2
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $2 ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$2 || defined __stub___$2
+choke me
+#endif
+
+int
+main ()
+{
+return $2 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_func
+
+# ac_fn_c_check_decl LINENO SYMBOL VAR INCLUDES
+# ---------------------------------------------
+# Tests whether SYMBOL is declared in INCLUDES, setting cache variable VAR
+# accordingly.
+ac_fn_c_check_decl ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  as_decl_name=`echo $2|sed 's/ *(.*//'`
+  as_decl_use=`echo $2|sed -e 's/(/((/' -e 's/)/) 0&/' -e 's/,/) 0& (/g'`
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $as_decl_name is declared" >&5
+$as_echo_n "checking whether $as_decl_name is declared... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$4
+int
+main ()
+{
+#ifndef $as_decl_name
+#ifdef __cplusplus
+  (void) $as_decl_use;
+#else
+  (void) $as_decl_name;
+#endif
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_decl
+
 # ac_fn_c_compute_int LINENO EXPR VAR INCLUDES
 # --------------------------------------------
 # Tries to find the compile-time value of EXPR in a program that includes
@@ -1822,165 +1972,6 @@ rm -f conftest.val
   as_fn_set_status $ac_retval
 
 } # ac_fn_c_compute_int
-
-# ac_fn_c_try_link LINENO
-# -----------------------
-# Try to link conftest.$ac_ext, and return whether this succeeded.
-ac_fn_c_try_link ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  rm -f conftest.$ac_objext conftest$ac_exeext
-  if { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>conftest.err
-  ac_status=$?
-  if test -s conftest.err; then
-    grep -v '^ *+' conftest.err >conftest.er1
-    cat conftest.er1 >&5
-    mv -f conftest.er1 conftest.err
-  fi
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 test -x conftest$ac_exeext
-       }; then :
-  ac_retval=0
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_retval=1
-fi
-  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
-  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
-  # interfere with the next link command; also delete a directory that is
-  # left behind by Apple's compiler.  We do this before executing the actions.
-  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-  as_fn_set_status $ac_retval
-
-} # ac_fn_c_try_link
-
-# ac_fn_c_check_func LINENO FUNC VAR
-# ----------------------------------
-# Tests whether FUNC exists, setting the cache variable VAR accordingly
-ac_fn_c_check_func ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define $2 innocuous_$2
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $2 (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef $2
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char $2 ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined __stub_$2 || defined __stub___$2
-choke me
-#endif
-
-int
-main ()
-{
-return $2 ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_func
-
-# ac_fn_c_check_decl LINENO SYMBOL VAR INCLUDES
-# ---------------------------------------------
-# Tests whether SYMBOL is declared in INCLUDES, setting cache variable VAR
-# accordingly.
-ac_fn_c_check_decl ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  as_decl_name=`echo $2|sed 's/ *(.*//'`
-  as_decl_use=`echo $2|sed -e 's/(/((/' -e 's/)/) 0&/' -e 's/,/) 0& (/g'`
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $as_decl_name is declared" >&5
-$as_echo_n "checking whether $as_decl_name is declared... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-int
-main ()
-{
-#ifndef $as_decl_name
-#ifdef __cplusplus
-  (void) $as_decl_use;
-#else
-  (void) $as_decl_name;
-#endif
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_decl
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -4706,28 +4697,6 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
 
 
-
-# The tests for host and target for $enable_largefile require
-# canonical names.
-
-
-
-# As the $enable_largefile decision depends on --enable-plugins we must set it
-# even in directories otherwise not depending on the $plugins option.
-
-case "${host}" in
-  sparc-*-solaris*|i[3-7]86-*-solaris*)
-    # On native 32bit sparc and ia32 solaris, large-file and procfs support
-    # are mutually exclusive; and without procfs support, the bfd/ elf module
-    # cannot provide certain routines such as elfcore_write_prpsinfo
-    # or elfcore_write_prstatus.  So unless the user explicitly requested
-    # large-file support through the --enable-largefile switch, disable
-    # large-file support in favor of procfs support.
-    test "${target}" = "${host}" -a "x$plugins" = xno \
-      && : ${enable_largefile="no"}
-    ;;
-esac
-
 # Check whether --enable-largefile was given.
 if test "${enable_largefile+set}" = set; then :
   enableval=$enable_largefile;
@@ -4929,7 +4898,6 @@ rm -rf conftest*
 fi
 
 
-
 enable_targets=
 
 
@@ -4943,15 +4911,6 @@ esac
 else
   want_mmap=false
 fi
-
-DEBUGDIR=${libdir}/debug
-
-# Check whether --with-separate-debug-dir was given.
-if test "${with_separate_debug_dir+set}" = set; then :
-  withval=$with_separate_debug_dir; DEBUGDIR="${withval}"
-fi
-
-
 
 
 
@@ -5067,47 +5026,13 @@ $as_echo "#define HAVE_LONG_DOUBLE 1" >>confdefs.h
 
   fi
 
+#AC_CHECK_SIZEOF(void *)
 
-    # The cast to long int works around a bug in the HP C Compiler
-# version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
-# declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
-# This bug is HP SR number 8606223364.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking size of void *" >&5
-$as_echo_n "checking size of void *... " >&6; }
-if ${ac_cv_sizeof_void_p+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if ac_fn_c_compute_int "$LINENO" "(long int) (sizeof (void *))" "ac_cv_sizeof_void_p"        "
-"; then :
-
-else
-  if test "$ac_cv_type_void_p" = yes; then
-     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error 77 "cannot compute sizeof (void *)
-See \`config.log' for more details" "$LINENO" 5; }
-   else
-     ac_cv_sizeof_void_p=0
-   fi
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sizeof_void_p" >&5
-$as_echo "$ac_cv_sizeof_void_p" >&6; }
-
-
-
-cat >>confdefs.h <<_ACEOF
-#define SIZEOF_VOID_P $ac_cv_sizeof_void_p
-_ACEOF
-
-
-
-if test "x${ac_cv_sizeof_void_p}" = "x8"; then
-  host64=true
-  BFD_HOST_64_BIT_DEFINED=1
-  BFD_HOSTPTR_T="unsigned long long"
-fi
+#if test "x${ac_cv_sizeof_void_p}" = "x8"; then
+#  host64=true
+#  BFD_HOST_64_BIT_DEFINED=1
+#  BFD_HOSTPTR_T="unsigned long long"
+#fi
 
 test -n "${HOST_64BIT_TYPE}" || HOST_64BIT_TYPE="long long"
 test -n "${HOST_U_64BIT_TYPE}" || HOST_U_64BIT_TYPE="unsigned long long"
@@ -5336,17 +5261,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ac_fn_c_check_decl "$LINENO" "ffs" "ac_cv_have_decl_ffs" "$ac_includes_default"
-if test "x$ac_cv_have_decl_ffs" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_FFS $ac_have_decl
-_ACEOF
-
 ac_fn_c_check_decl "$LINENO" "asprintf" "ac_cv_have_decl_asprintf" "$ac_includes_default"
 if test "x$ac_cv_have_decl_asprintf" = xyes; then :
   ac_have_decl=1
@@ -5358,53 +5272,6 @@ cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_ASPRINTF $ac_have_decl
 _ACEOF
 
-ac_fn_c_check_decl "$LINENO" "vasprintf" "ac_cv_have_decl_vasprintf" "$ac_includes_default"
-if test "x$ac_cv_have_decl_vasprintf" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_VASPRINTF $ac_have_decl
-_ACEOF
-
-
-save_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -Werror"
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking compiler support for hidden visibility" >&5
-$as_echo_n "checking compiler support for hidden visibility... " >&6; }
-if ${bfd_cv_hidden+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-const char hw[] __attribute__ ((__visibility__ ("hidden"))) = "Hello, World\n";
-extern void print (const char *) __attribute__ ((__visibility__ ("hidden")));
-int
-main ()
-{
-print (hw);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  bfd_cv_hidden=yes
-else
-  bfd_cv_hidden=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $bfd_cv_hidden" >&5
-$as_echo "$bfd_cv_hidden" >&6; }
-CFLAGS="$save_CFLAGS"
-if test $bfd_cv_hidden = yes; then
-
-$as_echo "#define HAVE_HIDDEN 1" >>confdefs.h
-
-fi
 
 # When building a shared libbfd, link against the pic version of libiberty
 # so that apps that use libbfd won't need libiberty just to satisfy any
@@ -5416,7 +5283,6 @@ all_targets=false
 defvec=
 selvecs=
 assocvecs=
-selarchs=
 TDEFINES=
 for targ in $target $canon_targets
 do
@@ -5425,7 +5291,6 @@ do
 	    defvec=$targ_defvec
 	fi
 	selvecs="$selvecs $targ_defvec $targ_selvecs"
-	selarchs="$selarchs $targ_archs"
 	TDEFINES="$TDEFINES $targ_cflags"
 done
 
@@ -5458,94 +5323,17 @@ for i in $assocvecs ; do
 done
 assocvecs="$f"
 
-
-# uniq the architectures in all the configured targets.
-f=""
-for i in $selarchs ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-selarchs="$f"
-
-# Target backend .o files.
-tb=
-
 elf="elf.o elflink.o elf-attrs.o elf-strtab.o elf-properties.o
      elf-eh-frame.o dwarf1.o dwarf2.o"
-coffgen="coffgen.o dwarf2.o"
 
-for vec in $selvecs
-do
-    target_size=32
-    case "$vec" in
-    # This list is alphabetized to make it easy to compare
-    # with the two vector lists in targets.c.  For the same reason,
-    # use one entry per line, even though this leads to long lines.
-    arm_elf32_le_vec)		 tb="$tb elf32-arm.o elf32.o $elf" ;;
-    arm_elf32_fdpic_le_vec)     tb="$tb elf32-arm.o elf32.o $elf" ;;
-    elf32_le_vec)		 tb="$tb elf32-gen.o elf32.o $elf" ;;
-
-    "")				 ;;
-    *) as_fn_error $? "*** unknown target vector $vec" "$LINENO" 5 ;;
-    esac
-
-    if test x"${vec}" = x"${defvec}"; then
-	bfd_default_target_size=${target_size}
-    fi
-done
 
 # Target architecture .o files.
 # A couple of CPUs use shorter file names to avoid problems on DOS
 # filesystems.
-ta=`echo $selarchs | sed -e s/bfd_/cpu-/g -e s/_arch/.o/g -e s/mn10200/m10200/ -e s/mn10300/m10300/`
-
-# Weed out duplicate .o files.
-f=""
-for i in $tb ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-tb="$f"
-
-f=""
-for i in $ta ; do
-    case " $f " in
-    *" $i "*) ;;
-    *) f="$f $i" ;;
-    esac
-done
-ta="$f"
-
-bfd_backends="$tb"
-bfd_machines="$ta"
 
   # Only set these if they will be nonempty, for the clever echo.
-  havevecs=
-  assocvecs=
-  test -n "$selvecs" &&
-    havevecs=`echo $selvecs | sed -e 's/^/-DHAVE_/' -e 's/ \(.\)/ -DHAVE_\1/g'`
-  test -n "$selvecs" &&
-    selvecs=`echo $selvecs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
-  test -n "$selarchs" &&
-selarchs=`echo $selarchs | sed -e 's/^/\&/' -e 's/ \(.\)/,\&\1/g'`
-
-tdefaults=""
-test -n "${defvec}" && tdefaults="${tdefaults} -DDEFAULT_VECTOR=${defvec}"
-test -n "${selvecs}" && tdefaults="${tdefaults} -DSELECT_VECS='${selvecs}'"
-test -n "${assocvecs}" && tdefaults="${tdefaults} -DASSOCIATED_VECS='${assocvecs}'"
-test -n "${selarchs}" && tdefaults="${tdefaults} -DSELECT_ARCHITECTURES='${selarchs}'"
 
 
-
-
-
-
-
-supports_plugins=0
 
 # Determine the host dependent file_ptr a.k.a. off_t type.  In order
 # prefer: off64_t - if ftello64 and fseeko64, off_t - if ftello and

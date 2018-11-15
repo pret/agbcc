@@ -1,11 +1,4 @@
-ifeq ($(prefix),)
-CHECK_PREFIX := @printf "\033[31;1m*******************************\nUse 'make install prefix=\"path\"\n*******************************\033[0m\n"; exit 1
-else
-CHECK_PREFIX := @:
-PREFIX := $(shell realpath $(prefix))
-endif
-
-CFLAGS ?= -O3 -g -march=native -mtune=native -std=c99
+CFLAGS ?= -O0 -std=gnu11
 
 # Simulate autotools by hacking recursive submake
 ifeq (,$(shell which aclocal-1.16 2>/dev/null || true))
@@ -39,6 +32,8 @@ CLEAN := $(addsuffix -clean, $(SUBDIRS))
 CONFIGURE_ARGS := SHELL="$(SHELL)" LDFLAGS="" CFLAGS="$(CFLAGS)" CC="$(CC)" --disable-plugins --without-libtool --without-libintl --target=armv4tl-none-eabi --program-prefix=arm-none-eabi- --disable-dependency-tracking --enable-gold=no --with-system-zlib --without-isl --exec-prefix=NONE CC="$(CC)"
 CONFIGURE := $(SHELL) ./configure -C --disable-option-checking $(CONFIGURE_ARGS)
 
+CONFIGURE_ACS := $(wildcard **/configure.ac)
+
 INSTALL_SUBDIRS := ld binutils gas
 BINUTILS_INSTALL := $(addsuffix -install, $(INSTALL_SUBDIRS))
 BINUTILS_INSTALL_STRIP := $(addsuffix -install-strip, $(INSTALL_SUBDIRS))
@@ -68,43 +63,47 @@ all: binutils old_gcc gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot
 binutils: $(BINUTILS_TGTS)
 
 install: install-prefix-check binutils old_gcc gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu libm4a libsiirtc $(BINUTILS_INSTALL_STRIP)
-	@mkdir -p $(PREFIX)/tools/agbcc
-	@mkdir -p $(PREFIX)/tools/agbcc/bin
-	@mkdir -p $(PREFIX)/tools/agbcc/include
-	@mkdir -p $(PREFIX)/tools/agbcc/lib
-	@mkdir -p $(PREFIX)/tools/binutils
-	@mkdir -p $(PREFIX)/tools/binutils/bin
-	@mkdir -p $(PREFIX)/tools/binutils/lib
-	cp agbcc $(PREFIX)/tools/agbcc/bin/
-	cp old_agbcc $(PREFIX)/tools/agbcc/bin/
-	cp -R libc/include $(PREFIX)/tools/agbcc/ #drop include, because we don't want include/include
-	cp -R ginclude/* $(PREFIX)/tools/agbcc/include/
-	cp agb_flash/agb_flash.h $(PREFIX)/tools/agbcc/include/
-	cp librfu/librfu.h $(PREFIX)/tools/agbcc/include/
-	cp libgcnmultiboot/libgcnmultiboot.h $(PREFIX)/tools/agbcc/include/
-	cp siirtc/siirtc.h $(PREFIX)/tools/agbcc/include
-	cp libgcc.a $(PREFIX)/tools/agbcc/lib/
-	cp libc.a $(PREFIX)/tools/agbcc/lib/
-	cp libagb_flash.a $(PREFIX)/tools/agbcc/lib/
-	cp libagbsyscall.a $(PREFIX)/tools/agbcc/lib/
-	cp libgcnmultiboot.a $(PREFIX)/tools/agbcc/lib/
-	cp libisagbprn.a $(PREFIX)/tools/agbcc/lib/
-	cp librfu_1024.a $(PREFIX)/tools/agbcc/lib/
-	cp librfu_1026.a $(PREFIX)/tools/agbcc/lib/
-	cp libm4a.a $(PREFIX)/tools/agbcc/lib/
-	cp libsiirtc.a $(PREFIX)/tools/agbcc/lib/
+	@mkdir -p $(prefix)/tools/agbcc
+	@mkdir -p $(prefix)/tools/agbcc/bin
+	@mkdir -p $(prefix)/tools/agbcc/include
+	@mkdir -p $(prefix)/tools/agbcc/lib
+	@mkdir -p $(prefix)/tools/binutils
+	@mkdir -p $(prefix)/tools/binutils/bin
+	@mkdir -p $(prefix)/tools/binutils/lib
+	cp agbcc $(prefix)/tools/agbcc/bin/
+	cp old_agbcc $(prefix)/tools/agbcc/bin/
+	cp -R libc/include $(prefix)/tools/agbcc/ #drop include, because we don't want include/include
+	cp -R ginclude/* $(prefix)/tools/agbcc/include/
+	cp agb_flash/agb_flash.h $(prefix)/tools/agbcc/include/
+	cp librfu/librfu.h $(prefix)/tools/agbcc/include/
+	cp libgcnmultiboot/libgcnmultiboot.h $(prefix)/tools/agbcc/include/
+	cp siirtc/siirtc.h $(prefix)/tools/agbcc/include
+	cp libgcc.a $(prefix)/tools/agbcc/lib/
+	cp libc.a $(prefix)/tools/agbcc/lib/
+	cp libagb_flash.a $(prefix)/tools/agbcc/lib/
+	cp libagbsyscall.a $(prefix)/tools/agbcc/lib/
+	cp libgcnmultiboot.a $(prefix)/tools/agbcc/lib/
+	cp libisagbprn.a $(prefix)/tools/agbcc/lib/
+	cp librfu_1024.a $(prefix)/tools/agbcc/lib/
+	cp librfu_1026.a $(prefix)/tools/agbcc/lib/
+	cp libm4a.a $(prefix)/tools/agbcc/lib/
+	cp libsiirtc.a $(prefix)/tools/agbcc/lib/
 
+$(CONFIGURE_ACS): %/configure.ac: %/ FORCE
+	cd $< && $(DO_AUTORECONF) || true
+FORCE:
+.PHONY: FORCE
+autoreconf: $(CONFIGURE_ACS)
+#	for i in **/configure.ac; do \
+#		cd $$(dirname $$i); \
+#		$(DO_AUTORECONF); \
+#		cd - >/dev/null; \
+#	done
 
-autoreconf:
-	for i in **/configure.ac; do \
-		cd $$(dirname $$i); \
-		$(DO_AUTORECONF); \
-		cd -; \
-	done
-
+# Apparently, optimizations really slow down Travis here.
 old_agbcc$(EXE): agbcc$(EXE)
 	@$(MAKE) -C gcc tidy
-	@$(MAKE) -C gcc old BASE_CFLAGS="-DAGBCC_VERSION=1 $(CFLAGS)"
+	@$(MAKE) -C gcc old BASE_CFLAGS="-DAGBCC_VERSION=1 -std=gnu11 -O0"
 	cp gcc/old_agbcc$(EXE) old_agbcc$(EXE)
 
 old: old_agbcc$(EXE)
@@ -120,7 +119,7 @@ old_gcc_clean:
 
 agbcc$(EXE):
 	@$(MAKE) -C gcc tidy
-	@$(MAKE) -C gcc BASE_CFLAGS="-DAGBCC_VERSION=1 $(CFLAGS)"
+	@$(MAKE) -C gcc BASE_CFLAGS="-DAGBCC_VERSION=1 -std=gnu11 -O0"
 	cp gcc/agbcc$(EXE) agbcc$(EXE)
 
 
@@ -234,21 +233,25 @@ clean: binutils_clean $(CLEAN) libc_clean libgcc_clean old_gcc_clean gcc_clean l
 .PHONY: binutils old gcc old_gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu librfu libm4a libsiirtc all clean install
 .PHONY: install-prefix-check $(ALL) $(SUBDIRS) $(OBJS_TGTS) $(BINUTILS_INSTALL) $(BINUTILS_INSTALL_STRIP) $(CLEAN) $(CONFIGURE_TGTS) install install-strip clean
 
+ifeq (,$(FORCE_INSTALL_LOCATION))
+INSTALL_ERROR = $(warning Try 'make install prefix=~/pokeruby' (or similar)) \
+		$(error Aborting (define FORCE_INSTALL_LOCATION to ignore))
+else
+INSTALL_ERROR = $(warning Try 'make install prefix=~/pokeruby' (or similar)) \
+		$(warning Ignoring because of FORCE_INSTALL_LOCATION.) sleep 1;
+endif
 
-# Stupidity check for make install. Especially check for Termux,
-# because it actually sets $PREFIX in the environment.
+# Stupidity check for make install.
 install-prefix-check:
-	@if [ -z "$(PREFIX)" ]; then				\
-	    echo "Invalid prefix!" >&2;				\
-	    exit 1;						\
-	else							\
-	    case $(PREFIX) in					\
-	    / | /usr* | /data/data/com.termux/files/usr*)	\
-	        echo "$(PREFIX): Invalid prefix!" >&2;		\
-	        exit 1;						\
-	       ;;						\
-	    esac						\
-	fi
+ifeq ($(prefix),)
+	$(warning Not installing to an empty prefix.)
+	$(INSTALL_ERROR)
+else
+ifneq ($(filter / /usr /usr/% /data/data/com.termux/files/usr /data/data/com.termux/files/usr/% C:\\Program%% /opt /opt/%, $(prefix)),)
+	$(warning Not installing to system prefix '$(prefix)')
+	$(INSTALL_ERROR)
+endif
+endif
 
 configure: ld-configure gas-configure bfd-configure libiberty-configure binutils-configure
 
@@ -267,9 +270,9 @@ configure: ld-configure gas-configure bfd-configure libiberty-configure binutils
 #     Installs, optionally stripping.
 
 ld-configure:
-	@if [ ! -f ld/Makefile ]; then 				\
-	    echo "Configuring in ld...";			\
-	    cd ld && $(CONFIGURE);				\
+	@if [ ! -f ld/Makefile ]; then                     \
+	    echo "Configuring in ld...";                   \
+	    cd ld && $(CONFIGURE);                         \
 	fi
 ld-objs: ld-configure bfd-headers
 	@$(MAKE) -C ld objs $(SUBSUBMAKEFLAGS)
@@ -278,14 +281,14 @@ ld-all: ld-objs bfd-all libiberty-all
 ld-clean: ld-configure
 	@$(MAKE) -C ld clean $(SUBSUBMAKEFLAGS)
 ld-install: ld-all
-	@$(MAKE) -C ld install prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C ld install prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
 ld-install-strip: ld-all
-	@$(MAKE) -C ld install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C ld install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 binutils-configure:
-	@if [ ! -f binutils/Makefile ]; then 			\
-	    echo "Configuring in binutils...";			\
-	    cd binutils && $(CONFIGURE); 			\
+	@if [ ! -f binutils/Makefile ]; then                \
+	    echo "Configuring in binutils...";              \
+	    cd binutils && $(CONFIGURE);                    \
 	fi
 binutils-objs: binutils-configure bfd-headers
 	@$(MAKE) -C binutils objs $(SUBSUBMAKEFLAGS)
@@ -294,14 +297,14 @@ binutils-all: binutils-objs bfd-all libiberty-all
 binutils-clean: binutils-configure
 	@$(MAKE) -C binutils clean $(SUBSUBMAKEFLAGS)
 binutils-install: binutils-all
-	@$(MAKE) -C binutils install prefix=$(PREFIX)/tools/binutils  $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C binutils install prefix=$(prefix)/tools/binutils  $(SUBSUBMAKEFLAGS)
 binutils-install-strip: binutils-all
-	@$(MAKE) -C binutils install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C binutils install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 gas-configure:
-	@if [ ! -f gas/Makefile ]; then 			\
-	    echo "Configuring in gas...";			\
-	    cd gas && $(CONFIGURE);				\
+	@if [ ! -f gas/Makefile ]; then                     \
+	    echo "Configuring in gas...";                   \
+	    cd gas && $(CONFIGURE);                         \
 	fi
 gas-objs: gas-configure bfd-headers
 	@$(MAKE) -C gas objs $(SUBSUBMAKEFLAGS)
@@ -310,14 +313,14 @@ gas-all: gas-objs bfd-all libiberty-all
 gas-clean: gas-configure
 	@$(MAKE) -C gas clean $(SUBSUBMAKEFLAGS)
 gas-install: gas-all
-	@$(MAKE) -C gas install prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C gas install prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
 gas-install-strip: gas-all
-	@$(MAKE) -C gas install-strip prefix=$(PREFIX)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C gas install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
 
 bfd-configure:
-	@if [ ! -f bfd/Makefile ]; then				\
-	    echo "Configuring in bfd...";			\
-	    cd bfd && $(CONFIGURE);				\
+	@if [ ! -f bfd/Makefile ]; then                     \
+	    echo "Configuring in bfd...";                   \
+	        cd bfd && $(CONFIGURE);                     \
 	fi
 bfd-objs: bfd-configure
 	@$(MAKE) -C bfd objs $(SUBSUBMAKEFLAGS)
@@ -333,9 +336,9 @@ bfd/stmp-bfd-h: bfd-configure
 .PHONY: bfd-headers
 
 libiberty-configure:
-	@if [ ! -f libiberty/Makefile ]; then 			\
-	    echo "Configuring in libiberty...";			\
-	    cd libiberty && $(CONFIGURE);			\
+	@if [ ! -f libiberty/Makefile ]; then               \
+	    echo "Configuring in libiberty...";             \
+	    cd libiberty && $(CONFIGURE);                   \
 	fi
 libiberty-objs: libiberty-configure
 	@$(MAKE) -C libiberty objs $(SUBSUBMAKEFLAGS)

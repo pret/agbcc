@@ -67,4 +67,12 @@
 #undef ULONG_LONG_MAX
 #define ULONG_LONG_MAX (LONG_LONG_MAX * 2ULL + 1)
 
+#undef LLONG_MIN
+#define LLONG_MIN LONG_LONG_MIN
+#undef LLONG_MAX
+#define LLONG_MAX LONG_LONG_MAX
+
+#undef ULLONG_MAX
+#define ULLONG_MAX ULONG_LONG_MAX
+
 #endif /* _LIMITS_H___ */

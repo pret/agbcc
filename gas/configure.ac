@@ -27,14 +27,14 @@ AC_CONFIG_SRCDIR(as.h)
 m4_include([../config/lean.m4])
 
 AC_CANONICAL_TARGET
-## AC_SEARCH_LIBS([strerror],[cposix])
+
 AC_CONFIG_MACRO_DIRS([../config])
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
 AC_USE_SYSTEM_EXTENSIONS
 
-ACX_LARGEFILE
+AC_SYS_LARGEFILE
 
 # Generate a header file
 AC_CONFIG_HEADERS(config.h:config.in)
@@ -61,11 +61,6 @@ os=eabi
 vendor=none
 obj_format=elf
 te_file=armeabi
-
-# Assign floating point type.  Most processors with FP support
-# IEEE FP.  On those that don't support FP at all, usually IEEE
-# is emulated.
-atof=ieee
 
 # Getting this done right is going to be a bitch.  Each configuration specified
 # with --enable-targets=... should be checked for environment, format, cpu
@@ -108,18 +103,8 @@ fi
 AC_SUBST(extra_objects)
 AC_DEFINE_UNQUOTED(EMULATIONS, $EMULATIONS, [Supported emulations.])
 
-reject_dev_configs=yes
-
-case ${reject_dev_configs}-${dev} in
-  yes-yes) # Oops.
-    AC_MSG_ERROR(GAS does not support the ${generic_target} configuration.)
-    ;;
-esac
-
-AC_SUBST(obj_format)
 AC_SUBST(te_file)
 AC_SUBST(install_tooldir)
-AC_SUBST(atof)
 
 AC_DEFINE_UNQUOTED(TARGET_CPU,		"${target_cpu}",   [Target CPU.])
 AC_DEFINE_UNQUOTED(TARGET_VENDOR,	"${target_vendor}", [Target vendor.])
@@ -130,11 +115,9 @@ AC_EXEEXT
 AC_CHECK_HEADERS_ONCE(memory.h strings.h unistd.h sys/types.h sys/stat.h)
 ACX_HEADER_STRING
 
-AC_FUNC_ALLOCA
 
 # VMS doesn't have unlink.
 AC_CHECK_FUNCS(unlink remove, break)
-AC_CHECK_FUNCS_ONCE(strsignal)
 
 # On some systems, the system header files may not declare malloc, realloc,
 # and free.  There are places where gas needs these functions to have been
@@ -150,19 +133,6 @@ gas_test_headers="
 #include <unistd.h>
 #endif
 "
-
-# Does errno.h declare errno, or do we have to add a separate declaration
-# for it?
-GAS_CHECK_DECL_NEEDED(errno, f, int f, [
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-])
-
-GAS_CHECK_DECL_NEEDED(environ, f, char **f, $gas_test_headers)
-GAS_CHECK_DECL_NEEDED(ffs, f, int (*f)(int), $gas_test_headers)
-
-AC_CHECK_DECLS([asprintf])
 
 dnl This must come last.
 

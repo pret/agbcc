@@ -178,10 +178,6 @@ Options:\n\
   fprintf (stream, _("\
   -g --gen-debug          generate debugging information\n"));
   fprintf (stream, _("\
-  --gstabs                generate STABS debugging information\n"));
-  fprintf (stream, _("\
-  --gstabs+               generate STABS debug info with GNU extensions\n"));
-  fprintf (stream, _("\
   --gdwarf-2              generate DWARF2 debugging information\n"));
   fprintf (stream, _("\
   --gdwarf-sections       generate per-function section names for DWARF line information\n"));
@@ -317,8 +313,6 @@ parse_args (int * pargc, char *** pargv)
       OPTION_LISTING_RHS_WIDTH,
       OPTION_LISTING_CONT_LINES,
       OPTION_DEPFILE,
-      OPTION_GSTABS,
-      OPTION_GSTABS_PLUS,
       OPTION_GDWARF2,
       OPTION_GDWARF_SECTIONS,
       OPTION_STRIP_LOCAL_ABSOLUTE,
@@ -375,8 +369,6 @@ parse_args (int * pargc, char *** pargv)
     ,{"gdwarf2", no_argument, NULL, OPTION_GDWARF2}
     ,{"gdwarf-sections", no_argument, NULL, OPTION_GDWARF_SECTIONS}
     ,{"gen-debug", no_argument, NULL, 'g'}
-    ,{"gstabs", no_argument, NULL, OPTION_GSTABS}
-    ,{"gstabs+", no_argument, NULL, OPTION_GSTABS_PLUS}
     ,{"hash-size", required_argument, NULL, OPTION_HASH_TABLE_SIZE}
     ,{"help", no_argument, NULL, OPTION_HELP}
     /* getopt allows abbreviations, so we do this to stop it from
@@ -591,17 +583,8 @@ This program has absolutely no warranty.\n"));
 
 	  if (md_debug_format_selector)
 	    debug_type = md_debug_format_selector (& use_gnu_debug_info_extensions);
-	  else if (IS_ELF)
-	    debug_type = DEBUG_DWARF2;
 	  else
-	    debug_type = DEBUG_STABS;
-	  break;
-
-	case OPTION_GSTABS_PLUS:
-	  use_gnu_debug_info_extensions = 1;
-	  /* Fall through.  */
-	case OPTION_GSTABS:
-	  debug_type = DEBUG_STABS;
+	    debug_type = DEBUG_DWARF2;
 	  break;
 
 	case OPTION_GDWARF2:
@@ -962,7 +945,6 @@ perform_an_assembly_pass (int argc, char ** argv)
     {
       if (*argv)
 	{			/* Is it a file-name argument?  */
-	  PROGRESS (1);
 	  saw_a_file++;
 	  /* argv->"" if stdin desired, else->filename.  */
 	  read_a_source_file (*argv);
@@ -999,8 +981,6 @@ main (int argc, char ** argv)
 
   expandargv (&argc, &argv);
 
-  START_PROGRESS (myname, 0);
-
 #ifndef OBJ_DEFAULT_OUTPUT_FILE_NAME
 #define OBJ_DEFAULT_OUTPUT_FILE_NAME "a.out"
 #endif
@@ -1011,7 +991,6 @@ main (int argc, char ** argv)
   bfd_init ();
   bfd_set_error_program_name (myname);
 
-  PROGRESS (1);
   /* Call parse_args before any of the init/begin functions
      so that switches like --hash-size can be honored.  */
   parse_args (&argc, &argv);
@@ -1056,8 +1035,6 @@ main (int argc, char ** argv)
 
   macro_init (flag_macro_alternate, flag_mri, macro_strip_at, macro_expr);
 
-  PROGRESS (1);
-
   output_file_create (out_file_name);
   gas_assert (stdoutput != 0);
 
@@ -1092,8 +1069,6 @@ main (int argc, char ** argv)
       free (defsyms);
       defsyms = next;
     }
-
-  PROGRESS (1);
 
   /* Assemble it.  */
   perform_an_assembly_pass (argc, argv);
@@ -1167,8 +1142,6 @@ main (int argc, char ** argv)
 #endif
 
   input_scrub_end ();
-
-  END_PROGRESS (myname);
 
   /* Use xexit instead of return, because under VMS environments they
      may not place the same interpretation on the value given.  */
