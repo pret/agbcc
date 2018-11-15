@@ -27,6 +27,12 @@ Boston, MA 02111-1307, USA.  */
 
 #include <ctype.h>
 
+#if !defined(alloca) && (defined(_WIN32) || defined(_MSC_VER) || defined(__CYGWIN__))
+#  include <malloc.h>
+#  undef alloca
+#  define alloca _alloca
+#endif
+
 # define IN_CTYPE_DOMAIN(c) 1
 
 #ifdef isblank

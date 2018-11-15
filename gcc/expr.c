@@ -7843,7 +7843,7 @@ static rtx expand_builtin_apply(rtx function, rtx arguments, rtx argsize)
 {
     int size, align, regno;
     enum machine_mode mode;
-    rtx incoming_args, result, reg, dest, call_insn;
+    rtx incoming_args, result, reg, dest, call_insn, valreg;
     rtx old_stack_level = 0;
     rtx call_fusage = 0;
 
@@ -7924,7 +7924,7 @@ static rtx expand_builtin_apply(rtx function, rtx arguments, rtx argsize)
         function = memory_address(FUNCTION_MODE, function);
 
     /* Generate the actual call instruction and save the return value.  */
-    rtx valreg = 0;
+    valreg = 0;
 
     /* Locate the unique return register.  It is not possible to
        express a call that sets more than one return register using

@@ -1690,7 +1690,8 @@ from the machine description file `md'.  */\n\n");
    missing CLOBBER expressions at the end.  In that case, the value\n\
    pointed to by the optional pointer will be set to the number of\n\
    CLOBBERs that need to be added (it should be initialized to zero by\n\
-   the caller).  If it is set nonzero, the caller should allocate a\n\
+   the caller).  If it is set nonzero, the caller should allocate a\n");
+    printf("\
    PARALLEL of the appropriate size, copy the initial entries, and call\n\
    add_clobbers (found in insn-emit.c) to fill in the CLOBBERs.");
 

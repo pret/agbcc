@@ -334,7 +334,8 @@ extern double real_value_from_int_cst(tree, tree);
 #define REAL_VALUE_FROM_CONST_DOUBLE(to, from) \
 do { \
     union real_extract u; \
-    for (size_t i = 0; i < 2; i++) \
+    size_t i; \
+    for (i = 0; i < 2; i++) \
         u.i[i] = XWINT((from), 2 + i); \
     to = u.d; \
 } while (0)

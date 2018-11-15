@@ -29,10 +29,10 @@
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
 
-#ifdef getc
+#if defined(getc_unlocked) || (!defined(_WIN32) && (defined(__linux__) || defined(__APPLE__) || defined(_POSIX_C_SOURCE)))
 #undef getc
-#endif
 #define getc(f) getc_unlocked(f)
+#endif
 
 /* Obstack used for allocating RTL objects.
    Between functions, this is the permanent_obstack.

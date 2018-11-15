@@ -7307,11 +7307,12 @@ static int constraint_accepts_reg_p(const char *const string, rtx reg)
     int regno = true_regnum(reg);
     int c;
     const size_t len = strlen(string);
+    size_t i;
 
     /* Initialize for first alternative.  */
     value = 0;
     /* Check that each alternative contains `g' or `r'.  */
-    for (size_t i = 0; i < len; ++i)
+    for (i = 0; i < len; ++i)
         switch (string[i])
         {
         case ',':

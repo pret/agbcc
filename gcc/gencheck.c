@@ -29,9 +29,10 @@ const char *tree_codes[] = {
 
 int main(void)
 {
+    int i;
     printf("/* This file is generated using gencheck. Do not edit. */\n");
 
-    for (int i = 0; tree_codes[i]; i++)
+    for (i = 0; tree_codes[i]; i++)
     {
         printf("#define %s_CHECK(t)\tTREE_CHECK (t, %s)\n", tree_codes[i], tree_codes[i]);
         printf("#define %s_CHECK1(t)\tTREE_CHECK1 (t, %s)\n", tree_codes[i], tree_codes[i]);

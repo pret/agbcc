@@ -28,8 +28,10 @@ Boston, MA 02111-1307, USA.  */
 #undef ABS /* Likewise.  */
 #undef PC /* Likewise.  */
 
-#ifndef TREE_CODE
-union __attribute__((may_alias)) tree_node;
+#ifndef TREE_TYPEDEF
+#define TREE_TYPEDEF
+union tree_node;
+typedef union tree_node *tree;
 #endif
 
 /* Register Transfer Language EXPRESSIONS CODES */
@@ -96,7 +98,7 @@ typedef union rtunion_def
 
 /* RTL expression ("rtx").  */
 
-typedef struct  __attribute__((may_alias))  rtx_def
+struct rtx_def
 {
   /* The kind of expression this is.  */
   enum rtx_code code : 16;
@@ -166,7 +168,12 @@ typedef struct  __attribute__((may_alias))  rtx_def
      The number of operands and their types are controlled
      by the `code' field, according to rtl.def.  */
   rtunion fld[1];
-}*__attribute__((may_alias)) rtx;
+};
+
+#ifndef RTX_TYPEDEF
+#define RTX_TYPEDEF
+typedef struct rtx_def *rtx;
+#endif
 
 #define NULL_RTX (rtx) NULL
 

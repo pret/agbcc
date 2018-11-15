@@ -334,7 +334,7 @@ struct rel_use
     rtx insn, *addrp;
     int luid, call_tally;
     enum reg_class rclass;
-    int set_in_parallel : 1;
+    int set_in_parallel;
     int32_t offset, match_offset;
     struct rel_use *next_chain, **prev_chain_ref, *next_hash, *sibling;
 };

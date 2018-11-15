@@ -45,7 +45,12 @@ tree ridpointers[(int)RID_MAX];
 /* Cause the `yydebug' variable to be defined.  */
 #define YYDEBUG 1
 
+/* Just guessing */
+#if defined(getc_unlocked) || (!defined(_WIN32) && (defined(__linux__) || defined(__APPLE__) || defined(_POSIX_C_SOURCE)))
 #define GETC() getc_unlocked(finput)
+#else
+#define GETC() getc(finput)
+#endif
 #define UNGETC(c) ungetc(c, finput)
 
 /* the declaration found for the last IDENTIFIER token read in.
@@ -466,6 +471,7 @@ linenum:
 
     if (token == CONSTANT && TREE_CODE(yylval.ttype) == INTEGER_CST)
     {
+        char *tmp;
         int old_lineno = lineno;
         int used_up = 0;
         /* subtract one, because it is the following line that
@@ -493,7 +499,7 @@ linenum:
             error("invalid #line");
             goto skipline;
         }
-        char *tmp  = (char *)permalloc(TREE_STRING_LENGTH(yylval.ttype) + 1);
+        tmp  = (char *)permalloc(TREE_STRING_LENGTH(yylval.ttype) + 1);
         strcpy(tmp, TREE_STRING_POINTER(yylval.ttype));
         input_filename = tmp;
         lineno = l;

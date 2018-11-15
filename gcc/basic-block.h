@@ -187,7 +187,7 @@ extern void free_int_list               (int_list_block **);
 /* from flow.c */
 extern void free_regset_vector (regset *, int nelts);
 extern int *uid_block_number;
-#define BLOCK_NUM(INSN)    uid_block_number[INSN_UID (INSN)]
+#define BLOCK_NUM(INSN) uid_block_number[INSN_UID(INSN)]
 
 extern void dump_bb_data       (FILE *, int_list_ptr *, int_list_ptr *,
 				       int);
