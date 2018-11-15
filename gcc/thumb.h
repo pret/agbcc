@@ -1082,11 +1082,17 @@ int thumb_shiftable_const(int32_t);
 
 #include "machmode.h"
 
-struct __attribute__((may_alias)) rtx_def;
-typedef struct rtx_def *__attribute__((may_alias)) rtx;
+#ifndef RTX_TYPEDEF
+#define RTX_TYPEDEF
+struct rtx_def;
+typedef struct rtx_def *rtx;
+#endif
 
-union __attribute__((may_alias)) tree_node;
-typedef union tree_node *__attribute__((may_alias)) tree;
+#ifndef TREE_TYPEDEF
+#define TREE_TYPEDEF
+union tree_node;
+typedef union tree_node *tree;
+#endif
 
 extern int thumb_cmp_operand(rtx, enum machine_mode);
 extern void thumb_reorg(rtx);

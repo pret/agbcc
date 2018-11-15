@@ -29,10 +29,10 @@ Boston, MA 02111-1307, USA.  */
 #include "output.h"
 #include "rtl.h"
 
-#ifdef getc
+#if defined(getc_unlocked) || (!defined(_WIN32) && (defined(__linux__) || defined(__APPLE__) || defined(_POSIX_C_SOURCE)))
 #undef getc
-#endif
 #define getc(f) getc_unlocked(f)
+#endif
 
 #ifndef WCHAR_TYPE_SIZE
 #ifdef INT_TYPE_SIZE
@@ -1588,6 +1588,7 @@ char *get_directive_line(FILE *finput)
     static char *directive_buffer = NULL;
     static unsigned buffer_length = 0;
     char *buffer_limit;
+    char *p;
     int looking_for = 0;
     int char_escaped = 0;
 
@@ -1599,7 +1600,7 @@ char *get_directive_line(FILE *finput)
 
     buffer_limit = &directive_buffer[buffer_length];
 
-    char *p = directive_buffer;
+    p = directive_buffer;
 
     for (;;)
     {

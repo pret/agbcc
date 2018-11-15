@@ -928,10 +928,12 @@ int dump_time;
 
 long get_run_time()
 {
+    clock_t clk;
+
     if (!loud_flag)
         return 0;
 
-    clock_t clk = clock();
+    clk = clock();
 
     if (clk < 0)
         return 0;
@@ -3531,6 +3533,8 @@ int main(int argc, char **argv)
 
     for (i = 1; i < argc; i++)
     {
+        size_t j;
+
         if (!strcmp(argv[i], "--help"))
         {
             display_help();
@@ -3541,8 +3545,6 @@ int main(int argc, char **argv)
             printf("%d\n", AGBCC_VERSION);
             exit(0);
         }
-
-        size_t j;
 
         /* If this is a language-specific option,
            decode it in a language-specific way.  */
@@ -3940,10 +3942,10 @@ static void set_target_switch(const char *name)
 
 static void print_version(FILE *file, const char *indent)
 {
+    const char *target_name = "thumb-elf";
     fprintf(file, "%s%s%s version %s", indent, *indent != 0 ? " " : "", language_string,
         version_string);
 
-    const char *target_name = "thumb-elf";
     fprintf(file, " (%s)", target_name);
     fprintf(file, " (agbcc version %d)", AGBCC_VERSION);
 #ifdef __GNUC__

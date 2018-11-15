@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.  */
 #include "machmode.h"
 
 #ifndef RTX_CODE
-struct __attribute__((may_alias)) rtx_def ;
+struct rtx_def;
 #endif
 
 /* Codes of tree nodes */
@@ -152,7 +152,10 @@ enum built_in_function
 
 /* This type is used everywhere to refer to a tree node.  */
 
-typedef union tree_node __attribute__((may_alias)) * __attribute__((may_alias)) tree;
+#ifndef TREE_TYPEDEF
+#define TREE_TYPEDEF
+typedef union tree_node *tree;
+#endif
 
 /* Every kind of tree node starts with this structure,
    so all nodes have these fields.

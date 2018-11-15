@@ -2832,11 +2832,12 @@ void init_emit_once(int line_numbers)
         {
             rtx tem = rtx_alloc(CONST_DOUBLE);
             union real_extract u;
+            int j;
 
             zero_memory((char *)&u, sizeof u); /* Zero any holes in a structure.  */
             u.d = i == 0 ? dconst0 : i == 1 ? dconst1 : dconst2;
 
-            for (int j = 0; j < sizeof(double) / sizeof(int32_t); j++)
+            for (j = 0; j < sizeof(double) / sizeof(int32_t); j++)
                 XWINT(tem, 2 + j) = u.i[j];
 
             CONST_DOUBLE_MEM(tem) = cc0_rtx;

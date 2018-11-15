@@ -194,7 +194,7 @@ struct loop_info
 
 /* Definitions used by the basic induction variable discovery code.  */
 enum iv_mode { UNKNOWN_INDUCT, BASIC_INDUCT, NOT_BASIC_INDUCT,
-		 GENERAL_INDUCT } __attribute__((may_alias)) ;
+		 GENERAL_INDUCT };
 
 /* Variables declared in loop.c, but also needed in unroll.c.  */
 

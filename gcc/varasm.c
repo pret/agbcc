@@ -1648,9 +1648,10 @@ rtx immed_real_const_1(double d, enum machine_mode mode)
 
     for (r = const_double_chain; r; r = CONST_DOUBLE_CHAIN(r))
     {
-        for (int i = 0; i < 2; i++)
-            if (u.i[i] != XWINT(r, 2 + i))
-                goto not_match;
+        if (u.i[0] != XWINT(r, 2))
+            goto not_match;
+        if (u.i[1] != XWINT(r, 3))
+            goto not_match;
         if (GET_MODE(r) == mode)
             return r;
     not_match:;
@@ -1668,8 +1669,8 @@ rtx immed_real_const_1(double d, enum machine_mode mode)
     rtl_in_saveable_obstack();
     r = rtx_alloc(CONST_DOUBLE);
     PUT_MODE(r, mode);
-    for (int i = 0; i < 2; i++)
-        XWINT(r, 2 + i) = u.i[i];
+    XWINT(r, 2) = u.i[0];
+    XWINT(r, 3) = u.i[1];
     pop_obstacks();
 
     /* Don't touch const_double_chain in nested function; see force_const_mem.
@@ -1844,8 +1845,9 @@ static int const_hash(tree exp)
     case CONSTRUCTOR:
         if (TREE_CODE(TREE_TYPE(exp)) == SET_TYPE)
         {
+            char *tmp;
             len = int_size_in_bytes(TREE_TYPE(exp));
-            char *tmp = (char *)alloca(len);
+            tmp = (char *)alloca(len);
             get_set_constructor_bytes(exp, (unsigned char *)tmp, len);
             p = tmp;
             break;
@@ -2726,8 +2728,8 @@ static void decode_rtx_const(enum machine_mode mode, rtx x, struct rtx_const *va
         if (GET_MODE(x) != VOIDmode)
         {
             value->mode = GET_MODE(x);
-            for (int i = 0; i < 2; i++)
-                value->un.du.i[i] = XWINT(x, 2 + i);
+            value->un.du.i[0] = XWINT(x, 2);
+            value->un.du.i[1] = XWINT(x, 3);
         }
         else
         {
@@ -3101,15 +3103,16 @@ void output_constant_pool(const char *fnname ATTRIBUTE_UNUSED, tree fndecl ATTRI
         switch (GET_MODE_CLASS(pool->mode))
         {
         case MODE_FLOAT:
+        {
             if (GET_CODE(x) != CONST_DOUBLE)
                 abort();
 
-            for (int i = 0; i < 2; i++)
-                u.i[i] = XWINT(x, 2 + i);
+            u.i[0] = XWINT(x, 2);
+            u.i[1] = XWINT(x, 3);
 
             assemble_real(u.d, pool->mode);
             break;
-
+        }
         case MODE_INT:
             assemble_integer(x, GET_MODE_SIZE(pool->mode), 1);
             break;
