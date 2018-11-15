@@ -23,7 +23,6 @@
 #include "bfd.h"
 #include "safe-ctype.h"
 #include "libiberty.h"
-#include "progress.h"
 #include "bfdlink.h"
 #include "filenames.h"
 
@@ -191,8 +190,6 @@ main (int argc, char **argv)
 
   program_name = argv[0];
 
-  START_PROGRESS (program_name, 0);
-
   expandargv (&argc, &argv);
 
   bfd_init ();
@@ -267,8 +264,8 @@ main (int argc, char **argv)
   link_info.combreloc = TRUE;
   link_info.strip_discarded = TRUE;
   link_info.prohibit_multiple_definition_absolute = FALSE;
-  link_info.emit_hash = DEFAULT_EMIT_SYSV_HASH;
-  link_info.emit_gnu_hash = DEFAULT_EMIT_GNU_HASH;
+  link_info.emit_hash = 1;
+  link_info.emit_gnu_hash = 0;
   link_info.callbacks = &link_callbacks;
   link_info.input_bfds_tail = &link_info.input_bfds;
   /* SVR4 linkers seem to set DT_INIT and DT_FINI based on magic _init
@@ -281,12 +278,6 @@ main (int argc, char **argv)
   link_info.pei386_auto_import = -1;
   link_info.spare_dynamic_tags = 5;
   link_info.path_separator = ':';
-#ifdef DEFAULT_FLAG_COMPRESS_DEBUG
-  link_info.compress_debug = COMPRESS_DEBUG_GABI_ZLIB;
-#endif
-#ifdef DEFAULT_NEW_DTAGS
-  link_info.new_dtags = DEFAULT_NEW_DTAGS;
-#endif
 
   ldfile_add_arch ("");
   emulation = get_emulation (argc, argv);
@@ -516,8 +507,6 @@ main (int argc, char **argv)
 	    }
 	}
     }
-
-  END_PROGRESS (program_name);
 
   if (config.stats)
     {

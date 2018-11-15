@@ -103,7 +103,6 @@ static const pseudo_typeS elf_pseudo_table[] =
 };
 
 #undef NO_RELOC
-//#include "aout/aout64.h"
 
 /* This is called when the assembler starts.  */
 

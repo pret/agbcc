@@ -464,12 +464,7 @@ _bfd_doprnt (FILE *stream, const char *format, union _bfd_doprnt_args *args)
 			*sptr++ = ptr[-1];
 			*sptr = '\0';
 #endif
-#if defined (__GNUC__) || defined (HAVE_LONG_LONG)
 			PRINT_TYPE (long long, ll);
-#else
-			/* Fake it and hope for the best.  */
-			PRINT_TYPE (long, l);
-#endif
 			break;
 		      }
 		  }
@@ -688,11 +683,7 @@ _bfd_doprnt_scan (const char *format, union _bfd_doprnt_args *args)
 			break;
 		      case 2:
 		      default:
-#if defined (__GNUC__) || defined (HAVE_LONG_LONG)
 			arg_type = LongLong;
-#else
-			arg_type = Long;
-#endif
 			break;
 		      }
 		  }

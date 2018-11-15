@@ -30,12 +30,6 @@
 #include <assert.h>
 #include "bucomm.h"
 
-#ifndef HAVE_TIME_T_IN_TIME_H
-#ifndef HAVE_TIME_T_IN_TYPES_H
-typedef long time_t;
-#endif
-#endif
-
 /* Error reporting.  */
 
 char *program_name;

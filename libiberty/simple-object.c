@@ -149,23 +149,6 @@ struct find_one_section_data
   int found;
 };
 
-/* Internal function passed to find_sections.  */
-
-static int
-find_one_section (void *data, const char *name, off_t offset, off_t length)
-{
-  struct find_one_section_data *fosd = (struct find_one_section_data *) data;
-
-  if (strcmp (name, fosd->name) != 0)
-    return 1;
-
-  *fosd->offset = offset;
-  *fosd->length = length;
-  fosd->found = 1;
-
-  /* Stop iteration.  */
-  return 0;
-}
 
 /* Callback to identify and rename LTO debug sections by name.
    Returns non-NULL if NAME is a LTO debug section, NULL if not.
@@ -213,22 +196,6 @@ handle_lto_debug_sections (const char *name, int rename)
     return strcpy (newname, name);
   free (newname);
   return NULL;
-}
-
-/* Wrapper for handle_lto_debug_sections.  */
-
-static char *
-handle_lto_debug_sections_rename (const char *name)
-{
-  return handle_lto_debug_sections (name, 1);
-}
-
-/* Wrapper for handle_lto_debug_sections.  */
-
-static char *
-handle_lto_debug_sections_norename (const char *name)
-{
-  return handle_lto_debug_sections (name, 0);
 }
 
 /* Start creating a section.  */

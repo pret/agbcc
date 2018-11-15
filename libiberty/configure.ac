@@ -32,7 +32,7 @@ AC_SUBST(libiberty_topdir)
 AC_CANONICAL_HOST
 
 dnl## These must be called before libtool because it may want
-dnl## to call AC_CHECK_PROG.
+dnl## to call AC_ CHECK_PROG.
 AC_CHECK_TOOL(AR, ar)
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 
@@ -40,8 +40,6 @@ AC_PROG_CC
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
-OUTPUT_OPTION='-o $@'
-AC_SUBST(OUTPUT_OPTION)
 AC_C_BIGENDIAN
 
 
@@ -69,9 +67,6 @@ esac
 if [[ -n "${frag}" ]]; then
   frag=${libiberty_topdir}/libiberty/config/$frag
 fi
-
-  PICFLAG=
-AC_SUBST(PICFLAG)
 
 echo "# Warning: this fragment is automatically generated" > temp-frag
 
@@ -103,7 +98,7 @@ AC_CHECK_SIZEOF([size_t])
 # This is the list of functions which libiberty will provide if they
 # are not available on the host.
 
-funcs="asprintf atexit basename bzero ffs getcwd getpagesize \
+funcs="asprintf atexit basename bzero getcwd getpagesize \
 gettimeofday index mkstemps random rename  \
 sigsetmask stpcpy strdup  \
 vasprintf"
@@ -116,7 +111,7 @@ vars="sys_errlist sys_nerr sys_siglist"
 # These are neither executed nor required, but they help keep
 # autoheader happy without adding a bunch of text to acconfig.h.
 if test "x" = "y"; then
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, ntf])
+  AC_CHECK_DECLS([basename(char *), asprintf, vasprintf, ntf])
   AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Define if you have the sys_errlist variable.])
   AC_DEFINE(HAVE_SYS_NERR,    1, [Define if you have the sys_nerr variable.])
   AC_DEFINE(HAVE_SYS_SIGLIST, 1, [Define if you have the sys_siglist variable.])
@@ -138,7 +133,6 @@ if test -n "${with_target_subdir}"; then
     AC_LIBOBJ([asprintf])
     AC_LIBOBJ([basename])
     AC_LIBOBJ([bzero])
-    AC_LIBOBJ([ffs])
     AC_LIBOBJ([getpagesize])
     AC_LIBOBJ([index])
     AC_LIBOBJ([mkstemps])
@@ -149,7 +143,7 @@ if test -n "${with_target_subdir}"; then
 
     for f in $funcs; do
       case "$f" in
-	asprintf | basename | bzero | ffs | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
+	asprintf | basename | bzero | getpagesize | index | mkstemps | random | sigsetmask | stpcpy | strdup | vasprintf)
 	  ;;
 	*)
 	  n=HAVE_`echo $f | tr 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
@@ -203,10 +197,7 @@ if test -z "${setobjs}"; then
 
   # We haven't set the list of objects yet.  Use the standard autoconf
   # tests.  This will only work if the compiler works.
-  AC_SEARCH_LIBS([strerror],[cposix])
   AC_REPLACE_FUNCS($funcs)
-
-    AC_CHECK_FUNCS(_doprnt)
 
   for v in $vars; do
     AC_MSG_CHECKING([for $v])
@@ -223,7 +214,7 @@ if test -z "${setobjs}"; then
     fi
   done
 
-  AC_CHECK_DECLS([basename(char *), ffs, asprintf, vasprintf, getopt, canonicalize_file_name])
+  AC_CHECK_DECLS([basename(char *), asprintf, vasprintf, getopt, canonicalize_file_name])
 fi
 
   INSTALL_DEST=libdir

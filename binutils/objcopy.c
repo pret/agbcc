@@ -20,7 +20,6 @@
 
 #include "sysdep.h"
 #include "bfd.h"
-#include "progress.h"
 #include "getopt.h"
 #include "libiberty.h"
 #include "bucomm.h"
@@ -5044,8 +5043,6 @@ main (int argc, char *argv[])
 
   program_name = argv[0];
 
-  START_PROGRESS (program_name, 0);
-
   expandargv (&argc, &argv);
 
   strip_symbols = STRIP_UNDEF;
@@ -5077,8 +5074,6 @@ main (int argc, char *argv[])
     strip_main (argc, argv);
   else
     copy_main (argc, argv);
-
-  END_PROGRESS (program_name);
 
   return status;
 }

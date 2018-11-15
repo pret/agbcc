@@ -87,12 +87,10 @@ extern "C" {
 /* The word size of the default bfd target.  */
 #define BFD_DEFAULT_TARGET_SIZE @bfd_default_target_size@
 
-#if @BFD_HOST_64_BIT_DEFINED@
 #define BFD_HOST_64_BIT int64_t
 #define BFD_HOST_U_64_BIT uint64_t
 typedef BFD_HOST_64_BIT bfd_int64_t;
 typedef BFD_HOST_U_64_BIT bfd_uint64_t;
-#endif
 
 # include <inttypes.h>
 
@@ -446,7 +444,6 @@ extern bfd_size_type bfd_bread (void *, bfd_size_type, bfd *);
 extern bfd_size_type bfd_bwrite (const void *, bfd_size_type, bfd *);
 extern int bfd_seek (bfd *, file_ptr, int);
 extern file_ptr bfd_tell (bfd *);
-extern int bfd_flush (bfd *);
 extern int bfd_stat (bfd *, struct stat *);
 
 /* Deprecated old routines.  */

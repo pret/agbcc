@@ -122,18 +122,7 @@ EXTRA_objdump_SOURCES = od-xcoff.c
 objdump_LDADD = $(OBJDUMP_PRIVATE_OFILES) $(BFDLIB) $(LIBIBERTY) -lz
 
 objdump.@OBJEXT@:objdump.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $(OBJDUMP_DEFS) $(srcdir)/objdump.c
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='objdump.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c $(OBJDUMP_DEFS) $(srcdir)/objdump.c
-endif
-
-
 
 ar_SOURCES = arparse.c arlex.c ar.c not-ranlib.c arsup.c rename.c binemul.c \
 	emul_$(EMULATION).c $(BULIBS)
@@ -197,64 +186,19 @@ sysinfo.h: sysinfo.c
 # Disable -Werror, if it has been enabled, since old versions of bison/
 # yacc will produce working code which contain compile time warnings.
 arparse.@OBJEXT@: arparse.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f arparse.c || echo $(srcdir)/`arparse.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='arparse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c `test -f arparse.c || echo $(srcdir)/`arparse.c $(NO_WERROR)
-endif
 
 arlex.@OBJEXT@: arlex.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f arlex.c || echo $(srcdir)/`arlex.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='arlex.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c `test -f arlex.c || echo $(srcdir)/`arlex.c $(NO_WERROR)
-endif
 
 sysroff.@OBJEXT@: sysroff.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f sysroff.c || echo $(srcdir)/`sysroff.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='sysroff.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c `test -f sysroff.c || echo $(srcdir)/`sysroff.c $(NO_WERROR)
-endif
 
 defparse.@OBJEXT@: defparse.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f defparse.c || echo $(srcdir)/`defparse.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='defparse.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c `test -f defparse.c || echo $(srcdir)/`defparse.c $(NO_WERROR)
-endif
 
 deflex.@OBJEXT@: deflex.c
-if am__fastdepCC
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `test -f deflex.c || echo $(srcdir)/`deflex.c $(NO_WERROR)
-	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-else
-if AMDEP
-	source='deflex.c' object='$@' libtool=no @AMDEPBACKSLASH@
-	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-endif
 	$(COMPILE) -c `test -f deflex.c || echo $(srcdir)/`deflex.c $(NO_WERROR)
-endif
 
 EXTRA_DIST = arparse.c arparse.h arlex.c sysinfo.c sysinfo.h \
 	syslex.c deflex.c defparse.h defparse.c \

@@ -37,7 +37,7 @@ WARN_CFLAGS = -Wall
 NO_WERROR =
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -DBINDIR='"$(bindir)"'
-LTCOMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
+COMPILE = $(CC) $(CFLAGS) $(AM_CPPFLAGS) $(AM_CFLAGS)
 
 # bfd.h goes here, for now
 BFD_H = bfd.h
@@ -117,12 +117,12 @@ CONFIG_STATUS_DEPENDENCIES = \
 	$(srcdir)/configure.host \
 	$(srcdir)/development.sh
 
-# These are defined by configure:
+# These are no longer defined by configure:
 ALL_BACKENDS = $(BFD32_BACKENDS)
-BFD_BACKENDS = @bfd_backends@
-BFD_MACHINES = @bfd_machines@
-TDEFAULTS = @tdefaults@
-HAVEVECS = @havevecs@
+BFD_BACKENDS =  elf32-arm.o elf32.o elf.o elflink.o elf-attrs.o elf-strtab.o elf-properties.o elf-eh-frame.o dwarf1.o dwarf2.o elf32-gen.o
+BFD_MACHINES =  cpu-arm.o
+TDEFAULTS =  -DDEFAULT_VECTOR=arm_elf32_le_vec -DSELECT_VECS='&arm_elf32_le_vec,&arm_elf32_fdpic_le_vec,&elf32_le_vec' -DSELECT_ARCHITECTURES='&bfd_arm_arch'
+HAVEVECS = -DHAVE_arm_elf32_le_vec -DHAVE_arm_elf32_fdpic_le_vec -DHAVE_elf32_le_vec
 
 AM_CPPFLAGS += @HDEFINES@ @TDEFINES@ $(CSEARCH) $(CSWITCHES) \
 	$(HAVEVECS)
@@ -155,7 +155,6 @@ BUILT_SOURCES = $(BUILD_HFILES)
 
 HFILES = $(SOURCE_HFILES) $(BUILD_HFILES)
 
-all diststuff: info
 
 # Various kinds of .o files to put in libbfd.a:
 # BFD_BACKENDS	Routines the configured targets need.
@@ -203,14 +202,14 @@ targmatch.h: config.bfd targmatch.sed
 # info from configure.
 
 targets.o: targets.c Makefile
-	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
+	$(COMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/targets.c
 
 archures.o: archures.c Makefile
-	$(LTCOMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
+	$(COMPILE) -c -o $@ $(TDEFAULTS) $(srcdir)/archures.c
 
 $(ofiles): %.o: %.c Makefile
 dwarf2.o: dwarf2.c Makefile
-	$(LTCOMPILE) -c -o $@ -DDEBUGDIR=\"$(DEBUGDIR)\" $(srcdir)/dwarf2.c
+	$(COMPILE) -c -o $@ -DDEBUGDIR=\"$(libdir)/debug\" $(srcdir)/dwarf2.c
 
 BFD_H_DEPS= $(INCDIR)/ansidecl.h $(INCDIR)/symcat.h
 LOCAL_H_DEPS= libbfd.h sysdep.h config.h

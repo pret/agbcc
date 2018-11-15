@@ -107,13 +107,6 @@ static void gen_proto(rtx insn)
     printf(");\n");
 }
 
-/* Print out a function declaration without a prototype.  */
-
-static void gen_nonproto(rtx insn)
-{
-    printf("extern rtx gen_%s ();\n", XSTR(insn, 0));
-}
-
 static void gen_insn(rtx insn)
 {
     const char *name = XSTR(insn, 0);

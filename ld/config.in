@@ -1,14 +1,5 @@
 /* config.in.  Generated from configure.ac by autoheader.  */
 
-/* Define to 1 if you want to emit gnu hash in the ELF linker by default. */
-#undef DEFAULT_EMIT_GNU_HASH
-
-/* Define to 1 if you want to emit sysv hash in the ELF linker by default. */
-#undef DEFAULT_EMIT_SYSV_HASH
-
-/* Define if you want compressed debug sections by default. */
-#undef DEFAULT_FLAG_COMPRESS_DEBUG
-
 /* Define to 1 if you want to enable -z relro in ELF linker by default. */
 #undef DEFAULT_LD_Z_RELRO
 
@@ -16,22 +7,8 @@
    default. */
 #undef DEFAULT_LD_Z_SEPARATE_CODE
 
-/* Define to 1 if you want to set DT_RUNPATH instead of DT_RPATH by default.
-   */
-#undef DEFAULT_NEW_DTAGS
-
-/* Define to choose default GOT handling scheme */
-#undef GOT_HANDLING_DEFAULT
-
-/* Define to 1 if you have the declaration of `environ', and to 0 if you
-   don't. */
-#undef HAVE_DECL_ENVIRON
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
-
-/* Define to 1 if you have the `glob' function. */
-#undef HAVE_GLOB
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H

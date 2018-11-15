@@ -2286,25 +2286,6 @@ default_indirect_link_order (bfd *output_bfd,
   return FALSE;
 }
 
-/* A little routine to count the number of relocs in a link_order
-   list.  */
-
-unsigned int
-_bfd_count_link_order_relocs (struct bfd_link_order *link_order)
-{
-  register unsigned int c;
-  register struct bfd_link_order *l;
-
-  c = 0;
-  for (l = link_order; l != NULL; l = l->next)
-    {
-      if (l->type == bfd_section_reloc_link_order
-	  || l->type == bfd_symbol_reloc_link_order)
-	++c;
-    }
-
-  return c;
-}
 
 /*
 FUNCTION

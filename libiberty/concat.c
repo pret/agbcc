@@ -76,21 +76,6 @@ vconcat_copy (char *dst, const char *first, va_list args)
   return dst;
 }
 
-/* @undocumented concat_length */
-
-unsigned long
-concat_length (const char *first, ...)
-{
-  unsigned long length;
-  va_list args;
-
-  va_start (args, first);
-  length = vconcat_length (first, args);
-  va_end (args);
-
-  return length;
-}
-
 /* @undocumented concat_copy */
 
 char *
@@ -115,18 +100,6 @@ char *libiberty_concat_ptr;
 }
 #endif /* __cplusplus */
 
-/* @undocumented concat_copy2 */
-
-char *
-concat_copy2 (const char *first, ...)
-{
-  va_list args;
-  va_start (args, first);
-  vconcat_copy (libiberty_concat_ptr, first, args);
-  va_end (args);
-
-  return libiberty_concat_ptr;
-}
 
 char *
 concat (const char *first, ...)

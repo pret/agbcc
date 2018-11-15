@@ -32,9 +32,6 @@
 #include "fopen-bin.h"
 
 #include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -51,10 +48,6 @@ extern int errno;
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#else
-#ifdef HAVE_SYS_FILE_H
-#include <sys/file.h>
-#endif
 #endif
 
 #ifdef HAVE_SYS_STAT_H
@@ -65,10 +58,6 @@ extern int errno;
 
 #if !HAVE_DECL_STPCPY
 extern char *stpcpy (char *, const char *);
-#endif
-
-#if !HAVE_DECL_ENVIRON
-extern char **environ;
 #endif
 
 #ifndef O_RDONLY

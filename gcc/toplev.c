@@ -1382,7 +1382,7 @@ static void v_warning_with_file_and_line(const char *file, int line, const char 
     if (count_error(1))
     {
         report_error_function(file);
-        v_message_with_file_and_line(file, line, MAGENTA("warning"), s, ap);
+        v_message_with_file_and_line(file, line, warnings_are_errors ? RED("error") : MAGENTA("warning"), s, ap);
         print_error_line(file, line);
     }
 }
