@@ -1,6 +1,8 @@
 #include <gba/gba.h>
 #include "librfu.h"
 
+typedef void (*IntrFunc)(void);
+
 extern IntrFunc IntrSIO32(void);
 
 extern void STWI_stop_timer(void);
