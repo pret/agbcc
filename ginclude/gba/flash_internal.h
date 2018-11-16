@@ -1,6 +1,8 @@
 #ifndef GUARD_GBA_FLASH_INTERNAL_H
 #define GUARD_GBA_FLASH_INTERNAL_H
 
+#include <gba/gba.h>
+
 #define FLASH_BASE ((u8 *)0xE000000)
 
 #define FLASH_WRITE(addr, data) ((*(vu8 *)(FLASH_BASE + (addr))) = (data))
@@ -73,5 +75,8 @@ u16 EraseFlashChip_MX(void);
 u16 EraseFlashSector_MX(u16 sectorNum);
 u16 ProgramFlashByte_MX(u16 sectorNum, u32 offset, u8 data);
 u16 ProgramFlashSector_MX(u16 sectorNum, u8 *src);
+
+// agb_flash_1m
+u16 IdentifyFlash(void);
 
 #endif // GUARD_GBA_FLASH_INTERNAL_H
