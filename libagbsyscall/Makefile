@@ -11,8 +11,24 @@ endif
 ASFLAGS := -mcpu=arm7tdmi
 ARFLAGS := rc
 
+SYSCALLS := ArcTan2 \
+            BgAffineSet \
+            CpuFastSet \
+            CpuSet \
+            Div \
+            LZ77UnCompVram \
+            LZ77UnCompWram \
+            MultiBoot \
+            ObjAffineSet \
+            RLUnCompVram \
+            RLUnCompWram \
+            RegisterRamReset \
+            SoftReset \
+            Sqrt \
+            VBlankIntrWait
+
 ASM_SRCS := libagbsyscall.s
-ASM_OBJS := $(ASM_SRCS:%.s=%.o)
+ASM_OBJS := $(foreach syscall, $(SYSCALLS), $(syscall).o)
 
 LIB := libagbsyscall.a
 
@@ -26,5 +42,5 @@ clean:
 $(LIB): $(ASM_OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
-$(ASM_OBJS): %.o: %.s
-	$(AS) $(ASFLAGS) -o $@ $<
+$(ASM_OBJS): libagbsyscall.s
+	$(AS) $(ASFLAGS) --defsym L_$(@:%.o=%)=1 -o $@ $<

@@ -146,7 +146,7 @@
 #define DmaCopyDefvars(dmaNum, src, dest, size, bit) \
 {                                                    \
     const void *_src = src;                          \
-    void *_dest = (void *)dest;                              \
+    void *_dest = (void *)(dest);                    \
     u32 _size = size;                                \
     DmaCopy##bit(dmaNum, _src, _dest, _size);        \
 }
