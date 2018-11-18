@@ -21,8 +21,8 @@
     .set L_SoftReset, 1
     .set L_Sqrt, 1
     .set L_VBlankIntrWait, 1
-    .set L_SoundBiasOff, 1
-    .set L_SoundBiasOn, 1
+    .set L_SoundBiasReset, 1
+    .set L_SoundBiasSet, 1
     .endif
 
     .ifdef L_ArcTan2
@@ -153,6 +153,26 @@ Sqrt: @ 82E70C4
 	thumb_func_end Sqrt
 	.endif
 
+	.ifdef L_SoundBiasReset
+	thumb_func_start SoundBiasReset
+@ void SoundBiasReset()
+SoundBiasReset:
+	movs r0, 0
+	swi 0x19
+	bx lr
+	thumb_func_end SoundBiasReset
+	.endif
+
+	.ifdef L_SoundBiasSet
+	thumb_func_start SoundBiasSet
+@ void SoundBiasSet()
+SoundBiasSet:
+	movs r0, 1
+	swi 0x19
+	bx lr
+	thumb_func_end SoundBiasSet
+	.endif
+
     .ifdef L_VBlankIntrWait
 	thumb_func_start VBlankIntrWait
 @ void VBlankIntrWait()
@@ -161,26 +181,6 @@ VBlankIntrWait: @ 82E70C8
 	swi 0x5
 	bx lr
 	thumb_func_end VBlankIntrWait
-	.endif
-
-	.ifdef L_SoundBiasOff
-	thumb_func_start SoundBiasOff
-@ void SoundBiasOff()
-SoundBiasOff:
-	movs r0, 0
-	swi 0x19
-	bx lr
-	thumb_func_end SoundBiasOff
-	.endif
-
-	.ifdef L_SoundBiasOn
-	thumb_func_start SoundBiasOn
-@ void SoundBiasOn()
-SoundBiasOn:
-	movs r0, 1
-	swi 0x19
-	bx lr
-	thumb_func_end SoundBiasOn
 	.endif
 
 	.align 2, 0 @ Don't pad with nop.

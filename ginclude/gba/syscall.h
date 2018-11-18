@@ -47,8 +47,8 @@ void RLUnCompVram(const void *src, void *dest);
 
 int MultiBoot(struct MultiBootParam *mp);
 
-void SoundBiasOff(void);
+void SoundBiasReset(void);
 
-void SoundBiasOn(void);
+void SoundBiasSet(void);
 
 #endif // GUARD_GBA_SYSCALL_H
