@@ -7,9 +7,16 @@ static vu16 *sTimerReg;
 static u16 sSavedIme;
 
 u8 gFlashTimeoutFlag;
+u8 (*PollFlashStatus)(u8 *);
 const struct FlashType *gFlash;
 u16 gFlashNumRemainingBytes;
 const u16 *gFlashMaxTime;
+
+u16 (*ProgramFlashByte)(u16, u32, u8);
+u16 (*ProgramFlashSector)(u16, void *);
+u16 (*EraseFlashChip)(void);
+u16 (*EraseFlashSector)(u16);
+u16 (*WaitForFlashWrite)(u8, u8 *, u8);
 
 void SetReadFlash1(u16 *dest);
 
