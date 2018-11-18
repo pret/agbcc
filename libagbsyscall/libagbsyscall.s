@@ -175,7 +175,7 @@ SoundBiasOff:
 
 	.ifdef L_SoundBiasOn
 	thumb_func_start SoundBiasOn
-@ void SoundBiasOff()
+@ void SoundBiasOn()
 SoundBiasOn:
 	movs r0, 1
 	swi 0x19
