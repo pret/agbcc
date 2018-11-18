@@ -1,6 +1,8 @@
 #ifndef GUARD_GBA_SYSCALL_H
 #define GUARD_GBA_SYSCALL_H
 
+#include <gba/types.h>
+
 #define RESET_EWRAM      0x01
 #define RESET_IWRAM      0x02
 #define RESET_PALETTE    0x04
@@ -44,5 +46,9 @@ void RLUnCompWram(const void *src, void *dest);
 void RLUnCompVram(const void *src, void *dest);
 
 int MultiBoot(struct MultiBootParam *mp);
+
+void SoundBiasOff(void);
+
+void SoundBiasOn(void);
 
 #endif // GUARD_GBA_SYSCALL_H

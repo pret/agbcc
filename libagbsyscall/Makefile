@@ -25,7 +25,9 @@ SYSCALLS := ArcTan2 \
             RegisterRamReset \
             SoftReset \
             Sqrt \
-            VBlankIntrWait
+            VBlankIntrWait \
+            SoundBiasOff \
+            SoundBiasOn
 
 ASM_SRCS := libagbsyscall.s
 ASM_OBJS := $(foreach syscall, $(SYSCALLS), $(syscall).o)
