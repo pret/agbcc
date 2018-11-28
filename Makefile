@@ -228,10 +228,13 @@ libsiirtc_clean:
 	$(RM) libsiirtc.a
 	@$(MAKE) -C siirtc clean
 
-clean: binutils_clean $(CLEAN) libc_clean libgcc_clean old_gcc_clean gcc_clean libagb_flash_clean libagbsyscall_clean libgcnmultiboot_clean libisagbprn_clean librfu_clean libm4a_clean libsiirtc_clean
+sdk: libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu libm4a libsiirtc
 
+sdk_clean: libagb_flash_clean libagbsyscall_clean libgcnmultiboot_clean libisagbprn_clean librfu_clean libm4a_clean libsiirtc_clean
 
-.PHONY: binutils old gcc old_gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu librfu libm4a libsiirtc all clean install
+clean: binutils_clean $(CLEAN) libc_clean libgcc_clean old_gcc_clean gcc_clean sdk_clean
+
+.PHONY: binutils old gcc old_gcc libc libgcc libagb_flash libagbsyscall libgcnmultiboot libisagbprn librfu librfu libm4a libsiirtc all clean install sdk sdk_clean
 .PHONY: install-prefix-check $(ALL) $(SUBDIRS) $(OBJS_TGTS) $(BINUTILS_INSTALL) $(BINUTILS_INSTALL_STRIP) $(CLEAN) $(CONFIGURE_TGTS) install install-strip clean
 
 ifeq (,$(FORCE_INSTALL_LOCATION))
