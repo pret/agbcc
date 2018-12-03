@@ -1,8 +1,6 @@
 #include <gba/gba.h>
 #include "librfu.h"
 
-typedef void (*IntrFunc)(void);
-
 // Nonmatching, only register differences
 /*u16 rfu_initializeAPI(u32 *unk0, u16 unk1, IntrFunc *interrupt, bool8 copyInterruptToRam)
 {

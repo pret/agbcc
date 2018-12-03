@@ -3,6 +3,10 @@
 
 #include <gba/gba.h>
 
+#ifndef PLAYER_NAME_LENGTH
+#define PLAYER_NAME_LENGTH 7
+#endif
+
 enum
 {
     RFU_RESET = 0x10,
@@ -84,7 +88,7 @@ struct UnkLinkRfuStruct_02022B14Substruct
     u8 playerTrainerId[2];
 };
 
-struct __attribute__((packed)) UnkLinkRfuStruct_02022B14
+struct __attribute__((packed, aligned(2))) UnkLinkRfuStruct_02022B14
 {
     struct UnkLinkRfuStruct_02022B14Substruct unk_00;
     u8 unk_04[4];
@@ -172,13 +176,14 @@ struct RfuUnk3
     u32 unk_dc;
 };
 
-struct RfuUnk5Sub {
+struct RfuUnk5Sub
+{
     u16 unk_00;
     u8 unk_02;
     u16 unk_04;
     struct UnkLinkRfuStruct_02022B14 unk_06;
-    u8 fill_13[2];
-    u8 unk_15[8];
+    u8 fill_13[1];
+    u8 playerName[PLAYER_NAME_LENGTH + 1];
 };
 
 struct RfuUnk5
@@ -208,7 +213,7 @@ extern struct RfuUnk1* gUnknown_03007870[4];
 extern void* sub_82E53F4;
 extern void rfu_STC_clearAPIVariables(void);
 
-void STWI_init_all(struct RfuIntrStruct *interruptStruct, void (**interrupt)(void), bool8 copyInterruptToRam);
+void STWI_init_all(struct RfuIntrStruct *interruptStruct, IntrFunc *interrupt, bool8 copyInterruptToRam);
 void rfu_REQ_stopMode(void);
 void rfu_waitREQComplete(void);
 u32 rfu_REQBN_softReset_and_checkID(void);
@@ -246,8 +251,8 @@ bool16 rfu_UNI_PARENT_getDRAC_ACK(u8 *a0);
 void rfu_REQ_disconnect(u8 who);
 void rfu_changeSendTarget(u8 a0, u8 who, u8 a2);
 void rfu_NI_stopReceivingData(u8 who);
-u16 rfu_initializeAPI(u32 *unk0, u16 unk1, void (**interrupt)(void), bool8 copyInterruptToRam);
-void rfu_setTimerInterrupt(u8 which, void (**intr)(void));
+u16 rfu_initializeAPI(u32 *unk0, u16 unk1, IntrFunc *interrupt, bool8 copyInterruptToRam);
+void rfu_setTimerInterrupt(u8 which, IntrFunc *intr);
 void rfu_setRecvBuffer(u8 a0, u8 a1, void *a2, size_t a3);
 bool16 rfu_UNI_setSendData(u8 flag, void *ptr, u8 size);
 void rfu_REQ_recvData(void);

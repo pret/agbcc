@@ -139,4 +139,8 @@ struct SioMultiCnt
 #define ST_SIO_57600_BPS  2 //  57600 bps
 #define ST_SIO_115200_BPS 3 // 115200 bps
 
+typedef void (*MainCallback)(void);
+typedef void (*IntrCallback)(void);
+typedef void (*IntrFunc)(void);
+
 #endif // GUARD_GBA_TYPES_H
