@@ -16,6 +16,7 @@ SYSCALLS := ArcTan2 \
             CpuFastSet \
             CpuSet \
             Div \
+            Mod \
             LZ77UnCompVram \
             LZ77UnCompWram \
             MultiBoot \

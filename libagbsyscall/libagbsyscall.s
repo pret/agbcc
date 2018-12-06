@@ -27,7 +27,7 @@
 
     .ifdef L_ArcTan2
 	thumb_func_start ArcTan2
-ArcTan2: @ 82E7078
+ArcTan2:
 	swi 0xA
 	bx lr
 	thumb_func_end ArcTan2
@@ -36,7 +36,7 @@ ArcTan2: @ 82E7078
     .ifdef L_BgAffineSet
 	thumb_func_start BgAffineSet
 @ void BgAffineSet(BgAffineSet_src_data *src, BgAffineSet_dest_data *dest, int entry_count)
-BgAffineSet: @ 82E707C
+BgAffineSet:
 	swi 0xE
 	bx lr
 	thumb_func_end BgAffineSet
@@ -45,7 +45,7 @@ BgAffineSet: @ 82E707C
     .ifdef L_CpuFastSet
 	thumb_func_start CpuFastSet
 @ void CpuFastSet(void *src, void *dest, unsigned int mode)
-CpuFastSet: @ 82E7080
+CpuFastSet:
 	swi 0xC
 	bx lr
 	thumb_func_end CpuFastSet
@@ -54,7 +54,7 @@ CpuFastSet: @ 82E7080
     .ifdef L_CpuSet
 	thumb_func_start CpuSet
 @ void CpuSet(void *src, void *dest, unsigned int mode)
-CpuSet: @ 82E7084
+CpuSet:
 	swi 0xB
 	bx lr
 	thumb_func_end CpuSet
@@ -62,16 +62,25 @@ CpuSet: @ 82E7084
 
     .ifdef L_Div
 	thumb_func_start Div
-Div: @ 82E7088
+Div:
 	swi 0x6
 	bx lr
 	thumb_func_end Div
 	.endif
 
+    .ifdef L_Mod
+    thumb_func_start Mod
+Mod:
+    swi 0x6
+    adds r0, r1, 0
+    bx lr
+    thumb_func_end Mod
+    .endif
+
     .ifdef L_LZ77UnCompVram
 	thumb_func_start LZ77UnCompVram
 @ void LZ77UnCompVram(void *src, void *dest)
-LZ77UnCompVram: @ 82E708C
+LZ77UnCompVram:
 	swi 0x12
 	bx lr
 	thumb_func_end LZ77UnCompVram
@@ -80,7 +89,7 @@ LZ77UnCompVram: @ 82E708C
     .ifdef L_LZ77UnCompWram
 	thumb_func_start LZ77UnCompWram
 @ void LZ77UnCompWram(void *src, void *dest)
-LZ77UnCompWram: @ 82E7090
+LZ77UnCompWram:
 	swi 0x11
 	bx lr
 	thumb_func_end LZ77UnCompWram
@@ -89,7 +98,7 @@ LZ77UnCompWram: @ 82E7090
     .ifdef L_MultiBoot
 	thumb_func_start MultiBoot
 @ s32 MultiBoot(struct MultiBootParam *mp)
-MultiBoot: @ 82E7094
+MultiBoot:
 	movs r1, 0x1
 	swi 0x25
 	bx lr
@@ -98,7 +107,7 @@ MultiBoot: @ 82E7094
 
     .ifdef L_ObjAffineSet
 	thumb_func_start ObjAffineSet
-ObjAffineSet: @ 82E709C
+ObjAffineSet:
 	swi 0xF
 	bx lr
 	thumb_func_end ObjAffineSet
@@ -106,7 +115,7 @@ ObjAffineSet: @ 82E709C
 
     .ifdef L_RLUnCompVram
 	thumb_func_start RLUnCompVram
-RLUnCompVram: @ 82E70A0
+RLUnCompVram:
 	swi 0x15
 	bx lr
 	thumb_func_end RLUnCompVram
@@ -114,7 +123,7 @@ RLUnCompVram: @ 82E70A0
 
     .ifdef L_RLUnCompWram
 	thumb_func_start RLUnCompWram
-RLUnCompWram: @ 82E70A4
+RLUnCompWram:
 	swi 0x14
 	bx lr
 	thumb_func_end RLUnCompWram
@@ -123,7 +132,7 @@ RLUnCompWram: @ 82E70A4
     .ifdef L_RegisterRamReset
 	thumb_func_start RegisterRamReset
 @ void RegisterRamReset(int ResetFlags)
-RegisterRamReset: @ 82E70A8
+RegisterRamReset:
 	swi 0x1
 	bx lr
 	thumb_func_end RegisterRamReset
@@ -132,7 +141,7 @@ RegisterRamReset: @ 82E70A8
     .ifdef L_SoftReset
 	thumb_func_start SoftReset
 @ void SoftReset()
-SoftReset: @ 82E70AC
+SoftReset:
 	ldr r3, =REG_IME
 	movs r2, 0
 	strb r2, [r3]
@@ -147,7 +156,7 @@ SoftReset: @ 82E70AC
     .ifdef L_Sqrt
 	thumb_func_start Sqrt
 @ s16 Sqrt(int)
-Sqrt: @ 82E70C4
+Sqrt:
 	swi 0x8
 	bx lr
 	thumb_func_end Sqrt
@@ -176,7 +185,7 @@ SoundBiasSet:
     .ifdef L_VBlankIntrWait
 	thumb_func_start VBlankIntrWait
 @ void VBlankIntrWait()
-VBlankIntrWait: @ 82E70C8
+VBlankIntrWait:
 	movs r2, 0
 	swi 0x5
 	bx lr
