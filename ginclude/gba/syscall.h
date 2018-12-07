@@ -51,4 +51,7 @@ void SoundBiasReset(void);
 
 void SoundBiasSet(void);
 
+u32 Div(u32 divisor, u32 dividend);
+u32 Mod(u32 divisor, u32 dividend);
+
 #endif // GUARD_GBA_SYSCALL_H
