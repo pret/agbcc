@@ -10,7 +10,7 @@ const struct FlashSetupInfo * const sSetupInfos[] =
     &DefaultFlash
 };
 
-u16 IdentifyFlash(void)
+u32 IdentifyFlash(void)
 {
     u16 result;
     u16 flashId;
