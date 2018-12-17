@@ -30,3 +30,5 @@ gas/as-new
 ld/ld-new
 ld/ldscripts/*
 
+.idea/
+

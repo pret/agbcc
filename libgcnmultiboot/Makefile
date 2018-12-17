@@ -1,6 +1,6 @@
-include $(DEVKITARM)/base_tools
-export AR := $(PREFIX)ar
-export AS := $(PREFIX)as
+AR     := ../binutils/ar
+AS     := ../gas/as-new
+CPP    := $(CC) -E
 
 ifeq ($(OS),Windows_NT)
 EXE := .exe

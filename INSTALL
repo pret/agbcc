@@ -4,7 +4,12 @@ working copy of agbcc and friends.
 In order to build this, you need zlib as well as your usual build
 tools:
 
+Examples for installing zlib:
+
+Linux and WSL:
     sudo apt-get install zlib-dev
+
+Mac OS X with [Homebrew](https://brew.sh/)
     brew install zlib
 
 Then run the following:
