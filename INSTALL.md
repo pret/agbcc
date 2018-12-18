@@ -7,9 +7,11 @@ tools:
 Examples for installing zlib:
 
 Linux and WSL:
+
     sudo apt-get install zlib-dev
 
 Mac OS X with [Homebrew](https://brew.sh/)
+
     brew install zlib
 
 Then run the following:
@@ -33,17 +35,16 @@ It is designed to be installed into the root of a pret GBA
 disassembly tree, and because of this, it will install itself
 into the following hierarchy:
 
-install_prefix
-└── tools
-    ├── agbcc
-    │   ├── bin
-    │   ├── lib
-    │   └── include
-    └── binutils
-        ├── bin
-        └── armv4tl-none-eabi
+    install_prefix
+    └── tools
+        ├── agbcc
+        │   ├── bin
+        │   ├── lib
+        │   └── include
+        └── binutils
             ├── bin
-            └── lib
-                └── ldscripts
-   
+            └── armv4tl-none-eabi
+                ├── bin
+                └── lib
+                    └── ldscripts
 
