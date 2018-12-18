@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+bfd.h
+bfd-in3.h
+bfdver.h
+config.h
+Makefile
+ofiles
+stamp-h1
+stamp-ofiles
+targmatch.h
+stmp-bfd-h

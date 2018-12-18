@@ -1,0 +1,8 @@
+# Created by .ignore support plugin (hsz.mobi)
+config.h
+Makefile
+stamp-h1
+earmelf.c
+ldemul-list.h
+stringify.sed
+tmpdir/
