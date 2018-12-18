@@ -11,24 +11,49 @@ endif
 ASFLAGS := -mcpu=arm7tdmi
 ARFLAGS := rc
 
-SYSCALLS := ArcTan2 \
+SYSCALLS := IntrWait \
+            RegisterRamReset \
+            Sqrt \
+            MusicPlayerOpen \
+            SoundBiasReset \
+            SoundDriverVSyncOn \
+            DivRem \
+            VBlankIntrWait \
+            MusicPlayerStart \
+            SoundDriverVSyncOff \
+            HuffUnComp \
+            SoftResetExram \
+            MusicPlayerFadeOut \
+            LZ77UnCompWram \
+            SoundDriverMain \
+            SoundBiasChange \
+            LZ77UnCompVram \
+            ArcTan2 \
+            MusicPlayerStop \
+            DivArm \
+            DivRemArm \
+            SoundDriverVSync \
+            SoundDriverInit \
             BgAffineSet \
+            Diff8bitUnFilterWram \
+            MultiBoot \
+            MidiKey2Freq \
+            Div \
+            Diff8bitUnFilterVram \
+            ArcTan \
+            ObjAffineSet \
+            SoftResetRom \
+            SoundDriverMode \
+            RLUnCompWram \
+            BitUnPack \
+            SoundChannelClear \
             CpuFastSet \
             CpuSet \
-            Div \
-            Mod \
-            LZ77UnCompVram \
-            LZ77UnCompWram \
-            MultiBoot \
-            ObjAffineSet \
-            RLUnCompVram \
-            RLUnCompWram \
-            RegisterRamReset \
+            Diff16bitUnFilter \
+            SoundBiasSet \
+            MusicPlayerContinue \
             SoftReset \
-            Sqrt \
-            VBlankIntrWait \
-            SoundBiasReset \
-            SoundBiasSet
+            RLUnCompVram
 
 ASM_SRCS := libagbsyscall.s
 ASM_OBJS := $(foreach syscall, $(SYSCALLS), $(syscall).o)
