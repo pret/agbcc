@@ -428,3 +428,5 @@ RLUnCompVram:
 	bx lr
 	thumb_func_end RLUnCompVram
 	.endif
+
+	.align 2, 0 @ Don't pad with nop
