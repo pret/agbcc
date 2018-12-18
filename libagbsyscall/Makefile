@@ -17,7 +17,7 @@ SYSCALLS := IntrWait \
             MusicPlayerOpen \
             SoundBiasReset \
             SoundDriverVSyncOn \
-            DivRem \
+            Mod \
             VBlankIntrWait \
             MusicPlayerStart \
             SoundDriverVSyncOff \
@@ -31,7 +31,7 @@ SYSCALLS := IntrWait \
             ArcTan2 \
             MusicPlayerStop \
             DivArm \
-            DivRemArm \
+            ModArm \
             SoundDriverVSync \
             SoundDriverInit \
             BgAffineSet \
