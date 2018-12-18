@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script
 
 AC_INIT
-AC_CONFIG_AUX_DIR([../aux])
+AC_CONFIG_AUX_DIR([../gnu_aux])
 AC_CONFIG_SRCDIR([vprintf-support.c])
 m4_include([../config/lean.m4])
 
@@ -79,7 +79,7 @@ fi
 echo enable_shared = no >> temp-frag
 
 frag=xhost-mkfrag
-${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/aux/move-if-change temp-frag xhost-mkfrag
+${CONFIG_SHELL-/bin/sh} ${libiberty_topdir}/gnu_aux/move-if-change temp-frag xhost-mkfrag
 
 host_makefile_frag=${frag}
 AC_SUBST_FILE(host_makefile_frag)

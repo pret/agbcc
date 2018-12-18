@@ -22,7 +22,7 @@ dnl
 dnl v2.5 needed for --bindir et al
 m4_include([../bfd/version.m4])
 AC_INIT([gas],[BFD_VERSION])
-AC_CONFIG_AUX_DIR([../aux])
+AC_CONFIG_AUX_DIR([../gnu_aux])
 AC_CONFIG_SRCDIR(as.h)
 m4_include([../config/lean.m4])
 

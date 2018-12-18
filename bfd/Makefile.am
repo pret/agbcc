@@ -171,7 +171,7 @@ stamp-ofiles: Makefile
 	  esac ; \
 	done ; \
 	echo $$f > tofiles
-	$(SHELL) $(srcdir)/../aux/move-if-change tofiles ofiles
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tofiles ofiles
 	touch stamp-ofiles
 
 ofiles: stamp-ofiles ; @true
@@ -232,7 +232,7 @@ $(BFD_H): libbfd.h stmp-bfd-h ; @true
 stmp-bfd-h: bfd-in3.h
 	rm -f bfd-tmp.h
 	cp bfd-in3.h bfd-tmp.h
-	$(SHELL) $(srcdir)/../aux/move-if-change bfd-tmp.h $(BFD_H)
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change bfd-tmp.h $(BFD_H)
 	rm -f bfd-tmp.h
 	touch stmp-bfd-h
 

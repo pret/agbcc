@@ -19,7 +19,7 @@ dnl
 
 m4_include([../bfd/version.m4])
 AC_INIT([binutils], BFD_VERSION)
-AC_CONFIG_AUX_DIR([../aux])
+AC_CONFIG_AUX_DIR([../gnu_aux])
 m4_include([../config/lean.m4])
 
 AC_CONFIG_SRCDIR(ar.c)

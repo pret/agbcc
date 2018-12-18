@@ -24,7 +24,7 @@ ac_cv_target_alias=armv4tl-none-eabi
 m4_include([version.m4])
 AC_INIT([bfd], [BFD_VERSION])
 m4_include([../config/lean.m4])
-AC_CONFIG_AUX_DIR([../aux])
+AC_CONFIG_AUX_DIR([../gnu_aux])
 AC_CONFIG_SRCDIR([libbfd.c])
 
 AC_CANONICAL_TARGET

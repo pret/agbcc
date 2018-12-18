@@ -116,9 +116,9 @@ REGS_H := regs.h varray.h machmode.h machmode.def
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $<
 
 tree-check.h: s-check
-s-check : gencheck $(srcdir)/../aux/move-if-change
+s-check : gencheck $(srcdir)/../gnu_aux/move-if-change
 	./gencheck > tmp-check.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-check.h tree-check.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-check.h tree-check.h
 	touch s-check
 
 gencheck : gencheck.o tree.def
@@ -143,80 +143,80 @@ gencheck.o : gencheck.c config.h system.h
 # because insn-* is older than s-*
 # and thus make -n thinks that insn-* will be updated
 # and force recompilation of things that depend on it.
-# We use ../aux/move-if-change precisely to avoid such recompilation.
+# We use ../gnu_aux/move-if-change precisely to avoid such recompilation.
 # But there is no way to teach make -n that it will be avoided.
 
 insn-config.h: s-config
-s-config : $(md_file) genconfig $(srcdir)/../aux/move-if-change
+s-config : $(md_file) genconfig $(srcdir)/../gnu_aux/move-if-change
 	./genconfig $(md_file) > tmp-config.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-config.h insn-config.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-config.h insn-config.h
 	touch s-config
 
 insn-flags.h: s-flags
-s-flags : $(md_file) genflags $(srcdir)/../aux/move-if-change
+s-flags : $(md_file) genflags $(srcdir)/../gnu_aux/move-if-change
 	./genflags $(md_file) > tmp-flags.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-flags.h insn-flags.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-flags.h insn-flags.h
 	touch s-flags
 
 insn-codes.h: s-codes
-s-codes : $(md_file) gencodes $(srcdir)/../aux/move-if-change
+s-codes : $(md_file) gencodes $(srcdir)/../gnu_aux/move-if-change
 	./gencodes $(md_file) > tmp-codes.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-codes.h insn-codes.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-codes.h insn-codes.h
 	touch s-codes
 
 insn-emit.c: s-emit
-s-emit : $(md_file) genemit $(srcdir)/../aux/move-if-change
+s-emit : $(md_file) genemit $(srcdir)/../gnu_aux/move-if-change
 	./genemit $(md_file) > tmp-emit.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-emit.c insn-emit.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-emit.c insn-emit.c
 	touch s-emit
 
 insn-recog.c: s-recog
-s-recog : $(md_file) genrecog $(srcdir)/../aux/move-if-change
+s-recog : $(md_file) genrecog $(srcdir)/../gnu_aux/move-if-change
 	./genrecog $(md_file) > tmp-recog.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-recog.c insn-recog.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-recog.c insn-recog.c
 	touch s-recog
 
 insn-opinit.c: s-opinit
-s-opinit : $(md_file) genopinit $(srcdir)/../aux/move-if-change
+s-opinit : $(md_file) genopinit $(srcdir)/../gnu_aux/move-if-change
 	./genopinit $(md_file) > tmp-opinit.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-opinit.c insn-opinit.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-opinit.c insn-opinit.c
 	touch s-opinit
 
 insn-extract.c: s-extract
-s-extract : $(md_file) genextract $(srcdir)/../aux/move-if-change
+s-extract : $(md_file) genextract $(srcdir)/../gnu_aux/move-if-change
 	./genextract $(md_file) > tmp-extract.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-extract.c insn-extract.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-extract.c insn-extract.c
 	touch s-extract
 
 insn-peep.c: s-peep
-s-peep : $(md_file) genpeep $(srcdir)/../aux/move-if-change
+s-peep : $(md_file) genpeep $(srcdir)/../gnu_aux/move-if-change
 	./genpeep $(md_file) > tmp-peep.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-peep.c insn-peep.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-peep.c insn-peep.c
 	touch s-peep
 
 insn-attr.h: s-attr
-s-attr : $(md_file) genattr $(srcdir)/../aux/move-if-change
+s-attr : $(md_file) genattr $(srcdir)/../gnu_aux/move-if-change
 	./genattr $(md_file) > tmp-attr.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-attr.h insn-attr.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-attr.h insn-attr.h
 	touch s-attr
 
 insn-attrtab.c: s-attrtab
-s-attrtab : $(md_file) genattrtab $(srcdir)/../aux/move-if-change
+s-attrtab : $(md_file) genattrtab $(srcdir)/../gnu_aux/move-if-change
 	./genattrtab $(md_file) > tmp-attrtab.c;
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-attrtab.c insn-attrtab.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-attrtab.c insn-attrtab.c
 	touch s-attrtab
 
 insn-output.c: s-output
-s-output : $(md_file) genoutput $(srcdir)/../aux/move-if-change
+s-output : $(md_file) genoutput $(srcdir)/../gnu_aux/move-if-change
 	./genoutput $(md_file) > tmp-output.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-output.c insn-output.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-output.c insn-output.c
 	touch s-output
 
 genrtl.c genrtl.h : s-genrtl
-s-genrtl: gengenrtl $(srcdir)/../aux/move-if-change $(RTL_BASE_H)
+s-genrtl: gengenrtl $(srcdir)/../gnu_aux/move-if-change $(RTL_BASE_H)
 	./gengenrtl tmp-genrtl.h tmp-genrtl.c
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-genrtl.h genrtl.h
-	$(SHELL) $(srcdir)/../aux/move-if-change tmp-genrtl.c genrtl.c
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-genrtl.h genrtl.h
+	$(SHELL) $(srcdir)/../gnu_aux/move-if-change tmp-genrtl.c genrtl.c
 	touch s-genrtl
 
 # Compile the programs that generate insn-* from the machine description.
