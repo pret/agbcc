@@ -32,3 +32,5 @@ ld/ldscripts/*
 
 .idea/
 
+# temporary folder for fixing indentation style, will delete later
+uncrustify/

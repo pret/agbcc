@@ -274,6 +274,7 @@ configure: ld-configure gas-configure bfd-configure libiberty-configure binutils
 #     Installs, optionally stripping.
 
 ld-configure:
+	@echo "Making ld";
 	@if [ ! -f ld/Makefile ]; then                     \
 	    echo "Configuring in ld...";                   \
 	    cd ld && $(CONFIGURE);                         \
@@ -285,11 +286,13 @@ ld-all: ld-objs bfd-all libiberty-all
 ld-clean: ld-configure
 	@$(MAKE) -C ld clean $(SUBSUBMAKEFLAGS)
 ld-install: ld-all
-	@$(MAKE) -C ld install prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C ld install prefix=$(abspath $(prefix))/tools/binutils $(SUBSUBMAKEFLAGS)
 ld-install-strip: ld-all
-	@$(MAKE) -C ld install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C ld install-strip prefix=$(abspath $(prefix))/tools/binutils $(SUBSUBMAKEFLAGS)
+	@printf "Done ld-install-strip\n\n\n";
 
 binutils-configure:
+	@echo "Making binutils";
 	@if [ ! -f binutils/Makefile ]; then                \
 	    echo "Configuring in binutils...";              \
 	    cd binutils && $(CONFIGURE);                    \
@@ -301,27 +304,36 @@ binutils-all: binutils-objs bfd-all libiberty-all
 binutils-clean: binutils-configure
 	@$(MAKE) -C binutils clean $(SUBSUBMAKEFLAGS)
 binutils-install: binutils-all
-	@$(MAKE) -C binutils install prefix=$(prefix)/tools/binutils  $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C binutils install prefix=$(abspath $(prefix))/tools/binutils  $(SUBSUBMAKEFLAGS)
 binutils-install-strip: binutils-all
-	@$(MAKE) -C binutils install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C binutils install-strip prefix=$(abspath $(prefix))/tools/binutils $(SUBSUBMAKEFLAGS)
+	@printf "Done binutils-install-strip\n\n\n";
+
+gas-time:
+	@echo $@: `date +%s.%N` > gas-time.log
 
 gas-configure:
+	@printf "Making gas";
 	@if [ ! -f gas/Makefile ]; then                     \
 	    echo "Configuring in gas...";                   \
 	    cd gas && $(CONFIGURE);                         \
 	fi
 gas-objs: gas-configure bfd-headers
 	@$(MAKE) -C gas objs $(SUBSUBMAKEFLAGS)
-gas-all: gas-objs bfd-all libiberty-all
+gas-all: gas-time gas-objs bfd-all libiberty-all
 	@$(MAKE) -C gas $(SUBSUBMAKEFLAGS)
+	@echo $@: `date +%s.%N` >> gas-time.log
+
 gas-clean: gas-configure
 	@$(MAKE) -C gas clean $(SUBSUBMAKEFLAGS)
 gas-install: gas-all
-	@$(MAKE) -C gas install prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C gas install prefix=$(abspath $(prefix))/tools/binutils $(SUBSUBMAKEFLAGS)
 gas-install-strip: gas-all
-	@$(MAKE) -C gas install-strip prefix=$(prefix)/tools/binutils $(SUBSUBMAKEFLAGS)
+	@$(MAKE) -C gas install-strip prefix=$(abspath $(prefix))/tools/binutils $(SUBSUBMAKEFLAGS)
+	@printf "Done gas-install-strip\n\n\n";
 
 bfd-configure:
+	@echo "Making bfd";
 	@if [ ! -f bfd/Makefile ]; then                     \
 	    echo "Configuring in bfd...";                   \
 	        cd bfd && $(CONFIGURE);                     \
@@ -340,6 +352,7 @@ bfd/stmp-bfd-h: bfd-configure
 .PHONY: bfd-headers
 
 libiberty-configure:
+	@echo "Making libiberty";
 	@if [ ! -f libiberty/Makefile ]; then               \
 	    echo "Configuring in libiberty...";             \
 	    cd libiberty && $(CONFIGURE);                   \
