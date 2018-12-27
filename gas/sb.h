@@ -43,28 +43,27 @@
 
    An sb is allocated by the caller.  */
 
-typedef struct sb
-{
-  char *ptr;			/* Points to the current block.  */
-  size_t len;			/* How much is used.  */
-  size_t max;			/* The maximum length.  */
+typedef struct sb {
+	char *ptr;              /* Points to the current block.  */
+	size_t len;             /* How much is used.  */
+	size_t max;             /* The maximum length.  */
 }
 sb;
 
-extern void sb_new (sb *);
-extern void sb_build (sb *, size_t);
-extern void sb_kill (sb *);
-extern void sb_add_sb (sb *, sb *);
-extern void sb_scrub_and_add_sb (sb *, sb *);
-extern void sb_reset (sb *);
-extern void sb_add_char (sb *, size_t);
-extern void sb_add_string (sb *, const char *);
-extern void sb_add_buffer (sb *, const char *, size_t);
-extern char *sb_terminate (sb *);
-extern size_t sb_skip_white (size_t, sb *);
-extern size_t sb_skip_comma (size_t, sb *);
+extern void sb_new(sb *);
+extern void sb_build(sb *, size_t);
+extern void sb_kill(sb *);
+extern void sb_add_sb(sb *, sb *);
+extern void sb_scrub_and_add_sb(sb *, sb *);
+extern void sb_reset(sb *);
+extern void sb_add_char(sb *, size_t);
+extern void sb_add_string(sb *, const char *);
+extern void sb_add_buffer(sb *, const char *, size_t);
+extern char *sb_terminate(sb *);
+extern size_t sb_skip_white(size_t, sb *);
+extern size_t sb_skip_comma(size_t, sb *);
 
 /* Actually in input-scrub.c.  */
-extern void input_scrub_include_sb (sb *, char *, int);
+extern void input_scrub_include_sb(sb *, char *, int);
 
 #endif /* SB_H */

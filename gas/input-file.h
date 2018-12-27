@@ -55,11 +55,11 @@
  * about I/O errors.
  */
 
-char *input_file_give_next_buffer (char *where);
-char *input_file_push (void);
-size_t input_file_buffer_size (void);
-void input_file_begin (void);
-void input_file_close (void);
-void input_file_end (void);
-void input_file_open (const char *filename, int pre);
-void input_file_pop (char *arg);
+char *input_file_give_next_buffer(char *where);
+char *input_file_push(void);
+size_t input_file_buffer_size(void);
+void input_file_begin(void);
+void input_file_close(void);
+void input_file_end(void);
+void input_file_open(const char *filename, int pre);
+void input_file_pop(char *arg);

@@ -33,22 +33,21 @@
    name and its default value.  Each time the macro is expanded, the
    formals get the actual values attached to them.  */
 
-enum formal_type
-  {
-    FORMAL_OPTIONAL,
-    FORMAL_REQUIRED,
-    FORMAL_VARARG
-  };
+enum formal_type {
+	FORMAL_OPTIONAL,
+	FORMAL_REQUIRED,
+	FORMAL_VARARG
+};
 
 /* Describe the formal arguments to a macro.  */
 
 typedef struct formal_struct {
-  struct formal_struct *next;	/* Next formal in list.  */
-  sb name;			/* Name of the formal.  */
-  sb def;			/* The default value.  */
-  sb actual;			/* The actual argument (changed on each expansion).  */
-  int index;			/* The index of the formal 0..formal_count - 1.  */
-  enum formal_type type;	/* The kind of the formal.  */
+	struct formal_struct *next; /* Next formal in list.  */
+	sb name;                /* Name of the formal.  */
+	sb def;                 /* The default value.  */
+	sb actual;              /* The actual argument (changed on each expansion).  */
+	int index;              /* The index of the formal 0..formal_count - 1.  */
+	enum formal_type type;  /* The kind of the formal.  */
 } formal_entry;
 
 /* Other values found in the index field of a formal_entry.  */
@@ -58,15 +57,14 @@ typedef struct formal_struct {
 
 /* Describe the macro.  */
 
-typedef struct macro_struct
-{
-  sb sub;				/* Substitution text.  */
-  int formal_count;			/* Number of formal args.  */
-  formal_entry *formals;		/* Pointer to list of formal_structs.  */
-  struct hash_control *formal_hash;	/* Hash table of formals.  */
-  const char *name;			/* Macro name.  */
-  const char *file;				/* File the macro was defined in.  */
-  unsigned int line;			/* Line number of definition.  */
+typedef struct macro_struct {
+	sb sub;                         /* Substitution text.  */
+	int formal_count;               /* Number of formal args.  */
+	formal_entry *formals;          /* Pointer to list of formal_structs.  */
+	struct hash_control *formal_hash; /* Hash table of formals.  */
+	const char *name;               /* Macro name.  */
+	const char *file;                       /* File the macro was defined in.  */
+	unsigned int line;              /* Line number of definition.  */
 } macro_entry;
 
 /* Whether any macros have been defined.  */
@@ -81,16 +79,16 @@ extern int macro_nest;
 
 extern struct hash_control *macro_hash;
 
-extern int buffer_and_nest (const char *, const char *, sb *,
-			    size_t (*) (sb *));
-extern void macro_init (int, int, int,
-			size_t (*) (const char *, size_t, sb *, offsetT *));
-extern void macro_set_alternate (int);
-extern void macro_mri_mode (int);
-extern const char *define_macro (size_t, sb *, sb *, size_t (*) (sb *),
-				 const char *, unsigned int, const char **);
-extern int check_macro (const char *, sb *, const char **, macro_entry **);
-extern void delete_macro (const char *);
-extern const char *expand_irp (int, size_t, sb *, sb *, size_t (*) (sb *));
+extern int buffer_and_nest(const char *, const char *, sb *,
+			   size_t (*)(sb *));
+extern void macro_init(int, int, int,
+		       size_t (*)(const char *, size_t, sb *, offsetT *));
+extern void macro_set_alternate(int);
+extern void macro_mri_mode(int);
+extern const char *define_macro(size_t, sb *, sb *, size_t (*)(sb *),
+				const char *, unsigned int, const char **);
+extern int check_macro(const char *, sb *, const char **, macro_entry **);
+extern void delete_macro(const char *);
+extern const char *expand_irp(int, size_t, sb *, sb *, size_t (*)(sb *));
 
 #endif

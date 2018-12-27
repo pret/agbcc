@@ -18,8 +18,8 @@
    along with GAS; see the file COPYING.  If not, write to
    the Free Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-void output_file_append (char *where, long length, char *filename);
-void output_file_close (const char *filename);
-void output_file_create (const char *name);
+void output_file_append(char *where, long length, char *filename);
+void output_file_close(const char *filename);
+void output_file_create(const char *name);
 
 /* end of output-file.h */

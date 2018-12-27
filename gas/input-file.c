@@ -45,215 +45,206 @@ static FILE *f_in;
 static const char *file_name;
 
 /* Struct for saving the state of this module for file includes.  */
-struct saved_file
-  {
-    FILE * f_in;
-    const char * file_name;
-    int    preprocess;
-    char * app_save;
-  };
-
+struct saved_file {
+	FILE * f_in;
+	const char * file_name;
+	int preprocess;
+	char * app_save;
+};
+
 /* These hooks accommodate most operating systems.  */
 
-void
-input_file_begin (void)
+void input_file_begin(void)
 {
-  f_in = (FILE *) 0;
+	f_in = (FILE*)0;
 }
 
-void
-input_file_end (void)
+void input_file_end(void)
 {
 }
 
 /* Return BUFFER_SIZE.  */
-size_t
-input_file_buffer_size (void)
+size_t input_file_buffer_size(void)
 {
-  return (BUFFER_SIZE);
+	return(BUFFER_SIZE);
 }
 
 /* Push the state of our input, returning a pointer to saved info that
    can be restored with input_file_pop ().  */
 
-char *
-input_file_push (void)
+char *input_file_push(void)
 {
-  struct saved_file *saved;
+	struct saved_file *saved;
 
-  saved = XNEW (struct saved_file);
+	saved = XNEW(struct saved_file);
 
-  saved->f_in = f_in;
-  saved->file_name = file_name;
-  saved->preprocess = preprocess;
-  if (preprocess)
-    saved->app_save = app_push ();
+	saved->f_in = f_in;
+	saved->file_name = file_name;
+	saved->preprocess = preprocess;
+	if (preprocess) {
+		saved->app_save = app_push();
+	}
 
-  /* Initialize for new file.  */
-  input_file_begin ();
+	/* Initialize for new file.  */
+	input_file_begin();
 
-  return (char *) saved;
+	return (char*)saved;
 }
 
-void
-input_file_pop (char *arg)
+void input_file_pop(char *arg)
 {
-  struct saved_file *saved = (struct saved_file *) arg;
+	struct saved_file *saved = (struct saved_file *)arg;
 
-  input_file_end ();		/* Close out old file.  */
+	input_file_end();       /* Close out old file.  */
 
-  f_in = saved->f_in;
-  file_name = saved->file_name;
-  preprocess = saved->preprocess;
-  if (preprocess)
-    app_pop (saved->app_save);
+	f_in = saved->f_in;
+	file_name = saved->file_name;
+	preprocess = saved->preprocess;
+	if (preprocess) {
+		app_pop(saved->app_save);
+	}
 
-  free (arg);
+	free(arg);
 }
-
+
 /* Open the specified file, "" means stdin.  Filename must not be null.  */
 
-void
-input_file_open (const char *filename,
-		 int pre)
+void input_file_open(const char *filename,
+		     int pre)
 {
-  int c;
-  char buf[80];
+	int c;
+	char buf[80];
 
-  preprocess = pre;
+	preprocess = pre;
 
-  gas_assert (filename != 0);	/* Filename may not be NULL.  */
-  if (filename[0])
-    {
-      f_in = fopen (filename, FOPEN_RT);
-      file_name = filename;
-    }
-  else
-    {
-      /* Use stdin for the input file.  */
-      f_in = stdin;
-      /* For error messages.  */
-      file_name = _("{standard input}");
-    }
-
-  if (f_in == NULL)
-    {
-      as_bad (_("can't open %s for reading: %s"),
-	      file_name, xstrerror (errno));
-      return;
-    }
-
-  c = getc (f_in);
-
-  if (ferror (f_in))
-    {
-      as_bad (_("can't read from %s: %s"),
-	      file_name, xstrerror (errno));
-
-      fclose (f_in);
-      f_in = NULL;
-      return;
-    }
-
-  /* Check for an empty input file.  */
-  if (feof (f_in))
-    {
-      fclose (f_in);
-      f_in = NULL;
-      return;
-    }
-  gas_assert (c != EOF);
-
-  if (c == '#')
-    {
-      /* Begins with comment, may not want to preprocess.  */
-      c = getc (f_in);
-      if (c == 'N')
-	{
-	  if (fgets (buf, sizeof (buf), f_in)
-	      && !strncmp (buf, "O_APP", 5) && ISSPACE (buf[5]))
-	    preprocess = 0;
-	  if (!strchr (buf, '\n'))
-	    ungetc ('#', f_in);	/* It was longer.  */
-	  else
-	    ungetc ('\n', f_in);
+	gas_assert(filename != 0); /* Filename may not be NULL.  */
+	if (filename[0]) {
+		f_in = fopen(filename, FOPEN_RT);
+		file_name = filename;
+	} else {
+		/* Use stdin for the input file.  */
+		f_in = stdin;
+		/* For error messages.  */
+		file_name = _("{standard input}");
 	}
-      else if (c == 'A')
-	{
-	  if (fgets (buf, sizeof (buf), f_in)
-	      && !strncmp (buf, "PP", 2) && ISSPACE (buf[2]))
-	    preprocess = 1;
-	  if (!strchr (buf, '\n'))
-	    ungetc ('#', f_in);
-	  else
-	    ungetc ('\n', f_in);
+
+	if (f_in == NULL) {
+		as_bad(_("can't open %s for reading: %s"),
+		       file_name, xstrerror(errno));
+		return;
 	}
-      else if (c == '\n')
-	ungetc ('\n', f_in);
-      else
-	ungetc ('#', f_in);
-    }
-  else
-    ungetc (c, f_in);
+
+	c = getc(f_in);
+
+	if (ferror(f_in)) {
+		as_bad(_("can't read from %s: %s"),
+		       file_name, xstrerror(errno));
+
+		fclose(f_in);
+		f_in = NULL;
+		return;
+	}
+
+	/* Check for an empty input file.  */
+	if (feof(f_in)) {
+		fclose(f_in);
+		f_in = NULL;
+		return;
+	}
+	gas_assert(c != EOF);
+
+	if (c == '#') {
+		/* Begins with comment, may not want to preprocess.  */
+		c = getc(f_in);
+		if (c == 'N') {
+			if (fgets(buf, sizeof(buf), f_in)
+			    && !strncmp(buf, "O_APP", 5) && ISSPACE(buf[5])) {
+				preprocess = 0;
+			}
+			if (!strchr(buf, '\n')) {
+				ungetc('#', f_in); /* It was longer.  */
+			} else {
+				ungetc('\n', f_in);
+			}
+		} else if (c == 'A') {
+			if (fgets(buf, sizeof(buf), f_in)
+			    && !strncmp(buf, "PP", 2) && ISSPACE(buf[2])) {
+				preprocess = 1;
+			}
+			if (!strchr(buf, '\n')) {
+				ungetc('#', f_in);
+			} else {
+				ungetc('\n', f_in);
+			}
+		} else if (c == '\n') {
+			ungetc('\n', f_in);
+		} else {
+			ungetc('#', f_in);
+		}
+	} else {
+		ungetc(c, f_in);
+	}
 }
 
 /* Close input file.  */
 
-void
-input_file_close (void)
+void input_file_close(void)
 {
-  /* Don't close a null file pointer.  */
-  if (f_in != NULL)
-    fclose (f_in);
+	/* Don't close a null file pointer.  */
+	if (f_in != NULL) {
+		fclose(f_in);
+	}
 
-  f_in = 0;
+	f_in = 0;
 }
 
 /* This function is passed to do_scrub_chars.  */
 
-static size_t
-input_file_get (char *buf, size_t buflen)
+static size_t input_file_get(char *buf, size_t buflen)
 {
-  size_t size;
+	size_t size;
 
-  if (feof (f_in))
-    return 0;
+	if (feof(f_in)) {
+		return 0;
+	}
 
-  size = fread (buf, sizeof (char), buflen, f_in);
-  if (ferror (f_in))
-    as_bad (_("can't read from %s: %s"), file_name, xstrerror (errno));
-  return size;
+	size = fread(buf, sizeof(char), buflen, f_in);
+	if (ferror(f_in)) {
+		as_bad(_("can't read from %s: %s"), file_name, xstrerror(errno));
+	}
+	return size;
 }
 
 /* Read a buffer from the input file.  */
 
-char *
-input_file_give_next_buffer (char *where /* Where to place 1st character of new buffer.  */)
+char *input_file_give_next_buffer(char *where /* Where to place 1st character of new buffer.  */)
 {
-  char *return_value;		/* -> Last char of what we read, + 1.  */
-  size_t size;
+	char *return_value;     /* -> Last char of what we read, + 1.  */
+	size_t size;
 
-  if (f_in == (FILE *) 0)
-    return 0;
-  /* fflush (stdin); could be done here if you want to synchronise
-     stdin and stdout, for the case where our input file is stdin.
-     Since the assembler shouldn't do any output to stdout, we
-     don't bother to synch output and input.  */
-  if (preprocess)
-    size = do_scrub_chars (input_file_get, where, BUFFER_SIZE);
-  else
-    size = input_file_get (where, BUFFER_SIZE);
+	if (f_in == (FILE*)0) {
+		return 0;
+	}
+	/* fflush (stdin); could be done here if you want to synchronise
+	   stdin and stdout, for the case where our input file is stdin.
+	   Since the assembler shouldn't do any output to stdout, we
+	   don't bother to synch output and input.  */
+	if (preprocess) {
+		size = do_scrub_chars(input_file_get, where, BUFFER_SIZE);
+	} else {
+		size = input_file_get(where, BUFFER_SIZE);
+	}
 
-  if (size)
-    return_value = where + size;
-  else
-    {
-      if (fclose (f_in))
-	as_warn (_("can't close %s: %s"), file_name, xstrerror (errno));
+	if (size) {
+		return_value = where + size;
+	} else {
+		if (fclose(f_in)) {
+			as_warn(_("can't close %s: %s"), file_name, xstrerror(errno));
+		}
 
-      f_in = (FILE *) 0;
-      return_value = 0;
-    }
+		f_in = (FILE*)0;
+		return_value = 0;
+	}
 
-  return return_value;
+	return return_value;
 }

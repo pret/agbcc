@@ -46,114 +46,109 @@
  * FixSs may be built up in any order.
  */
 
-struct fix
-{
-  /* These small fields are grouped together for compactness of
-     this structure, and efficiency of access on some architectures.  */
+struct fix {
+	/* These small fields are grouped together for compactness of
+	   this structure, and efficiency of access on some architectures.  */
 
-  /* Is this a pc-relative relocation?  */
-  unsigned fx_pcrel : 1;
+	/* Is this a pc-relative relocation?  */
+	unsigned fx_pcrel : 1;
 
-  /* Is this value an immediate displacement?  */
-  /* Only used on ns32k; merge it into TC_FIX_TYPE sometime.  */
-  unsigned fx_im_disp : 2;
+	/* Is this value an immediate displacement?  */
+	/* Only used on ns32k; merge it into TC_FIX_TYPE sometime.  */
+	unsigned fx_im_disp : 2;
 
-  /* Some bits for the CPU specific code.  */
-  unsigned fx_tcbit : 1;
-  unsigned fx_tcbit2 : 1;
+	/* Some bits for the CPU specific code.  */
+	unsigned fx_tcbit : 1;
+	unsigned fx_tcbit2 : 1;
 
-  /* Has this relocation already been applied?  */
-  unsigned fx_done : 1;
+	/* Has this relocation already been applied?  */
+	unsigned fx_done : 1;
 
-  /* Suppress overflow complaints on large addends.  This is used
-     in the PowerPC ELF config to allow large addends on the
-     BFD_RELOC_{LO16,HI16,HI16_S} relocations.
+	/* Suppress overflow complaints on large addends.  This is used
+	   in the PowerPC ELF config to allow large addends on the
+	   BFD_RELOC_{LO16,HI16,HI16_S} relocations.
 
-     @@ Can this be determined from BFD?  */
-  unsigned fx_no_overflow : 1;
+	   @@ Can this be determined from BFD?  */
+	unsigned fx_no_overflow : 1;
 
-  /* The value is signed when checking for overflow.  */
-  unsigned fx_signed : 1;
+	/* The value is signed when checking for overflow.  */
+	unsigned fx_signed : 1;
 
-  /* pc-relative offset adjust (only used by some CPU specific code) */
-  signed char fx_pcrel_adjust;
+	/* pc-relative offset adjust (only used by some CPU specific code) */
+	signed char fx_pcrel_adjust;
 
-  /* How many bytes are involved? */
-  unsigned char fx_size;
+	/* How many bytes are involved? */
+	unsigned char fx_size;
 
-  /* Which frag does this fix apply to?  */
-  fragS *fx_frag;
+	/* Which frag does this fix apply to?  */
+	fragS *fx_frag;
 
-  /* Where is the first byte to fix up?  */
-  long fx_where;
+	/* Where is the first byte to fix up?  */
+	long fx_where;
 
-  /* NULL or Symbol whose value we add in.  */
-  symbolS *fx_addsy;
+	/* NULL or Symbol whose value we add in.  */
+	symbolS *fx_addsy;
 
-  /* NULL or Symbol whose value we subtract.  */
-  symbolS *fx_subsy;
+	/* NULL or Symbol whose value we subtract.  */
+	symbolS *fx_subsy;
 
-  /* Absolute number we add in.  */
-  valueT fx_offset;
+	/* Absolute number we add in.  */
+	valueT fx_offset;
 
-  /* The value of dot when the fixup expression was parsed.  */
-  addressT fx_dot_value;
+	/* The value of dot when the fixup expression was parsed.  */
+	addressT fx_dot_value;
 
-  /* The frag fx_dot_value is based on.  */
-  fragS *fx_dot_frag;
+	/* The frag fx_dot_value is based on.  */
+	fragS *fx_dot_frag;
 
-  /* Next fixS in linked list, or NULL.  */
-  struct fix *fx_next;
+	/* Next fixS in linked list, or NULL.  */
+	struct fix *fx_next;
 
-  /* If NULL, no bitfix's to do.  */
-  bit_fixS *fx_bit_fixP;
+	/* If NULL, no bitfix's to do.  */
+	bit_fixS *fx_bit_fixP;
 
-  bfd_reloc_code_real_type fx_r_type;
+	bfd_reloc_code_real_type fx_r_type;
 
-  /* This field is sort of misnamed.  It appears to be a sort of random
-     scratch field, for use by the back ends.  The main gas code doesn't
-     do anything but initialize it to zero.  The use of it does need to
-     be coordinated between the cpu and format files, though.  E.g., some
-     coff targets pass the `addend' field from the cpu file via this
-     field.  I don't know why the `fx_offset' field above can't be used
-     for that; investigate later and document. KR  */
-  valueT fx_addnumber;
+	/* This field is sort of misnamed.  It appears to be a sort of random
+	   scratch field, for use by the back ends.  The main gas code doesn't
+	   do anything but initialize it to zero.  The use of it does need to
+	   be coordinated between the cpu and format files, though.  E.g., some
+	   coff targets pass the `addend' field from the cpu file via this
+	   field.  I don't know why the `fx_offset' field above can't be used
+	   for that; investigate later and document. KR  */
+	valueT fx_addnumber;
 
-  /* The location of the instruction which created the reloc, used
-     in error messages.  */
-  const char *fx_file;
-  unsigned fx_line;
+	/* The location of the instruction which created the reloc, used
+	   in error messages.  */
+	const char *fx_file;
+	unsigned fx_line;
 
 #ifdef TC_FIX_TYPE
-  /* Location where a backend can attach additional data
-     needed to perform fixups.  */
-  TC_FIX_TYPE tc_fix_data;
+	/* Location where a backend can attach additional data
+	   needed to perform fixups.  */
+	TC_FIX_TYPE tc_fix_data;
 #endif
 };
 
 typedef struct fix fixS;
 
-struct reloc_list
-{
-  struct reloc_list *next;
-  union
-  {
-    struct
-    {
-      symbolS *offset_sym;
-      reloc_howto_type *howto;
-      symbolS *sym;
-      bfd_vma addend;
-    } a;
-    struct
-    {
-      asection *sec;
-      asymbol *s;
-      arelent r;
-    } b;
-  } u;
-  const char *file;
-  unsigned int line;
+struct reloc_list {
+	struct reloc_list *next;
+	union {
+		struct {
+			symbolS *offset_sym;
+			reloc_howto_type *howto;
+			symbolS *sym;
+			bfd_vma addend;
+		} a;
+		struct {
+			asection *sec;
+			asymbol *s;
+			arelent r;
+		} b;
+	} u;
+	const char *file;
+	unsigned int line;
 };
 
 extern int finalize_syms;
@@ -162,19 +157,19 @@ extern addressT dot_value;
 extern fragS *dot_frag;
 extern struct reloc_list* reloc_list;
 
-extern void record_alignment (segT, unsigned);
-extern int get_recorded_alignment (segT);
-extern void write_object_file (void);
-extern long relax_frag (segT, fragS *, long);
-extern int relax_segment (struct frag *, segT, int);
-extern void number_to_chars_littleendian (char *, valueT, int);
-extern void number_to_chars_bigendian (char *, valueT, int);
+extern void record_alignment(segT, unsigned);
+extern int get_recorded_alignment(segT);
+extern void write_object_file(void);
+extern long relax_frag(segT, fragS *, long);
+extern int relax_segment(struct frag *, segT, int);
+extern void number_to_chars_littleendian(char *, valueT, int);
+extern void number_to_chars_bigendian(char *, valueT, int);
 extern fixS *fix_new
-  (fragS * frag, int where, int size, symbolS * add_symbol,
-   offsetT offset, int pcrel, bfd_reloc_code_real_type r_type);
+	(fragS * frag, int where, int size, symbolS * add_symbol,
+	offsetT offset, int pcrel, bfd_reloc_code_real_type r_type);
 extern fixS *fix_new_exp
-  (fragS * frag, int where, int size, expressionS *exp, int pcrel,
-   bfd_reloc_code_real_type r_type);
-extern void write_print_statistics (FILE *);
+	(fragS * frag, int where, int size, expressionS *exp, int pcrel,
+	bfd_reloc_code_real_type r_type);
+extern void write_print_statistics(FILE *);
 
 #endif /* __write_h__ */
