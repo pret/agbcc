@@ -38,65 +38,65 @@ struct obstack;
    notes for different frag kinds.  See how code pans.  */
 
 struct frag {
-	/* Object file address (as an octet offset).  */
-	addressT fr_address;
-	/* When relaxing multiple times, remember the address the frag had
-	   in the last relax pass.  */
-	addressT last_fr_address;
+    /* Object file address (as an octet offset).  */
+    addressT fr_address;
+    /* When relaxing multiple times, remember the address the frag had
+       in the last relax pass.  */
+    addressT last_fr_address;
 
-	/* (Fixed) number of octets we know we have.  May be 0.  */
-	offsetT fr_fix;
-	/* May be used for (Variable) number of octets after above.
-	   The generic frag handling code no longer makes any use of fr_var.  */
-	offsetT fr_var;
-	/* For variable-length tail.  */
-	offsetT fr_offset;
-	/* For variable-length tail.  */
-	symbolS *fr_symbol;
-	/* Points to opcode low addr byte, for relaxation.  */
-	char *fr_opcode;
+    /* (Fixed) number of octets we know we have.  May be 0.  */
+    offsetT fr_fix;
+    /* May be used for (Variable) number of octets after above.
+       The generic frag handling code no longer makes any use of fr_var.  */
+    offsetT fr_var;
+    /* For variable-length tail.  */
+    offsetT fr_offset;
+    /* For variable-length tail.  */
+    symbolS *fr_symbol;
+    /* Points to opcode low addr byte, for relaxation.  */
+    char *fr_opcode;
 
-	/* Chain forward; ascending address order.  Rooted in frch_root.  */
-	struct frag *fr_next;
+    /* Chain forward; ascending address order.  Rooted in frch_root.  */
+    struct frag *fr_next;
 
-	/* Where the frag was created, or where it became a variant frag.  */
-	const char *fr_file;
-	unsigned int fr_line;
+    /* Where the frag was created, or where it became a variant frag.  */
+    const char *fr_file;
+    unsigned int fr_line;
 
 #ifndef NO_LISTING
-	struct list_info_struct *line;
+    struct list_info_struct *line;
 #endif
 
-	/* A serial number for a sequence of frags having at most one alignment
-	   or org frag, and that at the tail of the sequence.  */
-	unsigned int region : 16;
+    /* A serial number for a sequence of frags having at most one alignment
+       or org frag, and that at the tail of the sequence.  */
+    unsigned int region : 16;
 
-	/* Flipped each relax pass so we can easily determine whether
-	   fr_address has been adjusted.  */
-	unsigned int relax_marker : 1;
+    /* Flipped each relax pass so we can easily determine whether
+       fr_address has been adjusted.  */
+    unsigned int relax_marker : 1;
 
-	/* Used to ensure that all insns are emitted on proper address
-	   boundaries.  */
-	unsigned int has_code : 1;
-	unsigned int insn_addr : 6;
+    /* Used to ensure that all insns are emitted on proper address
+       boundaries.  */
+    unsigned int has_code : 1;
+    unsigned int insn_addr : 6;
 
-	/* What state is my tail in? */
-	relax_stateT fr_type;
-	relax_substateT fr_subtype;
+    /* What state is my tail in? */
+    relax_stateT fr_type;
+    relax_substateT fr_subtype;
 
 #ifdef TC_FRAG_TYPE
-	TC_FRAG_TYPE tc_frag_data;
+    TC_FRAG_TYPE tc_frag_data;
 #endif
 #ifdef OBJ_FRAG_TYPE
-	OBJ_FRAG_TYPE obj_frag_data;
+    OBJ_FRAG_TYPE obj_frag_data;
 #endif
 
-	/* Data begins here.  */
-	char fr_literal[1];
+    /* Data begins here.  */
+    char fr_literal[1];
 };
 
 #define SIZEOF_STRUCT_FRAG \
-	((char*)zero_address_frag.fr_literal - (char*)&zero_address_frag)
+    ((char*)zero_address_frag.fr_literal - (char*)&zero_address_frag)
 /* We want to say fr_literal[0] above.  */
 
 /* Current frag we are building.  This frag is incomplete.  It is,
@@ -119,18 +119,18 @@ void frag_grow(size_t nchars);
 char *frag_more(size_t nchars);
 void frag_align(int alignment, int fill_character, int max);
 void frag_align_pattern(int alignment, const char *fill_pattern,
-			size_t n_fill, int max);
+                        size_t n_fill, int max);
 void frag_align_code(int alignment, int max);
 void frag_new(size_t old_frags_var_max_size);
 void frag_wane(fragS * fragP);
 
 char *frag_var(relax_stateT type,
-	       size_t max_chars,
-	       size_t var,
-	       relax_substateT subtype,
-	       symbolS * symbol,
-	       offsetT offset,
-	       char *opcode);
+               size_t max_chars,
+               size_t var,
+               relax_substateT subtype,
+               symbolS * symbol,
+               offsetT offset,
+               char *opcode);
 
 bfd_boolean frag_offset_fixed_p(const fragS *, const fragS *, offsetT *);
 

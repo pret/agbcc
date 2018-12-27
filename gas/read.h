@@ -29,34 +29,34 @@ extern bfd_boolean input_from_string;
 
 #ifdef PERMIT_WHITESPACE
 #define SKIP_WHITESPACE()                       \
-	((*input_line_pointer == ' ') ? ++input_line_pointer : 0)
+    ((*input_line_pointer == ' ') ? ++input_line_pointer : 0)
 #define SKIP_ALL_WHITESPACE()                   \
-	while (*input_line_pointer == ' ') ++input_line_pointer
+    while (*input_line_pointer == ' ') ++input_line_pointer
 #else
 #define SKIP_WHITESPACE() know(*input_line_pointer != ' ')
 #define SKIP_ALL_WHITESPACE() SKIP_WHITESPACE()
 #endif
 
 #define SKIP_WHITESPACE_AFTER_NAME()            \
-	do                                            \
-	{                                           \
-		if (*input_line_pointer == '"') {          \
-			++input_line_pointer; }                  \
-		if (*input_line_pointer == ' ') {          \
-			++input_line_pointer; }                  \
-	}                                           \
-	while (0)
+    do                                            \
+    {                                           \
+        if (*input_line_pointer == '"') {          \
+            ++input_line_pointer; }                  \
+        if (*input_line_pointer == ' ') {          \
+            ++input_line_pointer; }                  \
+    }                                           \
+    while (0)
 
 #define LEX_NAME        (1)     /* may continue a name */
 #define LEX_BEGIN_NAME  (2)     /* may begin a name */
 #define LEX_END_NAME    (4)     /* ends a name */
 
 #define is_name_beginner(c) \
-	(lex_type[(unsigned char)(c)] & LEX_BEGIN_NAME)
+    (lex_type[(unsigned char)(c)] & LEX_BEGIN_NAME)
 #define is_part_of_name(c) \
-	(lex_type[(unsigned char)(c)] & LEX_NAME)
+    (lex_type[(unsigned char)(c)] & LEX_NAME)
 #define is_name_ender(c) \
-	(lex_type[(unsigned char)(c)] & LEX_END_NAME)
+    (lex_type[(unsigned char)(c)] & LEX_END_NAME)
 
 #ifndef is_a_char
 #define CHAR_MASK       (0xff)
@@ -96,11 +96,11 @@ extern int outputting_stabs_line_debug;
 
 /* Possible arguments to .linkonce.  */
 enum linkonce_type {
-	LINKONCE_UNSET = 0,
-	LINKONCE_DISCARD,
-	LINKONCE_ONE_ONLY,
-	LINKONCE_SAME_SIZE,
-	LINKONCE_SAME_CONTENTS
+    LINKONCE_UNSET = 0,
+    LINKONCE_DISCARD,
+    LINKONCE_ONE_ONLY,
+    LINKONCE_SAME_SIZE,
+    LINKONCE_SAME_CONTENTS
 };
 
 #ifndef TC_CASE_SENSITIVE
@@ -114,7 +114,7 @@ extern char original_case_string[];
 
 extern void pop_insert(const pseudo_typeS *);
 extern unsigned int get_stab_string_offset
-	(const char *string, const char *stabstr_secname);
+    (const char *string, const char *stabstr_secname);
 extern char *demand_copy_string(int *lenP);
 extern char *demand_copy_C_string(int *len_pointer);
 extern offsetT get_absolute_expression(void);
@@ -127,9 +127,9 @@ extern void cons(int nbytes);
 extern void demand_empty_rest_of_line(void);
 extern void emit_expr(expressionS *exp, unsigned int nbytes);
 extern void emit_expr_with_reloc(expressionS *exp, unsigned int nbytes,
-				 TC_PARSE_CONS_RETURN_TYPE);
+                                 TC_PARSE_CONS_RETURN_TYPE);
 extern void emit_expr_fix(expressionS *, unsigned int, fragS *, char *,
-			  TC_PARSE_CONS_RETURN_TYPE);
+                          TC_PARSE_CONS_RETURN_TYPE);
 extern void equals(char *, int);
 extern void float_cons(int);
 extern void ignore_rest_of_line(void);
@@ -154,7 +154,7 @@ extern void s_abort(int) ATTRIBUTE_NORETURN;
 extern void s_align_bytes(int arg);
 extern void s_align_ptwo(int);
 extern void do_align(unsigned int align, char *fill, unsigned int length,
-		     unsigned int max);
+                     unsigned int max);
 extern void bss_alloc(symbolS *, addressT, unsigned);
 extern offsetT parse_align(int);
 extern symbolS *s_comm_internal(int, symbolS * (*)(int, symbolS *, addressT));

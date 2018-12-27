@@ -67,22 +67,22 @@ static void signal_crash(int) ATTRIBUTE_NORETURN;
 
 static void identify(const char *file)
 {
-	static int identified;
+    static int identified;
 
-	if (identified) {
-		return;
-	}
-	identified++;
+    if (identified) {
+        return;
+    }
+    identified++;
 
-	if (!file) {
-		unsigned int x;
-		file = as_where(&x);
-	}
+    if (!file) {
+        unsigned int x;
+        file = as_where(&x);
+    }
 
-	if (file) {
-		fprintf(stderr, "%s: ", file);
-	}
-	fprintf(stderr, _("Assembler messages:\n"));
+    if (file) {
+        fprintf(stderr, "%s: ", file);
+    }
+    fprintf(stderr, _("Assembler messages:\n"));
 }
 
 /* The number of warnings issued.  */
@@ -90,7 +90,7 @@ static int warning_count;
 
 int had_warnings(void)
 {
-	return warning_count;
+    return warning_count;
 }
 
 /* Nonzero if we've hit a 'bad error', and should not write an obj file,
@@ -100,25 +100,25 @@ static int error_count;
 
 int had_errors(void)
 {
-	return error_count;
+    return error_count;
 }
 
 /* Print the current location to stderr.  */
 
 static void as_show_where(void)
 {
-	const char *file;
-	unsigned int line;
+    const char *file;
+    unsigned int line;
 
-	file = as_where(&line);
-	identify(file);
-	if (file) {
-		if (line != 0) {
-			fprintf(stderr, "%s:%u: ", file, line);
-		} else {
-			fprintf(stderr, "%s: ", file);
-		}
-	}
+    file = as_where(&line);
+    identify(file);
+    if (file) {
+        if (line != 0) {
+            fprintf(stderr, "%s:%u: ", file, line);
+        } else {
+            fprintf(stderr, "%s: ", file);
+        }
+    }
 }
 
 /* Send to stderr a string as a warning, and locate warning
@@ -129,37 +129,37 @@ static void as_show_where(void)
 
 void as_tsktsk(const char *format, ...)
 {
-	va_list args;
+    va_list args;
 
-	as_show_where();
-	va_start(args, format);
-	vfprintf(stderr, format, args);
-	va_end(args);
-	(void)putc('\n', stderr);
+    as_show_where();
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    (void)putc('\n', stderr);
 }
 
 /* The common portion of as_warn and as_warn_where.  */
 
 static void as_warn_internal(const char *file, unsigned int line, char *buffer)
 {
-	++warning_count;
+    ++warning_count;
 
-	if (file == NULL) {
-		file = as_where(&line);
-	}
+    if (file == NULL) {
+        file = as_where(&line);
+    }
 
-	identify(file);
-	if (file) {
-		if (line != 0) {
-			fprintf(stderr, "%s:%u: %s%s\n", file, line, _("Warning: "), buffer);
-		} else {
-			fprintf(stderr, "%s: %s%s\n", file, _("Warning: "), buffer);
-		}
-	} else {
-		fprintf(stderr, "%s%s\n", _("Warning: "), buffer);
-	}
+    identify(file);
+    if (file) {
+        if (line != 0) {
+            fprintf(stderr, "%s:%u: %s%s\n", file, line, _("Warning: "), buffer);
+        } else {
+            fprintf(stderr, "%s: %s%s\n", file, _("Warning: "), buffer);
+        }
+    } else {
+        fprintf(stderr, "%s%s\n", _("Warning: "), buffer);
+    }
 #ifndef NO_LISTING
-	listing_warning(buffer);
+    listing_warning(buffer);
 #endif
 }
 
@@ -171,15 +171,15 @@ static void as_warn_internal(const char *file, unsigned int line, char *buffer)
 
 void as_warn(const char *format, ...)
 {
-	va_list args;
-	char buffer[2000];
+    va_list args;
+    char buffer[2000];
 
-	if (!flag_no_warnings) {
-		va_start(args, format);
-		vsnprintf(buffer, sizeof(buffer), format, args);
-		va_end(args);
-		as_warn_internal((char*)NULL, 0, buffer);
-	}
+    if (!flag_no_warnings) {
+        va_start(args, format);
+        vsnprintf(buffer, sizeof(buffer), format, args);
+        va_end(args);
+        as_warn_internal((char*)NULL, 0, buffer);
+    }
 }
 
 /* Like as_bad but the file name and line number are passed in.
@@ -188,39 +188,39 @@ void as_warn(const char *format, ...)
 
 void as_warn_where(const char *file, unsigned int line, const char *format, ...)
 {
-	va_list args;
-	char buffer[2000];
+    va_list args;
+    char buffer[2000];
 
-	if (!flag_no_warnings) {
-		va_start(args, format);
-		vsnprintf(buffer, sizeof(buffer), format, args);
-		va_end(args);
-		as_warn_internal(file, line, buffer);
-	}
+    if (!flag_no_warnings) {
+        va_start(args, format);
+        vsnprintf(buffer, sizeof(buffer), format, args);
+        va_end(args);
+        as_warn_internal(file, line, buffer);
+    }
 }
 
 /* The common portion of as_bad and as_bad_where.  */
 
 static void as_bad_internal(const char *file, unsigned int line, char *buffer)
 {
-	++error_count;
+    ++error_count;
 
-	if (file == NULL) {
-		file = as_where(&line);
-	}
+    if (file == NULL) {
+        file = as_where(&line);
+    }
 
-	identify(file);
-	if (file) {
-		if (line != 0) {
-			fprintf(stderr, "%s:%u: %s%s\n", file, line, _("Error: "), buffer);
-		} else {
-			fprintf(stderr, "%s: %s%s\n", file, _("Error: "), buffer);
-		}
-	} else {
-		fprintf(stderr, "%s%s\n", _("Error: "), buffer);
-	}
+    identify(file);
+    if (file) {
+        if (line != 0) {
+            fprintf(stderr, "%s:%u: %s%s\n", file, line, _("Error: "), buffer);
+        } else {
+            fprintf(stderr, "%s: %s%s\n", file, _("Error: "), buffer);
+        }
+    } else {
+        fprintf(stderr, "%s%s\n", _("Error: "), buffer);
+    }
 #ifndef NO_LISTING
-	listing_error(buffer);
+    listing_error(buffer);
 #endif
 }
 
@@ -232,14 +232,14 @@ static void as_bad_internal(const char *file, unsigned int line, char *buffer)
 
 void as_bad(const char *format, ...)
 {
-	va_list args;
-	char buffer[2000];
+    va_list args;
+    char buffer[2000];
 
-	va_start(args, format);
-	vsnprintf(buffer, sizeof(buffer), format, args);
-	va_end(args);
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
 
-	as_bad_internal((char*)NULL, 0, buffer);
+    as_bad_internal((char*)NULL, 0, buffer);
 }
 
 /* Like as_bad but the file name and line number are passed in.
@@ -248,14 +248,14 @@ void as_bad(const char *format, ...)
 
 void as_bad_where(const char *file, unsigned int line, const char *format, ...)
 {
-	va_list args;
-	char buffer[2000];
+    va_list args;
+    char buffer[2000];
 
-	va_start(args, format);
-	vsnprintf(buffer, sizeof(buffer), format, args);
-	va_end(args);
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
 
-	as_bad_internal(file, line, buffer);
+    as_bad_internal(file, line, buffer);
 }
 
 /* Send to stderr a string as a fatal message, and print location of
@@ -265,20 +265,20 @@ void as_bad_where(const char *file, unsigned int line, const char *format, ...)
 
 void as_fatal(const char *format, ...)
 {
-	va_list args;
+    va_list args;
 
-	as_show_where();
-	va_start(args, format);
-	fprintf(stderr, _("Fatal error: "));
-	vfprintf(stderr, format, args);
-	(void)putc('\n', stderr);
-	va_end(args);
-	/* Delete the output file, if it exists.  This will prevent make from
-	   thinking that a file was created and hence does not need rebuilding.  */
-	if (out_file_name != NULL) {
-		unlink_if_ordinary(out_file_name);
-	}
-	xexit(EXIT_FAILURE);
+    as_show_where();
+    va_start(args, format);
+    fprintf(stderr, _("Fatal error: "));
+    vfprintf(stderr, format, args);
+    (void)putc('\n', stderr);
+    va_end(args);
+    /* Delete the output file, if it exists.  This will prevent make from
+       thinking that a file was created and hence does not need rebuilding.  */
+    if (out_file_name != NULL) {
+        unlink_if_ordinary(out_file_name);
+    }
+    xexit(EXIT_FAILURE);
 }
 
 /* Indicate internal constency error.
@@ -287,29 +287,29 @@ void as_fatal(const char *format, ...)
 
 void as_abort(const char *file, int line, const char *fn)
 {
-	as_show_where();
+    as_show_where();
 
-	if (!file) {
-		fprintf(stderr, _("Internal error (%s).\n"), fn ? fn : "unknown");
-	} else if (fn) {
-		fprintf(stderr, _("Internal error in %s at %s:%d.\n"), fn, file, line);
-	} else {
-		fprintf(stderr, _("Internal error at %s:%d.\n"), file, line);
-	}
+    if (!file) {
+        fprintf(stderr, _("Internal error (%s).\n"), fn ? fn : "unknown");
+    } else if (fn) {
+        fprintf(stderr, _("Internal error in %s at %s:%d.\n"), fn, file, line);
+    } else {
+        fprintf(stderr, _("Internal error at %s:%d.\n"), file, line);
+    }
 
-	fprintf(stderr, _("Please report this bug.\n"));
+    fprintf(stderr, _("Please report this bug.\n"));
 
-	xexit(EXIT_FAILURE);
+    xexit(EXIT_FAILURE);
 }
 
 /* Handler for fatal signals, such as SIGSEGV. */
 
 static void signal_crash(int signo)
 {
-	/* Reset, to prevent unbounded recursion.  */
-	signal(signo, SIG_DFL);
+    /* Reset, to prevent unbounded recursion.  */
+    signal(signo, SIG_DFL);
 
-	as_abort(NULL, 0, strsignal(signo));
+    as_abort(NULL, 0, strsignal(signo));
 }
 
 /* Register signal handlers, for less abrubt crashes.  */
@@ -317,22 +317,22 @@ static void signal_crash(int signo)
 void signal_init(void)
 {
 #ifdef SIGSEGV
-	signal(SIGSEGV, signal_crash);
+    signal(SIGSEGV, signal_crash);
 #endif
 #ifdef SIGILL
-	signal(SIGILL, signal_crash);
+    signal(SIGILL, signal_crash);
 #endif
 #ifdef SIGBUS
-	signal(SIGBUS, signal_crash);
+    signal(SIGBUS, signal_crash);
 #endif
 #ifdef SIGABRT
-	signal(SIGABRT, signal_crash);
+    signal(SIGABRT, signal_crash);
 #endif
 #if defined SIGIOT && (!defined SIGABRT || SIGABRT != SIGIOT)
-	signal(SIGIOT, signal_crash);
+    signal(SIGIOT, signal_crash);
 #endif
 #ifdef SIGFPE
-	signal(SIGFPE, signal_crash);
+    signal(SIGFPE, signal_crash);
 #endif
 }
 
@@ -340,100 +340,100 @@ void signal_init(void)
 
 void sprint_value(char *buf, valueT val)
 {
-	if (sizeof(val) <= sizeof(long)) {
-		sprintf(buf, "%ld", (long)val);
-		return;
-	}
-	if (sizeof(val) <= sizeof(bfd_vma)) {
-		sprintf_vma(buf, val);
-		return;
-	}
-	abort();
+    if (sizeof(val) <= sizeof(long)) {
+        sprintf(buf, "%ld", (long)val);
+        return;
+    }
+    if (sizeof(val) <= sizeof(bfd_vma)) {
+        sprintf_vma(buf, val);
+        return;
+    }
+    abort();
 }
 
 #define HEX_MAX_THRESHOLD       1024
 #define HEX_MIN_THRESHOLD       -(HEX_MAX_THRESHOLD)
 
 static void as_internal_value_out_of_range(const char *prefix,
-					   offsetT val,
-					   offsetT min,
-					   offsetT max,
-					   const char *file,
-					   unsigned line,
-					   int bad)
+                                           offsetT val,
+                                           offsetT min,
+                                           offsetT max,
+                                           const char *file,
+                                           unsigned line,
+                                           int bad)
 {
-	const char * err;
+    const char * err;
 
-	if (prefix == NULL) {
-		prefix = "";
-	}
+    if (prefix == NULL) {
+        prefix = "";
+    }
 
-	if (val >= min && val <= max) {
-		addressT right = max & - max;
+    if (val >= min && val <= max) {
+        addressT right = max & - max;
 
-		if (max <= 1) {
-			abort();
-		}
+        if (max <= 1) {
+            abort();
+        }
 
-		/* xgettext:c-format  */
-		err = _("%s out of domain (%d is not a multiple of %d)");
-		if (bad) {
-			as_bad_where(file, line, err,
-				     prefix, (int)val, (int)right);
-		} else {
-			as_warn_where(file, line, err,
-				      prefix, (int)val, (int)right);
-		}
-		return;
-	}
+        /* xgettext:c-format  */
+        err = _("%s out of domain (%d is not a multiple of %d)");
+        if (bad) {
+            as_bad_where(file, line, err,
+                         prefix, (int)val, (int)right);
+        } else {
+            as_warn_where(file, line, err,
+                          prefix, (int)val, (int)right);
+        }
+        return;
+    }
 
-	if (val < HEX_MAX_THRESHOLD
-	    && min < HEX_MAX_THRESHOLD
-	    && max < HEX_MAX_THRESHOLD
-	    && val > HEX_MIN_THRESHOLD
-	    && min > HEX_MIN_THRESHOLD
-	    && max > HEX_MIN_THRESHOLD) {
-		/* xgettext:c-format  */
-		err = _("%s out of range (%d is not between %d and %d)");
+    if (val < HEX_MAX_THRESHOLD
+        && min < HEX_MAX_THRESHOLD
+        && max < HEX_MAX_THRESHOLD
+        && val > HEX_MIN_THRESHOLD
+        && min > HEX_MIN_THRESHOLD
+        && max > HEX_MIN_THRESHOLD) {
+        /* xgettext:c-format  */
+        err = _("%s out of range (%d is not between %d and %d)");
 
-		if (bad) {
-			as_bad_where(file, line, err,
-				     prefix, (int)val, (int)min, (int)max);
-		} else {
-			as_warn_where(file, line, err,
-				      prefix, (int)val, (int)min, (int)max);
-		}
-	} else {
-		char val_buf [sizeof(val) * 3 + 2];
-		char min_buf [sizeof(val) * 3 + 2];
-		char max_buf [sizeof(val) * 3 + 2];
+        if (bad) {
+            as_bad_where(file, line, err,
+                         prefix, (int)val, (int)min, (int)max);
+        } else {
+            as_warn_where(file, line, err,
+                          prefix, (int)val, (int)min, (int)max);
+        }
+    } else {
+        char val_buf [sizeof(val) * 3 + 2];
+        char min_buf [sizeof(val) * 3 + 2];
+        char max_buf [sizeof(val) * 3 + 2];
 
-		if (sizeof(val) > sizeof(bfd_vma)) {
-			abort();
-		}
+        if (sizeof(val) > sizeof(bfd_vma)) {
+            abort();
+        }
 
-		sprintf_vma(val_buf, (bfd_vma)val);
-		sprintf_vma(min_buf, (bfd_vma)min);
-		sprintf_vma(max_buf, (bfd_vma)max);
+        sprintf_vma(val_buf, (bfd_vma)val);
+        sprintf_vma(min_buf, (bfd_vma)min);
+        sprintf_vma(max_buf, (bfd_vma)max);
 
-		/* xgettext:c-format.  */
-		err = _("%s out of range (0x%s is not between 0x%s and 0x%s)");
+        /* xgettext:c-format.  */
+        err = _("%s out of range (0x%s is not between 0x%s and 0x%s)");
 
-		if (bad) {
-			as_bad_where(file, line, err, prefix, val_buf, min_buf, max_buf);
-		} else {
-			as_warn_where(file, line, err, prefix, val_buf, min_buf, max_buf);
-		}
-	}
+        if (bad) {
+            as_bad_where(file, line, err, prefix, val_buf, min_buf, max_buf);
+        } else {
+            as_warn_where(file, line, err, prefix, val_buf, min_buf, max_buf);
+        }
+    }
 }
 
 void as_warn_value_out_of_range(const char *prefix,
-				offsetT value,
-				offsetT min,
-				offsetT max,
-				const char *file,
-				unsigned line)
+                                offsetT value,
+                                offsetT min,
+                                offsetT max,
+                                const char *file,
+                                unsigned line)
 {
-	as_internal_value_out_of_range(prefix, value, min, max, file, line, 0);
+    as_internal_value_out_of_range(prefix, value, min, max, file, line, 0);
 }
 

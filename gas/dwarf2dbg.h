@@ -29,13 +29,13 @@
 #define DWARF2_FLAG_EPILOGUE_BEGIN      (1 << 3)
 
 struct dwarf2_line_info {
-	unsigned int filenum;
-	unsigned int line;
-	unsigned int column;
-	unsigned int isa;
-	unsigned int flags;
-	unsigned int discriminator;
-	symbolS *view;
+    unsigned int filenum;
+    unsigned int line;
+    unsigned int column;
+    unsigned int isa;
+    unsigned int flags;
+    unsigned int discriminator;
+    symbolS *view;
 };
 
 /* Implements the .file FILENO "FILENAME" directive.  FILENO can be 0
@@ -101,14 +101,14 @@ extern void dwarf2dbg_final_check(void);
 /* An enumeration which describes the sizes of offsets (to DWARF sections)
    and the mechanism by which the size is indicated.  */
 enum dwarf2_format {
-	/* 32-bit format: the initial length field is 4 bytes long.  */
-	dwarf2_format_32bit,
-	/* DWARF3 64-bit format: the representation of the initial length
-	   (of a DWARF section) is 0xffffffff (4 bytes) followed by eight
-	   bytes indicating the actual length.  */
-	dwarf2_format_64bit,
-	/* SGI extension to DWARF2: The initial length is eight bytes.  */
-	dwarf2_format_64bit_irix
+    /* 32-bit format: the initial length field is 4 bytes long.  */
+    dwarf2_format_32bit,
+    /* DWARF3 64-bit format: the representation of the initial length
+       (of a DWARF section) is 0xffffffff (4 bytes) followed by eight
+       bytes indicating the actual length.  */
+    dwarf2_format_64bit,
+    /* SGI extension to DWARF2: The initial length is eight bytes.  */
+    dwarf2_format_64bit_irix
 };
 
 #endif /* AS_DWARF2DBG_H */

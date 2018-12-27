@@ -90,8 +90,8 @@
    value at the end of assembly, so we can do better.  */
 
 struct cie_info {
-	unsigned code_alignment;
-	int z_augmentation;
+    unsigned code_alignment;
+    int z_augmentation;
 };
 
 static int get_cie_info(struct cie_info *);
@@ -100,139 +100,139 @@ static int get_cie_info(struct cie_info *);
 
 static int get_cie_info(struct cie_info *info)
 {
-	fragS *f;
-	fixS *fix;
-	int offset;
-	char CIE_id;
-	char augmentation[10];
-	int iaug;
-	int code_alignment = 0;
+    fragS *f;
+    fixS *fix;
+    int offset;
+    char CIE_id;
+    char augmentation[10];
+    int iaug;
+    int code_alignment = 0;
 
-	/* We should find the CIE at the start of the section.  */
+    /* We should find the CIE at the start of the section.  */
 
-	f = seg_info(now_seg)->frchainP->frch_root;
-	fix = seg_info(now_seg)->frchainP->fix_root;
+    f = seg_info(now_seg)->frchainP->frch_root;
+    fix = seg_info(now_seg)->frchainP->fix_root;
 
-	/* Look through the frags of the section to find the code alignment.  */
+    /* Look through the frags of the section to find the code alignment.  */
 
-	/* First make sure that the CIE Identifier Tag is 0/-1.  */
+    /* First make sure that the CIE Identifier Tag is 0/-1.  */
 
-	if (strncmp(segment_name(now_seg), ".debug_frame", 12) == 0) {
-		CIE_id = (char)0xff;
-	} else {
-		CIE_id = 0;
-	}
+    if (strncmp(segment_name(now_seg), ".debug_frame", 12) == 0) {
+        CIE_id = (char)0xff;
+    } else {
+        CIE_id = 0;
+    }
 
-	offset = 4;
-	while (f != NULL && offset >= f->fr_fix) {
-		offset -= f->fr_fix;
-		f = f->fr_next;
-	}
-	if (f == NULL
-	    || f->fr_fix - offset < 4
-	    || f->fr_literal[offset] != CIE_id
-	    || f->fr_literal[offset + 1] != CIE_id
-	    || f->fr_literal[offset + 2] != CIE_id
-	    || f->fr_literal[offset + 3] != CIE_id) {
-		return 0;
-	}
+    offset = 4;
+    while (f != NULL && offset >= f->fr_fix) {
+        offset -= f->fr_fix;
+        f = f->fr_next;
+    }
+    if (f == NULL
+        || f->fr_fix - offset < 4
+        || f->fr_literal[offset] != CIE_id
+        || f->fr_literal[offset + 1] != CIE_id
+        || f->fr_literal[offset + 2] != CIE_id
+        || f->fr_literal[offset + 3] != CIE_id) {
+        return 0;
+    }
 
-	/* Next make sure the CIE version number is 1.  */
+    /* Next make sure the CIE version number is 1.  */
 
-	offset += 4;
-	while (f != NULL && offset >= f->fr_fix) {
-		offset -= f->fr_fix;
-		f = f->fr_next;
-	}
-	if (f == NULL
-	    || f->fr_fix - offset < 1
-	    || f->fr_literal[offset] != 1) {
-		return 0;
-	}
+    offset += 4;
+    while (f != NULL && offset >= f->fr_fix) {
+        offset -= f->fr_fix;
+        f = f->fr_next;
+    }
+    if (f == NULL
+        || f->fr_fix - offset < 1
+        || f->fr_literal[offset] != 1) {
+        return 0;
+    }
 
-	/* Skip the augmentation (a null terminated string).  */
+    /* Skip the augmentation (a null terminated string).  */
 
-	iaug = 0;
-	++offset;
-	while (1) {
-		while (f != NULL && offset >= f->fr_fix) {
-			offset -= f->fr_fix;
-			f = f->fr_next;
-		}
-		if (f == NULL) {
-			return 0;
-		}
+    iaug = 0;
+    ++offset;
+    while (1) {
+        while (f != NULL && offset >= f->fr_fix) {
+            offset -= f->fr_fix;
+            f = f->fr_next;
+        }
+        if (f == NULL) {
+            return 0;
+        }
 
-		while (offset < f->fr_fix && f->fr_literal[offset] != '\0') {
-			if ((size_t)iaug < (sizeof augmentation) - 1) {
-				augmentation[iaug] = f->fr_literal[offset];
-				++iaug;
-			}
-			++offset;
-		}
-		if (offset < f->fr_fix) {
-			break;
-		}
-	}
-	++offset;
-	while (f != NULL && offset >= f->fr_fix) {
-		offset -= f->fr_fix;
-		f = f->fr_next;
-	}
-	if (f == NULL) {
-		return 0;
-	}
+        while (offset < f->fr_fix && f->fr_literal[offset] != '\0') {
+            if ((size_t)iaug < (sizeof augmentation) - 1) {
+                augmentation[iaug] = f->fr_literal[offset];
+                ++iaug;
+            }
+            ++offset;
+        }
+        if (offset < f->fr_fix) {
+            break;
+        }
+    }
+    ++offset;
+    while (f != NULL && offset >= f->fr_fix) {
+        offset -= f->fr_fix;
+        f = f->fr_next;
+    }
+    if (f == NULL) {
+        return 0;
+    }
 
-	augmentation[iaug] = '\0';
-	if (augmentation[0] == '\0') {
-		/* No augmentation.  */
-	} else if (strcmp(augmentation, "eh") == 0) {
-		/* We have to skip a pointer.  Unfortunately, we don't know how
-		   large it is.  We find out by looking for a matching fixup.  */
-		while (fix != NULL
-		       && (fix->fx_frag != f || fix->fx_where != offset)) {
-			fix = fix->fx_next;
-		}
-		if (fix == NULL) {
-			offset += 4;
-		} else {
-			offset += fix->fx_size;
-		}
-		while (f != NULL && offset >= f->fr_fix) {
-			offset -= f->fr_fix;
-			f = f->fr_next;
-		}
-		if (f == NULL) {
-			return 0;
-		}
-	} else if (augmentation[0] != 'z') {
-		return 0;
-	}
+    augmentation[iaug] = '\0';
+    if (augmentation[0] == '\0') {
+        /* No augmentation.  */
+    } else if (strcmp(augmentation, "eh") == 0) {
+        /* We have to skip a pointer.  Unfortunately, we don't know how
+           large it is.  We find out by looking for a matching fixup.  */
+        while (fix != NULL
+               && (fix->fx_frag != f || fix->fx_where != offset)) {
+            fix = fix->fx_next;
+        }
+        if (fix == NULL) {
+            offset += 4;
+        } else {
+            offset += fix->fx_size;
+        }
+        while (f != NULL && offset >= f->fr_fix) {
+            offset -= f->fr_fix;
+            f = f->fr_next;
+        }
+        if (f == NULL) {
+            return 0;
+        }
+    } else if (augmentation[0] != 'z') {
+        return 0;
+    }
 
-	/* We're now at the code alignment factor, which is a ULEB128.  If
-	   it isn't a single byte, forget it.  */
+    /* We're now at the code alignment factor, which is a ULEB128.  If
+       it isn't a single byte, forget it.  */
 
-	code_alignment = f->fr_literal[offset] & 0xff;
-	if ((code_alignment & 0x80) != 0) {
-		code_alignment = 0;
-	}
+    code_alignment = f->fr_literal[offset] & 0xff;
+    if ((code_alignment & 0x80) != 0) {
+        code_alignment = 0;
+    }
 
-	info->code_alignment = code_alignment;
-	info->z_augmentation = (augmentation[0] == 'z');
+    info->code_alignment = code_alignment;
+    info->z_augmentation = (augmentation[0] == 'z');
 
-	return 1;
+    return 1;
 }
 
 enum frame_state {
-	state_idle,
-	state_saw_size,
-	state_saw_cie_offset,
-	state_saw_pc_begin,
-	state_seeing_aug_size,
-	state_skipping_aug,
-	state_wait_loc4,
-	state_saw_loc4,
-	state_error,
+    state_idle,
+    state_saw_size,
+    state_saw_cie_offset,
+    state_saw_pc_begin,
+    state_seeing_aug_size,
+    state_skipping_aug,
+    state_wait_loc4,
+    state_saw_loc4,
+    state_error,
 };
 
 /* This function is called from emit_expr.  It looks for cases which
@@ -250,197 +250,197 @@ enum frame_state {
 
 int check_eh_frame(expressionS *exp, unsigned int *pnbytes)
 {
-	struct frame_data {
-		enum frame_state state;
+    struct frame_data {
+        enum frame_state state;
 
-		int cie_info_ok;
-		struct cie_info cie_info;
+        int cie_info_ok;
+        struct cie_info cie_info;
 
-		symbolS *size_end_sym;
-		fragS *loc4_frag;
-		int loc4_fix;
+        symbolS *size_end_sym;
+        fragS *loc4_frag;
+        int loc4_fix;
 
-		int aug_size;
-		int aug_shift;
-	};
+        int aug_size;
+        int aug_shift;
+    };
 
-	static struct frame_data eh_frame_data;
-	static struct frame_data debug_frame_data;
-	struct frame_data *d;
+    static struct frame_data eh_frame_data;
+    static struct frame_data debug_frame_data;
+    struct frame_data *d;
 
-	/* Don't optimize.  */
-	if (flag_traditional_format) {
-		return 0;
-	}
+    /* Don't optimize.  */
+    if (flag_traditional_format) {
+        return 0;
+    }
 
 #ifdef md_allow_eh_opt
-	if (!md_allow_eh_opt) {
-		return 0;
-	}
+    if (!md_allow_eh_opt) {
+        return 0;
+    }
 #endif
 
-	/* Select the proper section data.  */
-	if (strncmp(segment_name(now_seg), ".eh_frame", 9) == 0
-	    && segment_name(now_seg)[9] != '_') {
-		d = &eh_frame_data;
-	} else if (strncmp(segment_name(now_seg), ".debug_frame", 12) == 0) {
-		d = &debug_frame_data;
-	} else {
-		return 0;
-	}
+    /* Select the proper section data.  */
+    if (strncmp(segment_name(now_seg), ".eh_frame", 9) == 0
+        && segment_name(now_seg)[9] != '_') {
+        d = &eh_frame_data;
+    } else if (strncmp(segment_name(now_seg), ".debug_frame", 12) == 0) {
+        d = &debug_frame_data;
+    } else {
+        return 0;
+    }
 
-	if (d->state >= state_saw_size && S_IS_DEFINED(d->size_end_sym)) {
-		/* We have come to the end of the CIE or FDE.  See below where
-		   we set saw_size.  We must check this first because we may now
-		   be looking at the next size.  */
-		d->state = state_idle;
-	}
+    if (d->state >= state_saw_size && S_IS_DEFINED(d->size_end_sym)) {
+        /* We have come to the end of the CIE or FDE.  See below where
+           we set saw_size.  We must check this first because we may now
+           be looking at the next size.  */
+        d->state = state_idle;
+    }
 
-	switch (d->state) {
-	case state_idle:
-		if (*pnbytes == 4) {
-			/* This might be the size of the CIE or FDE.  We want to know
-			   the size so that we don't accidentally optimize across an FDE
-			   boundary.  We recognize the size in one of two forms: a
-			   symbol which will later be defined as a difference, or a
-			   subtraction of two symbols.  Either way, we can tell when we
-			   are at the end of the FDE because the symbol becomes defined
-			   (in the case of a subtraction, the end symbol, from which the
-			   start symbol is being subtracted).  Other ways of describing
-			   the size will not be optimized.  */
-			if ((exp->X_op == O_symbol || exp->X_op == O_subtract)
-			    && !S_IS_DEFINED(exp->X_add_symbol)) {
-				d->state = state_saw_size;
-				d->size_end_sym = exp->X_add_symbol;
-			}
-		}
-		break;
+    switch (d->state) {
+    case state_idle:
+        if (*pnbytes == 4) {
+            /* This might be the size of the CIE or FDE.  We want to know
+               the size so that we don't accidentally optimize across an FDE
+               boundary.  We recognize the size in one of two forms: a
+               symbol which will later be defined as a difference, or a
+               subtraction of two symbols.  Either way, we can tell when we
+               are at the end of the FDE because the symbol becomes defined
+               (in the case of a subtraction, the end symbol, from which the
+               start symbol is being subtracted).  Other ways of describing
+               the size will not be optimized.  */
+            if ((exp->X_op == O_symbol || exp->X_op == O_subtract)
+                && !S_IS_DEFINED(exp->X_add_symbol)) {
+                d->state = state_saw_size;
+                d->size_end_sym = exp->X_add_symbol;
+            }
+        }
+        break;
 
-	case state_saw_size:
-	case state_saw_cie_offset:
-		/* Assume whatever form it appears in, it appears atomically.  */
-		d->state = (enum frame_state)(d->state + 1);
-		break;
+    case state_saw_size:
+    case state_saw_cie_offset:
+        /* Assume whatever form it appears in, it appears atomically.  */
+        d->state = (enum frame_state)(d->state + 1);
+        break;
 
-	case state_saw_pc_begin:
-		/* Decide whether we should see an augmentation.  */
-		if (!d->cie_info_ok
-		    && !(d->cie_info_ok = get_cie_info(&d->cie_info))) {
-			d->state = state_error;
-		} else if (d->cie_info.z_augmentation) {
-			d->state = state_seeing_aug_size;
-			d->aug_size = 0;
-			d->aug_shift = 0;
-		} else {
-			d->state = state_wait_loc4;
-		}
-		break;
+    case state_saw_pc_begin:
+        /* Decide whether we should see an augmentation.  */
+        if (!d->cie_info_ok
+            && !(d->cie_info_ok = get_cie_info(&d->cie_info))) {
+            d->state = state_error;
+        } else if (d->cie_info.z_augmentation) {
+            d->state = state_seeing_aug_size;
+            d->aug_size = 0;
+            d->aug_shift = 0;
+        } else {
+            d->state = state_wait_loc4;
+        }
+        break;
 
-	case state_seeing_aug_size:
-		/* Bytes == -1 means this comes from an leb128 directive.  */
-		if ((int)*pnbytes == -1 && exp->X_op == O_constant) {
-			d->aug_size = exp->X_add_number;
-			d->state = state_skipping_aug;
-		} else if (*pnbytes == 1 && exp->X_op == O_constant) {
-			unsigned char byte = exp->X_add_number;
-			d->aug_size |= (byte & 0x7f) << d->aug_shift;
-			d->aug_shift += 7;
-			if ((byte & 0x80) == 0) {
-				d->state = state_skipping_aug;
-			}
-		} else {
-			d->state = state_error;
-		}
-		if (d->state == state_skipping_aug && d->aug_size == 0) {
-			d->state = state_wait_loc4;
-		}
-		break;
+    case state_seeing_aug_size:
+        /* Bytes == -1 means this comes from an leb128 directive.  */
+        if ((int)*pnbytes == -1 && exp->X_op == O_constant) {
+            d->aug_size = exp->X_add_number;
+            d->state = state_skipping_aug;
+        } else if (*pnbytes == 1 && exp->X_op == O_constant) {
+            unsigned char byte = exp->X_add_number;
+            d->aug_size |= (byte & 0x7f) << d->aug_shift;
+            d->aug_shift += 7;
+            if ((byte & 0x80) == 0) {
+                d->state = state_skipping_aug;
+            }
+        } else {
+            d->state = state_error;
+        }
+        if (d->state == state_skipping_aug && d->aug_size == 0) {
+            d->state = state_wait_loc4;
+        }
+        break;
 
-	case state_skipping_aug:
-		if ((int)*pnbytes < 0) {
-			d->state = state_error;
-		} else {
-			int left = (d->aug_size -= *pnbytes);
-			if (left == 0) {
-				d->state = state_wait_loc4;
-			} else if (left < 0) {
-				d->state = state_error;
-			}
-		}
-		break;
+    case state_skipping_aug:
+        if ((int)*pnbytes < 0) {
+            d->state = state_error;
+        } else {
+            int left = (d->aug_size -= *pnbytes);
+            if (left == 0) {
+                d->state = state_wait_loc4;
+            } else if (left < 0) {
+                d->state = state_error;
+            }
+        }
+        break;
 
-	case state_wait_loc4:
-		if (*pnbytes == 1
-		    && exp->X_op == O_constant
-		    && exp->X_add_number == DW_CFA_advance_loc4) {
-			/* This might be a DW_CFA_advance_loc4.  Record the frag and the
-			   position within the frag, so that we can change it later.  */
-			frag_grow(1);
-			d->state = state_saw_loc4;
-			d->loc4_frag = frag_now;
-			d->loc4_fix = frag_now_fix();
-		}
-		break;
+    case state_wait_loc4:
+        if (*pnbytes == 1
+            && exp->X_op == O_constant
+            && exp->X_add_number == DW_CFA_advance_loc4) {
+            /* This might be a DW_CFA_advance_loc4.  Record the frag and the
+               position within the frag, so that we can change it later.  */
+            frag_grow(1);
+            d->state = state_saw_loc4;
+            d->loc4_frag = frag_now;
+            d->loc4_fix = frag_now_fix();
+        }
+        break;
 
-	case state_saw_loc4:
-		d->state = state_wait_loc4;
-		if (*pnbytes != 4) {
-			break;
-		}
-		if (exp->X_op == O_constant) {
-			/* This is a case which we can optimize.  The two symbols being
-			   subtracted were in the same frag and the expression was
-			   reduced to a constant.  We can do the optimization entirely
-			   in this function.  */
-			if (exp->X_add_number < 0x40) {
-				d->loc4_frag->fr_literal[d->loc4_fix]
-					= DW_CFA_advance_loc | exp->X_add_number;
-				/* No more bytes needed.  */
-				return 1;
-			} else if (exp->X_add_number < 0x100) {
-				d->loc4_frag->fr_literal[d->loc4_fix] = DW_CFA_advance_loc1;
-				*pnbytes = 1;
-			} else if (exp->X_add_number < 0x10000) {
-				d->loc4_frag->fr_literal[d->loc4_fix] = DW_CFA_advance_loc2;
-				*pnbytes = 2;
-			}
-		} else if (exp->X_op == O_subtract && d->cie_info.code_alignment == 1) {
-			/* This is a case we can optimize.  The expression was not
-			   reduced, so we can not finish the optimization until the end
-			   of the assembly.  We set up a variant frag which we handle
-			   later.  */
-			frag_var(rs_cfa, 4, 0, 1 << 3, make_expr_symbol(exp),
-				 d->loc4_fix, (char*)d->loc4_frag);
-			return 1;
-		} else if ((exp->X_op == O_divide
-			    || exp->X_op == O_right_shift)
-			   && d->cie_info.code_alignment > 1) {
-			if (exp->X_add_symbol->bsym
-			    && exp->X_op_symbol->bsym
-			    && exp->X_add_symbol->sy_value.X_op == O_subtract
-			    && exp->X_op_symbol->sy_value.X_op == O_constant
-			    && ((exp->X_op == O_divide
-				 ? exp->X_op_symbol->sy_value.X_add_number
-				 : (offsetT)1 << exp->X_op_symbol->sy_value.X_add_number)
-				== (offsetT)d->cie_info.code_alignment)) {
-				/* This is a case we can optimize as well.  The expression was
-				   not reduced, so we can not finish the optimization until the
-				   end of the assembly.  We set up a variant frag which we
-				   handle later.  */
-				frag_var(rs_cfa, 4, 0, d->cie_info.code_alignment << 3,
-					 make_expr_symbol(&exp->X_add_symbol->sy_value),
-					 d->loc4_fix, (char*)d->loc4_frag);
-				return 1;
-			}
-		}
-		break;
+    case state_saw_loc4:
+        d->state = state_wait_loc4;
+        if (*pnbytes != 4) {
+            break;
+        }
+        if (exp->X_op == O_constant) {
+            /* This is a case which we can optimize.  The two symbols being
+               subtracted were in the same frag and the expression was
+               reduced to a constant.  We can do the optimization entirely
+               in this function.  */
+            if (exp->X_add_number < 0x40) {
+                d->loc4_frag->fr_literal[d->loc4_fix]
+                    = DW_CFA_advance_loc | exp->X_add_number;
+                /* No more bytes needed.  */
+                return 1;
+            } else if (exp->X_add_number < 0x100) {
+                d->loc4_frag->fr_literal[d->loc4_fix] = DW_CFA_advance_loc1;
+                *pnbytes = 1;
+            } else if (exp->X_add_number < 0x10000) {
+                d->loc4_frag->fr_literal[d->loc4_fix] = DW_CFA_advance_loc2;
+                *pnbytes = 2;
+            }
+        } else if (exp->X_op == O_subtract && d->cie_info.code_alignment == 1) {
+            /* This is a case we can optimize.  The expression was not
+               reduced, so we can not finish the optimization until the end
+               of the assembly.  We set up a variant frag which we handle
+               later.  */
+            frag_var(rs_cfa, 4, 0, 1 << 3, make_expr_symbol(exp),
+                     d->loc4_fix, (char*)d->loc4_frag);
+            return 1;
+        } else if ((exp->X_op == O_divide
+                    || exp->X_op == O_right_shift)
+                   && d->cie_info.code_alignment > 1) {
+            if (exp->X_add_symbol->bsym
+                && exp->X_op_symbol->bsym
+                && exp->X_add_symbol->sy_value.X_op == O_subtract
+                && exp->X_op_symbol->sy_value.X_op == O_constant
+                && ((exp->X_op == O_divide
+                     ? exp->X_op_symbol->sy_value.X_add_number
+                     : (offsetT)1 << exp->X_op_symbol->sy_value.X_add_number)
+                    == (offsetT)d->cie_info.code_alignment)) {
+                /* This is a case we can optimize as well.  The expression was
+                   not reduced, so we can not finish the optimization until the
+                   end of the assembly.  We set up a variant frag which we
+                   handle later.  */
+                frag_var(rs_cfa, 4, 0, d->cie_info.code_alignment << 3,
+                         make_expr_symbol(&exp->X_add_symbol->sy_value),
+                         d->loc4_fix, (char*)d->loc4_frag);
+                return 1;
+            }
+        }
+        break;
 
-	case state_error:
-		/* Just skipping everything.  */
-		break;
-	}
+    case state_error:
+        /* Just skipping everything.  */
+        break;
+    }
 
-	return 0;
+    return 0;
 }
 
 /* The function estimates the size of a rs_cfa variant frag based on
@@ -449,27 +449,27 @@ int check_eh_frame(expressionS *exp, unsigned int *pnbytes)
 
 int eh_frame_estimate_size_before_relax(fragS *frag)
 {
-	offsetT diff;
-	int ca = frag->fr_subtype >> 3;
-	int ret;
+    offsetT diff;
+    int ca = frag->fr_subtype >> 3;
+    int ret;
 
-	diff = resolve_symbol_value(frag->fr_symbol);
+    diff = resolve_symbol_value(frag->fr_symbol);
 
-	gas_assert(ca > 0);
-	diff /= ca;
-	if (diff < 0x40) {
-		ret = 0;
-	} else if (diff < 0x100) {
-		ret = 1;
-	} else if (diff < 0x10000) {
-		ret = 2;
-	} else {
-		ret = 4;
-	}
+    gas_assert(ca > 0);
+    diff /= ca;
+    if (diff < 0x40) {
+        ret = 0;
+    } else if (diff < 0x100) {
+        ret = 1;
+    } else if (diff < 0x10000) {
+        ret = 2;
+    } else {
+        ret = 4;
+    }
 
-	frag->fr_subtype = (frag->fr_subtype & ~7) | ret;
+    frag->fr_subtype = (frag->fr_subtype & ~7) | ret;
 
-	return ret;
+    return ret;
 }
 
 /* This function relaxes a rs_cfa variant frag based on the current
@@ -478,11 +478,11 @@ int eh_frame_estimate_size_before_relax(fragS *frag)
 
 int eh_frame_relax_frag(fragS *frag)
 {
-	int oldsize, newsize;
+    int oldsize, newsize;
 
-	oldsize = frag->fr_subtype & 7;
-	newsize = eh_frame_estimate_size_before_relax(frag);
-	return newsize - oldsize;
+    oldsize = frag->fr_subtype & 7;
+    newsize = eh_frame_estimate_size_before_relax(frag);
+    return newsize - oldsize;
 }
 
 /* This function converts a rs_cfa variant frag into a normal fill
@@ -491,43 +491,43 @@ int eh_frame_relax_frag(fragS *frag)
 
 void eh_frame_convert_frag(fragS *frag)
 {
-	offsetT diff;
-	fragS *loc4_frag;
-	int loc4_fix, ca;
+    offsetT diff;
+    fragS *loc4_frag;
+    int loc4_fix, ca;
 
-	loc4_frag = (fragS*)frag->fr_opcode;
-	loc4_fix = (int)frag->fr_offset;
+    loc4_frag = (fragS*)frag->fr_opcode;
+    loc4_fix = (int)frag->fr_offset;
 
-	diff = resolve_symbol_value(frag->fr_symbol);
+    diff = resolve_symbol_value(frag->fr_symbol);
 
-	ca = frag->fr_subtype >> 3;
-	gas_assert(ca > 0);
-	diff /= ca;
-	switch (frag->fr_subtype & 7) {
-	case 0:
-		gas_assert(diff < 0x40);
-		loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc | diff;
-		break;
+    ca = frag->fr_subtype >> 3;
+    gas_assert(ca > 0);
+    diff /= ca;
+    switch (frag->fr_subtype & 7) {
+    case 0:
+        gas_assert(diff < 0x40);
+        loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc | diff;
+        break;
 
-	case 1:
-		gas_assert(diff < 0x100);
-		loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc1;
-		frag->fr_literal[frag->fr_fix] = diff;
-		break;
+    case 1:
+        gas_assert(diff < 0x100);
+        loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc1;
+        frag->fr_literal[frag->fr_fix] = diff;
+        break;
 
-	case 2:
-		gas_assert(diff < 0x10000);
-		loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc2;
-		md_number_to_chars(frag->fr_literal + frag->fr_fix, diff, 2);
-		break;
+    case 2:
+        gas_assert(diff < 0x10000);
+        loc4_frag->fr_literal[loc4_fix] = DW_CFA_advance_loc2;
+        md_number_to_chars(frag->fr_literal + frag->fr_fix, diff, 2);
+        break;
 
-	default:
-		md_number_to_chars(frag->fr_literal + frag->fr_fix, diff, 4);
-		break;
-	}
+    default:
+        md_number_to_chars(frag->fr_literal + frag->fr_fix, diff, 4);
+        break;
+    }
 
-	frag->fr_fix += frag->fr_subtype & 7;
-	frag->fr_type = rs_fill;
-	frag->fr_subtype = 0;
-	frag->fr_offset = 0;
+    frag->fr_fix += frag->fr_subtype & 7;
+    frag->fr_type = rs_fill;
+    frag->fr_subtype = 0;
+    frag->fr_offset = 0;
 }

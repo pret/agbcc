@@ -44,9 +44,9 @@
    An sb is allocated by the caller.  */
 
 typedef struct sb {
-	char *ptr;              /* Points to the current block.  */
-	size_t len;             /* How much is used.  */
-	size_t max;             /* The maximum length.  */
+    char *ptr;              /* Points to the current block.  */
+    size_t len;             /* How much is used.  */
+    size_t max;             /* The maximum length.  */
 }
 sb;
 

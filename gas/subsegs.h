@@ -43,15 +43,15 @@ struct frch_cfi_data;
 
 struct frchain                  /* control building of a frag chain */
 {                               /* FRCH = FRagment CHain control */
-	struct frag *frch_root; /* 1st struct frag in chain, or NULL */
-	struct frag *frch_last; /* last struct frag in chain, or NULL */
-	struct frchain *frch_next; /* next in chain of struct frchain-s */
-	subsegT frch_subseg;    /* subsegment number of this chain */
-	fixS *fix_root;         /* Root of fixups for this subsegment.  */
-	fixS *fix_tail;         /* Last fixup for this subsegment.  */
-	struct obstack frch_obstack; /* for objects in this frag chain */
-	fragS *frch_frag_now;   /* frag_now for this subsegment */
-	struct frch_cfi_data *frch_cfi_data;
+    struct frag *frch_root; /* 1st struct frag in chain, or NULL */
+    struct frag *frch_last; /* last struct frag in chain, or NULL */
+    struct frchain *frch_next; /* next in chain of struct frchain-s */
+    subsegT frch_subseg;    /* subsegment number of this chain */
+    fixS *fix_root;         /* Root of fixups for this subsegment.  */
+    fixS *fix_tail;         /* Last fixup for this subsegment.  */
+    struct obstack frch_obstack; /* for objects in this frag chain */
+    fragS *frch_frag_now;   /* frag_now for this subsegment */
+    struct frch_cfi_data *frch_cfi_data;
 };
 
 typedef struct frchain frchainS;
@@ -61,58 +61,58 @@ typedef struct frchain frchainS;
 extern frchainS *frchain_now;
 
 typedef struct segment_info_struct {
-	frchainS *frchainP;
-	unsigned int hadone : 1;
+    frchainS *frchainP;
+    unsigned int hadone : 1;
 
-	/* This field is set if this is a .bss section which does not really
-	   have any contents.  Once upon a time a .bss section did not have
-	   any frags, but that is no longer true.  This field prevent the
-	   SEC_HAS_CONTENTS flag from being set for the section even if
-	   there are frags.  */
-	unsigned int bss : 1;
+    /* This field is set if this is a .bss section which does not really
+       have any contents.  Once upon a time a .bss section did not have
+       any frags, but that is no longer true.  This field prevent the
+       SEC_HAS_CONTENTS flag from being set for the section even if
+       there are frags.  */
+    unsigned int bss : 1;
 
-	int user_stuff;
+    int user_stuff;
 
-	/* Fixups for this segment.  This is only valid after the frchains
-	   are run together.  */
-	fixS *fix_root;
-	fixS *fix_tail;
+    /* Fixups for this segment.  This is only valid after the frchains
+       are run together.  */
+    fixS *fix_root;
+    fixS *fix_tail;
 
-	symbolS *dot;
+    symbolS *dot;
 
-	struct lineno_list *lineno_list_head;
-	struct lineno_list *lineno_list_tail;
+    struct lineno_list *lineno_list_head;
+    struct lineno_list *lineno_list_tail;
 
-	/* Which BFD section does this gas segment correspond to?  */
-	asection *bfd_section;
+    /* Which BFD section does this gas segment correspond to?  */
+    asection *bfd_section;
 
-	/* NULL, or pointer to the gas symbol that is the section symbol for
-	   this section.  sym->bsym and bfd_section->symbol should be the same.  */
-	symbolS *sym;
+    /* NULL, or pointer to the gas symbol that is the section symbol for
+       this section.  sym->bsym and bfd_section->symbol should be the same.  */
+    symbolS *sym;
 
-	/* Used by dwarf2dbg.c for this section's line table entries.  */
-	void *dwarf2_line_seg;
+    /* Used by dwarf2dbg.c for this section's line table entries.  */
+    void *dwarf2_line_seg;
 
-	union {
-		/* Current size of section holding stabs strings.  */
-		unsigned long stab_string_size;
-		/* Initial frag for ELF.  */
-		char *p;
-	}
-	stabu;
+    union {
+        /* Current size of section holding stabs strings.  */
+        unsigned long stab_string_size;
+        /* Initial frag for ELF.  */
+        char *p;
+    }
+    stabu;
 
 #ifdef NEED_LITERAL_POOL
-	unsigned long literal_pool_size;
+    unsigned long literal_pool_size;
 #endif
 
 #ifdef TC_SEGMENT_INFO_TYPE
-	TC_SEGMENT_INFO_TYPE tc_segment_info_data;
+    TC_SEGMENT_INFO_TYPE tc_segment_info_data;
 #endif
 } segment_info_type;
 
 
 #define seg_info(sec) \
-	((segment_info_type*)bfd_get_section_userdata(stdoutput, sec))
+    ((segment_info_type*)bfd_get_section_userdata(stdoutput, sec))
 
 extern symbolS *section_symbol(segT);
 

@@ -46,11 +46,11 @@ symbolS *symbol_find_exact_noref(const char *name, int noref);
 symbolS *symbol_find_or_make(const char *name);
 symbolS *symbol_make(const char *name);
 symbolS *symbol_new(const char *name, segT segment, valueT value,
-		    fragS * frag);
+                    fragS * frag);
 symbolS *symbol_create(const char *name, segT segment, valueT value,
-		       fragS * frag);
+                       fragS * frag);
 struct local_symbol *local_symbol_make(const char *name, segT section,
-				       valueT val, fragS *frag);
+                                       valueT val, fragS *frag);
 symbolS *symbol_clone(symbolS *, int);
 #undef symbol_clone_if_forward_ref
 symbolS *symbol_clone_if_forward_ref(symbolS *, int);
@@ -116,29 +116,29 @@ extern void S_SET_FORWARD_REF(symbolS *);
 
 #ifndef WORKING_DOT_WORD
 struct broken_word {
-	/* Linked list -- one of these structures per ".word x-y+C"
-	   expression.  */
-	struct broken_word *next_broken_word;
-	/* Segment and subsegment for broken word.  */
-	segT seg;
-	subsegT subseg;
-	/* Which frag is this broken word in?  */
-	fragS *frag;
-	/* Where in the frag is it?  */
-	char *word_goes_here;
-	/* Where to add the break.  */
-	fragS *dispfrag;        /* where to add the break */
-	/* Operands of expression.  */
-	symbolS *add;
-	symbolS *sub;
-	offsetT addnum;
+    /* Linked list -- one of these structures per ".word x-y+C"
+       expression.  */
+    struct broken_word *next_broken_word;
+    /* Segment and subsegment for broken word.  */
+    segT seg;
+    subsegT subseg;
+    /* Which frag is this broken word in?  */
+    fragS *frag;
+    /* Where in the frag is it?  */
+    char *word_goes_here;
+    /* Where to add the break.  */
+    fragS *dispfrag;        /* where to add the break */
+    /* Operands of expression.  */
+    symbolS *add;
+    symbolS *sub;
+    offsetT addnum;
 
-	int added;              /* nasty thing happened yet? */
-	/* 1: added and has a long-jump */
-	/* 2: added but uses someone elses long-jump */
+    int added;              /* nasty thing happened yet? */
+    /* 1: added and has a long-jump */
+    /* 2: added but uses someone elses long-jump */
 
-	/* Pointer to broken_word with a similar long-jump.  */
-	struct broken_word *use_jump;
+    /* Pointer to broken_word with a similar long-jump.  */
+    struct broken_word *use_jump;
 };
 extern struct broken_word *broken_words;
 #endif /* ifdef WORKING_DOT_WORD */
@@ -157,12 +157,12 @@ extern const short seg_N_TYPE[];/* subseg.c */
 void symbol_clear_list_pointers(symbolS * symbolP);
 
 void symbol_insert(symbolS * addme, symbolS * target,
-		   symbolS ** rootP, symbolS ** lastP);
+                   symbolS ** rootP, symbolS ** lastP);
 void symbol_remove(symbolS * symbolP, symbolS ** rootP,
-		   symbolS ** lastP);
+                   symbolS ** lastP);
 
 void symbol_append(symbolS * addme, symbolS * target,
-		   symbolS ** rootP, symbolS ** lastP);
+                   symbolS ** rootP, symbolS ** lastP);
 
 extern symbolS *symbol_next(symbolS *);
 

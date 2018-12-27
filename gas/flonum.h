@@ -49,12 +49,12 @@
    A sign value of 'N' means we've been asked to assemble -Inf
  */
 struct FLONUM_STRUCT {
-	LITTLENUM_TYPE *low;    /* low order littlenum of a bignum */
-	LITTLENUM_TYPE *high;   /* high order littlenum of a bignum */
-	LITTLENUM_TYPE *leader; /* -> 1st non-zero littlenum */
-	/* If flonum is 0.0, leader==low-1 */
-	long exponent;          /* base LITTLENUM_RADIX */
-	char sign;              /* '+' or '-' */
+    LITTLENUM_TYPE *low;    /* low order littlenum of a bignum */
+    LITTLENUM_TYPE *high;   /* high order littlenum of a bignum */
+    LITTLENUM_TYPE *leader; /* -> 1st non-zero littlenum */
+    /* If flonum is 0.0, leader==low-1 */
+    long exponent;          /* base LITTLENUM_RADIX */
+    char sign;              /* '+' or '-' */
 };
 
 typedef struct FLONUM_STRUCT FLONUM_TYPE;
@@ -84,13 +84,13 @@ extern const int table_size_of_flonum_powers_of_ten;
 \***********************************************************************/
 
 int atof_generic(char **address_of_string_pointer,
-		 const char *string_of_decimal_marks,
-		 const char *string_of_decimal_exponent_marks,
-		 FLONUM_TYPE * address_of_generic_floating_point_number);
+                 const char *string_of_decimal_marks,
+                 const char *string_of_decimal_exponent_marks,
+                 FLONUM_TYPE * address_of_generic_floating_point_number);
 
 void flonum_copy(FLONUM_TYPE * in, FLONUM_TYPE * out);
 void flonum_multip(const FLONUM_TYPE * a, const FLONUM_TYPE * b,
-		   FLONUM_TYPE * product);
+                   FLONUM_TYPE * product);
 
 /***********************************************************************\
 *									*

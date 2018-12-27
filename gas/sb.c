@@ -56,30 +56,30 @@ static void sb_check(sb *, size_t);
 
 void sb_build(sb *ptr, size_t size)
 {
-	ptr->ptr = XNEWVEC(char, size + 1);
-	ptr->max = size;
-	ptr->len = 0;
+    ptr->ptr = XNEWVEC(char, size + 1);
+    ptr->max = size;
+    ptr->len = 0;
 }
 
 void sb_new(sb *ptr)
 {
-	sb_build(ptr, INIT_ALLOC);
+    sb_build(ptr, INIT_ALLOC);
 }
 
 /* Deallocate the sb at ptr.  */
 
 void sb_kill(sb *ptr)
 {
-	free(ptr->ptr);
+    free(ptr->ptr);
 }
 
 /* Add the sb at s to the end of the sb at ptr.  */
 
 void sb_add_sb(sb *ptr, sb *s)
 {
-	sb_check(ptr, s->len);
-	memcpy(ptr->ptr + ptr->len, s->ptr, s->len);
-	ptr->len += s->len;
+    sb_check(ptr, s->len);
+    memcpy(ptr->ptr + ptr->len, s->ptr, s->len);
+    ptr->len += s->len;
 }
 
 /* Helper for sb_scrub_and_add_sb.  */
@@ -88,14 +88,14 @@ static sb *sb_to_scrub;
 static char *scrub_position;
 static size_t scrub_from_sb(char *buf, size_t buflen)
 {
-	size_t copy;
-	copy = sb_to_scrub->len - (scrub_position - sb_to_scrub->ptr);
-	if (copy > buflen) {
-		copy = buflen;
-	}
-	memcpy(buf, scrub_position, copy);
-	scrub_position += copy;
-	return copy;
+    size_t copy;
+    copy = sb_to_scrub->len - (scrub_position - sb_to_scrub->ptr);
+    if (copy > buflen) {
+        copy = buflen;
+    }
+    memcpy(buf, scrub_position, copy);
+    scrub_position += copy;
+    return copy;
 }
 
 /* Run the sb at s through do_scrub_chars and add the result to the sb
@@ -103,14 +103,14 @@ static size_t scrub_from_sb(char *buf, size_t buflen)
 
 void sb_scrub_and_add_sb(sb *ptr, sb *s)
 {
-	sb_to_scrub = s;
-	scrub_position = s->ptr;
+    sb_to_scrub = s;
+    scrub_position = s->ptr;
 
-	sb_check(ptr, s->len);
-	ptr->len += do_scrub_chars(scrub_from_sb, ptr->ptr + ptr->len, s->len);
+    sb_check(ptr, s->len);
+    ptr->len += do_scrub_chars(scrub_from_sb, ptr->ptr + ptr->len, s->len);
 
-	sb_to_scrub = 0;
-	scrub_position = 0;
+    sb_to_scrub = 0;
+    scrub_position = 0;
 }
 
 /* Make sure that the sb at ptr has room for another len characters,
@@ -118,72 +118,72 @@ void sb_scrub_and_add_sb(sb *ptr, sb *s)
 
 static void sb_check(sb *ptr, size_t len)
 {
-	size_t want = ptr->len + len;
+    size_t want = ptr->len + len;
 
-	if (want > ptr->max) {
-		size_t max;
+    if (want > ptr->max) {
+        size_t max;
 
-		want += MALLOC_OVERHEAD + 1;
-		if ((ssize_t)want < 0) {
-			as_fatal("string buffer overflow");
-		}
+        want += MALLOC_OVERHEAD + 1;
+        if ((ssize_t)want < 0) {
+            as_fatal("string buffer overflow");
+        }
 #if GCC_VERSION >= 3004
-		max = (size_t)1 << (CHAR_BIT * sizeof(want)
-				    - (sizeof(want) <= sizeof(long)
-				       ? __builtin_clzl((long)want)
-				       : __builtin_clzll((long long)want)));
+        max = (size_t)1 << (CHAR_BIT * sizeof(want)
+                            - (sizeof(want) <= sizeof(long)
+                               ? __builtin_clzl((long)want)
+                               : __builtin_clzll((long long)want)));
 #else
-		max = 128;
-		while (want > max) {
-			max <<= 1;
-		}
+        max = 128;
+        while (want > max) {
+            max <<= 1;
+        }
 #endif
-		max -= MALLOC_OVERHEAD + 1;
-		ptr->max = max;
-		ptr->ptr = XRESIZEVEC(char, ptr->ptr, max + 1);
-	}
+        max -= MALLOC_OVERHEAD + 1;
+        ptr->max = max;
+        ptr->ptr = XRESIZEVEC(char, ptr->ptr, max + 1);
+    }
 }
 
 /* Make the sb at ptr point back to the beginning.  */
 
 void sb_reset(sb *ptr)
 {
-	ptr->len = 0;
+    ptr->len = 0;
 }
 
 /* Add character c to the end of the sb at ptr.  */
 
 void sb_add_char(sb *ptr, size_t c)
 {
-	sb_check(ptr, 1);
-	ptr->ptr[ptr->len++] = c;
+    sb_check(ptr, 1);
+    ptr->ptr[ptr->len++] = c;
 }
 
 /* Add null terminated string s to the end of sb at ptr.  */
 
 void sb_add_string(sb *ptr, const char *s)
 {
-	size_t len = strlen(s);
-	sb_check(ptr, len);
-	memcpy(ptr->ptr + ptr->len, s, len);
-	ptr->len += len;
+    size_t len = strlen(s);
+    sb_check(ptr, len);
+    memcpy(ptr->ptr + ptr->len, s, len);
+    ptr->len += len;
 }
 
 /* Add string at s of length len to sb at ptr */
 
 void sb_add_buffer(sb *ptr, const char *s, size_t len)
 {
-	sb_check(ptr, len);
-	memcpy(ptr->ptr + ptr->len, s, len);
-	ptr->len += len;
+    sb_check(ptr, len);
+    memcpy(ptr->ptr + ptr->len, s, len);
+    ptr->len += len;
 }
 
 /* Write terminating NUL and return string.  */
 
 char *sb_terminate(sb *in)
 {
-	in->ptr[in->len] = 0;
-	return in->ptr;
+    in->ptr[in->len] = 0;
+    return in->ptr;
 }
 
 /* Start at the index idx into the string in sb at ptr and skip
@@ -191,12 +191,12 @@ char *sb_terminate(sb *in)
 
 size_t sb_skip_white(size_t idx, sb *ptr)
 {
-	while (idx < ptr->len
-	       && (ptr->ptr[idx] == ' '
-		   || ptr->ptr[idx] == '\t')) {
-		idx++;
-	}
-	return idx;
+    while (idx < ptr->len
+           && (ptr->ptr[idx] == ' '
+               || ptr->ptr[idx] == '\t')) {
+        idx++;
+    }
+    return idx;
 }
 
 /* Start at the index idx into the sb at ptr. skips whitespace,
@@ -205,22 +205,22 @@ size_t sb_skip_white(size_t idx, sb *ptr)
 
 size_t sb_skip_comma(size_t idx, sb *ptr)
 {
-	while (idx < ptr->len
-	       && (ptr->ptr[idx] == ' '
-		   || ptr->ptr[idx] == '\t')) {
-		idx++;
-	}
+    while (idx < ptr->len
+           && (ptr->ptr[idx] == ' '
+               || ptr->ptr[idx] == '\t')) {
+        idx++;
+    }
 
-	if (idx < ptr->len
-	    && ptr->ptr[idx] == ',') {
-		idx++;
-	}
+    if (idx < ptr->len
+        && ptr->ptr[idx] == ',') {
+        idx++;
+    }
 
-	while (idx < ptr->len
-	       && (ptr->ptr[idx] == ' '
-		   || ptr->ptr[idx] == '\t')) {
-		idx++;
-	}
+    while (idx < ptr->len
+           && (ptr->ptr[idx] == ' '
+               || ptr->ptr[idx] == '\t')) {
+        idx++;
+    }
 
-	return idx;
+    return idx;
 }

@@ -42,21 +42,21 @@ extern void hash_die(struct hash_control *);
    hash table.  */
 
 extern const char *hash_insert(struct hash_control *,
-			       const char *key, void *value);
+                               const char *key, void *value);
 
 /* Insert or replace an entry in a hash table.  This returns NULL on
    success.  On error, it returns a printable string indicating the
    error.  If an entry already exists, its value is replaced.  */
 
 extern const char *hash_jam(struct hash_control *,
-			    const char *key, void *value);
+                            const char *key, void *value);
 
 /* Replace an existing entry in a hash table.  This returns the old
    value stored for the entry.  If the entry is not found in the hash
    table, this does nothing and returns NULL.  */
 
 extern void *hash_replace(struct hash_control *, const char *key,
-			  void *value);
+                          void *value);
 
 /* Find an entry in a hash table, returning its value.  Returns NULL
    if the entry is not found.  */
@@ -77,12 +77,12 @@ extern void *hash_delete(struct hash_control *, const char *key, int);
    hash table.  */
 
 extern void hash_traverse(struct hash_control *,
-			  void (*pfn)(const char *key, void *value));
+                          void (*pfn)(const char *key, void *value));
 
 /* Print hash table statistics on the specified file.  NAME is the
    name of the hash table, used for printing a header.  */
 
 extern void hash_print_statistics(FILE *, const char *name,
-				  struct hash_control *);
+                                  struct hash_control *);
 
 #endif /* HASH_H */
