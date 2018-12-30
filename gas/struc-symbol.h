@@ -21,88 +21,86 @@
 #ifndef __struc_symbol_h__
 #define __struc_symbol_h__
 
-struct symbol_flags
-{
-  /* Whether the symbol is a local_symbol.  */
-  unsigned int sy_local_symbol : 1;
+struct symbol_flags {
+    /* Whether the symbol is a local_symbol.  */
+    unsigned int sy_local_symbol : 1;
 
-  /* Weather symbol has been written.  */
-  unsigned int sy_written : 1;
+    /* Weather symbol has been written.  */
+    unsigned int sy_written : 1;
 
-  /* Whether symbol value has been completely resolved (used during
-     final pass over symbol table).  */
-  unsigned int sy_resolved : 1;
+    /* Whether symbol value has been completely resolved (used during
+       final pass over symbol table).  */
+    unsigned int sy_resolved : 1;
 
-  /* Whether the symbol value is currently being resolved (used to
-     detect loops in symbol dependencies).  */
-  unsigned int sy_resolving : 1;
+    /* Whether the symbol value is currently being resolved (used to
+       detect loops in symbol dependencies).  */
+    unsigned int sy_resolving : 1;
 
-  /* Whether the symbol value is used in a reloc.  This is used to
-     ensure that symbols used in relocs are written out, even if they
-     are local and would otherwise not be.  */
-  unsigned int sy_used_in_reloc : 1;
+    /* Whether the symbol value is used in a reloc.  This is used to
+       ensure that symbols used in relocs are written out, even if they
+       are local and would otherwise not be.  */
+    unsigned int sy_used_in_reloc : 1;
 
-  /* Whether the symbol is used as an operand or in an expression.
-     NOTE:  Not all the backends keep this information accurate;
-     backends which use this bit are responsible for setting it when
-     a symbol is used in backend routines.  */
-  unsigned int sy_used : 1;
+    /* Whether the symbol is used as an operand or in an expression.
+       NOTE:  Not all the backends keep this information accurate;
+       backends which use this bit are responsible for setting it when
+       a symbol is used in backend routines.  */
+    unsigned int sy_used : 1;
 
-  /* Whether the symbol can be re-defined.  */
-  unsigned int sy_volatile : 1;
+    /* Whether the symbol can be re-defined.  */
+    unsigned int sy_volatile : 1;
 
-  /* Whether the symbol is a forward reference.  */
-  unsigned int sy_forward_ref : 1;
+    /* Whether the symbol is a forward reference.  */
+    unsigned int sy_forward_ref : 1;
 
-  /* This is set if the symbol is defined in an MRI common section.
-     We handle such sections as single common symbols, so symbols
-     defined within them must be treated specially by the relocation
-     routines.  */
-  unsigned int sy_mri_common : 1;
+    /* This is set if the symbol is defined in an MRI common section.
+       We handle such sections as single common symbols, so symbols
+       defined within them must be treated specially by the relocation
+       routines.  */
+    unsigned int sy_mri_common : 1;
 
-  /* This is set if the symbol is set with a .weakref directive.  */
-  unsigned int sy_weakrefr : 1;
+    /* This is set if the symbol is set with a .weakref directive.  */
+    unsigned int sy_weakrefr : 1;
 
-  /* This is set when the symbol is referenced as part of a .weakref
-     directive, but only if the symbol was not in the symbol table
-     before.  It is cleared as soon as any direct reference to the
-     symbol is present.  */
-  unsigned int sy_weakrefd : 1;
+    /* This is set when the symbol is referenced as part of a .weakref
+       directive, but only if the symbol was not in the symbol table
+       before.  It is cleared as soon as any direct reference to the
+       symbol is present.  */
+    unsigned int sy_weakrefd : 1;
 };
 
 /* The information we keep for a symbol.  Note that the symbol table
    holds pointers both to this and to local_symbol structures.  See
    below.  */
 
-struct symbol
-{
-  /* Symbol flags.  */
-  struct symbol_flags sy_flags;
+struct symbol {
+    /* Symbol flags.  */
+    struct symbol_flags sy_flags;
 
-  /* BFD symbol */
-  asymbol *bsym;
+    /* BFD symbol */
+    asymbol *bsym;
 
-  /* The value of the symbol.  */
-  expressionS sy_value;
+    /* The value of the symbol.  */
+    expressionS sy_value;
 
-  /* Forwards and (optionally) backwards chain pointers.  */
-  struct symbol *sy_next;
-  struct symbol *sy_previous;
+    /* Forwards and (optionally) backwards chain pointers.  */
+    struct symbol *sy_next;
+    struct symbol *sy_previous;
 
-  /* Pointer to the frag this symbol is attached to, if any.
-     Otherwise, NULL.  */
-  struct frag *sy_frag;
+    /* Pointer to the frag this symbol is attached to, if any.
+       Otherwise, NULL.  */
+    struct frag *sy_frag;
 
 #ifdef OBJ_SYMFIELD_TYPE
-  OBJ_SYMFIELD_TYPE sy_obj;
+    OBJ_SYMFIELD_TYPE sy_obj;
 #endif
 
 #ifdef TC_SYMFIELD_TYPE
-  TC_SYMFIELD_TYPE sy_tc;
+    TC_SYMFIELD_TYPE sy_tc;
 #endif
 
 #ifdef TARGET_SYMBOL_FIELDS
-  TARGET_SYMBOL_FIELDS
+    TARGET_SYMBOL_FIELDS
 #endif
 };
 
@@ -117,32 +115,30 @@ struct symbol
    big difference in assembler memory usage when assembling a large
    file.  */
 
-struct local_symbol
-{
-  /* Symbol flags.  Only sy_local_symbol and sy_resolved are relevant.  */
-  struct symbol_flags lsy_flags;
+struct local_symbol {
+    /* Symbol flags.  Only sy_local_symbol and sy_resolved are relevant.  */
+    struct symbol_flags lsy_flags;
 
-  /* The symbol section.  This also serves as a flag.  If this is
-     reg_section, then this symbol has been converted into a regular
-     symbol, and lsy_sym points to it.  */
-  segT lsy_section;
+    /* The symbol section.  This also serves as a flag.  If this is
+       reg_section, then this symbol has been converted into a regular
+       symbol, and lsy_sym points to it.  */
+    segT lsy_section;
 
-  /* The symbol name.  */
-  const char *lsy_name;
+    /* The symbol name.  */
+    const char *lsy_name;
 
-  /* The symbol frag or the real symbol, depending upon the value in
-     lsy_section.  */
-  union
-  {
-    fragS *lsy_frag;
-    symbolS *lsy_sym;
-  } u;
+    /* The symbol frag or the real symbol, depending upon the value in
+       lsy_section.  */
+    union {
+        fragS *lsy_frag;
+        symbolS *lsy_sym;
+    } u;
 
-  /* The value of the symbol.  */
-  valueT lsy_value;
+    /* The value of the symbol.  */
+    valueT lsy_value;
 
 #ifdef TC_LOCAL_SYMFIELD_TYPE
-  TC_LOCAL_SYMFIELD_TYPE lsy_tc;
+    TC_LOCAL_SYMFIELD_TYPE lsy_tc;
 #endif
 };
 

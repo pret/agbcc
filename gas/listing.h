@@ -33,27 +33,27 @@
 #define LISTING_DEFAULT    (LISTING_LISTING | LISTING_HLL | LISTING_SYMBOLS)
 
 #ifndef NO_LISTING
-#define LISTING_NEWLINE() { if (listing) listing_newline (NULL); }
+#define LISTING_NEWLINE() { if (listing) { listing_newline(NULL); } }
 #else
-#define LISTING_NEWLINE() {;}
+#define LISTING_NEWLINE() {; }
 #endif
 #define LISTING_EOF()     LISTING_NEWLINE()
 
 #define LISTING_SKIP_COND() ((listing & LISTING_NOCOND) != 0)
 
-void listing_eject (int);
-void listing_error (const char *message);
-void listing_file (const char *name);
-void listing_list (int on);
-void listing_newline (char *ps);
-void listing_print (char *, char **);
-void listing_psize (int);
-void listing_nopage (int);
-void listing_source_file (const char *);
-void listing_source_line (unsigned int);
-void listing_title (int depth);
-void listing_warning (const char *message);
-void listing_width (unsigned int x);
+void listing_eject(int);
+void listing_error(const char *message);
+void listing_file(const char *name);
+void listing_list(int on);
+void listing_newline(char *ps);
+void listing_print(char *, char **);
+void listing_psize(int);
+void listing_nopage(int);
+void listing_source_file(const char *);
+void listing_source_line(unsigned int);
+void listing_title(int depth);
+void listing_warning(const char *message);
+void listing_width(unsigned int x);
 
 extern int listing_lhs_width;
 extern int listing_lhs_width_second;

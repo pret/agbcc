@@ -49,9 +49,9 @@
  * Escaped newlines at end of line: remove them but add as many newlines
  *   to end of statement as you removed in the middle, to synch line numbers.
  */
-
+
 #define BEFORE_STRING ("\n")
-#define AFTER_STRING ("\0")	/* memcpy of 0 chars might choke.  */
+#define AFTER_STRING ("\0")     /* memcpy of 0 chars might choke.  */
 #define BEFORE_SIZE (1)
 #define AFTER_SIZE  (1)
 
@@ -59,9 +59,9 @@
 #define TC_EOL_IN_INSN(P) 0
 #endif
 
-static char *buffer_start;	/*->1st char of full buffer area.  */
-static char *partial_where;	/*->after last full line in buffer.  */
-static size_t partial_size;	/* >=0. Number of chars in partial line in buffer.  */
+static char *buffer_start;      /*->1st char of full buffer area.  */
+static char *partial_where;     /*->after last full line in buffer.  */
+static size_t partial_size;     /* >=0. Number of chars in partial line in buffer.  */
 
 /* Because we need AFTER_STRING just after last full line, it clobbers
    1st part of partial line. So we preserve 1st part of partial line
@@ -106,25 +106,25 @@ static int logical_input_line;
 
 /* Struct used to save the state of the input handler during include files */
 struct input_save {
-  char *              buffer_start;
-  char *              partial_where;
-  size_t              partial_size;
-  char                save_source[AFTER_SIZE];
-  size_t              buffer_length;
-  const char *              physical_input_file;
-  const char *              logical_input_file;
-  unsigned int        physical_input_line;
-  int                 logical_input_line;
-  size_t              sb_index;
-  sb                  from_sb;
-  int                 from_sb_is_expansion; /* Should we do a conditional check?  */
-  struct input_save * next_saved_file;	/* Chain of input_saves.  */
-  char *              input_file_save;	/* Saved state of input routines.  */
-  char *              saved_position;	/* Caller's saved position in buf.  */
+    char *              buffer_start;
+    char *              partial_where;
+    size_t partial_size;
+    char save_source[AFTER_SIZE];
+    size_t buffer_length;
+    const char *              physical_input_file;
+    const char *              logical_input_file;
+    unsigned int physical_input_line;
+    int logical_input_line;
+    size_t sb_index;
+    sb from_sb;
+    int from_sb_is_expansion;           /* Should we do a conditional check?  */
+    struct input_save * next_saved_file; /* Chain of input_saves.  */
+    char *              input_file_save;/* Saved state of input routines.  */
+    char *              saved_position;/* Caller's saved position in buf.  */
 };
 
-static struct input_save *input_scrub_push (char *saved_position);
-static char *input_scrub_pop (struct input_save *arg);
+static struct input_save *input_scrub_push(char *saved_position);
+static char *input_scrub_pop(struct input_save *arg);
 
 /* Saved information about the file that .include'd this one.  When we hit EOF,
    we automatically pop to that file.  */
@@ -133,304 +133,286 @@ static struct input_save *next_saved_file;
 
 /* Initialize input buffering.  */
 
-static void
-input_scrub_reinit (void)
+static void input_scrub_reinit(void)
 {
-  input_file_begin ();		/* Reinitialize! */
-  logical_input_line = -1;
-  logical_input_file = NULL;
+    input_file_begin();     /* Reinitialize! */
+    logical_input_line = -1;
+    logical_input_file = NULL;
 
-  buffer_length = input_file_buffer_size () * 2;
-  buffer_start = XNEWVEC (char, BEFORE_SIZE + AFTER_SIZE + 1 + buffer_length);
-  memcpy (buffer_start, BEFORE_STRING, (int) BEFORE_SIZE);
+    buffer_length = input_file_buffer_size() * 2;
+    buffer_start = XNEWVEC(char, BEFORE_SIZE + AFTER_SIZE + 1 + buffer_length);
+    memcpy(buffer_start, BEFORE_STRING, (int)BEFORE_SIZE);
 }
 
 /* Push the state of input reading and scrubbing so that we can #include.
    The return value is a 'void *' (fudged for old compilers) to a save
    area, which can be restored by passing it to input_scrub_pop().  */
 
-static struct input_save *
-input_scrub_push (char *saved_position)
+static struct input_save *input_scrub_push(char *saved_position)
 {
-  struct input_save *saved;
+    struct input_save *saved;
 
-  saved = XNEW (struct input_save);
+    saved = XNEW(struct input_save);
 
-  saved->saved_position = saved_position;
-  saved->buffer_start = buffer_start;
-  saved->partial_where = partial_where;
-  saved->partial_size = partial_size;
-  saved->buffer_length = buffer_length;
-  saved->physical_input_file = physical_input_file;
-  saved->logical_input_file = logical_input_file;
-  saved->physical_input_line = physical_input_line;
-  saved->logical_input_line = logical_input_line;
-  saved->sb_index = sb_index;
-  saved->from_sb = from_sb;
-  saved->from_sb_is_expansion = from_sb_is_expansion;
-  memcpy (saved->save_source, save_source, sizeof (save_source));
-  saved->next_saved_file = next_saved_file;
-  saved->input_file_save = input_file_push ();
+    saved->saved_position = saved_position;
+    saved->buffer_start = buffer_start;
+    saved->partial_where = partial_where;
+    saved->partial_size = partial_size;
+    saved->buffer_length = buffer_length;
+    saved->physical_input_file = physical_input_file;
+    saved->logical_input_file = logical_input_file;
+    saved->physical_input_line = physical_input_line;
+    saved->logical_input_line = logical_input_line;
+    saved->sb_index = sb_index;
+    saved->from_sb = from_sb;
+    saved->from_sb_is_expansion = from_sb_is_expansion;
+    memcpy(saved->save_source, save_source, sizeof(save_source));
+    saved->next_saved_file = next_saved_file;
+    saved->input_file_save = input_file_push();
 
-  sb_index = -1;
+    sb_index = -1;
 
-  input_scrub_reinit ();
+    input_scrub_reinit();
 
-  return saved;
+    return saved;
 }
 
-static char *
-input_scrub_pop (struct input_save *saved)
+static char *input_scrub_pop(struct input_save *saved)
 {
-  char *saved_position;
+    char *saved_position;
 
-  input_scrub_end ();		/* Finish off old buffer */
+    input_scrub_end();      /* Finish off old buffer */
 
-  input_file_pop (saved->input_file_save);
-  saved_position = saved->saved_position;
-  buffer_start = saved->buffer_start;
-  buffer_length = saved->buffer_length;
-  physical_input_file = saved->physical_input_file;
-  logical_input_file = saved->logical_input_file;
-  physical_input_line = saved->physical_input_line;
-  logical_input_line = saved->logical_input_line;
-  sb_index = saved->sb_index;
-  from_sb = saved->from_sb;
-  from_sb_is_expansion = saved->from_sb_is_expansion;
-  partial_where = saved->partial_where;
-  partial_size = saved->partial_size;
-  next_saved_file = saved->next_saved_file;
-  memcpy (save_source, saved->save_source, sizeof (save_source));
+    input_file_pop(saved->input_file_save);
+    saved_position = saved->saved_position;
+    buffer_start = saved->buffer_start;
+    buffer_length = saved->buffer_length;
+    physical_input_file = saved->physical_input_file;
+    logical_input_file = saved->logical_input_file;
+    physical_input_line = saved->physical_input_line;
+    logical_input_line = saved->logical_input_line;
+    sb_index = saved->sb_index;
+    from_sb = saved->from_sb;
+    from_sb_is_expansion = saved->from_sb_is_expansion;
+    partial_where = saved->partial_where;
+    partial_size = saved->partial_size;
+    next_saved_file = saved->next_saved_file;
+    memcpy(save_source, saved->save_source, sizeof(save_source));
 
-  free (saved);
-  return saved_position;
-}
-
-void
-input_scrub_begin (void)
-{
-  know (strlen (BEFORE_STRING) == BEFORE_SIZE);
-  know (strlen (AFTER_STRING) == AFTER_SIZE
-	|| (AFTER_STRING[0] == '\0' && AFTER_SIZE == 1));
-
-  physical_input_file = NULL;	/* No file read yet.  */
-  next_saved_file = NULL;	/* At EOF, don't pop to any other file */
-  input_scrub_reinit ();
-  do_scrub_begin (flag_m68k_mri);
+    free(saved);
+    return saved_position;
 }
 
-void
-input_scrub_end (void)
+void input_scrub_begin(void)
 {
-  if (buffer_start)
-    {
-      free (buffer_start);
-      buffer_start = 0;
-      input_file_end ();
+    know(strlen(BEFORE_STRING) == BEFORE_SIZE);
+    know(strlen(AFTER_STRING) == AFTER_SIZE
+         || (AFTER_STRING[0] == '\0' && AFTER_SIZE == 1));
+
+    physical_input_file = NULL; /* No file read yet.  */
+    next_saved_file = NULL; /* At EOF, don't pop to any other file */
+    input_scrub_reinit();
+    do_scrub_begin(flag_m68k_mri);
+}
+
+void input_scrub_end(void)
+{
+    if (buffer_start) {
+        free(buffer_start);
+        buffer_start = 0;
+        input_file_end();
     }
 }
 
 /* Start reading input from a new file.
    Return start of caller's part of buffer.  */
 
-char *
-input_scrub_new_file (const char *filename)
+char *input_scrub_new_file(const char *filename)
 {
-  input_file_open (filename, !flag_no_comments);
-  physical_input_file = filename[0] ? filename : _("{standard input}");
-  physical_input_line = 0;
+    input_file_open(filename, !flag_no_comments);
+    physical_input_file = filename[0] ? filename : _("{standard input}");
+    physical_input_line = 0;
 
-  partial_size = 0;
-  return (buffer_start + BEFORE_SIZE);
+    partial_size = 0;
+    return(buffer_start + BEFORE_SIZE);
 }
 
 /* Include a file from the current file.  Save our state, cause it to
    be restored on EOF, and begin handling a new file.  Same result as
    input_scrub_new_file.  */
 
-char *
-input_scrub_include_file (const char *filename, char *position)
+char *input_scrub_include_file(const char *filename, char *position)
 {
-  next_saved_file = input_scrub_push (position);
-  return input_scrub_new_file (filename);
+    next_saved_file = input_scrub_push(position);
+    return input_scrub_new_file(filename);
 }
 
 /* Start getting input from an sb structure.  This is used when
    expanding a macro.  */
 
-void
-input_scrub_include_sb (sb *from, char *position, int is_expansion)
+void input_scrub_include_sb(sb *from, char *position, int is_expansion)
 {
-  int newline;
+    int newline;
 
-  if (macro_nest > max_macro_nest)
-    as_fatal (_("macros nested too deeply"));
-  ++macro_nest;
+    if (macro_nest > max_macro_nest) {
+        as_fatal(_("macros nested too deeply"));
+    }
+    ++macro_nest;
 
 #ifdef md_macro_start
-  if (is_expansion)
-    {
-      md_macro_start ();
+    if (is_expansion) {
+        md_macro_start();
     }
 #endif
 
-  next_saved_file = input_scrub_push (position);
+    next_saved_file = input_scrub_push(position);
 
-  /* Allocate sufficient space: from->len + optional newline.  */
-  newline = from->len >= 1 && from->ptr[0] != '\n';
-  sb_build (&from_sb, from->len + newline);
-  from_sb_is_expansion = is_expansion;
-  if (newline)
-    {
-      /* Add the sentinel required by read.c.  */
-      sb_add_char (&from_sb, '\n');
+    /* Allocate sufficient space: from->len + optional newline.  */
+    newline = from->len >= 1 && from->ptr[0] != '\n';
+    sb_build(&from_sb, from->len + newline);
+    from_sb_is_expansion = is_expansion;
+    if (newline) {
+        /* Add the sentinel required by read.c.  */
+        sb_add_char(&from_sb, '\n');
     }
-  sb_scrub_and_add_sb (&from_sb, from);
+    sb_scrub_and_add_sb(&from_sb, from);
 
-  /* Make sure the parser looks at defined contents when it scans for
-     e.g. end-of-line at the end of a macro.  */
-  sb_terminate (&from_sb);
+    /* Make sure the parser looks at defined contents when it scans for
+       e.g. end-of-line at the end of a macro.  */
+    sb_terminate(&from_sb);
 
-  sb_index = 1;
+    sb_index = 1;
 
-  /* These variables are reset by input_scrub_push.  Restore them
-     since we are, after all, still at the same point in the file.  */
-  logical_input_line = next_saved_file->logical_input_line;
-  logical_input_file = next_saved_file->logical_input_file;
+    /* These variables are reset by input_scrub_push.  Restore them
+       since we are, after all, still at the same point in the file.  */
+    logical_input_line = next_saved_file->logical_input_line;
+    logical_input_file = next_saved_file->logical_input_file;
 }
 
-void
-input_scrub_close (void)
+void input_scrub_close(void)
 {
-  input_file_close ();
-  physical_input_line = 0;
-  logical_input_line = -1;
+    input_file_close();
+    physical_input_line = 0;
+    logical_input_line = -1;
 }
 
-char *
-input_scrub_next_buffer (char **bufp)
+char *input_scrub_next_buffer(char **bufp)
 {
-  char *limit;		/*->just after last char of buffer.  */
+    char *limit;    /*->just after last char of buffer.  */
 
-  if (sb_index != (size_t) -1)
-    {
-      if (sb_index >= from_sb.len)
-	{
-	  sb_kill (&from_sb);
-	  if (from_sb_is_expansion)
-	    {
-	      cond_finish_check (macro_nest);
+    if (sb_index != (size_t)-1) {
+        if (sb_index >= from_sb.len) {
+            sb_kill(&from_sb);
+            if (from_sb_is_expansion) {
+                cond_finish_check(macro_nest);
 #ifdef md_macro_end
-	      /* Allow the target to clean up per-macro expansion
-	         data.  */
-	      md_macro_end ();
+                /* Allow the target to clean up per-macro expansion
+                   data.  */
+                md_macro_end();
 #endif
-	    }
-	  --macro_nest;
-	  partial_where = NULL;
-	  partial_size = 0;
-	  if (next_saved_file != NULL)
-	    *bufp = input_scrub_pop (next_saved_file);
-	  return partial_where;
-	}
+            }
+            --macro_nest;
+            partial_where = NULL;
+            partial_size = 0;
+            if (next_saved_file != NULL) {
+                *bufp = input_scrub_pop(next_saved_file);
+            }
+            return partial_where;
+        }
 
-      partial_where = from_sb.ptr + from_sb.len;
-      partial_size = 0;
-      *bufp = from_sb.ptr + sb_index;
-      sb_index = from_sb.len;
-      return partial_where;
+        partial_where = from_sb.ptr + from_sb.len;
+        partial_size = 0;
+        *bufp = from_sb.ptr + sb_index;
+        sb_index = from_sb.len;
+        return partial_where;
     }
 
-  if (partial_size)
-    {
-      memmove (buffer_start + BEFORE_SIZE, partial_where, partial_size);
-      memcpy (buffer_start + BEFORE_SIZE, save_source, AFTER_SIZE);
+    if (partial_size) {
+        memmove(buffer_start + BEFORE_SIZE, partial_where, partial_size);
+        memcpy(buffer_start + BEFORE_SIZE, save_source, AFTER_SIZE);
     }
 
-  while (1)
-    {
-      char *p;
-      char *start = buffer_start + BEFORE_SIZE + partial_size;
+    while (1) {
+        char *p;
+        char *start = buffer_start + BEFORE_SIZE + partial_size;
 
-      *bufp = buffer_start + BEFORE_SIZE;
-      limit = input_file_give_next_buffer (start);
-      if (!limit)
-	{
-	  if (!partial_size)
-	    /* End of this file.  */
-	    break;
+        *bufp = buffer_start + BEFORE_SIZE;
+        limit = input_file_give_next_buffer(start);
+        if (!limit) {
+            if (!partial_size) {
+                /* End of this file.  */
+                break;
+            }
 
-	  as_warn (_("end of file not at end of a line; newline inserted"));
-	  p = buffer_start + BEFORE_SIZE + partial_size;
-	  *p++ = '\n';
-	  limit = p;
-	}
-      else
-	{
-	  /* Terminate the buffer to avoid confusing TC_EOL_IN_INSN.  */
-	  *limit = '\0';
+            as_warn(_("end of file not at end of a line; newline inserted"));
+            p = buffer_start + BEFORE_SIZE + partial_size;
+            *p++ = '\n';
+            limit = p;
+        } else {
+            /* Terminate the buffer to avoid confusing TC_EOL_IN_INSN.  */
+            *limit = '\0';
 
-	  /* Find last newline.  */
-	  for (p = limit - 1; *p != '\n' || TC_EOL_IN_INSN (p); --p)
-	    if (p < start)
-	      goto read_more;
-	  ++p;
-	}
+            /* Find last newline.  */
+            for (p = limit - 1; *p != '\n' || TC_EOL_IN_INSN(p); --p) {
+                if (p < start) {
+                    goto read_more;
+                }
+            }
+            ++p;
+        }
 
-      /* We found a newline in the newly read chars.  */
-      partial_where = p;
-      partial_size = limit - p;
+        /* We found a newline in the newly read chars.  */
+        partial_where = p;
+        partial_size = limit - p;
 
-      /* Save the fragment after that last newline.  */
-      memcpy (save_source, partial_where, (int) AFTER_SIZE);
-      memcpy (partial_where, AFTER_STRING, (int) AFTER_SIZE);
-      return partial_where;
+        /* Save the fragment after that last newline.  */
+        memcpy(save_source, partial_where, (int)AFTER_SIZE);
+        memcpy(partial_where, AFTER_STRING, (int)AFTER_SIZE);
+        return partial_where;
 
-    read_more:
-      /* Didn't find a newline.  Read more text.  */
-      partial_size = limit - (buffer_start + BEFORE_SIZE);
-      if (buffer_length - input_file_buffer_size () < partial_size)
-	{
-	  /* Increase the buffer when it doesn't have room for the
-	     next block of input.  */
-	  buffer_length *= 2;
-	  buffer_start = XRESIZEVEC (char, buffer_start,
-				     (buffer_length
-				      + BEFORE_SIZE + AFTER_SIZE + 1));
-	}
+ read_more:
+        /* Didn't find a newline.  Read more text.  */
+        partial_size = limit - (buffer_start + BEFORE_SIZE);
+        if (buffer_length - input_file_buffer_size() < partial_size) {
+            /* Increase the buffer when it doesn't have room for the
+               next block of input.  */
+            buffer_length *= 2;
+            buffer_start = XRESIZEVEC(char, buffer_start,
+                                      (buffer_length
+                                       + BEFORE_SIZE + AFTER_SIZE + 1));
+        }
     }
 
-  /* Tell the listing we've finished the file.  */
-  LISTING_EOF ();
+    /* Tell the listing we've finished the file.  */
+    LISTING_EOF();
 
-  /* If we should pop to another file at EOF, do it.  */
-  partial_where = NULL;
-  if (next_saved_file)
-    *bufp = input_scrub_pop (next_saved_file);
+    /* If we should pop to another file at EOF, do it.  */
+    partial_where = NULL;
+    if (next_saved_file) {
+        *bufp = input_scrub_pop(next_saved_file);
+    }
 
-  return partial_where;
+    return partial_where;
 }
-
+
 /* The remaining part of this file deals with line numbers, error
    messages and so on.  Return TRUE if we opened any file.  */
 
-int
-seen_at_least_1_file (void)
+int seen_at_least_1_file(void)
 {
-  return (physical_input_file != NULL);
+    return(physical_input_file != NULL);
 }
 
-void
-bump_line_counters (void)
+void bump_line_counters(void)
 {
-  if (sb_index == (size_t) -1)
-    {
-      ++physical_input_line;
-      if (logical_input_line >= 0)
-	++logical_input_line;
+    if (sb_index == (size_t)-1) {
+        ++physical_input_line;
+        if (logical_input_line >= 0) {
+            ++logical_input_line;
+        }
     }
 }
-
+
 /* Tells us what the new logical line number and file are.
    If the line_number is -1, we don't change the current logical line
    number.  If it is -2, we decrement the logical line number (this is
@@ -439,84 +421,79 @@ bump_line_counters (void)
    If the fname is NULL, we don't change the current logical file name.
    Returns nonzero if the filename actually changes.  */
 
-int
-new_logical_line_flags (const char *fname, /* DON'T destroy it!  We point to it!  */
-			int line_number,
-			int flags)
+int new_logical_line_flags(const char *fname,  /* DON'T destroy it!  We point to it!  */
+                           int line_number,
+                           int flags)
 {
-  switch (flags)
-    {
+    switch (flags) {
     case 0:
-      break;
+        break;
     case 1:
-      if (line_number != -1)
-	abort ();
-      break;
+        if (line_number != -1) {
+            abort();
+        }
+        break;
     case 1 << 1:
-    case 1 << 2:
-      /* FIXME: we could check that include nesting is correct.  */
-      break;
+            case 1 << 2:
+            /* FIXME: we could check that include nesting is correct.  */
+            break;
     default:
-      abort ();
+        abort();
     }
 
-  if (line_number >= 0)
-    logical_input_line = line_number;
-  else if (line_number == -1 && fname && !*fname && (flags & (1 << 2)))
-    {
-      logical_input_file = physical_input_file;
-      logical_input_line = physical_input_line;
-      fname = NULL;
+    if (line_number >= 0) {
+        logical_input_line = line_number;
+    } else if (line_number == -1 && fname && !*fname && (flags & (1 << 2))) {
+        logical_input_file = physical_input_file;
+        logical_input_line = physical_input_line;
+        fname = NULL;
     }
 
-  if (fname
-      && (logical_input_file == NULL
-	  || filename_cmp (logical_input_file, fname)))
-    {
-      logical_input_file = fname;
-      return 1;
+    if (fname
+        && (logical_input_file == NULL
+            || filename_cmp(logical_input_file, fname))) {
+        logical_input_file = fname;
+        return 1;
+    } else {
+        return 0;
     }
-  else
-    return 0;
 }
 
-int
-new_logical_line (const char *fname, int line_number)
+int new_logical_line(const char *fname, int line_number)
 {
-  return new_logical_line_flags (fname, line_number, 0);
+    return new_logical_line_flags(fname, line_number, 0);
 }
 
-
+
 /* Return the current physical input file name and line number, if known  */
 
-const char *
-as_where_physical (unsigned int *linep)
+const char *as_where_physical(unsigned int *linep)
 {
-  if (physical_input_file != NULL)
-    {
-      if (linep != NULL)
-	*linep = physical_input_line;
-      return physical_input_file;
+    if (physical_input_file != NULL) {
+        if (linep != NULL) {
+            *linep = physical_input_line;
+        }
+        return physical_input_file;
     }
 
-  if (linep != NULL)
-    *linep = 0;
-  return NULL;
+    if (linep != NULL) {
+        *linep = 0;
+    }
+    return NULL;
 }
 
 /* Return the current file name and line number.  */
 
-const char *
-as_where (unsigned int *linep)
+const char *as_where(unsigned int *linep)
 {
-  if (logical_input_file != NULL
-      && (linep == NULL || logical_input_line >= 0))
-    {
-      if (linep != NULL)
-	*linep = logical_input_line;
-      return logical_input_file;
+    if (logical_input_file != NULL
+        && (linep == NULL || logical_input_line >= 0)) {
+        if (linep != NULL) {
+            *linep = logical_input_line;
+        }
+        return logical_input_file;
     }
 
-  return as_where_physical (linep);
+    return as_where_physical(linep);
 }
 

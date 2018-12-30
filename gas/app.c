@@ -34,131 +34,137 @@ int enable_h_tick_hex = 0;
 
 /* The pseudo-op for which we need to special-case `@' characters.
    See the comment in do_scrub_chars.  */
-static const char   symver_pseudo[] = ".symver";
+static const char symver_pseudo[] = ".symver";
 static const char * symver_state;
 static char last_char;
 
 static char lex[256];
 static const char symbol_chars[] =
-"$._ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    "$._ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-#define LEX_IS_SYMBOL_COMPONENT		1
-#define LEX_IS_WHITESPACE		2
-#define LEX_IS_LINE_SEPARATOR		3
-#define LEX_IS_COMMENT_START		4
-#define LEX_IS_LINE_COMMENT_START	5
-#define	LEX_IS_TWOCHAR_COMMENT_1ST	6
-#define	LEX_IS_STRINGQUOTE		8
-#define	LEX_IS_COLON			9
-#define	LEX_IS_NEWLINE			10
-#define	LEX_IS_ONECHAR_QUOTE		11
+#define LEX_IS_SYMBOL_COMPONENT         1
+#define LEX_IS_WHITESPACE               2
+#define LEX_IS_LINE_SEPARATOR           3
+#define LEX_IS_COMMENT_START            4
+#define LEX_IS_LINE_COMMENT_START       5
+#define LEX_IS_TWOCHAR_COMMENT_1ST      6
+#define LEX_IS_STRINGQUOTE              8
+#define LEX_IS_COLON                    9
+#define LEX_IS_NEWLINE                  10
+#define LEX_IS_ONECHAR_QUOTE            11
 #ifdef TC_V850
-#define LEX_IS_DOUBLEDASH_1ST		12
+#define LEX_IS_DOUBLEDASH_1ST           12
 #endif
 #ifdef TC_M32R
 #define DOUBLEBAR_PARALLEL
 #endif
 #ifdef DOUBLEBAR_PARALLEL
-#define LEX_IS_DOUBLEBAR_1ST		13
+#define LEX_IS_DOUBLEBAR_1ST            13
 #endif
-#define LEX_IS_PARALLEL_SEPARATOR	14
+#define LEX_IS_PARALLEL_SEPARATOR       14
 #ifdef H_TICK_HEX
-#define LEX_IS_H			15
+#define LEX_IS_H                        15
 #endif
-#define IS_SYMBOL_COMPONENT(c)		(lex[c] == LEX_IS_SYMBOL_COMPONENT)
-#define IS_WHITESPACE(c)		(lex[c] == LEX_IS_WHITESPACE)
-#define IS_LINE_SEPARATOR(c)		(lex[c] == LEX_IS_LINE_SEPARATOR)
-#define IS_PARALLEL_SEPARATOR(c)	(lex[c] == LEX_IS_PARALLEL_SEPARATOR)
-#define IS_COMMENT(c)			(lex[c] == LEX_IS_COMMENT_START)
-#define IS_LINE_COMMENT(c)		(lex[c] == LEX_IS_LINE_COMMENT_START)
-#define	IS_NEWLINE(c)			(lex[c] == LEX_IS_NEWLINE)
+#define IS_SYMBOL_COMPONENT(c)          (lex[c] == LEX_IS_SYMBOL_COMPONENT)
+#define IS_WHITESPACE(c)                (lex[c] == LEX_IS_WHITESPACE)
+#define IS_LINE_SEPARATOR(c)            (lex[c] == LEX_IS_LINE_SEPARATOR)
+#define IS_PARALLEL_SEPARATOR(c)        (lex[c] == LEX_IS_PARALLEL_SEPARATOR)
+#define IS_COMMENT(c)                   (lex[c] == LEX_IS_COMMENT_START)
+#define IS_LINE_COMMENT(c)              (lex[c] == LEX_IS_LINE_COMMENT_START)
+#define IS_NEWLINE(c)                   (lex[c] == LEX_IS_NEWLINE)
 
-static int process_escape (int);
+static int process_escape(int);
 
 /* FIXME-soon: The entire lexer/parser thingy should be
    built statically at compile time rather than dynamically
    each and every time the assembler is run.  xoxorich.  */
 
-void
-do_scrub_begin (int m68k_mri ATTRIBUTE_UNUSED)
+void do_scrub_begin(int m68k_mri ATTRIBUTE_UNUSED)
 {
-  const char *p;
-  int c;
+    const char *p;
+    int c;
 
-  lex[' '] = LEX_IS_WHITESPACE;
-  lex['\t'] = LEX_IS_WHITESPACE;
-  lex['\r'] = LEX_IS_WHITESPACE;
-  lex['\n'] = LEX_IS_NEWLINE;
-  lex[':'] = LEX_IS_COLON;
+    lex[' '] = LEX_IS_WHITESPACE;
+    lex['\t'] = LEX_IS_WHITESPACE;
+    lex['\r'] = LEX_IS_WHITESPACE;
+    lex['\n'] = LEX_IS_NEWLINE;
+    lex[':'] = LEX_IS_COLON;
 
     {
-      lex['"'] = LEX_IS_STRINGQUOTE;
+        lex['"'] = LEX_IS_STRINGQUOTE;
 
-      lex['\''] = LEX_IS_ONECHAR_QUOTE;
+        lex['\''] = LEX_IS_ONECHAR_QUOTE;
 
 #ifdef SINGLE_QUOTE_STRINGS
-      lex['\''] = LEX_IS_STRINGQUOTE;
+        lex['\''] = LEX_IS_STRINGQUOTE;
 #endif
     }
 
-  /* Note: if any other character can be LEX_IS_STRINGQUOTE, the loop
-     in state 5 of do_scrub_chars must be changed.  */
+    /* Note: if any other character can be LEX_IS_STRINGQUOTE, the loop
+       in state 5 of do_scrub_chars must be changed.  */
 
-  /* Note that these override the previous defaults, e.g. if ';' is a
-     comment char, then it isn't a line separator.  */
-  for (p = symbol_chars; *p; ++p)
-    lex[(unsigned char) *p] = LEX_IS_SYMBOL_COMPONENT;
+    /* Note that these override the previous defaults, e.g. if ';' is a
+       comment char, then it isn't a line separator.  */
+    for (p = symbol_chars; *p; ++p) {
+        lex[(unsigned char)*p] = LEX_IS_SYMBOL_COMPONENT;
+    }
 
-  for (c = 128; c < 256; ++c)
-    lex[c] = LEX_IS_SYMBOL_COMPONENT;
+    for (c = 128; c < 256; ++c) {
+        lex[c] = LEX_IS_SYMBOL_COMPONENT;
+    }
 
 #ifdef tc_symbol_chars
-  /* This macro permits the processor to specify all characters which
-     may appears in an operand.  This will prevent the scrubber from
-     discarding meaningful whitespace in certain cases.  The i386
-     backend uses this to support prefixes, which can confuse the
-     scrubber as to whether it is parsing operands or opcodes.  */
-  for (p = tc_symbol_chars; *p; ++p)
-    lex[(unsigned char) *p] = LEX_IS_SYMBOL_COMPONENT;
+    /* This macro permits the processor to specify all characters which
+       may appears in an operand.  This will prevent the scrubber from
+       discarding meaningful whitespace in certain cases.  The i386
+       backend uses this to support prefixes, which can confuse the
+       scrubber as to whether it is parsing operands or opcodes.  */
+    for (p = tc_symbol_chars; *p; ++p) {
+        lex[(unsigned char)*p] = LEX_IS_SYMBOL_COMPONENT;
+    }
 #endif
 
-  /* The m68k backend wants to be able to change comment_chars.  */
+    /* The m68k backend wants to be able to change comment_chars.  */
 #ifndef tc_comment_chars
 #define tc_comment_chars comment_chars
 #endif
-  for (p = tc_comment_chars; *p; p++)
-    lex[(unsigned char) *p] = LEX_IS_COMMENT_START;
+    for (p = tc_comment_chars; *p; p++) {
+        lex[(unsigned char)*p] = LEX_IS_COMMENT_START;
+    }
 
-  for (p = line_comment_chars; *p; p++)
-    lex[(unsigned char) *p] = LEX_IS_LINE_COMMENT_START;
+    for (p = line_comment_chars; *p; p++) {
+        lex[(unsigned char)*p] = LEX_IS_LINE_COMMENT_START;
+    }
 
 #ifndef tc_line_separator_chars
 #define tc_line_separator_chars line_separator_chars
 #endif
-  for (p = tc_line_separator_chars; *p; p++)
-    lex[(unsigned char) *p] = LEX_IS_LINE_SEPARATOR;
+    for (p = tc_line_separator_chars; *p; p++) {
+        lex[(unsigned char)*p] = LEX_IS_LINE_SEPARATOR;
+    }
 
 #ifdef tc_parallel_separator_chars
-  /* This macro permits the processor to specify all characters which
-     separate parallel insns on the same line.  */
-  for (p = tc_parallel_separator_chars; *p; p++)
-    lex[(unsigned char) *p] = LEX_IS_PARALLEL_SEPARATOR;
+    /* This macro permits the processor to specify all characters which
+       separate parallel insns on the same line.  */
+    for (p = tc_parallel_separator_chars; *p; p++) {
+        lex[(unsigned char)*p] = LEX_IS_PARALLEL_SEPARATOR;
+    }
 #endif
 
-  /* Only allow slash-star comments if slash is not in use.
-     FIXME: This isn't right.  We should always permit them.  */
-  if (lex['/'] == 0)
-    lex['/'] = LEX_IS_TWOCHAR_COMMENT_1ST;
+    /* Only allow slash-star comments if slash is not in use.
+       FIXME: This isn't right.  We should always permit them.  */
+    if (lex['/'] == 0) {
+        lex['/'] = LEX_IS_TWOCHAR_COMMENT_1ST;
+    }
 
 #ifdef DOUBLEBAR_PARALLEL
-  lex['|'] = LEX_IS_DOUBLEBAR_1ST;
+    lex['|'] = LEX_IS_DOUBLEBAR_1ST;
 #endif
 
 #ifdef H_TICK_HEX
-  if (enable_h_tick_hex)
-    {
-      lex['h'] = LEX_IS_H;
-      lex['H'] = LEX_IS_H;
+    if (enable_h_tick_hex) {
+        lex['h'] = LEX_IS_H;
+        lex['H'] = LEX_IS_H;
     }
 #endif
 }
@@ -180,107 +186,100 @@ static char mri_last_ch;
    state at the time .include is interpreted is completely unrelated.
    That's why we have to save it all.  */
 
-struct app_save
-{
-  int          state;
-  int          old_state;
-  const char * out_string;
-  char         out_buf[sizeof (out_buf)];
-  int          add_newlines;
-  char *       saved_input;
-  size_t       saved_input_len;
-  const char * mri_state;
-  char         mri_last_ch;
-  const char * symver_state;
-  char last_char;
+struct app_save {
+    int state;
+    int old_state;
+    const char * out_string;
+    char out_buf[sizeof(out_buf)];
+    int add_newlines;
+    char *       saved_input;
+    size_t saved_input_len;
+    const char * mri_state;
+    char mri_last_ch;
+    const char * symver_state;
+    char last_char;
 };
 
-char *
-app_push (void)
+char *app_push(void)
 {
-  struct app_save *saved;
+    struct app_save *saved;
 
-  saved = XNEW (struct app_save);
-  saved->state = state;
-  saved->old_state = old_state;
-  saved->out_string = out_string;
-  memcpy (saved->out_buf, out_buf, sizeof (out_buf));
-  saved->add_newlines = add_newlines;
-  if (saved_input == NULL)
-    saved->saved_input = NULL;
-  else
-    {
-      saved->saved_input = XNEWVEC (char, saved_input_len);
-      memcpy (saved->saved_input, saved_input, saved_input_len);
-      saved->saved_input_len = saved_input_len;
+    saved = XNEW(struct app_save);
+    saved->state = state;
+    saved->old_state = old_state;
+    saved->out_string = out_string;
+    memcpy(saved->out_buf, out_buf, sizeof(out_buf));
+    saved->add_newlines = add_newlines;
+    if (saved_input == NULL) {
+        saved->saved_input = NULL;
+    } else {
+        saved->saved_input = XNEWVEC(char, saved_input_len);
+        memcpy(saved->saved_input, saved_input, saved_input_len);
+        saved->saved_input_len = saved_input_len;
     }
-  saved->mri_state = mri_state;
-  saved->mri_last_ch = mri_last_ch;
-  saved->symver_state = symver_state;
-  saved->last_char = last_char;
+    saved->mri_state = mri_state;
+    saved->mri_last_ch = mri_last_ch;
+    saved->symver_state = symver_state;
+    saved->last_char = last_char;
 
-  /* do_scrub_begin() is not useful, just wastes time.  */
+    /* do_scrub_begin() is not useful, just wastes time.  */
 
-  state = 0;
-  saved_input = NULL;
-  add_newlines = 0;
+    state = 0;
+    saved_input = NULL;
+    add_newlines = 0;
 
-  return (char *) saved;
+    return (char*)saved;
 }
 
-void
-app_pop (char *arg)
+void app_pop(char *arg)
 {
-  struct app_save *saved = (struct app_save *) arg;
+    struct app_save *saved = (struct app_save *)arg;
 
-  /* There is no do_scrub_end ().  */
-  state = saved->state;
-  old_state = saved->old_state;
-  out_string = saved->out_string;
-  memcpy (out_buf, saved->out_buf, sizeof (out_buf));
-  add_newlines = saved->add_newlines;
-  if (saved->saved_input == NULL)
-    saved_input = NULL;
-  else
-    {
-      gas_assert (saved->saved_input_len <= sizeof (input_buffer));
-      memcpy (input_buffer, saved->saved_input, saved->saved_input_len);
-      saved_input = input_buffer;
-      saved_input_len = saved->saved_input_len;
-      free (saved->saved_input);
+    /* There is no do_scrub_end ().  */
+    state = saved->state;
+    old_state = saved->old_state;
+    out_string = saved->out_string;
+    memcpy(out_buf, saved->out_buf, sizeof(out_buf));
+    add_newlines = saved->add_newlines;
+    if (saved->saved_input == NULL) {
+        saved_input = NULL;
+    } else {
+        gas_assert(saved->saved_input_len <= sizeof(input_buffer));
+        memcpy(input_buffer, saved->saved_input, saved->saved_input_len);
+        saved_input = input_buffer;
+        saved_input_len = saved->saved_input_len;
+        free(saved->saved_input);
     }
-  mri_state = saved->mri_state;
-  mri_last_ch = saved->mri_last_ch;
-  symver_state = saved->symver_state;
-  last_char = saved->last_char;
+    mri_state = saved->mri_state;
+    mri_last_ch = saved->mri_last_ch;
+    symver_state = saved->symver_state;
+    last_char = saved->last_char;
 
-  free (arg);
+    free(arg);
 }
 
 /* @@ This assumes that \n &c are the same on host and target.  This is not
    necessarily true.  */
 
-static int
-process_escape (int ch)
+static int process_escape(int ch)
 {
-  switch (ch)
-    {
+    switch (ch) {
     case 'b':
-      return '\b';
+        return '\b';
     case 'f':
-      return '\f';
+        return '\f';
     case 'n':
-      return '\n';
+        return '\n';
     case 'r':
-      return '\r';
+        return '\r';
     case 't':
-      return '\t';
+        return '\t';
     case '\'':
-      return '\'';
+        return '\'';
     case '"':
-      return '\"';
+        return '\"';
     default:
-      return ch;
+        return ch;
     }
 }
 
@@ -295,942 +294,887 @@ process_escape (int ch)
    machine, and saves its state so that it may return at any point.
    This is the way the old code used to work.  */
 
-size_t
-do_scrub_chars (size_t (*get) (char *, size_t), char *tostart, size_t tolen)
+size_t do_scrub_chars(size_t (*get)(char *, size_t), char *tostart, size_t tolen)
 {
-  char *to = tostart;
-  char *toend = tostart + tolen;
-  char *from;
-  char *fromend;
-  size_t fromlen;
-  int ch, ch2 = 0;
-  /* Character that started the string we're working on.  */
-  static char quotechar;
+    char *to = tostart;
+    char *toend = tostart + tolen;
+    char *from;
+    char *fromend;
+    size_t fromlen;
+    int ch, ch2 = 0;
+    /* Character that started the string we're working on.  */
+    static char quotechar;
 
 
-  /* I added states 9 and 10 because the MIPS ECOFF assembler uses
-     constructs like ``.loc 1 20''.  This was turning into ``.loc
-     120''.  States 9 and 10 ensure that a space is never dropped in
-     between characters which could appear in an identifier.  Ian
-     Taylor, ian@cygnus.com.
+    /* I added states 9 and 10 because the MIPS ECOFF assembler uses
+       constructs like ``.loc 1 20''.  This was turning into ``.loc
+       120''.  States 9 and 10 ensure that a space is never dropped in
+       between characters which could appear in an identifier.  Ian
+       Taylor, ian@cygnus.com.
 
-     I added state 11 so that something like "Lfoo add %r25,%r26,%r27" works
-     correctly on the PA (and any other target where colons are optional).
-     Jeff Law, law@cs.utah.edu.
+       I added state 11 so that something like "Lfoo add %r25,%r26,%r27" works
+       correctly on the PA (and any other target where colons are optional).
+       Jeff Law, law@cs.utah.edu.
 
-     I added state 13 so that something like "cmp r1, r2 || trap #1" does not
-     get squashed into "cmp r1,r2||trap#1", with the all important space
-     between the 'trap' and the '#1' being eliminated.  nickc@cygnus.com  */
+       I added state 13 so that something like "cmp r1, r2 || trap #1" does not
+       get squashed into "cmp r1,r2||trap#1", with the all important space
+       between the 'trap' and the '#1' being eliminated.  nickc@cygnus.com  */
 
-  /* This macro gets the next input character.  */
+    /* This macro gets the next input character.  */
 
-#define GET()							\
-  (from < fromend						\
-   ? * (unsigned char *) (from++)				\
-   : (saved_input = NULL,					\
-      fromlen = (*get) (input_buffer, sizeof input_buffer),	\
-      from = input_buffer,					\
-      fromend = from + fromlen,					\
-      (fromlen == 0						\
-       ? EOF							\
-       : * (unsigned char *) (from++))))
+#define GET()                                                   \
+    (from < fromend                                               \
+     ? *(unsigned char*)(from++)                               \
+     : (saved_input = NULL,                                       \
+        fromlen = (*get)(input_buffer, sizeof input_buffer),     \
+        from = input_buffer,                                      \
+        fromend = from + fromlen,                                 \
+        (fromlen == 0                                             \
+         ? EOF                                                    \
+         : *(unsigned char*)(from++))))
 
-  /* This macro pushes a character back on the input stream.  */
+    /* This macro pushes a character back on the input stream.  */
 
 #define UNGET(uch) (*--from = (uch))
 
-  /* This macro puts a character into the output buffer.  If this
-     character fills the output buffer, this macro jumps to the label
-     TOFULL.  We use this rather ugly approach because we need to
-     handle two different termination conditions: EOF on the input
-     stream, and a full output buffer.  It would be simpler if we
-     always read in the entire input stream before processing it, but
-     I don't want to make such a significant change to the assembler's
-     memory usage.  */
+    /* This macro puts a character into the output buffer.  If this
+       character fills the output buffer, this macro jumps to the label
+       TOFULL.  We use this rather ugly approach because we need to
+       handle two different termination conditions: EOF on the input
+       stream, and a full output buffer.  It would be simpler if we
+       always read in the entire input stream before processing it, but
+       I don't want to make such a significant change to the assembler's
+       memory usage.  */
 
-#define PUT(pch)				\
-  do						\
-    {						\
-      *to++ = (pch);				\
-      if (to >= toend)				\
-	goto tofull;				\
-    }						\
-  while (0)
+#define PUT(pch)                                \
+    do                                            \
+    {                                           \
+        *to++ = (pch);                            \
+        if (to >= toend) {                          \
+            goto tofull; }                            \
+    }                                           \
+    while (0)
 
-  if (saved_input != NULL)
-    {
-      from = saved_input;
-      fromend = from + saved_input_len;
-    }
-  else
-    {
-      fromlen = (*get) (input_buffer, sizeof input_buffer);
-      if (fromlen == 0)
-	return 0;
-      from = input_buffer;
-      fromend = from + fromlen;
+    if (saved_input != NULL) {
+        from = saved_input;
+        fromend = from + saved_input_len;
+    } else {
+        fromlen = (*get)(input_buffer, sizeof input_buffer);
+        if (fromlen == 0) {
+            return 0;
+        }
+        from = input_buffer;
+        fromend = from + fromlen;
     }
 
-  while (1)
-    {
-      /* The cases in this switch end with continue, in order to
-	 branch back to the top of this while loop and generate the
-	 next output character in the appropriate state.  */
-      switch (state)
-	{
-	case -1:
-	  ch = *out_string++;
-	  if (*out_string == '\0')
-	    {
-	      state = old_state;
-	      old_state = 3;
-	    }
-	  PUT (ch);
-	  continue;
+    while (1) {
+        /* The cases in this switch end with continue, in order to
+           branch back to the top of this while loop and generate the
+           next output character in the appropriate state.  */
+        switch (state) {
+        case -1:
+            ch = *out_string++;
+            if (*out_string == '\0') {
+                state = old_state;
+                old_state = 3;
+            }
+            PUT(ch);
+            continue;
 
-	case -2:
-	  for (;;)
-	    {
-	      do
-		{
-		  ch = GET ();
+        case -2:
+            for (;;) {
+                do {
+                    ch = GET();
 
-		  if (ch == EOF)
-		    {
-		      as_warn (_("end of file in comment"));
-		      goto fromeof;
-		    }
+                    if (ch == EOF) {
+                        as_warn(_("end of file in comment"));
+                        goto fromeof;
+                    }
 
-		  if (ch == '\n')
-		    PUT ('\n');
-		}
-	      while (ch != '*');
+                    if (ch == '\n') {
+                        PUT('\n');
+                    }
+                } while (ch != '*');
 
-	      while ((ch = GET ()) == '*')
-		;
+                while ((ch = GET()) == '*') {
+                    ;
+                }
 
-	      if (ch == EOF)
-		{
-		  as_warn (_("end of file in comment"));
-		  goto fromeof;
-		}
+                if (ch == EOF) {
+                    as_warn(_("end of file in comment"));
+                    goto fromeof;
+                }
 
-	      if (ch == '/')
-		break;
+                if (ch == '/') {
+                    break;
+                }
 
-	      UNGET (ch);
-	    }
+                UNGET(ch);
+            }
 
-	  state = old_state;
-	  UNGET (' ');
-	  continue;
+            state = old_state;
+            UNGET(' ');
+            continue;
 
-	case 4:
-	  ch = GET ();
-	  if (ch == EOF)
-	    goto fromeof;
-	  else if (ch >= '0' && ch <= '9')
-	    PUT (ch);
-	  else
-	    {
-	      while (ch != EOF && IS_WHITESPACE (ch))
-		ch = GET ();
-	      if (ch == '"')
-		{
-		  quotechar = ch;
-		  state = 5;
-		  old_state = 3;
-		  PUT (ch);
-		}
-	      else
-		{
-		  while (ch != EOF && ch != '\n')
-		    ch = GET ();
-		  state = 0;
-		  PUT (ch);
-		}
-	    }
-	  continue;
+        case 4:
+            ch = GET();
+            if (ch == EOF) {
+                goto fromeof;
+            } else if (ch >= '0' && ch <= '9') {
+                PUT(ch);
+            } else {
+                while (ch != EOF && IS_WHITESPACE(ch)) {
+                    ch = GET();
+                }
+                if (ch == '"') {
+                    quotechar = ch;
+                    state = 5;
+                    old_state = 3;
+                    PUT(ch);
+                } else {
+                    while (ch != EOF && ch != '\n') {
+                        ch = GET();
+                    }
+                    state = 0;
+                    PUT(ch);
+                }
+            }
+            continue;
 
-	case 5:
-	  /* We are going to copy everything up to a quote character,
-	     with special handling for a backslash.  We try to
-	     optimize the copying in the simple case without using the
-	     GET and PUT macros.  */
-	  {
-	    char *s;
-	    ptrdiff_t len;
+        case 5:
+            /* We are going to copy everything up to a quote character,
+               with special handling for a backslash.  We try to
+               optimize the copying in the simple case without using the
+               GET and PUT macros.  */
+        {
+            char *s;
+            ptrdiff_t len;
 
-	    for (s = from; s < fromend; s++)
-	      {
-		ch = *s;
-		if (ch == '\\'
-		    || ch == quotechar
-		    || ch == '\n')
-		  break;
-	      }
-	    len = s - from;
-	    if (len > toend - to)
-	      len = toend - to;
-	    if (len > 0)
-	      {
-		memcpy (to, from, len);
-		to += len;
-		from += len;
-		if (to >= toend)
-		  goto tofull;
-	      }
-	  }
+            for (s = from; s < fromend; s++) {
+                ch = *s;
+                if (ch == '\\'
+                    || ch == quotechar
+                    || ch == '\n') {
+                    break;
+                }
+            }
+            len = s - from;
+            if (len > toend - to) {
+                len = toend - to;
+            }
+            if (len > 0) {
+                memcpy(to, from, len);
+                to += len;
+                from += len;
+                if (to >= toend) {
+                    goto tofull;
+                }
+            }
+        }
 
-	  ch = GET ();
-	  if (ch == EOF)
-	    {
-	      /* This buffer is here specifically so
-		 that the UNGET below will work.  */
-	      static char one_char_buf[1];
+            ch = GET();
+            if (ch == EOF) {
+                /* This buffer is here specifically so
+                   that the UNGET below will work.  */
+                static char one_char_buf[1];
 
-	      as_warn (_("end of file in string; '%c' inserted"), quotechar);
-	      state = old_state;
-	      from = fromend = one_char_buf + 1;
-	      fromlen = 1;
-	      UNGET ('\n');
-	      PUT (quotechar);
-	    }
-	  else if (ch == quotechar)
-	    {
-	      state = old_state;
-	      PUT (ch);
-	    }
+                as_warn(_("end of file in string; '%c' inserted"), quotechar);
+                state = old_state;
+                from = fromend = one_char_buf + 1;
+                fromlen = 1;
+                UNGET('\n');
+                PUT(quotechar);
+            } else if (ch == quotechar) {
+                state = old_state;
+                PUT(ch);
+            }
 #ifndef NO_STRING_ESCAPES
-	  else if (ch == '\\')
-	    {
-	      state = 6;
-	      PUT (ch);
-	    }
+            else if (ch == '\\') {
+                state = 6;
+                PUT(ch);
+            }
 #endif
-	  else if (scrub_m68k_mri && ch == '\n')
-	    {
-	      /* Just quietly terminate the string.  This permits lines like
-		   bne	label	loop if we haven't reach end yet.  */
-	      state = old_state;
-	      UNGET (ch);
-	      PUT ('\'');
-	    }
-	  else
-	    {
-	      PUT (ch);
-	    }
-	  continue;
+            else if (scrub_m68k_mri && ch == '\n') {
+                /* Just quietly terminate the string.  This permits lines like
+                     bne	label	loop if we haven't reach end yet.  */
+                state = old_state;
+                UNGET(ch);
+                PUT('\'');
+            } else {
+                PUT(ch);
+            }
+            continue;
 
-	case 6:
-	  state = 5;
-	  ch = GET ();
-	  switch (ch)
-	    {
-	      /* Handle strings broken across lines, by turning '\n' into
-		 '\\' and 'n'.  */
-	    case '\n':
-	      UNGET ('n');
-	      add_newlines++;
-	      PUT ('\\');
-	      continue;
+        case 6:
+            state = 5;
+            ch = GET();
+            switch (ch) {
+            /* Handle strings broken across lines, by turning '\n' into
+               '\\' and 'n'.  */
+            case '\n':
+                UNGET('n');
+                add_newlines++;
+                PUT('\\');
+                continue;
 
-	    case EOF:
-	      as_warn (_("end of file in string; '%c' inserted"), quotechar);
-	      PUT (quotechar);
-	      continue;
+            case EOF:
+                as_warn(_("end of file in string; '%c' inserted"), quotechar);
+                PUT(quotechar);
+                continue;
 
-	    case '"':
-	    case '\\':
-	    case 'b':
-	    case 'f':
-	    case 'n':
-	    case 'r':
-	    case 't':
-	    case 'v':
-	    case 'x':
-	    case 'X':
-	    case '0':
-	    case '1':
-	    case '2':
-	    case '3':
-	    case '4':
-	    case '5':
-	    case '6':
-	    case '7':
-	      break;
+            case '"':
+            case '\\':
+            case 'b':
+            case 'f':
+            case 'n':
+            case 'r':
+            case 't':
+            case 'v':
+            case 'x':
+            case 'X':
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                break;
 
-	    default:
+            default:
 #ifdef ONLY_STANDARD_ESCAPES
-	      as_warn (_("unknown escape '\\%c' in string; ignored"), ch);
+                as_warn(_("unknown escape '\\%c' in string; ignored"), ch);
 #endif
-	      break;
-	    }
-	  PUT (ch);
-	  continue;
+                break;
+            }
+            PUT(ch);
+            continue;
 
 #ifdef DOUBLEBAR_PARALLEL
-	case 13:
-	  ch = GET ();
-	  if (ch != '|')
-	    abort ();
+        case 13:
+            ch = GET();
+            if (ch != '|') {
+                abort();
+            }
 
-	  /* Reset back to state 1 and pretend that we are parsing a
-	     line from just after the first white space.  */
-	  state = 1;
-	  PUT ('|');
-	  continue;
+            /* Reset back to state 1 and pretend that we are parsing a
+               line from just after the first white space.  */
+            state = 1;
+            PUT('|');
+            continue;
 #endif
-	}
+        }
 
-      /* OK, we are somewhere in states 0 through 4 or 9 through 11.  */
+        /* OK, we are somewhere in states 0 through 4 or 9 through 11.  */
 
-      /* flushchar: */
-      ch = GET ();
+        /* flushchar: */
+        ch = GET();
 
 #ifdef TC_PREDICATE_START_CHAR
-      if (ch == TC_PREDICATE_START_CHAR && (state == 0 || state == 1))
-	{
-	  state += 14;
-	  PUT (ch);
-	  continue;
-	}
-      else if (state == 14 || state == 15)
-	{
-	  if (ch == TC_PREDICATE_END_CHAR)
-	    {
-	      state -= 14;
-	      PUT (ch);
-	      ch = GET ();
-	    }
-	  else
-	    {
-	      PUT (ch);
-	      continue;
-	    }
-	}
+        if (ch == TC_PREDICATE_START_CHAR && (state == 0 || state == 1)) {
+            state += 14;
+            PUT(ch);
+            continue;
+        } else if (state == 14 || state == 15) {
+            if (ch == TC_PREDICATE_END_CHAR) {
+                state -= 14;
+                PUT(ch);
+                ch = GET();
+            } else {
+                PUT(ch);
+                continue;
+            }
+        }
 #endif
 
-    recycle:
+ recycle:
 
-      /* We need to watch out for .symver directives.  See the comment later
-	 in this function.  */
-      if (symver_state == NULL)
-	{
-	  if ((state == 0 || state == 1) && ch == symver_pseudo[0])
-	    symver_state = symver_pseudo + 1;
-	}
-      else
-	{
-	  /* We advance to the next state if we find the right
-	     character.  */
-	  if (ch != '\0' && (*symver_state == ch))
-	    ++symver_state;
-	  else if (*symver_state != '\0')
-	    /* We did not get the expected character, or we didn't
-	       get a valid terminating character after seeing the
-	       entire pseudo-op, so we must go back to the beginning.  */
-	    symver_state = NULL;
-	  else
-	    {
-	      /* We've read the entire pseudo-op.  If this is the end
-		 of the line, go back to the beginning.  */
-	      if (IS_NEWLINE (ch))
-		symver_state = NULL;
-	    }
-	}
+        /* We need to watch out for .symver directives.  See the comment later
+           in this function.  */
+        if (symver_state == NULL) {
+            if ((state == 0 || state == 1) && ch == symver_pseudo[0]) {
+                symver_state = symver_pseudo + 1;
+            }
+        } else {
+            /* We advance to the next state if we find the right
+               character.  */
+            if (ch != '\0' && (*symver_state == ch)) {
+                ++symver_state;
+            } else if (*symver_state != '\0') {
+                /* We did not get the expected character, or we didn't
+                   get a valid terminating character after seeing the
+                   entire pseudo-op, so we must go back to the beginning.  */
+                symver_state = NULL;
+            } else {
+                /* We've read the entire pseudo-op.  If this is the end
+                   of the line, go back to the beginning.  */
+                if (IS_NEWLINE(ch)) {
+                    symver_state = NULL;
+                }
+            }
+        }
 
-      if (ch == EOF)
-	{
-	  if (state != 0)
-	    {
-	      as_warn (_("end of file not at end of a line; newline inserted"));
-	      state = 0;
-	      PUT ('\n');
-	    }
-	  goto fromeof;
-	}
+        if (ch == EOF) {
+            if (state != 0) {
+                as_warn(_("end of file not at end of a line; newline inserted"));
+                state = 0;
+                PUT('\n');
+            }
+            goto fromeof;
+        }
 
-      switch (lex[ch])
-	{
-	case LEX_IS_WHITESPACE:
-	  do
-	    {
-	      ch = GET ();
-	    }
-	  while (ch != EOF && IS_WHITESPACE (ch));
-	  if (ch == EOF)
-	    goto fromeof;
+        switch (lex[ch]) {
+        case LEX_IS_WHITESPACE:
+            do {
+                ch = GET();
+            } while (ch != EOF && IS_WHITESPACE(ch));
+            if (ch == EOF) {
+                goto fromeof;
+            }
 
-	  if (state == 0)
-	    {
-	      /* Preserve a single whitespace character at the
-		 beginning of a line.  */
-	      state = 1;
-	      UNGET (ch);
-	      PUT (' ');
-	      break;
-	    }
+            if (state == 0) {
+                /* Preserve a single whitespace character at the
+                   beginning of a line.  */
+                state = 1;
+                UNGET(ch);
+                PUT(' ');
+                break;
+            }
 
 #ifdef KEEP_WHITE_AROUND_COLON
-	  if (lex[ch] == LEX_IS_COLON)
-	    {
-	      /* Only keep this white if there's no white *after* the
-		 colon.  */
-	      ch2 = GET ();
-	      if (ch2 != EOF)
-		UNGET (ch2);
-	      if (!IS_WHITESPACE (ch2))
-		{
-		  state = 9;
-		  UNGET (ch);
-		  PUT (' ');
-		  break;
-		}
-	    }
+            if (lex[ch] == LEX_IS_COLON) {
+                /* Only keep this white if there's no white *after* the
+                   colon.  */
+                ch2 = GET();
+                if (ch2 != EOF) {
+                    UNGET(ch2);
+                }
+                if (!IS_WHITESPACE(ch2)) {
+                    state = 9;
+                    UNGET(ch);
+                    PUT(' ');
+                    break;
+                }
+            }
 #endif
-	  if (IS_COMMENT (ch)
-	      || ch == '/'
-	      || IS_LINE_SEPARATOR (ch)
-	      || IS_PARALLEL_SEPARATOR (ch))
-	    {
-	      if (scrub_m68k_mri)
-		{
-		  /* In MRI mode, we keep these spaces.  */
-		  UNGET (ch);
-		  PUT (' ');
-		  break;
-		}
-	      goto recycle;
-	    }
+            if (IS_COMMENT(ch)
+                || ch == '/'
+                || IS_LINE_SEPARATOR(ch)
+                || IS_PARALLEL_SEPARATOR(ch)) {
+                if (scrub_m68k_mri) {
+                    /* In MRI mode, we keep these spaces.  */
+                    UNGET(ch);
+                    PUT(' ');
+                    break;
+                }
+                goto recycle;
+            }
 
-	  /* If we're in state 2 or 11, we've seen a non-white
-	     character followed by whitespace.  If the next character
-	     is ':', this is whitespace after a label name which we
-	     normally must ignore.  In MRI mode, though, spaces are
-	     not permitted between the label and the colon.  */
-	  if ((state == 2 || state == 11)
-	      && lex[ch] == LEX_IS_COLON
-	      && ! scrub_m68k_mri)
-	    {
-	      state = 1;
-	      PUT (ch);
-	      break;
-	    }
+            /* If we're in state 2 or 11, we've seen a non-white
+               character followed by whitespace.  If the next character
+               is ':', this is whitespace after a label name which we
+               normally must ignore.  In MRI mode, though, spaces are
+               not permitted between the label and the colon.  */
+            if ((state == 2 || state == 11)
+                && lex[ch] == LEX_IS_COLON
+                && !scrub_m68k_mri) {
+                state = 1;
+                PUT(ch);
+                break;
+            }
 
-	  switch (state)
-	    {
-	    case 1:
-	      /* We can arrive here if we leave a leading whitespace
-		 character at the beginning of a line.  */
-	      goto recycle;
-	    case 2:
-	      state = 3;
-	      if (to + 1 < toend)
-		{
-		  /* Optimize common case by skipping UNGET/GET.  */
-		  PUT (' ');	/* Sp after opco */
-		  goto recycle;
-		}
-	      UNGET (ch);
-	      PUT (' ');
-	      break;
-	    case 3:
+            switch (state) {
+            case 1:
+                /* We can arrive here if we leave a leading whitespace
+                   character at the beginning of a line.  */
+                goto recycle;
+            case 2:
+                state = 3;
+                if (to + 1 < toend) {
+                    /* Optimize common case by skipping UNGET/GET.  */
+                    PUT(' '); /* Sp after opco */
+                    goto recycle;
+                }
+                UNGET(ch);
+                PUT(' ');
+                break;
+            case 3:
 #ifndef TC_KEEP_OPERAND_SPACES
-	      /* For TI C6X, we keep these spaces as they may separate
-		 functional unit specifiers from operands.  */
-	      if (scrub_m68k_mri)
+                /* For TI C6X, we keep these spaces as they may separate
+                   functional unit specifiers from operands.  */
+                if (scrub_m68k_mri)
 #endif
-		{
-		  /* In MRI mode, we keep these spaces.  */
-		  UNGET (ch);
-		  PUT (' ');
-		  break;
-		}
-	      goto recycle;	/* Sp in operands */
-	    case 9:
-	    case 10:
+                {
+                    /* In MRI mode, we keep these spaces.  */
+                    UNGET(ch);
+                    PUT(' ');
+                    break;
+                }
+                goto recycle; /* Sp in operands */
+            case 9:
+            case 10:
 #ifndef TC_KEEP_OPERAND_SPACES
-	      if (scrub_m68k_mri)
+                if (scrub_m68k_mri)
 #endif
-		{
-		  /* In MRI mode, we keep these spaces.  */
-		  state = 3;
-		  UNGET (ch);
-		  PUT (' ');
-		  break;
-		}
-	      state = 10;	/* Sp after symbol char */
-	      goto recycle;
-	    case 11:
-	      if (LABELS_WITHOUT_COLONS || flag_m68k_mri)
-		state = 1;
-	      else
-		{
-		  /* We know that ch is not ':', since we tested that
-		     case above.  Therefore this is not a label, so it
-		     must be the opcode, and we've just seen the
-		     whitespace after it.  */
-		  state = 3;
-		}
-	      UNGET (ch);
-	      PUT (' ');	/* Sp after label definition.  */
-	      break;
-	    default:
-	      BAD_CASE (state);
-	    }
-	  break;
+                {
+                    /* In MRI mode, we keep these spaces.  */
+                    state = 3;
+                    UNGET(ch);
+                    PUT(' ');
+                    break;
+                }
+                state = 10; /* Sp after symbol char */
+                goto recycle;
+            case 11:
+                if (LABELS_WITHOUT_COLONS || flag_m68k_mri) {
+                    state = 1;
+                } else {
+                    /* We know that ch is not ':', since we tested that
+                       case above.  Therefore this is not a label, so it
+                       must be the opcode, and we've just seen the
+                       whitespace after it.  */
+                    state = 3;
+                }
+                UNGET(ch);
+                PUT(' '); /* Sp after label definition.  */
+                break;
+            default:
+                BAD_CASE(state);
+            }
+            break;
 
-	case LEX_IS_TWOCHAR_COMMENT_1ST:
-	  ch2 = GET ();
-	  if (ch2 == '*')
-	    {
-	      for (;;)
-		{
-		  do
-		    {
-		      ch2 = GET ();
-		      if (ch2 != EOF && IS_NEWLINE (ch2))
-			add_newlines++;
-		    }
-		  while (ch2 != EOF && ch2 != '*');
+        case LEX_IS_TWOCHAR_COMMENT_1ST:
+            ch2 = GET();
+            if (ch2 == '*') {
+                for (;;) {
+                    do {
+                        ch2 = GET();
+                        if (ch2 != EOF && IS_NEWLINE(ch2)) {
+                            add_newlines++;
+                        }
+                    } while (ch2 != EOF && ch2 != '*');
 
-		  while (ch2 == '*')
-		    ch2 = GET ();
+                    while (ch2 == '*') {
+                        ch2 = GET();
+                    }
 
-		  if (ch2 == EOF || ch2 == '/')
-		    break;
+                    if (ch2 == EOF || ch2 == '/') {
+                        break;
+                    }
 
-		  /* This UNGET will ensure that we count newlines
-		     correctly.  */
-		  UNGET (ch2);
-		}
+                    /* This UNGET will ensure that we count newlines
+                       correctly.  */
+                    UNGET(ch2);
+                }
 
-	      if (ch2 == EOF)
-		as_warn (_("end of file in multiline comment"));
+                if (ch2 == EOF) {
+                    as_warn(_("end of file in multiline comment"));
+                }
 
-	      ch = ' ';
-	      goto recycle;
-	    }
+                ch = ' ';
+                goto recycle;
+            }
 #ifdef DOUBLESLASH_LINE_COMMENTS
-	  else if (ch2 == '/')
-	    {
-	      do
-		{
-		  ch = GET ();
-		}
-	      while (ch != EOF && !IS_NEWLINE (ch));
-	      if (ch == EOF)
-		as_warn ("end of file in comment; newline inserted");
-	      state = 0;
-	      PUT ('\n');
-	      break;
-	    }
+            else if (ch2 == '/') {
+                do {
+                    ch = GET();
+                } while (ch != EOF && !IS_NEWLINE(ch));
+                if (ch == EOF) {
+                    as_warn("end of file in comment; newline inserted");
+                }
+                state = 0;
+                PUT('\n');
+                break;
+            }
 #endif
-	  else
-	    {
-	      if (ch2 != EOF)
-		UNGET (ch2);
-	      if (state == 9 || state == 10)
-		state = 3;
-	      PUT (ch);
-	    }
-	  break;
+            else {
+                if (ch2 != EOF) {
+                    UNGET(ch2);
+                }
+                if (state == 9 || state == 10) {
+                    state = 3;
+                }
+                PUT(ch);
+            }
+            break;
 
-	case LEX_IS_STRINGQUOTE:
-	  quotechar = ch;
-	  if (state == 10)
-	    {
-	      /* Preserve the whitespace in foo "bar".  */
-	      UNGET (ch);
-	      state = 3;
-	      PUT (' ');
+        case LEX_IS_STRINGQUOTE:
+            quotechar = ch;
+            if (state == 10) {
+                /* Preserve the whitespace in foo "bar".  */
+                UNGET(ch);
+                state = 3;
+                PUT(' ');
 
-	      /* PUT didn't jump out.  We could just break, but we
-		 know what will happen, so optimize a bit.  */
-	      ch = GET ();
-	      old_state = 3;
-	    }
-	  else if (state == 9)
-	    old_state = 3;
-	  else
-	    old_state = state;
-	  state = 5;
-	  PUT (ch);
-	  break;
+                /* PUT didn't jump out.  We could just break, but we
+                   know what will happen, so optimize a bit.  */
+                ch = GET();
+                old_state = 3;
+            } else if (state == 9) {
+                old_state = 3;
+            } else {
+                old_state = state;
+            }
+            state = 5;
+            PUT(ch);
+            break;
 
-	case LEX_IS_ONECHAR_QUOTE:
+        case LEX_IS_ONECHAR_QUOTE:
 #ifdef H_TICK_HEX
-	  if (state == 9 && enable_h_tick_hex)
-	    {
-	      char c;
+            if (state == 9 && enable_h_tick_hex) {
+                char c;
 
-	      c = GET ();
-	      as_warn ("'%c found after symbol", c);
-	      UNGET (c);
-	    }
+                c = GET();
+                as_warn("'%c found after symbol", c);
+                UNGET(c);
+            }
 #endif
-	  if (state == 10)
-	    {
-	      /* Preserve the whitespace in foo 'b'.  */
-	      UNGET (ch);
-	      state = 3;
-	      PUT (' ');
-	      break;
-	    }
-	  ch = GET ();
-	  if (ch == EOF)
-	    {
-	      as_warn (_("end of file after a one-character quote; \\0 inserted"));
-	      ch = 0;
-	    }
-	  if (ch == '\\')
-	    {
-	      ch = GET ();
-	      if (ch == EOF)
-		{
-		  as_warn (_("end of file in escape character"));
-		  ch = '\\';
-		}
-	      else
-		ch = process_escape (ch);
-	    }
-	  sprintf (out_buf, "%d", (int) (unsigned char) ch);
+            if (state == 10) {
+                /* Preserve the whitespace in foo 'b'.  */
+                UNGET(ch);
+                state = 3;
+                PUT(' ');
+                break;
+            }
+            ch = GET();
+            if (ch == EOF) {
+                as_warn(_("end of file after a one-character quote; \\0 inserted"));
+                ch = 0;
+            }
+            if (ch == '\\') {
+                ch = GET();
+                if (ch == EOF) {
+                    as_warn(_("end of file in escape character"));
+                    ch = '\\';
+                } else {
+                    ch = process_escape(ch);
+                }
+            }
+            sprintf(out_buf, "%d", (int)(unsigned char)ch);
 
-	  /* None of these 'x constants for us.  We want 'x'.  */
-	  if ((ch = GET ()) != '\'')
-	    {
+            /* None of these 'x constants for us.  We want 'x'.  */
+            if ((ch = GET()) != '\'') {
 #ifdef REQUIRE_CHAR_CLOSE_QUOTE
-	      as_warn (_("missing close quote; (assumed)"));
+                as_warn(_("missing close quote; (assumed)"));
 #else
-	      if (ch != EOF)
-		UNGET (ch);
+                if (ch != EOF) {
+                    UNGET(ch);
+                }
 #endif
-	    }
-	  if (strlen (out_buf) == 1)
-	    {
-	      PUT (out_buf[0]);
-	      break;
-	    }
-	  if (state == 9)
-	    old_state = 3;
-	  else
-	    old_state = state;
-	  state = -1;
-	  out_string = out_buf;
-	  PUT (*out_string++);
-	  break;
+            }
+            if (strlen(out_buf) == 1) {
+                PUT(out_buf[0]);
+                break;
+            }
+            if (state == 9) {
+                old_state = 3;
+            } else {
+                old_state = state;
+            }
+            state = -1;
+            out_string = out_buf;
+            PUT(*out_string++);
+            break;
 
-	case LEX_IS_COLON:
+        case LEX_IS_COLON:
 #ifdef KEEP_WHITE_AROUND_COLON
-	  state = 9;
+            state = 9;
 #else
-	  if (state == 9 || state == 10)
-	    state = 3;
-	  else if (state != 3)
-	    state = 1;
+            if (state == 9 || state == 10) {
+                state = 3;
+            } else if (state != 3) {
+                state = 1;
+            }
 #endif
-	  PUT (ch);
-	  break;
+            PUT(ch);
+            break;
 
-	case LEX_IS_NEWLINE:
-	  /* Roll out a bunch of newlines from inside comments, etc.  */
-	  if (add_newlines)
-	    {
-	      --add_newlines;
-	      UNGET (ch);
-	    }
-	  /* Fall through.  */
+        case LEX_IS_NEWLINE:
+            /* Roll out a bunch of newlines from inside comments, etc.  */
+            if (add_newlines) {
+                --add_newlines;
+                UNGET(ch);
+            }
+        /* Fall through.  */
 
-	case LEX_IS_LINE_SEPARATOR:
-	  state = 0;
-	  PUT (ch);
-	  break;
+        case LEX_IS_LINE_SEPARATOR:
+            state = 0;
+            PUT(ch);
+            break;
 
-	case LEX_IS_PARALLEL_SEPARATOR:
-	  state = 1;
-	  PUT (ch);
-	  break;
+        case LEX_IS_PARALLEL_SEPARATOR:
+            state = 1;
+            PUT(ch);
+            break;
 
 #ifdef DOUBLEBAR_PARALLEL
-	case LEX_IS_DOUBLEBAR_1ST:
-	  ch2 = GET ();
-	  if (ch2 != EOF)
-	    UNGET (ch2);
-	  if (ch2 != '|')
-	    goto de_fault;
+        case LEX_IS_DOUBLEBAR_1ST:
+            ch2 = GET();
+            if (ch2 != EOF) {
+                UNGET(ch2);
+            }
+            if (ch2 != '|') {
+                goto de_fault;
+            }
 
-	  /* Handle '||' in two states as invoking PUT twice might
-	     result in the first one jumping out of this loop.  We'd
-	     then lose track of the state and one '|' char.  */
-	  state = 13;
-	  PUT ('|');
-	  break;
+            /* Handle '||' in two states as invoking PUT twice might
+               result in the first one jumping out of this loop.  We'd
+               then lose track of the state and one '|' char.  */
+            state = 13;
+            PUT('|');
+            break;
 #endif
-	case LEX_IS_LINE_COMMENT_START:
-	  /* FIXME-someday: The two character comment stuff was badly
-	     thought out.  On i386, we want '/' as line comment start
-	     AND we want C style comments.  hence this hack.  The
-	     whole lexical process should be reworked.  xoxorich.  */
-	  if (ch == '/')
-	    {
-	      ch2 = GET ();
-	      if (ch2 == '*')
-		{
-		  old_state = 3;
-		  state = -2;
-		  break;
-		}
-	      else if (ch2 != EOF)
-		{
-		  UNGET (ch2);
-		}
-	    }
+        case LEX_IS_LINE_COMMENT_START:
+            /* FIXME-someday: The two character comment stuff was badly
+               thought out.  On i386, we want '/' as line comment start
+               AND we want C style comments.  hence this hack.  The
+               whole lexical process should be reworked.  xoxorich.  */
+            if (ch == '/') {
+                ch2 = GET();
+                if (ch2 == '*') {
+                    old_state = 3;
+                    state = -2;
+                    break;
+                } else if (ch2 != EOF) {
+                    UNGET(ch2);
+                }
+            }
 
-	  if (state == 0 || state == 1)	/* Only comment at start of line.  */
-	    {
-	      int startch;
+            if (state == 0 || state == 1) { /* Only comment at start of line.  */
+                int startch;
 
-	      startch = ch;
+                startch = ch;
 
-	      do
-		{
-		  ch = GET ();
-		}
-	      while (ch != EOF && IS_WHITESPACE (ch));
+                do {
+                    ch = GET();
+                } while (ch != EOF && IS_WHITESPACE(ch));
 
-	      if (ch == EOF)
-		{
-		  as_warn (_("end of file in comment; newline inserted"));
-		  PUT ('\n');
-		  break;
-		}
+                if (ch == EOF) {
+                    as_warn(_("end of file in comment; newline inserted"));
+                    PUT('\n');
+                    break;
+                }
 
-	      if (ch < '0' || ch > '9' || state != 0 || startch != '#')
-		{
-		  /* Not a cpp line.  */
-		  while (ch != EOF && !IS_NEWLINE (ch))
-		    ch = GET ();
-		  if (ch == EOF)
-		    {
-		      as_warn (_("end of file in comment; newline inserted"));
-		      PUT ('\n');
-		    }
-		  else /* IS_NEWLINE (ch) */
-		    {
-		      /* To process non-zero add_newlines.  */
-		      UNGET (ch);
-		    }
-		  state = 0;
-		  break;
-		}
-	      /* Looks like `# 123 "filename"' from cpp.  */
-	      UNGET (ch);
-	      old_state = 4;
-	      state = -1;
-	      if (scrub_m68k_mri)
-		out_string = "\tlinefile ";
-	      else
-		out_string = "\t.linefile ";
-	      PUT (*out_string++);
-	      break;
-	    }
+                if (ch < '0' || ch > '9' || state != 0 || startch != '#') {
+                    /* Not a cpp line.  */
+                    while (ch != EOF && !IS_NEWLINE(ch)) {
+                        ch = GET();
+                    }
+                    if (ch == EOF) {
+                        as_warn(_("end of file in comment; newline inserted"));
+                        PUT('\n');
+                    } else { /* IS_NEWLINE (ch) */
+                        /* To process non-zero add_newlines.  */
+                        UNGET(ch);
+                    }
+                    state = 0;
+                    break;
+                }
+                /* Looks like `# 123 "filename"' from cpp.  */
+                UNGET(ch);
+                old_state = 4;
+                state = -1;
+                if (scrub_m68k_mri) {
+                    out_string = "\tlinefile ";
+                } else {
+                    out_string = "\t.linefile ";
+                }
+                PUT(*out_string++);
+                break;
+            }
 
-	  /* We have a line comment character which is not at the
-	     start of a line.  If this is also a normal comment
-	     character, fall through.  Otherwise treat it as a default
-	     character.  */
-	  if (strchr (tc_comment_chars, ch) == NULL
-	      && (! scrub_m68k_mri
-		  || (ch != '!' && ch != '*')))
-	    goto de_fault;
-	  if (scrub_m68k_mri
-	      && (ch == '!' || ch == '*' || ch == '#')
-	      && state != 1
-	      && state != 10)
-	    goto de_fault;
-	  /* Fall through.  */
-	case LEX_IS_COMMENT_START:
-	  /* On the ARM, `@' is the comment character.
-	     Unfortunately this is also a special character in ELF .symver
-	     directives (and .type, though we deal with those another way).
-	     So we check if this line is such a directive, and treat
-	     the character as default if so.  This is a hack.  */
-	  if ((symver_state != NULL) && (*symver_state == 0))
-	    goto de_fault;
+            /* We have a line comment character which is not at the
+               start of a line.  If this is also a normal comment
+               character, fall through.  Otherwise treat it as a default
+               character.  */
+            if (strchr(tc_comment_chars, ch) == NULL
+                && (!scrub_m68k_mri
+                    || (ch != '!' && ch != '*'))) {
+                goto de_fault;
+            }
+            if (scrub_m68k_mri
+                && (ch == '!' || ch == '*' || ch == '#')
+                && state != 1
+                && state != 10) {
+                goto de_fault;
+            }
+        /* Fall through.  */
+        case LEX_IS_COMMENT_START:
+            /* On the ARM, `@' is the comment character.
+               Unfortunately this is also a special character in ELF .symver
+               directives (and .type, though we deal with those another way).
+               So we check if this line is such a directive, and treat
+               the character as default if so.  This is a hack.  */
+            if ((symver_state != NULL) && (*symver_state == 0)) {
+                goto de_fault;
+            }
 
-	  /* For the ARM, care is needed not to damage occurrences of \@
-	     by stripping the @ onwards.  Yuck.  */
-	  if ((to > tostart ? to[-1] : last_char) == '\\')
-	    /* Do not treat the @ as a start-of-comment.  */
-	    goto de_fault;
+            /* For the ARM, care is needed not to damage occurrences of \@
+               by stripping the @ onwards.  Yuck.  */
+            if ((to > tostart ? to[-1] : last_char) == '\\') {
+                /* Do not treat the @ as a start-of-comment.  */
+                goto de_fault;
+            }
 
 #ifdef WARN_COMMENTS
-	  if (!found_comment)
-	    found_comment_file = as_where (&found_comment);
+            if (!found_comment) {
+                found_comment_file = as_where(&found_comment);
+            }
 #endif
-	  do
-	    {
-	      ch = GET ();
-	    }
-	  while (ch != EOF && !IS_NEWLINE (ch));
-	  if (ch == EOF)
-	    as_warn (_("end of file in comment; newline inserted"));
-	  state = 0;
-	  PUT ('\n');
-	  break;
+            do {
+                ch = GET();
+            } while (ch != EOF && !IS_NEWLINE(ch));
+            if (ch == EOF) {
+                as_warn(_("end of file in comment; newline inserted"));
+            }
+            state = 0;
+            PUT('\n');
+            break;
 
 #ifdef H_TICK_HEX
-	case LEX_IS_H:
-	  /* Look for strings like H'[0-9A-Fa-f] and if found, replace
-	     the H' with 0x to make them gas-style hex characters.  */
-	  if (enable_h_tick_hex)
-	    {
-	      char quot;
+        case LEX_IS_H:
+            /* Look for strings like H'[0-9A-Fa-f] and if found, replace
+               the H' with 0x to make them gas-style hex characters.  */
+            if (enable_h_tick_hex) {
+                char quot;
 
-	      quot = GET ();
-	      if (quot == '\'')
-		{
-		  UNGET ('x');
-		  ch = '0';
-		}
-	      else
-		UNGET (quot);
-	    }
+                quot = GET();
+                if (quot == '\'') {
+                    UNGET('x');
+                    ch = '0';
+                } else {
+                    UNGET(quot);
+                }
+            }
 #endif
-	  /* Fall through.  */
+        /* Fall through.  */
 
-	case LEX_IS_SYMBOL_COMPONENT:
-	  if (state == 10)
-	    {
-	      /* This is a symbol character following another symbol
-		 character, with whitespace in between.  We skipped
-		 the whitespace earlier, so output it now.  */
-	      UNGET (ch);
-	      state = 3;
-	      PUT (' ');
-	      break;
-	    }
+        case LEX_IS_SYMBOL_COMPONENT:
+            if (state == 10) {
+                /* This is a symbol character following another symbol
+                   character, with whitespace in between.  We skipped
+                   the whitespace earlier, so output it now.  */
+                UNGET(ch);
+                state = 3;
+                PUT(' ');
+                break;
+            }
 
-	  if (state == 3)
-	    state = 9;
+            if (state == 3) {
+                state = 9;
+            }
 
-	  /* This is a common case.  Quickly copy CH and all the
-	     following symbol component or normal characters.  */
-	  if (to + 1 < toend
-	      && mri_state == NULL
-	      && symver_state == NULL
-	      )
-	    {
-	      char *s;
-	      ptrdiff_t len;
+            /* This is a common case.  Quickly copy CH and all the
+               following symbol component or normal characters.  */
+            if (to + 1 < toend
+                && mri_state == NULL
+                && symver_state == NULL
+                ) {
+                char *s;
+                ptrdiff_t len;
 
-	      for (s = from; s < fromend; s++)
-		{
-		  int type;
+                for (s = from; s < fromend; s++) {
+                    int type;
 
-		  ch2 = *(unsigned char *) s;
-		  type = lex[ch2];
-		  if (type != 0
-		      && type != LEX_IS_SYMBOL_COMPONENT)
-		    break;
-		}
+                    ch2 = *(unsigned char*)s;
+                    type = lex[ch2];
+                    if (type != 0
+                        && type != LEX_IS_SYMBOL_COMPONENT) {
+                        break;
+                    }
+                }
 
-	      if (s > from)
-		/* Handle the last character normally, for
-		   simplicity.  */
-		--s;
+                if (s > from) {
+                    /* Handle the last character normally, for
+                       simplicity.  */
+                    --s;
+                }
 
-	      len = s - from;
+                len = s - from;
 
-	      if (len > (toend - to) - 1)
-		len = (toend - to) - 1;
+                if (len > (toend - to) - 1) {
+                    len = (toend - to) - 1;
+                }
 
-	      if (len > 0)
-		{
-		  PUT (ch);
-		  memcpy (to, from, len);
-		  to += len;
-		  from += len;
-		  if (to >= toend)
-		    goto tofull;
-		  ch = GET ();
-		}
-	    }
+                if (len > 0) {
+                    PUT(ch);
+                    memcpy(to, from, len);
+                    to += len;
+                    from += len;
+                    if (to >= toend) {
+                        goto tofull;
+                    }
+                    ch = GET();
+                }
+            }
 
-	  /* Fall through.  */
-	default:
-	de_fault:
-	  /* Some relatively `normal' character.  */
-	  if (state == 0)
-	    {
-	      state = 11;	/* Now seeing label definition.  */
-	    }
-	  else if (state == 1)
-	    {
-	      state = 2;	/* Ditto.  */
-	    }
-	  else if (state == 9)
-	    {
-	      if (!IS_SYMBOL_COMPONENT (ch))
-		state = 3;
-	    }
-	  else if (state == 10)
-	    {
-	      if (ch == '\\')
-		{
-		  /* Special handling for backslash: a backslash may
-		     be the beginning of a formal parameter (of a
-		     macro) following another symbol character, with
-		     whitespace in between.  If that is the case, we
-		     output a space before the parameter.  Strictly
-		     speaking, correct handling depends upon what the
-		     macro parameter expands into; if the parameter
-		     expands into something which does not start with
-		     an operand character, then we don't want to keep
-		     the space.  We don't have enough information to
-		     make the right choice, so here we are making the
-		     choice which is more likely to be correct.  */
-		  if (to + 1 >= toend)
-		    {
-		      /* If we're near the end of the buffer, save the
-		         character for the next time round.  Otherwise
-		         we'll lose our state.  */
-		      UNGET (ch);
-		      goto tofull;
-		    }
-		  *to++ = ' ';
-		}
+        /* Fall through.  */
+        default:
+ de_fault:
+            /* Some relatively `normal' character.  */
+            if (state == 0) {
+                state = 11; /* Now seeing label definition.  */
+            } else if (state == 1) {
+                state = 2; /* Ditto.  */
+            } else if (state == 9) {
+                if (!IS_SYMBOL_COMPONENT(ch)) {
+                    state = 3;
+                }
+            } else if (state == 10) {
+                if (ch == '\\') {
+                    /* Special handling for backslash: a backslash may
+                       be the beginning of a formal parameter (of a
+                       macro) following another symbol character, with
+                       whitespace in between.  If that is the case, we
+                       output a space before the parameter.  Strictly
+                       speaking, correct handling depends upon what the
+                       macro parameter expands into; if the parameter
+                       expands into something which does not start with
+                       an operand character, then we don't want to keep
+                       the space.  We don't have enough information to
+                       make the right choice, so here we are making the
+                       choice which is more likely to be correct.  */
+                    if (to + 1 >= toend) {
+                        /* If we're near the end of the buffer, save the
+                           character for the next time round.  Otherwise
+                           we'll lose our state.  */
+                        UNGET(ch);
+                        goto tofull;
+                    }
+                    *to++ = ' ';
+                }
 
-	      state = 3;
-	    }
-	  PUT (ch);
-	  break;
-	}
+                state = 3;
+            }
+            PUT(ch);
+            break;
+        }
     }
 
-  /*NOTREACHED*/
+    /*NOTREACHED*/
 
  fromeof:
-  /* We have reached the end of the input.  */
-  if (to > tostart)
-    last_char = to[-1];
+    /* We have reached the end of the input.  */
+    if (to > tostart) {
+        last_char = to[-1];
+    }
 
-  return to - tostart;
+    return to - tostart;
 
  tofull:
-  /* The output buffer is full.  Save any input we have not yet
-     processed.  */
-  if (fromend > from)
-    {
-      saved_input = from;
-      saved_input_len = fromend - from;
+    /* The output buffer is full.  Save any input we have not yet
+       processed.  */
+    if (fromend > from) {
+        saved_input = from;
+        saved_input_len = fromend - from;
+    } else {
+        saved_input = NULL;
     }
-  else
-    saved_input = NULL;
 
-  if (to > tostart)
-    last_char = to[-1];
+    if (to > tostart) {
+        last_char = to[-1];
+    }
 
-  return to - tostart;
+    return to - tostart;
 }
