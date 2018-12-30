@@ -151,7 +151,7 @@ libgcc_clean:
 
 libagb_flash.a: agb_flash/libagb_flash.a
 	cp $< $@
-agb_flash/libagb_flash.a: agbcc
+agb_flash/libagb_flash.a: agbcc binutils
 	@$(MAKE) -C agb_flash
 
 libagb_flash: libagb_flash.a
@@ -162,7 +162,7 @@ libagb_flash_clean:
 
 libagbsyscall.a: libagbsyscall/libagbsyscall.a
 	cp $< $@
-libagbsyscall/libagbsyscall.a:
+libagbsyscall/libagbsyscall.a: binutils
 	@$(MAKE) -C libagbsyscall
 
 libagbsyscall: libagbsyscall.a
@@ -173,7 +173,7 @@ libagbsyscall_clean:
 
 libgcnmultiboot.a: libgcnmultiboot/libgcnmultiboot.a
 	cp $< $@
-libgcnmultiboot/libgcnmultiboot.a:
+libgcnmultiboot/libgcnmultiboot.a: binutils
 	@$(MAKE) -C libgcnmultiboot
 
 libgcnmultiboot: libgcnmultiboot.a
@@ -184,7 +184,7 @@ libgcnmultiboot_clean:
 
 libisagbprn.a: libisagbprn/libisagbprn.a
 	cp $< $@
-libisagbprn/libisagbprn.a: agbcc
+libisagbprn/libisagbprn.a: agbcc binutils
 	@$(MAKE) -C libisagbprn
 
 libisagbprn: libisagbprn.a
@@ -196,7 +196,7 @@ libisagbprn_clean:
 librfu_%.a: librfu/librfu_%.a
 	cp $< $@
 librfu/librfu_%.a: TARGET = $(@:librfu/librfu_%.a=v%)
-librfu/librfu_%.a: agbcc
+librfu/librfu_%.a: agbcc binutils
 	@$(MAKE) -C librfu clean
 	@$(MAKE) -C librfu $(TARGET)
 
@@ -208,7 +208,7 @@ librfu_clean:
 
 libm4a.a: m4a/libm4a.a
 	cp $< $@
-m4a/libm4a.a: old_agbcc
+m4a/libm4a.a: old_agbcc binutils
 	@$(MAKE) -C m4a
 
 libm4a: libm4a.a
@@ -219,7 +219,7 @@ libm4a_clean:
 
 libsiirtc.a: siirtc/libsiirtc.a
 	cp $< $@
-siirtc/libsiirtc.a: agbcc
+siirtc/libsiirtc.a: agbcc binutils
 	@$(MAKE) -C siirtc
 
 libsiirtc: libsiirtc.a
