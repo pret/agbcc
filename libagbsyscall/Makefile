@@ -71,4 +71,4 @@ $(LIB): $(ASM_OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 $(ASM_OBJS): libagbsyscall.s
-	$(AS) $(ASFLAGS) --defsym L_$(@:%.o=%)=1 -o $@ $<
+	$(AS) $(ASFLAGS) --defsym L_$(*F)=1 -o $@ $<
