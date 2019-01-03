@@ -6498,10 +6498,10 @@ _Str_RfuHeader: @ 89A3220
 	.byte 15, 15, 1, 3, 3, 0, 0x7f, 0
 
 	.ascii "RFU_V"
-	.byte VERSION_MAJOR + 0x30
-	.byte VERSION_MINOR + 0x30
-	.byte (VERSION_REVISION / 10) + 0x30
-	.byte (VERSION_REVISION % 10) + 0x30
+	.byte ((RFU_VERSION / 1000) % 10) + 0x30
+	.byte ((RFU_VERSION /  100) % 10) + 0x30
+	.byte ((RFU_VERSION /   10) % 10) + 0x30
+	.byte ((RFU_VERSION /    1) % 10) + 0x30
 	.byte 0
 
 	.align 2

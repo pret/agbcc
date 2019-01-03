@@ -203,6 +203,8 @@ librfu/librfu_%.a: agbcc binutils
 
 librfu: librfu_1024.a librfu_1026.a
 
+.PRECIOUS: librfu/librfu_1024.a librfu/librfu_1026.a
+
 librfu_clean:
 	$(RM) librfu_1024.a librfu_1026.a
 	@$(MAKE) -C librfu clean
