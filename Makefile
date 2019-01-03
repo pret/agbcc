@@ -109,7 +109,9 @@ old_agbcc$(EXE): agbcc$(EXE)
 
 old: old_agbcc$(EXE)
 old_gcc: old_agbcc$(EXE)
+ifneq ($(EXE),)
 old_agbcc: old_agbcc$(EXE)
+endif
 
 gcc_clean:
 	$(RM) agbcc$(EXE)
@@ -119,7 +121,9 @@ old_gcc_clean:
 	$(RM) old_agbcc$(EXE)
 	@$(MAKE) -C gcc clean
 
+ifneq ($(EXE),)
 agbcc: agbcc$(EXE)
+endif
 agbcc$(EXE):
 	@$(MAKE) -C gcc tidy
 	@$(MAKE) -C gcc BASE_CFLAGS="-DAGBCC_VERSION=1 -std=gnu11 -O0"
