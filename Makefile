@@ -108,7 +108,8 @@ old_agbcc$(EXE): agbcc$(EXE)
 	cp gcc/old_agbcc$(EXE) old_agbcc$(EXE)
 
 old: old_agbcc$(EXE)
-old_gcc: old
+old_gcc: old_agbcc$(EXE)
+old_agbcc: old_agbcc$(EXE)
 
 gcc_clean:
 	$(RM) agbcc$(EXE)
@@ -118,6 +119,7 @@ old_gcc_clean:
 	$(RM) old_agbcc$(EXE)
 	@$(MAKE) -C gcc clean
 
+agbcc: agbcc$(EXE)
 agbcc$(EXE):
 	@$(MAKE) -C gcc tidy
 	@$(MAKE) -C gcc BASE_CFLAGS="-DAGBCC_VERSION=1 -std=gnu11 -O0"
@@ -197,7 +199,6 @@ librfu_%.a: librfu/librfu_%.a
 	cp $< $@
 librfu/librfu_%.a: TARGET = $(@:librfu/librfu_%.a=v%)
 librfu/librfu_%.a: agbcc binutils
-	@$(MAKE) -C librfu clean
 	@$(MAKE) -C librfu $(TARGET)
 
 librfu: librfu_1024.a librfu_1026.a
@@ -347,8 +348,7 @@ bfd-clean: bfd-configure
 
 # All subdirs (aside from bfd and libiberty) need bfd.h to build.
 bfd-headers: bfd/stmp-bfd-h
-bfd/stmp-bfd-h: bfd-configure
-	@$(MAKE) -C bfd headers $(SUBSUBMAKEFLAGS)
+bfd/stmp-bfd-h: bfd-objs
 .PHONY: bfd-headers
 
 libiberty-configure:
