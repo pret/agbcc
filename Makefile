@@ -133,7 +133,7 @@ agbcc$(EXE):
 binutils_clean: $(CLEAN)
 
 libc.a: libc/libc.a
-	cp libc/libc.a libc.a
+	cp $< $@
 libc/libc.a: old_gcc binutils
 	@$(MAKE) -C libc
 
@@ -144,7 +144,7 @@ libc_clean:
 	@$(MAKE) -C libc clean
 
 libgcc.a: libgcc/libgcc.a
-	cp libgcc/libgcc.a libgcc.a
+	cp $< $@
 
 libgcc/libgcc.a: old_gcc binutils
 	@$(MAKE) -C libgcc

@@ -60,9 +60,10 @@ ASM_OBJS := $(foreach syscall, $(SYSCALLS), $(syscall).o)
 
 LIB := libagbsyscall.a
 
-.PHONY: all clean $(LIB)
+.PHONY: all clean
 
 all: $(LIB)
+	@:
 
 clean:
 	rm -f $(LIB) $(ASM_OBJS)

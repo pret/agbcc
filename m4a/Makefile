@@ -25,9 +25,10 @@ ALL_OBJS := $(C_OBJS) $(ASM_OBJS)
 
 LIB := libm4a.a
 
-.PHONY: all clean $(LIB)
+.PHONY: all clean
 
 all: $(LIB)
+	@:
 
 clean:
 	rm -f $(LIB) $(C_SRCS:%.c=%.i) $(C_SRCS:%.c=%.s) $(ALL_OBJS)

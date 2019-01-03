@@ -15,7 +15,7 @@ CFLAGS := -mthumb-interwork -O2
 
 CPPFLAGS := -I ../ginclude -I ../libc/include -nostdinc -undef
 ASFLAGS := -mcpu=arm7tdmi --defsym RFU_VERSION=$(RFU_VERSION)
-ARFLAGS := rc
+ARFLAGS := -rc
 
 C_SRCS := librfu_rfu.c librfu_stwi.c
 C_OBJS := $(C_SRCS:%.c=%_$(RFU_VERSION).o)
@@ -27,9 +27,10 @@ ALL_OBJS := $(C_OBJS) $(ASM_OBJS)
 
 LIB := librfu_$(RFU_VERSION).a
 
-.PHONY: all clean $(LIB)
+.PHONY: all clean
 
 all: $(LIB)
+	@:
 
 clean:
 	rm -f *.a *.o $(C_SRCS:%.c=%.i) $(C_SRCS:%.c=%.s)

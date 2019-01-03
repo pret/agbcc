@@ -20,9 +20,10 @@ C_OBJS := $(C_SRCS:%.c=%.o)
 
 LIB := libisagbprn.a
 
-.PHONY: all clean $(LIB)
+.PHONY: all clean
 
 all: $(LIB)
+	@:
 
 clean:
 	rm -f $(LIB) $(C_SRCS:%.c=%.i) $(C_SRCS:%.c=%.s) $(C_OBJS)

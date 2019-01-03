@@ -16,9 +16,10 @@ ASM_OBJS := $(ASM_SRCS:%.s=%.o)
 
 LIB := libgcnmultiboot.a
 
-.PHONY: all clean $(LIB)
+.PHONY: all clean
 
 all: $(LIB)
+	@:
 
 clean:
 	rm -f $(LIB) $(ASM_OBJS)
