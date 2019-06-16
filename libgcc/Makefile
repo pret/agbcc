@@ -1,4 +1,13 @@
-include $(DEVKITARM)/base_tools
+PREFIX		:=	arm-none-eabi-
+
+export CC	:=	$(PREFIX)gcc
+export CXX	:=	$(PREFIX)g++
+export AS	:=	$(PREFIX)as
+export AR	:=	$(PREFIX)gcc-ar
+export OBJCOPY	:=	$(PREFIX)objcopy
+export STRIP	:=	$(PREFIX)strip
+export NM	:=	$(PREFIX)gcc-nm
+export RANLIB	:=	$(PREFIX)gcc-ranlib
 CC1 = ../old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
