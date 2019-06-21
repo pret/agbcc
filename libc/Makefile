@@ -1,3 +1,4 @@
+export CXX	:= 	arm-none-eabi-g++
 export AS	:=	arm-none-eabi-as
 export AR	:=	arm-none-eabi-gcc-ar
 
