@@ -1,6 +1,10 @@
+ifdef DEVKITARM
+include $(DEVKITARM)/base_tools
+else
 export CXX	:=	arm-none-eabi-g++
 export AS	:=	arm-none-eabi-as
 export AR	:=	arm-none-eabi-gcc-ar
+endif
 CC1 = ../old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
