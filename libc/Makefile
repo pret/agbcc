@@ -1,17 +1,6 @@
-ifdef DEVKITARM
-include $(DEVKITARM)/base_tools
-else
-PREFIX		:=	arm-none-eabi-
+export AS	:=	arm-none-eabi-as
+export AR	:=	arm-none-eabi-gcc-ar
 
-export CC	:=	$(PREFIX)gcc
-export CXX	:=	$(PREFIX)g++
-export AS	:=	$(PREFIX)as
-export AR	:=	$(PREFIX)gcc-ar
-export OBJCOPY	:=	$(PREFIX)objcopy
-export STRIP	:=	$(PREFIX)strip
-export NM	:=	$(PREFIX)gcc-nm
-export RANLIB	:=	$(PREFIX)gcc-ranlib
-endif
 SHELL := /bin/bash -o pipefail
 
 ASFLAGS := -mcpu=arm7tdmi
