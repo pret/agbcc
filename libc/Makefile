@@ -1,7 +1,10 @@
+ifdef DEVKITARM
+include $(DEVKITARM)/base_tools
+else
 export CXX	:= 	arm-none-eabi-g++
 export AS	:=	arm-none-eabi-as
 export AR	:=	arm-none-eabi-gcc-ar
-
+endif
 SHELL := /bin/bash -o pipefail
 
 ASFLAGS := -mcpu=arm7tdmi
