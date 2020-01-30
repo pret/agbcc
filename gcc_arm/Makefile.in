@@ -763,7 +763,7 @@ cstamp-h: config.in config.status
 config.status: configure version.c
 	@if [ ! -f config.status ] ; then \
 	  echo You must configure gcc.  Look at the INSTALL file for details.; \
-	  true; \
+	  false; \
 	else \
 	  LANGUAGES="$(CONFIG_LANGUAGES)" $(SHELL) config.status --recheck; \
 	fi
