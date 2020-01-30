@@ -19,7 +19,9 @@ old_agbcc
 */genpeep
 */genrecog
 */config.log
+gcc_arm/config.cache
 gcc_arm/config.log
+gcc_arm/config.status
 gcc_arm/genrtl.c
 gcc_arm/genrtl.h
 gcc_arm/insn-attr.h

@@ -36,21 +36,6 @@ Boston, MA 02111-1307, USA.  */
 #define NULL 0
 #endif
 
-/* The compiler is not a multi-threaded application and therefore we
-   do not have to use the locking functions.  */
-#ifdef HAVE_PUTC_UNLOCKED
-# undef putc
-# define putc(C, Stream) putc_unlocked (C, Stream)
-#endif
-#ifdef HAVE_FPUTC_UNLOCKED
-# undef fputc
-# define fputc(C, Stream) fputc_unlocked (C, Stream)
-#endif
-#ifdef HAVE_FPUTS_UNLOCKED
-# undef fputs
-# define fputs(String, Stream) fputs_unlocked (String, Stream)
-#endif
-
 #include <ctype.h>
 
 /* Jim Meyering writes:
@@ -194,10 +179,6 @@ extern int errno;
 #undef MAX
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
-
-#ifdef HAVE_SYS_WAIT_H
-#include <sys/wait.h>
-#endif
 
 #ifndef WIFSIGNALED
 #define WIFSIGNALED(S) (((S) & 0xff) != 0 && ((S) & 0xff) != 0x7f)

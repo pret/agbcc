@@ -604,7 +604,7 @@ SCHED_CFLAGS = @sched_cflags@
 OBJS = toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
  function.o stmt.o except.o expr.o calls.o expmed.o explow.o optabs.o \
  varasm.o rtl.o print-rtl.o rtlanal.o emit-rtl.o genrtl.o real.o regmove.o \
- dbxout.o sdbout.o dwarfout.o dwarf2out.o xcoffout.o bitmap.o alias.o \
+ sdbout.o dwarfout.o dwarf2out.o xcoffout.o bitmap.o alias.o \
  integrate.o jump.o cse.o loop.o unroll.o flow.o stupid.o combine.o varray.o \
  regclass.o local-alloc.o global.o reload.o reload1.o caller-save.o gcse.o \
  insn-peep.o reorg.o $(SCHED_PREFIX)sched.o final.o recog.o reg-stack.o \
@@ -763,7 +763,7 @@ cstamp-h: config.in config.status
 config.status: configure version.c
 	@if [ ! -f config.status ] ; then \
 	  echo You must configure gcc.  Look at the INSTALL file for details.; \
-	  false; \
+	  true; \
 	else \
 	  LANGUAGES="$(CONFIG_LANGUAGES)" $(SHELL) config.status --recheck; \
 	fi

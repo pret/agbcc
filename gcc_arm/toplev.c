@@ -30,14 +30,6 @@ Boston, MA 02111-1307, USA.  */
 #include <signal.h>
 #include <setjmp.h>
 
-#ifdef HAVE_SYS_RESOURCE_H
-# include <sys/resource.h>
-#endif
-
-#ifdef HAVE_SYS_TIMES_H
-# include <sys/times.h>
-#endif
-
 #include "input.h"
 #include "tree.h"
 #include "rtl.h"
@@ -62,6 +54,9 @@ Boston, MA 02111-1307, USA.  */
 #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"
 #endif
+
+#undef SDB_DEBUGGING_INFO
+#undef DBX_DEBUGGING_INFO
 
 #if defined(DBX_DEBUGGING_INFO) || defined(XCOFF_DEBUGGING_INFO)
 #include "dbxout.h"
