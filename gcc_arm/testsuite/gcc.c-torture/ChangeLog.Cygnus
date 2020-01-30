@@ -1,0 +1,6 @@
+1998-12-17  Nick Clifton  <nickc@cygnus.com>
+
+	* special/special.exp: Suppress use of -fpic when compiling
+	special/981006-1 for the FR30.
+	
+
