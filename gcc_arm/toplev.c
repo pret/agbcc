@@ -992,7 +992,7 @@ lang_independent_options f_options[] =
   {"instrument-functions", &flag_instrument_function_entry_exit, 1,
    "Instrument function entry/exit with profiling calls"},
   {"leading-underscore", &flag_leading_underscore, 1,
-   "External symbols have a leading underscore" }
+   "External symbols have a leading underscore" },
 };
 
 #define NUM_ELEM(a)  (sizeof (a) / sizeof ((a)[0]))
@@ -1318,65 +1318,12 @@ get_run_time ()
   if (quiet_flag)
     return 0;
 
-#ifdef __BEOS__
-  return 0;
-#else /* not BeOS */
-#if defined (_WIN32) && !defined (__CYGWIN__)
-  if (clock() < 0)
-    return 0;
-  else
-    return (clock() * 1000);
-#else /* not _WIN32 */
-#ifdef _SC_CLK_TCK
-  {
-    static int tick;
-    struct tms tms;
-    if (tick == 0)
-      tick = 1000000 / sysconf(_SC_CLK_TCK);
-    times (&tms);
-    return (tms.tms_utime + tms.tms_stime) * tick;
-  }
-#else
-#ifdef USG
-  {
-    struct tms tms;
-#   if HAVE_SYSCONF && defined _SC_CLK_TCK
-#    define TICKS_PER_SECOND sysconf (_SC_CLK_TCK) /* POSIX 1003.1-1996 */
-#   else
-#    ifdef CLK_TCK
-#     define TICKS_PER_SECOND CLK_TCK /* POSIX 1003.1-1988; obsolescent */
-#    else
-#     define TICKS_PER_SECOND HZ /* traditional UNIX */
-#    endif
-#   endif
-    times (&tms);
-    return (tms.tms_utime + tms.tms_stime) * (1000000 / TICKS_PER_SECOND);
-  }
-#else
-#ifndef VMS
-  {
-    struct rusage rusage;
-    getrusage (0, &rusage);
-    return (rusage.ru_utime.tv_sec * 1000000 + rusage.ru_utime.tv_usec
-	    + rusage.ru_stime.tv_sec * 1000000 + rusage.ru_stime.tv_usec);
-  }
-#else /* VMS */
-  {
-    struct
-      {
-        int proc_user_time;
-        int proc_system_time;
-        int child_user_time;
-        int child_system_time;
-      } vms_times;
-    times ((void *) &vms_times);
-    return (vms_times.proc_user_time + vms_times.proc_system_time) * 10000;
-  }
-#endif	/* VMS */
-#endif	/* USG */
-#endif  /* _SC_CLK_TCK */
-#endif	/* _WIN32 */
-#endif	/* __BEOS__ */
+    clock_t clk = clock();
+
+    if (clk < 0)
+        return 0;
+
+    return (clk * 1000000) / CLOCKS_PER_SEC;
 }
 
 #define TIMEVAR(VAR, BODY)    \
