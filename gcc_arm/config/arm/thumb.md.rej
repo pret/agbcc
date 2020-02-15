@@ -1,0 +1,168 @@
+***************
+*** 1002,1019 ****
+  ;; Call insns
+  
+  (define_expand "call"
+-   [(call (match_operand:SI 0 "memory_operand" "")
+- 	 (match_operand 1 "" ""))]
+    ""
+    "
+  {
+-   if (TARGET_LONG_CALLS && GET_CODE (XEXP (operands[0], 0)) != REG)
+      XEXP (operands[0], 0) = force_reg (Pmode, XEXP (operands[0], 0));
+  }")
+  
+  (define_insn "*call_indirect"
+-   [(call (mem:SI (match_operand:SI 0 "register_operand" "l*r"))
+- 	 (match_operand 1 "" ""))]
+    "! TARGET_CALLER_INTERWORKING"
+    "bl\\t%__call_via_%0"
+  [(set_attr "length" "4")])
+--- 1002,1024 ----
+  ;; Call insns
+  
+  (define_expand "call"
++   [(parallel
++     [(call (match_operand:SI 0 "memory_operand" "")
++ 	   (match_operand 1 "" ""))
++      (use (match_operand 2 "" ""))])]
+    ""
+    "
+  {
++   if (GET_CODE (XEXP (operands[0], 0)) != REG
++       && arm_is_longcall_p (operands[0], INTVAL (operands[2]), 0))
+      XEXP (operands[0], 0) = force_reg (Pmode, XEXP (operands[0], 0));
+  }")
+  
+  (define_insn "*call_indirect"
++   [(parallel
++     [(call (mem:SI (match_operand:SI 0 "register_operand" "l*r"))
++ 	   (match_operand 1 "" ""))
++      (use (match_operand 2 "" ""))])]
+    "! TARGET_CALLER_INTERWORKING"
+    "bl\\t%__call_via_%0"
+  [(set_attr "length" "4")])
+***************
+*** 1023,1075 ****
+  ;; would switch back into ARM mode...
+  
+  (define_insn "*call_indirect_interwork"
+-   [(call (mem:SI (match_operand:SI 0 "register_operand" "l*r"))
+- 	 (match_operand 1 "" ""))]
+    "TARGET_CALLER_INTERWORKING"
+    "bl\\t%__interwork_call_via_%0"
+  [(set_attr "length" "4")])
+  
+  (define_expand "call_value"
+-   [(set (match_operand 0 "" "")
+- 	(call (match_operand 1 "memory_operand" "")
+- 	      (match_operand 2 "" "")))]
+    ""
+    "
+  {
+-   if (TARGET_LONG_CALLS && GET_CODE (XEXP (operands[1], 0)) != REG)
+      XEXP (operands[1], 0) = force_reg (Pmode, XEXP (operands[1], 0));
+  }")
+  
+  (define_insn "*call_value_indirect"
+-   [(set (match_operand 0 "" "=l")
+- 	(call (mem:SI (match_operand:SI 1 "register_operand" "l*r"))
+- 	      (match_operand 2 "" "")))]
+    "! TARGET_CALLER_INTERWORKING"
+    "bl\\t%__call_via_%1"
+  [(set_attr "length" "4")])
+  ;; See comment for call_indirect pattern
+  
+  (define_insn "*call_value_indirect_interwork"
+-   [(set (match_operand 0 "" "=l")
+- 	(call (mem:SI (match_operand:SI 1 "register_operand" "l*r"))
+- 	      (match_operand 2 "" "")))]
+    "TARGET_CALLER_INTERWORKING"
+    "bl\\t%__interwork_call_via_%1"
+  [(set_attr "length" "4")])
+  
+  
+  (define_insn "*call_insn"
+-   [(call (mem:SI (match_operand:SI 0 "" "i"))
+- 	 (match_operand:SI 1 "" ""))]
+-   "! TARGET_LONG_CALLS && GET_CODE (operands[0]) == SYMBOL_REF"
+    "bl\\t%a0"
+  [(set_attr "length" "4")])
+  
+  (define_insn "*call_value_insn"
+-   [(set (match_operand 0 "register_operand" "=l")
+  	(call (mem:SI (match_operand 1 "" "i"))
+- 	      (match_operand 2 "" "")))]
+-   "! TARGET_LONG_CALLS && GET_CODE (operands[1]) == SYMBOL_REF"
+    "bl\\t%a1"
+  [(set_attr "length" "4")])
+  
+--- 1028,1095 ----
+  ;; would switch back into ARM mode...
+  
+  (define_insn "*call_indirect_interwork"
++   [(parallel
++     [(call (mem:SI (match_operand:SI 0 "register_operand" "l*r"))
++ 	   (match_operand 1 "" ""))
++      (use (match_operand 2 "" ""))])]
+    "TARGET_CALLER_INTERWORKING"
+    "bl\\t%__interwork_call_via_%0"
+  [(set_attr "length" "4")])
+  
+  (define_expand "call_value"
++   [(parallel
++     [(set (match_operand 0 "" "")
++ 	  (call (match_operand 1 "memory_operand" "")
++ 		(match_operand 2 "" "")))
++      (use (match_operand 3 "" ""))])]
+    ""
+    "
+  {
++   if (GET_CODE (XEXP (operands[1], 0)) != REG
++       && arm_is_longcall_p (operands[1], INTVAL (operands[3]), 0))
+      XEXP (operands[1], 0) = force_reg (Pmode, XEXP (operands[1], 0));
+  }")
+  
+  (define_insn "*call_value_indirect"
++   [(parallel
++     [(set (match_operand 0 "" "=l")
++ 	  (call (mem:SI (match_operand:SI 1 "register_operand" "l*r"))
++ 		(match_operand 2 "" "")))
++      (use (match_operand 3 "" ""))])]
+    "! TARGET_CALLER_INTERWORKING"
+    "bl\\t%__call_via_%1"
+  [(set_attr "length" "4")])
+  ;; See comment for call_indirect pattern
+  
+  (define_insn "*call_value_indirect_interwork"
++   [(parallel
++     [(set (match_operand 0 "" "=l")
++ 	  (call (mem:SI (match_operand:SI 1 "register_operand" "l*r"))
++ 		(match_operand 2 "" "")))
++      (use (match_operand 3 "" ""))])]
+    "TARGET_CALLER_INTERWORKING"
+    "bl\\t%__interwork_call_via_%1"
+  [(set_attr "length" "4")])
+  
+  
+  (define_insn "*call_insn"
++   [(parallel
++     [(call (mem:SI (match_operand:SI 0 "" "i"))
++ 	   (match_operand:SI 1 "" ""))
++     (use (match_operand 2 "" ""))])]
++   "GET_CODE (operands[0]) == SYMBOL_REF
++    && ! arm_is_longcall_p (operands[0], INTVAL (operands[2]), 1)"
+    "bl\\t%a0"
+  [(set_attr "length" "4")])
+  
+  (define_insn "*call_value_insn"
++   [(parallel
++     [(set (match_operand 0 "register_operand" "=l")
+  	(call (mem:SI (match_operand 1 "" "i"))
++ 	      (match_operand 2 "" "")))
++      (use (match_operand 3 "" ""))])]
++   "GET_CODE(operands[1]) == SYMBOL_REF
++    && ! arm_is_longcall_p (operands[1], INTVAL (operands[3]), 1)"
+    "bl\\t%a1"
+  [(set_attr "length" "4")])
+  
