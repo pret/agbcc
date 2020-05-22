@@ -24,28 +24,22 @@ BUGS
 
 */
 
-
-/* FIXME:  The above description is ANSI compiliant.  This routine has not
-   been validated to comply with it.  -fnf */
-
 char *
 strstr (s1, s2)
   char *s1, *s2;
 {
-  register char *p = s1;
   extern char *strchr ();
-  extern int strncmp ();
+  extern int memcmp ();
 #if __GNUC__==2
   extern __SIZE_TYPE__ strlen ();
 #endif
   register int len = strlen (s2);
 
-  for (; (p = strchr (p, *s2)) != 0; p++)
-    {
-      if (strncmp (p, s2, len) == 0)
-	{
-	  return (p);
-	}
-    }
+  while (*s1)
+  {
+    if (!memcmp(s1, s2, len))
+      return s1;
+    s1++;
+  }
   return (0);
 }
