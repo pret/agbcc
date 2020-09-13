@@ -1,6 +1,6 @@
 language: generic
 dist: bionic
-sudo: false
+os: linux
 env:
   global:
     - DEVKITPRO=$HOME
@@ -10,7 +10,7 @@ addons:
     packages:
       - gcc-multilib
       - linux-libc-dev
-      - zlib-dev
+      - zlib1g-dev
 cache:
   apt: true
 install:
@@ -20,7 +20,7 @@ install:
   - travis_retry wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
   - tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
   - popd
-matrix:
+jobs:
   include:
     - os: linux
       env: _="Build"
