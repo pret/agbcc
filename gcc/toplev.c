@@ -584,6 +584,9 @@ int flag_instrument_function_entry_exit = 0;
 /* Use hex instead of decimal in ASM output.  */
 int flag_hex_asm = 0;
 
+/* Fix prologue bug in new compiler.  */
+int flag_prologue_bugfix = 0;
+
 typedef struct
 {
     char *string;
@@ -723,6 +726,13 @@ lang_independent_options f_options[] =
      "Instrument function entry/exit with profiling calls"},
     {"hex-asm", &flag_hex_asm, 1,
      "Use hex instead of decimal in assembly output"},
+#ifndef OLD_COMPILER
+    /* This flag fixes a bug in the newer agbcc version that causes `lr` to be
+       saved onto the stack in functions where it is not necessary. This is
+       needed to produce matching code for certain GBA games.  */
+    {"prologue-bugfix", &flag_prologue_bugfix, 1,
+     "Prevent unnecessary saving of the lr register to the stack"},
+#endif
 };
 
 #define NUM_ELEM(a)  (sizeof (a) / sizeof ((a)[0]))
