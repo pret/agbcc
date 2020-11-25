@@ -1,4 +1,11 @@
+ifneq (,$(wildcard $(DEVKITARM)/base_tools))
 include $(DEVKITARM)/base_tools
+else
+PREFIX := arm-none-eabi-
+export AR := $(PREFIX)ar
+export AS := $(PREFIX)as
+endif
+
 CC1 = ../old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o

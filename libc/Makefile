@@ -1,4 +1,10 @@
+ifneq (,$(wildcard $(DEVKITARM)/base_tools))
 include $(DEVKITARM)/base_tools
+else
+PREFIX := arm-none-eabi-
+export AR := $(PREFIX)ar
+export AS := $(PREFIX)as
+endif
 
 SHELL := /bin/bash -o pipefail
 
