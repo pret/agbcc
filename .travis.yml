@@ -10,7 +10,7 @@ addons:
     packages:
       - gcc-multilib
       - linux-libc-dev
-      - zlib-dev
+      - zlib1g-dev
 cache:
   apt: true
 install:
