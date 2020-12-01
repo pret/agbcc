@@ -19,7 +19,7 @@
 #Boston MA 02111-1307, USA.
 
 # Directory where sources are, from where we are.
-srcdir = .
+srcdir ?= .
 VPATH = $(srcdir)
 
 CC = gcc

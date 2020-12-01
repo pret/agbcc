@@ -1,5 +1,5 @@
 include $(DEVKITARM)/base_tools
-CC1 = ../old_agbcc
+CC1 = ../build_old_agbcc/old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
 	$(AR) -x libgcc1.a
