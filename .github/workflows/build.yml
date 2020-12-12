@@ -13,7 +13,9 @@ jobs:
       DEVKITARM: $DEVKITPRO/devkitARM
     steps:
       - name: Load devkitARM and rules
-        run: wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+        run: |
+          wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
+          wget -nv https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
         working-directory: $HOME
       
       - name: Unpack devkitARM
