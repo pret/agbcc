@@ -12,18 +12,15 @@ jobs:
       DEVKITPRO: $HOME
       DEVKITARM: $DEVKITPRO/devkitARM
     steps:
-      - name: Load devkitARM and rules
+      - name: Get wget, tar, xzip, gcc, libc and zlib1g
+        run: sudo apt install wget tar xz-utils gcc-multilib linux-libc-dev zlib1g-dev
+      
+      - name: Load and setup devkitARM and rules
         run: |
-          wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
-          wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
-        working-directory: $HOME
-      
-      - name: Unpack devkitARM
-        run: tar xJf devkitARM*.tar.xz
-        working-directory: $HOME
-      
-      - name: Unpack devkitARM rules
-        run: tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
+          wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
+          wget -nv https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+          tar xJf devkitARM*.tar.xz
+          tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
         working-directory: $HOME
       
       - name: Fetch repo
