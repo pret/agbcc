@@ -9,18 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # so apparently setting an env var in a step will not take effect until the next step
+      # there is no need to install wget, libc, gcc, zlib1g, tar or xz-utils. all of there come with the runner by default
+      # apparently setting an env var in a step will not take effect until the next step, so when setting env vars one cannot depend on vars set previously but in the same step
       - name: Set environment variables
         run: |
           echo "DEVKITPRO=$HOME" >> $GITHUB_ENV
           echo "DEVKITARM=$HOME/devkitARM" >> $GITHUB_ENV
       
-      - name: check env vars
-        run: |
-          echo $DEVKITPRO
-          echo $DEVKITARM
-      
-      - name: Load and setup devkitARM and rules
+      - name: Load and setup devkitARM
         run: |
           wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
           tar xJf devkitARM*.tar.xz -C $DEVKITPRO
