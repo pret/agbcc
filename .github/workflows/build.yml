@@ -17,6 +17,9 @@ jobs:
       
       - name: Load and setup devkitARM and rules
         run: |
+          mkdir -p devkitARM
+          echo $DEVKITPRO
+          echo $DEVKITARM
           wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
           wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
           tar xJf devkitARM*.tar.xz
