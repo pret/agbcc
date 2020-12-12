@@ -9,8 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      - DEVKITPRO=$HOME
-      - DEVKITARM=$DEVKITPRO/devkitARM
+      DEVKITPRO: $HOME
+      DEVKITARM: $DEVKITPRO/devkitARM
     steps:
       - name: Get gcc, libc and zlib1g
         # alternatively one could just "run: sudo apt-get install [packages]"
