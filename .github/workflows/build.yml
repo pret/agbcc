@@ -5,10 +5,6 @@ on:
     branches: [ master ]
   pull_request:
 
-env:
-  DEVKITPRO: $HOME
-  DEVKITARM: $DEVKITPRO/devkitARM
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,11 +14,15 @@ jobs:
       
       - name: check env vars
         run: |
+          echo "::set-env name=DEVKITPRO::$HOME"
+          echo "::set-env name=DEVKITARM::$DEVKITPRO/devkitARM"
           echo $DEVKITPRO
           echo $DEVKITARM
       
       - name: Load and setup devkitARM and rules
         run: |
+          echo "::set-env name=DEVKITPRO::$HOME"
+          echo "::set-env name=DEVKITARM::$DEVKITPRO/devkitARM"
           mkdir -p $DEVKITARM
           wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
           wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
@@ -34,8 +34,13 @@ jobs:
         uses: actions/checkout@master
         
       - name: Build via script
-        run: sh build.sh
+        run: |
+          echo "::set-env name=DEVKITPRO::$HOME"
+          echo "::set-env name=DEVKITARM::$DEVKITPRO/devkitARM"
+          sh build.sh
       - name: Build via Makefile
         run: |
+          echo "::set-env name=DEVKITPRO::$HOME"
+          echo "::set-env name=DEVKITARM::$DEVKITPRO/devkitARM"
           make clean
           make -j4 all
