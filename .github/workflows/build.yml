@@ -5,21 +5,25 @@ on:
     branches: [ master ]
   pull_request:
 
+env:
+  DEVKITPRO: $HOME
+  DEVKITARM: $DEVKITPRO/devkitARM
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DEVKITPRO: $HOME
-      DEVKITARM: $DEVKITPRO/devkitARM
     steps:
       - name: Get wget, tar, xzip, gcc, libc and zlib1g
         run: sudo apt install wget tar xz-utils gcc-multilib linux-libc-dev zlib1g-dev
       
-      - name: Load and setup devkitARM and rules
+      - name: check env vars
         run: |
-          mkdir -p devkitARM
           echo $DEVKITPRO
           echo $DEVKITARM
+      
+      - name: Load and setup devkitARM and rules
+        run: |
+          mkdir -p $DEVKITARM
           wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
           wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
           tar xJf devkitARM*.tar.xz
