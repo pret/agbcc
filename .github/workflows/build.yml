@@ -25,16 +25,9 @@ jobs:
       
       - name: Load and setup devkitARM and rules
         run: |
-          echo $DEVKITPRO
-          echo $DEVKITARM
-          echo $PWD
-        working-directory: $HOME
-        
-      - name: Unpack dka
-        run: |
-          tar vxJf devkitARM*.tar.xz
+          wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+          tar vxJf devkitARM*.tar.xz -C $DEVKITPRO
           tar vxJf devkitarm-rules-*.tar.xz -C $DEVKITARM
-        working-directory: $HOME
       
       - name: Fetch repo
         uses: actions/checkout@master
