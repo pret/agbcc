@@ -9,9 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Get wget, tar, xzip, gcc, libc and zlib1g
-        run: sudo apt install wget tar xz-utils gcc-multilib linux-libc-dev zlib1g-dev
-      
       # so apparently setting an env var in a step will not take effect until the next step
       - name: Set environment variables
         run: |
@@ -25,9 +22,9 @@ jobs:
       
       - name: Load and setup devkitARM and rules
         run: |
-          wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
-          tar vxJf devkitARM*.tar.xz -C $DEVKITPRO
-          tar vxJf devkitarm-rules-*.tar.xz -C $DEVKITARM
+          wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+          tar xJf devkitARM*.tar.xz -C $DEVKITPRO
+          tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
       
       - name: Fetch repo
         uses: actions/checkout@master
@@ -37,4 +34,4 @@ jobs:
       - name: Build via Makefile
         run: |
           make clean
-          make -j4 all
+          make -j$(nproc) all
