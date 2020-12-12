@@ -1,0 +1,71 @@
+name: GithubCI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      - DEVKITPRO=$HOME
+      - DEVKITARM=$DEVKITPRO/devkitARM
+    steps:
+      - name: Get gcc, libc and zlib1g
+        # alternatively one could just "run: sudo apt-get install [packages]"
+        run: sudo apt install gcc-multilib linux-libc-dev zlib1g-dev
+      
+      - name: Setup devkitARM and rules
+        uses: teddyking/dependency-action@master
+        with:
+          deps: https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+      
+      - name: Move rules
+        run: |
+          pushd $HOME
+          mv 3ds_rules base_rules base_tools ds_rules gba_rules gp32_rules Makefile $DEVKITARM/
+          popd
+      
+      - name: Fetch repo
+        uses: actions/checkout@master
+        
+      - name: Build via script
+        run: sh build.sh
+      - name: Build via Makefile
+        run: |
+          make clean
+          make -j4 all
+
+language: generic
+dist: bionic
+os: linux
+env:
+  global:
+    - DEVKITPRO=$HOME
+    - DEVKITARM=$DEVKITPRO/devkitARM
+addons:
+  apt:
+    packages:
+      - gcc-multilib
+      - linux-libc-dev
+      - zlib1g-dev
+cache:
+  apt: true
+install:
+  - pushd $HOME
+  - travis_retry wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
+  - tar xJf devkitARM*.tar.xz
+  - travis_retry wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+  - tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
+  - popd
+jobs:
+  build:
+    runs-on: ubuntu-bionic
+  include:
+    - os: linux
+      env: _="Build"
+      script:
+            - sh build.sh
+            - make clean
+            - make all
