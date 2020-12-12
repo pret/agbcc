@@ -12,20 +12,15 @@ jobs:
       - name: Get wget, tar, xzip, gcc, libc and zlib1g
         run: sudo apt install wget tar xz-utils gcc-multilib linux-libc-dev zlib1g-dev
       
-      - name: set env vars
+      # so apparently setting an env var in a step will not take effect until the next step
+      - name: Set environment variables
         run: |
           echo "DEVKITPRO=$HOME" >> $GITHUB_ENV
-          echo "DEVKITARM=$DEVKITPRO/devkitARM" >> $GITHUB_ENV
-      
-      - name: check env vars
-        run: |
-          echo $DEVKITPRO
-          echo $DEVKITARM
+          echo "DEVKITARM=$HOME/devkitARM" >> $GITHUB_ENV
       
       - name: Load and setup devkitARM and rules
         run: |
-          wget https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz
-          wget https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
+          wget -nv https://github.com/devkitPro/buildscripts/releases/download/devkitARM_r52/devkitARM_r52-linux.tar.xz https://github.com/devkitPro/devkitarm-rules/releases/download/v1.0.0/devkitarm-rules-1.0.0.tar.xz
           tar xJf devkitARM*.tar.xz
           tar xJf devkitarm-rules-*.tar.xz -C $DEVKITARM
         working-directory: $HOME
