@@ -12,10 +12,13 @@ jobs:
       - name: Get wget, tar, xzip, gcc, libc and zlib1g
         run: sudo apt install wget tar xz-utils gcc-multilib linux-libc-dev zlib1g-dev
       
-      - name: check env vars
+      - name: set env vars
         run: |
           echo "DEVKITPRO=$HOME" >> $GITHUB_ENV
           echo "DEVKITARM=$DEVKITPRO/devkitARM" >> $GITHUB_ENV
+      
+      - name: check env vars
+        run: |
           echo $DEVKITPRO
           echo $DEVKITARM
       
