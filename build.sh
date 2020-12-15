@@ -1,4 +1,10 @@
 #!/bin/sh
+if [ -z "$DEVKITARM" ]; then
+	echo "ERROR: environment variable DEVKITARM is empty."
+	echo "Make sure you set DEVKITARM to a usable value before running this script."
+	exit 1
+fi
+
 set -e
 CCOPT=
 CXXOPT=

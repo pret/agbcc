@@ -1,3 +1,7 @@
+# check for dka environment variable
+ifeq ($(DEVKITARM),)
+$(error Required environment variable DEVKITARM is empty)
+endif
 
 .PHONY = agbcc old_agbcc agbcc_arm libc.a libgcc.a
 
