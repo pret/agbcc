@@ -1,4 +1,4 @@
-ifneq (,$(wildcard $(DEVKITARM)/base_tools))
+ifneq (,$(wildcard $(DEVKITARM)/bin))
 include $(DEVKITARM)/base_tools
 else
 PREFIX := arm-none-eabi-
