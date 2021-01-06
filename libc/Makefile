@@ -13,6 +13,11 @@ ifneq ($(DKA_EXISTS),1)
 PREFIX := arm-none-eabi-
 export AR := $(PREFIX)ar
 export AS := $(PREFIX)as
+
+ifeq ($(shell which $(AR)),1)
+$(error Cannot find $(AR) or devkitARM, make sure you have an arm-none-eabi toolchain or devkitARM installed and your environment variables properly set up)
+endif
+
 endif
 
 SHELL := /bin/bash -o pipefail

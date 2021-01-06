@@ -1,8 +1,3 @@
-# check for dka environment variable
-ifeq ($(DEVKITARM),)
-$(error Required environment variable DEVKITARM is empty)
-endif
-
 .PHONY = agbcc old_agbcc agbcc_arm libc.a libgcc.a
 
 # needed for out-of-tree builds of agbcc and old_agbcc
