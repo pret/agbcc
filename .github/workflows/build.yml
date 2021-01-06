@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # there is no need to install wget, libc, gcc, zlib1g, tar or xz-utils. all of there come with the runner by default
+      - name: Install binutils-arm-none-eabi for devkitARM-less build
+        run: sudo apt install binutils-arm-none-eabi
+      
       # apparently setting an env var in a step will not take effect until the next step, so when setting env vars one cannot depend on vars set previously but in the same step
       - name: Set environment variables
         run: |
@@ -25,9 +28,21 @@ jobs:
       - name: Fetch repo
         uses: actions/checkout@master
         
-      - name: Build via script
+      - name: Build using devkitARM via script
         run: sh build.sh
-      - name: Build via Makefile
+      - name: Build using devkitARM via Makefile
+        run: |
+          make clean
+          make -j$(nproc) all
+      
+      - name: Unset environment variables
+        run: |
+          echo "DEVKITPRO=" >> $GITHUB_ENV
+          echo "DEVKITARM=" >> $GITHUB_ENV
+          
+      - name: Build using binutils-arm-none-eabi via script
+        run: sh build.sh
+      - name: Build using binutils-arm-none-eabi via Makefile
         run: |
           make clean
           make -j$(nproc) all
