@@ -40,6 +40,7 @@
 #include "except.h"
 #include "toplev.h"
 #include "expr.h"
+#include "unistd.h"
 
 #if defined (DWARF2_DEBUGGING_INFO)
 #include "dwarf2out.h"

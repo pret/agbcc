@@ -43,6 +43,8 @@ Boston, MA 02111-1307, USA.  */
 #include "range.h"
 #include "toplev.h"
 
+void init_regset_vector	PROTO ((regset *, int, struct obstack *));
+
 extern struct obstack *rtl_obstack;
 
 /* Information that we gather about registers */
