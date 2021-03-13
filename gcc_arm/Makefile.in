@@ -64,7 +64,7 @@ ALLOCA_FINISH = true
 XCFLAGS =
 TCFLAGS =
 # CYGNUS LOCAL nowarnings/law
-CFLAGS = -g 
+CFLAGS = -g -Wno-implicit-function-declaration
 BOOT_CFLAGS = -O2 $(CFLAGS)
 WARN_CFLAGS =
 # END CYGNUS LOCAL
