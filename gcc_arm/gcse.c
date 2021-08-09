@@ -5168,9 +5168,8 @@ invalidate_nonnull_info (x, setter)
    This could probably be integrated with global cprop with a little work.  */
 
 void
-delete_null_pointer_checks (f, pass)
+delete_null_pointer_checks (f)
      rtx f;
-     int pass;
 {
   int_list_ptr *s_preds, *s_succs;
   int *num_preds, *num_succs;

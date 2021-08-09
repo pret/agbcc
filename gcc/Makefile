@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -g -std=gnu11
+BASE_CFLAGS = -g -std=gnu11 -Werror-implicit-function-declaration
 
 INCLUDES = -I. -I$(srcdir)
 

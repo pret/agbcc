@@ -38,6 +38,7 @@ Boston, MA 02111-1307, USA.  */
 #include "tree.h"
 #include "expr.h"
 #include "toplev.h"
+#include "recog.h"
 
 /* The maximum number of insns skipped which will be conditionalised if
    possible.  */
@@ -47,7 +48,6 @@ extern FILE *asm_out_file;
 /* Some function declarations.  */
 
 /* CYGNUS LOCAL */
-void arm_increase_location PROTO ((int));
 static int get_prologue_size PROTO ((void));
 /* END CYGNUS LOCAL */
 
