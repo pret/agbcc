@@ -1,21 +1,6 @@
-ifneq (,$(DEVKITARM))
-    ifneq (,$(wildcard $(DEVKITARM)/bin))	    
-        include $(DEVKITARM)/base_tools
-        DKA_EXISTS=1
-    else
-        DKA_EXISTS=0
-    endif
-else
-DKA_EXISTS=0
-endif
-
-ifneq ($(DKA_EXISTS),1)
-PREFIX := arm-none-eabi-
-export AR := $(PREFIX)ar
-export AS := $(PREFIX)as
-endif
-
-CC1 = ../old_agbcc
+AR := ../binutils/build/binutils/ar
+AS := ../binutils/build/gas/as-new
+CC1 := ../old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
 	$(AR) -x libgcc1.a;

@@ -1,25 +1,10 @@
-ifneq (,$(DEVKITARM))
-    ifneq (,$(wildcard $(DEVKITARM)/bin))	    
-        include $(DEVKITARM)/base_tools
-        DKA_EXISTS=1
-    else
-        DKA_EXISTS=0
-    endif
-else
-DKA_EXISTS=0
-endif
-
-ifneq ($(DKA_EXISTS),1)
-PREFIX := arm-none-eabi-
-export AR := $(PREFIX)ar
-export AS := $(PREFIX)as
-endif
-
 SHELL := /bin/bash -o pipefail
 
 ASFLAGS := -mcpu=arm7tdmi
 
-CC1    := ../old_agbcc
+AR := ../binutils/build/binutils/ar
+AS := ../binutils/build/gas/as-new
+CC1 := ../old_agbcc
 CFLAGS := -O2 -fno-builtin
 
 CPPFLAGS := -I ../ginclude -I include -nostdinc -undef \
