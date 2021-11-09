@@ -51,3 +51,6 @@ gcc_arm/s-peep
 gcc_arm/s-recog
 gcc_arm/tree-check.h
 
+binutils/binutils-*.tar.xz
+binutils/binutils-*/
+binutils/build/
