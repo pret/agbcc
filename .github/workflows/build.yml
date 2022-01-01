@@ -1,0 +1,38 @@
+name: Build and release agbcc
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies (Ubuntu)
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi
+      - name: Build
+        shell: bash
+        run: |
+          sh build.sh
+      - name: Install to temp dir
+        shell: bash
+        run: |
+          sh install.sh TEMPDIR
+      - name: Create release archive
+        shell: bash
+        run: |
+          tar -czf agbcc.tar.gz TEMPDIR/*
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: agbcc.tar.gz
+          path: |
+            agbcc.tar.gz
+      - name: Update release
+        uses: johnwbyrd/update-release@v1.0.0
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: agbcc.tar.gz
