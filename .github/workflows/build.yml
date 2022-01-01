@@ -23,7 +23,7 @@ jobs:
       - name: Create release archive
         shell: bash
         run: |
-          tar -czf agbcc.tar.gz -C TEMPDIR/tools/agbcc $(ls .)
+          tar -C TEMPDIR/tools/agbcc -czf agbcc.tar.gz bin include lib
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
