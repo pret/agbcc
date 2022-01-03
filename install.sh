@@ -14,7 +14,11 @@ if [ "$1" != "" ]; then
 		cp libgcc.a $1/tools/agbcc/lib/
 		cp libc.a $1/tools/agbcc/lib/
 	else
-		echo "Target directory does not exist. Did you mean to do \"./install.sh ../$1\"?"
+		if [ -d "../$1" ]; then
+			echo "Target directory does not exist. Did you mean to do \"./install.sh ../$1\"?"
+		else
+			echo "Target directory does not exist. If you aren't familiar with relative paths, make sure that agbcc and $1 are in the same directory, and run \"./install.sh ../$1\" again."
+		fi
 	fi
 else
 	echo "Usage: install.sh PATH"
