@@ -17,5 +17,5 @@ if [ "$1" != "" ]; then
 		echo "Target directory does not exist. Did you mean to do \"./install.sh ../$1\"?"
 	fi
 else
-    echo "Usage: install.sh PATH"
+	echo "Usage: install.sh PATH"
 fi
