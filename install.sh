@@ -13,6 +13,7 @@ if [ "$1" != "" ]; then
 		cp ginclude/* $1/tools/agbcc/include/
 		cp libgcc.a $1/tools/agbcc/lib/
 		cp libc.a $1/tools/agbcc/lib/
+		echo "agbcc successfully installed!"
 	else
 		if [ -d "../$1" ]; then
 			echo "Target directory does not exist. Did you mean to do \"./install.sh ../$1\"?"
