@@ -585,6 +585,9 @@ int flag_instrument_function_entry_exit = 0;
 /* Use hex instead of decimal in ASM output.  */
 int flag_hex_asm = 0;
 
+/* Output standard-compliant dwarf .debug_abbrev section.  */
+int flag_dwarf_bugfix = 0;
+
 typedef struct
 {
     char *string;
@@ -724,6 +727,8 @@ lang_independent_options f_options[] =
      "Instrument function entry/exit with profiling calls"},
     {"hex-asm", &flag_hex_asm, 1,
      "Use hex instead of decimal in assembly output"},
+    {"dwarf-bugfix", &flag_dwarf_bugfix, 1,
+     "Output standard-compliant dwarf .debug_abbrev section"},
 };
 
 #define NUM_ELEM(a)  (sizeof (a) / sizeof ((a)[0]))
