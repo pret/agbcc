@@ -4,7 +4,7 @@ CCOPT=
 CXXOPT=
 
 # error if devkitarm is not installed and binutils-arm-none-eabi is not installed
-if ! ([ -v DEVKITARM ] && [ -d "$DEVKITARM/bin" ]) && ! (command -v arm-none-eabi-as &> /dev/null && command -v arm-none-eabi-ar &> /dev/null) ; then
+if ! ([ -n "$DEVKITARM" ] && [ -d "$DEVKITARM/bin" ]) && ! (command -v arm-none-eabi-as &> /dev/null && command -v arm-none-eabi-ar &> /dev/null) ; then
 	echo "Could not find a binutils installation! Re-read the instructions and make sure you've installed either devkitARM or binutils-arm-none-eabi, depending on your system."
 	exit 1
 fi
