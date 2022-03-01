@@ -2118,13 +2118,6 @@ compile_file(char *name)
         }
 #endif
 
-        /* Output something to inform GDB that this compilation was by GCC.  */
-#ifndef ASM_IDENTIFY_GCC
-        fprintf(asm_out_file, "gcc2_compiled.:\n");
-#else
-        ASM_IDENTIFY_GCC(asm_out_file);
-#endif
-
         /* Output something to identify which front-end produced this file.  */
 #ifdef ASM_IDENTIFY_LANGUAGE
         ASM_IDENTIFY_LANGUAGE(asm_out_file);
