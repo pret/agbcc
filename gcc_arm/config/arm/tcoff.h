@@ -51,6 +51,12 @@ extern int arm_structure_size_boundary;
 #undef USER_LABEL_PREFIX
 #define USER_LABEL_PREFIX ""
 
+/* A C statement to output assembler commands which will identify the
+   object file as having been compiled with GNU CC (or another GNU
+   compiler).  */
+#define ASM_IDENTIFY_GCC(STREAM)				\
+     fprintf (STREAM, "%sgcc2_compiled.:\n", LOCAL_LABEL_PREFIX )
+
 #undef ASM_FILE_START
 #define ASM_FILE_START(STREAM) \
 do {								\
