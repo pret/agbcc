@@ -123,7 +123,7 @@ static rtx enqueue_insn         (rtx, rtx);
 static int queued_subexp_p      (rtx);
 static void init_queue          (void);
 static int move_by_pieces_ninsns (unsigned int, int);
-static void move_by_pieces_1    (rtx (*)(rtx, ...), enum machine_mode,
+static void move_by_pieces_1    (rtx (*)(rtx, rtx), enum machine_mode,
                                  struct move_by_pieces *);
 static void clear_by_pieces     (rtx, int, int);
 static void clear_by_pieces_1   (rtx (*)(rtx, rtx), enum machine_mode,
@@ -1093,7 +1093,7 @@ move_by_pieces_ninsns(unsigned int l, int align)
    to make a move insn for that mode.  DATA has all the other info.  */
 
 static void
-move_by_pieces_1(rtx (*genfun) (rtx, ...), enum machine_mode mode, struct move_by_pieces *data)
+move_by_pieces_1(rtx (*genfun) (rtx, rtx), enum machine_mode mode, struct move_by_pieces *data)
 {
     register int size = GET_MODE_SIZE(mode);
     register rtx to1, from1;
