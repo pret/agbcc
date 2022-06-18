@@ -51,4 +51,3 @@ endif
 	cp ginclude/* $(PREFIX)/tools/agbcc/include/
 	cp libgcc/libgcc.a $(PREFIX)/tools/agbcc/lib/
 	cp libc/libc.a $(PREFIX)/tools/agbcc/lib/
-	
