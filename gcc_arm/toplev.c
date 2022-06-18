@@ -1393,7 +1393,7 @@ fatal_insn (message, insn)
      char *message;
      rtx insn;
 {
-  error (message);
+  error ("%s", message);
   debug_rtx (insn);
   if (asm_out_file)
     fflush (asm_out_file);
