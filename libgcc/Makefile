@@ -9,17 +9,24 @@ else
 DKA_EXISTS=0
 endif
 
-ifneq ($(DKA_EXISTS),1)
 PREFIX := arm-none-eabi-
 export AR := $(PREFIX)ar
 export AS := $(PREFIX)as
+
+ifeq ($(DKA_EXISTS),0)
+ifeq ($(shell which $(AR)),)
+$(info DKA_EXISTS=$(DKA_EXISTS))
+$(info DEVKITARM=$(DEVKITARM))
+$(info which arm-none-eabi-ar is $(shell which arm-none-eabi-ar))
+$(error Cannot find $(AR) or devkitARM, make sure you have an arm-none-eabi toolchain or devkitARM installed and your environment variables properly set up)
+endif
 endif
 
-CC1 = ../old_agbcc
+CC1 = ../build_old_agbcc/old_agbcc
 
 libgcc.a: libgcc1.a libgcc2.a fp-bit.o dp-bit.o
-	$(AR) -x libgcc1.a;
-	$(AR) -x libgcc2.a;
+	$(AR) -x libgcc1.a
+	$(AR) -x libgcc2.a
 	$(AR) -rc libgcc.a *.o
 
 LIB1ASMFUNCS = _udivsi3 _divsi3 _umodsi3 _modsi3 _dvmd_tls _call_via_rX
@@ -66,19 +73,19 @@ libgcc2.a: libgcc2.c longlong.h
 	mv tmplibgcc2.a libgcc2.a
 
 fp-bit.o: fp-bit.c
-	$(CPP) -undef -I ../ginclude -nostdinc -o fp-bit.i fp-bit.c;
+	$(CPP) -undef -I ../ginclude -nostdinc -o fp-bit.i fp-bit.c
 	$(CC1) -O2 fp-bit.i
 	rm -f fp-bit.i
 	bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> fp-bit.s
-	$(AS) -mcpu=arm7tdmi -o fp-bit.o fp-bit.s;
+	$(AS) -mcpu=arm7tdmi -o fp-bit.o fp-bit.s
 	rm -f fp-bit.s
 
 dp-bit.o: dp-bit.c
-	$(CPP) -undef -I ../ginclude -nostdinc -o dp-bit.i dp-bit.c;
+	$(CPP) -undef -I ../ginclude -nostdinc -o dp-bit.i dp-bit.c
 	$(CC1) -O2 dp-bit.i
 	rm -f dp-bit.i
 	bash -c 'echo -e ".text\n\t.align\t2, 0\n"' >> dp-bit.s
-	$(AS) -mcpu=arm7tdmi -o dp-bit.o dp-bit.s;
+	$(AS) -mcpu=arm7tdmi -o dp-bit.o dp-bit.s
 	rm -f dp-bit.s
 
 fp-bit.c: fp-bit-base.c
