@@ -1,4 +1,4 @@
-name: GithubCI
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
   build-devkitARM:
     runs-on: ubuntu-latest
     steps:
-      # apparently setting an env var in a step will not take effect until the next step, so when setting env vars one cannot depend on vars set previously but in the same step
+      # the environment file is loaded once at the beginning of a step, updates will not take effect until the next step
       - name: Set environment variables
         run: |
           echo "DEVKITPRO=$HOME" >> $GITHUB_ENV
@@ -30,7 +30,6 @@ jobs:
         run: |
           make clean
           make -j$(nproc) all
-
 
   build-arm-none-eabi:
     runs-on: ubuntu-latest
