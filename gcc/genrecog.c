@@ -151,6 +151,7 @@ static struct pred_table
      {"address_operand", {CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF,
 			  LABEL_REF, SUBREG, REG, MEM, PLUS, MINUS, MULT}},
      {"register_operand", {SUBREG, REG}},
+     {"s_register_operand", {SUBREG, REG}},
      {"scratch_operand", {SCRATCH, REG}},
      {"immediate_operand", {CONST_INT, CONST_DOUBLE, CONST, SYMBOL_REF,
 			    LABEL_REF}},

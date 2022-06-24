@@ -1127,7 +1127,7 @@ extern rtx gen_rtx_MEM (enum machine_mode, rtx);
 
 /* We need the cast here to ensure that we get the same result both with
    and without prototypes.  */
-#define GEN_INT(N)  gen_rtx_CONST_INT (VOIDmode, (HOST_WIDE_INT) (N))
+#define GEN_INT(N)  gen_rtx_CONST_INT (VOIDmode, (HOST_WIDE_INT) (intptr_t) (N))
 
 #define arg_pointer_rtx		(&global_rtl.arg_pointer_val)
 

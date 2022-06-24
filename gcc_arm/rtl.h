@@ -1132,7 +1132,7 @@ extern rtx gen_rtx_MEM PROTO((enum machine_mode, rtx));
 
 /* We need the cast here to ensure that we get the same result both with
    and without prototypes.  */
-#define GEN_INT(N)  gen_rtx_CONST_INT (VOIDmode, (HOST_WIDE_INT) (N))
+#define GEN_INT(N)  gen_rtx_CONST_INT (VOIDmode, (HOST_WIDE_INT) (intptr_t) (N))
 
 
 /* If HARD_FRAME_POINTER_REGNUM is defined, then a special dummy reg

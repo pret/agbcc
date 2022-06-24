@@ -453,41 +453,41 @@ print_blocks_internal (stream, block, level)
       static char *vars_types_name[] = {"vars: ", "types:"};
 
       fprintf (stream, "%*sBlock ", level*4, "");
-      fprintf (stream, HOST_WIDE_INT_PRINT_HEX, (HOST_WIDE_INT) block);
+      fprintf (stream, HOST_WIDE_INT_PRINT_HEX, (HOST_WIDE_INT) (intptr_t) block);
 
       if (BLOCK_CHAIN (block))
 	{
 	  fprintf (stream, ", chain ");
 	  fprintf (stream, HOST_WIDE_INT_PRINT_HEX,
-		   (HOST_WIDE_INT) BLOCK_CHAIN (block));
+		   (HOST_WIDE_INT) (intptr_t) BLOCK_CHAIN (block));
 	}
 
       if (BLOCK_VARS (block))
 	{
 	  fprintf (stream, ", vars ");
 	  fprintf (stream, HOST_WIDE_INT_PRINT_HEX,
-		   (HOST_WIDE_INT) BLOCK_VARS (block));
+		   (HOST_WIDE_INT) (intptr_t) BLOCK_VARS (block));
 	}
 
       if (BLOCK_TYPE_TAGS (block))
 	{
 	  fprintf (stream, ", types ");
 	  fprintf (stream, HOST_WIDE_INT_PRINT_HEX,
-		   (HOST_WIDE_INT) BLOCK_TYPE_TAGS (block));
+		   (HOST_WIDE_INT) (intptr_t) BLOCK_TYPE_TAGS (block));
 	}
 
       if (BLOCK_SUBBLOCKS (block))
 	{
 	  fprintf (stream, ", subblocks ");
 	  fprintf (stream, HOST_WIDE_INT_PRINT_HEX,
-		   (HOST_WIDE_INT) BLOCK_SUBBLOCKS (block));
+		   (HOST_WIDE_INT) (intptr_t) BLOCK_SUBBLOCKS (block));
 	}
 
       if (BLOCK_ABSTRACT_ORIGIN (block))
 	{
 	  fprintf (stream, ", abstract origin ");
 	  fprintf (stream, HOST_WIDE_INT_PRINT_HEX,
-		   (HOST_WIDE_INT) BLOCK_ABSTRACT_ORIGIN (block));
+		   (HOST_WIDE_INT) (intptr_t) BLOCK_ABSTRACT_ORIGIN (block));
 	}
 
       if (BLOCK_ABSTRACT (block))
