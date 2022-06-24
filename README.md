@@ -8,3 +8,8 @@ To install, simply run:
 `./install.sh`
 
 You'll now have a working compiler with which you can build your Game Boy Advance game.
+
+To clean your build directory, simply run:
+`./clean.sh`
+
+and your compiler will be ready for another compile
