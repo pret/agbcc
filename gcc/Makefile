@@ -81,7 +81,7 @@ $(OBJS): %.o: %.c $(DEPDIR)/%.d | $(GENERATED)
 	$(COMPILE) $<
 	$(POSTCOMPILE)
 
-$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c $(DEPDIR)/%.d
+$(RTL_OBJS) $(RTLANAL_OBJS) $(PRINT_OBJS): %.o: %.c $(DEPDIR)/%.d genrtl.h
 	$(COMPILE) $<
 	$(POSTCOMPILE)
 
