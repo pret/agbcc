@@ -18,7 +18,8 @@ make -C gcc clean
 make -C gcc -j$(nproc) normal $CCOPT $CXXOPT
 mv gcc/agbcc .
 # not sure if the ARM compiler is the old one or the new one (-DOLD_COMPILER)
-make -C gcc_arm distclean
+# || true is needed to keep going if the distclean fails, such as when no configure has been done before
+make -C gcc_arm distclean || true
 cd gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && cd ..
 make -C gcc_arm -j$(nproc) cc1
 mv gcc_arm/cc1 agbcc_arm
