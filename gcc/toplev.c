@@ -727,8 +727,8 @@ lang_independent_options f_options[] =
      "Instrument function entry/exit with profiling calls"},
     {"hex-asm", &flag_hex_asm, 1,
      "Use hex instead of decimal in assembly output"},
-    {"legacy-debug-line-info", &flag_legacy_debug_info, 1,
-     "Generate old (buggy) DWARF line info"},
+    {"legacy-debug-info", &flag_legacy_debug_info, 1,
+     "Generate old (buggy) DWARF info"},
 };
 
 #define NUM_ELEM(a)  (sizeof (a) / sizeof ((a)[0]))
