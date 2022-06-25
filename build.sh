@@ -21,7 +21,7 @@ mv gcc/agbcc .
 # || true is needed to keep going if the distclean fails, such as when no configure has been done before
 make -C gcc_arm distclean || true
 cd gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && cd ..
-make -C gcc_arm -j$(nproc) cc1
+make -C gcc_arm cc1
 mv gcc_arm/cc1 agbcc_arm
 make -C libgcc clean
 make -C libgcc -j$(nproc) $CCOPT $CXXOPT
