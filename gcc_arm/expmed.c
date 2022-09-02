@@ -363,8 +363,11 @@ store_bit_field (str_rtx, bitsize, bitnum, fieldmode, value, align, total_size)
 		abort ();
 	    }
 
-	  emit_insn (GEN_FCN (icode)
-		   (gen_rtx_SUBREG (fieldmode, op0, offset), value));
+	    {
+	      rtx (*gen_insn)(rtx, rtx) = GEN_FCN (icode);
+	      emit_insn (gen_insn
+		  (gen_rtx_SUBREG (fieldmode, op0, offset), value));
+	    }
 	}
       return value;
     }
@@ -4226,7 +4229,10 @@ emit_store_flag (target, code, op0, op1, mode, unsignedp, normalizep)
 	  || ! (*insn_operand_predicate[(int) icode][0]) (subtarget, compare_mode))
 	subtarget = gen_reg_rtx (compare_mode);
 
-      pattern = GEN_FCN (icode) (subtarget);
+	{
+	  rtx (*gen_insn)(rtx) = GEN_FCN (icode);
+	  pattern = gen_insn (subtarget);
+	}
       if (pattern)
 	{
 	  emit_insn (pattern);

@@ -156,10 +156,10 @@ static rtx enqueue_insn		PROTO((rtx, rtx));
 static int queued_subexp_p	PROTO((rtx));
 static void init_queue		PROTO((void));
 static int move_by_pieces_ninsns PROTO((unsigned int, int));
-static void move_by_pieces_1	PROTO((rtx (*) (rtx, ...), enum machine_mode,
+static void move_by_pieces_1	PROTO((rtx (*) (rtx, rtx), enum machine_mode,
 				       struct move_by_pieces *));
 static void clear_by_pieces	PROTO((rtx, int, int));
-static void clear_by_pieces_1	PROTO((rtx (*) (rtx, ...), enum machine_mode,
+static void clear_by_pieces_1	PROTO((rtx (*) (rtx, rtx), enum machine_mode,
 				       struct clear_by_pieces *));
 static int is_zeros_p		PROTO((tree));
 static int mostly_zeros_p	PROTO((tree));
@@ -1589,7 +1589,7 @@ move_by_pieces_ninsns (l, align)
 
 static void
 move_by_pieces_1 (genfun, mode, data)
-     rtx (*genfun) PROTO ((rtx, ...));
+     rtx (*genfun) PROTO ((rtx, rtx));
      enum machine_mode mode;
      struct move_by_pieces *data;
 {
@@ -1716,7 +1716,10 @@ emit_block_move (x, y, size, align)
 		  && ! (*insn_operand_predicate[(int) code][2]) (op2, mode))
 		op2 = copy_to_mode_reg (mode, op2);
 
-	      pat = GEN_FCN ((int) code) (x, y, op2, opalign);
+		{
+		  rtx (*gen_insn)(rtx, rtx, rtx, rtx) = GEN_FCN ((int) code);
+		  pat = gen_insn (x, y, op2, opalign);
+		}
 	      if (pat)
 		{
 		  emit_insn (pat);
@@ -2352,7 +2355,7 @@ clear_by_pieces (to, len, align)
 
 static void
 clear_by_pieces_1 (genfun, mode, data)
-     rtx (*genfun) PROTO ((rtx, ...));
+     rtx (*genfun) PROTO ((rtx, rtx));
      enum machine_mode mode;
      struct clear_by_pieces *data;
 {
@@ -2450,7 +2453,10 @@ clear_storage (object, size, align)
 								     mode))
 		    op1 = copy_to_mode_reg (mode, op1);
 
-		  pat = GEN_FCN ((int) code) (object, op1, opalign);
+		    {
+		      rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN ((int) code);
+		      pat = gen_insn (object, op1, opalign);
+		    }
 		  if (pat)
 		    {
 		      emit_insn (pat);
@@ -2618,9 +2624,12 @@ emit_move_insn_1 (x, y)
   /* END CYGNUS LOCAL */
 
   if (mov_optab->handlers[(int) mode].insn_code != CODE_FOR_nothing)
-    return
-      emit_insn (GEN_FCN (mov_optab->handlers[(int) mode].insn_code) (x, y));
-
+    {
+      rtx (*gen_insn)(rtx, rtx) = GEN_FCN (mov_optab->handlers[(int) mode].insn_code);
+      return
+        emit_insn (gen_insn (x, y));
+    }
+    
   /* Expand complex moves by moving real part and imag part, if possible.  */
   else if ((class == MODE_COMPLEX_FLOAT || class == MODE_COMPLEX_INT)
 	   && BLKmode != (submode = mode_for_size ((GET_MODE_UNIT_SIZE (mode)
@@ -2633,6 +2642,7 @@ emit_move_insn_1 (x, y)
     {
       /* Don't split destination if it is a stack push.  */
       int stack = push_operand (x, GET_MODE (x));
+      rtx (*gen_insn)(rtx, rtx) = GEN_FCN (mov_optab->handlers[(int) submode].insn_code);
 
       /* If this is a stack, push the highpart first, so it
 	 will be in the argument order.
@@ -2644,17 +2654,17 @@ emit_move_insn_1 (x, y)
 	  /* Note that the real part always precedes the imag part in memory
 	     regardless of machine's endianness.  */
 #ifdef STACK_GROWS_DOWNWARD
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_rtx_MEM (submode, (XEXP (x, 0))),
 		      gen_imagpart (submode, y)));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_rtx_MEM (submode, (XEXP (x, 0))),
 		      gen_realpart (submode, y)));
 #else
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_rtx_MEM (submode, (XEXP (x, 0))),
 		      gen_realpart (submode, y)));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_rtx_MEM (submode, (XEXP (x, 0))),
 		      gen_imagpart (submode, y)));
 #endif
@@ -2670,9 +2680,9 @@ emit_move_insn_1 (x, y)
 	      emit_insn (gen_rtx_CLOBBER (VOIDmode, x));
 	    }
 
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_realpart (submode, x), gen_realpart (submode, y)));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (gen_insn
 		     (gen_imagpart (submode, x), gen_imagpart (submode, y)));
 	}
 
@@ -3053,13 +3063,14 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 		      rtx op2 = convert_to_mode (mode, size, 1);
 		      rtx last = get_last_insn ();
 		      rtx pat;
+		      rtx (*gen_insn)(rtx, rtx, rtx, rtx) = GEN_FCN ((int) code);
 
 		      if (insn_operand_predicate[(int) code][2] != 0
 			  && ! ((*insn_operand_predicate[(int) code][2])
 				(op2, mode)))
 			op2 = copy_to_mode_reg (mode, op2);
 
-		      pat = GEN_FCN ((int) code) (target, xinner,
+		      pat = gen_insn (target, xinner,
 						  op2, opalign);
 		      if (pat)
 			{
@@ -10337,10 +10348,11 @@ expand_increment (exp, post, ignore)
 	  && (*insn_operand_predicate[icode][0]) (op0, mode)
 	  && (*insn_operand_predicate[icode][1]) (op0, mode))
 	{
+	  rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
 	  if (! (*insn_operand_predicate[icode][2]) (op1, mode))
 	    op1 = force_reg (mode, op1);
 
-	  return enqueue_insn (op0, GEN_FCN (icode) (op0, op0, op1));
+	  return enqueue_insn (op0, gen_insn (op0, op0, op1));
 	}
       if (icode != (int) CODE_FOR_nothing && GET_CODE (op0) == MEM)
 	{
@@ -10348,6 +10360,8 @@ expand_increment (exp, post, ignore)
 		      ? force_reg (Pmode, XEXP (op0, 0))
 		      : copy_to_reg (XEXP (op0, 0)));
 	  rtx temp, result;
+	  rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
+	  
 
 	  op0 = change_address (op0, VOIDmode, addr);
 	  temp = force_reg (GET_MODE (op0), op0);
@@ -10357,7 +10371,7 @@ expand_increment (exp, post, ignore)
 	  /* The increment queue is LIFO, thus we have to `queue'
 	     the instructions in reverse order.  */
 	  enqueue_insn (op0, gen_move_insn (op0, temp));
-	  result = enqueue_insn (temp, GEN_FCN (icode) (temp, temp, op1));
+	  result = enqueue_insn (temp, gen_insn (temp, temp, op1));
 	  return result;
 	}
     }
