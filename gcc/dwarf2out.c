@@ -3697,6 +3697,14 @@ output_abbrev_section ()
 
       fprintf (asm_out_file, "\t%s\t0,0\n", ASM_BYTE_OP);
     }
+
+  if (flag_dwarf_bugfix)
+  {
+    /* We need to properly terminate the abbrev table for this
+       compilation unit, as per the standard, and not rely on
+       workarounds in e.g. gdb.  */
+    fprintf (asm_out_file, "\t%s\t0\n", ASM_BYTE_OP);
+  }
 }
 
 /* Output location description stack opcode's operands (if any).  */
