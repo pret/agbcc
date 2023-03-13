@@ -9,12 +9,12 @@ fi
 # If there's no installation directory specified, the install script will default to 
 # installing agbcc into /opt/pret/agbcc
 if [ "$1" = "" ]; then
-	BASE_INSTALL_DIRECTORY=/opt/pret/
+	BASE_INSTALL_DIRECTORY=/opt/pret
 	INSTALL_DIRECTORY=$BASE_INSTALL_DIRECTORY
 	mkdir -p $INSTALL_DIRECTORY
 else
 	BASE_INSTALL_DIRECTORY=$1
-	INSTALL_DIRECTORY=$BASE_INSTALL_DIRECTORY/tools/
+	INSTALL_DIRECTORY=$BASE_INSTALL_DIRECTORY/tools
 fi
 
 # The BASE_INSTALL_DIRECTORY nomenclature is so that the check for the existence of the 
