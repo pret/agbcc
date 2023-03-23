@@ -110,7 +110,10 @@ gen_add3_insn (r0, r1, c)
 
   if ((*insn_operand_predicate[icode][1])(r1, insn_operand_mode[icode][1])
       && (*insn_operand_predicate[icode][2])(c, insn_operand_mode[icode][2]))
-    return (GEN_FCN (icode) (r0, r1, c));
+    {
+      rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
+      return (gen_insn (r0, r1, c));
+    }
 
   mcode = (int) mov_optab->handlers[(int) GET_MODE (r0)].insn_code;
   if (REGNO (r0) == REGNO (r1)
@@ -121,8 +124,14 @@ gen_add3_insn (r0, r1, c)
     return NULL_RTX;
 
   start_sequence ();
-  emit_insn (GEN_FCN (mcode) (r0, c));
-  emit_insn (GEN_FCN (icode) (r0, r0, r1));
+    {
+      rtx (*gen_insn)(rtx, rtx) = GEN_FCN (mcode);
+      emit_insn (gen_insn (r0, c));
+    }
+    {
+      rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
+      emit_insn (gen_insn (r0, r0, r1));
+    }
   s = gen_sequence ();
   end_sequence ();
   return s;
@@ -1571,7 +1580,10 @@ optimize_related_values (nregs, regmove_dump_file)
 	  || ! (*insn_operand_predicate[icode][1]) (reg, mode)
 	  || ! (*insn_operand_predicate[icode][2]) (const1_rtx, mode))
 	continue;
-      add = GEN_FCN (icode) (reg, reg, const1_rtx);
+        {
+          rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
+          add = gen_insn (reg, reg, const1_rtx);
+        }
       if (GET_CODE (add) == SEQUENCE)
 	continue;
       add = make_insn_raw (add);
@@ -3555,7 +3567,10 @@ regmove_profitable_p ()
 	      || ! (*insn_operand_predicate[icode][1]) (reg1, VOIDmode)
 	      || ! (*insn_operand_predicate[icode][2]) (reg2, VOIDmode))
 	    break;
-	  pat = GEN_FCN (icode) (reg0, reg1, reg2);
+    {
+      rtx (*gen_insn)(rtx, rtx, rtx) = GEN_FCN (icode);
+      pat = gen_insn (reg0, reg1, reg2);
+    }
 	  if (! pat)
 	    continue;
 	  if (GET_CODE (pat) == SEQUENCE)

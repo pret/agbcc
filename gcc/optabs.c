@@ -499,7 +499,10 @@ expand_binop (mode, binoptab, op0, op1, target, unsignedp, methods)
       if (! (*insn_operand_predicate[icode][0]) (temp, mode))
 	temp = gen_reg_rtx (mode);
 
-      pat = GEN_FCN (icode) (temp, xop0, xop1);
+        {
+          rtx (*gen_insn)(rtx, rtx, rtx) = (GEN_FCN (icode));
+          pat = gen_insn(temp, xop0, xop1);
+        }
       if (pat)
 	{
 	  /* If PAT is a multi-insn sequence, try to add an appropriate
@@ -1781,7 +1784,10 @@ expand_twoval_binop (binoptab, op0, op1, targ0, targ1, unsignedp)
 	  || ! (*insn_operand_predicate[icode][3]) (targ1, mode))
 	abort ();
 	
-      pat = GEN_FCN (icode) (targ0, xop0, xop1, targ1);
+        {
+          rtx (*gen_insn)(rtx, rtx, rtx, rtx) = (GEN_FCN (icode));
+          pat = gen_insn(targ0, xop0, xop1, targ1);
+        }
       if (pat)
 	{
 	  emit_insn (pat);
@@ -1885,7 +1891,10 @@ expand_unop (mode, unoptab, op0, target, unsignedp)
       if (! (*insn_operand_predicate[icode][0]) (temp, mode))
 	temp = gen_reg_rtx (mode);
 
-      pat = GEN_FCN (icode) (temp, xop0);
+    {
+      rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (icode));
+      pat = gen_insn(temp, xop0);
+    }
       if (pat)
 	{
 	  if (GET_CODE (pat) == SEQUENCE
@@ -2258,7 +2267,10 @@ expand_complex_abs (mode, op0, target, unsignedp)
       if (! (*insn_operand_predicate[icode][0]) (temp, submode))
 	temp = gen_reg_rtx (submode);
 
-      pat = GEN_FCN (icode) (temp, xop0);
+        {
+          rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (icode));
+          pat = gen_insn(temp, xop0);
+        }
       if (pat)
 	{
 	  if (GET_CODE (pat) == SEQUENCE
@@ -2424,7 +2436,10 @@ emit_unop_insn (icode, target, op0, code)
       || (flag_force_mem && GET_CODE (temp) == MEM))
     temp = gen_reg_rtx (GET_MODE (temp));
 
-  pat = GEN_FCN (icode) (temp, op0);
+    {
+      rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (icode));
+      pat = gen_insn(temp, op0);
+    }
 
   if (GET_CODE (pat) == SEQUENCE && code != UNKNOWN)
     add_equal_note (pat, temp, code, op0, NULL_RTX);
@@ -2842,7 +2857,10 @@ emit_cmp_insn (x, y, comparison, size, mode, unsignedp, align)
 	  (x, insn_operand_mode[icode][0]))
 	x = copy_to_mode_reg (insn_operand_mode[icode][0], x);
 
-      emit_insn (GEN_FCN (icode) (x));
+      {
+        rtx (*gen_insn)(rtx) = (GEN_FCN (icode));
+        emit_insn (gen_insn(x));
+      }
       return;
     }
 
@@ -2865,7 +2883,11 @@ emit_cmp_insn (x, y, comparison, size, mode, unsignedp, align)
 	  (y, insn_operand_mode[icode][1]))
 	y = copy_to_mode_reg (insn_operand_mode[icode][1], y);
 
-      emit_insn (GEN_FCN (icode) (x, y));
+      {
+        rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (icode));
+        emit_insn (gen_insn(x, y));
+      }
+
       return;
     }
 
@@ -3221,7 +3243,10 @@ emit_conditional_move (target, code, op0, op1, cmode, op2, op3, mode,
     /* This shouldn't happen.  */
     abort ();
   
-  insn = GEN_FCN (icode) (subtarget, comparison, op2, op3);
+    {
+      rtx (*gen_insn)(rtx, rtx, rtx, rtx) = (GEN_FCN (icode));
+      insn = gen_insn(subtarget, comparison, op2, op3);
+    }
 
   /* If that failed, then give up.  */
   if (insn == 0)
@@ -3275,7 +3300,10 @@ gen_add2_insn (x, y)
       || ! (*insn_operand_predicate[icode][2]) (y, insn_operand_mode[icode][2]))
     abort ();
 
-  return (GEN_FCN (icode) (x, x, y));
+  {
+    rtx (*gen_insn)(rtx, rtx, rtx) = (GEN_FCN (icode));
+    return gen_insn(x, x, y);
+  }
 }
 
 int
@@ -3298,7 +3326,10 @@ gen_sub2_insn (x, y)
       || ! (*insn_operand_predicate[icode][2]) (y, insn_operand_mode[icode][2]))
     abort ();
 
-  return (GEN_FCN (icode) (x, x, y));
+  {
+    rtx (*gen_insn)(rtx, rtx, rtx) = (GEN_FCN (icode));
+    return gen_insn(x, x, y);
+  }
 }
 
 int
@@ -3379,7 +3410,10 @@ gen_move_insn (x, y)
 	}
 	  
       insn_code = mov_optab->handlers[(int) tmode].insn_code;
-      return (GEN_FCN (insn_code) (x, y));
+      {
+        rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (insn_code));
+        return gen_insn(x, y);
+      }
     }
 
   start_sequence ();
@@ -3410,7 +3444,8 @@ gen_extend_insn (x, y, mto, mfrom, unsignedp)
      enum machine_mode mto, mfrom;
      int unsignedp;
 {
-  return (GEN_FCN (extendtab[(int) mto][(int) mfrom][unsignedp]) (x, y));
+  rtx (*gen_insn)(rtx, rtx) = (GEN_FCN (extendtab[(int) mto][(int) mfrom][unsignedp]));
+  return (gen_insn (x, y));
 }
 
 /* can_fix_p and can_float_p say whether the target machine
@@ -4374,7 +4409,8 @@ gen_cond_trap (code, op1, op2, tcode)
       && cmp_optab->handlers[(int) mode].insn_code != CODE_FOR_nothing)
     {
       rtx insn;
-      emit_insn (GEN_FCN (cmp_optab->handlers[(int) mode].insn_code) (op1, op2));
+      rtx (*gen_insn)(rtx, rtx) = GEN_FCN (cmp_optab->handlers[(int) mode].insn_code);
+      emit_insn (gen_insn (op1, op2));
       PUT_CODE (trap_rtx, code);
       insn = gen_conditional_trap (trap_rtx, tcode);
       if (insn)
