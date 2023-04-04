@@ -4323,10 +4323,10 @@ output_line_info ()
   ASM_GENERATE_INTERNAL_LABEL (p1, LN_PROLOG_AS_LABEL, 0);
   ASM_GENERATE_INTERNAL_LABEL (p2, LN_PROLOG_END_LABEL, 0);
 
-  if (flag_legacy_debug_info)
-    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_info ());
-  else
+  if (flag_fixed_debug_line_info)
     ASM_OUTPUT_DWARF_DELTA (asm_out_file, l2, l1);
+  else
+    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_info ());
 
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s Length of Source Line Info.",
@@ -4334,7 +4334,8 @@ output_line_info ()
 
   fputc ('\n', asm_out_file);
 
-  if (!flag_legacy_debug_info)
+  if (flag_fixed_debug_line_info)
+    /* start of .debug_line */
     ASM_OUTPUT_LABEL(asm_out_file, l1);
 
   ASM_OUTPUT_DWARF_DATA2 (asm_out_file, DWARF_VERSION);
@@ -4343,17 +4344,18 @@ output_line_info ()
 
   fputc ('\n', asm_out_file);
 
-  if (flag_legacy_debug_info)
-    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_prolog ());
-  else
+  if (flag_fixed_debug_line_info)
     ASM_OUTPUT_DWARF_DELTA (asm_out_file, p2, p1);
+  else
+    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_prolog ());
 
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s Prolog Length", ASM_COMMENT_START);
 
   fputc ('\n', asm_out_file);
 
-  if (!flag_legacy_debug_info)
+  if (flag_fixed_debug_line_info)
+    /* start of .debug_line prologue */
     ASM_OUTPUT_LABEL(asm_out_file, p1);
 
   ASM_OUTPUT_DWARF_DATA1 (asm_out_file, DWARF_LINE_MIN_INSTR_LENGTH);
@@ -4450,7 +4452,8 @@ output_line_info ()
   ASM_OUTPUT_DWARF_DATA1 (asm_out_file, 0);
   fputc ('\n', asm_out_file);
 
-  if (!flag_legacy_debug_info)
+  if (flag_fixed_debug_line_info)
+    /* end of .debug_line prologue */
     ASM_OUTPUT_LABEL (asm_out_file, p2);
 
   /* Set the address register to the first location in the text section */
@@ -4769,8 +4772,8 @@ output_line_info ()
 	}
     }
 
-  if (!flag_legacy_debug_info)
-    /* Output the marker for the end of the line number info.  */
+  if (flag_fixed_debug_line_info)
+    /* end of .debug_line */
     ASM_OUTPUT_LABEL (asm_out_file, l2);
 }
 

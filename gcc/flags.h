@@ -451,6 +451,6 @@ extern enum graph_dump_types graph_dump_format;
 /* Nonzero if ASM output should use hex instead of decimal.  */
 extern int flag_hex_asm;
 
-/* Nonzero if generated DWARF debug info should match (buggy) original
-   GCC 2.95.x behavior. */
-extern int flag_legacy_debug_info;
+/* Nonzero if generated DWARF debug info should be corrected rather than
+   match the original (buggy) GCC 2.95.x output. */
+extern int flag_fixed_debug_line_info;

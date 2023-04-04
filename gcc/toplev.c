@@ -586,7 +586,7 @@ int flag_instrument_function_entry_exit = 0;
 int flag_hex_asm = 0;
 
 /* Use old (buggy) DWARF line info generator. */
-int flag_legacy_debug_info = 0;
+int flag_fixed_debug_line_info = 0;
 
 typedef struct
 {
@@ -727,8 +727,8 @@ lang_independent_options f_options[] =
      "Instrument function entry/exit with profiling calls"},
     {"hex-asm", &flag_hex_asm, 1,
      "Use hex instead of decimal in assembly output"},
-    {"legacy-debug-line-info", &flag_legacy_debug_info, 1,
-     "Generate old (buggy) DWARF line info"},
+    {"fix-debug-line", &flag_fixed_debug_line_info, 1,
+     "Generate fixed DWARF line info"},
 };
 
 #define NUM_ELEM(a)  (sizeof (a) / sizeof ((a)[0]))
