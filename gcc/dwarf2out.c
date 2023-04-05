@@ -232,6 +232,10 @@ static unsigned reg_number		(rtx);
 #define FDE_AFTER_SIZE_LABEL	"LSFDE"
 #define FDE_END_LABEL		"LEFDE"
 #define FDE_LENGTH_LABEL	"LLFDE"
+#define LINE_NUMBER_BEGIN_LABEL	"LSLT"
+#define LINE_NUMBER_END_LABEL	"LELT"
+#define LN_PROLOG_AS_LABEL	"LASLTP"
+#define LN_PROLOG_END_LABEL	"LELTP"
 
 /* Definitions of defaults for various types of primitive assembly language
    output operations.  These may be overridden from within the tm.h file,
@@ -4301,6 +4305,7 @@ output_aranges ()
 static void
 output_line_info ()
 {
+  char l1[20], l2[20], p1[20], p2[20];
   char line_label[MAX_ARTIFICIAL_LABEL_BYTES];
   char prev_line_label[MAX_ARTIFICIAL_LABEL_BYTES];
   register unsigned opc;
@@ -4313,22 +4318,46 @@ output_line_info ()
   register unsigned long current_file;
   register unsigned long function;
 
-  ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_info ());
+  ASM_GENERATE_INTERNAL_LABEL (l1, LINE_NUMBER_BEGIN_LABEL, 0);
+  ASM_GENERATE_INTERNAL_LABEL (l2, LINE_NUMBER_END_LABEL, 0);
+  ASM_GENERATE_INTERNAL_LABEL (p1, LN_PROLOG_AS_LABEL, 0);
+  ASM_GENERATE_INTERNAL_LABEL (p2, LN_PROLOG_END_LABEL, 0);
+
+  if (flag_fixed_debug_line_info)
+    ASM_OUTPUT_DWARF_DELTA (asm_out_file, l2, l1);
+  else
+    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_info ());
+
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s Length of Source Line Info.",
 	     ASM_COMMENT_START);
 
   fputc ('\n', asm_out_file);
+
+  if (flag_fixed_debug_line_info)
+    /* start of .debug_line */
+    ASM_OUTPUT_LABEL(asm_out_file, l1);
+
   ASM_OUTPUT_DWARF_DATA2 (asm_out_file, DWARF_VERSION);
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s DWARF Version", ASM_COMMENT_START);
 
   fputc ('\n', asm_out_file);
-  ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_prolog ());
+
+  if (flag_fixed_debug_line_info)
+    ASM_OUTPUT_DWARF_DELTA (asm_out_file, p2, p1);
+  else
+    ASM_OUTPUT_DWARF_DATA (asm_out_file, size_of_line_prolog ());
+
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s Prolog Length", ASM_COMMENT_START);
 
   fputc ('\n', asm_out_file);
+
+  if (flag_fixed_debug_line_info)
+    /* start of .debug_line prologue */
+    ASM_OUTPUT_LABEL(asm_out_file, p1);
+
   ASM_OUTPUT_DWARF_DATA1 (asm_out_file, DWARF_LINE_MIN_INSTR_LENGTH);
   if (flag_debug_asm)
     fprintf (asm_out_file, "\t%s Minimum Instruction Length",
@@ -4422,6 +4451,10 @@ output_line_info ()
   /* Terminate the file name table */
   ASM_OUTPUT_DWARF_DATA1 (asm_out_file, 0);
   fputc ('\n', asm_out_file);
+
+  if (flag_fixed_debug_line_info)
+    /* end of .debug_line prologue */
+    ASM_OUTPUT_LABEL (asm_out_file, p2);
 
   /* Set the address register to the first location in the text section */
   ASM_OUTPUT_DWARF_DATA1 (asm_out_file, 0);
@@ -4738,6 +4771,10 @@ output_line_info ()
 	  fputc ('\n', asm_out_file);
 	}
     }
+
+  if (flag_fixed_debug_line_info)
+    /* end of .debug_line */
+    ASM_OUTPUT_LABEL (asm_out_file, l2);
 }
 
 /* Given a pointer to a BLOCK node return non-zero if (and only if) the node
