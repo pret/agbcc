@@ -585,7 +585,7 @@ int flag_instrument_function_entry_exit = 0;
 /* Use hex instead of decimal in ASM output.  */
 int flag_hex_asm = 0;
 
-/* Use old (buggy) DWARF line info generator. */
+/* Fix buggy DWARF line info generation.  */
 int flag_fixed_debug_line_info = 0;
 
 typedef struct
