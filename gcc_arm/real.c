@@ -5729,7 +5729,7 @@ mtherr (name, code)
     name = "square root";
   sprintf (errstr, "%s during real %s", ermsg[code], name);
   if (extra_warnings)
-    warning (errstr);
+    warning ("%s", errstr);
   /* Set global error message word */
   merror = code + 1;
 }

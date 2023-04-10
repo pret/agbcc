@@ -22,9 +22,9 @@
 srcdir = .
 VPATH = $(srcdir)
 
-CC = gcc
+CC ?= gcc
 
-BASE_CFLAGS = -g -std=gnu11 -Werror-implicit-function-declaration
+BASE_CFLAGS = -g -std=gnu11 -Werror-implicit-function-declaration -Wno-format-overflow
 
 INCLUDES = -I. -I$(srcdir)
 

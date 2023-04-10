@@ -5577,7 +5577,7 @@ output_func_epilogue (f, frame_size)
 	  else if (lr_save_eliminated)
 	    fprintf (f, (TARGET_APCS_32 ? "\tmov\t%spc, %slr\n"
 			 : "\tmovs\t%spc, %slr\n"),
-		     REGISTER_PREFIX, REGISTER_PREFIX, f);
+		     REGISTER_PREFIX, REGISTER_PREFIX);
 	  else
 	    print_multi_reg (f, "ldmfd\t%ssp!", live_regs_mask | 0x8000,
 			     TARGET_APCS_32 ? FALSE : TRUE);

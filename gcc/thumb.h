@@ -112,7 +112,7 @@ extern int target_flags;
    fprintf((STREAM), ", %d\t%s %d\n", (ROUNDED), (ASM_COMMENT_START), (SIZE)))
 
 #define ASM_GENERATE_INTERNAL_LABEL(STRING,PREFIX,NUM)        \
-  sprintf ((STRING), "*%s%s%d", (LOCAL_LABEL_PREFIX), (PREFIX), (NUM))
+  sprintf ((STRING), "*%s%s%ld", (LOCAL_LABEL_PREFIX), (PREFIX), (long unsigned int) (NUM))
 
 /* This is how to output an internal numbered label where
    PREFIX is the class of label and NUM is the number within the class.  */

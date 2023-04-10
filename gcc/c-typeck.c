@@ -3133,7 +3133,7 @@ build_unary_op (code, xarg, noconvert)
       return fold (build1 (code, argtype, arg));
     }
 
-  error (errstring);
+  error ("%s", errstring);
   return error_mark_node;
 }
 
