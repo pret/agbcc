@@ -220,6 +220,7 @@ s-output : $(md_file) genoutput $(srcdir)/move-if-change
 
 genrtl.c genrtl.h : s-genrtl
 s-genrtl: gengenrtl $(srcdir)/move-if-change $(RTL_BASE_H)
+	chmod +x ./gengenrtl
 	./gengenrtl tmp-genrtl.h tmp-genrtl.c
 	$(srcdir)/move-if-change tmp-genrtl.h genrtl.h
 	$(srcdir)/move-if-change tmp-genrtl.c genrtl.c
