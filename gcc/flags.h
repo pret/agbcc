@@ -454,3 +454,6 @@ extern int flag_hex_asm;
 /* Nonzero if generated DWARF debug info should be corrected rather than
    match the original (buggy) GCC 2.95.x output. */
 extern int flag_fixed_debug_line_info;
+
+/* Nonzero if prologue bug should be fixed.  */
+extern int flag_prologue_bugfix;

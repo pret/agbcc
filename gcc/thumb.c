@@ -717,8 +717,11 @@ far_jump_used_p()
     rtx insn;
 
 #ifndef OLD_COMPILER
-    if (current_function_has_far_jump)
-        return 1;
+    if (!flag_prologue_bugfix)
+    {
+        if (current_function_has_far_jump)
+            return 1;
+    }
 #endif
 
     for (insn = get_insns(); insn; insn = NEXT_INSN(insn))
