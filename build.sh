@@ -18,7 +18,8 @@ make -C gcc clean
 make -C gcc $CCOPT $CXXOPT
 mv gcc/agbcc .
 # not sure if the ARM compiler is the old one or the new one (-DOLD_COMPILER)
-rm -f gcc_arm/config.status gcc_arm/config.cache
+# || true is needed to keep going if the distclean fails, such as when no configure has been done before
+make -C gcc_arm distclean || true
 cd gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && make cc1 && cd ..
 mv gcc_arm/cc1 agbcc_arm
 make -C libgcc clean

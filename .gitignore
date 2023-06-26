@@ -21,10 +21,14 @@ old_agbcc
 */config.log
 gcc_arm/auto-host.h
 gcc_arm/config.cache
+gcc_arm/config.h
 gcc_arm/config.log
 gcc_arm/config.status
+gcc_arm/cstamp-h
+gcc_arm/gencheck.h
 gcc_arm/genrtl.c
 gcc_arm/genrtl.h
+gcc_arm/hconfig.h
 gcc_arm/insn-attr.h
 gcc_arm/insn-attrtab.c
 gcc_arm/insn-codes.h
@@ -36,6 +40,11 @@ gcc_arm/insn-opinit.c
 gcc_arm/insn-output.c
 gcc_arm/insn-peep.c
 gcc_arm/insn-recog.c
+gcc_arm/Make-hooks
+gcc_arm/Make-host
+gcc_arm/Make-lang
+gcc_arm/Make-target
+gcc_arm/options.h
 gcc_arm/s-attr
 gcc_arm/s-attrtab
 gcc_arm/s-check
@@ -49,5 +58,7 @@ gcc_arm/s-opinit
 gcc_arm/s-output
 gcc_arm/s-peep
 gcc_arm/s-recog
+gcc_arm/specs.h
+gcc_arm/tconfig.h
 gcc_arm/tree-check.h
-
+gcc_arm/tm.h
