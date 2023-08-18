@@ -67,6 +67,6 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: agbcc.tar.gz
           commit: ${{ github.sha }}
-          makeLatest: true # This is a test
+          makeLatest: true
           tag: release
           token: ${{ secrets.GITHUB_TOKEN }} # Automatically created by the workflow with a lifetime of one hour
