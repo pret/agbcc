@@ -5,13 +5,68 @@ on:
     branches: [ master ]
   pull_request:
 
+# Note, Github Actions is dumb and only steps - not jobs - can access env.
+# Therefore, if you update this, make sure to update the deploy job below.
+env:
+  IS_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@main
+
       - name: Install deps
-        run: sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi
+        run: |
+          sudo apt update
+          sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi
+
       - name: Compile
         run: sh build.sh
+
+      # No point in running the following steps if we are not deploying
+      # See https://github.com/actions/runner/issues/1395 for why fromJSON() is needed
+      - name: Install to temp dir
+        if: fromJSON(env.IS_DEPLOY)
+        shell: bash
+        run: |
+          mkdir TEMPDIR
+          sh install.sh TEMPDIR
+
+      - name: Create release archive
+        if: fromJSON(env.IS_DEPLOY)
+        shell: bash
+        run: tar -C TEMPDIR/tools/agbcc -czf agbcc.tar.gz bin include lib
+
+      - name: Upload archive
+        uses: actions/upload-artifact@main
+        if: fromJSON(env.IS_DEPLOY)
+        with:
+          name: agbcc.tar.gz
+          path: agbcc.tar.gz
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    permissions:
+      contents: write
+    steps:
+
+      - name: Download archive
+        uses: actions/download-artifact@main
+        with:
+          name: agbcc.tar.gz
+
+      - name: Update release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: agbcc.tar.gz
+          commit: ${{ github.sha }}
+          makeLatest: true
+          tag: release
+          token: ${{ secrets.GITHUB_TOKEN }} # Automatically created by the workflow with a lifetime of one hour
