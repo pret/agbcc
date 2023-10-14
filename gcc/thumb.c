@@ -555,26 +555,49 @@ number_of_first_bit_set(int mask)
 static void
 thumb_exit(FILE *f, int reg_containing_return_addr)
 {
-    int reg_available_for_popping;
+    int regs_available_for_popping;
+    int regs_to_pop;
+    int pops_needed;
+    int reg;
+    int available;
+    int required;
     int mode;
     int size;
     int restore_a4 = FALSE;
 
-    if (reg_containing_return_addr != -1)
+    /* Compute the registers we need to pop.  */
+    regs_to_pop = 0;
+    pops_needed = 0;
+
+    if (reg_containing_return_addr == -1)
     {
-        /* If the return address is in a register,
-           then just emit the BX instruction and return.  */
+        regs_to_pop |= 1 << LINK_REGISTER;
+        ++pops_needed;
+    }
+
+    if (TARGET_BACKTRACE)
+    {
+        /* Restore frame pointer and stack pointer.  */
+        regs_to_pop |= (1 << FRAME_POINTER) | (1 << STACK_POINTER);
+        pops_needed += 2;
+    }
+
+    /* If there is nothing to pop then just emit the BX instruction and return.  */
+    if (pops_needed == 0)
+    {
         asm_fprintf(f, "\tbx\t%s\n", reg_names[reg_containing_return_addr]);
         return;
     }
-
-    if (!TARGET_THUMB_INTERWORK)
+    else if (!TARGET_THUMB_INTERWORK && !TARGET_BACKTRACE)
     {
-        /* If we are not supporting interworking,
-           then just pop the return address straight into the PC.  */
+        /* If we are not supporting interworking and we have not created
+        a backtrace structure, just pop the return address straight into the PC.  */
         asm_fprintf(f, "\tpop\t{pc}\n" );
         return;
     }
+
+    /* Find out how many of the (return) argument registers we can corrupt. */
+    regs_available_for_popping = 0;
 
     /* If we can deduce the registers used from the function's return value.
        This is more reliable that examining regs_ever_live[] because that
@@ -594,23 +617,48 @@ thumb_exit(FILE *f, int reg_containing_return_addr)
            In a function that returns a structure on the stack
            we can use the second and third argument registers.  */
         if (mode == VOIDmode)
-            reg_available_for_popping = ARG_1_REGISTER;
+            regs_available_for_popping = (1 << ARG_1_REGISTER) | (1 << ARG_2_REGISTER) | (1 << ARG_3_REGISTER);
         else
-            reg_available_for_popping = ARG_2_REGISTER;
+            regs_available_for_popping = (1 << ARG_2_REGISTER) | (1 << ARG_3_REGISTER);
     }
     else if (size <= 4)
     {
-        reg_available_for_popping = ARG_2_REGISTER;
+        regs_available_for_popping = (1 << ARG_2_REGISTER) | (1 << ARG_3_REGISTER);
     }
     else if (size <= 8)
     {
-        reg_available_for_popping = ARG_3_REGISTER;
+        regs_available_for_popping = (1 << ARG_3_REGISTER);
     }
-    else
-    {
-        reg_available_for_popping = ARG_4_REGISTER;
 
-        if (size > 12)
+    /* Match registers to be popped with registers into which we pop them.  */
+    for (available = regs_available_for_popping,
+         required = regs_to_pop;
+         required != 0 && available != 0;
+         available &= ~(available & -available),
+         required &= ~(required & -required))
+    {
+        --pops_needed;
+    }
+
+    /* If we have any popping registers left over, remove them.  */
+    if (available > 0)
+    {
+        regs_available_for_popping &= ~available;
+    }
+
+    /* Otherwise if we need another popping register we can use
+       the fourth argument register.  */
+    else if (pops_needed != 0)
+    {
+        /* If we have not found any free argument registers and
+           reg a4 contains the return address, we must move it.  */
+        if (regs_available_for_popping == 0 && reg_containing_return_addr == ARG_4_REGISTER)
+        {
+            asm_fprintf(f, "\tmov\t%s, %s\n",
+                        reg_names[LINK_REGISTER], reg_names[ARG_4_REGISTER]);
+            reg_containing_return_addr = LINK_REGISTER;
+        }
+        else if (size > 12)
         {
             /* Register a4 is being used to hold part of the return value,
                but we have dire need of a free, low register.  */
@@ -619,20 +667,142 @@ thumb_exit(FILE *f, int reg_containing_return_addr)
             asm_fprintf(f, "\tmov\t%s, %s\n",
                         reg_names[IP_REGISTER], reg_names[ARG_4_REGISTER]);
         }
+
+        if (reg_containing_return_addr != ARG_4_REGISTER)
+        {
+            /* The fourth argument register is available.  */
+            regs_available_for_popping |= 1 << ARG_4_REGISTER;
+
+            --pops_needed;
+        }
     }
 
-    /* Pop the return address.  */
-    thumb_pushpop(f, (1 << reg_available_for_popping), FALSE);
+    /* Pop as many registers as we can.  */
+    thumb_pushpop(f, regs_available_for_popping, FALSE);
 
-    reg_containing_return_addr = reg_available_for_popping;
+    /* Process the registers we popped.  */
+    if (reg_containing_return_addr == -1)
+    {
+        /* The return address was popped into the lowest numbered register.  */
+        regs_to_pop &= ~(1 << LINK_REGISTER);
+
+        reg_containing_return_addr = number_of_first_bit_set(regs_available_for_popping);
+
+        /* Remove this register for the mask of available registers, so that
+           the return address will not be corrupted by futher pops.  */
+        regs_available_for_popping &= ~(1 << reg_containing_return_addr);
+    }
+
+    /* If we popped other registers then handle them here.  */
+    if (regs_available_for_popping)
+    {
+        int frame_pointer;
+
+        /* Work out which register currently contains the frame pointer.  */
+        frame_pointer = number_of_first_bit_set(regs_available_for_popping);
+
+        /* Move it into the correct place.  */
+        asm_fprintf(f, "\tmov\tfp, %s\n", reg_names[frame_pointer]);
+
+        /* (Temporarily) remove it from the mask of popped registers.  */
+        regs_available_for_popping &= ~(1 << frame_pointer);
+        regs_to_pop &= ~(1 << FRAME_POINTER);
+
+        if (regs_available_for_popping)
+        {
+            int stack_pointer;
+
+            /* We popped the stack pointer as well, find the register that
+               contains it.*/
+            stack_pointer = number_of_first_bit_set(regs_available_for_popping);
+
+            /* Move it into the stack register.  */
+            asm_fprintf(f, "\tmov\tsp, %s\n", reg_names[stack_pointer]);
+
+            /* At this point we have popped all necessary registers, so
+               do not worry about restoring regs_available_for_popping
+               to its correct value:  */
+
+#if 0
+            assert (pops_needed == 0)
+            assert (regs_available_for_popping == (1 << frame_pointer))
+            assert (regs_to_pop == (1 << STACK_POINTER))
+#endif
+        }
+        else
+        {
+            /* Since we have just move the popped value into the frame
+               pointer, the popping register is available for reuse, and
+               we know that we still have the stack pointer left to pop.  */
+            regs_available_for_popping |= (1 << frame_pointer);
+        }
+    }
+
+    /* If we still have registers left on the stack, but we no longer have
+       any registers into which we can pop them, then we must move the return
+       address into the link register and make available the register that
+       contained it.  */
+    if (regs_available_for_popping == 0 && pops_needed > 0)
+    {
+        regs_available_for_popping |= 1 << reg_containing_return_addr;
+
+        asm_fprintf(f, "\tmov\t%s, %s\n",
+                    reg_names[LINK_REGISTER],
+                    reg_names[reg_containing_return_addr]);
+
+        reg_containing_return_addr = LINK_REGISTER;
+    }
+
+    /* If we have registers left on the stack then pop some more.
+       We know that at most we will want to pop FP and SP.  */
+    if (pops_needed > 0)
+    {
+        int popped_into;
+        int move_to;
+
+        thumb_pushpop(f, regs_available_for_popping, FALSE);
+
+        /* We have popped either FP or SP.
+           Move whichever one it is into the correct register.  */
+        popped_into = number_of_first_bit_set(regs_available_for_popping);
+        move_to = number_of_first_bit_set(regs_to_pop);
+
+        asm_fprintf(f, "\tmov\t%s, %s\n",
+                    reg_names[move_to], reg_names[popped_into]);
+
+        regs_to_pop &= ~(1 << move_to);
+
+        --pops_needed;
+    }
+
+    /* If we still have not popped everything then we must have only
+       had one register available to us and we are now popping the SP.  */
+    if (pops_needed > 0)
+    {
+        int popped_into;
+
+        thumb_pushpop(f, regs_available_for_popping, FALSE);
+
+        popped_into = number_of_first_bit_set(regs_available_for_popping);
+
+        asm_fprintf(f, "\tmov\tsp, %s\n", reg_names[popped_into]);
+
+#if 0
+        assert (regs_to_pop == (1 << STACK_POINTER))
+        assert (pops_needed == 1)
+#endif
+    }
 
     /* If necessary restore the a4 register.  */
     if (restore_a4)
     {
-        asm_fprintf(f, "\tmov\t%s, %s\n",
-                    reg_names[LINK_REGISTER], reg_names[ARG_4_REGISTER]);
+        if (reg_containing_return_addr != LINK_REGISTER)
+        {
+            asm_fprintf(f, "\tmov\t%s, %s\n",
+                        reg_names[LINK_REGISTER], reg_names[ARG_4_REGISTER]);
 
-        reg_containing_return_addr = LINK_REGISTER;
+            reg_containing_return_addr = LINK_REGISTER;
+        }
 
         asm_fprintf(f, "\tmov\t%s, %s\n",
                     reg_names[ARG_4_REGISTER], reg_names[IP_REGISTER]);
@@ -686,7 +856,7 @@ thumb_pushpop(FILE *f, int mask, int push)
     {
         /* Catch popping the PC.  */
 
-        if (TARGET_THUMB_INTERWORK)
+        if (TARGET_THUMB_INTERWORK || TARGET_BACKTRACE)
         {
             /* The PC is never popped directly, instead
                it is popped into r0-r3 and then BX is used. */
@@ -785,7 +955,89 @@ thumb_function_prologue(FILE *f, int frame_size)
     if (live_regs_mask || !leaf_function_p() || far_jump_used_p())
         live_regs_mask |= 1 << 14;
 
-    if (live_regs_mask)
+    if (TARGET_BACKTRACE)
+    {
+        char * name;
+        int    offset;
+        int    work_register = 0;
+
+        /* We have been asked to create a stack backtrace structure.
+           The code looks like this:
+
+         0   .align 2
+         0   func:
+         0     sub   SP, #16         Reserve space for 4 registers.
+         2     push  {R7}            Get a work register.
+         4     add   R7, SP, #20     Get the stack pointer before the push.
+         6     str   R7, [SP, #8]    Store the stack pointer (before reserving the space).
+         8     mov   R7, PC          Get hold of the start of this code plus 12.
+        10     str   R7, [SP, #16]   Store it.
+        12     mov   R7, FP          Get hold of the current frame pointer.
+        14     str   R7, [SP, #4]    Store it.
+        16     mov   R7, LR          Get hold of the current return address.
+        18     str   R7, [SP, #12]   Store it.
+        20     add   R7, SP, #16     Point at the start of the backtrace structure.
+        22     mov   FP, R7          Put this value into the frame pointer.  */
+
+        if ((live_regs_mask & 0xFF) == 0)
+        {
+            /* See if the a4 register is free.  */
+
+            if (regs_ever_live[ 3 ] == 0)
+                work_register = 3;
+            else /* We must push a register of our own */
+                live_regs_mask |= (1 << 7);
+        }
+
+        if (work_register == 0)
+        {
+            /* Select a register from the list that will be pushed to use as our work register. */
+
+            for (work_register = 8; work_register--;)
+                if ((1 << work_register) & live_regs_mask)
+                    break;
+        }
+
+        name = reg_names[work_register];
+
+        asm_fprintf(f, "\tsub\tsp, sp, #16\t@ Create stack backtrace structure\n");
+
+        if (live_regs_mask)
+            thumb_pushpop(f, live_regs_mask, 1);
+
+        for (offset = 0, work_register = 1 << 15; work_register; work_register >>= 1)
+            if (work_register & live_regs_mask)
+                offset += 4;
+
+        asm_fprintf(f, "\tadd\t%s, sp, #%d\n",
+                    name, offset + 16 + current_function_pretend_args_size);
+
+        asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset + 4);
+
+        /* Make sure that the instruction fetching the PC is in the right place
+           to calculate "start of backtrace creation code + 12".  */
+
+        if (live_regs_mask)
+        {
+            asm_fprintf(f, "\tmov\t%s, pc\n", name);
+            asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset + 12);
+            asm_fprintf(f, "\tmov\t%s, fp\n", name);
+            asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset);
+        }
+        else
+        {
+            asm_fprintf(f, "\tmov\t%s, fp\n", name);
+            asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset);
+            asm_fprintf(f, "\tmov\t%s, pc\n", name);
+            asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset + 12);
+        }
+
+        asm_fprintf(f, "\tmov\t%s, lr\n", name);
+        asm_fprintf(f, "\tstr\t%s, [sp, #%d]\n", name, offset + 8);
+        asm_fprintf(f, "\tadd\t%s, sp, #%d\n", name, offset + 12);
+        asm_fprintf(f, "\tmov\tfp, %s\t\t@ Backtrace structure created\n", name);
+    }
+    else if (live_regs_mask)
         thumb_pushpop(f, live_regs_mask, 1);
 
     for (regno = 8; regno < 13; regno++)
@@ -1064,7 +1316,16 @@ thumb_unexpanded_epilogue()
 
     had_to_push_lr = (live_regs_mask || !leaf_function || far_jump_used_p());
 
-    if (current_function_pretend_args_size == 0)
+    if (TARGET_BACKTRACE && ((live_regs_mask & 0xFF) == 0) && regs_ever_live[ARG_4_REGISTER] != 0)
+    {
+        /* The stack backtrace structure creation code had to
+            push R7 in order to get a work register, so we pop
+            it now.   */
+
+        live_regs_mask |= (1 << WORK_REGISTER);
+    }
+
+    if (current_function_pretend_args_size == 0 || TARGET_BACKTRACE)
     {
         if (had_to_push_lr)
             live_regs_mask |= 1 << PROGRAM_COUNTER;
