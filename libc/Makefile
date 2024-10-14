@@ -15,7 +15,7 @@ export AR := $(PREFIX)ar
 export AS := $(PREFIX)as
 endif
 
-SHELL := /bin/bash -o pipefail
+SHELL := bash -o pipefail
 
 ASFLAGS := -mcpu=arm7tdmi
 

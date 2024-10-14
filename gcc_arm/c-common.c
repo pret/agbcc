@@ -1587,7 +1587,7 @@ check_format_info (info, params)
 	      ++format_chars;
 	      if (params == 0)
 		{
-		  warning (tfaff);
+		  warning ("%s", tfaff);
 		  return;
 		}
 	      if (info->first_arg_num != 0)
@@ -1630,7 +1630,7 @@ check_format_info (info, params)
 		      ++format_chars;
 		      if (params == 0)
 		        {
-			  warning (tfaff);
+			  warning ("%s", tfaff);
 			  return;
 			}
 		      cur_param = TREE_VALUE (params);
@@ -1825,7 +1825,7 @@ check_format_info (info, params)
 	continue;
       if (params == 0)
 	{
-	  warning (tfaff);
+	  warning ("%s", tfaff);
 	  return;
 	}
       cur_param = TREE_VALUE (params);
