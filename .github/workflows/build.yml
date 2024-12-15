@@ -12,37 +12,75 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            gcc-version: 11
+            experimental: false
+            deployable: true
+          - os: ubuntu-22.04
+            gcc-version: 12
+            experimental: false
+            deployable: false
+          - os: ubuntu-24.04
+            gcc-version: 12
+            experimental: false
+            deployable: false
+          - os: ubuntu-24.04
+            gcc-version: 13
+            experimental: false
+            deployable: false
+          - os: ubuntu-24.04
+            gcc-version: 14
+            experimental: true
+            deployable: false
+          - os: macos-14
+            gcc-version: 13
+            experimental: true
+            deployable: false
+          - os: macos-14
+            gcc-version: 14
+            experimental: true
+            deployable: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     steps:
 
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Install deps
+      - name: Install deps (Linux)
+        if: ${{ matrix.os == 'ubuntu-22.04' || matrix.os == 'ubuntu-24.04' }} 
         run: |
           sudo apt update
           sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi
 
+      - name: Install deps (Mac)
+        if: ${{ matrix.os == 'macos-14' }}
+        run: |
+          brew install arm-none-eabi-binutils arm-none-eabi-gcc
+
       - name: Compile
-        run: sh build.sh
+        run: CC=gcc-${{matrix.gcc-version}} CXX=g++-${{matrix.gcc-version}} sh build.sh
 
       # No point in running the following steps if we are not deploying
       # See https://github.com/actions/runner/issues/1395 for why fromJSON() is needed
       - name: Install to temp dir
-        if: fromJSON(env.IS_DEPLOY)
+        if: ${{ fromJSON(env.IS_DEPLOY) && matrix.deployable }}
         shell: bash
         run: |
           mkdir TEMPDIR
           sh install.sh TEMPDIR
 
       - name: Create release archive
-        if: fromJSON(env.IS_DEPLOY)
+        if: ${{ fromJSON(env.IS_DEPLOY) && matrix.deployable }}
         shell: bash
         run: tar -C TEMPDIR/tools/agbcc -czf agbcc.tar.gz bin include lib
 
       - name: Upload archive
         uses: actions/upload-artifact@main
-        if: fromJSON(env.IS_DEPLOY)
+        if: ${{ fromJSON(env.IS_DEPLOY) && matrix.deployable }}
         with:
           name: agbcc.tar.gz
           path: agbcc.tar.gz
