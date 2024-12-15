@@ -17,34 +17,26 @@ jobs:
         include:
           - os: ubuntu-22.04
             gcc-version: 11
-            experimental: false
             deployable: true
           - os: ubuntu-22.04
             gcc-version: 12
-            experimental: false
             deployable: false
           - os: ubuntu-24.04
             gcc-version: 12
-            experimental: false
             deployable: false
           - os: ubuntu-24.04
             gcc-version: 13
-            experimental: false
             deployable: false
           - os: ubuntu-24.04
             gcc-version: 14
-            experimental: true
             deployable: false
           - os: macos-14
             gcc-version: 13
-            experimental: true
             deployable: false
           - os: macos-14
             gcc-version: 14
-            experimental: true
             deployable: false
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     steps:
 
       - name: Checkout
