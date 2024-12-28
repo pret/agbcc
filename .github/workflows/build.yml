@@ -11,7 +11,7 @@ env:
   IS_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
 
@@ -47,9 +47,24 @@ jobs:
           name: agbcc.tar.gz
           path: agbcc.tar.gz
 
+  build-macos:
+    runs-on: macos-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Install deps
+        run: |
+          brew install arm-none-eabi-binutils
+          brew install arm-none-eabi-gcc
+
+      - name: Compile
+        run: sh build.sh
+
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-linux
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
