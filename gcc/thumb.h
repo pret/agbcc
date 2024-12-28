@@ -38,6 +38,8 @@ Boston, MA 02111-1307, USA.  */
 
 #define TARGET_VERSION  fputs (" (ARM/THUMB:generic)", stderr);
 
+#define THUMB_FLAG_BACKTRACE    		0x0002
+#define THUMB_FLAG_LEAF_BACKTRACE		0x0004
 #define ARM_FLAG_THUMB				0x1000	/* same as in arm.h */
 
 /* Nonzero if all call instructions should be indirect.  */
@@ -48,6 +50,9 @@ Boston, MA 02111-1307, USA.  */
 extern int target_flags;
 #define TARGET_DEFAULT          0 /* ARM_FLAG_THUMB */
 #define TARGET_THUMB_INTERWORK	(target_flags & ARM_FLAG_THUMB)
+#define TARGET_BACKTRACE	(leaf_function_p()			      \
+				 ? (target_flags & THUMB_FLAG_LEAF_BACKTRACE) \
+				 : (target_flags & THUMB_FLAG_BACKTRACE))
 
 #define TARGET_LONG_CALLS		(target_flags & ARM_FLAG_LONG_CALLS)
 
@@ -63,6 +68,10 @@ extern int target_flags;
   {"long-calls",		ARM_FLAG_LONG_CALLS,		\
    "Generate all call instructions as indirect calls"},		\
   {"no-long-calls",	       -ARM_FLAG_LONG_CALLS, ""},	\
+  {"tpcs-frame",		    THUMB_FLAG_BACKTRACE},	\
+  {"no-tpcs-frame",                -THUMB_FLAG_BACKTRACE},	\
+  {"tpcs-leaf-frame",	  	    THUMB_FLAG_LEAF_BACKTRACE},	\
+  {"no-tpcs-leaf-frame",           -THUMB_FLAG_LEAF_BACKTRACE},	\
   SUBTARGET_SWITCHES						\
   {"",                          TARGET_DEFAULT}         	\
 }
