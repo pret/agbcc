@@ -64,7 +64,7 @@ ALLOCA_FINISH = true
 XCFLAGS =
 TCFLAGS =
 # CYGNUS LOCAL nowarnings/law
-CFLAGS = -g -Werror-implicit-function-declaration -Wno-error=incompatible-pointer-types
+CFLAGS = -g -Werror-implicit-function-declaration -Wno-error=incompatible-pointer-types -std=gnu11
 BOOT_CFLAGS = -O2 $(CFLAGS)
 WARN_CFLAGS =
 # END CYGNUS LOCAL
