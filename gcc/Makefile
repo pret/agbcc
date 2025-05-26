@@ -24,7 +24,7 @@ VPATH = $(srcdir)
 
 CC = gcc
 
-BASE_CFLAGS = -g -std=gnu11 -Werror-implicit-function-declaration
+BASE_CFLAGS = -g -std=gnu11 -Werror-implicit-function-declaration -Wno-error=incompatible-pointer-types
 
 INCLUDES = -I. -I$(srcdir)
 
