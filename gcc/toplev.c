@@ -1061,7 +1061,7 @@ fatal_io_error(char *name)
 void
 fatal_insn(char *message, rtx insn)
 {
-    error(message);
+    error("%s", message);
     debug_rtx(insn);
     if (asm_out_file)
         fflush(asm_out_file);

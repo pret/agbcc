@@ -5703,8 +5703,6 @@ mtherr (name, code)
      char *name;
      int code;
 {
-  char errstr[80];
-
   /* The string passed by the calling program is supposed to be the
      name of the function in which the error occurred.
      The code argument selects which error message string will be printed.  */
@@ -5727,9 +5725,8 @@ mtherr (name, code)
     name = "modulus";
   else if (strcmp (name, "esqrt") == 0)
     name = "square root";
-  sprintf (errstr, "%s during real %s", ermsg[code], name);
   if (extra_warnings)
-    warning (errstr);
+    warning ("%s during real %s", ermsg[code], name);
   /* Set global error message word */
   merror = code + 1;
 }
