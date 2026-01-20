@@ -12,10 +12,10 @@ fi
 if [ ! -z "$CC" ]; then CCOPT=CC=$CC; fi
 if [ ! -z "$CXX" ]; then CXXOPT=CXX=$CXX; fi
 make -C gcc clean
-make -C gcc old $CCOPT $CXXOPT
+make -C gcc old -j1 $CCOPT $CXXOPT
 mv gcc/old_agbcc .
 make -C gcc clean
-make -C gcc $CCOPT $CXXOPT
+make -C gcc -j1 $CCOPT $CXXOPT
 mv gcc/agbcc .
 # not sure if the ARM compiler is the old one or the new one (-DOLD_COMPILER)
 rm -f gcc_arm/config.status gcc_arm/config.cache
