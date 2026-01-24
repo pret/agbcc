@@ -21,6 +21,11 @@ Boston, MA 02111-1307, USA.  */
 #ifndef __GCC_TOPLEV_H__
 #define __GCC_TOPLEV_H__
 
+#include <setjmp.h>
+#ifndef _JBLEN
+# define _JBLEN (sizeof(jmp_buf)/sizeof(jmp_buf[0]))
+#endif
+
 #ifdef ANSI_PROTOTYPES
 union tree_node;
 struct rtx_def;
