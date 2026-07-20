@@ -1187,12 +1187,24 @@ find_reg (allocno, losers, alt_regs_p, accept_call_clobbered, retrying)
 
   /* Did we find a register?  */
 
+  if (best_reg < 0 && getenv ("AGBCC_TRACE_ALLOC"))
+    fprintf (stderr, "[galloc] pseudo %d -> SPILL (allocno %d, calls_crossed %d)\n",
+	     allocno_reg[allocno], allocno, (int) allocno_calls_crossed[allocno]);
+
   if (best_reg >= 0)
     {
       register int lim, j;
       HARD_REG_SET this_reg;
 
       /* Yes.  Record it as the hard register of this pseudo-reg.  */
+      if (getenv ("AGBCC_TRACE_ALLOC"))
+	fprintf (stderr,
+		 "[galloc] pseudo %d -> r%d  (allocno %d, size %d, calls_crossed %d, live_length %d, n_refs %d)\n",
+		 allocno_reg[allocno], best_reg, allocno,
+		 (int) allocno_size[allocno],
+		 (int) allocno_calls_crossed[allocno],
+		 (int) allocno_live_length[allocno],
+		 (int) allocno_n_refs[allocno]);
       reg_renumber[allocno_reg[allocno]] = best_reg;
       /* Also of any pseudo-regs that share with it.  */
       if (reg_may_share[allocno_reg[allocno]])

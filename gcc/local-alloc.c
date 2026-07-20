@@ -1412,7 +1412,15 @@ block_alloc (b)
     if (qty_phys_reg[q] >= 0)
       {
 	for (i = qty_first_reg[q]; i >= 0; i = reg_next_in_qty[i])
-	  reg_renumber[i] = qty_phys_reg[q] + reg_offset[i];
+	  {
+	    if (getenv ("AGBCC_TRACE_ALLOC"))
+	      fprintf (stderr,
+		       "[lalloc] pseudo %d -> r%d  (qty %d, births %d, deaths %d, n_calls_crossed %d)\n",
+		       i, qty_phys_reg[q] + reg_offset[i], q,
+		       (int) qty_birth[q], (int) qty_death[q],
+		       (int) qty_n_calls_crossed[q]);
+	    reg_renumber[i] = qty_phys_reg[q] + reg_offset[i];
+	  }
       }
 }
 
